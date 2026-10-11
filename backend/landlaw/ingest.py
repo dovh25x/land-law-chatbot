@@ -64,11 +64,16 @@ async def download(client, url, publication_url=None):
 
 def html_text(content: bytes, legal=False):
     soup = BeautifulSoup(content, "html.parser")
-    for item in soup.select("script,style,nav,header,footer,aside,iframe,form"):
+    for item in soup.select("script,style,nav,header,footer,aside,iframe"):
         item.decompose()
+    # ASP.NET portals wrap their entire document in a server form. Preserve its content.
+    for item in soup.select("form"):
+        item.unwrap()
     for item in soup.select(".related-news,.related-articles,.detail__related,.box-related,.VCSortableInPreviewMode[type='RelatedOneNews']"):
         item.decompose()
-    candidates = soup.select("#block_detail.document-detail,#news-bodyhtml,.detail__content,article,main,.vbContent,.toanvan,.content-detail,.detail-content,.article-content,.entry-content")
+    candidates = soup.select("#block_detail.document-detail,#news-bodyhtml,.detail-body,.detail__content,.vbContent,.toanvan,.detail-content,.article-content,.entry-content")
+    if not candidates:
+        candidates = soup.select("article,main,.content-detail")
     if candidates:
         node = max(candidates, key=lambda n: len(n.get_text()))
     else:
@@ -108,6 +113,13 @@ def pdf_pages(content: bytes, allow_ocr=False):
         # over thousands of price-table cells, which consumes gigabytes offline.
         text = page.extract_text(extraction_mode="layout", layout_mode_strip_rotated=False) or ""
         if len(text.strip()) < 60:
+            plain = page.extract_text() or ""
+            if len(plain.strip()) >= 60:
+                text = plain
+            elif not page.images and not re.sub(r"[\d\W_]", "", plain):
+                # Truly blank separator/back pages are not failed scans.
+                continue
+        if len(text.strip()) < 60:
             if not allow_ocr:
                 raise Quarantine(f"Page {index+1} requires offline OCR")
             text = ocr_page(content, index)
@@ -122,7 +134,7 @@ def pdf_pages(content: bytes, allow_ocr=False):
 def chunks_for(doc_id, pages):
     chunks = []
     active_article = None
-    for page, text in pages:
+    for page_index, (page, text) in enumerate(pages):
         text = redact(text).strip()
         if "�" in text and text.count("�") / max(len(text), 1) > 0.005:
             raise Quarantine("Encoding/OCR quality insufficient")
@@ -137,16 +149,32 @@ def chunks_for(doc_id, pages):
             locator = f"Điều {active_article}" if active_article else f"Trang {page}" if page else f"Đoạn {section_index+1}"
             words = section.split()
             # Conservative estimate: Vietnamese words typically span multiple subword tokens.
-            segments = [" ".join(words[start:start+330]) for start in range(0, len(words), 300)]
+            if "[BẢNG / ĐƠN GIÁ" in text:
+                # Preserve whole rows, spacing, units and page headers in price tables.
+                lines = section.splitlines()
+                header = "\n".join(lines[:8])
+                segments, current, count = [], [], 0
+                for line in lines:
+                    size = len(line.split())
+                    if current and count + size > 330:
+                        segments.append(header + "\n" + "\n".join(current))
+                        current, count = [], 0
+                    current.append(line)
+                    count += size
+                if current:
+                    segments.append(header + "\n" + "\n".join(current))
+                parent_text = header + "\n" + "\n".join(lines[8:24])
+            else:
+                segments = [" ".join(words[start:start+330]) for start in range(0, len(words), 300)]
+                parent_text = " ".join(words[:660])
             parent_id = None
             if len(segments) > 1:
-                parent_id = f"{doc_id}-{page or 0}-{section_index}-parent"
+                parent_id = f"{doc_id}-{page_index}-{section_index}-parent"
                 # A parent retains headings and enough context without unbounded prompts.
-                parent_text = " ".join(words[:660])
                 chunks.append(Chunk(id=parent_id, document_id=doc_id, text=parent_text,
                                     locator=locator + " · ngữ cảnh", page=page, checksum=digest(parent_text)))
             for index, segment in enumerate(segments):
-                chunk_id = f"{doc_id}-{page or 0}-{section_index}-{index}"
+                chunk_id = f"{doc_id}-{page_index}-{section_index}-{index}"
                 chunks.append(Chunk(id=chunk_id, document_id=doc_id, text=segment, locator=locator,
                                     page=page, parent_id=parent_id, checksum=digest(segment)))
     if not chunks:
@@ -222,7 +250,7 @@ async def collect_source(source, settings, client, offline=False, allow_ocr=Fals
                     raise Quarantine("OCR sidecar contains low quality pages")
                 pages.extend((index+1, text) for index, text in enumerate(ocr_pages))
             else:
-                parse_cache = settings.data_dir / "checkpoints" / f"parse-layout-v3-{digest(content)}.json"
+                parse_cache = settings.data_dir / "checkpoints" / f"parse-layout-v4-{digest(content)}.json"
                 if parse_cache.exists():
                     pages.extend(json.loads(parse_cache.read_text())["pages"])
                 else:
@@ -249,12 +277,13 @@ async def collect_source(source, settings, client, offline=False, allow_ocr=Fals
     return doc
 
 
-async def build_corpus(settings: Settings, provider: Gemini | None, offline=False, embed=False, allow_ocr=False):
+async def build_corpus(settings: Settings, provider: Gemini | None, offline=False, embed=False, allow_ocr=False, cached_embeddings_only=False):
     sources = json.loads((settings.data_dir / "sources.json").read_text())
     relations_path = settings.data_dir / "legal_relations.json"
     relations = json.loads(relations_path.read_text()) if relations_path.exists() else []
     documents, issues = [], []
     seen_checksums = {}
+    embedding_blocked = cached_embeddings_only
     async with httpx.AsyncClient(timeout=45, headers={"User-Agent": "HanoiLandLawResearch/0.1 (+official legal corpus demo)"}) as client:
         for source in sources:
             try:
@@ -275,6 +304,8 @@ async def build_corpus(settings: Settings, provider: Gemini | None, offline=Fals
                             pending.append((chunk, checkpoint))
                         chunk.embedding_model = provider.settings.embedding_model
                     for start in range(0, len(pending), 8):
+                        if embedding_blocked:
+                            break
                         batch = pending[start:start+8]
                         for attempt in range(3):
                             try:
@@ -282,12 +313,22 @@ async def build_corpus(settings: Settings, provider: Gemini | None, offline=Fals
                                 break
                             except RateLimited as exc:
                                 if exc.retry_after > 60 or attempt == 2:
-                                    raise
-                                await asyncio.sleep(min(5, exc.retry_after))
+                                    embedding_blocked = True
+                                    issues.append({"id": doc.id, "reason": "Embedding quota reached; checkpoint resume required", "retry_after": exc.retry_after, "quarantined": False})
+                                    break
+                                await asyncio.sleep(exc.retry_after)
+                            except ProviderUnavailable:
+                                embedding_blocked = True
+                                issues.append({"id": doc.id, "reason": "Embedding provider unavailable; checkpoint resume required", "quarantined": False})
+                                break
+                        if embedding_blocked:
+                            break
                         for (chunk, checkpoint), vector in zip(batch, vectors, strict=True):
                             chunk.embedding = vector
                             json_write(checkpoint, {"embedding": vector})
                         await asyncio.sleep(.2)
+                    if any(c.embedding is None for c in doc.chunks):
+                        issues.append({"id": doc.id, "reason": "Parsed staging document has incomplete embeddings; publication blocked", "quarantined": False})
                 item = doc.model_dump(mode="json")
                 for raw, chunk in zip(item["chunks"], doc.chunks, strict=True):
                     raw["embedding"] = chunk.embedding
@@ -301,12 +342,13 @@ async def build_corpus(settings: Settings, provider: Gemini | None, offline=Fals
     for relation in relations:
         if relation["source_id"] not in document_ids or relation["target_id"] not in document_ids:
             issues.append({"id": relation["target_id"], "reason": "Relation endpoint missing from corpus", "quarantined": True})
-    content_hash = digest(json.dumps(documents, sort_keys=True, ensure_ascii=False))[:16]
     aliases_path = settings.data_dir / "place_aliases.json"
     aliases = json.loads(aliases_path.read_text()) if aliases_path.exists() else []
+    content_hash = digest(json.dumps({"documents": documents, "relations": valid_relations,
+        "place_aliases": aliases, "embedding_model": settings.embedding_model, "parser_version": 5}, sort_keys=True, ensure_ascii=False))[:16]
     payload = {"id": f"corpus-{content_hash}", "checked_at": min((d["checked_at"] for d in documents), default=utcnow().isoformat()), "documents": documents,
                "relations": valid_relations, "place_aliases": aliases, "embedding_model": settings.embedding_model,
-               "embedding_dimensions": 768, "embedded": embed}
+               "embedding_dimensions": 768, "embedded": bool(documents and all(c.get("embedding") for d in documents for c in d["chunks"]))}
     report = coverage(payload, issues)
     json_write(settings.data_dir / "staging" / f"{payload['id']}.json", payload)
     json_write(settings.reports_dir / "corpus-coverage.json", report)

@@ -1,27 +1,33 @@
 # Bằng chứng triển khai
 
-Cập nhật ngày 12/10/2026 (giờ Hà Nội). Không đánh dấu toàn bộ kế hoạch hoàn tất khi chưa có URL chạy xuyên suốt và nghiệm thu thật.
+Cập nhật ngày 12/10/2026 (giờ Hà Nội). Kế hoạch M0–M6 chưa hoàn tất; không công bố corpus hoặc chứng nhận chất lượng khi chưa qua gate.
 
 | Mốc | Trạng thái | Bằng chứng / việc còn thiếu |
 |---|---|---|
-| M0 | Đang kiểm chứng | Repo cấu trúc đã tạo; Supabase migration 001/002 đã chạy; Gemini structured generation thật và embedding 768 thật thành công. Đang triển khai hosting Free và kiểm tra runtime role. |
-| M1 | Chưa hoàn tất | 56 nguồn thật, 31 legal verified, mỗi dự án 5 verified; raw/checksum/metadata/quan hệ đã có. Ingestion/embedding staging đang chạy. Toàn văn lịch sử QĐ56/2024 còn thiếu và chặn publish. |
-| M2 | Đang kiểm chứng | Hybrid FTS/vector/RRF, baseline, API SSE và hội thoại đã có. Cần kết quả gọi thật với corpus hoàn chỉnh. |
-| M3 | Đang kiểm chứng | LangGraph thực, công cụ đọc, retry hữu hạn, verifier, temporal/partial-relation safeguards và unit tests. Cần benchmark thật trên staging. |
-| M4 | Đang kiểm chứng | React responsive, chat/filter/source/project/trace/report đã build. Đang QA browser desktop/mobile; không có dữ liệu demo giả. |
-| M5 | Chưa hoàn tất | CI, quota/cách ly phiên, RLS, private Storage, backup/restore/rollback, source staging/checksum và bảo vệ secret đã triển khai. Cần kiểm thử tích hợp PostgreSQL, restore rehearsal, đánh giá 80 câu cố định và p95. |
-| M6 | Chưa hoàn tất | Docker/Render/Cloudflare workflows và hướng dẫn đã có. Chưa chứng nhận URL/benchmark cuối. |
+| M0 | Đang deploy backend | GitHub đã push và CI Python 3.12/frontend/Docker pass. Cloudflare Pages HTTP 200, CSP và browser smoke pass. Service Render Docker Free đã được người dùng cung cấp; đang cấu hình/deploy. Gemini generation và embedding thật đã kiểm tra. |
+| M1 | Chưa hoàn tất | Staging 46 tài liệu: 31 legal verified và 5 nguồn mỗi dự án; 6.546 đoạn, 945 vector thật đã checkpoint. Thiếu toàn văn lịch sử QĐ56/2024 và embedding còn lại; publication_ready=false. 60 objects nguồn/manifest đã lưu Storage private, khoảng 50 MB. |
+| M2 | Đã có luồng thật trên staging | PostgreSQL FTS/pgvector/RRF, baseline, SSE và hội thoại đã triển khai. Có development benchmark gọi Gemini thật; chưa đủ corpus/80 câu nghiệm thu. |
+| M3 | Đã có luồng thật trên staging | LangGraph, công cụ đọc, hiệu lực cấp điều khoản, partial amendments, hỏi lại, verifier, sửa JSON một lần và ngân sách hữu hạn đã kiểm thử. Có lượt thật truy xuất bổ sung; chưa đạt chứng nhận benchmark. |
+| M4 | Giao diện đã QA và có URL | https://hanoi-land-law.pages.dev — hiện bản xem trước ghi rõ backend chưa triển khai. 6 browser checks pass desktop/mobile, 2 SSE protocol tests pass. Cần kiểm tra toàn luồng sau deploy backend. |
+| M5 | Hoàn thành nhiều kiểm tra, chưa nghiệm thu | 38 backend tests pass; npm audit 0 vulnerabilities. Live PostgreSQL privileges/session isolation/atomic quota/RLS pass, database khoảng 109 MB. Restore/rollback với corpus thật và backup hội thoại mã hóa pass trên database thử nghiệm tách biệt. Còn benchmark cố định, cold start và fault smoke trên URL. |
+| M6 | Chưa hoàn tất | Mã nguồn, Docker, migration, workflow, benchmark, pipeline, tài liệu vận hành và demo đã có. Backend deployment và nghiệm thu cuối đang chờ hoàn tất. |
 
-## Kiểm tra đã thực hiện
+## Báo cáo kiểm chứng
 
-- Backend: 22 tests pass ở lần kiểm tra trước khi bổ sung batch/cache/backup. Có thêm tests để kiểm tra các thay đổi mới; chỉ kết quả mới nhất sau chạy lại được coi là bằng chứng cuối.
-- Frontend: TypeScript/Vite build, hai SSE protocol tests pass; npm audit zero vulnerabilities sau nâng Vitest. Playwright đã thêm và đang hoàn thiện môi trường Chromium.
-- Live API: `gemini-2.5-flash` generation 404, `gemini-3.8-flash` thử đơn giản 503, `gemini-3.5-flash-lite` generation thường/JSON schema 200. `gemini-embedding-2` single và batch hai đoạn đều trả 768 chiều, các vector độc lập.
-- Supabase owner connection SELECT 1 pass; migration tạo schema mới và RLS pass. Frontend không có key database/Gemini. Credential scans được chạy; raw secrets không đưa vào báo cáo.
-- GitHub repository người dùng cung cấp: tồn tại, trống, token có quyền push. Cloudflare Pages token đọc project được; Render token đọc workspace/services được. Không sửa các ứng dụng khác trong tài khoản.
+- [Corpus coverage](../reports/corpus-coverage.json): tất cả nguồn staging có checksum/nguồn truy nguyên; nguồn pending/OCR/draft bị cách ly. Độ bao phủ số lượng đạt, điều kiện phát hành chưa đạt.
+- [PostgreSQL integration](../reports/postgres-integration.json): runtime chỉ đọc corpus, anonymous bị từ chối, hai phiên cách ly, bộ đếm atomic và dung lượng dưới 350 MB.
+- [Storage archive](../reports/storage-archive.json): bucket private, immutable source objects và giới hạn dự phòng 700 MB.
+- [Restore rehearsal](../reports/restore-rehearsal.json): dùng corpus thật trong SQLite tách biệt; giữ checksum, số đoạn, hội thoại, trace, token hash, rollback và forward restore. Không đổi pointer PostgreSQL công khai.
+- [Frontend deployment](../reports/frontend-deployment.json): URL HTTP 200 và CSP; chưa đồng nghĩa backend hoặc nghiệm thu hoạt động.
+- [Development benchmark](../reports/latest.json) và [HTML](../reports/benchmark.html): gọi model thật, checkpoint theo corpus/model/dataset/configuration. Số liệu từ vài câu dev không chứng minh tiêu chí 80 câu; recall/nội dung/claim support chưa rà soát là null.
 
-## Blocker pháp lý
+Lượt phát triển đầu tiên phát hiện tải archive vector quá lớn và thời gian trên 90 giây. Đã tách metadata thành migration 003, giảm dữ liệu trong truy vấn và bỏ transaction không cần thiết cho SELECT; kiểm tra exact-article trên PostgreSQL giảm còn khoảng 3 giây. Timeout hiện bao gồm cả tải metadata/lịch sử. Một output JSON sai schema đã dẫn đến bổ sung một lần sửa trong ngân sách; các run cũ giữ trong reports/runs (không commit) để đối chiếu.
 
-Cổng Hà Nội hiện trỏ tới QĐ56/2024 PDF bản dự thảo với số/ngày trống. VBPL legacy trả shell tải dữ liệu; các đường signed/mirror thử thêm không cung cấp bản lịch sử đủ điều kiện. Mốc hết hiệu lực 02/04/2026 đã được xác minh từ Điều 2 QĐ40/2026, nhưng điều đó không cung cấp nội dung quy định lịch sử. Pipeline bắt buộc giữ QĐ56 trong corpus trước phát hành; không dùng draft hoặc snippet thay toàn văn.
+## Những việc còn chặn phát hành
 
-Các source OCR pending và thiếu văn bản đặc thù được ghi cụ thể tại [SOURCES.md](SOURCES.md). Benchmark reference đang ở trạng thái draft; chưa coi đó là nguồn gold đã kiểm chứng, chưa có bằng chứng đạt 85%/95% hoặc p95≤60 giây. Báo cáo kết quả pending/null là chủ đích để tránh chứng nhận sai.
+1. QĐ56/2024: attachment cổng Hà Nội đang là draft số/ngày trống. VBPL legacy bị chặn hoặc không có toàn văn tải được; không dùng draft hay search snippet làm corpus. Mốc thay thế xác minh từ QĐ40/2026 không cung cấp nội dung lịch sử. Chi tiết tại [SOURCES](SOURCES.md).
+2. Gemini embedding Free đã trả daily quota 429. Checkpoint giữ 945 vector; còn 5.601 đoạn. Tiếp tục khi provider cho phép, tối đa 900 input/ngày mặc định, không nâng phí. Retry-After/RetryInfo được giữ, không retry vòng lặp vô hạn.
+3. Bộ 120 câu (40 dev/80 acceptance) có rubric/reference draft. Cần source-check gold và rà soát kết quả thật; chưa có bằng chứng đạt Recall@8≥85%, rubric≥85%, claim support≥95%, critical temporal zero errors hoặc p95≤60s trên nghiệm thu.
+4. GitHub token hiện không đọc được Actions Secrets (HTTP 403). Workflow tiếp tục embedding/backup đã chuẩn bị nhưng vẫn cần Secrets quyền ghi hoặc cấu hình qua GitHub UI; job phụ thuộc secret được giữ disabled bằng variables.
+
+Danh sách và bằng chứng được cập nhật sau mỗi lần deploy/đánh giá; không tự coi giao diện hoặc development benchmark là hoàn tất M0–M6.

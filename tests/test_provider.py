@@ -51,13 +51,31 @@ async def test_quota_returns_retry_and_never_exposes_provider_body(settings, sto
     await provider.close()
 
 
+async def test_daily_quota_honours_google_retryinfo(settings, store):
+    provider = Gemini(settings, store, httpx.AsyncClient(transport=httpx.MockTransport(lambda _: httpx.Response(429, json={"error": {"details": [{"@type": "type.googleapis.com/google.rpc.RetryInfo", "retryDelay": "20927.1s"}]}}))))
+    with pytest.raises(RateLimited) as error:
+        await provider.embed("document")
+    assert error.value.retry_after == 20928
+    await provider.close()
+
+
 async def test_error_body_and_malformed_schema_are_blocked(settings, store):
-    responses = [httpx.Response(500, json={'error': {'message': 'test-key private prompt'}}), httpx.Response(200, json={'candidates': [{'content': {'parts': [{'text': 'not JSON'}]}}]})]
+    malformed = httpx.Response(200, json={'candidates': [{'content': {'parts': [{'text': 'not JSON'}]}}]})
+    responses = [httpx.Response(500, json={'error': {'message': 'test-key private prompt'}}), malformed, malformed]
     provider = Gemini(settings, store, httpx.AsyncClient(transport=httpx.MockTransport(lambda _: responses.pop(0))))
     for _ in range(2):
         with pytest.raises(ProviderUnavailable) as error:
             await provider.generate(Probe, 'probe', {}, Budget())
         assert 'test-key' not in str(error.value) and 'private prompt' not in str(error.value)
+    await provider.close()
+
+
+async def test_schema_repair_is_bounded_and_counted(settings, store):
+    responses = [httpx.Response(200,json={'candidates':[{'content':{'parts':[{'text':'wrong'}]}}]}), httpx.Response(200,json={'candidates':[{'content':{'parts':[{'text':'{"ok":true}'}]}}]})]
+    provider = Gemini(settings,store,httpx.AsyncClient(transport=httpx.MockTransport(lambda _:responses.pop(0))))
+    budget = Budget()
+    assert (await provider.generate(Probe,'probe',{},budget)).ok
+    assert budget.llm_calls == 2
     await provider.close()
 
 

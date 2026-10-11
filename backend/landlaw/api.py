@@ -4,6 +4,7 @@ import logging
 import secrets
 import time
 import uuid
+from datetime import datetime, timedelta
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, HTTPException, Request
@@ -11,6 +12,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, StreamingResponse
 
 from .agent import Agent
+from .evaluation import configuration_fingerprint
 from .config import Settings, get_settings
 from .models import ChatRequest, ChatResult, TraceEvent
 from .provider import Gemini
@@ -31,6 +33,7 @@ def create_app(settings: Settings | None = None, store: Store | None = None, pro
         state["agent"] = Agent(state["store"], state["provider"])
         state["semaphore"] = asyncio.Semaphore(settings.max_concurrent_requests)
         state["ip_secret"] = settings.ip_hash_secret.get_secret_value() or secrets.token_hex(32)
+        state["configuration"] = configuration_fingerprint(settings)
         yield
         if not provider:
             await state["provider"].close()
@@ -85,7 +88,7 @@ def create_app(settings: Settings | None = None, store: Store | None = None, pro
     async def ready():
         try:
             await asyncio.to_thread(state["store"].ready)
-            release = await asyncio.to_thread(state["store"].release)
+            release = await asyncio.to_thread(state["store"].release, None, True)
         except Exception:
             return JSONResponse({"status": "not_ready", "database": False, "reason": "database_unavailable"}, status_code=503)
         configured = state["provider"].configured
@@ -166,12 +169,18 @@ def create_app(settings: Settings | None = None, store: Store | None = None, pro
                     history = await asyncio.to_thread(state["store"].messages, body.session_id, 8)
                     cache_key = digest(json.dumps({"session": body.session_id, "question": body.message,
                         "history": history, "release": release_id, "model": settings.gemini_model,
+                        "configuration": state["configuration"],
                         "embedding": settings.embedding_model, "as_of": str(body.as_of or local_date()),
                         "project": body.project, "mode": body.mode}, sort_keys=True, ensure_ascii=False))
                     cached = await asyncio.to_thread(state["store"].cached_answer, cache_key, body.session_id)
+                    if cached and (body.as_of is None or body.as_of >= local_date()):
+                        release = await asyncio.to_thread(state["store"].release, release_id, True)
+                        checked = datetime.fromisoformat(release["checked_at"].replace("Z", "+00:00")) if release else None
+                        if not checked or utcnow() - checked > timedelta(days=7):
+                            cached = None
                     if cached:
                         result = ChatResult.model_validate(cached).model_copy(update={"trace_id": str(uuid.uuid4()),
-                            "llm_calls": 0, "tool_calls": 0, "token_usage": 0, "elapsed_ms": 0,
+                            "llm_calls": 0, "embedding_calls": 0, "tool_calls": 0, "token_usage": 0, "elapsed_ms": 0,
                             "trace": [TraceEvent(step="cache", summary="Đã dùng kết quả đã kiểm tra của cùng phiên và phạm vi câu hỏi.")]})
                     else:
                         result = await state["agent"].run(body, emit)

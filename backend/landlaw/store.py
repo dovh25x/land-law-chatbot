@@ -1,6 +1,7 @@
 """Durable storage. SQLite is development-only; PostgreSQL is required in production."""
 import json
 import math
+import re
 import sqlite3
 import threading
 from contextlib import contextmanager
@@ -13,6 +14,7 @@ from .security import digest, normalize, utcnow
 
 SQLITE_SCHEMA = """
 CREATE TABLE IF NOT EXISTS releases(id TEXT PRIMARY KEY, payload TEXT NOT NULL, created_at TEXT NOT NULL);
+CREATE TABLE IF NOT EXISTS release_metadata(id TEXT PRIMARY KEY REFERENCES releases(id) ON DELETE CASCADE, payload TEXT NOT NULL);
 CREATE TABLE IF NOT EXISTS app_state(key TEXT PRIMARY KEY, value TEXT NOT NULL);
 CREATE TABLE IF NOT EXISTS documents(
  release_id TEXT NOT NULL REFERENCES releases(id), id TEXT NOT NULL, payload TEXT NOT NULL,
@@ -38,6 +40,7 @@ CREATE INDEX IF NOT EXISTS message_session_idx ON messages(session_id,created_at
 class RateLimited(Exception):
     def __init__(self, retry_after: int = 60):
         self.retry_after = retry_after
+        super().__init__(f"Quota exceeded; retry_after={retry_after}s")
 
 
 class Store:
@@ -53,7 +56,9 @@ class Store:
 
             self.pool = ConnectionPool(
                 settings.database_url.get_secret_value(), min_size=0, max_size=4,
-                timeout=8, reconnect_timeout=15, kwargs={"row_factory": dict_row, "prepare_threshold": None, "connect_timeout": 8},
+                timeout=8, reconnect_timeout=15, kwargs={"row_factory": dict_row, "prepare_threshold": None,
+                    "connect_timeout": 8, "autocommit": True, "keepalives": 1, "keepalives_idle": 30,
+                    "keepalives_interval": 10, "keepalives_count": 3, "tcp_user_timeout": 60000},
             )
         else:
             path = Path(settings.sqlite_path)
@@ -61,6 +66,10 @@ class Store:
             self.conn = sqlite3.connect(str(path), check_same_thread=False, timeout=10)
             self.conn.row_factory = sqlite3.Row
             self.conn.executescript("PRAGMA foreign_keys=ON; PRAGMA journal_mode=WAL;" + SQLITE_SCHEMA)
+            self.conn.execute("""INSERT OR IGNORE INTO release_metadata
+                SELECT id,json_set(payload,'$.documents',(SELECT json_group_array(json_remove(value,'$.chunks'))
+                FROM json_each(payload,'$.documents'))) FROM releases
+                WHERE id NOT IN (SELECT id FROM release_metadata)""")
             self.conn.commit()
 
     def close(self):
@@ -88,6 +97,10 @@ class Store:
         return conn.execute(sql.replace("?", "%s"), params or None) if self.postgres else conn.execute(sql, params)
 
     def rows(self, sql, params=()):
+        if self.pool:
+            # Read-only queries need one round trip; writes still use explicit transactions.
+            with self.pool.connection() as conn:
+                return [dict(r) for r in self.execute(conn, sql, params).fetchall()]
         with self.transaction() as conn:
             return [dict(r) for r in self.execute(conn, sql, params).fetchall()]
 
@@ -158,13 +171,18 @@ class Store:
         return json.loads(rows[0]["payload"]) if rows else None
 
     def consume(self, limits: list[tuple[str, int, int]]):
+        return self.consume_weighted([(key,limit,window,1) for key,limit,window in limits])
+
+    def consume_weighted(self, limits: list[tuple[str,int,int,int]]):
         """Atomically reserve all counters or none, including across processes."""
         now = utcnow()
         with self.transaction() as conn:
-            for key, limit, window in limits:
+            for key, limit, window, units in limits:
+                if units < 1 or units > limit:
+                    raise RateLimited(window)
                 expires = (now + timedelta(seconds=window)).isoformat()
-                row = self.execute(conn, """INSERT INTO counters(key,value,expires_at) VALUES(?,1,?)
-                    ON CONFLICT(key) DO UPDATE SET value=counters.value+1 RETURNING value""", (key, expires)).fetchone()
+                row = self.execute(conn, """INSERT INTO counters(key,value,expires_at) VALUES(?,?,?)
+                    ON CONFLICT(key) DO UPDATE SET value=counters.value+excluded.value RETURNING value""", (key, units, expires)).fetchone()
                 if row["value"] > limit:
                     raise RateLimited(window)
 
@@ -176,32 +194,51 @@ class Store:
         with self.transaction() as conn:
             self.execute(conn, "INSERT INTO app_state VALUES(?,?) ON CONFLICT(key) DO UPDATE SET value=excluded.value", (key, value))
 
-    def release(self, release_id=None):
+    def release(self, release_id=None, metadata_only=False):
         release_id = release_id or self.state("active_release")
         if not release_id:
             return None
-        rows = self.rows("SELECT payload FROM releases WHERE id=?", (release_id,))
+        if metadata_only:
+            rows = self.rows("SELECT payload FROM release_metadata WHERE id=?", (release_id,))
+        else:
+            rows = self.rows("SELECT payload FROM releases WHERE id=?", (release_id,))
         return json.loads(rows[0]["payload"]) if rows else None
 
     def stage(self, payload):
         release_id = payload["id"]
+        serialized = json.dumps(payload, ensure_ascii=False)
+        if self.postgres:
+            used = self.rows("SELECT pg_database_size(current_database()) AS size")[0]['size']
+            if used + len(serialized.encode()) * 2 > 350 * 1024 * 1024:
+                raise ValueError("Staging would exceed the 350 MB database reserve; prune reviewed releases first")
         with self.transaction() as conn:
             if self.execute(conn, "SELECT id FROM releases WHERE id=?", (release_id,)).fetchone():
                 raise ValueError("Release already exists: immutable content cannot be overwritten")
             self.execute(conn, "INSERT INTO releases VALUES(?,?,?)", (
-                release_id, json.dumps(payload, ensure_ascii=False), utcnow().isoformat()))
+                release_id, serialized, utcnow().isoformat()))
+            metadata = {**payload, "documents": [{k: v for k, v in d.items() if k != "chunks"} for d in payload["documents"]]}
+            self.execute(conn, "INSERT INTO release_metadata VALUES(?,?)", (release_id, json.dumps(metadata, ensure_ascii=False)))
+            document_rows, chunk_rows = [], []
             for item in payload["documents"]:
                 doc = Document.model_validate(item)
-                self.execute(conn, "INSERT INTO documents VALUES(?,?,?,?,?,?,?,?)", (
+                document_rows.append((
                     release_id, doc.id, doc.model_dump_json(), doc.title, doc.document_number,
                     doc.project, doc.source_kind, doc.jurisdiction))
                 for raw in item["chunks"]:
                     chunk = Chunk.model_validate(raw)
                     embedding = raw.get("embedding")
-                    self.execute(conn, "INSERT INTO chunks(release_id,id,document_id,text,locator,parent_id,page,checksum,embedding_model,embedding) VALUES(?,?,?,?,?,?,?,?,?,?)", (
+                    chunk_rows.append((
                         release_id, chunk.id, doc.id, chunk.text, chunk.locator, chunk.parent_id,
                         chunk.page, chunk.checksum, chunk.embedding_model,
                         json.dumps(embedding) if embedding else None))
+            batches = [("INSERT INTO documents VALUES(?,?,?,?,?,?,?,?)", document_rows),
+                       ("INSERT INTO chunks(release_id,id,document_id,text,locator,parent_id,page,checksum,embedding_model,embedding) VALUES(?,?,?,?,?,?,?,?,?,?)", chunk_rows)]
+            for statement, records in batches:
+                if self.postgres:
+                    with conn.cursor() as cursor:
+                        cursor.executemany(statement.replace("?", "%s"), records)
+                else:
+                    conn.executemany(statement, records)
 
     def publish(self, release_id):
         release = self.release(release_id)
@@ -215,13 +252,29 @@ class Store:
 
     def documents(self, release_id=None):
         release_id = release_id or self.state("active_release")
-        return [Document.model_validate_json(r["payload"]) for r in self.rows(
-            "SELECT payload FROM documents WHERE release_id=? ORDER BY id", (release_id,))]
+        release = self.release(release_id, metadata_only=True)
+        return [Document.model_validate(d) for d in (release or {}).get("documents", [])]
 
     def document(self, doc_id, release_id=None):
         release_id = release_id or self.state("active_release")
         rows = self.rows("SELECT payload FROM documents WHERE release_id=? AND id=?", (release_id, doc_id))
         return Document.model_validate_json(rows[0]["payload"]) if rows else None
+
+    def open_document(self, doc_id, release_id=None, locator=None):
+        """Bounded read tool: fetch relevant passages without the entire price-table archive."""
+        release_id = release_id or self.state('active_release')
+        doc = next((d for d in self.documents(release_id) if d.id == doc_id), None)
+        if not doc:
+            return None
+        articles = re.findall(r'Điều\s+(\d+)', locator or '', flags=re.IGNORECASE)
+        where, params = '', [release_id, doc_id]
+        if articles:
+            where = ' AND (' + ' OR '.join('locator=? OR locator=?' for _ in articles) + ')'
+            for number in articles:
+                params.extend([f'Điều {number}',f'Điều {number} · ngữ cảnh'])
+        rows = self.rows('SELECT id,document_id,text,locator,parent_id,page,checksum,embedding_model FROM chunks WHERE release_id=? AND document_id=?' + where + ' ORDER BY id LIMIT 3',tuple(params))
+        doc.chunks = [self._chunk(r) for r in rows]
+        return doc
 
     def chunk(self, chunk_id, release_id=None):
         release_id = release_id or self.state("active_release")
@@ -236,7 +289,7 @@ class Store:
         return Chunk(**{k: row[k] for k in ["id", "document_id", "text", "locator", "parent_id", "page", "checksum", "embedding_model"]}, embedding=vector)
 
     def relations(self, doc_id, release_id=None):
-        release = self.release(release_id)
+        release = self.release(release_id, metadata_only=True)
         return [Relation.model_validate(r) for r in (release or {}).get("relations", [])
                 if r["source_id"] == doc_id or r["target_id"] == doc_id]
 
@@ -246,14 +299,37 @@ class Store:
             return []
         scope_sql = " AND (d.project IS NULL OR d.project=?)" if project else ""
         params = (release_id, project) if project else (release_id,)
+        projection = 'c.id,c.document_id,c.text,c.locator,c.parent_id,c.page,c.checksum,c.embedding_model' if self.postgres else 'c.*'
+        docs = {d.id: d for d in self.documents(release_id)}
+        exact_docs = [d.id for d in docs.values() if d.document_number and normalize(d.document_number) in normalize(query)]
+        article = re.search(r"\bdieu\s+(\d+)\b", normalize(query))
+        exact = []
+        if exact_docs:
+            exact_sql = " AND d.id IN (" + ",".join("?" for _ in exact_docs) + ")"
+            exact_params = [*params, *exact_docs]
+            if article:
+                exact_sql += " AND (c.locator=? OR c.locator=?)"
+                exact_params.extend([f"Điều {article[1]}", f"Điều {article[1]} · ngữ cảnh"])
+            exact = self.rows(f"""SELECT {projection} FROM chunks c JOIN documents d ON d.id=c.document_id AND d.release_id=c.release_id
+                WHERE c.release_id=?""" + scope_sql + exact_sql + " ORDER BY c.id LIMIT 20", tuple(exact_params))
         if self.postgres:
-            lexical = self.rows("""SELECT c.*, ts_rank_cd(c.search_tsv, websearch_to_tsquery('simple',?)) AS rank
+            lexical = self.rows(f"""SELECT {projection}, ts_rank_cd(c.search_tsv, websearch_to_tsquery('simple',?)) AS rank
                 FROM chunks c JOIN documents d ON d.id=c.document_id AND d.release_id=c.release_id
                 WHERE c.release_id=? AND c.search_tsv @@ websearch_to_tsquery('simple',?)""" + scope_sql +
                 " ORDER BY rank DESC,c.id LIMIT 20", (normalize(query), release_id, normalize(query), *params[1:]))
+            if len(lexical) < 8:
+                terms = list(dict.fromkeys(re.findall(r"[a-z0-9]{2,}", normalize(query))))[:40]
+                if terms:
+                    disjunction = " OR ".join(terms)
+                    fallback = self.rows(f"""SELECT {projection}, ts_rank_cd(c.search_tsv, websearch_to_tsquery('simple',?)) AS rank
+                        FROM chunks c JOIN documents d ON d.id=c.document_id AND d.release_id=c.release_id
+                        WHERE c.release_id=? AND c.search_tsv @@ websearch_to_tsquery('simple',?)""" + scope_sql +
+                        " ORDER BY rank DESC,c.id LIMIT 20", (disjunction, release_id, disjunction, *params[1:]))
+                    used = {r['id'] for r in lexical}
+                    lexical += [r for r in fallback if r['id'] not in used][:20-len(lexical)]
             semantic = []
             if vector:
-                semantic = self.rows("""SELECT c.* FROM chunks c JOIN documents d ON d.id=c.document_id AND d.release_id=c.release_id
+                semantic = self.rows(f"""SELECT {projection} FROM chunks c JOIN documents d ON d.id=c.document_id AND d.release_id=c.release_id
                     WHERE c.release_id=? AND c.embedding IS NOT NULL AND c.embedding_model=?""" + scope_sql +
                     " ORDER BY c.embedding <=> ?::vector LIMIT 20", (*params[:1], embedding_model, *params[1:], json.dumps(vector)))
         else:
@@ -271,15 +347,16 @@ class Store:
                     return sum(a*b for a, b in zip(v, vector, strict=True))
                 semantic = sorted((r for r in candidates if r["embedding"] and r["embedding_model"] == embedding_model), key=cosine, reverse=True)[:20]
         scores, rows_by_id = {}, {}
-        for branch in (lexical, semantic):
+        for branch in (lexical, semantic, exact):
             for position, row in enumerate(branch, 1):
                 scores[row["id"]] = scores.get(row["id"], 0) + 1 / (60 + position)
                 rows_by_id[row["id"]] = row
-        docs = {d.id: d for d in self.documents(release_id)}
         for chunk_id, row in rows_by_id.items():
             number = docs[row["document_id"]].document_number
             if number and normalize(number) in normalize(query):
                 scores[chunk_id] += 0.1
+            if row['id'] in {r['id'] for r in exact}:
+                scores[chunk_id] += 0.2
         return [Evidence(chunk=self._chunk(rows_by_id[i]), document=docs[rows_by_id[i]["document_id"]], score=scores[i])
                 for i in sorted(scores, key=lambda i: (-scores[i], i))[:8]]
 

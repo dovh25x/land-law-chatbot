@@ -49,12 +49,24 @@ Bộ dữ liệu công bố có ID bất biến và lưu chứng cứ benchmark 
 .venv/bin/land-law cleanup
 ```
 
-Backup CLI chứa corpus và pointer active/previous, quyền tệp 0600; không chứa token phiên hoặc câu hỏi. PostgreSQL vẫn là nguồn bền vững cho lịch sử qua restart. Để khôi phục hội thoại sau mất database cần snapshot có mã hóa do chủ tài khoản kiểm soát và TTL bảy ngày; không đưa nguyên hội thoại vào GitHub artifact công khai. Restore CLI khôi phục corpus, không tuyên bố đã khôi phục lịch sử bị mất. Sau restore chạy `/readyz`, truy vấn nguồn, smoke thật và kiểm tra cách ly phiên.
+Backup CLI chứa corpus và pointer active/previous, quyền tệp 0600; không chứa token phiên hoặc câu hỏi. PostgreSQL vẫn là nguồn bền vững cho lịch sử qua restart. Để khôi phục hội thoại sau mất database, đặt BACKUP_ENCRYPTION_KEY (Fernet), chạy `land-law backup --include-sessions --output data/backups/private.enc`; archive được mã hóa và restore giữ TTL bảy ngày. Giữ khóa tách biệt; không đưa plaintext hội thoại vào GitHub artifact. Backup mặc định chỉ khôi phục corpus. Sau restore chạy `/readyz`, truy vấn nguồn, smoke thật và kiểm tra cách ly phiên.
 
-Workflow maintenance khi variable `ENABLE_MAINTENANCE=true`, secret admin DATABASE_URL: cleanup hằng ngày, backup định kỳ trước publish và hằng tuần; artifact 14 ngày. Kiểm tra artifact không chứa định danh/secret; chỉ lưu corpus công khai. Storage upload riêng tư dùng `land-law upload <release.json>`. Restore rehearsal dùng database phát triển tách biệt để tránh ghi đè active production trong lúc kiểm tra.
+Workflow maintenance khi variable `MAINTENANCE_ENABLED=true`, secret admin DATABASE_URL: cleanup hằng ngày, backup định kỳ trước publish và hằng tuần; artifact 14 ngày. Kiểm tra artifact không chứa định danh/secret; chỉ lưu corpus công khai. Storage upload riêng tư dùng `land-law upload <release.json>`. Restore rehearsal dùng database phát triển tách biệt để tránh ghi đè active production trong lúc kiểm tra.
 
 ## Theo dõi lỗi
 
 Log JSON gồm request ID, status HTTP, model, latency, token/call counts và trace ID; không log nguyên câu hỏi, prompt, token phiên, DB URL hoặc provider response body. Trace UI chỉ là tên tool, tài liệu, thời gian và kết quả kiểm tra. `/healthz` kiểm tra process, `/readyz` kiểm tra database/corpus và cấu hình AI; smoke dùng Gemini thật để xác nhận dependency không chỉ có khóa.
 
 Khi lỗi database, không phát câu trả lời là thành công trước khi lưu. Khi Gemini lỗi/429, không sinh trả lời giả hay chuyển sang API khác. Dùng Render log request/trace ID để đối chiếu, chạy preflight, khôi phục nguồn/kết nối, rồi smoke lại. Rollback app dùng image/deploy trước trong Render, frontend redeploy build đã kiểm thử; rollback corpus dùng pointer riêng.
+
+## Tiếp tục embedding qua quota miễn phí
+
+`land-law ingest --offline --cached-embeddings-only` tái sử dụng vector đã có, không gọi embedding API. `land-law ingest --offline --embed` tiếp tục các đoạn còn thiếu. Batch tám đoạn tính là tám input tại provider; ngoài giới hạn HTTP, `GLOBAL_DAILY_EMBEDDING_ITEM_LIMIT=900` chừa dự phòng cho query. Daily quota lấy RetryInfo của provider; không suy giờ reset từ timezone máy. Văn bản parse đạt nhưng thiếu vector vẫn ở staging và bị gate chặn publish.
+
+Workflow `embeddings.yml` sử dụng private raw archive (`land-law restore-sources`) và cache JSON checkpoint; `--no-persist` giữ bản trung gian trong artifact để tránh lấp database bằng nhiều staging release. Muốn chạy: GitHub environment `production` có ADMIN_DATABASE_URL, GEMINI_API_KEY, SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY; repository variable EMBEDDING_RESUME_ENABLED=true. Quota đạt thì lưu checkpoint và dừng gọi thêm; không tự công bố corpus. Sau khi embedding đầy đủ phải kiểm tra nguồn lại, review benchmark và publish qua CLI.
+
+`land-law archive-sources` lưu bản raw/checksum/manifest nguồn đã rà soát vào private Storage. Nội dung cùng tên chỉ được nhận nếu checksum khớp; staging database giữ dự phòng 350 MB và Storage 700 MB. `land-law restore-sources` xác minh checksum trước ghi.
+
+Render service đã tạo: chạy `python scripts/configure_render.py` để xác nhận Free/Docker/repo, đặt runtime credentials và /healthz; chạy `python scripts/deploy.py backend`, rồi `frontend`. Backend chỉ có DATABASE_URL runtime; ADMIN_DATABASE_URL, Storage service role và khóa backup không đưa lên API. `frontend-preview` chỉ công bố giao diện với thông báo chưa có backend.
+
+Đặt BACKUP_ENCRYPTION_KEY trong GitHub Secrets riêng biệt để workflow maintenance sao lưu hội thoại mã hóa; không có khóa thì workflow chỉ sao lưu corpus. Job cần MAINTENANCE_ENABLED=true. GitHub token quản trị phải có quyền Secrets đọc/ghi để cấu hình qua API; Contents/Workflows không tự cấp quyền này. Kiểm tra thực tế bằng `scripts/check_postgres.py`, `scripts/check_restore.py` và browser e2e.

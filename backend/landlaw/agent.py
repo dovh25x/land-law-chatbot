@@ -51,11 +51,21 @@ class State(TypedDict, total=False):
     tool_notes: list[dict]
 
 
-def applicability(doc: Document, as_of: date):
+def applicability(doc: Document, as_of: date, chunk=None):
     if doc.source_kind == "official_news":
         return "context"
     if not doc.applicability_verified:
         return "unverified"
+    if chunk:
+        for scope in doc.provision_validity:
+            ends = scope.get('effective_to')
+            if ends and as_of >= date.fromisoformat(ends) and 'bang gia' in normalize(scope.get('locator','')) and '[BẢNG / ĐƠN GIÁ' in chunk.text:
+                return 'historical'
+            numbers = re.findall(r"Điều\s+(\d+)", scope.get('locator',''),flags=re.IGNORECASE)
+            if any(re.search(rf'^Điều {n}(?:\D|$)',chunk.locator) for n in numbers):
+                starts, ends = scope.get('effective_from'), scope.get('effective_to')
+                if (starts and date.fromisoformat(starts) <= as_of and doc.effective_from and as_of < doc.effective_from) or (ends and as_of >= date.fromisoformat(ends)):
+                    return 'provision_specific'
     if doc.effective_from and as_of < doc.effective_from:
         return "future"
     if doc.effective_to and as_of >= doc.effective_to:
@@ -134,7 +144,7 @@ class Agent:
     async def search(self, state, query, project=None):
         vector = None
         try:
-            vector = await self.provider.embed(query, query=True)
+            vector = await self.provider.embed(query, query=True,budget=state['budget'])
         except (ProviderUnavailable, RateLimited):
             await self.event(state, "retrieval", "Embedding chưa khả dụng; dùng tìm kiếm từ khóa trong lượt này.")
         return await asyncio.to_thread(self.store.search, query, vector, project,
@@ -155,7 +165,7 @@ class Agent:
             if call.name in {"search_law", "search_project"}:
                 results = await self.search(state, call.query or state["request"].message, state["request"].project)
             elif call.name in {"open_article", "check_effectivity"} and call.document_id:
-                doc = await asyncio.to_thread(self.store.document, call.document_id, release_id)
+                doc = await asyncio.to_thread(self.store.open_document, call.document_id, release_id, call.locator)
                 if doc:
                     results = [Evidence(chunk=c, document=doc) for c in doc.chunks
                                if not call.locator or normalize(call.locator) in normalize(c.locator)][:3]
@@ -165,7 +175,7 @@ class Agent:
                 state["tool_notes"].append({"tool": call.name, "matches": matched[:6]})
                 await self.event(state, "tool", f"Tìm thấy {len(matched)} ánh xạ địa bàn có nguồn; thiếu ánh xạ thì cần hỏi lại.", call.name)
             for item in results:
-                item.applicability = applicability(item.document, state["as_of"])
+                item.applicability = applicability(item.document, state["as_of"],item.chunk)
                 found[item.chunk.id] = item
             await self.event(state, "tool", f"Thu được {len(results)} đoạn chứng cứ.", call.name,
                              sorted({e.document.id for e in results}))
@@ -177,12 +187,12 @@ class Agent:
             relations = await asyncio.to_thread(self.store.relations, doc_id, release_id)
             for relation in relations:
                 related_id = relation.source_id if relation.target_id == doc_id else relation.target_id
-                doc = await asyncio.to_thread(self.store.document, related_id, release_id)
+                locator = (relation.source_locator or relation.locator) if related_id == relation.source_id else " ".join(relation.target_locators)
+                doc = await asyncio.to_thread(self.store.open_document, related_id, release_id, locator)
                 if doc:
-                    locator = (relation.source_locator or relation.locator) if related_id == relation.source_id else " ".join(relation.target_locators)
                     for chunk in relation_chunks(doc, locator):
                         found.setdefault(chunk.id, Evidence(chunk=chunk, document=doc,
-                                                           applicability=applicability(doc, state["as_of"])))
+                                                           applicability=applicability(doc, state["as_of"],chunk)))
             await self.event(state, "applicability", f"Đã kiểm tra {len(relations)} quan hệ pháp lý theo thời điểm.", "check_effectivity", [doc_id])
         # Keep existing hits stable and add parent text, capped to a bounded context.
         for item in list(found.values())[:8]:
@@ -225,6 +235,7 @@ class Agent:
                 "Tạo câu trả lời có cấu trúc. summary chỉ giới thiệu kết quả và giới hạn, không chứa kết luận pháp lý "
                 "không dẫn nguồn. MỌI kết luận pháp lý nằm trong claims, gắn citation_ids có trong evidence. "
                 "Đoạn unverified/future không chứng minh quy định hiện hành. historical chỉ dùng khi giải thích lịch sử "
+                "provision_specific có mốc riêng tại khoản được ghi; phải kiểm tra đúng khoản và không suy hiệu lực toàn điều. "
                 "hoặc chuyển tiếp được chứng minh. Không coi official_news là quy phạm. Nếu thiếu dữ kiện hồ sơ, "
                 "dùng clarification_needed. Không kết luận chắc chắn về quyền lợi hộ/thửa hoặc số tiền. "
                 "next_steps chỉ là hướng dẫn đối chiếu hồ sơ chung; thời hạn/điều kiện pháp lý phải đưa vào claims có nguồn.",
@@ -270,7 +281,7 @@ class Agent:
             "pháp lý chưa dẫn nguồn, ghi issues. Không xác nhận current từ đoạn unverified. historical chỉ hỗ trợ câu "
             "về quá khứ hoặc điều khoản chuyển tiếp có chứng cứ. Nguồn tin chỉ hỗ trợ sự kiện/bối cảnh, không quyền lợi. "
             "Đặt needs_more_evidence và followup_query khi một lượt truy xuất bổ sung có thể khắc phục. "
-            "Không tự tạo thêm chứng cứ.",
+            "provision_specific phải đối chiếu đúng khoản có mốc riêng; không suy hiệu lực toàn điều. Không tự tạo thêm chứng cứ.",
             {"question": redact(state["request"].message), "as_of": str(state["as_of"]),
              "draft": draft.model_dump(), "evidence": self.context(state)}, state["budget"])
         checked.issues = structural_issues + checked.issues
@@ -322,7 +333,7 @@ class Agent:
             intro = "Bộ dữ liệu đã quá bảy ngày chưa được kiểm tra nguồn; chưa thể xác nhận quy định hiện hành."
         content = intro
         if claims:
-            content += "\n\n" + "\n\n".join(c.text + " " + " ".join(f"[{i}]" for i in c.citation_ids) for c in claims)
+            content += "\n\n" + "\n\n".join(c.text + " " + " ".join(f"[{cited_ids.index(i)+1}]" for i in c.citation_ids) for c in claims)
         missing = list(dict.fromkeys(state["plan"].missing_facts + draft.missing_facts))
         if missing and status == "answered":
             status = "clarification_needed"
@@ -338,6 +349,7 @@ class Agent:
         state["result"] = ChatResult(status=status, content=content, citations=citations, as_of=state["as_of"],
             corpus_release=(release or {}).get("id"), trace_id=str(uuid.uuid4()), trace=state["trace"], missing_facts=missing,
             llm_calls=budget.llm_calls, tool_calls=budget.tool_calls, token_usage=budget.tokens,
+            embedding_calls=budget.embedding_calls,
             elapsed_ms=int((time.monotonic()-budget.started)*1000), model=self.provider.settings.gemini_model,
             embedding_model=self.provider.settings.embedding_model, mode=state["request"].mode,
             support_level="full" if status == "answered" else "partial" if citations else "insufficient",
@@ -348,14 +360,17 @@ class Agent:
     async def run(self, request, emit, release_id=None):
         budget = Budget()
         state: State = {"request": request, "budget": budget, "emit": emit, "trace": [], "evidence": [], "rounds": 0, "tool_notes": [],
-                        "as_of": request.as_of or local_date(), "release": await asyncio.to_thread(self.store.release, release_id),
-                        "history": await asyncio.to_thread(self.store.messages, request.session_id, 8)}
-        # Only user text and displayed answers, never stored traces/model-internal state, enter the next prompt.
-        state["history"] = [{"role": m["role"], "content": redact(m["payload"].get("content", "")[:3000])} for m in state["history"]]
+                        "as_of": request.as_of or local_date(), "release": None, "history": []}
         try:
             if not self.provider.configured:
                 raise ProviderUnavailable("GEMINI_API_KEY chưa được cấu hình; không sinh câu trả lời giả")
             async with asyncio.timeout(self.provider.settings.turn_timeout_seconds):
+                state["release"] = await asyncio.to_thread(self.store.release, release_id, True)
+                history = await asyncio.to_thread(self.store.messages, request.session_id, 8)
+                # Only displayed text, never traces/model-internal state, enters subsequent prompts.
+                state["history"] = [{"role": m["role"], "content": redact(m["payload"].get("content", "")[:3000]),
+                    "as_of": m['payload'].get('as_of'), 'citations': [{k:c.get(k) for k in ('document_id','document_number','locator')}
+                        for c in m['payload'].get('citations',[])[:8]]} for m in history]
                 output = await self.graph.ainvoke(state, config={"recursion_limit": 16})
                 return output["result"]
         except (ProviderUnavailable, RateLimited, BudgetExceeded, TimeoutError) as exc:
@@ -365,6 +380,7 @@ class Agent:
             return ChatResult(status=status, content=content, as_of=state["as_of"],
                 corpus_release=(state["release"] or {}).get("id"), trace_id=str(uuid.uuid4()), trace=state["trace"],
                 llm_calls=budget.llm_calls, tool_calls=budget.tool_calls, token_usage=budget.tokens,
+                embedding_calls=budget.embedding_calls,
                 elapsed_ms=int((time.monotonic()-budget.started)*1000), model=self.provider.settings.gemini_model,
                 embedding_model=self.provider.settings.embedding_model, mode=request.mode,
                 retry_after=exc.retry_after if isinstance(exc, RateLimited) else None)

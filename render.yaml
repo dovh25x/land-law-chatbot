@@ -26,3 +26,5 @@ services:
         value: 100
       - key: GLOBAL_DAILY_EMBEDDING_LIMIT
         value: 500
+      - key: GLOBAL_DAILY_EMBEDDING_ITEM_LIMIT
+        value: 900

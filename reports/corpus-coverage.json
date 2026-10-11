@@ -1,69 +1,65 @@
 {
-  "release": "corpus-669c47e964e0d0d3",
-  "documents": 9,
-  "legal": 8,
-  "verified_legal": 8,
+  "release": "corpus-cdccba119a0214f7",
+  "documents": 46,
+  "legal": 31,
+  "verified_legal": 31,
   "projects": {
-    "ring4": 0,
-    "songhong": 1,
-    "olympic": 0
+    "ring4": 5,
+    "songhong": 5,
+    "olympic": 5
   },
-  "chunks": 448,
-  "embedded": true,
-  "coverage_passed": false,
+  "chunks": 6546,
+  "embedded": false,
+  "coverage_passed": true,
   "missing_mandatory_sources": [
-    "luat-dat-dai-2024",
-    "nd-226-2025",
-    "nd-88-2024",
-    "nq-52-2025-hanoi",
     "qd-56-2024-hanoi"
   ],
   "publication_ready": false,
   "issues": [
     {
       "id": "luat-dat-dai-2024",
-      "reason": "Page 94 requires offline OCR",
-      "quarantined": true
+      "reason": "Parsed staging document has incomplete embeddings; publication blocked",
+      "quarantined": false
     },
     {
       "id": "nd-88-2024",
-      "reason": "60",
-      "quarantined": true
+      "reason": "Parsed staging document has incomplete embeddings; publication blocked",
+      "quarantined": false
     },
     {
       "id": "nd-71-2024",
-      "reason": "Page 95 requires offline OCR",
-      "quarantined": true
+      "reason": "Parsed staging document has incomplete embeddings; publication blocked",
+      "quarantined": false
     },
     {
       "id": "nd-101-2024",
-      "reason": "60",
-      "quarantined": true
+      "reason": "Parsed staging document has incomplete embeddings; publication blocked",
+      "quarantined": false
     },
     {
       "id": "nd-102-2024",
-      "reason": "Page 95 requires offline OCR",
-      "quarantined": true
+      "reason": "Parsed staging document has incomplete embeddings; publication blocked",
+      "quarantined": false
     },
     {
       "id": "nd-103-2024",
-      "reason": "Page 95 requires offline OCR",
-      "quarantined": true
+      "reason": "Parsed staging document has incomplete embeddings; publication blocked",
+      "quarantined": false
     },
     {
       "id": "nd-151-2025",
-      "reason": "60",
-      "quarantined": true
+      "reason": "Parsed staging document has incomplete embeddings; publication blocked",
+      "quarantined": false
     },
     {
       "id": "nd-226-2025",
-      "reason": "60",
-      "quarantined": true
+      "reason": "Parsed staging document has incomplete embeddings; publication blocked",
+      "quarantined": false
     },
     {
       "id": "nd-49-2026",
-      "reason": "60",
-      "quarantined": true
+      "reason": "Parsed staging document has incomplete embeddings; publication blocked",
+      "quarantined": false
     },
     {
       "id": "qd-56-2024-hanoi",
@@ -72,28 +68,43 @@
     },
     {
       "id": "qd-38-2025-hanoi",
-      "reason": "60",
-      "quarantined": true
+      "reason": "Parsed staging document has incomplete embeddings; publication blocked",
+      "quarantined": false
+    },
+    {
+      "id": "qd-10-2026-hanoi",
+      "reason": "Parsed staging document has incomplete embeddings; publication blocked",
+      "quarantined": false
+    },
+    {
+      "id": "qd-40-2026-hanoi",
+      "reason": "Parsed staging document has incomplete embeddings; publication blocked",
+      "quarantined": false
     },
     {
       "id": "qd-55-2024-hanoi",
-      "reason": "60",
-      "quarantined": true
+      "reason": "Parsed staging document has incomplete embeddings; publication blocked",
+      "quarantined": false
     },
     {
       "id": "qd-61-2024-hanoi",
-      "reason": "Page 1 requires offline OCR",
-      "quarantined": true
+      "reason": "Parsed staging document has incomplete embeddings; publication blocked",
+      "quarantined": false
     },
     {
       "id": "qd-71-2024-hanoi",
-      "reason": "Page 98 requires offline OCR",
-      "quarantined": true
+      "reason": "Parsed staging document has incomplete embeddings; publication blocked",
+      "quarantined": false
+    },
+    {
+      "id": "qd-40-2025-hanoi",
+      "reason": "Parsed staging document has incomplete embeddings; publication blocked",
+      "quarantined": false
     },
     {
       "id": "luat-thu-do-2024",
-      "reason": "Page 24 requires offline OCR",
-      "quarantined": true
+      "reason": "Parsed staging document has incomplete embeddings; publication blocked",
+      "quarantined": false
     },
     {
       "id": "luat-quy-hoach-2017",
@@ -102,13 +113,13 @@
     },
     {
       "id": "luat-quy-hoach-do-thi-2024",
-      "reason": "60",
-      "quarantined": true
+      "reason": "Parsed staging document has incomplete embeddings; publication blocked",
+      "quarantined": false
     },
     {
       "id": "nd-178-2025",
-      "reason": "60",
-      "quarantined": true
+      "reason": "Parsed staging document has incomplete embeddings; publication blocked",
+      "quarantined": false
     },
     {
       "id": "luat-dat-dai-2013",
@@ -127,8 +138,8 @@
     },
     {
       "id": "qd-27-2024-hanoi",
-      "reason": "60",
-      "quarantined": true
+      "reason": "Parsed staging document has incomplete embeddings; publication blocked",
+      "quarantined": false
     },
     {
       "id": "qd-30-2019-hanoi",
@@ -142,8 +153,8 @@
     },
     {
       "id": "luat-khieu-nai-2011",
-      "reason": "Portal loading shell or no substantive article",
-      "quarantined": true
+      "reason": "Parsed staging document has incomplete embeddings; publication blocked",
+      "quarantined": false
     },
     {
       "id": "nd-124-2020",
@@ -152,8 +163,8 @@
     },
     {
       "id": "luat-nha-o-2023",
-      "reason": "Page 94 requires offline OCR",
-      "quarantined": true
+      "reason": "Parsed staging document has incomplete embeddings; publication blocked",
+      "quarantined": false
     },
     {
       "id": "nd-123-2024",
@@ -162,8 +173,8 @@
     },
     {
       "id": "ring4-nq56-2022",
-      "reason": "Page 7 requires offline OCR",
-      "quarantined": true
+      "reason": "Parsed staging document has incomplete embeddings; publication blocked",
+      "quarantined": false
     },
     {
       "id": "ring4-nq106-2022",
@@ -172,108 +183,93 @@
     },
     {
       "id": "ring4-hadong-2025",
-      "reason": "Portal loading shell or no substantive article",
-      "quarantined": true
+      "reason": "Parsed staging document has incomplete embeddings; publication blocked",
+      "quarantined": false
     },
     {
       "id": "ring4-hotro-2025",
-      "reason": "Portal loading shell or no substantive article",
-      "quarantined": true
+      "reason": "Parsed staging document has incomplete embeddings; publication blocked",
+      "quarantined": false
     },
     {
       "id": "ring4-phuluong-2025",
-      "reason": "Portal loading shell or no substantive article",
-      "quarantined": true
+      "reason": "Parsed staging document has incomplete embeddings; publication blocked",
+      "quarantined": false
     },
     {
       "id": "songhong-chuanbi-2025",
-      "reason": "Portal loading shell or no substantive article",
-      "quarantined": true
+      "reason": "Parsed staging document has incomplete embeddings; publication blocked",
+      "quarantined": false
     },
     {
       "id": "songhong-thongtin-2026",
-      "reason": "Portal loading shell or no substantive article",
-      "quarantined": true
+      "reason": "Parsed staging document has incomplete embeddings; publication blocked",
+      "quarantined": false
     },
     {
       "id": "songhong-trienkhai-2026",
-      "reason": "Portal loading shell or no substantive article",
-      "quarantined": true
+      "reason": "Parsed staging document has incomplete embeddings; publication blocked",
+      "quarantined": false
     },
     {
       "id": "songhong-khoicong-2025",
-      "reason": "Portal loading shell or no substantive article",
-      "quarantined": true
+      "reason": "Parsed staging document has incomplete embeddings; publication blocked",
+      "quarantined": false
     },
     {
       "id": "olympic-chutruong-2025",
-      "reason": "Portal loading shell or no substantive article",
-      "quarantined": true
+      "reason": "Parsed staging document has incomplete embeddings; publication blocked",
+      "quarantined": false
     },
     {
       "id": "olympic-nhiemvu-khub-2025",
-      "reason": "Portal loading shell or no substantive article",
-      "quarantined": true
+      "reason": "Parsed staging document has incomplete embeddings; publication blocked",
+      "quarantined": false
     },
     {
       "id": "olympic-chuanbi-2025",
-      "reason": "Portal loading shell or no substantive article",
-      "quarantined": true
+      "reason": "Parsed staging document has incomplete embeddings; publication blocked",
+      "quarantined": false
     },
     {
       "id": "olympic-khoicong-2025",
-      "reason": "Portal loading shell or no substantive article",
-      "quarantined": true
+      "reason": "Parsed staging document has incomplete embeddings; publication blocked",
+      "quarantined": false
     },
     {
       "id": "olympic-kiemtra-2026",
-      "reason": "Portal loading shell or no substantive article",
-      "quarantined": true
+      "reason": "Parsed staging document has incomplete embeddings; publication blocked",
+      "quarantined": false
+    },
+    {
+      "id": "luat-thu-do-2026",
+      "reason": "Parsed staging document has incomplete embeddings; publication blocked",
+      "quarantined": false
     },
     {
       "id": "qd-566-2026-hanoi",
-      "reason": "60",
-      "quarantined": true
+      "reason": "Parsed staging document has incomplete embeddings; publication blocked",
+      "quarantined": false
     },
     {
       "id": "nq-52-2025-hanoi",
-      "reason": "60",
-      "quarantined": true
+      "reason": "Parsed staging document has incomplete embeddings; publication blocked",
+      "quarantined": false
     },
     {
       "id": "qd-89-2025-hanoi",
-      "reason": "60",
-      "quarantined": true
+      "reason": "Parsed staging document has incomplete embeddings; publication blocked",
+      "quarantined": false
     },
     {
       "id": "qd-19-2026-hanoi",
-      "reason": "60",
-      "quarantined": true
+      "reason": "Parsed staging document has incomplete embeddings; publication blocked",
+      "quarantined": false
     },
     {
       "id": "ring4-trienkhai-2022",
-      "reason": "60",
-      "quarantined": true
-    },
-    {
-      "id": "luat-dat-dai-2024",
-      "reason": "Relation endpoint missing from corpus",
-      "quarantined": true
-    },
-    {
-      "id": "luat-nha-o-2023",
-      "reason": "Relation endpoint missing from corpus",
-      "quarantined": true
-    },
-    {
-      "id": "qd-56-2024-hanoi",
-      "reason": "Relation endpoint missing from corpus",
-      "quarantined": true
-    },
-    {
-      "id": "qd-38-2025-hanoi",
-      "reason": "Relation endpoint missing from corpus",
-      "quarantined": true
+      "reason": "Parsed staging document has incomplete embeddings; publication blocked",
+      "quarantined": false
     },
     {
       "id": "qd-56-2024-hanoi",
@@ -296,27 +292,7 @@
       "quarantined": true
     },
     {
-      "id": "qd-38-2025-hanoi",
-      "reason": "Relation endpoint missing from corpus",
-      "quarantined": true
-    },
-    {
-      "id": "qd-10-2026-hanoi",
-      "reason": "Relation endpoint missing from corpus",
-      "quarantined": true
-    },
-    {
-      "id": "qd-55-2024-hanoi",
-      "reason": "Relation endpoint missing from corpus",
-      "quarantined": true
-    },
-    {
-      "id": "qd-61-2024-hanoi",
-      "reason": "Relation endpoint missing from corpus",
-      "quarantined": true
-    },
-    {
-      "id": "qd-71-2024-hanoi",
+      "id": "qd-56-2024-hanoi",
       "reason": "Relation endpoint missing from corpus",
       "quarantined": true
     },
@@ -327,66 +303,6 @@
     },
     {
       "id": "qd-20-2023-hanoi",
-      "reason": "Relation endpoint missing from corpus",
-      "quarantined": true
-    },
-    {
-      "id": "nd-71-2024",
-      "reason": "Relation endpoint missing from corpus",
-      "quarantined": true
-    },
-    {
-      "id": "nd-88-2024",
-      "reason": "Relation endpoint missing from corpus",
-      "quarantined": true
-    },
-    {
-      "id": "nd-101-2024",
-      "reason": "Relation endpoint missing from corpus",
-      "quarantined": true
-    },
-    {
-      "id": "nd-102-2024",
-      "reason": "Relation endpoint missing from corpus",
-      "quarantined": true
-    },
-    {
-      "id": "nd-151-2025",
-      "reason": "Relation endpoint missing from corpus",
-      "quarantined": true
-    },
-    {
-      "id": "nd-88-2024",
-      "reason": "Relation endpoint missing from corpus",
-      "quarantined": true
-    },
-    {
-      "id": "nd-71-2024",
-      "reason": "Relation endpoint missing from corpus",
-      "quarantined": true
-    },
-    {
-      "id": "luat-quy-hoach-do-thi-2024",
-      "reason": "Relation endpoint missing from corpus",
-      "quarantined": true
-    },
-    {
-      "id": "luat-quy-hoach-do-thi-2024",
-      "reason": "Relation endpoint missing from corpus",
-      "quarantined": true
-    },
-    {
-      "id": "luat-khieu-nai-2011",
-      "reason": "Relation endpoint missing from corpus",
-      "quarantined": true
-    },
-    {
-      "id": "luat-thu-do-2024",
-      "reason": "Relation endpoint missing from corpus",
-      "quarantined": true
-    },
-    {
-      "id": "luat-thu-do-2024",
       "reason": "Relation endpoint missing from corpus",
       "quarantined": true
     }

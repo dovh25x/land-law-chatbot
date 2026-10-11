@@ -39,6 +39,14 @@ def test_counters_atomic_and_concurrent(store):
     assert not store.rows("SELECT * FROM counters WHERE key='fresh'")
 
 
+def test_embedding_batch_counts_inputs_atomically(store):
+    store.consume_weighted([('batch-http',5,60,1),('batch-inputs',10,60,8)])
+    with pytest.raises(RateLimited):
+        store.consume_weighted([('batch-http',5,60,1),('batch-inputs',10,60,8)])
+    assert store.rows("SELECT value FROM counters WHERE key='batch-http'")[0]['value'] == 1
+    assert store.rows("SELECT value FROM counters WHERE key='batch-inputs'")[0]['value'] == 8
+
+
 def test_release_immutable_backup_restore_and_rollback(store, settings, tmp_path):
     release(store)
     with pytest.raises(ValueError):
@@ -64,6 +72,18 @@ def test_search_keeps_national_law_but_filters_other_projects(store):
     release(store, [national, ring, olympic])
     results = store.search("boi thuong", project="ring4")
     assert {r.document.id for r in results} == {"law", "ring"}
+
+
+def test_exact_article_number_retrieves_without_keyword_overlap(store):
+    doc = document()
+    doc.document_number = "40/2026/QĐ-UBND"
+    doc.chunks[0].locator = "Điều 29"
+    doc.chunks[0].text = "Nội dung hồ sơ cũ còn được xem xét theo thủ tục."
+    release(store, [doc])
+    found = store.search("Điều 29 của 40/2026/QĐ-UBND")
+    assert found and found[0].chunk.locator == "Điều 29"
+    assert not store.documents()[0].chunks
+    assert "chunks" not in store.release(metadata_only=True)["documents"][0]
 
 
 def test_encrypted_restore_preserves_session_isolation_and_rejects_plaintext_sessions(store, settings, tmp_path):

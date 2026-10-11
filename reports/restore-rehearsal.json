@@ -1,0 +1,16 @@
+{
+  "checked_at": "2026-10-11T18:45:16.511943+00:00",
+  "passed": true,
+  "checks": {
+    "encrypted_archive": true,
+    "corpus_pointer": true,
+    "source_checksums": true,
+    "chunk_count": true,
+    "history_and_trace": true,
+    "session_isolation": true,
+    "rollback": true,
+    "forward_restore": true
+  },
+  "release": "corpus-cdccba119a0214f7",
+  "scope": "disposable SQLite databases with real staged corpus; public corpus unchanged"
+}

@@ -56,7 +56,7 @@ class Evidence(BaseModel):
     chunk: Chunk
     document: Document
     score: float = 0
-    applicability: Literal["current", "historical", "future", "unverified", "context"] = "unverified"
+    applicability: Literal["current", "historical", "future", "unverified", "context", "provision_specific"] = "unverified"
 
 
 class Citation(BaseModel):
@@ -110,6 +110,7 @@ class ChatResult(BaseModel):
     trace: list[TraceEvent] = Field(default_factory=list)
     missing_facts: list[str] = Field(default_factory=list)
     llm_calls: int = 0
+    embedding_calls: int = 0
     tool_calls: int = 0
     token_usage: int = 0
     elapsed_ms: int = 0

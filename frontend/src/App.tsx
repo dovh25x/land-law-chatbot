@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import ReactMarkdown from 'react-markdown'
 import { ArrowUp, ArrowUpRight, BookOpen, Check, ChevronRight, CircleHelp, Clock3, FileText, GitBranch, Landmark, Layers3, LoaderCircle, MapPin, Plus, Search, ShieldCheck, Square, X } from 'lucide-react'
-import { ask, BASE, getJSON, getSession, restoreSession, type Citation, type LegalDocument, type Project, type Readiness, type Result, type Session, type Trace } from './api'
+import { ask, BASE, BACKEND_CONFIGURED, getJSON, getSession, restoreSession, type Citation, type LegalDocument, type Project, type Readiness, type Result, type Session, type Trace } from './api'
 
 type Page = 'chat' | 'sources' | 'projects' | 'evaluation'
 type Message = { id: string; role: 'user' | 'assistant'; content: string; result?: Result }
@@ -27,6 +27,7 @@ function App() {
   const sessionRef = useRef<Session | null>(null), abortRef = useRef<AbortController | null>(null), bottom = useRef<HTMLDivElement>(null)
 
   async function refresh(signal?: AbortSignal) {
+    if (!BACKEND_CONFIGURED) { setReadiness({ status: 'not_deployed' }); return }
     setConnecting(true)
     try {
       const response = await fetch(BASE + '/readyz', { signal })
@@ -45,11 +46,12 @@ function App() {
   }
   useEffect(() => { const c = new AbortController(); void refresh(c.signal); return () => c.abort() }, [])
   useEffect(() => {
+    if (!BACKEND_CONFIGURED) return
     const c = new AbortController(), cached = sessionStorage.getItem('landlaw-session')
     void restoreSession(c.signal).then(restored => {
       if (!restored || c.signal.aborted || cached !== sessionStorage.getItem('landlaw-session') || sessionRef.current) return
       sessionRef.current = restored.session
-      setMessages(restored.messages.map(m => ({ id: m.payload.trace_id || crypto.randomUUID(), role: m.role,
+      setMessages(existing => existing.length ? existing : restored.messages.map(m => ({ id: m.payload.trace_id || crypto.randomUUID(), role: m.role,
         content: m.payload.content, result: m.role === 'assistant' ? m.payload as Result : undefined })))
     }).catch(() => {})
     return () => c.abort()
@@ -76,6 +78,7 @@ function App() {
 
   async function send(text = input) {
     if (busy || !text.trim()) return
+    if (!BACKEND_CONFIGURED) { setError('Backend chưa được triển khai. Bản xem trước hiện chỉ có giao diện.'); return }
     const question = text.trim()
     setPage('chat'); setInput(''); setError(''); setBusy(true); setTrace([])
     setMessages(m => [...m, { id: crypto.randomUUID(), role: 'user', content: question }])
@@ -125,11 +128,11 @@ function App() {
             <div className="message-label">{message.role === 'user' ? 'Bạn' : <><span className="mini-brand"><Landmark size={15}/></span>Hà Nội · Pháp luật đất đai</>}</div>
             {message.result && <div className={`answer-status ${message.result.status}`}><ShieldCheck size={14}/>{labels[message.result.status] || message.result.status}</div>}
             <div className="message-body"><ReactMarkdown components={{ a: ({ children }) => <span>{children}</span> }}>{message.content}</ReactMarkdown></div>
-            {!!message.result?.citations.length && <div className="citations">{message.result.citations.map(c => <button key={c.id} onClick={() => setSelectedSource(c)}><FileText size={14}/><span>{c.document_number || c.title}<small>{c.locator}</small></span><ArrowUpRight size={14}/></button>)}</div>}
+            {!!message.result?.citations.length && <div className="citations">{message.result.citations.map((c, index) => <button key={c.id} onClick={() => setSelectedSource(c)}><FileText size={14}/><span>{index+1}. {c.document_number || c.title}<small>{c.locator}</small></span><ArrowUpRight size={14}/></button>)}</div>}
             {message.result && <button className="trace-link" onClick={() => { setTrace(message.result!.trace); setTraceOpen(true) }}><GitBranch size={14}/>Xem quá trình kiểm chứng<span>{message.result.tool_calls} công cụ · {(message.result.elapsed_ms/1000).toFixed(1)} giây</span></button>}
           </article>)}{busy && <div className="working" role="status"><LoaderCircle size={18} className="spin"/><span>{trace.at(-1)?.summary || 'Đang kết nối và chuẩn bị tra cứu…'}</span><button onClick={() => setTraceOpen(true)}>Xem quá trình</button></div>}<div ref={bottom}/></div>}
         </div>
-        <div className="composer-area">{error && <div className="error-banner" role="alert">{error}<button onClick={() => setError('')} aria-label="Đóng thông báo"><X size={15}/></button></div>}{!ready && !connecting && <div className="connection-note">{readiness?.database && !readiness.llm_configured ? 'Chưa cấu hình API AI. Hệ thống sẽ báo rõ giới hạn khi bạn gửi câu hỏi.' : readiness?.database && !readiness.corpus_release ? 'Bộ dữ liệu đang chờ công bố. Bạn có thể xem trạng thái trong thư viện.' : 'Backend có thể đang khởi động. Kết nối đầu tiên có thể mất khoảng một phút.'}</div>}<form className="composer" onSubmit={e => { e.preventDefault(); void send() }}><textarea value={input} onChange={e => setInput(e.target.value)} placeholder="Mô tả câu hỏi của bạn, kèm địa bàn và thời điểm nếu có…" maxLength={4000} rows={2} aria-label="Câu hỏi pháp luật" onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey && !e.nativeEvent.isComposing) { e.preventDefault(); void send() } }}/><div className="composer-bottom"><span><ShieldCheck size={13}/> Chỉ nhập tình huống đã ẩn danh</span>{busy ? <button type="button" className="send-button" onClick={() => abortRef.current?.abort()} aria-label="Dừng lượt hỏi"><Square size={16}/></button> : <button className="send-button" type="submit" disabled={!input.trim()} aria-label="Gửi câu hỏi"><ArrowUp size={21}/></button>}</div></form><p className="disclaimer">Thông tin để tham khảo và đối chiếu hồ sơ. Quyền lợi cụ thể cần được xác định từ tài liệu và cơ quan có thẩm quyền.</p></div>
+        <div className="composer-area">{error && <div className="error-banner" role="alert">{error}<button onClick={() => setError('')} aria-label="Đóng thông báo"><X size={15}/></button></div>}{!ready && !connecting && <div className="connection-note">{readiness?.status === 'not_deployed' ? 'Bản xem trước giao diện. Backend chưa được triển khai và chưa có corpus công bố.' : readiness?.database && !readiness.llm_configured ? 'Chưa cấu hình API AI. Hệ thống sẽ báo rõ giới hạn khi bạn gửi câu hỏi.' : readiness?.database && !readiness.corpus_release ? 'Bộ dữ liệu đang chờ công bố. Bạn có thể xem trạng thái trong thư viện.' : 'Backend có thể đang khởi động. Kết nối đầu tiên có thể mất khoảng một phút.'}</div>}<form className="composer" onSubmit={e => { e.preventDefault(); void send() }}><textarea value={input} onChange={e => setInput(e.target.value)} placeholder="Mô tả câu hỏi của bạn, kèm địa bàn và thời điểm nếu có…" maxLength={4000} rows={2} aria-label="Câu hỏi pháp luật" onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey && !e.nativeEvent.isComposing) { e.preventDefault(); void send() } }}/><div className="composer-bottom"><span><ShieldCheck size={13}/> Chỉ nhập tình huống đã ẩn danh</span>{busy ? <button type="button" className="send-button" onClick={() => abortRef.current?.abort()} aria-label="Dừng lượt hỏi"><Square size={16}/></button> : <button className="send-button" type="submit" disabled={!input.trim()} aria-label="Gửi câu hỏi"><ArrowUp size={21}/></button>}</div></form><p className="disclaimer">Thông tin để tham khảo và đối chiếu hồ sơ. Quyền lợi cụ thể cần được xác định từ tài liệu và cơ quan có thẩm quyền.</p></div>
       </>}
       {page === 'sources' && <section className="content-page"><div className="eyebrow">THƯ VIỆN NGUỒN</div><h1>Căn cứ có thể kiểm tra.</h1><p className="page-intro">Văn bản được công bố trong corpus, kèm thời điểm kiểm tra và trạng thái xác minh. Văn bản lịch sử được giữ để đối chiếu hồ sơ cũ.</p><label className="searchbox"><Search size={18}/><input value={search} onChange={e => setSearch(e.target.value)} placeholder="Tìm số hiệu hoặc tên văn bản…"/></label><div className="library-count">{docs.length} tài liệu đã công bố</div>{!docs.length && <div className="empty-state"><BookOpen size={30}/><h2>Corpus chưa được công bố</h2><p>Tài liệu chỉ xuất hiện sau bước thu thập, kiểm tra chất lượng và công bố phiên bản. Danh mục nguồn không được xem là toàn văn đã xử lý.</p><button onClick={() => void refresh()}>Kiểm tra lại</button></div>}<div className="document-list">{docs.filter(d => `${d.title} ${d.document_number}`.toLocaleLowerCase('vi').includes(search.toLocaleLowerCase('vi'))).map(d => <button key={d.id} onClick={() => setSelectedSource(d)}><span className="doc-icon"><FileText size={21}/></span><span><small>{kinds[d.source_kind]}</small><strong>{d.title}</strong><p>{d.document_number} · Kiểm tra {new Date(d.checked_at).toLocaleDateString('vi-VN')}</p></span><span className={`doc-state ${d.applicability_verified ? 'verified' : ''}`}>{d.effective_to ? 'Có mốc kết thúc hiệu lực' : d.applicability_verified ? 'Đã xác minh' : 'Cần kiểm tra tính áp dụng'}</span><ArrowUpRight size={17}/></button>)}</div></section>}
       {page === 'projects' && <section className="content-page"><div className="eyebrow">HÀ NỘI ĐANG CHUYỂN MÌNH</div><h1>Ba dự án. Từng căn cứ.</h1><p className="page-intro">Tra cứu bối cảnh và hồ sơ công khai. Phạm vi tổng thể của dự án không xác định việc thu hồi một thửa đất cụ thể.</p><div className="project-grid">{projects.map((p, i) => <article key={p.id}><div className={`project-map map-${i}`}><span className="map-line"/><span className="map-line second"/><span className="map-node"/><span className="map-node second"/><span className="map-caption">HỒ SƠ DỰ ÁN · 0{i+1}</span></div><div className="project-copy"><small>HÀ NỘI</small><h2>{p.name}</h2><p>{p.description}</p><div className="project-source-count"><FileText size={14}/>{docs.filter(d => d.project === p.id).length} nguồn đã công bố / {p.source_ids.length} nguồn trong danh mục</div><button onClick={() => { setProject(p.id); setPage('chat'); setInput(p.questions[0] || `Tôi cần kiểm tra hồ sơ pháp lý nào của ${p.name}?`) }}>Tra cứu dự án<ArrowUpRight size={16}/></button></div></article>)}</div>{!projects.length && <div className="empty-state">Chưa tải được hồ sơ dự án. <button onClick={() => void refresh()}>Thử lại</button></div>}</section>}

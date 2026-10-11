@@ -1,4 +1,5 @@
 export const BASE = (import.meta.env.VITE_API_BASE_URL || '').replace(/\/$/, '')
+export const BACKEND_CONFIGURED = !!BASE || import.meta.env.DEV
 export type ProjectID = 'ring4' | 'songhong' | 'olympic'
 export interface Trace { step: string; tool?: string; summary: string; document_ids: string[]; elapsed_ms: number }
 export interface Citation { id: string; document_id: string; title: string; document_number?: string; url: string; locator: string; excerpt: string; checked_at: string; applicability: string }
@@ -15,6 +16,7 @@ export async function getJSON<T>(path: string, signal?: AbortSignal): Promise<T>
 }
 
 export async function getSession(): Promise<Session> {
+  if (!BACKEND_CONFIGURED) throw new Error('Backend chưa được triển khai. Bản xem trước hiện chỉ có giao diện.')
   const cached = sessionStorage.getItem('landlaw-session')
   if (cached) {
     try {

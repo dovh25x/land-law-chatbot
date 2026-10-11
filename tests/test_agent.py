@@ -35,6 +35,22 @@ async def noop(_):
     pass
 
 
+def test_clause_effective_date_does_not_change_the_whole_document():
+    law = document()
+    law.effective_from = date(2026,7,1)
+    law.provision_validity = [{'locator':'khoản 4 Điều 8','effective_from':'2026-04-23','effective_to':None}]
+    law.chunks[0].locator = 'Điều 8'
+    assert applicability(law,date(2026,5,1)) == 'future'
+    assert applicability(law,date(2026,5,1),law.chunks[0]) == 'provision_specific'
+    law.chunks[0].locator = 'Điều 9'
+    assert applicability(law,date(2026,5,1),law.chunks[0]) == 'future'
+    law.effective_from = date(2024,12,20)
+    law.provision_validity = [{'locator':'Điều 1 khoản 1 — kỳ áp dụng bảng giá','effective_from':'2024-12-20','effective_to':'2026-01-01'}]
+    law.chunks[0].text = '[BẢNG / ĐƠN GIÁ — giữ đơn vị]\nSTT  Giá đất'
+    assert applicability(law,date(2026,10,12),law.chunks[0]) == 'historical'
+    assert applicability(law,date(2026,10,12)) == 'current'
+
+
 async def test_graph_calls_tools_and_verifies_before_answer(store, settings):
     release(store)
     sid, _ = session(store)

@@ -1,0 +1,52 @@
+{
+  "status": "awaiting_review",
+  "dataset_sha256": "919d297f64d2a14b3dfcf0215be401a16615bdaa2e778af8514d060bb5b5392e",
+  "generated_at": "2026-10-11T18:45:44.304856+00:00",
+  "cases": 40,
+  "completed_pairs": 2,
+  "results": [
+    {
+      "mode": "baseline",
+      "completed": 2,
+      "reviewed": 0,
+      "recall_at_8": null,
+      "answer_pass_rate": null,
+      "citation_id_valid_rate": 1.0,
+      "claim_support_rate": null,
+      "p95_seconds": 12.162,
+      "llm_calls": 4,
+      "embedding_calls": 2,
+      "tool_calls": 8,
+      "critical_failed": [],
+      "limited_or_error": 0
+    },
+    {
+      "mode": "agentic",
+      "completed": 2,
+      "reviewed": 0,
+      "recall_at_8": null,
+      "answer_pass_rate": null,
+      "citation_id_valid_rate": 1.0,
+      "claim_support_rate": null,
+      "p95_seconds": 44.096,
+      "llm_calls": 12,
+      "embedding_calls": 5,
+      "tool_calls": 21,
+      "critical_failed": [],
+      "limited_or_error": 0
+    }
+  ],
+  "acceptance_passed": false,
+  "run_id": "corpus-4e24227c1a49b8ea-gemini-3.5-flash-lite-dev-919d297f-0d859432",
+  "release": "corpus-4e24227c1a49b8ea",
+  "model": "gemini-3.5-flash-lite",
+  "embedding_model": "gemini-embedding-2",
+  "split": "dev",
+  "corpus_embedded": false,
+  "publication_candidate": false,
+  "notes": [
+    "Development runs on incomplete staging cannot certify acceptance; query embedding failures fall back to lexical retrieval."
+  ],
+  "as_of": "2026-10-12",
+  "configuration_sha256": "0d859432bb79b3b713f2e0f4dfb71f86afa315eb9742ca027f7728fe3d309a6f"
+}

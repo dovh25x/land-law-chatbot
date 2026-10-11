@@ -1,0 +1,48 @@
+name: Resume free embeddings
+on:
+  schedule:
+    - cron: '35 8 * * *'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: embedding-checkpoints
+  cancel-in-progress: false
+jobs:
+  embed:
+    if: vars.EMBEDDING_RESUME_ENABLED == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    environment: production
+    env:
+      DATABASE_URL: ${{ secrets.ADMIN_DATABASE_URL }}
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+      EMBEDDING_MODEL: gemini-embedding-2
+      GLOBAL_DAILY_EMBEDDING_LIMIT: '500'
+      GLOBAL_DAILY_EMBEDDING_ITEM_LIMIT: '900'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+      - run: pip install -r requirements.lock && pip install --no-deps -e .
+      - uses: actions/cache@v4
+        with:
+          path: data/checkpoints/*.json
+          key: legal-embeddings-${{ runner.os }}-${{ hashFiles('data/sources.json', 'backend/landlaw/ingest.py', 'backend/landlaw/provider.py') }}-${{ github.run_id }}
+          restore-keys: |
+            legal-embeddings-${{ runner.os }}-
+      - run: land-law restore-sources
+      - name: Resume within free quota; archive staging without filling the database
+        run: land-law ingest --offline --embed --no-persist
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: embedding-staging
+          path: |
+            data/staging
+            reports/corpus-coverage.json
+          retention-days: 14

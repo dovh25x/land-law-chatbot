@@ -12,6 +12,7 @@ jobs:
     environment: production
     env:
       DATABASE_URL: ${{ secrets.ADMIN_DATABASE_URL }}
+      BACKUP_ENCRYPTION_KEY: ${{ secrets.BACKUP_ENCRYPTION_KEY }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -19,12 +20,23 @@ jobs:
           python-version: '3.12'
       - run: pip install -r requirements.lock && pip install --no-deps -e .
       - run: land-law cleanup
+      - name: Weekly calendar
+        id: calendar
+        run: |
+          if [ "$(date -u +%u)" = "7" ]; then
+            echo 'weekly=true' >> "$GITHUB_OUTPUT"
+          fi
       - name: Backup corpus and release pointers
-        if: github.event_name == 'workflow_dispatch' || github.run_number % 7 == 0
-        run: land-law backup --output data/backups/latest.json
+        if: github.event_name == 'workflow_dispatch' || steps.calendar.outputs.weekly == 'true'
+        run: |
+          if [ -n "$BACKUP_ENCRYPTION_KEY" ]; then
+            land-law backup --include-sessions --output data/backups/private.enc
+          else
+            land-law backup --output data/backups/latest.json
+          fi
       - uses: actions/upload-artifact@v4
-        if: github.event_name == 'workflow_dispatch' || github.run_number % 7 == 0
+        if: github.event_name == 'workflow_dispatch' || steps.calendar.outputs.weekly == 'true'
         with:
           name: corpus-backup
-          path: data/backups/latest.json
+          path: data/backups/
           retention-days: 14

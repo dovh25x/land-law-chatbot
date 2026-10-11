@@ -26,6 +26,7 @@ class Budget:
     llm_calls: int = 0
     tool_calls: int = 0
     tokens: int = 0
+    embedding_calls: int = 0
     started: float = 0
 
     def __post_init__(self):
@@ -70,6 +71,12 @@ class Gemini:
     async def reserve(self, kind, limit):
         await asyncio.to_thread(self.store.consume, [(f"{kind}:{utcnow().date()}", limit, 86400)])
 
+    async def reserve_embeddings(self, items):
+        day = utcnow().date()
+        await asyncio.to_thread(self.store.consume_weighted,
+            [(f'embedding:{day}',self.settings.global_daily_embedding_limit,86400,1),
+             (f'embedding-items:{day}',self.settings.global_daily_embedding_item_limit,86400,items)])
+
     async def _request(self, model, operation, body):
         if not self.configured:
             raise ProviderUnavailable("GEMINI_API_KEY chưa được cấu hình")
@@ -81,16 +88,23 @@ class Gemini:
         except httpx.HTTPError:
             raise ProviderUnavailable("Không kết nối được Gemini") from None
         if response.status_code == 429:
-            retry = response.headers.get("retry-after", "60")
-            raise RateLimited(min(86400, max(1, int(retry))) if retry.isdigit() else 60)
+            retry = response.headers.get("retry-after")
+            if not retry:
+                try:
+                    retry = next((str(d["retryDelay"]).rstrip("s") for d in response.json().get("error", {}).get("details", []) if "retryDelay" in d), "60")
+                except (ValueError, TypeError):
+                    retry = "60"
+            try:
+                seconds = math.ceil(float(retry))
+            except (ValueError, TypeError):
+                seconds = 60
+            raise RateLimited(min(86400, max(1, seconds)))
         if response.status_code >= 400:
             # Never expose provider body: it can echo prompts, credentials or account identifiers.
             raise ProviderUnavailable(f"Gemini trả HTTP {response.status_code}")
         return response.json()
 
     async def generate(self, schema: type[BaseModel], instruction: str, payload: dict, budget: Budget):
-        budget.llm()
-        await self.reserve("llm", self.settings.global_daily_llm_limit)
         body = {
             "systemInstruction": {"parts": [{"text": SYSTEM_BOUNDARY + instruction}]},
             "contents": [{"role": "user", "parts": [{"text": json.dumps(payload, ensure_ascii=False)}]}],
@@ -99,14 +113,20 @@ class Gemini:
         }
         if self.settings.gemini_model == "gemini-2.5-flash":
             body["generationConfig"]["thinkingConfig"] = {"thinkingBudget": 512}
-        result = await self._request(self.settings.gemini_model, "generateContent", body)
-        budget.tokens += result.get("usageMetadata", {}).get("totalTokenCount", 0)
-        try:
-            candidate = result["candidates"][0]
-            text = "".join(part.get("text", "") for part in candidate["content"]["parts"] if not part.get("thought"))
-            return schema.model_validate_json(text)
-        except (KeyError, IndexError, ValueError):
-            raise ProviderUnavailable("Gemini không trả kết quả đúng schema") from None
+        for attempt in range(2):
+            budget.llm()
+            await self.reserve("llm", self.settings.global_daily_llm_limit)
+            result = await self._request(self.settings.gemini_model, "generateContent", body)
+            budget.tokens += result.get("usageMetadata", {}).get("totalTokenCount", 0)
+            try:
+                candidate = result["candidates"][0]
+                text = "".join(part.get("text", "") for part in candidate["content"]["parts"] if not part.get("thought"))
+                return schema.model_validate_json(text)
+            except (KeyError, IndexError, ValueError):
+                if attempt:
+                    raise ProviderUnavailable("Gemini không trả kết quả đúng schema") from None
+                # Retry once within the same turn/global budget. Never replay invalid model text as instructions.
+                body['systemInstruction']['parts'][0]['text'] += '\nLượt trước không khớp schema. Trả duy nhất JSON đúng responseJsonSchema; dùng đúng kiểu trường và giá trị enum, không có markdown.'
 
     def embedding_body(self, text, title=None, query=False):
         if self.settings.embedding_model == "gemini-embedding-001":
@@ -130,15 +150,17 @@ class Gemini:
             raise ProviderUnavailable("Embedding rỗng")
         return [x/norm for x in values]
 
-    async def embed(self, text, title=None, query=False):
-        await self.reserve("embedding", self.settings.global_daily_embedding_limit)
+    async def embed(self, text, title=None, query=False, budget=None):
+        if budget:
+            budget.embedding_calls += 1
+        await self.reserve_embeddings(1)
         result = await self._request(self.settings.embedding_model, "embedContent", self.embedding_body(text, title, query))
         return self.normalize_vector(result.get("embedding", {}).get("values", []))
 
     async def embed_many(self, texts: list[str], title=None):
         if not 1 <= len(texts) <= 8:
             raise ValueError("Embedding batches must contain 1–8 independent chunks")
-        await self.reserve("embedding", self.settings.global_daily_embedding_limit)
+        await self.reserve_embeddings(len(texts))
         # Each request holds a distinct Content. Multiple Parts in one Content would aggregate into one vector.
         result = await self._request(self.settings.embedding_model, "batchEmbedContents",
             {"requests": [self.embedding_body(text, title) for text in texts]})

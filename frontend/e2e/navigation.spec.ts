@@ -34,3 +34,24 @@ test('API quota errors are displayed without an invented answer', async ({ page 
   await expect(page.getByRole('alert')).toContainText('37 giây')
   await expect(page.locator('.message.assistant')).toHaveCount(0)
 })
+
+test('verified SSE answer opens source and trace with keyboard dismissal', async ({ page }) => {
+  const citation = { id: 'law-article', document_id: 'law', title: 'Nguồn thử nghiệm giao diện', document_number: '40/2026/QĐ-UBND', url: 'https://hanoi.gov.vn/', locator: 'Điều 29', excerpt: 'Trích đoạn kiểm thử, không phải dữ liệu pháp lý.', checked_at: '2026-10-11T00:00:00Z', applicability: 'current' }
+  const trace = [{ step: 'verify', tool: 'check_effectivity', summary: 'Đã kiểm tra nguồn trong fixture.', document_ids: ['law'], elapsed_ms: 50 }]
+  const result = { status: 'clarification_needed', content: 'Cần bổ sung thời điểm quyết định.', citations: [citation], trace, trace_id: 'ui-test-trace', elapsed_ms: 100, tool_calls: 1 }
+  await page.route('**/api/v1/sessions', r => r.fulfill({ status: 201, json: { session_id: 'test-session', token: 'test-session-token' } }))
+  await page.route('**/api/v1/chat', r => r.fulfill({ contentType: 'text/event-stream', body: `event: progress\ndata: ${JSON.stringify(trace[0])}\n\nevent: result\ndata: ${JSON.stringify(result)}\n\n` }))
+  await page.goto('/')
+  await page.getByLabel('Câu hỏi pháp luật').fill('Một câu hỏi kiểm thử giao diện')
+  await page.getByRole('button', { name: 'Gửi câu hỏi' }).click()
+  await expect(page.locator('.message.assistant')).toContainText(result.content)
+  await page.getByRole('button', { name: /40\/2026/ }).click()
+  await expect(page.getByRole('dialog', { name: 'Chi tiết nguồn' })).toContainText(citation.excerpt)
+  await expect(page.getByRole('link', { name: 'Mở nguồn chính thức' })).toHaveAttribute('href', citation.url)
+  await page.keyboard.press('Escape')
+  await expect(page.getByRole('dialog')).toHaveCount(0)
+  await page.getByRole('button', { name: /Xem quá trình kiểm chứng/ }).click()
+  await expect(page.getByRole('dialog', { name: 'Quá trình kiểm chứng' })).toContainText(trace[0].summary)
+  await page.keyboard.press('Escape')
+  await expect(page.getByRole('dialog')).toHaveCount(0)
+})

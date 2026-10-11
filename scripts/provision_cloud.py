@@ -43,7 +43,7 @@ def main():
         if not matches:
             # Supplying plan explicitly is essential: Render's omitted default is paid.
             body = {'type': 'web_service', 'name': 'hanoi-land-law-api', 'ownerId': owner_id,
-                    'repo': 'https://github.com/dovh25x/land-law-chatbot', 'branch': 'main', 'autoDeployTrigger': 'off',
+                    'repo': 'https://github.com/dovh25x/land-law-chatbot.git', 'branch': 'main', 'autoDeployTrigger': 'off',
                     'serviceDetails': {'runtime': 'docker', 'plan': 'free', 'region': 'singapore', 'numInstances': 1,
                                        'healthCheckPath': '/healthz', 'envSpecificDetails': {'dockerContext': '.', 'dockerfilePath': './Dockerfile'}},
                     'envVars': [{'key': key, 'value': value} for key, value in {
@@ -51,10 +51,15 @@ def main():
                         'GEMINI_API_KEY': settings.gemini_api_key.get_secret_value(), 'IP_HASH_SECRET': settings.ip_hash_secret.get_secret_value(),
                         'CORS_ORIGINS': origin, 'GEMINI_MODEL': settings.gemini_model, 'EMBEDDING_MODEL': settings.embedding_model,
                         'GLOBAL_DAILY_LLM_LIMIT': str(settings.global_daily_llm_limit),
-                        'GLOBAL_DAILY_EMBEDDING_LIMIT': str(settings.global_daily_embedding_limit), 'TRUST_PROXY_HEADERS': 'false'}.items()]}
+                        'GLOBAL_DAILY_EMBEDDING_LIMIT': str(settings.global_daily_embedding_limit),
+                        'GLOBAL_DAILY_EMBEDDING_ITEM_LIMIT': str(settings.global_daily_embedding_item_limit), 'TRUST_PROXY_HEADERS': 'false'}.items()]}
             response = client.post('https://api.render.com/v1/services', headers=render_headers, json=body)
             if response.status_code not in (200, 201):
-                raise SystemExit(f'Render Free creation failed: HTTP {response.status_code}; no upgrade attempted')
+                message = str(response.json().get('message', ''))
+                for value in env.values():
+                    if value and len(value) >= 12:
+                        message = message.replace(value, '[REDACTED]')
+                raise SystemExit(f'Render Free creation failed: HTTP {response.status_code}; {message[:250]}; no upgrade attempted')
             result = response.json()
             service = result.get('service', result)
         else:

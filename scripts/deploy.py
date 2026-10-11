@@ -46,16 +46,16 @@ def backend():
     raise SystemExit("Deployment still pending; resume status check using the returned deployment in dashboard")
 
 
-def frontend():
+def frontend(preview=False):
     required("CLOUDFLARE_API_TOKEN"); required("CLOUDFLARE_ACCOUNT_ID")
     project = required("CLOUDFLARE_PAGES_PROJECT")
-    api_url = required("VITE_API_BASE_URL")
-    if not api_url.startswith("https://") or not api_url.endswith(".onrender.com"):
+    api_url = '' if preview else required("VITE_API_BASE_URL")
+    if not preview and (not api_url.startswith("https://") or not api_url.endswith(".onrender.com")):
         raise SystemExit("Production frontend requires an HTTPS Render URL allowed by CSP")
-    subprocess.run(["npm", "run", "build"], cwd="frontend", check=True)
+    subprocess.run(["npm", "run", "build"], cwd="frontend", check=True, env={**os.environ, 'VITE_API_BASE_URL': api_url})
     subprocess.run(["npx", "--yes", "wrangler@4", "pages", "deploy", "frontend/dist", "--project-name", project,
                     "--branch", "main"], check=True)
 
 
 if __name__ == "__main__":
-    {"backend": backend, "frontend": frontend}[sys.argv[1]]()
+    {"backend": backend, "frontend": frontend, "frontend-preview": lambda: frontend(preview=True)}[sys.argv[1]]()

@@ -22,6 +22,21 @@ def test_article_chunking_preserves_locator_and_parent():
     assert all(c.checksum for c in chunks)
 
 
+def test_attachment_pages_have_unique_ids_and_price_table_rows_survive():
+    table = "[BẢNG / ĐƠN GIÁ — giữ dòng, tiêu đề, đơn vị]\nĐơn vị tính: nghìn đồng/m2\nSTT    Tên đường    Mức giá\n1      Đường A       12345\n" + "2      Đường B       67890\n"*80
+    chunks = chunks_for("prices", [(1, table), (1, table)])
+    assert len({c.id for c in chunks}) == len(chunks)
+    assert all(c.page == 1 for c in chunks)
+    assert all("Đơn vị tính" in c.text and "STT    Tên đường" in c.text for c in chunks)
+    assert any("1      Đường A       12345" in c.text for c in chunks)
+
+
+def test_aspnet_form_preserves_article_and_excludes_navigation():
+    html = '<form><nav>menu</nav><div id="block_detail" class="document-detail">Điều 1. '+ 'Căn cứ thu hồi đất. '*60 + '</div><div class="related-news">unrelated</div></form>'
+    text = html_text(html.encode(), legal=True)[0][1]
+    assert "Điều 1" in text and "unrelated" not in text and "menu" not in text
+
+
 def test_source_allowlist_and_personal_identifier_redaction():
     assert official_url("https://datafiles.hanoi.gov.vn/law.pdf")
     assert not official_url("https://hanoi.gov.vn.evil.example/law.pdf")

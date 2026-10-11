@@ -111,15 +111,15 @@ def migrate():
 
 
 @app.command()
-def ingest(offline: bool = False, embed: bool = False, ocr: bool = False):
+def ingest(offline: bool = False, embed: bool = False, ocr: bool = False, cached_embeddings_only: bool = False, persist: bool = True):
     """Build a staging release. Never auto-publish changed legal content."""
     async def run():
         settings = Settings().for_operator()
         store, provider = Store(settings), None
         try:
             provider = Gemini(settings, store)
-            payload, report = await build_corpus(settings, provider, offline, embed, ocr)
-            if not store.release(payload["id"]):
+            payload, report = await build_corpus(settings, provider, offline, embed or cached_embeddings_only, ocr, cached_embeddings_only)
+            if persist and not store.release(payload["id"],metadata_only=True):
                 store.stage(payload)
             return report
         finally:
@@ -226,23 +226,86 @@ def upload(release_file: Path):
     if not settings.supabase_url or not settings.supabase_service_role_key.get_secret_value():
         raise typer.BadParameter("Supabase Storage credentials missing")
     async def run():
-        headers = {"Authorization": f"Bearer {settings.supabase_service_role_key.get_secret_value()}",
-                   "apikey": settings.supabase_service_role_key.get_secret_value()}
-        async with httpx.AsyncClient(timeout=60) as client:
-            bucket = await client.get(f"{settings.supabase_url}/storage/v1/bucket/{settings.supabase_bucket}", headers=headers)
-            if bucket.status_code == 404:
-                bucket = await client.post(f"{settings.supabase_url}/storage/v1/bucket", headers=headers,
-                    json={"id": settings.supabase_bucket, "name": settings.supabase_bucket, "public": False})
-            if bucket.status_code >= 400:
-                raise ValueError("Cannot create/read private bucket")
-            if bucket.json().get("public"):
-                raise ValueError("Corpus bucket must be private")
-            response = await client.post(f"{settings.supabase_url}/storage/v1/object/{settings.supabase_bucket}/{payload['id']}/corpus.json",
-                headers={**headers, "Content-Type": "application/json", "x-upsert": "false"}, content=release_file.read_bytes())
-            if response.status_code not in {200, 201, 409}:
-                raise ValueError("Storage upload failed")
+        from .storage import PrivateArchive
+        archive = PrivateArchive(settings)
+        try:
+            return await archive.upload_files([(f"{payload['id']}/corpus.json", release_file.read_bytes(), 'application/json')])
+        finally:
+            await archive.close()
     asyncio.run(run())
     typer.echo("Private corpus archive uploaded.")
+
+
+@app.command()
+def archive_sources():
+    """Archive checksum-reviewed official raw sources privately, without publishing a corpus."""
+    from .security import digest
+    from .storage import PrivateArchive
+    settings = Settings()
+    manifest = json.loads((settings.data_dir / 'sources.json').read_text())
+    reviewed, files = [], {}
+    for source in manifest:
+        if source.get('review_status') != 'verified':
+            continue
+        for raw in source.get('raw_paths', []):
+            path = Path(raw)
+            if not path.resolve().is_relative_to((settings.data_dir / 'raw').resolve()):
+                raise ValueError('Raw archive path outside data/raw')
+            content = path.read_bytes()
+            checksum = digest(content)
+            if checksum not in source.get('raw_checksums', {}).values():
+                raise ValueError('Source checksum no longer reviewed')
+            name = f'raw/{checksum}{path.suffix}'
+            files[name] = (name, content, 'application/pdf' if path.suffix == '.pdf' else 'text/html')
+        reviewed.append(source)
+    body = json.dumps(reviewed, ensure_ascii=False, sort_keys=True).encode()
+    name = f'manifests/{digest(body)}.json'
+    files[name] = (name, body, 'application/json')
+    async def run():
+        archive = PrivateArchive(settings)
+        try:
+            return await archive.upload_files(list(files.values()))
+        finally:
+            await archive.close()
+    report = asyncio.run(run())
+    report.update({'checked_at': utcnow().isoformat(), 'reviewed_sources': len(reviewed)})
+    json_write(settings.reports_dir / 'storage-archive.json', report)
+    typer.echo(json.dumps(report, indent=2))
+
+
+@app.command()
+def restore_sources():
+    """Recover reviewed raw files from the private archive, verifying every checksum."""
+    from .security import digest
+    from .storage import PrivateArchive
+    settings = Settings()
+    manifest = json.loads((settings.data_dir/'sources.json').read_text())
+    async def run():
+        archive, recovered = PrivateArchive(settings), 0
+        try:
+            await archive.ensure_private()
+            for source in manifest:
+                if source.get('review_status') != 'verified':
+                    continue
+                for raw in source.get('raw_paths',[]):
+                    path = Path(raw)
+                    if not path.resolve().is_relative_to((settings.data_dir/'raw').resolve()):
+                        raise ValueError('Raw restore path outside data/raw')
+                    checksum = source.get('raw_checksums',{}).get(raw)
+                    if not checksum:
+                        raise ValueError('Reviewed checksum missing')
+                    if path.exists() and digest(path.read_bytes()) == checksum:
+                        continue
+                    r = await archive.client.get(f'{archive.root}/object/authenticated/{archive.bucket}/raw/{checksum}{path.suffix}')
+                    if r.status_code != 200 or digest(r.content) != checksum:
+                        raise ValueError('Raw archive unavailable or checksum mismatch')
+                    path.parent.mkdir(parents=True,exist_ok=True)
+                    path.write_bytes(r.content)
+                    recovered += 1
+            return recovered
+        finally:
+            await archive.close()
+    typer.echo(f'Restored {asyncio.run(run())} checksum-verified raw files.')
 
 
 @app.command()

@@ -24,6 +24,7 @@ class Settings(BaseSettings):
     trust_proxy_headers: bool = False
     global_daily_llm_limit: int = Field(default=100, ge=1)
     global_daily_embedding_limit: int = Field(default=500, ge=1)
+    global_daily_embedding_item_limit: int = Field(default=900, ge=1)
     max_concurrent_requests: int = Field(default=2, ge=1, le=2)
     turn_timeout_seconds: int = Field(default=90, ge=1, le=90)
     session_retention_days: int = Field(default=7, ge=1, le=7)

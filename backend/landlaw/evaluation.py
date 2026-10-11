@@ -9,7 +9,7 @@ from pathlib import Path
 from .agent import Agent
 from .ingest import json_write
 from .models import ChatRequest
-from .security import new_token, utcnow
+from .security import local_date, new_token, utcnow
 
 
 def dataset(path: Path):
@@ -52,6 +52,7 @@ def summarise(records, cases, fingerprint, reviews=None):
             "citation_id_valid_rate": valid/len(items) if items else None,
             "claim_support_rate": statistics.mean(support) if support else None,
             "p95_seconds": p95, "llm_calls": sum(r["result"]["llm_calls"] for r in items),
+            "embedding_calls": sum(r['result'].get('embedding_calls',0) for r in items),
             "tool_calls": sum(r["result"]["tool_calls"] for r in items), "critical_failed": critical_failed,
             "limited_or_error": sum(r["result"]["status"] in {"limited", "error"} for r in items)})
     summary["completed_pairs"] = sum(all(any(r["case_id"] == c["id"] and r["mode"] == m for r in records)
@@ -65,17 +66,29 @@ def summarise(records, cases, fingerprint, reviews=None):
     return summary
 
 
+def configuration_fingerprint(settings):
+    files = [Path(__file__).with_name(name) for name in ("agent.py", "provider.py", "store.py", "config.py")]
+    configuration = {"model": settings.gemini_model, "embedding_model": settings.embedding_model,
+                     "dimensions": settings.embedding_dimensions, "timeout_seconds": settings.turn_timeout_seconds,
+                     "llm_budget": 6, "tool_budget": 12, "retrieval_rounds": 2}
+    return hashlib.sha256(json.dumps(configuration, sort_keys=True).encode()+b"".join(p.read_bytes() for p in files)).hexdigest()
+
+
 async def evaluate(settings, store, provider, split="dev", release_id=None, limit=None):
     path = settings.data_dir / "evaluation/questions.jsonl"
     fingerprint = hashlib.sha256(path.read_bytes()).hexdigest()
     cases = [c for c in dataset(path) if c["split"] == split]
     if not provider.configured:
         raise ValueError("Cannot evaluate without real GEMINI_API_KEY")
-    release = store.release(release_id)
+    release = store.release(release_id, metadata_only=True)
     if not release:
         raise ValueError("No corpus release to evaluate")
-    run_id = f"{release['id']}-{provider.settings.gemini_model}-{split}-{fingerprint[:8]}"
+    configuration = configuration_fingerprint(settings)
+    run_id = f"{release['id']}-{provider.settings.gemini_model}-{split}-{fingerprint[:8]}-{configuration[:8]}"
     records_path = settings.reports_dir / "runs" / run_id / "records.json"
+    metadata_path = records_path.with_name("metadata.json")
+    metadata = json.loads(metadata_path.read_text()) if metadata_path.exists() else {"as_of": str(local_date()), "configuration_sha256": configuration}
+    json_write(metadata_path, metadata)
     records = json.loads(records_path.read_text()) if records_path.exists() else []
     agent, executed = Agent(store, provider), 0
     async def emit(_):
@@ -89,7 +102,7 @@ async def evaluate(settings, store, provider, split="dev", release_id=None, limi
             session_id = str(uuid.uuid4())
             await asyncio.to_thread(store.create_session, session_id, new_token())
             request = ChatRequest(session_id=session_id, message=case["question"], project=case.get("project"),
-                                  as_of=case.get("as_of"), mode=mode)
+                                  as_of=case.get("as_of") or metadata["as_of"], mode=mode)
             result = await agent.run(request, emit, release["id"])
             records = [r for r in records if not (r["case_id"] == case["id"] and r["mode"] == mode)]
             records.append({"case_id": case["id"], "mode": mode, "result": result.model_dump(mode="json")})
@@ -103,7 +116,9 @@ async def evaluate(settings, store, provider, split="dev", release_id=None, limi
     review_path = settings.data_dir / "evaluation/reviews.json"
     report = summarise(records, cases, fingerprint, json.loads(review_path.read_text()) if review_path.exists() else {})
     report.update({"run_id": run_id, "release": release["id"], "model": provider.settings.gemini_model,
-                   "embedding_model": provider.settings.embedding_model, "split": split})
+                   "embedding_model": provider.settings.embedding_model, "split": split,
+                   "corpus_embedded": release.get("embedded", False), "publication_candidate": False,
+                   "notes": ["Development runs on incomplete staging cannot certify acceptance; query embedding failures fall back to lexical retrieval."], **metadata})
     json_write(settings.reports_dir / "latest.json", report)
     from html import escape
     html = "<!doctype html><html lang='vi'><meta charset='utf-8'><title>Benchmark</title>"
