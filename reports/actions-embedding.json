@@ -1,0 +1,28 @@
+{
+  "checked_at": "2026-10-11T19:29:23.629677+00:00",
+  "workflow_url": "https://github.com/dovh25x/land-law-chatbot/actions/runs/38167661842",
+  "workflow_success": true,
+  "artifact_id": 11712843434,
+  "artifact_mb": 6.78,
+  "release": "corpus-adcd1a8f9596ccb8",
+  "documents": 46,
+  "legal": 31,
+  "projects": {
+    "ring4": 5,
+    "songhong": 5,
+    "olympic": 5
+  },
+  "chunks": 5250,
+  "embedded_vectors": 687,
+  "missing_vectors": 4563,
+  "publication_ready": false,
+  "quota_events": [
+    {
+      "id": "luat-dat-dai-2024",
+      "reason": "Embedding quota reached; checkpoint resume required",
+      "retry_after": 16556,
+      "quarantined": false
+    }
+  ],
+  "scope": "real CI raw restore + checkpoint seed + bounded embedding run; workflow success does not mean corpus published"
+}
