@@ -3,7 +3,7 @@ import pytest
 
 from landlaw.config import Settings
 from landlaw.evaluation import dataset, summarise
-from landlaw.ingest import Quarantine, chunks_for, coverage, html_text
+from landlaw.ingest import Quarantine, chunks_for, coverage, html_text, table_layout
 from landlaw.security import official_url, redact
 
 
@@ -35,6 +35,29 @@ def test_aspnet_form_preserves_article_and_excludes_navigation():
     html = '<form><nav>menu</nav><div id="block_detail" class="document-detail">Điều 1. '+ 'Căn cứ thu hồi đất. '*60 + '</div><div class="related-news">unrelated</div></form>'
     text = html_text(html.encode(), legal=True)[0][1]
     assert "Điều 1" in text and "unrelated" not in text and "menu" not in text
+
+
+def test_wrapped_cross_reference_keeps_actual_article_and_page_continuation():
+    pages = [(1, "Điều 98. Bồi thường về đất ở\nNếu đủ điều kiện quy định tại\nĐiều 95 của Luật này thì được xem xét theo hồ sơ."),
+             (2, "Tiếp tục nội dung quy định tại Điều 95 của Luật này.\nĐiều 99. Quy định đối với đất khác\nNội dung quy định tiếp theo được áp dụng.")]
+    chunks = chunks_for("law", pages)
+    first = next(c for c in chunks if "Điều 95 của" in c.text and c.page == 1)
+    continuation = next(c for c in chunks if c.page == 2 and c.text.startswith("Tiếp tục"))
+    assert first.locator == continuation.locator == "Điều 98"
+    assert any(c.locator == "Điều 99" for c in chunks)
+    assert not any(c.locator == "Điều 95" for c in chunks)
+
+
+def test_table_marker_cache_does_not_turn_prose_into_table_or_repeat_rows():
+    prose = "Điều 104. Bồi thường chi phí di chuyển\nỦy ban nhân dân cấp tỉnh quy định đơn giá bồi thường theo quy định của pháp luật."
+    assert not table_layout(prose)
+    assert all("[BẢNG" not in c.text for c in chunks_for("law", [(1, "[BẢNG / ĐƠN GIÁ — giữ dòng, tiêu đề, đơn vị; đối chiếu trang gốc]\n"+prose)]))
+    table = "Đơn vị tính: nghìn đồng/m2\nSTT    Tên đường    Mức giá\n1      Đường A       12345\n2      Đường B       67890\n"
+    chunk = chunks_for("prices", [(1, table)])[0]
+    assert chunk.text.count("1      Đường A       12345") == 1
+    assert "STT    Tên đường" in chunk.text
+    many = chunks_for("prices", [(1, table+"3      Đường C       99999\n"*120)])
+    assert sum(c.text.count("1      Đường A       12345") for c in many if not c.id.endswith("parent")) == 1
 
 
 def test_source_allowlist_and_personal_identifier_redaction():

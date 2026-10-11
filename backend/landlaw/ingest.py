@@ -101,6 +101,22 @@ def ocr_page(content: bytes, page_index: int):
         return result.stdout
 
 
+TABLE_MARKER = "[BẢNG / ĐƠN GIÁ — giữ dòng, tiêu đề, đơn vị; đối chiếu trang gốc]"
+ARTICLE_HEADING = re.compile(r"^[ \t]*Điều[ \t]+(\d+)[ \t]*[.:]", re.MULTILINE | re.IGNORECASE)
+
+
+def table_layout(text):
+    """A price mentioned in prose is not evidence of a table."""
+    lines = text.splitlines()
+    columns = [line for line in lines if re.search(r"\S[ \t]{3,}\S", line)]
+    if len(columns) < 2:
+        return False
+    if any(re.search(r"\bSTT\b|Tên đường|Tên phố", line, re.IGNORECASE) for line in columns):
+        return True
+    numeric_rows = sum(bool(re.search(r"\S[ \t]{3,}\d[\d.,]*(?:[ \t]{3,}|$)", line)) for line in columns)
+    return numeric_rows >= 2 and bool(re.search(r"đơn vị tính|đơn giá|mức giá", text, re.IGNORECASE))
+
+
 def pdf_pages(content: bytes, allow_ocr=False):
     reader = PdfReader(io.BytesIO(content))
     if reader.is_encrypted:
@@ -125,8 +141,8 @@ def pdf_pages(content: bytes, allow_ocr=False):
             text = ocr_page(content, index)
             if len(text.strip()) < 120 or text.count("�") > 2:
                 raise Quarantine(f"Low quality OCR on page {index+1}")
-        if re.search(r"(?:đơn giá|đơn vị tính|STT|Tên đường|Mức giá)", text, re.IGNORECASE):
-            text = "[BẢNG / ĐƠN GIÁ — giữ dòng, tiêu đề, đơn vị; đối chiếu trang gốc]\n" + text
+        if table_layout(text):
+            text = TABLE_MARKER + "\n" + text
         pages.append((index + 1, text))
     return pages
 
@@ -135,37 +151,52 @@ def chunks_for(doc_id, pages):
     chunks = []
     active_article = None
     for page_index, (page, text) in enumerate(pages):
-        text = redact(text).strip()
+        # Reclassify old parse caches too: v4 marked any prose mentioning 'đơn giá'.
+        text = redact(text).replace(TABLE_MARKER + "\n", "").strip()
         if "�" in text and text.count("�") / max(len(text), 1) > 0.005:
             raise Quarantine("Encoding/OCR quality insufficient")
-        sections = re.split(r"(?=^\s*Điều\s+\d+[.\s])", text, flags=re.MULTILINE)
+        positions = [m.start() for m in ARTICLE_HEADING.finditer(text)]
+        boundaries = sorted(set([0, *positions, len(text)]))
+        sections = [text[a:b] for a, b in zip(boundaries, boundaries[1:])]
         for section_index, section in enumerate(sections):
             section = section.strip()
             if len(section) < 30:
                 continue
-            match = re.search(r"Điều\s+(\d+)", section[:140])
+            match = ARTICLE_HEADING.match(section)
             if match:
                 active_article = match[1]
             locator = f"Điều {active_article}" if active_article else f"Trang {page}" if page else f"Đoạn {section_index+1}"
             words = section.split()
             # Conservative estimate: Vietnamese words typically span multiple subword tokens.
-            if "[BẢNG / ĐƠN GIÁ" in text:
+            if table_layout(section):
                 # Preserve whole rows, spacing, units and page headers in price tables.
                 lines = section.splitlines()
-                header = "\n".join(lines[:8])
+                first_row = next((i for i, line in enumerate(lines)
+                    if i >= 1 and re.match(r"^[ \t]*\d+[.)]?[ \t]{2,}\S", line)), min(8, len(lines)))
+                header_lines = lines[:first_row]
+                header = TABLE_MARKER + "\n" + "\n".join(header_lines)
                 segments, current, count = [], [], 0
-                for line in lines:
+                # A section appears once; subsequent segments repeat only its header.
+                for line in lines[first_row:]:
                     size = len(line.split())
                     if current and count + size > 330:
                         segments.append(header + "\n" + "\n".join(current))
                         current, count = [], 0
                     current.append(line)
                     count += size
-                if current:
+                if current or not segments:
                     segments.append(header + "\n" + "\n".join(current))
-                parent_text = header + "\n" + "\n".join(lines[8:24])
+                parent_text = header + "\n" + "\n".join(lines[first_row:first_row+16])
             else:
-                segments = [" ".join(words[start:start+330]) for start in range(0, len(words), 300)]
+                segments, start = [], 0
+                while start < len(words):
+                    end = min(start+330, len(words))
+                    if len(words)-end <= 60:
+                        end = len(words)
+                    segments.append(" ".join(words[start:end]))
+                    if end == len(words):
+                        break
+                    start += 300
                 parent_text = " ".join(words[:660])
             parent_id = None
             if len(segments) > 1:
@@ -345,7 +376,7 @@ async def build_corpus(settings: Settings, provider: Gemini | None, offline=Fals
     aliases_path = settings.data_dir / "place_aliases.json"
     aliases = json.loads(aliases_path.read_text()) if aliases_path.exists() else []
     content_hash = digest(json.dumps({"documents": documents, "relations": valid_relations,
-        "place_aliases": aliases, "embedding_model": settings.embedding_model, "parser_version": 5}, sort_keys=True, ensure_ascii=False))[:16]
+        "place_aliases": aliases, "embedding_model": settings.embedding_model, "parser_version": 6}, sort_keys=True, ensure_ascii=False))[:16]
     payload = {"id": f"corpus-{content_hash}", "checked_at": min((d["checked_at"] for d in documents), default=utcnow().isoformat()), "documents": documents,
                "relations": valid_relations, "place_aliases": aliases, "embedding_model": settings.embedding_model,
                "embedding_dimensions": 768, "embedded": bool(documents and all(c.get("embedding") for d in documents for c in d["chunks"]))}

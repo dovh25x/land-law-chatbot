@@ -22,6 +22,7 @@ jobs:
       EMBEDDING_MODEL: gemini-embedding-2
       GLOBAL_DAILY_EMBEDDING_LIMIT: '500'
       GLOBAL_DAILY_EMBEDDING_ITEM_LIMIT: '900'
+      EMBEDDING_SEED_SHA256: ${{ vars.EMBEDDING_SEED_SHA256 }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -36,13 +37,18 @@ jobs:
           restore-keys: |
             legal-embeddings-${{ runner.os }}-
       - run: land-law restore-sources
+      - run: python scripts/embedding_checkpoint_seed.py restore
       - name: Resume within free quota; archive staging without filling the database
         run: land-law ingest --offline --embed --no-persist
+      - name: Compress staging within free artifact storage
+        if: always()
+        run: |
+          if [ -d data/staging ]; then
+            tar -czf /tmp/embedding-staging.tar.gz data/staging reports/corpus-coverage.json
+          fi
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: embedding-staging
-          path: |
-            data/staging
-            reports/corpus-coverage.json
-          retention-days: 14
+          path: /tmp/embedding-staging.tar.gz
+          retention-days: 3

@@ -1,0 +1,17 @@
+{
+  "checked_at": "2026-10-11T19:11:58.505783+00:00",
+  "parser_version": 6,
+  "release": "corpus-adcd1a8f9596ccb8",
+  "passed": true,
+  "checks": {
+    "article_98_includes_cross_reference_95": true,
+    "wrapped_reference_not_split_into_new_heading": true,
+    "article_104_not_marked_as_price_table": true,
+    "article_104_heading_once_per_leaf": true,
+    "no_duplicate_chunk_ids": true
+  },
+  "chunks": 5250,
+  "reused_real_vectors": 687,
+  "acceptance_passed": false,
+  "scope": "targeted structure checks on actual corpus; not a legal answer benchmark"
+}

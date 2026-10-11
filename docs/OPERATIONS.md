@@ -53,7 +53,7 @@ Bộ dữ liệu công bố có ID bất biến và lưu chứng cứ benchmark 
 
 Backup CLI chứa corpus và pointer active/previous, quyền tệp 0600; không chứa token phiên hoặc câu hỏi. PostgreSQL vẫn là nguồn bền vững cho lịch sử qua restart. Để khôi phục hội thoại sau mất database, đặt BACKUP_ENCRYPTION_KEY (Fernet), chạy `land-law backup --include-sessions --output data/backups/private.enc`; archive được mã hóa và restore giữ TTL bảy ngày. Giữ khóa tách biệt; không đưa plaintext hội thoại vào GitHub artifact. Backup mặc định chỉ khôi phục corpus. Sau restore chạy `/readyz`, truy vấn nguồn, smoke thật và kiểm tra cách ly phiên.
 
-Workflow maintenance khi variable `MAINTENANCE_ENABLED=true`, secret admin DATABASE_URL: cleanup hằng ngày, backup định kỳ trước publish và hằng tuần; artifact 14 ngày. Kiểm tra artifact không chứa định danh/secret; chỉ lưu corpus công khai. Storage upload riêng tư dùng `land-law upload <release.json>`. Restore rehearsal dùng database phát triển tách biệt để tránh ghi đè active production trong lúc kiểm tra.
+Workflow maintenance khi variable `MAINTENANCE_ENABLED=true`, secret admin DATABASE_URL: cleanup hằng ngày, backup định kỳ trước publish và hằng tuần; artifact tám ngày. Daily staging được nén tar.gz và giữ ba ngày để dự phòng dung lượng Actions miễn phí. Kiểm tra artifact không chứa định danh/secret; hội thoại chỉ có trong archive mã hóa. Storage upload riêng tư dùng `land-law upload <release.json>`. Restore rehearsal dùng database phát triển tách biệt để tránh ghi đè active production trong lúc kiểm tra.
 
 ## Theo dõi lỗi
 
@@ -65,7 +65,11 @@ Khi lỗi database, không phát câu trả lời là thành công trước khi 
 
 `land-law ingest --offline --cached-embeddings-only` tái sử dụng vector đã có, không gọi embedding API. `land-law ingest --offline --embed` tiếp tục các đoạn còn thiếu. Batch tám đoạn tính là tám input tại provider; ngoài giới hạn HTTP, `GLOBAL_DAILY_EMBEDDING_ITEM_LIMIT=900` chừa dự phòng cho query. Daily quota lấy RetryInfo của provider; không suy giờ reset từ timezone máy. Văn bản parse đạt nhưng thiếu vector vẫn ở staging và bị gate chặn publish.
 
-Workflow `embeddings.yml` sử dụng private raw archive (`land-law restore-sources`) và cache JSON checkpoint; `--no-persist` giữ bản trung gian trong artifact để tránh lấp database bằng nhiều staging release. Muốn chạy: GitHub environment `production` có ADMIN_DATABASE_URL, GEMINI_API_KEY, SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY; repository variable EMBEDDING_RESUME_ENABLED=true. Quota đạt thì lưu checkpoint và dừng gọi thêm; không tự công bố corpus. Sau khi embedding đầy đủ phải kiểm tra nguồn lại, review benchmark và publish qua CLI.
+Workflow `embeddings.yml` sử dụng private raw archive (`land-law restore-sources`), seed checkpoint trong Storage private và cache JSON checkpoint; `--no-persist` giữ bản trung gian trong artifact để tránh lấp database bằng nhiều staging release. Muốn chạy: Secrets ADMIN_DATABASE_URL, GEMINI_API_KEY, SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY; repository variables EMBEDDING_RESUME_ENABLED=true và EMBEDDING_SEED_SHA256. Quota đạt thì lưu checkpoint và dừng gọi thêm; không tự công bố corpus. Sau khi embedding đầy đủ phải kiểm tra nguồn lại, review benchmark và publish qua CLI.
+
+Operator chạy `python scripts/embedding_checkpoint_seed.py archive` để tạo seed bất biến trong Storage private; `restore` xác minh checksum, tên tệp và vector 768 chiều, không ghi đè checkpoint mới hơn. Lần triển khai này đã archive/restore đối chiếu 958 checkpoint thật. Không đưa vector vào Git. Seed là dữ liệu pháp luật công khai, không chứa hội thoại hoặc khóa API.
+
+`pip install PyNaCl==1.6.2` chỉ trên máy operator, rồi `python scripts/configure_github.py`: cấu hình Secrets bằng sealed-box của GitHub và Variables, bật lịch sau khi đủ cấu hình. Token cần Secrets và Variables đọc/ghi. Script giới hạn repository đã được cấp quyền, không in giá trị secret; backend Docker không cần PyNaCl. Có thể dùng repository Secrets cho jobs environment `production` khi không đặt secret cùng tên tại environment.
 
 `land-law archive-sources` lưu bản raw/checksum/manifest nguồn đã rà soát vào private Storage. Nội dung cùng tên chỉ được nhận nếu checksum khớp; staging database giữ dự phòng 350 MB và Storage 700 MB. `land-law restore-sources` xác minh checksum trước ghi.
 
