@@ -4,7 +4,7 @@ Web chatbot tiếng Việt dùng FastAPI, LangGraph, Gemini, PostgreSQL/pgvector
 
 ## Trạng thái
 
-Đây là implementation đang được kiểm chứng, chưa phải bản phát hành đã nghiệm thu M0–M6. Xem [bằng chứng và hạng mục còn mở](docs/IMPLEMENTATION_STATUS.md), [nguồn thật và khoảng trống](docs/SOURCES.md), [benchmark](docs/BENCHMARK.md). Không có câu trả lời hay chỉ số chất lượng giả trong runtime. SQLite dành cho phát triển; production bắt buộc PostgreSQL.
+Website: https://hanoi-land-law.pages.dev; API: https://land-law-chatbot.onrender.com. Hạ tầng đã live và một lượt Gemini/SSE thật đã qua smoke. Corpus chưa công bố; đây chưa phải bản phát hành đã nghiệm thu M0–M6. Xem [bằng chứng và hạng mục còn mở](docs/IMPLEMENTATION_STATUS.md), [nguồn thật và khoảng trống](docs/SOURCES.md), [benchmark](docs/BENCHMARK.md). Không có câu trả lời hay chỉ số chất lượng giả trong runtime. SQLite dành cho phát triển; production bắt buộc PostgreSQL.
 
 Preflight ngày 12/10/2026 (giờ Hà Nội): model được kế hoạch dự kiến `gemini-2.5-flash` trả HTTP 404; `gemini-3.5-flash-lite` gọi sinh JSON thật thành công và có Free tier theo [tài liệu Google](https://ai.google.dev/gemini-api/docs/pricing). Cấu hình hiện dùng model này cho cả hai chế độ; embedding giữ `gemini-embedding-2`, 768 chiều. Thay model phải chạy lại benchmark. Hệ thống không chuyển sang model khác khi hết quota.
 

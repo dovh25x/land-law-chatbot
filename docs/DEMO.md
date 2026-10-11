@@ -2,6 +2,8 @@
 
 Chỉ demo pháp lý sau khi release được công bố và `/readyz` + smoke thành công. Nếu còn blocker, trình bày trạng thái thật trong `IMPLEMENTATION_STATUS.md`, không giả lập câu trả lời.
 
+Hiện có thể mở https://hanoi-land-law.pages.dev để xem giao diện, ba hồ sơ dự án và trạng thái corpus; hỏi một câu để kiểm tra SSE, trace và hành vi thiếu căn cứ. Đây là demo hạ tầng, chưa thực hiện kịch bản hỏi đáp pháp lý dưới đây. API đang chạy tại https://land-law-chatbot.onrender.com trên Render Free.
+
 1. **Phút 0–1:** mở URL Cloudflare, chờ backend khởi động. Nêu phạm vi Hà Nội, tài liệu công khai, không upload hồ sơ/tính tiền/GIS từng thửa. Xem ngày kiểm tra nguồn.
 2. **Phút 1–3:** hỏi “Đất nông nghiệp bị thu hồi ở Hà Nội được bồi thường và hỗ trợ theo những điều kiện nào?”. Mở nguồn trích dẫn; đối chiếu điều/khoản và điều kiện còn thiếu. Hỏi tiếp “Nếu chưa có giấy chứng nhận thì cần kiểm tra thêm gì?” để xem hội thoại.
 3. **Phút 3–5:** xem QĐ 56/2024 tại 01/04/2026 và 02/04/2026; agent phải kiểm tra văn bản thay thế và chuyển tiếp. Mở trace công cụ/quan hệ, không trình bày suy nghĩ nội bộ.

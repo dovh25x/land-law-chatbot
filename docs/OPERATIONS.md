@@ -22,6 +22,8 @@ Chỉ sử dụng gói Free. Chủ tài khoản tạo/xác minh tài khoản, c�
 .venv/bin/land-law smoke https://<service>.onrender.com
 ```
 
+URL hiện tại: https://hanoi-land-law.pages.dev và https://land-law-chatbot.onrender.com. Trước khi có corpus công bố, chạy `.venv/bin/python scripts/smoke_infrastructure.py` để kiểm tra kết nối database, CORS, cách ly phiên, SSE/Gemini thật và lưu hội thoại. Script ghi `reports/infrastructure-smoke.json`, luôn giữ `acceptance_passed=false`; `/readyz` trả 503 vì thiếu corpus là trạng thái đúng ở giai đoạn này. Sau khi công bố phải chạy smoke pháp lý và nghiệm thu riêng.
+
 Workflow deploy thủ công dùng GitHub environment `production`: Secrets `RENDER_API_KEY`, `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`; Variables `RENDER_SERVICE_ID`, `CLOUDFLARE_PAGES_PROJECT`, `API_BASE_URL`. Secrets không xuất hiện trong bundle. Không coi deploy thành công là nghiệm thu khi corpus/benchmark chưa đạt.
 
 ## Quota, timeout và bảo vệ API

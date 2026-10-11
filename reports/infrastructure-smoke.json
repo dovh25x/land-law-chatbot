@@ -1,0 +1,30 @@
+{
+  "checked_at": "2026-10-11T18:53:50.549132+00:00",
+  "base_url": "https://land-law-chatbot.onrender.com",
+  "frontend": "https://hanoi-land-law.pages.dev",
+  "passed": true,
+  "checks": {
+    "health_https": true,
+    "database_connected": true,
+    "readiness_honest": true,
+    "ai_configured": true,
+    "no_public_draft_corpus": true,
+    "three_project_profiles": true,
+    "cors_frontend": true,
+    "cors_untrusted_blocked": true,
+    "session_auth": true,
+    "session_isolation": true,
+    "sse_transport": true,
+    "real_generation": true,
+    "verified_or_explicit_limit": true,
+    "history_persisted": true,
+    "unpublished_corpus_abstention": true
+  },
+  "answer_status": "insufficient_evidence",
+  "llm_calls": 1,
+  "elapsed_ms": 1924,
+  "trace_id": "30cf107c-188d-4ef5-8f74-71e5ffdd6a6b",
+  "corpus_published": false,
+  "acceptance_passed": false,
+  "scope": "infrastructure smoke only; legal demo requires published reviewed corpus and fixed acceptance benchmark"
+}
