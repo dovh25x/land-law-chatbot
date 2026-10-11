@@ -1,0 +1,28 @@
+services:
+  - type: web
+    name: hanoi-land-law-api
+    runtime: docker
+    plan: free
+    region: singapore
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /healthz
+    autoDeployTrigger: off
+    envVars:
+      - key: APP_ENV
+        value: production
+      - key: DATABASE_URL
+        sync: false
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: IP_HASH_SECRET
+        generateValue: true
+      - key: CORS_ORIGINS
+        sync: false
+      - key: GEMINI_MODEL
+        value: gemini-3.5-flash-lite
+      - key: EMBEDDING_MODEL
+        value: gemini-embedding-2
+      - key: GLOBAL_DAILY_LLM_LIMIT
+        value: 100
+      - key: GLOBAL_DAILY_EMBEDDING_LIMIT
+        value: 500
