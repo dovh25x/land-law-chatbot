@@ -213,6 +213,13 @@ def chunks_for(doc_id, pages):
                                     page=page, parent_id=parent_id, checksum=digest(segment)))
     if not chunks:
         raise Quarantine("No usable text chunks")
+    # Publication headers alone have no rule or context; retain page/locator on
+    # substantive passages and preserve their stable IDs/checkpoints.
+    allowed_header_words=set('cong bao ha noi so ngay thang nam'.split())
+    chunks=[chunk for chunk in chunks if not (len(normalize(chunk.text))<180
+        and 'cong bao' in normalize(chunk.text)
+        and set(re.findall(r'[a-z]+',normalize(chunk.text)))<=allowed_header_words)]
+    if not chunks:raise Quarantine('No substantive text after publication-header removal')
     return chunks
 
 
@@ -410,7 +417,7 @@ async def build_corpus(settings: Settings, provider: Gemini | None, offline=Fals
     embedding_contract = contract(settings)
     content_hash = digest(json.dumps({"documents": documents, "relations": valid_relations,
         "unresolved_relations":unresolved,'coverage_gaps':gaps,'embedding_contract':embedding_contract,
-        "place_aliases": aliases, "embedding_model": settings.embedding_model, "parser_version": 7}, sort_keys=True, ensure_ascii=False))[:16]
+        "place_aliases": aliases, "embedding_model": settings.embedding_model, "parser_version": 9}, sort_keys=True, ensure_ascii=False))[:16]
     payload = {"id": f"corpus-{content_hash}", "checked_at": min((d["checked_at"] for d in documents), default=utcnow().isoformat()), "documents": documents,
                "relations": valid_relations, "place_aliases": aliases, "embedding_model": settings.embedding_model,
                "embedding_dimensions":settings.embedding_dimensions,'embedding_contract':embedding_contract,

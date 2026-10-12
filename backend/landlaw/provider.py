@@ -138,7 +138,7 @@ class Gemini:
         require_fields(shape)
         format_note='\nTrả tất cả trường trong JSON schema dưới đây.'
         if 'supporting_quotes' in shape.get('properties',{}):
-            format_note+=' Mỗi supported_claim_indexes cần supporting_quotes sao chép nguyên văn tại mọi citation_id của claim; không có quote thì không xác nhận index.'
+            format_note+=' Every supported index needs supporting_spans selected from source_spans for every cited passage, or a verbatim supporting_quote. Without proof, do not confirm the index.'
         try:
             response = await self.client.post(
                 f'https://api.cloudflare.com/client/v4/accounts/{self.settings.cloudflare_account_id}/ai/v1/chat/completions',

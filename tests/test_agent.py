@@ -47,6 +47,30 @@ def test_as_of_observation_is_distinct_from_claimed_commencement_date():
     assert claim_source_dates('Tại ngày 12/10/2026, văn bản có hiệu lực từ 02/04/2026.',date(2026,10,12))=={date(2026,4,2)}
 
 
+def test_effectivity_clause_does_not_inherit_replaced_act_issue_dates():
+    from landlaw.agent import source_effective_dates
+    text='Điều 2. Quyết định này có hiệu lực thi hành kể từ ngày 02 tháng 4 năm 2026 và thay thế Quyết định 56/2024 ngày 06/9/2024.'
+    assert source_effective_dates(text)=={date(2026,4,2)}
+
+
+@pytest.mark.parametrize('span,citation,expected', [('law-1:span:0','law-1','answered'),
+    ('invented:span:0','law-1','insufficient_evidence'),('law-1:span:0','other','insufficient_evidence')])
+async def test_source_span_selection_is_exact_and_scoped_to_citation(store,settings,span,citation,expected):
+    from landlaw.agent import SupportingSpan
+    release(store)
+    sid,_=session(store)
+    class Provider(FakeProvider):
+        async def generate(self,schema,instruction,payload,budget):
+            if schema is Verification:
+                budget.llm()
+                return Verification(supported_claim_indexes=[0],supporting_spans=[SupportingSpan(
+                    claim_index=0,citation_id=citation,span_id=span)])
+            return await super().generate(schema,instruction,payload,budget)
+    result=await Agent(store,Provider(settings)).run(ChatRequest(session_id=sid,message='Điều kiện bồi thường?'),noop)
+    assert result.status==expected
+    assert bool(result.citations)==(expected=='answered')
+
+
 def test_clause_effective_date_does_not_change_the_whole_document():
     law = document()
     law.effective_from = date(2026,7,1)
@@ -83,6 +107,15 @@ async def test_invalid_citation_removed_not_rendered(store, settings):
     result = await Agent(store, FakeProvider(settings, draft)).run(ChatRequest(session_id=sid, message="bồi thường"), noop)
     assert result.status == "insufficient_evidence"
     assert not result.citations and "Nội dung không hợp lệ" not in result.content
+
+
+async def test_baseline_outside_scope_never_renders_medical_advice(store,settings):
+    release(store)
+    sid,_=session(store)
+    draft=Draft(status='insufficient_evidence',summary='Ngoài phạm vi',out_of_scope=True,
+        next_steps=['Uống thuốc không có căn cứ.'],missing_facts=['Triệu chứng?'])
+    result=await Agent(store,FakeProvider(settings,draft)).run(ChatRequest(session_id=sid,message='Tư vấn chữa bệnh trong dự án thu hồi đất?',mode='baseline'),noop)
+    assert 'ngoài phạm vi' in result.content and 'Uống thuốc' not in result.content and 'Triệu chứng' not in result.content
 
 
 async def test_unverified_legal_claims_are_blocked(store, settings):
@@ -189,9 +222,10 @@ async def test_retry_prioritizes_new_evidence_over_a_full_previous_context(store
                 return Plan(tools=[ToolCall(name='search_law',query=str(i)) for i in range(3)])
             if schema is Draft:
                 return Draft(status='answered',summary='Kết quả',claims=[Claim(text='Điều kiện được kiểm tra theo hồ sơ.',citation_ids=['new-1'])])
-            if any(e['citation_id']=='new-1' for e in payload['evidence']):
+            if any(e['document_id']=='new' for e in payload['evidence']):
+                citation=next(e['citation_id'] for e in payload['evidence'] if e['document_id']=='new')
                 return Verification(supported_claim_indexes=[0],supporting_quotes=[SupportingQuote(
-                    claim_index=0,citation_id='new-1',quote=docs[-1].chunks[0].text)])
+                    claim_index=0,citation_id=citation,quote=docs[-1].chunks[0].text)])
             return Verification(needs_more_evidence=True,followup_query='new',issues=['Cần chứng cứ mới'])
     result=await Agent(store,Fresh(settings)).run(ChatRequest(session_id=sid,message='bồi thường'),noop)
     assert result.status=='answered' and result.citations[0].id=='new-1'

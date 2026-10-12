@@ -110,6 +110,21 @@ def test_extreme_table_padding_preserves_rows_and_units():
     assert 'Đơn vị tính: nghìn đồng/m2' in chunks[0].text
 
 
+def test_publication_header_alone_is_not_an_evidence_chunk():
+    from landlaw.ingest import chunks_for,Quarantine
+    header='CÔNG BÁO HÀ NỘI/Số 132/Ngày 09 -4-2026 7'
+    with pytest.raises(Quarantine):chunks_for('law',[(1,header)])
+    body='Điều 2. Quyết định này có hiệu lực thi hành kể từ ngày 02 tháng 4 năm 2026.'
+    assert [c.text for c in chunks_for('law',[(1,header+'\n'+body)])]==[body]
+
+
+def test_contact_redaction_preserves_legal_dates_and_masks_real_phones():
+    from landlaw.security import redact
+    assert redact('Ngày 01-08-2024; ngày 09 -4-2026 7')=='Ngày 01-08-2024; ngày 09 -4-2026 7'
+    assert '[SỐ LIÊN HỆ ĐÃ ẨN]' in redact('Điện thoại 0912345678')
+    assert '[SỐ LIÊN HỆ ĐÃ ẨN]' in redact('Điện thoại +84912345678')
+
+
 def test_normalized_checkpoint_bytes_are_stable():
     vector=Gemini.normalize_vector([0.12345]*1024,1024)
     assert Gemini.normalize_vector(vector,1024)==vector

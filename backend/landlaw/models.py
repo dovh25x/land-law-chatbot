@@ -88,7 +88,8 @@ class ChatRequest(BaseModel):
 
 
 class Claim(BaseModel):
-    kind: Literal['legal_rule','applicability','context'] = 'legal_rule'
+    kind: Literal['legal_rule','applicability','context'] = Field(default='legal_rule',
+        description='applicability: dates, commencement, expiry or replacement only; legal_rule: rights, duties or conditions; context: project news only.')
     text: str = Field(min_length=1, max_length=3000)
     citation_ids: list[str] = Field(min_length=1, max_length=8)
 
@@ -99,6 +100,7 @@ class Draft(BaseModel):
     claims: list[Claim] = Field(default_factory=list, max_length=10)
     missing_facts: list[str] = Field(default_factory=list, max_length=6)
     next_steps: list[str] = Field(default_factory=list, max_length=6)
+    out_of_scope: bool = False
 
 
 class ChatResult(BaseModel):

@@ -34,9 +34,16 @@ class SupportingQuote(BaseModel):
     quote: str = Field(min_length=20,max_length=1600)
 
 
+class SupportingSpan(BaseModel):
+    claim_index: int = Field(ge=0,le=9)
+    citation_id: str = Field(max_length=160)
+    span_id: str = Field(max_length=220)
+
+
 class Verification(BaseModel):
     supported_claim_indexes: list[int] = Field(default_factory=list)
     supporting_quotes: list[SupportingQuote] = Field(default_factory=list,max_length=80)
+    supporting_spans: list[SupportingSpan] = Field(default_factory=list,max_length=80)
     issues: list[str] = Field(default_factory=list, max_length=10)
     needs_more_evidence: bool = False
     followup_query: str = Field(default="", max_length=1000)
@@ -132,6 +139,27 @@ def claim_source_dates(text, as_of):
     if any(phrase in normalized for phrase in ('tai ngay','vao ngay','den ngay')) and not any(as_of in dates_in(s) for s in starts):
         values.discard(as_of)
     return values
+
+
+def source_effective_dates(text):
+    """Read dates in a commencement clause, excluding dates of replaced acts."""
+    result=set()
+    for match in re.finditer(r'co hieu luc(?:\s+thi hanh)?\b[^.;\n]{0,160}',normalize(text)):
+        result.update(dates_in(match[0].split(' va ')[0]))
+    return result
+
+
+def source_spans(evidence):
+    """Number exact overlapping source passages; the model cannot supply their text."""
+    result={}
+    for item in evidence:
+        text=item.chunk.text
+        for start in range(0,len(text),1200):
+            quote=text[start:start+1400]
+            if len(quote)<20:continue
+            key=f'{item.chunk.id}:span:{start}'
+            result[key]={'span_id':key,'citation_id':item.chunk.id,'quote':quote}
+    return result
 
 
 def resolve_places(aliases, query, as_of):
@@ -333,11 +361,13 @@ class Agent:
 
     async def synthesize(self, state):
         if state["plan"].out_of_scope:
-            state["draft"] = Draft(status="insufficient_evidence", summary="Câu hỏi nằm ngoài phạm vi đất đai và quy hoạch Hà Nội.")
+            state["draft"] = Draft(status="insufficient_evidence", summary="Câu hỏi nằm ngoài phạm vi đất đai và quy hoạch Hà Nội.",out_of_scope=True)
         elif not state["evidence"]:
             state["draft"] = Draft(status="insufficient_evidence", summary="Chưa tìm được chứng cứ trong bộ dữ liệu đã công bố.",
                                    missing_facts=state["plan"].missing_facts)
         else:
+            aliases={item.chunk.id:f'C{index+1}' for index,item in enumerate(state['evidence'])}
+            contexts=[{**item,'citation_id':aliases[item['citation_id']]} for item in self.context(state)]
             state["draft"] = await self.provider.generate(Draft,
                 "Tạo câu trả lời có cấu trúc. summary chỉ giới thiệu kết quả và giới hạn, không chứa kết luận pháp lý "
                 "không dẫn nguồn. MỌI kết luận pháp lý nằm trong claims, gắn citation_ids có trong evidence. "
@@ -345,6 +375,7 @@ class Agent:
                 "provision_specific có mốc riêng tại khoản được ghi; phải kiểm tra đúng khoản và không suy hiệu lực toàn điều. "
                 "hoặc chuyển tiếp được chứng minh. Không coi official_news là quy phạm. Nếu thiếu dữ kiện hồ sơ, "
                 "dùng clarification_needed. Không kết luận chắc chắn về quyền lợi hộ/thửa hoặc số tiền. "
+                "Đánh dấu out_of_scope nếu câu hỏi không thuộc pháp luật đất đai/quy hoạch Hà Nội; không tư vấn y tế, đầu tư hoặc lĩnh vực ngoài phạm vi. "
                 "next_steps chỉ là hướng dẫn đối chiếu hồ sơ chung; thời hạn/điều kiện pháp lý phải đưa vào claims có nguồn. "
                 "coverage_gaps và unresolved_relations chỉ mô tả phần còn thiếu, không phải chứng cứ. "
                 "Không khẳng định quyền lợi lịch sử theo QĐ56/2024 khi thiếu toàn văn; không suy nội dung văn bản cũ "
@@ -355,12 +386,18 @@ class Agent:
                 "kind=context chỉ cho bối cảnh dự án. Trả lời trực tiếp vấn đề được hỏi trước khi giải thích bổ sung. "
                 "Không thêm ngày hiệu lực nếu câu hỏi không yêu cầu. Nếu nêu ngày hiệu lực, phải dẫn đúng đoạn "
                 "quy định hiệu lực và chứa ngày đó; metadata ngày ban hành không chứng minh ngày hiệu lực. "
-                "Ưu tiên ít claims rõ ràng, mỗi claim dẫn đoạn chứng minh trực tiếp; không ghép thêm căn cứ không cần thiết.",
+                "Ưu tiên ít claims rõ ràng, mỗi claim dẫn đoạn chứng minh trực tiếp; không ghép thêm căn cứ không cần thiết. "
+                "citation_ids chỉ được chọn mã C1, C2,... có trong allowed_citation_ids; không tạo mã hoặc dùng document_id. "
+                "Câu hỏi chỉ về hiệu lực/thay thế một văn bản nên có một hoặc hai claims, kind=applicability, không lặp các mốc ở nhiều claims.",
                 {"question": redact(state["request"].message), "as_of": str(state["as_of"]), "history": state["history"],
-                 "missing_facts": state["plan"].missing_facts, "tool_results": state["tool_notes"], "evidence": self.context(state),
+                 "missing_facts": state["plan"].missing_facts, "tool_results": state["tool_notes"], "evidence": contexts,
+                 'allowed_citation_ids':list(aliases.values()),
                  "coverage_gaps": (state['release'] or {}).get('coverage_gaps', []),
                  "unresolved_relations": (state['release'] or {}).get('unresolved_relations', []),
                  "previous_issues": state.get("verification", Verification()).issues}, state["budget"])
+            actual={value:key for key,value in aliases.items()}
+            state['draft'].claims=[claim.model_copy(update={'citation_ids':[actual.get(key,key) for key in claim.citation_ids]})
+                                   for claim in state['draft'].claims]
         await self.event(state, "synthesis", "Đã tạo bản trả lời; đang kiểm tra trước khi hiển thị.")
         return state
 
@@ -378,15 +415,15 @@ class Agent:
             if any(i not in evidence for i in claim.citation_ids):
                 continue
             doc_ids={evidence[i].document.id for i in claim.citation_ids}
-            if len(doc_ids)!=1 or any('hieu luc' in normalize(evidence[i].chunk.text) and
-                    claim_dates<=dates_in(evidence[i].chunk.text) for i in claim.citation_ids):
+            if len(doc_ids)!=1:
                 continue
             candidates=[e for e in evidence.values() if e.document.id in doc_ids
-                        and 'hieu luc' in normalize(e.chunk.text) and claim_dates<=dates_in(e.chunk.text)]
+                        and claim_dates<=source_effective_dates(e.chunk.text)]
             if candidates:
                 candidate=min(candidates,key=lambda e:(len(e.chunk.text),e.chunk.id))
-                draft.claims[index]=claim.model_copy(update={'citation_ids':[candidate.chunk.id]})
-                repaired.append(candidate.document.id)
+                if claim.citation_ids != [candidate.chunk.id]:
+                    draft.claims[index]=claim.model_copy(update={'citation_ids':[candidate.chunk.id]})
+                    repaired.append(candidate.document.id)
         if repaired:
             await self.event(state,'verification','Đã chọn đúng đoạn quy định ngày hiệu lực trong cùng văn bản trước khi đối chiếu nội dung.',
                              docs=sorted(set(repaired)))
@@ -406,7 +443,7 @@ class Agent:
             if claimed_dates-dates_in(cited_text):
                 structural_issues.append(f'Claim {index}: ngày nêu trong kết luận không xuất hiện trong đoạn được dẫn')
             if 'hieu luc' in normalized_claim and claimed_dates and not any(
-                    'hieu luc' in normalize(evidence[i].chunk.text) and claimed_dates <= dates_in(evidence[i].chunk.text)
+                    claimed_dates <= source_effective_dates(evidence[i].chunk.text)
                     for i in claim.citation_ids if i in evidence):
                 structural_issues.append(f'Claim {index}: cần đoạn quy định hiệu lực có đúng ngày, không dùng ngày ban hành')
             if 'chuyen giao cho uy ban nhan dan cap xa' in normalized_claim:
@@ -434,7 +471,27 @@ class Agent:
                     affected = not relation.get('target_locators_complete') or any(re.search(rf"^Điều {n}(?:\D|$)", item.chunk.locator) for n in affected_articles)
                     if affected and relation["source_id"] not in cited_documents:
                         structural_issues.append(f"Claim {index}: điều khoản có sửa đổi/bãi bỏ một phần; cần dẫn cả văn bản tác động")
+        cited_ids={citation_id for claim in draft.claims for citation_id in claim.citation_ids}
+        selected=[item for item in state['evidence'] if item.chunk.id in cited_ids]
+        spans=source_spans(selected)
+        verification_context=[item for item in self.context(state) if not cited_ids or item['citation_id'] in cited_ids]
+        aliases={item['citation_id']:f'C{index+1}' for index,item in enumerate(verification_context)}
+        actual={value:key for key,value in aliases.items()}
+        span_aliases={key:f'S{index+1}' for index,key in enumerate(spans)}
+        actual_spans={value:key for key,value in span_aliases.items()}
+        checked_draft=draft.model_dump()
+        for claim in checked_draft['claims']:
+            claim['citation_ids']=[aliases.get(key,key) for key in claim['citation_ids']]
+        model_context=[{**item,'citation_id':aliases[item['citation_id']]} for item in verification_context]
+        model_spans=[{**item,'span_id':span_aliases[key],'citation_id':aliases[item['citation_id']]} for key,item in spans.items()]
         checked = await self.provider.generate(Verification,
+            "You are an evidence verifier. For EVERY supported claim, select supporting_spans using span_id "
+            "from source_spans that actually proves that claim and every citation_id. Never invent a span_id. "
+            "The server extracts its exact original source text; do not paraphrase it as a quote. "
+            "Do not confirm a claim if the selected span only names a law or fails to prove the asserted rule. "
+            "You may alternatively return supporting_quotes, but quote MUST be copied verbatim from evidence.text, "
+            "never from draft.claims.text. An as_of observation date can be inferred from verified effectivity "
+            "dates and relationships; an asserted commencement date must appear in the operative source. "
             "Đối chiếu từng claim với đúng đoạn trích và thời điểm. Chỉ đưa index vào supported_claim_indexes nếu "
             "chứng cứ hỗ trợ đầy đủ nội dung, phạm vi và tính áp dụng. Kiểm tra summary và next_steps: nếu có kết luận "
             "pháp lý chưa dẫn nguồn, ghi issues. Không xác nhận current từ đoạn unverified. historical chỉ hỗ trợ câu "
@@ -449,9 +506,19 @@ class Agent:
             "Quote phải chứng minh nội dung claim tương ứng; đoạn mở đầu/căn cứ tên văn bản không chứng minh điều khoản ở trang khác. "
             "Không có quote chứng minh thì bỏ index và yêu cầu truy xuất bổ sung. Nếu đáp án bỏ sót câu hỏi trực tiếp, ghi issues để sửa.",
             {"question": redact(state["request"].message), "as_of": str(state["as_of"]),
-             "draft": draft.model_dump(), "evidence": self.context(state),
+             "draft": checked_draft, "evidence": model_context,'source_spans':model_spans,
              "coverage_gaps": (state['release'] or {}).get('coverage_gaps', []),
              "unresolved_relations": (state['release'] or {}).get('unresolved_relations', [])}, state["budget"])
+        checked.supporting_quotes=[quote.model_copy(update={'citation_id':actual.get(quote.citation_id,quote.citation_id)})
+                                   for quote in checked.supporting_quotes]
+        for reference in checked.supporting_spans:
+            reference=reference.model_copy(update={'citation_id':actual.get(reference.citation_id,reference.citation_id),
+                'span_id':actual_spans.get(reference.span_id,reference.span_id)})
+            span=spans.get(reference.span_id)
+            if (span and span['citation_id']==reference.citation_id and reference.claim_index<len(draft.claims)
+                    and reference.citation_id in draft.claims[reference.claim_index].citation_ids):
+                checked.supporting_quotes.append(SupportingQuote(claim_index=reference.claim_index,
+                    citation_id=reference.citation_id,quote=span['quote']))
         checked.issues = structural_issues + checked.issues
         for index,claim in enumerate(draft.claims):
             proven = {q.citation_id for q in checked.supporting_quotes if q.claim_index==index
@@ -514,6 +581,10 @@ class Agent:
         if stale and state["as_of"] >= local_date():
             status = "insufficient_evidence"
             claims, citations = [], []
+        outside=state['plan'].out_of_scope or draft.out_of_scope
+        if outside:
+            status='insufficient_evidence'
+            claims,citations=[],[]
         # Only verified content is rendered. Never pass unchecked summary/next_steps on a failed verification.
         # Summary prose is never treated as an unchecked place to smuggle legal assertions.
         intro = {"answered": "Đã đối chiếu các căn cứ dưới đây.",
@@ -522,9 +593,12 @@ class Agent:
         if stale and state["as_of"] >= local_date():
             intro = "Bộ dữ liệu đã quá bảy ngày chưa được kiểm tra nguồn; chưa thể xác nhận quy định hiện hành."
         content = intro
+        if outside:
+            content='Câu hỏi nằm ngoài phạm vi pháp luật đất đai và quy hoạch Hà Nội.'
         if claims:
             content += "\n\n" + "\n\n".join(c.text + " " + " ".join(f"[{cited_ids.index(i)+1}]" for i in c.citation_ids) for c in claims)
         missing = list(dict.fromkeys(state["plan"].missing_facts + draft.missing_facts))
+        if outside:missing=[]
         if missing and status == "answered":
             status = "clarification_needed"
             content = content.replace("Đã đối chiếu các căn cứ dưới đây.", "Cần bổ sung dữ kiện để xác định quy định áp dụng cho hồ sơ cụ thể.", 1)
@@ -534,7 +608,7 @@ class Agent:
             for number in ('40/2026','56/2024'))
         if historical_question and any(g['document_id']=='qd-56-2024-hanoi' for g in (release or {}).get('coverage_gaps',[])):
             content+='\n\nBộ dữ liệu chưa có toàn văn đạt kiểm tra của QĐ56/2024; chưa thể xác định đầy đủ quyền lợi hồ sơ lịch sử phụ thuộc văn bản này.'
-        if draft.next_steps and not check.issues:
+        if draft.next_steps and not check.issues and not outside:
             content += "\n\nBước tiếp theo:\n" + "\n".join(f"- {x}" for x in draft.next_steps)
         content += f"\n\nThời điểm xem xét: {state['as_of'].strftime('%d/%m/%Y')}."
         if release:

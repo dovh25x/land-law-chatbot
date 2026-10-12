@@ -37,7 +37,15 @@ def hash_ip(ip: str, secret: str) -> str:
 def redact(text: str) -> str:
     """Conservative pattern redaction; not a guarantee of anonymisation."""
     text = re.sub(r"[\w.+-]+@[\w.-]+\.[A-Za-z]{2,}", "[EMAIL ĐÃ ẨN]", text)
-    text = re.sub(r"(?<!\d)(?:\+84|0)[\d .-]{8,14}\d(?!\d)", "[SỐ LIÊN HỆ ĐÃ ẨN]", text)
+    def phone(match):
+        value=match[0]
+        digits=re.sub(r'\D','',value)
+        length=len(digits)
+        valid=length in ({11,12} if value.startswith('+84') else {10,11})
+        # Numeric legal dates (including a following PDF page number) are not contacts.
+        date_like=re.search(r'\b\d{1,2}\s*[-/]\s*\d{1,2}\s*[-/]\s*(?:19|20)\d{2}\b',value)
+        return '[SỐ LIÊN HỆ ĐÃ ẨN]' if valid and not date_like else value
+    text = re.sub(r"(?<!\d)(?:\+84|0)[\d .-]{8,14}\d(?!\d)", phone, text)
     text = re.sub(r"(?<!\d)\d{12}(?!\d)", "[ĐỊNH DANH ĐÃ ẨN]", text)
     return text
 

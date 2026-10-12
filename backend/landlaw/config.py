@@ -10,7 +10,7 @@ class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
     app_env: str = "development"
     gemini_api_key: SecretStr = SecretStr("")
-    gemini_model: str = "gemini-3.8-flash"
+    gemini_model: str = "gemini-3.5-flash-lite"
     llm_provider: Literal['gemini', 'cloudflare'] = 'gemini'
     cloudflare_llm_model: Literal['@cf/qwen/qwen3-30b-a3b-fp8'] = '@cf/qwen/qwen3-30b-a3b-fp8'
     embedding_model: str = "gemini-embedding-2"
