@@ -17,9 +17,8 @@ def main():
     desired = {'APP_ENV':'production','DATABASE_URL':settings.database_url.get_secret_value(),
         'GEMINI_API_KEY':settings.gemini_api_key.get_secret_value(),'IP_HASH_SECRET':settings.ip_hash_secret.get_secret_value(),
         'CORS_ORIGINS':origin,'GEMINI_MODEL':settings.gemini_model,'EMBEDDING_MODEL':settings.embedding_model,
-        'GLOBAL_DAILY_LLM_LIMIT':str(settings.global_daily_llm_limit),
-        'GLOBAL_DAILY_EMBEDDING_LIMIT':str(settings.global_daily_embedding_limit),
-        'GLOBAL_DAILY_EMBEDDING_ITEM_LIMIT':str(settings.global_daily_embedding_item_limit),
+        'EMBEDDING_PROVIDER':settings.embedding_provider,'EMBEDDING_DIMENSIONS':str(settings.embedding_dimensions),
+        'CLOUDFLARE_ACCOUNT_ID':settings.cloudflare_account_id,'CLOUDFLARE_AI_API_TOKEN':settings.cloudflare_ai_api_token.get_secret_value(),
         'TRUST_PROXY_HEADERS':'false','MAX_CONCURRENT_REQUESTS':'2','TURN_TIMEOUT_SECONDS':'90','SESSION_RETENTION_DAYS':'7'}
     Settings(_env_file=None,**{key.lower():value for key,value in desired.items()})
     with httpx.Client(base_url='https://api.render.com/v1',timeout=45,headers={'Authorization':'Bearer '+token}) as client:
@@ -34,6 +33,8 @@ def main():
         if r.status_code != 200:
             raise SystemExit('Cannot inspect service environment')
         current = {item['envVar']['key']:item['envVar']['value'] for item in r.json()}
+        for key in ('GLOBAL_DAILY_LLM_LIMIT','GLOBAL_DAILY_EMBEDDING_LIMIT','GLOBAL_DAILY_EMBEDDING_ITEM_LIMIT'):
+            current.pop(key, None)
         current.update(desired)
         r = client.put(f'/services/{service_id}/env-vars',json=[{'key':k,'value':v} for k,v in current.items()])
         if r.status_code not in (200,201):

@@ -54,7 +54,7 @@ class PrivateArchive:
             existing = await self.client.get(f'{self.root}/object/authenticated/{self.bucket}/{path}')
             if existing.status_code == 200 and hashlib.sha256(existing.content).digest() == hashlib.sha256(content).digest():
                 return 'verified_existing'
-        raise ValueError('Private archive upload failed or immutable object differs')
+        raise ValueError(f'Private archive upload failed or immutable object differs: HTTP {r.status_code}')
 
     async def upload_files(self, files):
         await self.ensure_private()

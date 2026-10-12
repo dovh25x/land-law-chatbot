@@ -7,7 +7,7 @@ export interface Result { status: string; content: string; citations: Citation[]
 export interface Session { session_id: string; token: string }
 export interface LegalDocument { id: string; title: string; url: string; document_number?: string; source_kind: string; project?: ProjectID; checked_at: string; applicability_verified: boolean; effective_from?: string; effective_to?: string; chunks?: { id: string; locator: string; text: string }[] }
 export interface Project { id: ProjectID; name: string; description: string; source_ids: string[]; questions: string[] }
-export interface Readiness { status: string; database?: boolean; llm_configured?: boolean; corpus_release?: string; checked_at?: string }
+export interface Readiness { status: string; database?: boolean; llm_configured?: boolean; corpus_release?: string; checked_at?: string; publication_profile?: string; quality_status?: string; retrieval_mode?: string; coverage_gaps?: {document_id: string; title: string; reason: string}[] }
 
 export async function getJSON<T>(path: string, signal?: AbortSignal): Promise<T> {
   const res = await fetch(BASE + path, { signal })

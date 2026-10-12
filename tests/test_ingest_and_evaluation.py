@@ -27,8 +27,8 @@ def test_attachment_pages_have_unique_ids_and_price_table_rows_survive():
     chunks = chunks_for("prices", [(1, table), (1, table)])
     assert len({c.id for c in chunks}) == len(chunks)
     assert all(c.page == 1 for c in chunks)
-    assert all("Đơn vị tính" in c.text and "STT    Tên đường" in c.text for c in chunks)
-    assert any("1      Đường A       12345" in c.text for c in chunks)
+    assert all("Đơn vị tính" in c.text and "STT   Tên đường" in c.text for c in chunks)
+    assert any("1   Đường A   12345" in c.text for c in chunks)
 
 
 def test_aspnet_form_preserves_article_and_excludes_navigation():
@@ -54,10 +54,10 @@ def test_table_marker_cache_does_not_turn_prose_into_table_or_repeat_rows():
     assert all("[BẢNG" not in c.text for c in chunks_for("law", [(1, "[BẢNG / ĐƠN GIÁ — giữ dòng, tiêu đề, đơn vị; đối chiếu trang gốc]\n"+prose)]))
     table = "Đơn vị tính: nghìn đồng/m2\nSTT    Tên đường    Mức giá\n1      Đường A       12345\n2      Đường B       67890\n"
     chunk = chunks_for("prices", [(1, table)])[0]
-    assert chunk.text.count("1      Đường A       12345") == 1
-    assert "STT    Tên đường" in chunk.text
+    assert chunk.text.count("1   Đường A   12345") == 1
+    assert "STT   Tên đường" in chunk.text
     many = chunks_for("prices", [(1, table+"3      Đường C       99999\n"*120)])
-    assert sum(c.text.count("1      Đường A       12345") for c in many if not c.id.endswith("parent")) == 1
+    assert sum(c.text.count("1   Đường A   12345") for c in many if not c.id.endswith("parent")) == 1
 
 
 def test_source_allowlist_and_personal_identifier_redaction():

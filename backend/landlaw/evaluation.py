@@ -26,7 +26,8 @@ def summarise(records, cases, fingerprint, reviews=None):
     for mode in ("baseline", "agentic"):
         items = [r for r in records if r["mode"] == mode]
         latencies, recalls, scores, support = [], [], [], []
-        critical_failed, reviewed, valid = [], 0, 0
+        critical_failed, reviewed, valid, unsupported = [], 0, 0, 0
+        review_notes_complete = True
         for item in items:
             case, result = by_id[item["case_id"]], item["result"]
             result_hash = hashlib.sha256(json.dumps(result, sort_keys=True, ensure_ascii=False).encode()).hexdigest()
@@ -43,6 +44,9 @@ def summarise(records, cases, fingerprint, reviews=None):
                 reviewed += 1
                 scores.append(bool(review.get("passed")))
                 support.extend(review.get("claim_support", []))
+                unsupported += sum(not value for value in review.get('claim_support', []))
+                review_notes_complete &= bool(review.get('source_checked') and review.get('notes')
+                    and len(review.get('claim_support', [])) == len(result.get('verified_claims', [])))
                 if case.get("critical") and not review.get("passed"):
                     critical_failed.append(case["id"])
         p95 = sorted(latencies)[math.ceil(len(latencies)*.95)-1] if latencies else None
@@ -51,6 +55,7 @@ def summarise(records, cases, fingerprint, reviews=None):
             "answer_pass_rate": statistics.mean(scores) if scores else None,
             "citation_id_valid_rate": valid/len(items) if items else None,
             "claim_support_rate": statistics.mean(support) if support else None,
+            "unsupported_claims": unsupported, "source_review_complete": reviewed == len(cases) and review_notes_complete,
             "p95_seconds": p95, "llm_calls": sum(r["result"]["llm_calls"] for r in items),
             "embedding_calls": sum(r['result'].get('embedding_calls',0) for r in items),
             "tool_calls": sum(r["result"]["tool_calls"] for r in items), "critical_failed": critical_failed,
@@ -67,15 +72,16 @@ def summarise(records, cases, fingerprint, reviews=None):
 
 
 def configuration_fingerprint(settings):
-    files = [Path(__file__).with_name(name) for name in ("agent.py", "provider.py", "store.py", "config.py")]
+    files = [Path(__file__).with_name(name) for name in ("agent.py", "provider.py", "embedding.py", "store.py", "config.py", "publication.py", "models.py", "security.py")]
     configuration = {"model": settings.gemini_model, "embedding_model": settings.embedding_model,
-                     "dimensions": settings.embedding_dimensions, "timeout_seconds": settings.turn_timeout_seconds,
+                     "dimensions": settings.embedding_dimensions, 'embedding_provider':settings.embedding_provider,
+                     "timeout_seconds": settings.turn_timeout_seconds,
                      "llm_budget": 6, "tool_budget": 12, "retrieval_rounds": 2}
     return hashlib.sha256(json.dumps(configuration, sort_keys=True).encode()+b"".join(p.read_bytes() for p in files)).hexdigest()
 
 
 async def evaluate(settings, store, provider, split="dev", release_id=None, limit=None):
-    path = settings.data_dir / "evaluation/questions.jsonl"
+    path = settings.data_dir / ('evaluation/smoke.jsonl' if split=='smoke' else 'evaluation/questions.jsonl')
     fingerprint = hashlib.sha256(path.read_bytes()).hexdigest()
     cases = [c for c in dataset(path) if c["split"] == split]
     if not provider.configured:
@@ -93,36 +99,51 @@ async def evaluate(settings, store, provider, split="dev", release_id=None, limi
     agent, executed = Agent(store, provider), 0
     async def emit(_):
         pass
-    for case in cases:
-        for mode in ("baseline", "agentic"):
-            if any(r["case_id"] == case["id"] and r["mode"] == mode and r["result"]["status"] not in {"limited", "error"} for r in records):
-                continue
-            if limit is not None and executed >= limit:
-                break
-            session_id = str(uuid.uuid4())
-            await asyncio.to_thread(store.create_session, session_id, new_token())
-            request = ChatRequest(session_id=session_id, message=case["question"], project=case.get("project"),
-                                  as_of=case.get("as_of") or metadata["as_of"], mode=mode)
-            result = await agent.run(request, emit, release["id"])
-            records = [r for r in records if not (r["case_id"] == case["id"] and r["mode"] == mode)]
-            records.append({"case_id": case["id"], "mode": mode, "result": result.model_dump(mode="json")})
-            json_write(records_path, records)
-            executed += 1
-            if result.status == "limited":
-                break
-            await asyncio.sleep(1)
-        if (limit is not None and executed >= limit) or (records and records[-1]["result"]["status"] == "limited"):
+    pending = [(case,mode) for case in cases for mode in ('baseline','agentic')
+        if not any(r['case_id']==case['id'] and r['mode']==mode and r['result']['status'] not in {'limited','error'} for r in records)]
+    if limit is not None:
+        pending=pending[:limit]
+    async def execute(case,mode):
+        session_id = str(uuid.uuid4())
+        await asyncio.to_thread(store.create_session,session_id,new_token())
+        # Persist preceding turns only in this private benchmark session.
+        for turn in case.get('history',[]):
+            preceding = await agent.run(ChatRequest(session_id=session_id,message=turn,
+                project=case.get('project'),as_of=case.get('as_of') or metadata['as_of'],mode=mode),emit,release['id'])
+            await asyncio.to_thread(store.save_turn,session_id,turn,preceding)
+        result = await agent.run(ChatRequest(session_id=session_id,message=case['question'],
+            project=case.get('project'),as_of=case.get('as_of') or metadata['as_of'],mode=mode),emit,release['id'])
+        return {'case_id':case['id'],'mode':mode,'result':result.model_dump(mode='json')}
+    for start in range(0,len(pending),2):
+        results=await asyncio.gather(*(execute(c,m) for c,m in pending[start:start+2]))
+        for result in results:
+            records=[r for r in records if not (r['case_id']==result['case_id'] and r['mode']==result['mode'])]
+            records.append(result)
+            json_write(records_path,records)
+        if any(r['result']['status'] in {'limited','error'} for r in results):
             break
-    review_path = settings.data_dir / "evaluation/reviews.json"
+    review_path = settings.data_dir / ('evaluation/smoke-reviews.json' if split=='smoke' else 'evaluation/reviews.json')
     report = summarise(records, cases, fingerprint, json.loads(review_path.read_text()) if review_path.exists() else {})
     report.update({"run_id": run_id, "release": release["id"], "model": provider.settings.gemini_model,
                    "embedding_model": provider.settings.embedding_model, "split": split,
                    "corpus_embedded": release.get("embedded", False), "publication_candidate": False,
                    "notes": ["Development runs on incomplete staging cannot certify acceptance; query embedding failures fall back to lexical retrieval."], **metadata})
-    json_write(settings.reports_dir / "latest.json", report)
+    report['execution_concurrency'] = 2
+    report['acceptance_passed'] = bool(report['acceptance_passed'] and split=='acceptance'
+        and len(cases)==80 and all(c.get('ground_truth_status')=='source_checked' for c in cases)
+        and all(r['reviewed']==80 and r['source_review_complete'] for r in report['results']))
+    report['latency_scope'] = 'Paired CLI run, concurrency 2; public API single-user p95 measured separately.'
+    for name in ('source-audit','runtime-tests'):
+        evidence_path = settings.reports_dir/f'{name}.json'
+        evidence = json.loads(evidence_path.read_text()) if evidence_path.exists() else {}
+        field = name.replace('-','_')
+        report[field+'_passed'] = bool(evidence.get('passed') and evidence.get('release')==release['id']
+            and (name=='source-audit' or evidence.get('configuration_sha256')==configuration))
+        report[field+'_sha256'] = hashlib.sha256(evidence_path.read_bytes()).hexdigest() if evidence_path.exists() else None
+    json_write(settings.reports_dir / ('smoke.json' if split=='smoke' else 'latest.json'), report)
     from html import escape
     html = "<!doctype html><html lang='vi'><meta charset='utf-8'><title>Benchmark</title>"
     html += "<style>body{font:15px system-ui;max-width:1100px;margin:40px auto;padding:20px}pre{white-space:pre-wrap}</style>"
     html += "<h1>Báo cáo benchmark</h1><p>Kết quả chưa rà soát chưa chứng nhận chất lượng pháp lý.</p><pre>" + escape(json.dumps(report, ensure_ascii=False, indent=2)) + "</pre>"
-    (settings.reports_dir / "benchmark.html").write_text(html, encoding="utf-8")
+    (settings.reports_dir / ('smoke.html' if split=='smoke' else 'benchmark.html')).write_text(html, encoding="utf-8")
     return report

@@ -18,6 +18,7 @@ from pypdf import PdfReader
 from .config import Settings
 from .models import Chunk, Document, Relation
 from .provider import Gemini, ProviderUnavailable
+from .embedding import contract
 from .security import digest, normalize, official_url, public_ip_address, redact, utcnow
 from .store import RateLimited
 
@@ -170,7 +171,9 @@ def chunks_for(doc_id, pages):
             # Conservative estimate: Vietnamese words typically span multiple subword tokens.
             if table_layout(section):
                 # Preserve whole rows, spacing, units and page headers in price tables.
-                lines = section.splitlines()
+                # PDF layout may add thousands of padding spaces per row. Keep a
+                # column separator, every value and every row; never embed padding.
+                lines = [re.sub(r'[ \t]{3,}', '   ', line).rstrip() for line in section.splitlines()]
                 first_row = next((i for i, line in enumerate(lines)
                     if i >= 1 and re.match(r"^[ \t]*\d+[.)]?[ \t]{2,}\S", line)), min(8, len(lines)))
                 header_lines = lines[:first_row]
@@ -308,6 +311,52 @@ async def collect_source(source, settings, client, offline=False, allow_ocr=Fals
     return doc
 
 
+async def embed_pending(provider, pending, title, issues, doc_id):
+    """Checkpoint every successful batch, including peers of a throttled request."""
+    concurrency, successes, offset = 2, 0, 0
+    async def batch_run(batch):
+        throttled = False
+        for attempt in range(3):
+            try:
+                vectors = await provider.embed_many([c.text for c, _ in batch], title=title)
+                for (chunk, checkpoint), vector in zip(batch, vectors, strict=True):
+                    chunk.embedding = vector
+                    json_write(checkpoint, {"embedding": vector})
+                return len(batch), throttled
+            except RateLimited as exc:
+                throttled = True
+                if exc.retry_after > 60 or attempt == 2:
+                    raise
+                await asyncio.sleep(exc.retry_after)
+            except ProviderUnavailable as exc:
+                if not exc.retryable or attempt == 2:
+                    raise
+                await asyncio.sleep(exc.retry_after or 2 ** attempt)
+    while offset < len(pending):
+        batches = [pending[start:start+8] for start in range(offset, min(len(pending),offset+8*concurrency),8)]
+        results = await asyncio.gather(*(batch_run(b) for b in batches), return_exceptions=True)
+        blocked = False
+        for result in results:
+            if isinstance(result, BaseException):
+                if not isinstance(result, (RateLimited, ProviderUnavailable)):
+                    raise result
+                issues.append({"id": doc_id, "reason": "Embedding provider blocked; checkpoint resume required",
+                    "retry_after": getattr(result, 'retry_after', None), "quota_source": getattr(result, 'source', None),
+                    "error_type": type(result).__name__, "quarantined": False})
+                blocked = True
+            else:
+                successes += 1
+        if blocked:
+            return True
+        offset += sum(len(b) for b in batches)
+        if any(result[1] for result in results if isinstance(result, tuple)):
+            concurrency, successes = max(1, concurrency // 2), 0
+        elif successes >= 10:
+            concurrency = min(8, concurrency*2)
+            successes = 0
+    return False
+
+
 async def build_corpus(settings: Settings, provider: Gemini | None, offline=False, embed=False, allow_ocr=False, cached_embeddings_only=False):
     sources = json.loads((settings.data_dir / "sources.json").read_text())
     relations_path = settings.data_dir / "legal_relations.json"
@@ -330,34 +379,12 @@ async def build_corpus(settings: Settings, provider: Gemini | None, offline=Fals
                         key = digest(f"embedding-format-v1:{provider.settings.embedding_model}:{doc.title}:{chunk.checksum}")
                         checkpoint = settings.data_dir / "checkpoints" / f"{key}.json"
                         if checkpoint.exists():
-                            chunk.embedding = provider.normalize_vector(json.loads(checkpoint.read_text())["embedding"])
+                            chunk.embedding = provider.normalize_vector(json.loads(checkpoint.read_text())["embedding"],settings.embedding_dimensions)
                         else:
                             pending.append((chunk, checkpoint))
                         chunk.embedding_model = provider.settings.embedding_model
-                    for start in range(0, len(pending), 8):
-                        if embedding_blocked:
-                            break
-                        batch = pending[start:start+8]
-                        for attempt in range(3):
-                            try:
-                                vectors = await provider.embed_many([c.text for c, _ in batch], title=doc.title)
-                                break
-                            except RateLimited as exc:
-                                if exc.retry_after > 60 or attempt == 2:
-                                    embedding_blocked = True
-                                    issues.append({"id": doc.id, "reason": "Embedding quota reached; checkpoint resume required", "retry_after": exc.retry_after, "quarantined": False})
-                                    break
-                                await asyncio.sleep(exc.retry_after)
-                            except ProviderUnavailable:
-                                embedding_blocked = True
-                                issues.append({"id": doc.id, "reason": "Embedding provider unavailable; checkpoint resume required", "quarantined": False})
-                                break
-                        if embedding_blocked:
-                            break
-                        for (chunk, checkpoint), vector in zip(batch, vectors, strict=True):
-                            chunk.embedding = vector
-                            json_write(checkpoint, {"embedding": vector})
-                        await asyncio.sleep(.2)
+                    if not embedding_blocked:
+                        embedding_blocked = await embed_pending(provider, pending, doc.title, issues, doc.id)
                     if any(c.embedding is None for c in doc.chunks):
                         issues.append({"id": doc.id, "reason": "Parsed staging document has incomplete embeddings; publication blocked", "quarantined": False})
                 item = doc.model_dump(mode="json")
@@ -375,11 +402,20 @@ async def build_corpus(settings: Settings, provider: Gemini | None, offline=Fals
             issues.append({"id": relation["target_id"], "reason": "Relation endpoint missing from corpus", "quarantined": True})
     aliases_path = settings.data_dir / "place_aliases.json"
     aliases = json.loads(aliases_path.read_text()) if aliases_path.exists() else []
+    unresolved = [r for r in relations if r['source_id'] not in document_ids or r['target_id'] not in document_ids]
+    gaps = [{"document_id":s['id'], "document_number":s.get('document_number'), "title":s['title'],
+             "url":s.get('publication_url') or s['url'],
+             "reason":"Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."}
+            for s in sources if s['id'] not in document_ids]
+    embedding_contract = contract(settings)
     content_hash = digest(json.dumps({"documents": documents, "relations": valid_relations,
-        "place_aliases": aliases, "embedding_model": settings.embedding_model, "parser_version": 6}, sort_keys=True, ensure_ascii=False))[:16]
+        "unresolved_relations":unresolved,'coverage_gaps':gaps,'embedding_contract':embedding_contract,
+        "place_aliases": aliases, "embedding_model": settings.embedding_model, "parser_version": 7}, sort_keys=True, ensure_ascii=False))[:16]
     payload = {"id": f"corpus-{content_hash}", "checked_at": min((d["checked_at"] for d in documents), default=utcnow().isoformat()), "documents": documents,
                "relations": valid_relations, "place_aliases": aliases, "embedding_model": settings.embedding_model,
-               "embedding_dimensions": 768, "embedded": bool(documents and all(c.get("embedding") for d in documents for c in d["chunks"]))}
+               "embedding_dimensions":settings.embedding_dimensions,'embedding_contract':embedding_contract,
+               "embedded": bool(documents and all(c.get("embedding") for d in documents for c in d["chunks"])),
+               "unresolved_relations":unresolved, "coverage_gaps":gaps}
     report = coverage(payload, issues)
     json_write(settings.data_dir / "staging" / f"{payload['id']}.json", payload)
     json_write(settings.reports_dir / "corpus-coverage.json", report)
@@ -391,7 +427,8 @@ def coverage(payload, issues=None):
     legal = sum(d["source_kind"] == "legal" for d in docs)
     projects = {p: sum(d.get("project") == p for d in docs) for p in ("ring4", "songhong", "olympic")}
     verified = sum(d.get("applicability_verified", False) for d in docs if d["source_kind"] == "legal")
-    embedded = all(c.get("embedding") and len(c["embedding"]) == 768 for d in docs for c in d["chunks"])
+    dimensions = payload.get('embedding_dimensions',768)
+    embedded = all(c.get("embedding") and len(c["embedding"]) == dimensions for d in docs for c in d["chunks"])
     mandatory = {"luat-dat-dai-2024", "nd-88-2024", "nd-226-2025", "qd-56-2024-hanoi", "qd-40-2026-hanoi", "nq-52-2025-hanoi"}
     missing = sorted(mandatory - {d["id"] for d in docs})
     return {"release": payload["id"], "documents": len(docs), "legal": legal, "verified_legal": verified,

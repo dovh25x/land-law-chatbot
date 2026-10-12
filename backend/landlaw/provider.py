@@ -11,10 +11,13 @@ from pydantic import BaseModel
 from .config import Settings
 from .security import utcnow
 from .store import RateLimited, Store
+from .embedding import contract, CloudflareEmbeddings
 
 
 class ProviderUnavailable(Exception):
-    pass
+    def __init__(self, message, retryable=False, retry_after=None):
+        self.retryable, self.retry_after = retryable, retry_after
+        super().__init__(message)
 
 
 class BudgetExceeded(Exception):
@@ -53,13 +56,30 @@ Không tiết lộ suy nghĩ nội bộ. Chỉ báo quyết định công cụ, 
 """
 
 
+def generation_schema(schema):
+    """Keep types/enums for decoding, validate bounds strictly with Pydantic.
+
+    Gemini rejects some deeply nested bounded string/array grammars with 400.
+    Removing decoding bounds never removes server-side validation.
+    """
+    def simplify(value):
+        if isinstance(value,dict):
+            return {key:simplify(item) for key,item in value.items()
+                    if key not in {'maxLength','minLength','maxItems','minItems','minimum','maximum'}}
+        if isinstance(value,list): return [simplify(item) for item in value]
+        return value
+    return simplify(schema.model_json_schema())
+
+
 class Gemini:
     def __init__(self, settings: Settings, store: Store, client: httpx.AsyncClient | None = None):
         self.settings, self.store = settings, store
         self.client = client or httpx.AsyncClient(timeout=25, limits=httpx.Limits(max_connections=6))
-        for name in (settings.gemini_model, settings.embedding_model):
+        for name in (settings.gemini_model,):
             if not re.fullmatch(r"[a-zA-Z0-9._-]+", name):
                 raise ValueError("Invalid model identifier")
+        contract(settings)
+        self.cloudflare_embeddings = CloudflareEmbeddings(settings,self.client,self.record_usage,self.normalize_vector)
 
     @property
     def configured(self):
@@ -68,14 +88,12 @@ class Gemini:
     async def close(self):
         await self.client.aclose()
 
-    async def reserve(self, kind, limit):
-        await asyncio.to_thread(self.store.consume, [(f"{kind}:{utcnow().date()}", limit, 86400)])
+    async def record_usage(self, kind, units=1):
+        await asyncio.to_thread(self.store.record_usage, kind, units)
 
     async def reserve_embeddings(self, items):
-        day = utcnow().date()
-        await asyncio.to_thread(self.store.consume_weighted,
-            [(f'embedding:{day}',self.settings.global_daily_embedding_limit,86400,1),
-             (f'embedding-items:{day}',self.settings.global_daily_embedding_item_limit,86400,items)])
+        await self.record_usage('embedding-requests')
+        await self.record_usage('embedding-items', items)
 
     async def _request(self, model, operation, body):
         if not self.configured:
@@ -86,7 +104,7 @@ class Gemini:
                 headers={"x-goog-api-key": self.settings.gemini_api_key.get_secret_value()}, json=body,
             )
         except httpx.HTTPError:
-            raise ProviderUnavailable("Không kết nối được Gemini") from None
+            raise ProviderUnavailable("Không kết nối được Gemini", retryable=True) from None
         if response.status_code == 429:
             retry = response.headers.get("retry-after")
             if not retry:
@@ -98,10 +116,10 @@ class Gemini:
                 seconds = math.ceil(float(retry))
             except (ValueError, TypeError):
                 seconds = 60
-            raise RateLimited(min(86400, max(1, seconds)))
+            raise RateLimited(min(86400, max(1, seconds)), source='provider')
         if response.status_code >= 400:
             # Never expose provider body: it can echo prompts, credentials or account identifiers.
-            raise ProviderUnavailable(f"Gemini trả HTTP {response.status_code}")
+            raise ProviderUnavailable(f"Gemini trả HTTP {response.status_code}", retryable=response.status_code>=500) from None
         return response.json()
 
     async def generate(self, schema: type[BaseModel], instruction: str, payload: dict, budget: Budget):
@@ -109,57 +127,82 @@ class Gemini:
             "systemInstruction": {"parts": [{"text": SYSTEM_BOUNDARY + instruction}]},
             "contents": [{"role": "user", "parts": [{"text": json.dumps(payload, ensure_ascii=False)}]}],
             "generationConfig": {"temperature": 0, "maxOutputTokens": 4096,
-                                 "responseMimeType": "application/json", "responseJsonSchema": schema.model_json_schema()},
+                                 "responseMimeType": "application/json", "responseJsonSchema": generation_schema(schema)},
         }
         if self.settings.gemini_model == "gemini-2.5-flash":
             body["generationConfig"]["thinkingConfig"] = {"thinkingBudget": 512}
-        for attempt in range(2):
+        schema_failures = 0
+        for attempt in range(3):
             budget.llm()
-            await self.reserve("llm", self.settings.global_daily_llm_limit)
-            result = await self._request(self.settings.gemini_model, "generateContent", body)
+            await self.record_usage("llm")
+            try:
+                result = await self._request(self.settings.gemini_model, "generateContent", body)
+            except RateLimited as exc:
+                remaining = self.settings.turn_timeout_seconds - (time.monotonic()-budget.started)
+                if exc.retry_after > min(60,remaining-15) or attempt == 2:
+                    raise
+                await asyncio.sleep(exc.retry_after)
+                continue
+            except ProviderUnavailable as exc:
+                if not exc.retryable or attempt == 2:
+                    raise
+                await asyncio.sleep(exc.retry_after or 2 ** attempt)
+                continue
             budget.tokens += result.get("usageMetadata", {}).get("totalTokenCount", 0)
+            await self.record_usage('tokens', result.get("usageMetadata", {}).get("totalTokenCount", 0))
             try:
                 candidate = result["candidates"][0]
                 text = "".join(part.get("text", "") for part in candidate["content"]["parts"] if not part.get("thought"))
                 return schema.model_validate_json(text)
             except (KeyError, IndexError, ValueError):
-                if attempt:
+                schema_failures += 1
+                if schema_failures >= 2 or attempt == 2:
                     raise ProviderUnavailable("Gemini không trả kết quả đúng schema") from None
-                # Retry once within the same turn/global budget. Never replay invalid model text as instructions.
+                # Retries count as actual calls inside the same per-turn budget.
                 body['systemInstruction']['parts'][0]['text'] += '\nLượt trước không khớp schema. Trả duy nhất JSON đúng responseJsonSchema; dùng đúng kiểu trường và giá trị enum, không có markdown.'
 
-    def embedding_body(self, text, title=None, query=False):
-        if self.settings.embedding_model == "gemini-embedding-001":
+    def embedding_body(self, text, title=None, query=False, model=None):
+        model = model or self.settings.embedding_model
+        if model == "gemini-embedding-001":
             formatted = text
-            body = {"model": f"models/{self.settings.embedding_model}", "content": {"parts": [{"text": formatted}]},
+            body = {"model": f"models/{model}", "content": {"parts": [{"text": formatted}]},
                     "taskType": "RETRIEVAL_QUERY" if query else "RETRIEVAL_DOCUMENT", "outputDimensionality": 768}
             if title and not query:
                 body["title"] = title
         else:
             formatted = f"task: question answering | query: {text}" if query else f"title: {title or 'none'} | text: {text}"
-            body = {"model": f"models/{self.settings.embedding_model}", "content": {"parts": [{"text": formatted}]},
+            body = {"model": f"models/{model}", "content": {"parts": [{"text": formatted}]},
                     "outputDimensionality": 768}
         return body
 
     @staticmethod
-    def normalize_vector(values):
-        if len(values) != 768 or not all(isinstance(x, (float, int)) and math.isfinite(x) for x in values):
-            raise ProviderUnavailable("Embedding không đúng 768 chiều hữu hạn")
+    def normalize_vector(values, dimensions=768):
+        if dimensions not in {768,1024} or len(values) != dimensions or not all(isinstance(x, (float, int)) and math.isfinite(x) for x in values):
+            raise ProviderUnavailable(f"Embedding không đúng {dimensions} chiều hữu hạn")
         norm = math.sqrt(sum(x*x for x in values))
         if norm == 0:
             raise ProviderUnavailable("Embedding rỗng")
+        # Preserve already-normalized checkpoint bytes: repeated ingestion must
+        # not mint new releases from floating-point renormalization noise.
+        if abs(norm - 1.0) < 1e-6:
+            return list(values)
         return [x/norm for x in values]
 
-    async def embed(self, text, title=None, query=False, budget=None):
+    async def embed(self, text, title=None, query=False, budget=None, release=None):
         if budget:
             budget.embedding_calls += 1
+        selected = contract(self.settings,release)
+        if selected['provider']=='cloudflare':
+            return (await self.cloudflare_embeddings.embed_many([text],title,query))[0]
         await self.reserve_embeddings(1)
-        result = await self._request(self.settings.embedding_model, "embedContent", self.embedding_body(text, title, query))
+        result = await self._request(selected['model'], "embedContent", self.embedding_body(text, title, query,selected['model']))
         return self.normalize_vector(result.get("embedding", {}).get("values", []))
 
     async def embed_many(self, texts: list[str], title=None):
         if not 1 <= len(texts) <= 8:
             raise ValueError("Embedding batches must contain 1–8 independent chunks")
+        if self.settings.embedding_provider=='cloudflare':
+            return await self.cloudflare_embeddings.embed_many(texts,title)
         await self.reserve_embeddings(len(texts))
         # Each request holds a distinct Content. Multiple Parts in one Content would aggregate into one vector.
         result = await self._request(self.settings.embedding_model, "batchEmbedContents",

@@ -18,3 +18,5 @@ jobs:
       - run: pytest -q
       - run: npm ci && npm test && npm run build
         working-directory: frontend
+      - run: npx playwright install --with-deps chromium && npx playwright test
+        working-directory: frontend

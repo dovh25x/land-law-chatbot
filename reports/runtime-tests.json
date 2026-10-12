@@ -1,0 +1,15 @@
+{
+  "passed": true,
+  "release": "corpus-7ad6a91c3e015adb",
+  "checked_at": "2026-10-12T17:36:37.789117+00:00",
+  "configuration_sha256": "13402cade111cb471256bd46a7d433a0af54a92e175e2f6e1ac0330bd5206b90",
+  "checks": {
+    "backend_tests": 48,
+    "frontend_protocol_tests": 2,
+    "desktop_mobile_browser_tests": 6,
+    "secret_scan": true,
+    "postgres_live": true,
+    "ingestion_idempotent": true
+  },
+  "scope": "Executed pytest, Vitest, Playwright desktop/mobile, secret scan, live PostgreSQL and cached ingestion; cloud deployment/recovery tracked separately."
+}

@@ -1,6 +1,8 @@
 # Bằng chứng triển khai
 
-Cập nhật ngày 12/10/2026 (giờ Hà Nội). Kế hoạch M0–M6 chưa hoàn tất; không công bố corpus hoặc chứng nhận chất lượng khi chưa qua gate.
+Cập nhật trong đợt tăng tốc bắt đầu 12/10/2026 16:44 UTC; hạn ưu tiên 13/10/2026 07:44 UTC. Kế hoạch M0–M6 chưa hoàn tất. Cho phép demo sau gate riêng; nghiệm thu đầy đủ vẫn giữ tiêu chí gốc.
+
+Đợt tăng tốc: bỏ trần gọi API theo ngày trong ứng dụng/Render/Actions, gọi Workers AI BGE-M3 thật sau Gemini quota dài hạn. Đủ 5.250 vector 1024 chiều, 46 tài liệu (31 legal; 5 mỗi dự án), release staging `corpus-7ad6a91c3e015adb`. Chạy lại cached ingestion tái tạo đúng ID. Source audit checksum/locator/provenance pass. Migration hai chiều đã áp dụng trên Supabase; database khoảng 290 MB dưới reserve 350 MB. Bộ smoke 20 ca đã đối chiếu nguồn đang chạy/review với provider thật; chưa công bố trước khi gate đạt. 48 pytest, 2 Vitest và 6 Playwright desktop/mobile pass. Khôi phục PostgreSQL độc lập và deployment mới đang được kiểm chứng.
 
 | Mốc | Trạng thái | Bằng chứng / việc còn thiếu |
 |---|---|---|
@@ -32,7 +34,7 @@ Lượt phát triển đầu tiên phát hiện tải archive vector quá lớn 
 ## Những việc còn chặn phát hành
 
 1. QĐ56/2024: attachment cổng Hà Nội đang là draft số/ngày trống. VBPL legacy bị chặn hoặc không có toàn văn tải được; không dùng draft hay search snippet làm corpus. Tìm kiếm Công báo ngày 12/10 theo từ khóa `56/2024` trả ba văn bản sửa đổi/đính chính, không có bản gốc. Mốc thay thế xác minh từ QĐ40/2026 không cung cấp nội dung lịch sử. Chi tiết tại [SOURCES](SOURCES.md).
-2. Gemini embedding Free đã trả daily quota 429. Parser v6 tái sử dụng 687 vector khớp nội dung; còn 4.563 đoạn. Tiếp tục khi provider cho phép, tối đa 900 input/ngày mặc định, không nâng phí. Retry-After/RetryInfo được giữ, không retry vòng lặp vô hạn.
+2. Embedding đã hoàn tất bằng BGE-M3 Workers AI, không còn chờ Gemini embedding. Còn gate smoke/review và triển khai cấu hình mới; không gọi API có phí. Các số vector trong bảng mốc bên trên là bằng chứng trước đợt tăng tốc; snapshot mới ở đoạn đầu và corpus-coverage.
 3. Bộ 120 câu (40 dev/80 acceptance) có rubric/reference draft. Cần source-check gold và rà soát kết quả thật; chưa có bằng chứng đạt Recall@8≥85%, rubric≥85%, claim support≥95%, critical temporal zero errors hoặc p95≤60s trên nghiệm thu.
 
 GitHub Secrets/Variables đã được cấu hình sau khi chủ tài khoản bổ sung quyền token. Lịch embedding và backup đã enabled; không tự công bố corpus. Đã chạy workflow thủ công thực tế: restore nguồn/seed, xử lý staging, dừng theo quota và upload artifact đều qua; backup mã hóa đã restore kiểm chứng. Lịch tự động vẫn không bảo đảm chạy đúng giờ.

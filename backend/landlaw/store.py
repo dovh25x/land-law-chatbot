@@ -1,5 +1,7 @@
 """Durable storage. SQLite is development-only; PostgreSQL is required in production."""
 import json
+import base64
+import gzip
 import math
 import re
 import sqlite3
@@ -38,9 +40,10 @@ CREATE INDEX IF NOT EXISTS message_session_idx ON messages(session_id,created_at
 
 
 class RateLimited(Exception):
-    def __init__(self, retry_after: int = 60):
+    def __init__(self, retry_after: int = 60, source: str = 'application'):
         self.retry_after = retry_after
-        super().__init__(f"Quota exceeded; retry_after={retry_after}s")
+        self.source = source
+        super().__init__(f"{source} quota exceeded; retry_after={retry_after}s")
 
 
 class Store:
@@ -66,10 +69,10 @@ class Store:
             self.conn = sqlite3.connect(str(path), check_same_thread=False, timeout=10)
             self.conn.row_factory = sqlite3.Row
             self.conn.executescript("PRAGMA foreign_keys=ON; PRAGMA journal_mode=WAL;" + SQLITE_SCHEMA)
-            self.conn.execute("""INSERT OR IGNORE INTO release_metadata
-                SELECT id,json_set(payload,'$.documents',(SELECT json_group_array(json_remove(value,'$.chunks'))
-                FROM json_each(payload,'$.documents'))) FROM releases
-                WHERE id NOT IN (SELECT id FROM release_metadata)""")
+            for row in self.conn.execute('SELECT id,payload FROM releases WHERE id NOT IN (SELECT id FROM release_metadata)').fetchall():
+                metadata = self.decode_release(row['payload'])
+                metadata['documents'] = [{k:v for k,v in d.items() if k!='chunks'} for d in metadata['documents']]
+                self.conn.execute('INSERT INTO release_metadata VALUES(?,?)',(row['id'],json.dumps(metadata,ensure_ascii=False)))
             self.conn.commit()
 
     def close(self):
@@ -173,6 +176,16 @@ class Store:
     def consume(self, limits: list[tuple[str, int, int]]):
         return self.consume_weighted([(key,limit,window,1) for key,limit,window in limits])
 
+    def record_usage(self, kind, units=1):
+        """Count provider usage without imposing an application quota."""
+        if units < 1:
+            return
+        now = utcnow()
+        with self.transaction() as conn:
+            self.execute(conn, """INSERT INTO counters(key,value,expires_at) VALUES(?,?,?)
+                ON CONFLICT(key) DO UPDATE SET value=counters.value+excluded.value""",
+                (f"usage:{kind}:{now.date()}", units, (now+timedelta(days=8)).isoformat()))
+
     def consume_weighted(self, limits: list[tuple[str,int,int,int]]):
         """Atomically reserve all counters or none, including across processes."""
         now = utcnow()
@@ -202,27 +215,37 @@ class Store:
             rows = self.rows("SELECT payload FROM release_metadata WHERE id=?", (release_id,))
         else:
             rows = self.rows("SELECT payload FROM releases WHERE id=?", (release_id,))
-        return json.loads(rows[0]["payload"]) if rows else None
+        if not rows:
+            return None
+        return json.loads(rows[0]['payload']) if metadata_only else self.decode_release(rows[0]['payload'])
+
+    @staticmethod
+    def decode_release(payload):
+        if payload.startswith('gzip:'):
+            payload = gzip.decompress(base64.b64decode(payload[5:])).decode()
+        return json.loads(payload)
 
     def stage(self, payload):
         release_id = payload["id"]
         serialized = json.dumps(payload, ensure_ascii=False)
+        # Vector archives compress well; metadata and searchable chunks remain separate.
+        archived = 'gzip:'+base64.b64encode(gzip.compress(serialized.encode(),mtime=0)).decode()
         if self.postgres:
             used = self.rows("SELECT pg_database_size(current_database()) AS size")[0]['size']
-            if used + len(serialized.encode()) * 2 > 350 * 1024 * 1024:
+            if used + len(archived.encode()) * 2 > 350 * 1024 * 1024:
                 raise ValueError("Staging would exceed the 350 MB database reserve; prune reviewed releases first")
         with self.transaction() as conn:
             if self.execute(conn, "SELECT id FROM releases WHERE id=?", (release_id,)).fetchone():
                 raise ValueError("Release already exists: immutable content cannot be overwritten")
             self.execute(conn, "INSERT INTO releases VALUES(?,?,?)", (
-                release_id, serialized, utcnow().isoformat()))
+                release_id, archived, utcnow().isoformat()))
             metadata = {**payload, "documents": [{k: v for k, v in d.items() if k != "chunks"} for d in payload["documents"]]}
             self.execute(conn, "INSERT INTO release_metadata VALUES(?,?)", (release_id, json.dumps(metadata, ensure_ascii=False)))
             document_rows, chunk_rows = [], []
             for item in payload["documents"]:
                 doc = Document.model_validate(item)
                 document_rows.append((
-                    release_id, doc.id, doc.model_dump_json(), doc.title, doc.document_number,
+                    release_id, doc.id, doc.model_copy(update={'chunks':[]}).model_dump_json(), doc.title, doc.document_number,
                     doc.project, doc.source_kind, doc.jurisdiction))
                 for raw in item["chunks"]:
                     chunk = Chunk.model_validate(raw)
@@ -240,12 +263,34 @@ class Store:
                 else:
                     conn.executemany(statement, records)
 
-    def publish(self, release_id):
+    def publication(self, release_id=None):
+        release_id = release_id or self.state('active_release')
+        for profile in ('accepted', 'demo'):
+            value = self.state(f'publication:{release_id}:{profile}') if release_id else None
+            if value:
+                return json.loads(value)
+        return None
+
+    def unpublish(self):
+        """Withdraw the first release without deleting sessions or corpus."""
+        with self.transaction() as conn:
+            self.execute(conn,"DELETE FROM app_state WHERE key='active_release'")
+
+    def publish(self, release_id, publication=None):
         release = self.release(release_id)
         if not release:
             raise ValueError("Unknown release")
         old = self.state("active_release")
         with self.transaction() as conn:
+            if publication:
+                if publication.get('profile') not in {'demo','accepted'}:
+                    raise ValueError('Invalid publication profile')
+                key = f"publication:{release_id}:{publication['profile']}"
+                value = json.dumps(publication,sort_keys=True,ensure_ascii=False)
+                existing = self.execute(conn,'SELECT value FROM app_state WHERE key=?',(key,)).fetchone()
+                if existing and existing['value'] != value:
+                    raise ValueError('Publication evidence is immutable')
+                self.execute(conn,'INSERT INTO app_state VALUES(?,?) ON CONFLICT(key) DO NOTHING',(key,value))
             if old:
                 self.execute(conn, "INSERT INTO app_state VALUES('previous_release',?) ON CONFLICT(key) DO UPDATE SET value=excluded.value", (old,))
             self.execute(conn, "INSERT INTO app_state VALUES('active_release',?) ON CONFLICT(key) DO UPDATE SET value=excluded.value", (release_id,))
@@ -329,9 +374,12 @@ class Store:
                     lexical += [r for r in fallback if r['id'] not in used][:20-len(lexical)]
             semantic = []
             if vector:
+                dimensions = len(vector)
+                if dimensions not in {768,1024}:
+                    raise ValueError('Unsupported query vector dimension')
                 semantic = self.rows(f"""SELECT {projection} FROM chunks c JOIN documents d ON d.id=c.document_id AND d.release_id=c.release_id
-                    WHERE c.release_id=? AND c.embedding IS NOT NULL AND c.embedding_model=?""" + scope_sql +
-                    " ORDER BY c.embedding <=> ?::vector LIMIT 20", (*params[:1], embedding_model, *params[1:], json.dumps(vector)))
+                    WHERE c.release_id=? AND c.embedding IS NOT NULL AND c.embedding_model=? AND vector_dims(c.embedding)={dimensions}""" + scope_sql +
+                    f" ORDER BY c.embedding::vector({dimensions}) <=> ?::vector({dimensions}) LIMIT 20", (*params[:1], embedding_model, *params[1:], json.dumps(vector)))
         else:
             candidates = self.rows("""SELECT c.* FROM chunks c JOIN documents d ON d.id=c.document_id AND d.release_id=c.release_id
                 WHERE c.release_id=?""" + scope_sql, params)
@@ -345,7 +393,8 @@ class Store:
                 def cosine(r):
                     v = json.loads(r["embedding"])
                     return sum(a*b for a, b in zip(v, vector, strict=True))
-                semantic = sorted((r for r in candidates if r["embedding"] and r["embedding_model"] == embedding_model), key=cosine, reverse=True)[:20]
+                semantic = sorted((r for r in candidates if r["embedding"] and r["embedding_model"] == embedding_model
+                    and len(json.loads(r['embedding']))==len(vector)), key=cosine, reverse=True)[:20]
         scores, rows_by_id = {}, {}
         for branch in (lexical, semantic, exact):
             for position, row in enumerate(branch, 1):
@@ -363,7 +412,7 @@ class Store:
     def backup(self, target: Path, include_sessions=False):
         # Only corpus/config; deliberately exclude session tokens and personal messages.
         payload = {"format": 1, "releases": self.rows("SELECT * FROM releases"),
-                   "state": self.rows("SELECT * FROM app_state WHERE key IN ('active_release','previous_release')")}
+                   "state": self.rows("SELECT * FROM app_state WHERE key IN ('active_release','previous_release') OR key LIKE 'publication:%'")}
         if include_sessions:
             from cryptography.fernet import Fernet
             key = self.settings.backup_encryption_key.get_secret_value()
@@ -392,7 +441,7 @@ class Store:
             raise ValueError("Unsupported backup format")
         for item in payload["releases"]:
             if not self.release(item["id"]):
-                self.stage(json.loads(item["payload"]))
+                self.stage(self.decode_release(item["payload"]))
         for item in payload["state"]:
             self.set_state(item["key"], item["value"])
         if payload.get("sessions"):

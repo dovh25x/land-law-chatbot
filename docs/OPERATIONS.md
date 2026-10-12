@@ -28,7 +28,7 @@ Workflow deploy thủ công dùng GitHub environment `production`: Secrets `REND
 
 ## Quota, timeout và bảo vệ API
 
-Mỗi phiên và nhóm IP: 3 lượt/phút, 20 lượt/ngày; toàn hệ thống tối đa hai lượt đang chạy. Bộ đếm dùng transaction SQL để không mất sau restart. API trả 429 với `Retry-After`; Gemini quota trả `limited`, timeout trả `error`. Mặc định tối đa 100 request LLM/ngày và 500 embedding request/ngày trong ứng dụng; batch tối đa tám vector/request. Retry tính vào bộ đếm. Đặt mức theo quota tài khoản thực tế, không tăng chỉ để che lỗi 429. Benchmark có checkpoint và có thể tiếp tục qua nhiều ngày trên cùng release/model/dataset.
+Mỗi phiên và nhóm IP: 3 lượt/phút, 20 lượt/ngày; toàn hệ thống tối đa hai lượt đang chạy. Bộ đếm dùng transaction SQL để không mất sau restart. API trả 429 với `Retry-After`; quota provider trả `limited`, timeout trả `error`. Không còn trần LLM/embedding theo ngày do ứng dụng đặt: bộ đếm `usage:*` chỉ ghi nhận, không chặn request. CLI ingestion/benchmark không chịu giới hạn chat phiên/IP. Giữ điểm dừng mỗi lượt: 6 lần gọi LLM (kể cả retry), 12 công cụ, hai vòng retrieval, 90 giây. Retry tạm thời tối đa ba lần và tuân thủ provider; quota dài hạn lưu checkpoint rồi dừng. Không chuyển sang API có phí.
 
 Render Free có cold start; frontend báo trạng thái khởi động, cho thử lại, chờ tối đa ba phút gồm khởi động. p95 benchmark chỉ đo backend sẵn sàng và lượt không cache; cold start cần smoke đo riêng. Không bật ping để né chính sách miễn phí. Supabase Free có thể pause; `/readyz` trả 503 khi dependency chưa sẵn sàng.
 
@@ -41,6 +41,8 @@ Ingress: `TRUST_PROXY_HEADERS=false` mặc định và Uvicorn `--no-proxy-heade
 Workflow `corpus.yml` kiểm tra hằng ngày, tải vào staging, không tự đổi active. Raw checksum khác bản đã rà soát làm cách ly; kiểm tra lại toàn văn, số/ngày, tỷ lệ/số tiền, trạng thái hiệu lực và quan hệ từng điều. OCR sidecar phải có checksum PDF/OCR, đủ trang và review; không dựa vào việc chạy OCR thành công. Pending không được index. Mốc hiệu lực điều khoản khác ngày chung cần metadata `provision_validity`; quan hệ bãi bỏ một phần không bãi bỏ toàn văn.
 
 Bộ dữ liệu công bố có ID bất biến và lưu chứng cứ benchmark đúng release. `land-law publish` backup trước đổi pointer. Corpus quá bảy ngày chưa kiểm tra nguồn không khẳng định tính hiện hành. Không coi một lần parse offline là lần kiểm tra nguồn mới.
+
+`land-law benchmark --split smoke --release-id <id>` chạy 20 ca đã đối chiếu nguồn ở hai chế độ, tối đa hai lượt đồng thời. Review từng kết quả trong `data/evaluation/smoke-reviews.json` bằng khóa `<case>:<mode>:<sha256(result JSON sorted)>`, lưu `passed`, `source_checked`, `notes`, và một giá trị `claim_support` cho từng `verified_claims`. Gắn `reports/source-audit.json` và `reports/runtime-tests.json` đúng release/configuration, rồi chạy lại benchmark để tổng hợp. `land-law publish <id> --profile demo` chỉ qua khi đủ vector, 30 legal/5 nguồn mỗi dự án, cả 40 kết quả được review và mọi ca trọng yếu đạt. Demo công khai coverage gaps, chưa nghiệm thu. Lệnh publish mặc định `accepted` vẫn đòi bộ 80 acceptance và nguồn bắt buộc đầy đủ; không có tùy chọn force. Báo cáo smoke không bao giờ được xem là nghiệm thu 80 câu.
 
 ## Backup, rollback, restore và lưu trữ
 
@@ -63,11 +65,15 @@ Khi lỗi database, không phát câu trả lời là thành công trước khi 
 
 ## Tiếp tục embedding qua quota miễn phí
 
-`land-law ingest --offline --cached-embeddings-only` tái sử dụng vector đã có, không gọi embedding API. `land-law ingest --offline --embed` tiếp tục các đoạn còn thiếu. Batch tám đoạn tính là tám input tại provider; ngoài giới hạn HTTP, `GLOBAL_DAILY_EMBEDDING_ITEM_LIMIT=900` chừa dự phòng cho query. Daily quota lấy RetryInfo của provider; không suy giờ reset từ timezone máy. Văn bản parse đạt nhưng thiếu vector vẫn ở staging và bị gate chặn publish.
+`land-law ingest --offline --cached-embeddings-only` tái sử dụng vector đã có, không gọi embedding API. `land-law ingest --offline --embed` tiếp tục các đoạn còn thiếu. Batch tám đoạn, bắt đầu hai batch đồng thời và tăng đến tám khi ổn định, giảm khi throttling; checkpoint ngay mỗi batch thành công. Daily quota lấy RetryInfo của provider; không suy giờ reset từ timezone máy. Văn bản parse đạt nhưng thiếu vector vẫn ở staging và bị gate chặn publish.
 
 Workflow `embeddings.yml` sử dụng private raw archive (`land-law restore-sources`), seed checkpoint trong Storage private và cache JSON checkpoint; `--no-persist` giữ bản trung gian trong artifact để tránh lấp database bằng nhiều staging release. Muốn chạy: Secrets ADMIN_DATABASE_URL, GEMINI_API_KEY, SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY; repository variables EMBEDDING_RESUME_ENABLED=true và EMBEDDING_SEED_SHA256. Quota đạt thì lưu checkpoint và dừng gọi thêm; không tự công bố corpus. Sau khi embedding đầy đủ phải kiểm tra nguồn lại, review benchmark và publish qua CLI.
 
-Operator chạy `python scripts/embedding_checkpoint_seed.py archive` để tạo seed bất biến trong Storage private; `restore` xác minh checksum, tên tệp và vector 768 chiều, không ghi đè checkpoint mới hơn. Lần triển khai này đã archive/restore đối chiếu 958 checkpoint thật. Không đưa vector vào Git. Seed là dữ liệu pháp luật công khai, không chứa hội thoại hoặc khóa API.
+Operator chạy `python scripts/embedding_checkpoint_seed.py archive` để tạo seed bất biến chia shard nhỏ trong Storage private; `restore` xác minh manifest/shard checksum, tên tệp và vector 768/1024 chiều, không ghi đè checkpoint mới hơn. Không đưa vector vào Git. Seed là dữ liệu pháp luật công khai, không chứa hội thoại hoặc khóa API. Giới hạn giải nén tổng cộng 180 MB, tối đa 20.000 checkpoint.
+
+Release demo hiện dùng `EMBEDDING_PROVIDER=cloudflare`, `EMBEDDING_MODEL=@cf/baai/bge-m3`, `EMBEDDING_DIMENSIONS=1024`, `CLOUDFLARE_ACCOUNT_ID` và token riêng `CLOUDFLARE_AI_API_TOKEN`. Gemini vẫn sinh đáp án. Không đổi token Pages. Migration 004 giữ vector Gemini 768 và tạo index riêng 1024. Query chọn contract từ release đang hoạt động, kể cả rollback; không trộn vector khác model/chiều. Workers AI secret/embedding variables được cấu hình qua script GitHub. Nội dung bảng giữ dòng, tiêu đề, đơn vị và phân cách cột; bỏ padding PDF thừa, luôn đối chiếu trang gốc khi đọc giá.
+
+Workflow `recovery.yml` sao lưu mã hóa thật, restore toàn bộ vào PostgreSQL/pgvector trên runner độc lập, kiểm tra hai chiều, dữ liệu, rollback, thu hồi bản đầu và restart; chỉ upload báo cáo không chứa hội thoại. Cần secret owner DATABASE_URL và BACKUP_ENCRYPTION_KEY. Nó không đổi pointer corpus production.
 
 `pip install PyNaCl==1.6.2` chỉ trên máy operator, rồi `python scripts/configure_github.py`: cấu hình Secrets bằng sealed-box của GitHub và Variables, bật lịch sau khi đủ cấu hình. Token cần Secrets và Variables đọc/ghi. Script giới hạn repository đã được cấp quyền, không in giá trị secret; backend Docker không cần PyNaCl. Có thể dùng repository Secrets cho jobs environment `production` khi không đặt secret cùng tên tại environment.
 

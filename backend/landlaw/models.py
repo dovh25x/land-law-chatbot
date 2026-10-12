@@ -88,6 +88,7 @@ class ChatRequest(BaseModel):
 
 
 class Claim(BaseModel):
+    kind: Literal['legal_rule','applicability','context'] = 'legal_rule'
     text: str = Field(min_length=1, max_length=3000)
     citation_ids: list[str] = Field(min_length=1, max_length=8)
 
@@ -102,8 +103,13 @@ class Draft(BaseModel):
 
 class ChatResult(BaseModel):
     status: Status
+    publication_profile: str = 'staging'
+    quality_status: str = 'acceptance_pending'
+    retrieval_mode: str = 'unavailable'
+    coverage_gaps: list[dict] = Field(default_factory=list)
     content: str
     citations: list[Citation] = Field(default_factory=list)
+    verified_claims: list[Claim] = Field(default_factory=list)
     as_of: date
     corpus_release: str | None = None
     trace_id: str

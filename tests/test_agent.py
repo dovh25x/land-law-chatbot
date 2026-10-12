@@ -26,7 +26,11 @@ class FakeProvider:
             return Plan(tools=[ToolCall(name="search_law", query="bồi thường thu hồi đất")])
         if schema is Draft:
             return self.draft
-        return self.verification
+        from landlaw.agent import SupportingQuote
+        quotes=[SupportingQuote(claim_index=i,citation_id=citation_id,quote=e['text'][:1600])
+            for i,claim in enumerate(payload['draft']['claims']) for citation_id in claim['citation_ids']
+            for e in payload['evidence'] if e['citation_id']==citation_id]
+        return self.verification.model_copy(update={'supporting_quotes':quotes})
     async def embed(self, *args, **kwargs):
         raise ProviderUnavailable("Embedding offline in test")
 

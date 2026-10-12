@@ -41,13 +41,17 @@ async def test_batch_creates_separate_normalized_vectors(settings, store):
     await provider.close()
 
 
-async def test_quota_returns_retry_and_never_exposes_provider_body(settings, store):
+async def test_quota_returns_retry_and_never_exposes_provider_body(settings, store, monkeypatch):
+    async def no_sleep(_): pass
+    monkeypatch.setattr('landlaw.provider.asyncio.sleep',no_sleep)
     def handler(request):
         return httpx.Response(429, headers={'Retry-After': '37'}, json={'error': {'message': 'secret test-key'}})
     provider = Gemini(settings, store, httpx.AsyncClient(transport=httpx.MockTransport(handler)))
+    budget=Budget()
     with pytest.raises(RateLimited) as error:
-        await provider.generate(Probe, 'probe', {}, Budget())
+        await provider.generate(Probe, 'probe', {}, budget)
     assert error.value.retry_after == 37
+    assert error.value.source=='provider' and budget.llm_calls==3
     await provider.close()
 
 
@@ -61,7 +65,7 @@ async def test_daily_quota_honours_google_retryinfo(settings, store):
 
 async def test_error_body_and_malformed_schema_are_blocked(settings, store):
     malformed = httpx.Response(200, json={'candidates': [{'content': {'parts': [{'text': 'not JSON'}]}}]})
-    responses = [httpx.Response(500, json={'error': {'message': 'test-key private prompt'}}), malformed, malformed]
+    responses = [httpx.Response(500, json={'error': {'message': 'test-key private prompt'}}) for _ in range(3)] + [malformed, malformed]
     provider = Gemini(settings, store, httpx.AsyncClient(transport=httpx.MockTransport(lambda _: responses.pop(0))))
     for _ in range(2):
         with pytest.raises(ProviderUnavailable) as error:

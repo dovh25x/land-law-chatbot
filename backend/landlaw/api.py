@@ -7,7 +7,7 @@ import uuid
 from datetime import datetime, timedelta
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI, HTTPException, Request
+from fastapi import FastAPI, HTTPException, Query, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, StreamingResponse
 
@@ -18,6 +18,7 @@ from .models import ChatRequest, ChatResult, TraceEvent
 from .provider import Gemini
 from .security import digest, hash_ip, local_date, new_token, redact, utcnow
 from .store import RateLimited, Store
+from .publication import public_status
 
 logger = logging.getLogger("landlaw")
 
@@ -95,6 +96,8 @@ def create_app(settings: Settings | None = None, store: Store | None = None, pro
         data = {"status": "ready" if configured and release else "not_ready", "database": True,
                 "llm_configured": configured, "corpus_release": (release or {}).get("id"),
                 "checked_at": (release or {}).get("checked_at"), "storage": "postgresql" if state["store"].postgres else "sqlite-development"}
+        publication = await asyncio.to_thread(state['store'].publication)
+        data.update(public_status(release, publication))
         return JSONResponse(data, status_code=200 if configured and release else 503)
 
     @app.post("/api/v1/sessions", status_code=201)
@@ -125,8 +128,8 @@ def create_app(settings: Settings | None = None, store: Store | None = None, pro
         return {"documents": [d.model_dump(mode="json", exclude={"chunks"}) for d in docs]}
 
     @app.get("/api/v1/documents/{document_id}")
-    async def document(document_id: str):
-        doc = await asyncio.to_thread(state["store"].document, document_id)
+    async def document(document_id: str, locator: str | None = Query(default=None,max_length=200)):
+        doc = await asyncio.to_thread(state["store"].open_document, document_id, None, locator)
         if not doc:
             raise HTTPException(404, "Tài liệu chưa được công bố")
         return {"document": doc.model_dump(mode="json"), "relations": [r.model_dump(mode="json")
@@ -140,9 +143,15 @@ def create_app(settings: Settings | None = None, store: Store | None = None, pro
     @app.get("/api/v1/evaluations/latest")
     async def evaluations():
         path = settings.reports_dir / "latest.json"
+        active = await asyncio.to_thread(state['store'].state, 'active_release')
         if not path.exists():
-            return {"status": "not_run", "message": "Chưa chạy benchmark với API và corpus thật.", "results": []}
-        return json.loads(path.read_text())
+            return {"status": "not_run", "message": "Chưa chạy benchmark với API và corpus thật.", "results": [], 'active_release':active, 'matches_active_release':False}
+        report = json.loads(path.read_text())
+        smoke_path = settings.reports_dir/'smoke.json'
+        smoke = json.loads(smoke_path.read_text()) if smoke_path.exists() else None
+        return {**report, 'evaluation_release':report.get('release'), 'active_release':active,
+                'demo_smoke':smoke, 'smoke_matches_active_release':bool(smoke and active==smoke.get('release')),
+                'matches_active_release':bool(active and active==report.get('release'))}
 
     @app.post("/api/v1/chat")
     async def chat(body: ChatRequest, request: Request):
@@ -179,7 +188,10 @@ def create_app(settings: Settings | None = None, store: Store | None = None, pro
                         if not checked or utcnow() - checked > timedelta(days=7):
                             cached = None
                     if cached:
+                        release = await asyncio.to_thread(state['store'].release, release_id, True)
+                        publication = await asyncio.to_thread(state['store'].publication, release_id)
                         result = ChatResult.model_validate(cached).model_copy(update={"trace_id": str(uuid.uuid4()),
+                            **public_status(release, publication),
                             "llm_calls": 0, "embedding_calls": 0, "tool_calls": 0, "token_usage": 0, "elapsed_ms": 0,
                             "trace": [TraceEvent(step="cache", summary="Đã dùng kết quả đã kiểm tra của cùng phiên và phạm vi câu hỏi.")]})
                     else:

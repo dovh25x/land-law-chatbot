@@ -108,6 +108,9 @@ function App() {
   }
 
   const ready = readiness?.status === 'ready'
+  const evaluationWarning = evaluation && evaluation.status !== 'not_run' &&
+    (!evaluation.matches_active_release || evaluation.status !== 'reviewed')
+    ? 'Báo cáo này chưa chứng nhận chất lượng bản đang hoạt động: kết quả có thể thuộc corpus khác hoặc chưa được rà soát đầy đủ.' : ''
   return <div className="app-shell">
     <aside className="sidebar">
       <a className="brand" href="#" onClick={e => { e.preventDefault(); setPage('chat') }}><span className="brand-mark"><Landmark size={23}/></span><span>Hà Nội<span className="brand-sub">PHÁP LUẬT ĐẤT ĐAI</span></span></a>
@@ -120,7 +123,9 @@ function App() {
       <div className="sidebar-footer"><span className="region-icon"><MapPin size={17}/></span><div>Thành phố Hà Nội<small>Nguồn chính thức · Tiếng Việt</small></div></div>
     </aside>
     <main className="main">
+      {page === 'evaluation' && evaluationWarning && <aside className="connection-note" role="status">{evaluationWarning}</aside>}
       <header className="topbar"><div><span className="breadcrumb">Không gian tra cứu</span><ChevronRight size={13}/><span>{page === 'chat' ? 'Hỏi đáp pháp luật' : page === 'sources' ? 'Thư viện văn bản' : page === 'projects' ? 'Dự án trọng điểm' : 'Đánh giá hệ thống'}</span></div><button className="status-chip" onClick={() => void refresh()} disabled={connecting}><span className={ready ? 'status-dot ready' : 'status-dot'}/>{connecting ? 'Đang kết nối' : ready ? 'Sẵn sàng tra cứu' : 'Kiểm tra kết nối'}{connecting && <LoaderCircle size={12} className="spin"/>}</button></header>
+      {readiness?.publication_profile === 'demo' && <aside className="connection-note" role="note"><strong>Demo — chưa hoàn tất nghiệm thu.</strong> Chỉ trả lời trong phạm vi nguồn đã kiểm tra. {readiness.checked_at && <>Dữ liệu kiểm tra: {new Date(readiness.checked_at).toLocaleDateString('vi-VN')}. </>}{!!readiness.coverage_gaps?.length && <details><summary>Các nguồn chưa đủ dữ liệu ({readiness.coverage_gaps.length})</summary><ul>{readiness.coverage_gaps.map(g => <li key={g.document_id}>{g.title}: {g.reason}</li>)}</ul></details>}</aside>}
       {page === 'chat' && <>
         <div className="filterbar"><span className="filter-label"><MapPin size={14}/> Phạm vi</span><label className="sr-only" htmlFor="project">Dự án</label><select id="project" value={project} onChange={e => setProject(e.target.value)}><option value="">Toàn Hà Nội</option><option value="ring4">Vành đai 4</option><option value="songhong">Trục cảnh quan sông Hồng</option><option value="olympic">Khu đô thị thể thao Olympic</option></select><span className="filter-divider"/><Clock3 size={14}/><label className="sr-only" htmlFor="asof">Thời điểm áp dụng</label><input id="asof" type="date" value={asOf} onChange={e => setAsOf(e.target.value)} aria-label="Thời điểm áp dụng, để trống là hôm nay"/><span className="filter-spacer"/><label className="sr-only" htmlFor="mode">Chế độ truy xuất</label><select id="mode" value={mode} onChange={e => setMode(e.target.value)}><option value="agentic">Agentic RAG</option><option value="baseline">RAG thông thường</option></select></div>
         <div className="chat-scroll">

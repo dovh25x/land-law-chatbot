@@ -7,7 +7,9 @@ import typer
 from pydantic import BaseModel, SecretStr
 
 from .config import Settings
-from .evaluation import evaluate
+from .evaluation import evaluate, configuration_fingerprint
+from .publication import validate_demo
+from .security import digest
 from .ingest import build_corpus, coverage, json_write
 from .provider import Budget, Gemini
 from .security import utcnow
@@ -78,7 +80,7 @@ def preflight(live: bool = False):
                 try:
                     await provider.generate(Probe, "Trả về ok=true. Kiểm tra kết nối kỹ thuật.", {}, Budget())
                     checks["generation_live"] = True
-                    checks["embedding_live"] = len(await provider.embed("Kiểm tra kết nối", query=True)) == 768
+                    checks["embedding_live"] = len(await provider.embed("Kiểm tra kết nối", query=True)) == settings.embedding_dimensions
                 except Exception as exc:
                     checks["generation_or_embedding_error"] = type(exc).__name__
                     if type(exc).__name__ in {"ProviderUnavailable", "RateLimited"}:
@@ -130,7 +132,7 @@ def ingest(offline: bool = False, embed: bool = False, ocr: bool = False, cached
 
 
 @app.command()
-def publish(release_id: str):
+def publish(release_id: str, profile: str = 'accepted'):
     """Require reviewed complete corpus and acceptance evidence for this exact release."""
     settings = Settings().for_operator()
     store = Store(settings)
@@ -139,17 +141,28 @@ def publish(release_id: str):
         if not release:
             raise typer.BadParameter("Unknown release")
         corpus = coverage(release)
-        path = settings.reports_dir / "latest.json"
+        if profile not in {'demo','accepted'}:
+            raise typer.BadParameter('profile must be demo or accepted')
+        path = settings.reports_dir / ('smoke.json' if profile=='demo' else 'latest.json')
         evaluation = json.loads(path.read_text()) if path.exists() else {}
-        if not corpus["publication_ready"]:
-            raise typer.BadParameter("Corpus missing verified metadata, embeddings or required coverage")
-        if not (evaluation.get("acceptance_passed") and evaluation.get("split") == "acceptance" and evaluation.get("release") == release_id):
-            raise typer.BadParameter("Reviewed acceptance benchmark for this exact release is required")
+        configuration = configuration_fingerprint(settings)
+        if profile=='demo':
+            try:
+                validate_demo(release,corpus,evaluation,configuration)
+            except ValueError as exc:
+                raise typer.BadParameter(str(exc)) from None
+        else:
+            if not corpus["publication_ready"]:
+                raise typer.BadParameter("Corpus missing verified metadata, embeddings or required coverage")
+            if not (evaluation.get("acceptance_passed") and evaluation.get("split") == "acceptance" and evaluation.get("release") == release_id
+                    and evaluation.get('configuration_sha256')==configuration):
+                raise typer.BadParameter("Reviewed acceptance benchmark for this exact release/configuration is required")
         backup_path = settings.data_dir / "backups" / f"prepublish-{utcnow().strftime('%Y%m%dT%H%M%S')}.json"
         store.backup(backup_path)
-        store.publish(release_id)
+        store.publish(release_id, {'profile':profile, 'evidence_sha256':digest(path.read_bytes()),
+            'configuration_sha256':configuration, 'published_at':utcnow().isoformat()})
         json_write(settings.data_dir / "releases" / f"{release_id}.json", release)
-        typer.echo(f"Published {release_id}; backup {backup_path}")
+        typer.echo(f"Published {profile} {release_id}; backup {backup_path}")
     finally:
         store.close()
 
@@ -157,8 +170,8 @@ def publish(release_id: str):
 @app.command()
 def benchmark(split: str = "dev", release_id: str | None = None, limit: int | None = None):
     """Run/resume real paired benchmark. Evaluate staging before publishing."""
-    if split not in {"dev", "acceptance"}:
-        raise typer.BadParameter("split must be dev or acceptance")
+    if split not in {"dev", "acceptance", "smoke"}:
+        raise typer.BadParameter("split must be dev, acceptance or smoke")
     async def run():
         settings = Settings().for_operator()
         store, provider = Store(settings), None
@@ -198,7 +211,9 @@ def rollback():
     try:
         previous = store.state("previous_release")
         if not previous:
-            raise typer.BadParameter("No previous release")
+            store.unpublish()
+            typer.echo('First release withdrawn; corpus and sessions retained.')
+            return
         store.publish(previous)
         typer.echo(f"Active release: {previous}")
     finally:
@@ -217,19 +232,23 @@ def cleanup():
 
 
 @app.command()
-def upload(release_file: Path):
+def upload(release_file: Path, profile: str = 'accepted'):
     """Upload complete reviewed corpus into a private immutable Supabase bucket."""
     settings = Settings()
     payload = json.loads(release_file.read_text())
-    if not coverage(payload)["publication_ready"]:
-        raise typer.BadParameter("Only reviewed embedded complete releases may be uploaded")
+    if profile == 'demo':
+        path = settings.reports_dir/'smoke.json'
+        validate_demo(payload,coverage(payload),json.loads(path.read_text()),configuration_fingerprint(settings))
+    elif profile != 'accepted' or not coverage(payload)["publication_ready"]:
+        raise typer.BadParameter("Only a gated demo or complete accepted corpus may be uploaded")
     if not settings.supabase_url or not settings.supabase_service_role_key.get_secret_value():
         raise typer.BadParameter("Supabase Storage credentials missing")
     async def run():
         from .storage import PrivateArchive
         archive = PrivateArchive(settings)
         try:
-            return await archive.upload_files([(f"{payload['id']}/corpus.json", release_file.read_bytes(), 'application/json')])
+            import gzip
+            return await archive.upload_files([(f"{payload['id']}/corpus.json.gz", gzip.compress(release_file.read_bytes(),mtime=0), 'application/gzip')])
         finally:
             await archive.close()
     asyncio.run(run())

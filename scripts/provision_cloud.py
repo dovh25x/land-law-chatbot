@@ -50,9 +50,9 @@ def main():
                         'APP_ENV': 'production', 'DATABASE_URL': settings.database_url.get_secret_value(),
                         'GEMINI_API_KEY': settings.gemini_api_key.get_secret_value(), 'IP_HASH_SECRET': settings.ip_hash_secret.get_secret_value(),
                         'CORS_ORIGINS': origin, 'GEMINI_MODEL': settings.gemini_model, 'EMBEDDING_MODEL': settings.embedding_model,
-                        'GLOBAL_DAILY_LLM_LIMIT': str(settings.global_daily_llm_limit),
-                        'GLOBAL_DAILY_EMBEDDING_LIMIT': str(settings.global_daily_embedding_limit),
-                        'GLOBAL_DAILY_EMBEDDING_ITEM_LIMIT': str(settings.global_daily_embedding_item_limit), 'TRUST_PROXY_HEADERS': 'false'}.items()]}
+                        'EMBEDDING_PROVIDER':settings.embedding_provider,'EMBEDDING_DIMENSIONS':str(settings.embedding_dimensions),
+                        'CLOUDFLARE_AI_API_TOKEN':settings.cloudflare_ai_api_token.get_secret_value(),'CLOUDFLARE_ACCOUNT_ID':settings.cloudflare_account_id,
+                        'TRUST_PROXY_HEADERS': 'false'}.items()]}
             response = client.post('https://api.render.com/v1/services', headers=render_headers, json=body)
             if response.status_code not in (200, 201):
                 message = str(response.json().get('message', ''))

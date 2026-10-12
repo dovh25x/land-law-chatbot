@@ -17,11 +17,14 @@ def main():
     if repo != 'dovh25x/land-law-chatbot':
         raise SystemExit('This setup is scoped to dovh25x/land-law-chatbot')
     names = ['ADMIN_DATABASE_URL', 'GEMINI_API_KEY', 'SUPABASE_URL', 'SUPABASE_SERVICE_ROLE_KEY',
-             'BACKUP_ENCRYPTION_KEY', 'RENDER_API_KEY', 'CLOUDFLARE_API_TOKEN', 'CLOUDFLARE_ACCOUNT_ID']
+             'BACKUP_ENCRYPTION_KEY', 'RENDER_API_KEY', 'CLOUDFLARE_API_TOKEN', 'CLOUDFLARE_ACCOUNT_ID', 'CLOUDFLARE_AI_API_TOKEN']
     variables = {'RENDER_SERVICE_ID': env.get('RENDER_SERVICE_ID'),
                  'CLOUDFLARE_PAGES_PROJECT': env.get('CLOUDFLARE_PAGES_PROJECT'),
                  'API_BASE_URL': env.get('VITE_API_BASE_URL'),
                  'EMBEDDING_SEED_SHA256': env.get('EMBEDDING_SEED_SHA256'),
+                 'EMBEDDING_PROVIDER': env.get('EMBEDDING_PROVIDER','gemini'),
+                 'EMBEDDING_MODEL': env.get('EMBEDDING_MODEL','gemini-embedding-2'),
+                 'EMBEDDING_DIMENSIONS': env.get('EMBEDDING_DIMENSIONS','768'),
                  'EMBEDDING_RESUME_ENABLED': 'true', 'MAINTENANCE_ENABLED': 'true'}
     if not env.get('GITHUB_TOKEN') or any(not env.get(n) for n in names) or any(not v for v in variables.values()):
         raise SystemExit('Missing operator credentials or checkpoint seed; configure .env first')

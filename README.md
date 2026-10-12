@@ -6,7 +6,7 @@ Web chatbot tiếng Việt dùng FastAPI, LangGraph, Gemini, PostgreSQL/pgvector
 
 Website: https://hanoi-land-law.pages.dev; API: https://land-law-chatbot.onrender.com. Hạ tầng đã live và một lượt Gemini/SSE thật đã qua smoke. Corpus chưa công bố; đây chưa phải bản phát hành đã nghiệm thu M0–M6. Xem [bằng chứng và hạng mục còn mở](docs/IMPLEMENTATION_STATUS.md), [nguồn thật và khoảng trống](docs/SOURCES.md), [benchmark](docs/BENCHMARK.md). Không có câu trả lời hay chỉ số chất lượng giả trong runtime. SQLite dành cho phát triển; production bắt buộc PostgreSQL.
 
-Preflight ngày 12/10/2026 (giờ Hà Nội): model được kế hoạch dự kiến `gemini-2.5-flash` trả HTTP 404; `gemini-3.5-flash-lite` gọi sinh JSON thật thành công và có Free tier theo [tài liệu Google](https://ai.google.dev/gemini-api/docs/pricing). Cấu hình hiện dùng model này cho cả hai chế độ; embedding giữ `gemini-embedding-2`, 768 chiều. Thay model phải chạy lại benchmark. Hệ thống không chuyển sang model khác khi hết quota.
+Model sinh hiện là `gemini-3.5-flash-lite` cho cả hai chế độ, sau khi model dự kiến `gemini-2.5-flash` trả HTTP 404. Gemini embedding Free đã bị quota thật, nên corpus hoàn chỉnh dùng Workers AI `@cf/baai/bge-m3`, 1.024 chiều; đủ 5.250 vector trên 46 tài liệu. Không có trần gọi API theo ngày do ứng dụng đặt. Model/provider được gắn với release và benchmark; không chuyển sang API có phí. Xem [cấu hình và quota](docs/OPERATIONS.md).
 
 ## Chạy phát triển
 
@@ -43,6 +43,9 @@ Manifest `data/sources.json` chứa nguồn chính thức, checksum raw và meta
 .venv/bin/land-law benchmark --split dev --release-id corpus-<id>
 .venv/bin/land-law benchmark --split acceptance --release-id corpus-<id>
 .venv/bin/land-law publish corpus-<id>
+# Demo sớm: chỉ sau khi source audit/runtime tests và 20 ca smoke ở cả hai chế độ qua review
+.venv/bin/land-law benchmark --split smoke --release-id corpus-<id>
+.venv/bin/land-law publish corpus-<id> --profile demo
 ```
 
 Embedding theo batch tối đa tám Content độc lập, một vector cho mỗi đoạn, checkpoint theo model/định dạng/title/checksum. Chạy lại tiếp tục checkpoint và không nhân đôi release cùng nội dung/metadata. `publish` từ chối khi thiếu nguồn bắt buộc (gồm QĐ 56/2024 lịch sử), độ bao phủ, metadata, embedding hoặc báo cáo nghiệm thu đã rà soát cho đúng release. Benchmark chạy được trên staging trước công bố; không cần bypass gate để đánh giá.

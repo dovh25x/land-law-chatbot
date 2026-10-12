@@ -1,0 +1,62 @@
+<!doctype html><html lang='vi'><meta charset='utf-8'><title>Benchmark</title><style>body{font:15px system-ui;max-width:1100px;margin:40px auto;padding:20px}pre{white-space:pre-wrap}</style><h1>Báo cáo benchmark</h1><p>Kết quả chưa rà soát chưa chứng nhận chất lượng pháp lý.</p><pre>{
+  &quot;status&quot;: &quot;awaiting_review&quot;,
+  &quot;dataset_sha256&quot;: &quot;47d8c8291fdeea2924ae57a9635502c3af2052c6baa1a13becbcc04fb647ac26&quot;,
+  &quot;generated_at&quot;: &quot;2026-10-12T17:18:23.316459+00:00&quot;,
+  &quot;cases&quot;: 20,
+  &quot;completed_pairs&quot;: 7,
+  &quot;results&quot;: [
+    {
+      &quot;mode&quot;: &quot;baseline&quot;,
+      &quot;completed&quot;: 7,
+      &quot;reviewed&quot;: 0,
+      &quot;recall_at_8&quot;: 0.7857142857142857,
+      &quot;answer_pass_rate&quot;: null,
+      &quot;citation_id_valid_rate&quot;: 1.0,
+      &quot;claim_support_rate&quot;: null,
+      &quot;unsupported_claims&quot;: 0,
+      &quot;source_review_complete&quot;: false,
+      &quot;p95_seconds&quot;: 19.775,
+      &quot;llm_calls&quot;: 14,
+      &quot;embedding_calls&quot;: 7,
+      &quot;tool_calls&quot;: 23,
+      &quot;critical_failed&quot;: [],
+      &quot;limited_or_error&quot;: 0
+    },
+    {
+      &quot;mode&quot;: &quot;agentic&quot;,
+      &quot;completed&quot;: 7,
+      &quot;reviewed&quot;: 0,
+      &quot;recall_at_8&quot;: 0.6428571428571429,
+      &quot;answer_pass_rate&quot;: null,
+      &quot;citation_id_valid_rate&quot;: 1.0,
+      &quot;claim_support_rate&quot;: null,
+      &quot;unsupported_claims&quot;: 0,
+      &quot;source_review_complete&quot;: false,
+      &quot;p95_seconds&quot;: 16.09,
+      &quot;llm_calls&quot;: 20,
+      &quot;embedding_calls&quot;: 1,
+      &quot;tool_calls&quot;: 14,
+      &quot;critical_failed&quot;: [],
+      &quot;limited_or_error&quot;: 1
+    }
+  ],
+  &quot;acceptance_passed&quot;: false,
+  &quot;run_id&quot;: &quot;corpus-7ad6a91c3e015adb-gemini-3.5-flash-lite-smoke-47d8c829-921f77ed&quot;,
+  &quot;release&quot;: &quot;corpus-7ad6a91c3e015adb&quot;,
+  &quot;model&quot;: &quot;gemini-3.5-flash-lite&quot;,
+  &quot;embedding_model&quot;: &quot;@cf/baai/bge-m3&quot;,
+  &quot;split&quot;: &quot;smoke&quot;,
+  &quot;corpus_embedded&quot;: true,
+  &quot;publication_candidate&quot;: false,
+  &quot;notes&quot;: [
+    &quot;Development runs on incomplete staging cannot certify acceptance; query embedding failures fall back to lexical retrieval.&quot;
+  ],
+  &quot;as_of&quot;: &quot;2026-10-13&quot;,
+  &quot;configuration_sha256&quot;: &quot;921f77ed91deb225c3d9f6cb23848f6a7fbc8438668428a45aeef115539c7389&quot;,
+  &quot;execution_concurrency&quot;: 2,
+  &quot;latency_scope&quot;: &quot;Paired CLI run, concurrency 2; public API single-user p95 measured separately.&quot;,
+  &quot;source_audit_passed&quot;: true,
+  &quot;source_audit_sha256&quot;: &quot;1b1a95f81e1c3d7c22379c29c72cb731fd44ae81818ab90def72b3df32419e25&quot;,
+  &quot;runtime_tests_passed&quot;: false,
+  &quot;runtime_tests_sha256&quot;: null
+}</pre>
