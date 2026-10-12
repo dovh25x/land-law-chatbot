@@ -247,12 +247,31 @@ def upload(release_file: Path, profile: str = 'accepted'):
         from .storage import PrivateArchive
         archive = PrivateArchive(settings)
         try:
-            import gzip
-            return await archive.upload_files([(f"{payload['id']}/corpus.json.gz", gzip.compress(release_file.read_bytes(),mtime=0), 'application/gzip')])
+            return await archive.upload_corpus(payload['id'],release_file.read_bytes())
         finally:
             await archive.close()
-    asyncio.run(run())
+    report=asyncio.run(run())
+    json_write(settings.reports_dir/'corpus-archive.json',report)
     typer.echo("Private corpus archive uploaded.")
+
+
+@app.command()
+def restore_archive(release_id: str, output: Path):
+    """Restore checksum-verified private corpus to a file; never publish it."""
+    from .storage import PrivateArchive
+    settings=Settings()
+    async def run():
+        archive=PrivateArchive(settings)
+        try:
+            return await archive.restore_corpus(release_id)
+        finally:
+            await archive.close()
+    content=asyncio.run(run())
+    if output.exists() and output.read_bytes()!=content:
+        raise typer.BadParameter('Refusing to overwrite a different existing file')
+    output.parent.mkdir(parents=True,exist_ok=True)
+    output.write_bytes(content)
+    typer.echo(f'Restored immutable corpus to {output}; active release unchanged.')
 
 
 @app.command()

@@ -404,7 +404,7 @@ class Store:
             number = docs[row["document_id"]].document_number
             if number and normalize(number) in normalize(query):
                 scores[chunk_id] += 0.1
-            if row['id'] in {r['id'] for r in exact}:
+            if article and row['id'] in {r['id'] for r in exact}:
                 scores[chunk_id] += 0.2
         return [Evidence(chunk=self._chunk(rows_by_id[i]), document=docs[rows_by_id[i]["document_id"]], score=scores[i])
                 for i in sorted(scores, key=lambda i: (-scores[i], i))[:8]]

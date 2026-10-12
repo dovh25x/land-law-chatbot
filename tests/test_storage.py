@@ -30,3 +30,31 @@ async def test_immutable_archive_collision_requires_matching_bytes(settings):
             await item.put('raw/sha.pdf',b'reviewed-source')
     finally:
         await item.close()
+
+
+async def test_multipart_corpus_restore_checks_every_part(settings, monkeypatch):
+    import json
+    release_id='corpus-1234567890abcdef'
+    content=json.dumps({'id':release_id,'documents':[]}).encode()
+    objects={}
+    def handler(request):
+        path=request.url.path
+        if '/bucket/' in path:
+            return httpx.Response(200,json={'public':False})
+        if '/object/list/' in path:
+            return httpx.Response(200,json=[])
+        if request.method=='POST':
+            objects[path.split('/object/legal-corpus/')[1]]=request.content
+            return httpx.Response(200,json={})
+        return httpx.Response(200,content=objects[path.split('/object/authenticated/legal-corpus/')[1]])
+    item=archive(settings,handler)
+    monkeypatch.setattr(item,'CORPUS_PART_BYTES',20)
+    try:
+        report=await item.upload_corpus(release_id,content)
+        assert report['parts']>1 and await item.restore_corpus(release_id)==content
+        path=next(p for p in objects if p.endswith('.gz.part'))
+        objects[path]=b'tampered'
+        with pytest.raises(ValueError,match='checksum or size'):
+            await item.restore_corpus(release_id)
+    finally:
+        await item.close()

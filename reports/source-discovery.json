@@ -1,0 +1,23 @@
+{
+  "checked_at": "2026-10-12T18:01:14.424916+00:00",
+  "document": "56/2024/QĐ-UBND",
+  "publication_url": "https://vbpl.vn/hanoi/Pages/ivbpq-toanvan.aspx?ItemID=169992&Keyword=",
+  "status": "official_full_text_snapshot_found_awaiting_ingestion_review",
+  "snapshot_line_count": 391,
+  "overlap_matches": true,
+  "snapshot_files": [
+    {
+      "path": "data/raw/qd56-web-snapshot-first.txt",
+      "sha256": "e220060fdaeb1240e2c0536cfe487920cbe59d3875a994e5e699ad0cf96a63db"
+    },
+    {
+      "path": "data/raw/qd56-web-snapshot-middle.txt",
+      "sha256": "47225d7d918c5a2b041e91f9bf614f77c31490b82ef608162a5ff5e17b066bc2"
+    }
+  ],
+  "limitations": [
+    "Web retrieval returned cached official HTML representation, not the original PDF. Snapshot retrieved on 2026-10-12; cached page reports crawling five months earlier.",
+    "Not added to the immutable current corpus. Must review full text, attachments and legal relationships before indexing."
+  ],
+  "scope": "Complete numbered page representation retrieved through web tool, including signed decision, 28 regulation articles and appendix; no search-snippet reconstruction."
+}

@@ -136,3 +136,74 @@ async def test_partial_repeal_requires_affected_amendment_without_invalidating_o
     release(store, [original, amendment], release_id='other-article', relations=[relation])
     result = await Agent(store, FakeProvider(settings)).run(ChatRequest(session_id=sid, message='bồi thường'), noop)
     assert result.status == 'answered'
+
+
+async def test_citation_quote_must_come_from_the_cited_passage(store,settings):
+    from landlaw.agent import SupportingQuote
+    release(store)
+    sid,_=session(store)
+    class BadQuote(FakeProvider):
+        async def generate(self,schema,instruction,payload,budget):
+            if schema is Verification:
+                budget.llm()
+                return Verification(supported_claim_indexes=[0],supporting_quotes=[SupportingQuote(
+                    claim_index=0,citation_id='law-1',quote='Fabricated text not present in the cited official passage.')])
+            return await super().generate(schema,instruction,payload,budget)
+    result=await Agent(store,BadQuote(settings)).run(ChatRequest(session_id=sid,message='bồi thường'),noop)
+    assert result.status=='insufficient_evidence' and not result.citations
+    assert any(e.step=='repair' for e in result.trace)
+
+
+async def test_authority_cannot_drop_the_chairperson(store,settings):
+    text='Điều 1. Thẩm quyền chuyển giao cho Chủ tịch Ủy ban nhân dân cấp xã thực hiện.'
+    release(store,[document(text=text)])
+    sid,_=session(store)
+    draft=Draft(status='answered',summary='Kết quả',claims=[Claim(
+        text='Thẩm quyền chuyển giao cho Ủy ban nhân dân cấp xã thực hiện.',citation_ids=['law-1'])])
+    result=await Agent(store,FakeProvider(settings,draft)).run(ChatRequest(session_id=sid,message='thẩm quyền'),noop)
+    assert result.status=='insufficient_evidence' and not result.verified_claims
+
+
+async def test_retry_prioritizes_new_evidence_over_a_full_previous_context(store,settings,monkeypatch):
+    from landlaw.models import Evidence
+    from landlaw.agent import SupportingQuote
+    docs=[document(f'old-{i}') for i in range(24)]+[document('new')]
+    release(store,docs)
+    sid,_=session(store)
+    def search(query,*args):
+        selected=[docs[-1]] if query=='new' else docs[int(query)*8:(int(query)+1)*8]
+        return [Evidence(chunk=d.chunks[0],document=d) for d in selected]
+    monkeypatch.setattr(store,'search',search)
+    class Fresh(FakeProvider):
+        async def generate(self,schema,instruction,payload,budget):
+            budget.llm()
+            if schema is Plan:
+                return Plan(tools=[ToolCall(name='search_law',query=str(i)) for i in range(3)])
+            if schema is Draft:
+                return Draft(status='answered',summary='Kết quả',claims=[Claim(text='Điều kiện được kiểm tra theo hồ sơ.',citation_ids=['new-1'])])
+            if any(e['citation_id']=='new-1' for e in payload['evidence']):
+                return Verification(supported_claim_indexes=[0],supporting_quotes=[SupportingQuote(
+                    claim_index=0,citation_id='new-1',quote=docs[-1].chunks[0].text)])
+            return Verification(needs_more_evidence=True,followup_query='new',issues=['Cần chứng cứ mới'])
+    result=await Agent(store,Fresh(settings)).run(ChatRequest(session_id=sid,message='bồi thường'),noop)
+    assert result.status=='answered' and result.citations[0].id=='new-1'
+    assert result.llm_calls<=6 and result.tool_calls<=12
+
+
+async def test_issued_date_does_not_prove_effective_date(store, settings):
+    law=document(text='Hà Nội, ngày 18 tháng 01 năm 2026. Quyết định ban hành quy định bồi thường.')
+    release(store,[law])
+    sid,_=session(store)
+    draft=Draft(status='answered',summary='Kết quả',claims=[Claim(kind='applicability',
+        text='Quyết định có hiệu lực từ ngày 18/01/2026.',citation_ids=['law-1'])])
+    result=await Agent(store,FakeProvider(settings,draft)).run(ChatRequest(session_id=sid,message='ngày hiệu lực?'),noop)
+    assert result.status=='insufficient_evidence' and not result.verified_claims
+
+
+async def test_date_cannot_be_borrowed_from_a_different_passage(store, settings):
+    release(store,[document(text='Điều 1. Chuyển giao thẩm quyền thực hiện thủ tục đất đai.')])
+    sid,_=session(store)
+    draft=Draft(status='answered',summary='Kết quả',claims=[Claim(kind='applicability',
+        text='Quy định có hiệu lực từ ngày 01 tháng 7 năm 2025.',citation_ids=['law-1'])])
+    result=await Agent(store,FakeProvider(settings,draft)).run(ChatRequest(session_id=sid,message='hiệu lực?'),noop)
+    assert not result.verified_claims

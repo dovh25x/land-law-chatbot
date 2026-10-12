@@ -1,0 +1,22 @@
+{
+  "passed": true,
+  "checked_at": "2026-10-12T17:44:40.880089+00:00",
+  "checks": {
+    "encrypted_backup": true,
+    "all_releases_restored": true,
+    "chunks_restored": true,
+    "immutable_archive_bytes": true,
+    "release_pointer": true,
+    "publication_evidence": true,
+    "both_embedding_dimensions": true,
+    "hybrid_768": true,
+    "hybrid_1024": true,
+    "rollback": true,
+    "first_release_withdrawal": true,
+    "restart": true
+  },
+  "backup_sha256": "60b466ace205796648592bdcc1424de6c5fbcf2df0d66cbc3bdc6b7a7f322fe0",
+  "release": "corpus-7ad6a91c3e015adb",
+  "releases": 5,
+  "scope": "Full real encrypted source backup restored into a disposable separate PostgreSQL database on a loopback service. Production pointer unchanged."
+}

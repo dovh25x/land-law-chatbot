@@ -90,6 +90,19 @@ def relation_chunks(doc, locator):
     return (selected or doc.chunks)[:3]
 
 
+def dates_in(text):
+    text = normalize(text)
+    values = set()
+    for pattern in (r'(?<!\d)(\d{1,2})[/-](\d{1,2})[/-](\d{4})(?!\d)',
+                    r'ngay\s+(\d{1,2})\s+thang\s+(\d{1,2})\s+nam\s+(\d{4})'):
+        for day, month, year in re.findall(pattern, text):
+            try:
+                values.add(date(int(year), int(month), int(day)))
+            except ValueError:
+                pass
+    return values
+
+
 def resolve_places(aliases, query, as_of):
     query = normalize(query)
     candidates = []
@@ -163,8 +176,26 @@ class Agent:
         except (ProviderUnavailable, RateLimited):
             state['retrieval_degraded']=True
             await self.event(state, "retrieval", "Embedding chưa khả dụng; dùng tìm kiếm từ khóa trong lượt này.")
-        return await asyncio.to_thread(self.store.search, query, vector, project,
-                                       (state["release"] or {}).get("id"), (state['release'] or {}).get('embedding_model', self.provider.settings.embedding_model))
+        hits = await asyncio.to_thread(self.store.search, query, vector, project,
+                                      (state["release"] or {}).get("id"), (state['release'] or {}).get('embedding_model', self.provider.settings.embedding_model))
+        # An explicitly requested missing historical document can still have a
+        # verified replacement. Open that operative clause before generic hits.
+        release = state['release'] or {}
+        missing = {g['document_id'] for g in release.get('coverage_gaps', [])
+                   if normalize(g.get('document_number', '')).split('/qd')[0] in normalize(query)
+                   and g.get('document_number')}
+        priority = {}
+        for relation in release.get('relations', []) + release.get('unresolved_relations', []):
+            if relation['target_id'] in missing and relation['type'] in {'replaces', 'repeals'} and state['budget'].tool_calls < 12:
+                state['budget'].tool()
+                doc = await asyncio.to_thread(self.store.open_document, relation['source_id'], release['id'],
+                                             relation.get('source_locator') or relation.get('locator'))
+                if doc:
+                    for chunk in doc.chunks:
+                        priority[chunk.id] = Evidence(chunk=chunk, document=doc)
+        for hit in hits:
+            priority.setdefault(hit.chunk.id, hit)
+        return list(priority.values())[:8]
 
     async def tools(self, state):
         if state["plan"].out_of_scope or not state["release"]:
@@ -174,7 +205,9 @@ class Agent:
         else:
             calls = state["plan"].tools or [ToolCall(name="search_law", query=state["request"].message)]
         release_id = state["release"]["id"]
-        found = {e.chunk.id: e for e in state["evidence"]}
+        previous_evidence=state['evidence']
+        # Fresh evidence must enter the bounded context on the second round.
+        found = {} if state['rounds'] else {e.chunk.id:e for e in previous_evidence}
         for call in calls:
             state["budget"].tool()
             results = []
@@ -202,6 +235,16 @@ class Agent:
             state["budget"].tool()
             relations = await asyncio.to_thread(self.store.relations, doc_id, release_id)
             for relation in relations:
+                if relation.source_id==doc_id and relation.source_locator and state['budget'].tool_calls<12:
+                    numbers=re.findall(r'Điều\s+(\d+)',relation.source_locator)
+                    if not any(e.document.id==doc_id and any(e.chunk.locator==f'Điều {n}' for n in numbers) for e in found.values()):
+                        state['budget'].tool()
+                        source=await asyncio.to_thread(self.store.open_document,doc_id,release_id,relation.source_locator)
+                        if source:
+                            for chunk in source.chunks:
+                                found.setdefault(chunk.id,Evidence(chunk=chunk,document=source,
+                                    applicability=applicability(source,state['as_of'],chunk)))
+                            await self.event(state,'tool','Đã mở điều khoản nguồn của quan hệ sửa đổi/thay thế.','open_article',[doc_id])
                 related_id = relation.source_id if relation.target_id == doc_id else relation.target_id
                 locator = (relation.source_locator or relation.locator) if related_id == relation.source_id else " ".join(relation.target_locators)
                 doc = await asyncio.to_thread(self.store.open_document, related_id, release_id, locator)
@@ -210,6 +253,8 @@ class Agent:
                         found.setdefault(chunk.id, Evidence(chunk=chunk, document=doc,
                                                            applicability=applicability(doc, state["as_of"],chunk)))
             await self.event(state, "applicability", f"Đã kiểm tra {len(relations)} quan hệ pháp lý theo thời điểm.", "check_effectivity", [doc_id])
+        for item in previous_evidence:
+            found.setdefault(item.chunk.id,item)
         # Keep existing hits stable and add parent text, capped to a bounded context.
         for item in list(found.values())[:8]:
             if item.chunk.parent_id:
@@ -261,7 +306,10 @@ class Agent:
                 "Giữ đúng chủ thể: Chủ tịch UBND khác UBND; không rút gọn làm đổi thẩm quyền. "
                 "kind=applicability chỉ để nêu mốc hiệu lực/tình trạng áp dụng, không chứa quyền lợi. "
                 "Có thể dẫn đoạn future để giải thích văn bản CHƯA có hiệu lực, không áp dụng quyền lợi từ đó. "
-                "kind=context chỉ cho bối cảnh dự án. Trả lời trực tiếp vấn đề được hỏi trước khi giải thích bổ sung.",
+                "kind=context chỉ cho bối cảnh dự án. Trả lời trực tiếp vấn đề được hỏi trước khi giải thích bổ sung. "
+                "Không thêm ngày hiệu lực nếu câu hỏi không yêu cầu. Nếu nêu ngày hiệu lực, phải dẫn đúng đoạn "
+                "quy định hiệu lực và chứa ngày đó; metadata ngày ban hành không chứng minh ngày hiệu lực. "
+                "Ưu tiên ít claims rõ ràng, mỗi claim dẫn đoạn chứng minh trực tiếp; không ghép thêm căn cứ không cần thiết.",
                 {"question": redact(state["request"].message), "as_of": str(state["as_of"]), "history": state["history"],
                  "missing_facts": state["plan"].missing_facts, "tool_results": state["tool_notes"], "evidence": self.context(state),
                  "coverage_gaps": (state['release'] or {}).get('coverage_gaps', []),
@@ -284,6 +332,13 @@ class Agent:
                    (evidence[i].applicability=='future' and claim.kind!='applicability')) for i in claim.citation_ids):
                 structural_issues.append(f"Claim {index}: căn cứ chưa xác minh tính áp dụng")
             normalized_claim=normalize(claim.text)
+            cited_text=' '.join(evidence[i].chunk.text for i in claim.citation_ids if i in evidence)
+            if dates_in(claim.text)-dates_in(cited_text):
+                structural_issues.append(f'Claim {index}: ngày nêu trong kết luận không xuất hiện trong đoạn được dẫn')
+            if 'hieu luc' in normalized_claim and dates_in(claim.text) and not any(
+                    'hieu luc' in normalize(evidence[i].chunk.text) and dates_in(claim.text) <= dates_in(evidence[i].chunk.text)
+                    for i in claim.citation_ids if i in evidence):
+                structural_issues.append(f'Claim {index}: cần đoạn quy định hiệu lực có đúng ngày, không dùng ngày ban hành')
             if 'chuyen giao cho uy ban nhan dan cap xa' in normalized_claim:
                 if any('chuyen giao cho chu tich uy ban nhan dan cap xa' in normalize(evidence[i].chunk.text)
                        for i in claim.citation_ids if i in evidence):
@@ -340,7 +395,10 @@ class Agent:
                    (evidence[c].applicability=='future' and draft.claims[i].kind!='applicability') for c in draft.claims[i].citation_ids)}
         checked.supported_claim_indexes = sorted(set(checked.supported_claim_indexes) & allowed)
         state["verification"] = checked
-        await self.event(state, "verification", f"{len(checked.supported_claim_indexes)}/{len(draft.claims)} kết luận được hỗ trợ; {len(checked.issues)} vấn đề.")
+        summary=f"{len(checked.supported_claim_indexes)}/{len(draft.claims)} kết luận được hỗ trợ; {len(checked.issues)} vấn đề."
+        if checked.issues:
+            summary+=' '+redact('; '.join(checked.issues[:3]))[:500]
+        await self.event(state, "verification", summary)
         return state
 
     @staticmethod
@@ -402,7 +460,7 @@ class Agent:
         if missing:
             content += "\n\nThông tin cần bổ sung:\n" + "\n".join(f"- {x}" for x in missing)
         historical_question = state['as_of'] < date(2026,4,2) and any(number in normalize(state['request'].message)
-            for number in ('40/2026','56/2024','boi thuong'))
+            for number in ('40/2026','56/2024'))
         if historical_question and any(g['document_id']=='qd-56-2024-hanoi' for g in (release or {}).get('coverage_gaps',[])):
             content+='\n\nBộ dữ liệu chưa có toàn văn đạt kiểm tra của QĐ56/2024; chưa thể xác định đầy đủ quyền lợi hồ sơ lịch sử phụ thuộc văn bản này.'
         if draft.next_steps and not check.issues:
