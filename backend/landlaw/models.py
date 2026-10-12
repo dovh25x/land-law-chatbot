@@ -37,13 +37,14 @@ class Document(BaseModel):
     provision_validity: list[dict] = Field(default_factory=list)
     checked_at: datetime
     checksum: str
+    source_review_notes: str = ''
     chunks: list[Chunk] = Field(default_factory=list)
 
 
 class Relation(BaseModel):
     source_id: str
     target_id: str
-    type: Literal["amends", "replaces", "repeals", "guides", "transition"]
+    type: Literal["amends", "replaces", "repeals", "guides", "transition", "overrides"]
     locator: str | None = None
     source_locator: str | None = None
     target_locators: list[str] = Field(default_factory=list)
@@ -69,6 +70,7 @@ class Citation(BaseModel):
     excerpt: str
     checked_at: datetime
     applicability: str
+    source_review_notes: str = ''
 
 
 class TraceEvent(BaseModel):

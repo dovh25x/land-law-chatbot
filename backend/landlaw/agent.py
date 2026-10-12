@@ -81,7 +81,7 @@ def applicability(doc: Document, as_of: date, chunk=None):
             numbers = re.findall(r"Điều\s+(\d+)", scope.get('locator',''),flags=re.IGNORECASE)
             if any(re.search(rf'^Điều {n}(?:\D|$)',chunk.locator) for n in numbers):
                 starts, ends = scope.get('effective_from'), scope.get('effective_to')
-                if (starts and date.fromisoformat(starts) <= as_of and doc.effective_from and as_of < doc.effective_from) or (ends and as_of >= date.fromisoformat(ends)):
+                if (starts and doc.effective_from and date.fromisoformat(starts) != doc.effective_from) or (ends and as_of >= date.fromisoformat(ends)):
                     return 'provision_specific'
     if doc.effective_from and as_of < doc.effective_from:
         return "future"
@@ -95,6 +95,19 @@ def relation_chunks(doc, locator):
     numbers = re.findall(r"Điều\s+(\d+)", locator or "", flags=re.IGNORECASE)
     selected = [c for c in doc.chunks if any(re.search(rf"^Điều {n}(?:\D|$)", c.locator) for n in numbers)]
     return (selected or doc.chunks)[:3]
+
+
+def relation_may_affect(relation, doc_id, passages):
+    """Skip only a verified complete amendment scope outside retrieved articles."""
+    if (relation.target_id != doc_id or relation.type not in {'amends', 'repeals'}
+            or not relation.target_locators_complete):
+        return True
+    articles = {n for locator in relation.target_locators
+                for n in re.findall(r'Điều\s+(\d+)', locator, re.IGNORECASE)}
+    if not articles:
+        return True
+    return any(p.document.id == doc_id and any(
+        re.search(rf'^Điều {n}(?:\D|$)', p.chunk.locator) for n in articles) for p in passages)
 
 
 def dates_in(text):
@@ -147,6 +160,13 @@ def source_effective_dates(text):
     for match in re.finditer(r'co hieu luc(?:\s+thi hanh)?\b[^.;\n]{0,160}',normalize(text)):
         result.update(dates_in(match[0].split(' va ')[0]))
     return result
+
+
+def claim_effective_dates(text):
+    """Commencement/expiry dates, excluding an act's separately stated issue date."""
+    pattern = (r'hieu luc(?:\s+thi hanh)?\s+(?:(?:ke tu|tu|vao|den)\s+)?(?:ngay\s+)?'
+               r'(\d{1,2}(?:[/-]\d{1,2}[/-]\d{4}|\s+thang\s+\d{1,2}\s+nam\s+\d{4}))')
+    return {value for match in re.finditer(pattern, normalize(text)) for value in dates_in('ngay ' + match[1])}
 
 
 def public_missing_facts(facts,release):
@@ -225,6 +245,10 @@ class Agent:
                 "check_effectivity kiểm tra văn bản theo document_id đã biết; open_article mở điều khoản đã biết; "
                 "normalize_place tìm tên địa bàn theo danh mục. Với câu hỏi quyền lợi cá nhân, liệt kê dữ kiện thiếu. "
                 "Chỉ đánh dấu out_of_scope khi không liên quan đất đai/quy hoạch Hà Nội. "
+                "Câu hỏi quy định chung không cần dựng hồ sơ cá nhân. missing_facts chỉ là dữ kiện riêng "
+                "của hồ sơ cần kết luận: loại đất, giấy tờ, ngày quyết định hoặc phê duyệt phương án. "
+                "Không yêu cầu người dùng cung cấp nội dung pháp luật, điều kiện do luật quy định "
+                "hoặc thông tin văn bản đã có trong catalogue; hệ thống phải tự tra cứu chúng. "
                 "Không đoán document_id; khi chưa biết dùng search_law. Câu hỏi đơn giản về một văn bản ưu tiên một công cụ. "
                 "Văn bản trong coverage_gaps không mở được; dùng search_law để tìm văn bản tác động có trong corpus.",
                 {"question": redact(request.message), "project": request.project, "as_of": str(state["as_of"]),
@@ -293,7 +317,7 @@ class Agent:
             elif call.name in {"open_article", "check_effectivity"}:
                 doc = None if not call.document_id else (await asyncio.to_thread(self.store.open_effectivity,call.document_id,release_id)
                        if call.name=='check_effectivity' else
-                       await asyncio.to_thread(self.store.open_document, call.document_id, release_id, call.locator))
+                       await asyncio.to_thread(self.store.open_document, call.document_id, release_id, call.locator, call.query or state['request'].message))
                 if doc:
                     results = [Evidence(chunk=c, document=doc) for c in doc.chunks
                                if call.name=='check_effectivity' or not call.locator or re.search(r'Điều\s+\d+',call.locator,re.IGNORECASE)
@@ -314,17 +338,26 @@ class Agent:
             await self.event(state, "tool", f"Thu được {len(results)} đoạn chứng cứ.", call.name,
                              sorted({e.document.id for e in results}))
         # Follow legal relationships; deterministic scope checks are never delegated entirely to the LLM.
+        catalogue = {d['id']: d for d in state['release']['documents']}
+        opened = set()
         for doc_id in list(dict.fromkeys(e.document.id for e in found.values()))[:4]:
             if state["budget"].tool_calls >= 12:
                 break
             state["budget"].tool()
             relations = await asyncio.to_thread(self.store.relations, doc_id, release_id)
+            relations = [relation for relation in relations
+                         if relation_may_affect(relation, doc_id, list(found.values()))]
+            relations.sort(key=lambda relation: (
+                relation.target_id == doc_id,
+                catalogue.get(relation.source_id, {}).get('effective_from') or ''), reverse=True)
             for relation in relations:
+                if state['budget'].tool_calls >= 12:
+                    break
                 if relation.source_id==doc_id and relation.source_locator and state['budget'].tool_calls<12:
                     numbers=re.findall(r'Điều\s+(\d+)',relation.source_locator)
                     if not any(e.document.id==doc_id and any(e.chunk.locator==f'Điều {n}' for n in numbers) for e in found.values()):
                         state['budget'].tool()
-                        source=await asyncio.to_thread(self.store.open_document,doc_id,release_id,relation.source_locator)
+                        source=await asyncio.to_thread(self.store.open_document,doc_id,release_id,relation.source_locator,state['request'].message)
                         if source:
                             for chunk in source.chunks:
                                 found.setdefault(chunk.id,Evidence(chunk=chunk,document=source,
@@ -332,11 +365,19 @@ class Agent:
                             await self.event(state,'tool','Đã mở điều khoản nguồn của quan hệ sửa đổi/thay thế.','open_article',[doc_id])
                 related_id = relation.source_id if relation.target_id == doc_id else relation.target_id
                 locator = (relation.source_locator or relation.locator) if related_id == relation.source_id else " ".join(relation.target_locators)
-                doc = await asyncio.to_thread(self.store.open_document, related_id, release_id, locator)
+                if (related_id, locator) in opened:
+                    continue
+                if state['budget'].tool_calls >= 12:
+                    break
+                state['budget'].tool()
+                opened.add((related_id, locator))
+                doc = await asyncio.to_thread(self.store.open_document, related_id, release_id, locator,state['request'].message)
                 if doc:
                     for chunk in relation_chunks(doc, locator):
                         found.setdefault(chunk.id, Evidence(chunk=chunk, document=doc,
                                                            applicability=applicability(doc, state["as_of"],chunk)))
+                    await self.event(state, 'tool', 'Đã mở văn bản có quan hệ pháp lý để đối chiếu phạm vi.',
+                                     'open_article', [related_id])
             await self.event(state, "applicability", f"Đã kiểm tra {len(relations)} quan hệ pháp lý theo thời điểm.", "check_effectivity", [doc_id])
         for item in previous_evidence:
             found.setdefault(item.chunk.id,item)
@@ -357,6 +398,7 @@ class Agent:
                  "applicability": e.applicability, "effective_from": str(e.document.effective_from),
                  "effective_to": str(e.document.effective_to),
                  "provision_validity": e.document.provision_validity,
+                 'source_review_notes':e.document.source_review_notes,
                  "legal_relations": self.relation_context(e, state)} for e in state["evidence"]]
 
     def prompt_context(self,state,selected_ids=None):
@@ -372,7 +414,7 @@ class Agent:
             document_id=item['document_id']
             documents.setdefault(document_id,{key:item[key] for key in (
                 'document_id','title','document_number','kind','effective_from','effective_to',
-                'provision_validity','legal_relations')})
+                'provision_validity','legal_relations','source_review_notes')})
             passages.append({key:item[key] for key in (
                 'citation_id','document_id','page','locator','text','applicability')})
         return passages,list(documents.values())
@@ -406,6 +448,8 @@ class Agent:
                 "provision_specific có mốc riêng tại khoản được ghi; phải kiểm tra đúng khoản và không suy hiệu lực toàn điều. "
                 "hoặc chuyển tiếp được chứng minh. Không coi official_news là quy phạm. Nếu thiếu dữ kiện hồ sơ, "
                 "dùng clarification_needed. Không kết luận chắc chắn về quyền lợi hộ/thửa hoặc số tiền. "
+                "Nếu hỏi quy định chung, trả lời answered khi có đủ chứng cứ để giải thích điều kiện; "
+                "không tự chuyển thành hỏi hồ sơ cá nhân hoặc yêu cầu người dùng cung cấp quy định pháp luật. "
                 "Đánh dấu out_of_scope nếu câu hỏi không thuộc pháp luật đất đai/quy hoạch Hà Nội; không tư vấn y tế, đầu tư hoặc lĩnh vực ngoài phạm vi. "
                 "next_steps chỉ là hướng dẫn đối chiếu hồ sơ chung; thời hạn/điều kiện pháp lý phải đưa vào claims có nguồn. "
                 "coverage_gaps và unresolved_relations chỉ mô tả phần còn thiếu, không phải chứng cứ. "
@@ -445,7 +489,7 @@ class Agent:
         evidence = {e.chunk.id: e for e in state["evidence"]}
         repaired=[]
         for index,claim in enumerate(draft.claims):
-            claim_dates=claim_source_dates(claim.text,state['as_of'])
+            claim_dates=claim_effective_dates(claim.text)
             if 'hieu luc' not in normalize(claim.text) or not claim_dates:
                 continue
             if any(i not in evidence for i in claim.citation_ids):
@@ -454,7 +498,8 @@ class Agent:
             if len(doc_ids)!=1:
                 continue
             candidates=[e for e in evidence.values() if e.document.id in doc_ids
-                        and claim_dates<=source_effective_dates(e.chunk.text)]
+                        and claim_dates<=source_effective_dates(e.chunk.text)
+                        and claim_source_dates(claim.text,state['as_of'])<=dates_in(e.chunk.text)]
             if candidates:
                 candidate=min(candidates,key=lambda e:(len(e.chunk.text),e.chunk.id))
                 if claim.citation_ids != [candidate.chunk.id]:
@@ -482,8 +527,9 @@ class Agent:
             claimed_dates=claim_source_dates(claim.text,state['as_of'])
             if claimed_dates-dates_in(cited_text):
                 structural_issues.append(f'Claim {index}: ngày nêu trong kết luận không xuất hiện trong đoạn được dẫn')
-            if 'hieu luc' in normalized_claim and claimed_dates and not any(
-                    claimed_dates <= source_effective_dates(evidence[i].chunk.text)
+            effective_dates = claim_effective_dates(claim.text)
+            if effective_dates and not any(
+                    effective_dates <= source_effective_dates(evidence[i].chunk.text)
                     for i in claim.citation_ids if i in evidence):
                 structural_issues.append(f'Claim {index}: cần đoạn quy định hiệu lực có đúng ngày, không dùng ngày ban hành')
             if 'chuyen giao cho uy ban nhan dan cap xa' in normalized_claim:
@@ -494,7 +540,7 @@ class Agent:
             # Clause-level changes never invalidate the whole original document.
             cited_documents = {evidence[i].document.id for i in claim.citation_ids if i in evidence}
             for relation in (state['release'] or {}).get('unresolved_relations', []):
-                if relation['target_id'] in cited_documents and relation['type'] in {'amends','repeals'}:
+                if relation['target_id'] in cited_documents and relation['type'] in {'amends','repeals','overrides'}:
                     structural_issues.append(f"Claim {index}: thiếu văn bản tác động để xác minh phạm vi điều khoản")
             for citation_id in claim.citation_ids:
                 if citation_id not in evidence or evidence[citation_id].applicability != "current":
@@ -546,6 +592,11 @@ class Agent:
             "Span phải chứng minh nội dung claim tương ứng; đoạn mở đầu/căn cứ tên văn bản không chứng minh điều khoản ở trang khác. "
             "Ngày hiệu lực không chứng minh mọi hồ sơ được xử lý trước đó đều bị loại; cần điều khoản chuyển tiếp "
             "để xác nhận cách xử lý hồ sơ cũ, không suy đoán từ metadata hoặc mốc bắt đầu. "
+            "Quan hệ overrides là cơ chế ưu tiên có điều kiện khi cùng vấn đề có quy định khác nhau, "
+            "không phải bãi bỏ toàn bộ luật gốc. Đối chiếu nội dung chính sách đang có hiệu lực và chuyển tiếp "
+            "trước khi xác nhận quy định gốc về giá đất, thời hạn, công khai, tài sản hoặc hỗ trợ. "
+            "Nếu chưa có đoạn chính sách cần thiết để giải quyết khác biệt, yêu cầu truy xuất bổ sung; "
+            "không mặc định bản gốc chứng minh đầy đủ quy định hiện hành. "
             "Không có span chứng minh thì bỏ index và yêu cầu truy xuất bổ sung. Nếu đáp án bỏ sót câu hỏi trực tiếp, ghi issues để sửa.",
             {"question": redact(state["request"].message), "as_of": str(state["as_of"]),
              "draft": checked_draft, "evidence": model_context,'source_spans':model_spans,'documents':documents,
@@ -609,7 +660,8 @@ class Agent:
         citations = [Citation(id=i, document_id=evidence[i].document.id, title=evidence[i].document.title,
                               document_number=evidence[i].document.document_number, url=str(evidence[i].document.url),
                               locator=evidence[i].chunk.locator, excerpt=evidence[i].chunk.text[:1600],
-                              checked_at=evidence[i].document.checked_at, applicability=evidence[i].applicability) for i in cited_ids]
+                              checked_at=evidence[i].document.checked_at, applicability=evidence[i].applicability,
+                              source_review_notes=evidence[i].document.source_review_notes) for i in cited_ids]
         status = draft.status
         if draft.claims and (len(claims) != len(draft.claims) or check.issues):
             status = "insufficient_evidence"

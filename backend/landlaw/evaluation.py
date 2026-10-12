@@ -4,19 +4,88 @@ import json
 import math
 import statistics
 import uuid
+from datetime import timedelta
 from pathlib import Path
 
 from .agent import Agent
 from .ingest import json_write
 from .models import ChatRequest
-from .security import local_date, new_token, utcnow
+from .security import digest, local_date, new_token, official_url, utcnow
 
 
 def dataset(path: Path):
     cases = [json.loads(line) for line in path.read_text(encoding="utf-8").splitlines() if line.strip()]
     if len({q["id"] for q in cases}) != len(cases):
         raise ValueError("Duplicate benchmark IDs")
+    for case in cases:
+        validate_history(case.get('history', []))
     return cases
+
+
+def validate_frozen_benchmark(path, freeze_path, sources_path, store=None, release_id=None):
+    """Check immutable source references; this cannot certify legal correctness."""
+    cases = dataset(path)
+    freeze = json.loads(freeze_path.read_text())
+    sources = json.loads(sources_path.read_text())
+    acceptance = [case for case in cases if case['split'] == 'acceptance']
+    if (len(cases) != 120 or len(acceptance) != 80
+            or sum(case['split'] == 'dev' for case in cases) != 40
+            or digest(path.read_bytes()) != freeze['dataset_sha256']
+            or digest(json.dumps(acceptance, ensure_ascii=False, sort_keys=True)) != freeze['acceptance_sha256']
+            or digest(sources_path.read_bytes()) != freeze['gold_sources_sha256']
+            or [case['id'] for case in acceptance] != freeze['acceptance_ids']):
+        raise ValueError('Benchmark freeze mismatch; create a reviewed new version before evaluation')
+    passages = sources['passages']
+    checked = set()
+    for case in cases:
+        if (case.get('ground_truth_status') != 'source_checked' or not case.get('source_review')
+                or not case.get('rubric') or not case.get('source_review_metadata', {}).get('reviewed_at')):
+            raise ValueError('Unreviewed benchmark case')
+        refs = {ref['chunk_id']: ref for ref in case.get('reference_chunks', [])}
+        if set(case.get('gold_chunk_ids', [])) != set(refs):
+            raise ValueError('Gold IDs do not match source references')
+        for cid, ref in refs.items():
+            source = passages.get(cid)
+            if (not source or not official_url(ref['url'])
+                    or any(source.get(key) != value for key, value in ref.items())
+                    or digest(source['text']) != ref['chunk_checksum']):
+                raise ValueError('Invalid benchmark source provenance or checksum')
+            if store is not None and cid not in checked:
+                chunk = store.chunk(cid, release_id)
+                document = store.document(ref['document_id'], release_id)
+                if (not chunk or not document or chunk.document_id != ref['document_id']
+                        or chunk.checksum != ref['chunk_checksum'] or chunk.locator != ref['locator']
+                        or chunk.page != ref['page'] or document.checksum != ref['document_checksum']):
+                    raise ValueError('Benchmark source differs from evaluation corpus')
+            checked.add(cid)
+    return {'dataset_sha256': freeze['dataset_sha256'], 'acceptance_cases': 80,
+            'source_checked_cases': 120, 'distinct_source_passages': len(checked),
+            'independent_legal_certification': False, 'freeze_sha256': digest(freeze_path.read_bytes())}
+
+
+def validate_history(history):
+    """Frozen displayed turns, shared by both modes; never generated during scoring."""
+    if not isinstance(history, list) or len(history) > 8:
+        raise ValueError('Benchmark history must contain at most eight fixed turns')
+    for index, turn in enumerate(history):
+        if (not isinstance(turn, dict) or turn.get('role') != ('user' if index % 2 == 0 else 'assistant')
+                or not isinstance(turn.get('content'), str) or not 1 <= len(turn['content']) <= 3000):
+            raise ValueError('Benchmark history requires alternating user/assistant content fixtures')
+    if len(history) % 2:
+        raise ValueError('Benchmark history must end with a fixed assistant turn')
+
+
+def seed_history(store, session_id, history):
+    """Write explicitly labelled fixtures only into the evaluator's private session."""
+    validate_history(history)
+    now = utcnow()
+    with store.transaction() as conn:
+        for index, turn in enumerate(history):
+            payload = {**turn, 'benchmark_fixture': True}
+            payload.pop('role')
+            store.execute(conn, 'INSERT INTO messages VALUES(?,?,?,?,?)',
+                (str(uuid.uuid4()), session_id, turn['role'], json.dumps(payload, ensure_ascii=False),
+                 (now + timedelta(microseconds=index)).isoformat()))
 
 
 def preserve_attempt(folder,record,origin='executed'):
@@ -100,17 +169,23 @@ async def evaluate(settings, store, provider, split="dev", release_id=None, limi
     release = store.release(release_id, metadata_only=True)
     if not release:
         raise ValueError("No corpus release to evaluate")
+    source_validation = None
+    if split == 'acceptance':
+        source_validation = await asyncio.to_thread(validate_frozen_benchmark, path,
+            path.with_name('acceptance-freeze.json'), path.with_name('gold-sources.json'), store, release['id'])
     configuration = configuration_fingerprint(settings)
     run_id = f"{release['id']}-{provider.settings.generation_model.replace('/', '_')}-{split}-{fingerprint[:8]}-{configuration[:8]}-c{concurrency}"
     records_path = settings.reports_dir / "runs" / run_id / "records.json"
     metadata_path = records_path.with_name("metadata.json")
     metadata = json.loads(metadata_path.read_text()) if metadata_path.exists() else {"as_of": str(local_date()), "configuration_sha256": configuration}
+    if source_validation:
+        metadata['benchmark_source_validation'] = source_validation
     json_write(metadata_path, metadata)
     records = json.loads(records_path.read_text()) if records_path.exists() else []
     attempts_path=records_path.parent/'attempts'
     for record in records:
         preserve_attempt(attempts_path,record,'imported_latest_checkpoint')
-    agent, executed = Agent(store, provider), 0
+    agent = Agent(store, provider)
     async def emit(_):
         pass
     pending = [(case,mode) for case in cases for mode in ('baseline','agentic')
@@ -120,11 +195,7 @@ async def evaluate(settings, store, provider, split="dev", release_id=None, limi
     async def execute(case,mode):
         session_id = str(uuid.uuid4())
         await asyncio.to_thread(store.create_session,session_id,new_token())
-        # Persist preceding turns only in this private benchmark session.
-        for turn in case.get('history',[]):
-            preceding = await agent.run(ChatRequest(session_id=session_id,message=turn,
-                project=case.get('project'),as_of=case.get('as_of') or metadata['as_of'],mode=mode),emit,release['id'])
-            await asyncio.to_thread(store.save_turn,session_id,turn,preceding)
+        await asyncio.to_thread(seed_history, store, session_id, case.get('history', []))
         result = await agent.run(ChatRequest(session_id=session_id,message=case['question'],
             project=case.get('project'),as_of=case.get('as_of') or metadata['as_of'],mode=mode),emit,release['id'])
         return {'case_id':case['id'],'mode':mode,'result':result.model_dump(mode='json')}

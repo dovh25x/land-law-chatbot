@@ -16,6 +16,7 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = ["pytest>=8,<10", "pytest-asyncio>=1,<2", "respx>=0.22,<1", "ruff>=0.12,<1"]
+ocr = ["pypdfium2>=4.30,<6", "Pillow>=11,<13"]
 
 [project.scripts]
 land-law = "landlaw.cli:app"

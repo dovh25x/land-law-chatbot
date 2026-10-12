@@ -2,7 +2,9 @@
 
 `data/evaluation/questions.jsonl` chứa 120 câu hỏi viết riêng: 40 câu phát triển và 80 câu nghiệm thu. Bộ câu hỏi bao phủ bồi thường, hỗ trợ, tái định cư, quy hoạch, thủ tục, khiếu nại, lịch sử và chuyển tiếp, địa danh, hội thoại tiếp nối, ba dự án, thiếu nguồn, nguồn mâu thuẫn và prompt injection.
 
-**Trạng thái hiện tại: bản nháp tiêu chí, chưa phải bộ gold pháp lý.** Tất cả 120 bản ghi có `ground_truth_status: draft`. Có file câu hỏi, chạy được evaluator hoặc vượt một kiểm thử schema không có nghĩa là đạt các chỉ tiêu chất lượng pháp lý trong kế hoạch. Không công bố “benchmark passed”, Recall@8 hay độ chính xác pháp lý nếu chưa đáp ứng điều kiện đo dưới đây.
+**Trạng thái hiện tại: 120 rubric đã được đối chiếu nguồn hoặc xác định rõ hành vi/giới hạn hồ sơ; chưa có báo cáo nghiệm thu đầy đủ.** 93 đoạn tham chiếu nằm trong `gold-sources.json`; 40 câu dev và 80 câu acceptance được giữ nguyên số lượng. `acceptance-freeze.json` khóa checksum trước chạy đánh giá cuối. Rà soát này do AI engineer thực hiện, chưa có thẩm định pháp lý độc lập. Nhãn `source_checked` mô tả rubric và nguồn, không xác nhận câu trả lời của model đã đạt.
+
+Chạy `python scripts/validate_benchmark_sources.py --release data/staging/corpus-<id>.json` để đối chiếu chính xác ID, checksum, điều/trang và phiên bản văn bản với corpus sẽ đánh giá. CI kiểm tra freeze cùng bản trích dẫn. Evaluator acceptance từ chối dữ liệu bị sửa hoặc gold không khớp corpus trước khi gọi provider. Không thay gold sau khi xem kết quả để nâng điểm. Các lượt probe phát triển/provider trước đó không phải kết quả nghiệm thu.
 
 ## Schema và ý nghĩa nhãn
 
@@ -17,16 +19,16 @@ Mỗi dòng JSON có các trường sau:
 | `project` | `ring4`, `songhong`, `olympic` hoặc null |
 | `expected_status` | Hành vi dự kiến khi có đủ corpus đã được thẩm định |
 | `allowed_statuses` | Các hành vi an toàn có thể chấp nhận theo điều kiện; không phải điểm đạt tự động |
-| `reference_document_numbers` | Số hiệu ứng viên để tìm căn cứ; chưa là danh sách điều khoản gold |
+| `reference_document_numbers` | Số hiệu của các đoạn tham chiếu đã gắn, không tự thay thế điều khoản/phạm vi/chuyển tiếp |
 | `expected_points` | Những ý cần đối chiếu nội dung, nguồn và ngữ cảnh |
 | `forbidden_claims` | Khẳng định sai/không có căn cứ hoặc hành vi không được xảy ra |
 | `critical` | Lỗi thời điểm, phạm vi, bảo vệ dữ liệu/công cụ ảnh hưởng điều kiện nghiệm thu |
 | `ground_truth_status` | `draft` hoặc `source_checked` sau kiểm tra nguồn cụ thể |
-| `reference_urls` | URL nguồn đã xác định để bắt đầu đối chiếu; URL hiện diện không chứng minh đã đọc và kiểm tra toàn văn |
+| `reference_urls` | URL chính thức gắn với `reference_chunks`; checksum và locator nằm trong mỗi reference |
 
 Các số hiệu ứng viên, đặc biệt văn bản sửa đổi, phân quyền và pháp luật quy hoạch, phải được giải quyết với manifest nguồn. Không sử dụng mọi số hiệu được liệt kê cho mọi câu một cách máy móc. `source_checked` chỉ được gán khi người kiểm tra đã mở được bản nguồn, xác định điều/khoản, phạm vi, hiệu lực và quan hệ tác động cần cho câu đó. Nguồn không tải được, nội dung OCR không tin cậy hoặc chưa xác minh sửa đổi giữ trạng thái draft.
 
-Ngày 01/04/2026 và 03/04/2026 quanh Quyết định 56/2024/QĐ-UBND là **tình huống kiểm tra**, không phải xác nhận trong bộ này rằng một quy định cụ thể có hiệu lực ngày nào. Cần lịch sử và văn bản thay thế/bãi bỏ chính thức trước khi hoàn tất gold.
+Ngày 01/04/2026 và 03/04/2026 là hai tình huống quanh mốc thay thế QĐ56. Điều 2 QĐ40/2026 xác nhận thay thế từ 02/04/2026. QĐ56 lịch sử có nguồn snapshot VBPL được lưu cả bản gốc và giới hạn tuổi cache. Câu hỏi quyền lợi hồ sơ cũ vẫn phải kiểm tra sửa đổi và chuyển tiếp, không chỉ ngày hỏi.
 
 ## Hoàn thiện gold và đóng băng nghiệm thu
 
@@ -78,3 +80,9 @@ Báo cáo HTML/JSON phải nêu corpus và benchmark hash, thời gian, cấu h�
 Resolver phải đọc `kind` và `ambiguous`, không lấy mọi `canonical` làm tên xã hiện tại. Với `historical_scope`, `ambiguous_split` và `ambiguous_name`, giữ địa danh lịch sử và hỏi địa chỉ/xã phường hiện tại; `candidates` là gợi ý đối chiếu, không là kết quả chọn tự động. Hết `valid_to` của đơn vị cũ không có nghĩa hồ sơ/quyết định cũ hết hiệu lực. Với `full_merge`, ánh xạ chỉ phù hợp cho vị trí sau mốc vận hành; câu hỏi lịch sử phải giữ tên cũ. Tên không có trong file phải hỏi thêm hoặc tra nguồn, không tự dựng mapping.
 
 Mỗi record có nguồn, vị trí điều khoản, ngày công bố nguồn và ngày kiểm tra. Các bản công bố web có thể chứa lỗi đánh máy: trang toàn văn nêu ngày thông qua ở cuối khác các thông báo chính thức của Hà Nội; file không dùng dòng đó để xác định ngày thông qua. Chứng cứ địa danh phục vụ xác định phạm vi, không tự chứng minh thửa đất thuộc dự án hoặc cơ quan hiện tại có thẩm quyền xử lý một thủ tục cụ thể.
+
+## Phiên và phạm vi kiểm thử
+
+Lịch sử trong mỗi case là fixture gồm các lượt user/assistant cố định, được ghi rõ `benchmark_fixture` trong phiên kỹ thuật riêng; không phải câu trả lời thật của provider. Hai chế độ nhận cùng fixture và không tốn lượt LLM để sinh lịch sử riêng. S14 trong smoke đo tiếp nối bằng fixture này. HL109–111 không có lịch sử nên rubric yêu cầu không bịa ngữ cảnh.
+
+HL116 kiểm tra chỉ dẫn được người dùng quy cho tài liệu; bản thân ca này chưa chứng minh prompt injection qua retrieval. Kiểm thử runtime có fixture tool result độc hại riêng. Hành vi cách ly phiên phải được kiểm chứng bằng API/DB, không coi lời hứa của model là bằng chứng bảo mật. Các ca thiếu thửa, bản đồ hoặc luật lịch sử chưa thu thập được chỉ kiểm tra hành vi giới hạn đã ghi rõ; không tạo gold pháp lý giả cho nguồn còn thiếu.

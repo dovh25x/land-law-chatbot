@@ -6,7 +6,7 @@ Web chatbot tiếng Việt dùng FastAPI, LangGraph, Gemini, PostgreSQL/pgvector
 
 Website: https://hanoi-land-law.pages.dev; API: https://land-law-chatbot.onrender.com. Hạ tầng đã live và một lượt Gemini/SSE thật đã qua smoke. Corpus chưa công bố; đây chưa phải bản phát hành đã nghiệm thu M0–M6. Xem [bằng chứng và hạng mục còn mở](docs/IMPLEMENTATION_STATUS.md), [nguồn thật và khoảng trống](docs/SOURCES.md), [benchmark](docs/BENCHMARK.md). Không có câu trả lời hay chỉ số chất lượng giả trong runtime. SQLite dành cho phát triển; production bắt buộc PostgreSQL.
 
-Provider sinh được chọn rõ bằng `LLM_PROVIDER`: Gemini hoặc Cloudflare Workers AI `@cf/qwen/qwen3-30b-a3b-fp8`. Qwen là dự phòng miễn phí được chủ dự án cho phép khi các model Gemini nhanh trả quota theo ngày. Hai chế độ dùng cùng model; cấu hình/provider có fingerprint riêng và không ghép kết quả đánh giá. Corpus mới `corpus-a6af9cf431b26f71` có 47 tài liệu, 32 văn bản pháp lý, 5 nguồn mỗi dự án và đủ 5.149 vector BGE-M3 1.024 chiều. Đây vẫn là staging cho đến khi gate demo đạt. Không có trần gọi API theo ngày do ứng dụng đặt; giữ điểm dừng workflow và chống lạm dụng website. Không bật billing hoặc nâng gói.
+Provider sinh được chọn rõ bằng `LLM_PROVIDER`: Gemini hoặc Cloudflare Workers AI `@cf/qwen/qwen3-30b-a3b-fp8`. Qwen là dự phòng miễn phí được chủ dự án cho phép khi các model Gemini nhanh trả quota theo ngày. Hai chế độ dùng cùng model; cấu hình/provider có fingerprint riêng và không ghép kết quả đánh giá. Corpus mới `corpus-1cd1aa2da9050e47` có 52 tài liệu, 37 văn bản pháp lý và 5 nguồn mỗi dự án; đã có 4.636/5.582 vector BGE-M3 1.024 chiều. Còn 946 vector cần tiếp tục khi quota provider phục hồi. Bản BGE trước có đủ 5.149 vector vẫn được giữ làm staging. Chưa công bố corpus hoặc đạt gate demo. Không có trần gọi API theo ngày do ứng dụng đặt; giữ điểm dừng workflow và chống lạm dụng website. Không bật billing hoặc nâng gói.
 
 ## Chạy phát triển
 
@@ -34,7 +34,7 @@ Mở http://127.0.0.1:5173. Vite proxy `/api`, `/healthz`, `/readyz` đến back
 
 ## Corpus và phát hành
 
-Manifest `data/sources.json` chứa nguồn chính thức, checksum raw và metadata pháp lý đã rà soát. Chạy ingestion online hoặc offline với raw đã tải. PDF ảnh cần Tesseract `vie+eng` và Poppler trên máy ingestion; backend Docker không chứa OCR. Nguồn chưa duyệt, draft, shell tải dữ liệu, checksum thay đổi, OCR lỗi và hồ sơ cá nhân chưa ẩn danh đều bị cách ly.
+Manifest `data/sources.json` chứa nguồn chính thức, checksum raw và metadata pháp lý đã rà soát. Chạy ingestion online hoặc offline với raw đã tải. PDF ảnh xử lý ngoại tuyến bằng Tesseract tiếng Việt; `scripts/ocr_offline.py` dùng PDFium và lưu text phân trang cùng diagnostics. Cài tùy chọn `pip install -e ".[ocr]"` trên máy ingestion, không cài OCR vào backend Docker. Nguồn chưa duyệt, draft, shell tải dữ liệu, checksum thay đổi, OCR lỗi và hồ sơ cá nhân chưa ẩn danh đều bị cách ly.
 
 ```bash
 .venv/bin/land-law migrate                 # PostgreSQL, quyền owner/admin
@@ -50,7 +50,7 @@ Manifest `data/sources.json` chứa nguồn chính thức, checksum raw và meta
 
 Embedding theo batch tối đa tám Content độc lập, một vector cho mỗi đoạn, checkpoint theo model/định dạng/title/checksum. Chạy lại tiếp tục checkpoint và không nhân đôi release cùng nội dung/metadata. `publish` từ chối khi thiếu nguồn bắt buộc (gồm QĐ 56/2024 lịch sử), độ bao phủ, metadata, embedding hoặc báo cáo nghiệm thu đã rà soát cho đúng release. Benchmark chạy được trên staging trước công bố; không cần bypass gate để đánh giá.
 
-Bộ 120 câu hỏi gồm 40 dev/80 acceptance; căn cứ và rubric draft phải được đối chiếu toàn văn, bổ sung `gold_chunk_ids`, rồi review từng câu trả lời. Chỉ số chưa đo/rà soát hiển thị `null`; kết quả chưa đủ không được coi là đạt. Các ca benchmark là tình huống giả định, không phải hồ sơ người dân.
+Bộ 120 câu hỏi gồm 40 dev/80 acceptance đã có rubric theo nguồn và 93 đoạn tham chiếu; 80 câu nghiệm thu được đóng băng trước chạy đánh giá cuối. Đây là rà soát nguồn của AI engineer, chưa được chuyên gia pháp lý thẩm định độc lập. Từng câu trả lời thật vẫn phải được chấm riêng. `scripts/validate_benchmark_sources.py` kiểm tra checksum/freeze và đối chiếu corpus, không tự chứng nhận độ chính xác pháp lý. Chỉ số chưa đo/rà soát hiển thị `null`; kết quả chưa đủ không được coi là đạt. Các ca benchmark là tình huống giả định, không phải hồ sơ người dân.
 
 ## Kiểm tra
 

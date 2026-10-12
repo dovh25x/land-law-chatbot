@@ -161,13 +161,14 @@ class Store:
     def save_turn(self, session_id, message, result):
         import uuid
 
-        now = utcnow().isoformat()
+        now = utcnow()
         with self.transaction() as conn:
-            for role, payload in [("user", {"content": message}), ("assistant", result.model_dump(mode="json"))]:
+            for index, (role, payload) in enumerate([("user", {"content": message}), ("assistant", result.model_dump(mode="json"))]):
                 self.execute(conn, "INSERT INTO messages VALUES(?,?,?,?,?)",
-                             (str(uuid.uuid4()), session_id, role, json.dumps(payload, ensure_ascii=False), now))
+                             (str(uuid.uuid4()), session_id, role, json.dumps(payload, ensure_ascii=False),
+                              (now + timedelta(microseconds=index)).isoformat()))
             self.execute(conn, "INSERT INTO traces VALUES(?,?,?,?)", (
-                result.trace_id, session_id, json.dumps([e.model_dump() for e in result.trace], ensure_ascii=False), now))
+                result.trace_id, session_id, json.dumps([e.model_dump() for e in result.trace], ensure_ascii=False), now.isoformat()))
 
     def trace(self, trace_id, session_id):
         rows = self.rows("SELECT payload FROM traces WHERE id=? AND session_id=?", (trace_id, session_id))
@@ -325,20 +326,36 @@ class Store:
         rows = self.rows("SELECT payload FROM documents WHERE release_id=? AND id=?", (release_id, doc_id))
         return Document.model_validate_json(rows[0]["payload"]) if rows else None
 
-    def open_document(self, doc_id, release_id=None, locator=None):
+    def open_document(self, doc_id, release_id=None, locator=None, query=None):
         """Bounded read tool: fetch relevant passages without the entire price-table archive."""
         release_id = release_id or self.state('active_release')
         doc = next((d for d in self.documents(release_id) if d.id == doc_id), None)
         if not doc:
             return None
-        articles = re.findall(r'Điều\s+(\d+)', locator or '', flags=re.IGNORECASE)
-        where, params = '', [release_id, doc_id]
-        if articles:
-            where = ' AND (' + ' OR '.join('locator=? OR locator=?' for _ in articles) + ')'
+        articles = list(dict.fromkeys(re.findall(r'\bdieu\s+(\d+)', normalize(locator or ''))))[:3]
+        projection = 'id,document_id,text,locator,parent_id,page,checksum,embedding_model'
+        base = f'SELECT {projection} FROM chunks WHERE release_id=? AND document_id=?'
+        if not articles:
+            rows = self.rows(base + ' ORDER BY id LIMIT 3', (release_id, doc_id))
+        else:
+            # A long article can span many chunks. Opening its first three loses
+            # late clauses (notably transitional rules). Rank bounded candidates
+            # using the requested clause and question, and retain each article.
+            clause = re.search(r'\bkhoan\s+(\d+)\b', normalize(locator or ''))
+            terms = set(re.findall(r'[a-z0-9]{3,}', normalize(query or locator or '')))
+            def relevance(row):
+                body = normalize(row['text'])
+                exact_clause = bool(clause and re.search(rf'(?<!\d){clause[1]}\.\s', body))
+                return (exact_clause, sum(body.count(term) for term in terms) / math.sqrt(max(1, len(body.split()))))
+            groups = []
             for number in articles:
-                params.extend([f'Điều {number}',f'Điều {number} · ngữ cảnh'])
-        rows = self.rows('SELECT id,document_id,text,locator,parent_id,page,checksum,embedding_model FROM chunks WHERE release_id=? AND document_id=?' + where + ' ORDER BY id LIMIT 3',tuple(params))
-        doc.chunks = [self._chunk(r) for r in rows]
+                candidates = self.rows(base + ' AND (locator=? OR locator=?) ORDER BY page,id LIMIT 20',
+                                       (release_id, doc_id, f'Điều {number}', f'Điều {number} · ngữ cảnh'))
+                groups.append(sorted(candidates, key=relevance, reverse=True))
+            rows = [group[0] for group in groups if group]
+            extras = sorted([row for group in groups for row in group[1:]], key=relevance, reverse=True)
+            rows += extras[:3-len(rows)]
+        doc.chunks = [self._chunk(r) for r in rows[:3]]
         return doc
 
     def chunk(self, chunk_id, release_id=None):

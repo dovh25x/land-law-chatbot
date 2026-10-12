@@ -48,6 +48,40 @@ def test_wrapped_cross_reference_keeps_actual_article_and_page_continuation():
     assert not any(c.locator == "Điều 95" for c in chunks)
 
 
+def test_wrapped_reference_with_period_does_not_relabel_amendment_body():
+    text = ('Điều 7. Thay thế một số cụm từ\n'
+            'Bãi bỏ cụm từ trong khoản 1\nĐiều 2.\n'
+            '3. Thay thế cụm từ tại khoản 4\nĐiều 65.\n'
+            'b) Bổ sung nội dung theo quy định.\n'
+            'Điều 8.\nĐiều khoản chuyển tiếp\n1. Hồ sơ cũ được xem xét theo thời điểm.')
+    chunks = chunks_for('amendment', [(35, text)])
+    assert {chunk.locator for chunk in chunks} == {'Điều 7', 'Điều 8'}
+    assert 'Điều 65.' in next(chunk.text for chunk in chunks if chunk.locator == 'Điều 7')
+
+
+def test_unpunctuated_articles_and_appendix_preserve_distinct_locators_and_units():
+    pages = [(1, 'Điều 1\nQuyết định chủ trương đầu tư dự án theo hồ sơ chính thức.\n'
+                 'Điều 2\n1. Mục tiêu đầu tư theo nghị quyết được Quốc hội thông qua.\n'
+                 'Thực hiện quy định tại\nĐiều 95 của Luật này khi giải quyết hồ sơ.'),
+             (6, 'PHỤ LỤC\nĐơn vị tính: tỷ đồng\nTT   Dự án   Tổng mức đầu tư\n'
+                 '1   Bồi thường, hỗ trợ, tái định cư   19.590\n'
+                 '1.1   Hà Nội   13.370\n')]
+    chunks = chunks_for('project', pages)
+    assert {c.locator for c in chunks} == {'Điều 1', 'Điều 2', 'Trang 6'}
+    appendix = next(c for c in chunks if c.page == 6)
+    assert 'tỷ đồng' in appendix.text and '13.370' in appendix.text
+    assert 'Điều 95 của' in next(c.text for c in chunks if c.locator == 'Điều 2')
+
+
+def test_project_table_decimal_rows_are_not_repeated_as_headers():
+    table = ('PHỤ LỤC\nĐơn vị tính: tỷ đồng\nTT   Dự án   Vốn đầu tư\n'
+             '1.3   Bắc Ninh   2.480\n' + '2.1   Hà Nội   9.687\n'*100)
+    chunks = [c for c in chunks_for('appendix', [(7, table)]) if not c.id.endswith('parent')]
+    assert len(chunks) > 1
+    assert sum(c.text.count('1.3   Bắc Ninh   2.480') for c in chunks) == 1
+    assert all('Đơn vị tính: tỷ đồng' in c.text and 'TT   Dự án' in c.text for c in chunks)
+
+
 def test_table_marker_cache_does_not_turn_prose_into_table_or_repeat_rows():
     prose = "Điều 104. Bồi thường chi phí di chuyển\nỦy ban nhân dân cấp tỉnh quy định đơn giá bồi thường theo quy định của pháp luật."
     assert not table_layout(prose)
@@ -87,6 +121,27 @@ def test_benchmark_has_real_distinct_questions_and_no_fabricated_results():
     assert summary["results"][0]["recall_at_8"] is None
 
 
+def test_frozen_benchmark_rejects_edited_gold_and_source_content(tmp_path):
+    import json
+    from pathlib import Path
+    from landlaw.evaluation import validate_frozen_benchmark
+    root = Path('data/evaluation')
+    paths = [tmp_path/name for name in ('questions.jsonl', 'acceptance-freeze.json', 'gold-sources.json')]
+    for path in paths:
+        path.write_bytes((root/path.name).read_bytes())
+    assert validate_frozen_benchmark(*paths)['acceptance_cases'] == 80
+    original = paths[0].read_bytes()
+    paths[0].write_bytes(original.replace(b'HL-041', b'HL-999', 1))
+    with pytest.raises(ValueError, match='freeze mismatch'):
+        validate_frozen_benchmark(*paths)
+    paths[0].write_bytes(original)
+    sources = json.loads(paths[2].read_text())
+    next(iter(sources['passages'].values()))['text'] += ' unauthorized edit'
+    paths[2].write_text(json.dumps(sources))
+    with pytest.raises(ValueError, match='freeze mismatch'):
+        validate_frozen_benchmark(*paths)
+
+
 def test_publication_requires_real_coverage_and_embeddings():
     report = coverage({"id": "empty", "documents": [], "checked_at": "2026-10-12"})
     assert not report["publication_ready"] and not report["coverage_passed"]
@@ -103,3 +158,36 @@ def test_resuming_preserves_failed_attempt_without_overwriting_it(tmp_path):
     next_path=preserve_attempt(tmp_path,succeeded)
     assert next_path!=path and len(list(tmp_path.glob('*.json')))==2
     assert json.loads(path.read_text())['record']['result']['status']=='error'
+
+
+def test_paired_benchmark_history_is_fixed_labelled_and_isolated(store):
+    from landlaw.evaluation import seed_history
+    from conftest import session
+    first, _ = session(store)
+    second, _ = session(store)
+    untouched, _ = session(store)
+    fixture = [{'role':'user','content':'Văn bản nào?'},
+               {'role':'assistant','content':'Tình huống tham chiếu QĐ40.',
+                'citations':[{'document_id':'qd-40-2026-hanoi','locator':'Điều 2'}]}]
+    for sid in (first, second):
+        seed_history(store, sid, fixture)
+    displayed = lambda sid: [(m['role'], m['payload']) for m in store.messages(sid)]
+    assert displayed(first) == displayed(second)
+    assert [role for role, _ in displayed(first)] == ['user', 'assistant']
+    assert all(payload['benchmark_fixture'] for _, payload in displayed(first))
+    assert not store.messages(untouched)
+    assert not store.rows('SELECT * FROM traces')
+    assert not store.rows('SELECT * FROM counters')
+    with pytest.raises(ValueError, match='alternating'):
+        seed_history(store, first, ['A previous turn requiring an unmeasured LLM call'])
+    assert len(store.messages(first)) == 2
+
+
+def test_source_backup_includes_reviewed_ocr_and_original_provenance():
+    from landlaw.cli import reviewed_source_files
+    source={'raw_paths':['data/raw/source.pdf'],'raw_checksums':{'data/raw/source.pdf':'pdf'},
+        'ocr_sidecars':[{'ocr_path':'data/raw/source.ocr.txt','ocr_sha256':'ocr','review_status':'verified'},
+                       {'ocr_path':'data/raw/unreviewed.txt','ocr_sha256':'pending','review_status':'pending'}],
+        'source_artifacts':[{'path':'data/raw/publication.html','sha256':'publication'}]}
+    assert reviewed_source_files(source)==[('data/raw/source.pdf','pdf'),
+        ('data/raw/source.ocr.txt','ocr'),('data/raw/publication.html','publication')]

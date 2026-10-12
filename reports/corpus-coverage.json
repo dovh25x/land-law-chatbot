@@ -1,19 +1,59 @@
 {
-  "release": "corpus-a6af9cf431b26f71",
-  "documents": 47,
-  "legal": 32,
-  "verified_legal": 32,
+  "release": "corpus-1cd1aa2da9050e47",
+  "documents": 52,
+  "legal": 37,
+  "verified_legal": 37,
   "projects": {
     "ring4": 5,
     "songhong": 5,
     "olympic": 5
   },
-  "chunks": 5149,
-  "embedded": true,
+  "chunks": 5582,
+  "embedded": false,
   "coverage_passed": true,
   "missing_mandatory_sources": [],
-  "publication_ready": true,
+  "publication_ready": false,
   "issues": [
+    {
+      "id": "nd-88-2024",
+      "reason": "Parsed staging document has incomplete embeddings; publication blocked",
+      "quarantined": false
+    },
+    {
+      "id": "nd-71-2024",
+      "reason": "Parsed staging document has incomplete embeddings; publication blocked",
+      "quarantined": false
+    },
+    {
+      "id": "nd-101-2024",
+      "reason": "Parsed staging document has incomplete embeddings; publication blocked",
+      "quarantined": false
+    },
+    {
+      "id": "nd-102-2024",
+      "reason": "Parsed staging document has incomplete embeddings; publication blocked",
+      "quarantined": false
+    },
+    {
+      "id": "nd-103-2024",
+      "reason": "Parsed staging document has incomplete embeddings; publication blocked",
+      "quarantined": false
+    },
+    {
+      "id": "nd-151-2025",
+      "reason": "Parsed staging document has incomplete embeddings; publication blocked",
+      "quarantined": false
+    },
+    {
+      "id": "nd-226-2025",
+      "reason": "Parsed staging document has incomplete embeddings; publication blocked",
+      "quarantined": false
+    },
+    {
+      "id": "qd-71-2024-hanoi",
+      "reason": "Parsed staging document has incomplete embeddings; publication blocked",
+      "quarantined": false
+    },
     {
       "id": "luat-quy-hoach-2017",
       "reason": "Source full text / legal metadata awaiting review",
@@ -55,9 +95,44 @@
       "quarantined": true
     },
     {
+      "id": "ring4-nq56-2022",
+      "reason": "Parsed staging document has incomplete embeddings; publication blocked",
+      "quarantined": false
+    },
+    {
       "id": "ring4-nq106-2022",
       "reason": "Source full text / legal metadata awaiting review",
       "quarantined": true
+    },
+    {
+      "id": "nq-52-2025-hanoi",
+      "reason": "Parsed staging document has incomplete embeddings; publication blocked",
+      "quarantined": false
+    },
+    {
+      "id": "luat-146-2025",
+      "reason": "Parsed staging document has incomplete embeddings; publication blocked",
+      "quarantined": false
+    },
+    {
+      "id": "nq-254-2025",
+      "reason": "Parsed staging document has incomplete embeddings; publication blocked",
+      "quarantined": false
+    },
+    {
+      "id": "nq-258-2025",
+      "reason": "Parsed staging document has incomplete embeddings; publication blocked",
+      "quarantined": false
+    },
+    {
+      "id": "luat-71-2025",
+      "reason": "Parsed staging document has incomplete embeddings; publication blocked",
+      "quarantined": false
+    },
+    {
+      "id": "nq-90-2026-hanoi",
+      "reason": "Parsed staging document has incomplete embeddings; publication blocked",
+      "quarantined": false
     },
     {
       "id": "qd-30-2019-hanoi",

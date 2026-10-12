@@ -2,6 +2,7 @@ import asyncio
 import hashlib
 import io
 import json
+import logging
 import re
 import shutil
 import socket
@@ -23,6 +24,7 @@ from .security import digest, normalize, official_url, public_ip_address, redact
 from .store import RateLimited
 
 MAX_DOWNLOAD = 25 * 1024 * 1024
+logger = logging.getLogger(__name__)
 
 
 class Quarantine(Exception):
@@ -103,7 +105,21 @@ def ocr_page(content: bytes, page_index: int):
 
 
 TABLE_MARKER = "[BẢNG / ĐƠN GIÁ — giữ dòng, tiêu đề, đơn vị; đối chiếu trang gốc]"
-ARTICLE_HEADING = re.compile(r"^[ \t]*Điều[ \t]+(\d+)[ \t]*[.:]", re.MULTILINE | re.IGNORECASE)
+ARTICLE_HEADING = re.compile(r"^[ \t]*Điều[ \t]+(\d+)(?:[ \t]*[.:]|[ \t]*(?=\n|$))", re.MULTILINE | re.IGNORECASE)
+
+
+def article_headings(text):
+    """Do not turn a wrapped reference ending in 'Điều 65.' into a heading."""
+    for match in ARTICLE_HEADING.finditer(text):
+        tail = text[match.end():].split('\n', 1)
+        if not tail[0].strip():
+            following = tail[1].lstrip() if len(tail) > 1 else ''
+            preceding = text[:match.start()].rstrip().split('\n')[-1] if match.start() else ''
+            punctuated = match[0].rstrip().endswith(('.', ':'))
+            if (not following or (punctuated and re.match(r'(?:\d+[.)]|[a-zđ]\))', following))
+                    or re.search(r'\btai\s+(?:khoan|diem)\b', normalize(preceding))):
+                continue
+        yield match
 
 
 def table_layout(text):
@@ -112,7 +128,7 @@ def table_layout(text):
     columns = [line for line in lines if re.search(r"\S[ \t]{3,}\S", line)]
     if len(columns) < 2:
         return False
-    if any(re.search(r"\bSTT\b|Tên đường|Tên phố", line, re.IGNORECASE) for line in columns):
+    if any(re.search(r"\b(?:STT|TT)\b|Tên đường|Tên phố", line, re.IGNORECASE) for line in columns):
         return True
     numeric_rows = sum(bool(re.search(r"\S[ \t]{3,}\d[\d.,]*(?:[ \t]{3,}|$)", line)) for line in columns)
     return numeric_rows >= 2 and bool(re.search(r"đơn vị tính|đơn giá|mức giá", text, re.IGNORECASE))
@@ -156,7 +172,9 @@ def chunks_for(doc_id, pages):
         text = redact(text).replace(TABLE_MARKER + "\n", "").strip()
         if "�" in text and text.count("�") / max(len(text), 1) > 0.005:
             raise Quarantine("Encoding/OCR quality insufficient")
-        positions = [m.start() for m in ARTICLE_HEADING.finditer(text)]
+        if re.search(r'^\s*PHỤ LỤC\s*$', text, re.MULTILINE | re.IGNORECASE):
+            active_article = None
+        positions = [m.start() for m in article_headings(text)]
         boundaries = sorted(set([0, *positions, len(text)]))
         sections = [text[a:b] for a, b in zip(boundaries, boundaries[1:])]
         for section_index, section in enumerate(sections):
@@ -175,7 +193,7 @@ def chunks_for(doc_id, pages):
                 # column separator, every value and every row; never embed padding.
                 lines = [re.sub(r'[ \t]{3,}', '   ', line).rstrip() for line in section.splitlines()]
                 first_row = next((i for i, line in enumerate(lines)
-                    if i >= 1 and re.match(r"^[ \t]*\d+[.)]?[ \t]{2,}\S", line)), min(8, len(lines)))
+                    if i >= 1 and re.match(r"^[ \t]*\d+(?:\.\d+)*[.)]?[ \t]{2,}\S", line)), min(8, len(lines)))
                 header_lines = lines[:first_row]
                 header = TABLE_MARKER + "\n" + "\n".join(header_lines)
                 segments, current, count = [], [], 0
@@ -313,6 +331,7 @@ async def collect_source(source, settings, client, offline=False, allow_ocr=Fals
         issued_on=source.get("issued_on"), effective_from=source.get("effective_from"), effective_to=source.get("effective_to"),
         applicability_verified=legal_verified,
         provision_validity=source.get("provision_validity", []),
+        source_review_notes=source.get('source_review_notes', ''),
         checked_at=datetime.fromisoformat(source["checked_at"].replace("Z", "+00:00")) if offline else utcnow(), checksum=checksum,
         chunks=chunks_for(source_id, pages))
     return doc
@@ -329,6 +348,8 @@ async def embed_pending(provider, pending, title, issues, doc_id):
                 for (chunk, checkpoint), vector in zip(batch, vectors, strict=True):
                     chunk.embedding = vector
                     json_write(checkpoint, {"embedding": vector})
+                logger.info('Embedding checkpoint: document=%s items=%d provider=%s',
+                            doc_id, len(batch), getattr(getattr(provider, 'settings', None), 'embedding_provider', 'injected-test'))
                 return len(batch), throttled
             except RateLimited as exc:
                 throttled = True
@@ -374,6 +395,7 @@ async def build_corpus(settings: Settings, provider: Gemini | None, offline=Fals
     async with httpx.AsyncClient(timeout=45, headers={"User-Agent": "HanoiLandLawResearch/0.1 (+official legal corpus demo)"}) as client:
         for source in sources:
             try:
+                logger.info('Checking source: document=%s offline=%s', source['id'], offline)
                 doc = await collect_source(source, settings, client, offline, allow_ocr)
                 if doc.checksum in seen_checksums:
                     raise Quarantine(f"Duplicate body with {seen_checksums[doc.checksum]} (possible portal shell)")
@@ -390,6 +412,8 @@ async def build_corpus(settings: Settings, provider: Gemini | None, offline=Fals
                         else:
                             pending.append((chunk, checkpoint))
                         chunk.embedding_model = provider.settings.embedding_model
+                    logger.info('Parsed source: document=%s chunks=%d cached=%d pending=%d',
+                                doc.id, len(doc.chunks), len(doc.chunks)-len(pending), len(pending))
                     if not embedding_blocked:
                         embedding_blocked = await embed_pending(provider, pending, doc.title, issues, doc.id)
                     if any(c.embedding is None for c in doc.chunks):
@@ -417,7 +441,7 @@ async def build_corpus(settings: Settings, provider: Gemini | None, offline=Fals
     embedding_contract = contract(settings)
     content_hash = digest(json.dumps({"documents": documents, "relations": valid_relations,
         "unresolved_relations":unresolved,'coverage_gaps':gaps,'embedding_contract':embedding_contract,
-        "place_aliases": aliases, "embedding_model": settings.embedding_model, "parser_version": 9}, sort_keys=True, ensure_ascii=False))[:16]
+        "place_aliases": aliases, "embedding_model": settings.embedding_model, "parser_version": 12}, sort_keys=True, ensure_ascii=False))[:16]
     payload = {"id": f"corpus-{content_hash}", "checked_at": min((d["checked_at"] for d in documents), default=utcnow().isoformat()), "documents": documents,
                "relations": valid_relations, "place_aliases": aliases, "embedding_model": settings.embedding_model,
                "embedding_dimensions":settings.embedding_dimensions,'embedding_contract':embedding_contract,

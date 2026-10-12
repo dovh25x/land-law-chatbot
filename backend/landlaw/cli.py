@@ -22,6 +22,9 @@ def reviewed_source_files(source):
     """Include original cached official responses as well as normalized parser input."""
     files = [(raw, source.get('raw_checksums', {}).get(raw)) for raw in source.get('raw_paths', [])]
     files.extend((item['path'], item['sha256']) for item in (source.get('source_snapshot') or {}).get('raw_snapshots', []))
+    files.extend((item['ocr_path'], item['ocr_sha256']) for item in source.get('ocr_sidecars', [])
+                 if item.get('review_status') == 'verified')
+    files.extend((item['path'], item['sha256']) for item in source.get('source_artifacts', []))
     return files
 
 
@@ -122,6 +125,11 @@ def migrate():
 @app.command()
 def ingest(offline: bool = False, embed: bool = False, ocr: bool = False, cached_embeddings_only: bool = False, persist: bool = True):
     """Build a staging release. Never auto-publish changed legal content."""
+    import logging
+    logger = logging.getLogger('landlaw.ingest')
+    if not logger.handlers:
+        logger.addHandler(logging.StreamHandler())
+    logger.setLevel(logging.INFO)
     async def run():
         settings = Settings().for_operator()
         store, provider = Store(settings), None
@@ -321,7 +329,9 @@ def archive_sources():
             if checksum != expected:
                 raise ValueError('Source checksum no longer reviewed')
             name = f'raw/{checksum}{path.suffix}'
-            files[name] = (name, content, 'application/pdf' if path.suffix == '.pdf' else 'text/plain' if path.suffix == '.txt' else 'text/html')
+            media_types={'.pdf':'application/pdf','.txt':'text/plain','.html':'text/html',
+                         '.json':'application/json','.jpg':'image/jpeg','.png':'image/png'}
+            files[name] = (name, content, media_types.get(path.suffix,'application/octet-stream'))
         reviewed.append(source)
     body = json.dumps(reviewed, ensure_ascii=False, sort_keys=True).encode()
     name = f'manifests/{digest(body)}.json'

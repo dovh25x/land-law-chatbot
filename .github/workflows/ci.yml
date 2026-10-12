@@ -17,6 +17,7 @@ jobs:
           cache: pip
       - run: pip install -r requirements.lock && pip install --no-deps -e .
       - run: pytest -q
+      - run: python scripts/validate_benchmark_sources.py
   frontend:
     runs-on: ubuntu-latest
     defaults:

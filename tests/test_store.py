@@ -98,6 +98,27 @@ def test_effectivity_tool_opens_operative_article_not_preamble(store):
     assert [c.id for c in store.open_effectivity(doc.id).chunks]==['operative']
 
 
+def test_open_article_preserves_late_clause_and_other_requested_article(store):
+    from landlaw.models import Chunk
+    from landlaw.security import digest
+    doc = document()
+    doc.chunks = []
+    for index in range(12):
+        text = f'{index + 1}. Quy định về thủ tục.'
+        if index == 11:
+            text = '13. Hồ sơ đã có phương án bồi thường phê duyệt tiếp tục thực hiện theo điều khoản chuyển tiếp.'
+        doc.chunks.append(Chunk(id=f'part-{index:02}', document_id=doc.id, text=text,
+                                locator='Điều 3', page=index + 1, checksum=digest(text)))
+    text = 'Điều 13. Nghị quyết này có hiệu lực thi hành từ ngày 01 tháng 01 năm 2026.'
+    doc.chunks.append(Chunk(id='effectivity', document_id=doc.id, text=text, locator='Điều 13', page=15, checksum=digest(text)))
+    release(store, [doc])
+    opened = store.open_document(doc.id, locator='Khoản 13 Điều 3', query='phương án đã phê duyệt và chuyển tiếp')
+    assert opened.chunks[0].id == 'part-11'
+    opened = store.open_document(doc.id, locator='Điều 3 và Điều 13', query='phương án đã phê duyệt và chuyển tiếp')
+    assert {chunk.id for chunk in opened.chunks} >= {'part-11', 'effectivity'}
+    assert len(opened.chunks) <= 3
+
+
 def test_encrypted_restore_preserves_session_isolation_and_rejects_plaintext_sessions(store, settings, tmp_path):
     from cryptography.fernet import Fernet
     from landlaw.store import Store

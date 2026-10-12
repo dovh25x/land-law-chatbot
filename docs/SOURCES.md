@@ -6,7 +6,7 @@ Thời điểm tải và đối chiếu: 11–12/10/2026 UTC; snapshot QĐ56 đ�
 
 | Nhóm | Danh mục | Toàn văn đã kiểm tra | Chờ kiểm tra/cách ly |
 |---|---:|---:|---:|
-| Văn bản pháp lý | 40 | 32 | 8 |
+| Văn bản pháp lý | 45 | 37 | 8 |
 | Vành đai 4 | 6 | 1 nghị quyết + 4 bài chính thức | 1 nghị quyết PDF ảnh |
 | Trục đại lộ cảnh quan sông Hồng | 5 | 5 | 0 |
 | Khu đô thị thể thao Olympic | 5 | 5 | 0 |
@@ -27,7 +27,7 @@ Tổng cộng 56 nguồn, 28 quan hệ pháp lý có vị trí điều khoản v
 
 ## Khoảng trống không được suy diễn
 
-Chưa thu thập toàn văn NQ 254/2025/QH15, NQ 258/2025/QH15 và toàn bộ chính sách đặc thù Hà Nội ban hành năm 2026 được các nguồn dẫn chiếu. NĐ 49/2026 và Luật Thủ đô mới cung cấp một phần căn cứ nhưng không thay thế văn bản được hướng dẫn. Những câu hỏi đòi hỏi quy định đặc thù chưa có phải trả lời giới hạn và nêu nguồn cần đối chiếu. Danh mục sửa đổi/đính chính sau NĐ 178/2025 và văn bản xử phạt cũng chưa được xác minh đầy đủ; không khẳng định corpus là bản hợp nhất của mọi luật tại ngày phát hành.
+Đã bổ sung NQ254/2025, NQ258/2025 và NQ90/2026 Hà Nội, nhưng chưa thu thập toàn bộ chính sách/tiêu chí và quyết định dự án được các nguồn dẫn chiếu. NĐ 49/2026 và Luật Thủ đô mới cung cấp một phần căn cứ nhưng không thay thế văn bản được hướng dẫn. Những câu hỏi đòi hỏi quy định đặc thù chưa có phải trả lời giới hạn và nêu nguồn cần đối chiếu. Danh mục sửa đổi/đính chính sau NĐ 178/2025 và văn bản xử phạt cũng chưa được xác minh đầy đủ; không khẳng định corpus là bản hợp nhất của mọi luật tại ngày phát hành.
 
 Nguồn sông Hồng và Olympic hiện chủ yếu là thông tin chính thức. Bài Viện Quy hoạch nêu các quyết định phê duyệt nhưng chưa tải được toàn bộ quyết định/bản đồ tương ứng. Bài Olympic khu B nói về **nhiệm vụ quy hoạch**, không chứng minh đã phê duyệt đồ án. Tin khởi công/tiến độ không chứng minh một hộ đủ bồi thường hay một thửa nằm trong ranh giới thu hồi.
 
@@ -52,7 +52,7 @@ Nguồn sông Hồng và Olympic hiện chủ yếu là thông tin chính thức
 | `nd-103-2024` | 103/2024/NĐ-CP | 2024-08-01 | [Nguồn](https://congbao.chinhphu.vn/van-ban/nghi-dinh-so-103-2024-nd-cp-42499.htm) |
 | `nd-104-2024` | 104/2024/NĐ-CP | 2024-08-01 | [Nguồn](https://congbao.chinhphu.vn/van-ban/nghi-dinh-so-104-2024-nd-cp-42495.htm) |
 | `nd-151-2025` | 151/2025/NĐ-CP | 2025-07-01 | [Nguồn](https://congbao.chinhphu.vn/van-ban/nghi-dinh-so-151-2025-nd-cp-45191.htm) |
-| `nd-226-2025` | 226/2025/NĐ-CP | 2025-08-15 | [Nguồn](https://xaydungchinhsach.chinhphu.vn/nghi-dinh-226-2025-nd-cp-sua-doi-bo-sung-cac-nghi-dinh-quy-dinh-thi-hanh-luat-dat-dai-119250817114021905.htm) |
+| `nd-226-2025` | 226/2025/NĐ-CP | 2025-08-15 | [Nguồn](https://congbao.chinhphu.vn/van-ban/nghi-dinh-so-226-2025-nd-cp-45839/58217.htm) |
 | `nd-49-2026` | 49/2026/NĐ-CP | 2026-01-31 | [Nguồn](https://congbao.chinhphu.vn/van-ban/nghi-dinh-so-49-2026-nd-cp-468908.htm) |
 | `qd-56-2024-hanoi` | 56/2024/QĐ-UBND | 2024-09-20; hết hiệu lực 2026-04-02 | [Snapshot nguồn chính thức](https://vbpl.vn/hanoi/Pages/ivbpq-toanvan.aspx?ItemID=169992&Keyword=) |
 | `qd-38-2025-hanoi` | 38/2025/QĐ-UBND | 2025-07-01 | [Nguồn](https://congbao.hanoi.gov.vn/Default.aspx?p_attribute=4875&pageid=45002) |
@@ -75,6 +75,12 @@ Nguồn sông Hồng và Olympic hiện chủ yếu là thông tin chính thức
 | `nq-52-2025-hanoi` | 52/2025/NQ-HĐND | 2026-01-01 | [Nguồn](https://congbao.hanoi.gov.vn/Default.aspx?p_attribute=5054&pageid=45002) |
 | `qd-89-2025-hanoi` | 89/2025/QĐ-UBND | 2026-01-01 | [Nguồn](https://congbao.hanoi.gov.vn/Default.aspx?p_attribute=5098&pageid=45002) |
 | `qd-19-2026-hanoi` | 19/2026/QĐ-UBND | 2026-02-02 | [Nguồn](https://congbao.hanoi.gov.vn/Default.aspx?p_attribute=5252&pageid=45002) |
+
+| `luat-146-2025` | 146/2025/QH15 | 2026-01-01 (đọc hiệu lực từng điều) | [Nguồn](https://congbao.chinhphu.vn/van-ban/luat-so-146-2025-qh15-468706/61741.htm) |
+| `nq-254-2025` | 254/2025/QH15 | 2026-01-01 (đọc hiệu lực từng điều) | [Nguồn](https://xaydungchinhsach.chinhphu.vn/toan-van-nghi-quyet-254-2025-qh15-quy-dinh-mot-so-co-che-chinh-sach-thao-go-kho-khan-vuong-mac-trong-to-chuc-thi-hanh-luat-dat-dai-119251225171010998.htm) |
+| `nq-258-2025` | 258/2025/QH15 | 2025-12-12 (đọc hiệu lực từng điều) | [Nguồn](https://phudien.hanoi.gov.vn/phu-dien-voi-cong-tac-bau-cu-dai-bieu-quoc-hoi-khoa-xvi-va-dai-bieu-hoi-dong-nhan-dan-cac-cap-nhiem-ky-2026-2031/cac-nghi-quyet-thong-qua-cua-quoc-hoi-ve-ky-hop-thu-10-quoc-hoi-khoa-xv-2794260206110358458.htm) |
+| `luat-71-2025` | 71/2025/QH15 | 2026-01-01 (đọc hiệu lực từng điều) | [Nguồn](https://congbao.chinhphu.vn/van-ban/luat-so-71-2025-qh15-45555.htm) |
+| `nq-90-2026-hanoi` | 90/2026/NQ-HĐND | 2026-01-27 (đọc hiệu lực từng điều) | [Nguồn](https://vanban.hanoi.gov.vn/chi-tiet-van-ban/ve-viec-thuc-hien-khoan-4-dieu-7-nghi-quyet-so-258-2025-qh15-ngay-11-thang-12-nam-2025-cua-quoc-hoi-233936) |
 
 ## Nguồn pháp lý chờ kiểm tra/cách ly
 
@@ -120,3 +126,15 @@ Nguồn sông Hồng và Olympic hiện chủ yếu là thông tin chính thức
 Khi cập nhật: tải staging, kiểm tra checksum, đối chiếu số/ngày và quan hệ cấp điều khoản, chạy regression, rồi mới tạo release. Nếu quá bảy ngày chưa đối chiếu thành công, trả lời “hiện nay” phải nêu giới hạn cập nhật. QĐ56 đã qua kiểm tra nguồn/snapshot; các OCR pending vẫn cần kiểm tra nội dung thực tế trước indexing.
 
 Kiểm tra cấu trúc/checksum: data/raw/source_asset_audit.json. Mọi ID quan hệ hợp lệ, raw_checksums khớp tệp và mỗi hồ sơ dự án có năm source_ids verified. Kiểm tra đọc body thực tế trên toàn bộ nguồn verified đạt >1000 ký tự/nguồn; có cảnh báo font Courier CFF thiếu fontTools, cần kiểm tra chất lượng parse khi ingestion.
+
+## Nguồn bổ sung và giới hạn xử lý
+
+- NQ254: 15 ảnh gốc được liên kết từ trang Chính phủ; giữ toàn bộ JPEG, HTML công bố và manifest/checksum. PDF dùng cho pipeline được ghép từ các ảnh, không phải bản PDF ký số gốc. OCR đã đối chiếu từng trang. Điều 3 thay đổi căn cứ giá, thời gian công khai/đối thoại và chuyển tiếp; ngày chung 01/01/2026, riêng điểm b khoản 3 Điều 12 từ 11/12/2025. Không coi quan hệ ưu tiên áp dụng là bãi bỏ toàn Luật Đất đai.
+- NQ258: bản PDF scan 10 trang từ cổng phường Phú Diễn có watermark Thư Viện Pháp Luật; giữ nguyên PDF gốc, phần thương mại không đưa vào nội dung quy định. OCR đã đối chiếu từng trang. Điều 12 quy định thời gian thực hiện thí điểm, không tự gán ngày hết hiệu lực toàn văn. Điều 36 khoản 6 Luật Thủ đô 2026 có chuyển tiếp và ngoại lệ quyết định áp dụng cho dự án mới.
+- NQ90 Hà Nội: PDF chính thức 3 trang, OCR đã đối chiếu ảnh. Điều 3 loại dự án đã/đang GPMB trước hiệu lực NQ258. Điều 4 quy định 02 lần cho loại dự án điểm a và 1,5 lần cho b/c/d/đ; chỉ bồi thường bằng tiền về đất, trong phạm vi và điều kiện tương ứng. Không nhân đôi mọi khoản và không tự áp cho Vành đai 4 khởi công năm 2023.
+- Luật146: bản Công báo đủ 80 trang, Điều16/17 đã đối chiếu; hiệu lực chung 01/01/2026, một số quy định từ 01/07/2026 hoặc 01/01/2027. Bãi bỏ điểm a khoản 4 Điều182 Luật Đất đai, không bãi bỏ toàn điều.
+- Luật71: bản Công báo đủ 31 trang; Điều49 khoản5 đổi thuật ngữ khu công nghệ thông tin tập trung thành khu công nghệ số tập trung trong các văn bản được chỉ rõ. Metadata ghi hiệu lực riêng Điều11/28/29 từ 01/07/2025 và ngày chung 01/01/2026.
+- NĐ226: dùng toàn văn Công báo 44 trang thay HTML tóm tắt có locator sai. Phân số chi phí đầu tư còn lại tại trang PDF15 được đối chiếu trực quan và chuẩn hóa dấu ngoặc; PDF gốc giữ nguyên. NĐ49 sau đó có sửa đổi/bãi bỏ theo phạm vi cụ thể, không ghi cả NĐ226 hết hiệu lực.
+- Phụ lục NQ56/2022 Vành đai 4: hai trang bảng xoay được đọc trực quan, chép lại theo tên cột, đơn vị và số gốc; ô trống không quy thành 0. Các trang nghị quyết giữ native text. Sidecar và hồ sơ xử lý được lưu trong manifest/Storage riêng tư. Dữ liệu này là sơ bộ năm 2022, không phải đơn giá bồi thường hộ.
+
+Manifest hiện có 49 quan hệ với phạm vi và nguồn chứng minh. Quan hệ rà soát chưa đủ toàn bộ mục sửa đổi mang `scope_complete=false`; đầu mút lịch sử chưa có vẫn nằm trong báo cáo khoảng trống. Luật144 bãi bỏ cả Điều24/28 của Luật47 và một số khoản/điểm riêng; Điều2 của Luật144 có kỳ áp dụng riêng đến trước 01/03/2027. Không gán mốc này cho toàn Luật144.

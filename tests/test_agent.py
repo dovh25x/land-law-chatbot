@@ -39,6 +39,37 @@ async def noop(_):
     pass
 
 
+async def test_related_document_reads_obey_tool_budget_and_keep_unaffected_articles(store,settings,monkeypatch):
+    from landlaw.models import Relation
+    from landlaw.provider import Budget
+    original=document()
+    original.chunks[0].locator='Điều 104'
+    related=[document('amendment-'+str(i)) for i in range(20)]
+    unrelated=document('unrelated')
+    relations=[Relation(source_id=d.id,target_id=original.id,type='amends',
+        target_locators=['Điều 104'],target_locators_complete=True,
+        source_locator='Điều 1',source_url=d.url,explanation='Test amendment scope') for d in related]
+    relations.append(Relation(source_id=unrelated.id,target_id=original.id,type='amends',
+        target_locators=['Điều 182'],target_locators_complete=True,
+        source_locator='Điều 1',source_url=unrelated.url,explanation='Unrelated test scope'))
+    payload=release(store,[original,*related,unrelated],relations=[r.model_dump(mode='json') for r in relations])
+    opened=[]
+    real_open=store.open_document
+    def tracked_open(doc_id,*args):
+        opened.append(doc_id)
+        return real_open(doc_id,*args)
+    monkeypatch.setattr(store,'open_document',tracked_open)
+    sid, _ = session(store)
+    state={'request':ChatRequest(session_id=sid,message='Điều 104',mode='agentic'),
+        'budget':Budget(),'release':payload,'plan':Plan(tools=[ToolCall(name='open_article',document_id='law',locator='Điều 104')]),
+        'as_of':date(2026,10,12),'evidence':[],'rounds':0,'tool_notes':[],'trace':[],'emit':noop}
+    result=await Agent(store,FakeProvider(settings)).tools(state)
+    assert state['budget'].tool_calls == 12
+    assert len(opened) <= 11
+    assert 'unrelated' not in opened
+    assert result['evidence'] and any(event.tool=='open_article' and event.document_ids!=['law'] for event in result['trace'])
+
+
 def test_as_of_observation_is_distinct_from_claimed_commencement_date():
     from landlaw.agent import claim_source_dates
     assert claim_source_dates('Văn bản không còn hiệu lực vào ngày 12/10/2026.',date(2026,10,12))==set()
@@ -51,6 +82,14 @@ def test_effectivity_clause_does_not_inherit_replaced_act_issue_dates():
     from landlaw.agent import source_effective_dates
     text='Điều 2. Quyết định này có hiệu lực thi hành kể từ ngày 02 tháng 4 năm 2026 và thay thế Quyết định 56/2024 ngày 06/9/2024.'
     assert source_effective_dates(text)=={date(2026,4,2)}
+
+
+def test_issued_date_is_not_misclassified_as_commencement_in_the_same_claim():
+    from landlaw.agent import claim_effective_dates, claim_source_dates
+    text='Quyết định 56/2024 ngày 06/9/2024 hết hiệu lực từ ngày 02 tháng 4 năm 2026.'
+    assert claim_effective_dates(text)=={date(2026,4,2)}
+    assert claim_source_dates(text,date(2026,10,12))=={date(2024,9,6),date(2026,4,2)}
+    assert claim_effective_dates('Văn bản có hiệu lực từ 03/04/2026.')=={date(2026,4,3)}
 
 
 async def test_commencement_clause_does_not_exclude_all_historical_files(store,settings):
@@ -224,6 +263,27 @@ async def test_partial_repeal_requires_affected_amendment_without_invalidating_o
     release(store, [original, amendment], release_id='other-article', relations=[relation])
     result = await Agent(store, FakeProvider(settings)).run(ChatRequest(session_id=sid, message='bồi thường'), noop)
     assert result.status == 'answered'
+
+
+def test_later_clause_commencement_is_not_treated_as_whole_article_current():
+    law=document(provision_validity=[{'locator':'Điểm a khoản 3 Điều 10','effective_from':'2027-01-01'}])
+    law.chunks[0].locator='Điều 10'
+    assert applicability(law,date(2026,10,12),law.chunks[0])=='provision_specific'
+    law.chunks[0].locator='Điều 11'
+    assert applicability(law,date(2026,10,12),law.chunks[0])=='current'
+
+
+async def test_conditional_override_does_not_blanket_repeal_original(store,settings):
+    original=document()
+    special=document('special',text='Điều 13. Nếu cùng vấn đề có quy định khác nhau thì áp dụng chính sách này.')
+    relation={'source_id':'special','target_id':'law','type':'overrides','source_locator':'Điều 13',
+              'source_url':str(special.url),'explanation':'Ưu tiên có điều kiện, không bãi bỏ luật gốc.'}
+    release(store,[original,special],relations=[relation])
+    assert store.relations('law')[0].type=='overrides'
+    sid,_=session(store)
+    result=await Agent(store,FakeProvider(settings)).run(ChatRequest(session_id=sid,message='bồi thường'),noop)
+    assert result.status=='answered'
+    assert applicability(original,date(2026,10,12))=='current'
 
 
 async def test_citation_quote_must_come_from_the_cited_passage(store,settings):

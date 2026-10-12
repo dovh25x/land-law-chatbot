@@ -71,7 +71,7 @@ Workflow `embeddings.yml` sử dụng private raw archive (`land-law restore-sou
 
 Operator chạy `python scripts/embedding_checkpoint_seed.py archive` để tạo seed bất biến chia shard nhỏ trong Storage private; `restore` xác minh manifest/shard checksum, tên tệp và vector 768/1024 chiều, không ghi đè checkpoint mới hơn. Không đưa vector vào Git. Seed là dữ liệu pháp luật công khai, không chứa hội thoại hoặc khóa API. Giới hạn giải nén tổng cộng 180 MB, tối đa 20.000 checkpoint.
 
-Release demo hiện dùng `EMBEDDING_PROVIDER=cloudflare`, `EMBEDDING_MODEL=@cf/baai/bge-m3`, `EMBEDDING_DIMENSIONS=1024`, `CLOUDFLARE_ACCOUNT_ID` và token riêng `CLOUDFLARE_AI_API_TOKEN`. Gemini vẫn sinh đáp án. Không đổi token Pages. Migration 004 giữ vector Gemini 768 và tạo index riêng 1024. Query chọn contract từ release đang hoạt động, kể cả rollback; không trộn vector khác model/chiều. Workers AI secret/embedding variables được cấu hình qua script GitHub. Nội dung bảng giữ dòng, tiêu đề, đơn vị và phân cách cột; bỏ padding PDF thừa, luôn đối chiếu trang gốc khi đọc giá.
+Corpus staging mục tiêu dùng `EMBEDDING_PROVIDER=cloudflare`, `EMBEDDING_MODEL=@cf/baai/bge-m3`, `EMBEDDING_DIMENSIONS=1024`, `CLOUDFLARE_ACCOUNT_ID` và token riêng `CLOUDFLARE_AI_API_TOKEN`. Provider sinh do `LLM_PROVIDER` chọn Gemini hoặc Qwen dự phòng; chỉ công bố sau gate trên đúng lựa chọn. Không đổi token Pages. Migration 004 giữ vector Gemini 768 và tạo index riêng 1024. Query chọn contract từ release đang hoạt động, kể cả rollback; không trộn vector khác model/chiều. Workers AI secret/embedding variables được cấu hình qua script GitHub. Nội dung bảng giữ dòng, tiêu đề, đơn vị và phân cách cột; bỏ padding PDF thừa, luôn đối chiếu trang gốc khi đọc giá.
 
 Workflow `recovery.yml` sao lưu mã hóa thật, restore toàn bộ vào PostgreSQL/pgvector trên runner độc lập, kiểm tra hai chiều, dữ liệu, rollback, thu hồi bản đầu và restart; chỉ upload báo cáo không chứa hội thoại. Cần secret owner DATABASE_URL và BACKUP_ENCRYPTION_KEY. Nó không đổi pointer corpus production.
 
@@ -87,8 +87,16 @@ Render service đã tạo: chạy `python scripts/configure_render.py` để xá
 
 Đặt `LLM_PROVIDER=cloudflare`, `CLOUDFLARE_LLM_MODEL=@cf/qwen/qwen3-30b-a3b-fp8`, account ID và token Workers AI. Gemini vẫn chọn được bằng `LLM_PROVIDER=gemini`; không tự chuyển provider trong một lượt. Qwen dùng JSON schema, Pydantic kiểm tra lại phía server và cùng verifier/chứng cứ như Gemini. Chỉ lấy nội dung trả lời, không lưu/phát reasoning của provider. Report/cache gắn đúng model và fingerprint; đổi provider cần chạy lại gate. Dùng `scripts/configure_render.py` để đồng bộ backend; không đặt token AI trong frontend.
 
-HTTP 429 Workers AI code 3036 là hết phân bổ miễn phí theo ngày, 3040 là capacity tạm thời. Ưu tiên `Retry-After`; khi code 3036 không có header, báo thời gian đến chu kỳ reset UTC theo tài liệu Cloudflare. Bộ đếm `usage:workers-ai-millineurons:*` chỉ quan sát, không chặn API. Không nâng Workers Paid hoặc bật billing.
+HTTP 429 Workers AI code 3036, hoặc thông báo daily allocation/neurons dù mã khác, là hết phân bổ miễn phí theo ngày; 3040 là capacity tạm thời. Ưu tiên `Retry-After`; khi xác định daily allocation mà không có header, báo thời gian đến chu kỳ reset UTC theo tài liệu Cloudflare. Bộ đếm `usage:workers-ai-millineurons:*` chỉ quan sát, không chặn API. Không nâng Workers Paid hoặc bật billing.
 
 `archive-sources` và `restore-sources` giữ cả parser input và các snapshot gốc của nguồn đã chuẩn hóa. Corpus lớn dùng phần gzip nhị phân tối đa 20 MB, manifest và checksum; `restore-archive` xác minh mọi phần và nội dung mở rộng rồi ghi tệp, không đổi pointer công khai. Checkpoint seed chia shard để tránh giới hạn 50 MB mỗi object Free.
 
 Để dọn database khi có nhiều staging chưa công bố: `land-law retire-staging corpus-<old> ...`. Lệnh tạo backup đầy đủ có hội thoại mã hóa trước khi xóa, từ chối release active/previous hoặc có hồ sơ công bố, rồi VACUUM FULL các bảng corpus qua kết nối operator. Giữ hai release gần nhất và backup riêng; không dọn khi đang phát hành/đánh giá. Chạy trong khoảng bảo trì vì VACUUM khóa bảng corpus. Hội thoại và pointer không bị xóa. Không đưa quyền owner vào Render.
+
+## OCR ngoại tuyến và kiểm tra bố cục
+
+Cài Tesseract và gói ngôn ngữ `vie` miễn phí trên máy operator; `pip install -e ".[ocr]"` cài PDFium/Pillow cho script ngoại tuyến. Chạy `python scripts/ocr_offline.py source.pdf data/raw/source-unreviewed.ocr.txt --workers 2`. Script từ chối ghi đè, lưu text phân trang và JSON diagnostics; kết quả luôn pending cho đến khi đọc ảnh gốc và cập nhật checksum/review. Confidence cao không bảo đảm số tiền, dấu phủ định hoặc ngày đúng.
+
+Với bảng xoay hoặc phân số, không chỉ dựa vào số ký tự text. Giữ PDF/ảnh gốc, lưu bản chuẩn hóa theo trang, hồ sơ vị trí đã đối chiếu và mọi checksum trong `source_artifacts`/`ocr_sidecars`. Các trang text không sửa giữ nguyên; trường hợp không kiểm tra được phải cách ly. `archive-sources` lưu cả bản gốc và sidecar verified. Không đưa Tesseract, Pillow hoặc PDFium vào backend Render.
+
+Bộ nghiệm thu được khóa bằng `data/evaluation/acceptance-freeze.json`; chạy `python scripts/validate_benchmark_sources.py --release <release-file>` trước benchmark để kiểm tra gold khớp corpus. Đây là kiểm tra tính nhất quán, không tự chấm câu trả lời hoặc cấp chứng nhận pháp lý.
