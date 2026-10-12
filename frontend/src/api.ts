@@ -2,7 +2,7 @@ export const BASE = (import.meta.env.VITE_API_BASE_URL || '').replace(/\/$/, '')
 export const BACKEND_CONFIGURED = !!BASE || import.meta.env.DEV
 export type ProjectID = 'ring4' | 'songhong' | 'olympic'
 export interface Trace { step: string; tool?: string; summary: string; document_ids: string[]; elapsed_ms: number }
-export interface Citation { id: string; document_id: string; title: string; document_number?: string; url: string; locator: string; excerpt: string; checked_at: string; applicability: string; source_review_notes?: string }
+export interface Citation { id: string; document_id: string; title: string; document_number?: string; url: string; locator: string; excerpt: string; checked_at: string; applicability: string; source_review_notes?: string; page?: number; source_url?: string }
 export interface Result { status: string; content: string; citations: Citation[]; trace: Trace[]; trace_id: string; corpus_release?: string; model: string; embedding_model: string; mode: string; llm_calls: number; tool_calls: number; token_usage: number; elapsed_ms: number; as_of: string; support_level: string }
 export interface Session { session_id: string; token: string }
 export interface LegalDocument { id: string; title: string; url: string; document_number?: string; source_kind: string; project?: ProjectID; checked_at: string; applicability_verified: boolean; effective_from?: string; effective_to?: string; source_review_notes?: string; chunks?: { id: string; locator: string; text: string }[] }

@@ -10,6 +10,32 @@ from landlaw.store import RateLimited
 from conftest import document, release, session
 
 
+def test_pdf_citation_maps_global_chunk_index_to_exact_attachment_and_physical_page():
+    from landlaw.agent import citation_source_url
+    from landlaw.models import Evidence, SourceFile
+    doc = document(source_files=[
+        SourceFile(url='https://datafiles.chinhphu.vn/first.pdf', checksum='a', first_page_index=0, last_page_index=1),
+        SourceFile(url='https://datafiles.chinhphu.vn/second.pdf', checksum='b', first_page_index=2, last_page_index=4)])
+    chunk = doc.chunks[0].model_copy(update={'id':'law-2-0-0', 'page':1})
+    assert citation_source_url(Evidence(document=doc, chunk=chunk)) == 'https://datafiles.chinhphu.vn/second.pdf#page=1'
+    assert citation_source_url(Evidence(document=doc, chunk=chunk.model_copy(update={'id':'law-0-0-0', 'page':2}))) == 'https://datafiles.chinhphu.vn/first.pdf#page=2'
+    assert citation_source_url(Evidence(document=doc.model_copy(update={'source_files':[]}), chunk=chunk)) is None
+    assert citation_source_url(Evidence(document=doc, chunk=chunk.model_copy(update={'id':'invalid-id'}))) is None
+
+
+def test_adding_article_7a_does_not_amend_the_existing_article_7():
+    from landlaw.agent import relation_may_affect
+    from landlaw.models import Evidence, Relation
+    doc = document()
+    evidence = Evidence(document=doc, chunk=doc.chunks[0].model_copy(update={'locator':'Điều 7'}))
+    relation = Relation(source_id='amendment', target_id=doc.id, type='amends',
+        source_locator='Điều 2', target_locators=['Điều 7a'], target_locators_complete=True,
+        source_url='https://vanban.chinhphu.vn/', explanation='Adds Article 7a, leaving Article 7 unaffected')
+    assert not relation_may_affect(relation, doc.id, [evidence])
+    new_article = evidence.model_copy(update={'chunk':evidence.chunk.model_copy(update={'locator':'Điều 7a'})})
+    assert relation_may_affect(relation, doc.id, [new_article])
+
+
 class FakeProvider:
     """Explicit dependency injection for tests; never registered in the application."""
     configured = True

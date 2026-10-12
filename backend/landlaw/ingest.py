@@ -167,21 +167,24 @@ def pdf_pages(content: bytes, allow_ocr=False):
 def chunks_for(doc_id, pages):
     chunks = []
     active_article = None
+    appendix = False
     for page_index, (page, text) in enumerate(pages):
         # Reclassify old parse caches too: v4 marked any prose mentioning 'đơn giá'.
         text = redact(text).replace(TABLE_MARKER + "\n", "").strip()
         if "�" in text and text.count("�") / max(len(text), 1) > 0.005:
             raise Quarantine("Encoding/OCR quality insufficient")
-        if re.search(r'^\s*PHỤ LỤC\s*$', text, re.MULTILINE | re.IGNORECASE):
-            active_article = None
-        positions = [m.start() for m in article_headings(text)]
-        boundaries = sorted(set([0, *positions, len(text)]))
-        sections = [text[a:b] for a, b in zip(boundaries, boundaries[1:])]
-        for section_index, section in enumerate(sections):
-            section = section.strip()
+        appendix_heading = None if appendix else re.search(r'^\s*PHỤ LỤC\s*$', text, re.MULTILINE | re.IGNORECASE)
+        appendix_start = appendix_heading.start() if appendix_heading else None
+        main_text = text[:appendix_start] if appendix_start is not None else text
+        positions = [] if appendix else [m.start() for m in article_headings(main_text)]
+        boundaries = sorted(set([0, *positions, *([appendix_start] if appendix_start is not None else []), len(text)]))
+        for section_index, (start, end) in enumerate(zip(boundaries, boundaries[1:])):
+            if appendix_start is not None and start >= appendix_start:
+                active_article, appendix = None, True
+            section = text[start:end].strip()
             if len(section) < 30:
                 continue
-            match = ARTICLE_HEADING.match(section)
+            match = None if appendix else ARTICLE_HEADING.match(section)
             if match:
                 active_article = match[1]
             locator = f"Điều {active_article}" if active_article else f"Trang {page}" if page else f"Đoạn {section_index+1}"
@@ -251,6 +254,7 @@ async def collect_source(source, settings, client, offline=False, allow_ocr=Fals
     raw_dir.mkdir(parents=True, exist_ok=True)
     contents = []
     paths = []
+    file_urls = list(source.get('attachment_urls') or [])
     if offline:
         candidates = [Path(p) for p in source.get("raw_paths", [])]
         if not candidates:
@@ -266,6 +270,7 @@ async def collect_source(source, settings, client, offline=False, allow_ocr=Fals
             (raw_dir / f"{source_id}.pdf").write_bytes(content)
             contents.append(content)
             paths.append(raw_dir / f"{source_id}.pdf")
+            file_urls = [source['url']]
         else:
             (raw_dir / f"{source_id}.html").write_bytes(content)
             soup = BeautifulSoup(content, "html.parser")
@@ -274,6 +279,7 @@ async def collect_source(source, settings, client, offline=False, allow_ocr=Fals
                 links = [urljoin(final_url, str(a["href"])) for a in soup.select("a[href]")
                          if ".pdf" in str(a["href"]).lower()][:8]
             if links:
+                file_urls = links
                 for index, link in enumerate(links):
                     pdf, _ = await download(client, link, source["url"])
                     if not pdf.startswith(b"%PDF"):
@@ -290,7 +296,9 @@ async def collect_source(source, settings, client, offline=False, allow_ocr=Fals
     if not reviewed_checksums or any(digest(content) not in reviewed_checksums for content in contents):
         raise Quarantine("Source content changed or has no reviewed checksum; metadata must be reviewed again")
     pages = []
-    for path, content in zip(paths, contents, strict=True):
+    source_files = []
+    for file_index, (path, content) in enumerate(zip(paths, contents, strict=True)):
+        first_page_index = len(pages)
         if content.startswith(b"%PDF"):
             sidecar = next((item for item in source.get("ocr_sidecars", []) if item.get("pdf_sha256") == digest(content)), None)
             if sidecar:
@@ -316,6 +324,11 @@ async def collect_source(source, settings, client, offline=False, allow_ocr=Fals
                     parsed = await asyncio.to_thread(pdf_pages, content, allow_ocr)
                     json_write(parse_cache, {"pages": parsed})
                     pages.extend(parsed)
+            file_url = (file_urls[file_index] if len(file_urls) == len(contents) else
+                        source['url'] if source['url'].split('?')[0].endswith('.pdf') else None)
+            if file_url and official_url(file_url, source.get('publication_url') or source['url']):
+                source_files.append({'url': file_url, 'checksum': digest(content),
+                    'first_page_index': first_page_index, 'last_page_index': len(pages)-1})
         else:
             pages.extend(html_text(content, legal=source["source_kind"] == "legal"))
     if source["source_kind"] == "legal" and not any(re.search(r"Điều\s+\d+", text) for _, text in pages):
@@ -332,6 +345,7 @@ async def collect_source(source, settings, client, offline=False, allow_ocr=Fals
         applicability_verified=legal_verified,
         provision_validity=source.get("provision_validity", []),
         source_review_notes=source.get('source_review_notes', ''),
+        source_files=source_files,
         checked_at=datetime.fromisoformat(source["checked_at"].replace("Z", "+00:00")) if offline else utcnow(), checksum=checksum,
         chunks=chunks_for(source_id, pages))
     return doc
@@ -441,7 +455,7 @@ async def build_corpus(settings: Settings, provider: Gemini | None, offline=Fals
     embedding_contract = contract(settings)
     content_hash = digest(json.dumps({"documents": documents, "relations": valid_relations,
         "unresolved_relations":unresolved,'coverage_gaps':gaps,'embedding_contract':embedding_contract,
-        "place_aliases": aliases, "embedding_model": settings.embedding_model, "parser_version": 12}, sort_keys=True, ensure_ascii=False))[:16]
+        "place_aliases": aliases, "embedding_model": settings.embedding_model, "parser_version": 13}, sort_keys=True, ensure_ascii=False))[:16]
     payload = {"id": f"corpus-{content_hash}", "checked_at": min((d["checked_at"] for d in documents), default=utcnow().isoformat()), "documents": documents,
                "relations": valid_relations, "place_aliases": aliases, "embedding_model": settings.embedding_model,
                "embedding_dimensions":settings.embedding_dimensions,'embedding_contract':embedding_contract,

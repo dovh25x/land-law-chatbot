@@ -1,17 +1,19 @@
 {
-  "checked_at": "2026-10-11T19:11:58.505783+00:00",
-  "parser_version": 6,
-  "release": "corpus-adcd1a8f9596ccb8",
+  "checked_at": "2026-10-12T22:23:33.903569+00:00",
+  "parser_version": 13,
+  "release": "corpus-c30fb243d71ebd2d",
   "passed": true,
   "checks": {
-    "article_98_includes_cross_reference_95": true,
-    "wrapped_reference_not_split_into_new_heading": true,
-    "article_104_not_marked_as_price_table": true,
-    "article_104_heading_once_per_leaf": true,
-    "no_duplicate_chunk_ids": true
+    "unique_chunk_ids": true,
+    "nd155_templates_use_page_locators": true,
+    "nd155_thuly_seven_working_days": true,
+    "nd88_transition_preserved": true,
+    "nd88_html_templates_not_articles": true,
+    "ring4_rotated_table_hanoi_units": true,
+    "nd88_commencement_preserved": true
   },
-  "chunks": 5250,
-  "reused_real_vectors": 687,
+  "chunks": 7566,
+  "reused_real_vectors": 4555,
   "acceptance_passed": false,
-  "scope": "targeted structure checks on actual corpus; not a legal answer benchmark"
+  "scope": "Targeted structure checks on actual parsed sources; legal response smoke and independent legal certification are separate."
 }

@@ -14,6 +14,14 @@ def test_loading_shell_and_metadata_not_legal_text():
         html_text(("<article>Ngày ban hành: 01/01/2026 " + "metadata "*100 + "</article>").encode(), legal=True)
 
 
+def test_hanoi_archival_cdn_requires_official_publication_and_hanoi_path():
+    url = 'https://storage-vnportal.vnpt.vn/gov-hni/6249/VanBanCongBao/source.pdf'
+    assert official_url(url, 'https://congbao.hanoi.gov.vn/')
+    assert not official_url(url)
+    assert not official_url(url, 'https://example.com/')
+    assert not official_url(url.replace('/gov-hni/', '/other-tenant/'), 'https://congbao.hanoi.gov.vn/')
+
+
 def test_article_chunking_preserves_locator_and_parent():
     text = "Điều 4. " + "Điều kiện bồi thường theo hồ sơ. "*180
     chunks = chunks_for("law", [(2, text)])
@@ -29,6 +37,28 @@ def test_attachment_pages_have_unique_ids_and_price_table_rows_survive():
     assert all(c.page == 1 for c in chunks)
     assert all("Đơn vị tính" in c.text and "STT   Tên đường" in c.text for c in chunks)
     assert any("1   Đường A   12345" in c.text for c in chunks)
+
+
+def test_pdf_citation_audit_rejects_swapped_attachments_and_overlapping_ranges():
+    import importlib.util
+    from pathlib import Path
+    from landlaw.security import digest
+    spec = importlib.util.spec_from_file_location('release_audit', Path('scripts/audit_release.py'))
+    audit = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(audit)
+    raw = [b'%PDF-first-test-fixture', b'%PDF-second-test-fixture']
+    urls = ['https://datafiles.chinhphu.vn/first.pdf', 'https://datafiles.chinhphu.vn/second.pdf']
+    source = {'url':'https://vanban.chinhphu.vn/', 'attachment_urls':urls,
+              'raw_checksums':{str(i):digest(value) for i,value in enumerate(raw)}}
+    files = [{'url':url, 'checksum':digest(value), 'first_page_index':i, 'last_page_index':i}
+             for i,(url,value) in enumerate(zip(urls,raw,strict=True))]
+    document = {'id':'law','source_files':files,'chunks':[{'id':'law-1-0-0','page':1}]}
+    assert audit.source_file_provenance(document,source,raw)
+    assert not audit.source_file_provenance({**document,'source_files':list(reversed(files))},source,raw)
+    overlap = [files[0],{**files[1],'first_page_index':0}]
+    assert not audit.source_file_provenance({**document,'source_files':overlap},source,raw)
+    assert not audit.source_file_provenance({**document,'source_files':[]},source,raw)
+    assert not audit.source_file_provenance({**document,'chunks':[{'id':'law-9-0-0','page':1}]},source,raw)
 
 
 def test_aspnet_form_preserves_article_and_excludes_navigation():
@@ -80,6 +110,24 @@ def test_project_table_decimal_rows_are_not_repeated_as_headers():
     assert len(chunks) > 1
     assert sum(c.text.count('1.3   Bắc Ninh   2.480') for c in chunks) == 1
     assert all('Đơn vị tính: tỷ đồng' in c.text and 'TT   Dự án' in c.text for c in chunks)
+
+
+def test_appendix_decision_templates_are_not_indexed_as_statutory_articles():
+    pages = [(1, 'Điều 19. Hiệu lực thi hành\nQuy định có hiệu lực theo mốc được xác minh.'),
+             (2, 'Phụ lục\n(Kèm theo Nghị định)\nMẫu số 14a\nQUYẾT ĐỊNH\nĐiều 1. Điền thông tin tạm đình chỉ.'),
+             (3, 'Mẫu số 14b\nĐiều 2. Quyết định này có hiệu lực kể từ ngày ký.\nĐiều 3. Điền tên người thi hành.')]
+    chunks = chunks_for('amending-decree', pages)
+    assert {c.locator for c in chunks} == {'Điều 19', 'Trang 2', 'Trang 3'}
+    assert any('Điều 2. Quyết định' in c.text and c.locator == 'Trang 3' for c in chunks)
+
+
+def test_html_appendix_does_not_erase_operative_articles_before_it():
+    html = '<article>Điều 31. Chuyển tiếp\n'+ 'Tiếp tục phương án đã phê duyệt. '*20 + '\nĐiều 32. Trách nhiệm thi hành\n' + 'Thực hiện theo thẩm quyền. '*20 + '\nPhụ lục\nMẪU QUYẾT ĐỊNH\nĐiều 1. Điền tên dự án trong mẫu.\n</article>'
+    chunks = chunks_for('decree', html_text(html.encode(), legal=True))
+    assert any(c.locator == 'Điều 31' and 'Tiếp tục phương án' in c.text for c in chunks)
+    assert any(c.locator == 'Điều 32' and 'Thực hiện theo' in c.text for c in chunks)
+    assert not any(c.locator == 'Điều 1' for c in chunks)
+    assert all(not c.locator.startswith('Điều') for c in chunks if 'MẪU QUYẾT ĐỊNH' in c.text)
 
 
 def test_table_marker_cache_does_not_turn_prose_into_table_or_repeat_rows():

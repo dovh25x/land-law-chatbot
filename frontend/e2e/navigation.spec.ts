@@ -36,7 +36,7 @@ test('API quota errors are displayed without an invented answer', async ({ page 
 })
 
 test('verified SSE answer opens source and trace with keyboard dismissal', async ({ page }) => {
-  const citation = { id: 'law-article', document_id: 'law', title: 'Nguồn thử nghiệm giao diện', document_number: '40/2026/QĐ-UBND', url: 'https://hanoi.gov.vn/', locator: 'Điều 29', excerpt: 'Trích đoạn kiểm thử, không phải dữ liệu pháp lý.', checked_at: '2026-10-11T00:00:00Z', applicability: 'current' }
+  const citation = { id: 'law-article', document_id: 'law', title: 'Nguồn thử nghiệm giao diện', document_number: '40/2026/QĐ-UBND', url: 'https://hanoi.gov.vn/', locator: 'Điều 29', excerpt: 'Trích đoạn kiểm thử, không phải dữ liệu pháp lý.', checked_at: '2026-10-11T00:00:00Z', applicability: 'current', page: 6, source_url: 'https://datafiles.hanoi.gov.vn/test-fixture.pdf#page=6' }
   const trace = [{ step: 'verify', tool: 'check_effectivity', summary: 'Đã kiểm tra nguồn trong fixture.', document_ids: ['law'], elapsed_ms: 50 }]
   const result = { status: 'clarification_needed', content: 'Cần bổ sung thời điểm quyết định.', citations: [citation], trace, trace_id: 'ui-test-trace', elapsed_ms: 100, tool_calls: 1 }
   await page.route('**/api/v1/sessions', r => r.fulfill({ status: 201, json: { session_id: 'test-session', token: 'test-session-token' } }))
@@ -48,6 +48,8 @@ test('verified SSE answer opens source and trace with keyboard dismissal', async
   await page.getByRole('button', { name: /40\/2026/ }).click()
   await expect(page.getByRole('dialog', { name: 'Chi tiết nguồn' })).toContainText(citation.excerpt)
   await expect(page.getByRole('link', { name: 'Mở nguồn chính thức' })).toHaveAttribute('href', citation.url)
+  await expect(page.getByRole('link', { name: 'Mở trang PDF gốc' })).toHaveAttribute('href', citation.source_url)
+  await expect(page.getByRole('dialog')).toContainText('Trang nguồn: 6')
   await page.keyboard.press('Escape')
   await expect(page.getByRole('dialog')).toHaveCount(0)
   await page.getByRole('button', { name: /Xem quá trình kiểm chứng/ }).click()

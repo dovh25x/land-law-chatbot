@@ -60,6 +60,8 @@ def official_url(url: str, publication_url: str | None = None) -> bool:
         return True
     if host == "hanoi.gov.vn" or host.endswith(".hanoi.gov.vn"):
         return True
+    if host == 'storage-vnportal.vnpt.vn':
+        return bool(parsed.path.startswith('/gov-hni/') and publication_url and official_url(publication_url))
     return bool(host in {"sqhx-hanoi.mediacdn.vn", "congbaocdn.chinhphu.vn", "g7.cdnchinhphu.vn"}
                 and publication_url and official_url(publication_url))
 

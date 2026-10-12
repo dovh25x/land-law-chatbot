@@ -338,7 +338,9 @@
     "publication_url": null,
     "review_status": "verified",
     "notes": "Thay HTML bài giới thiệu có phần tóm tắt/lặp và locator sai bằng PDF Công báo đầy đủ 44 trang, trang in 41–84, liên kết từ trang công bố chính thức. Kiểm tra số/ngày, Điều 2 sửa NĐ88, Điều 7 khoản 2 thay cụm từ, Điều 8 chuyển tiếp, Điều 9 hiệu lực 15/08/2025 và chữ ký Trần Hồng Hà. Duy trì bố cục/trang gốc; không lấy tiêu đề điều trong văn bản được trích dẫn làm điều của NĐ226. Đây là kiểm tra nguồn kỹ thuật, chưa thẩm định pháp lý độc lập. Phụ lục được thay bằng liên kết đến nghị định/biểu mẫu, không dựng mẫu thiếu.",
-    "attachment_urls": [],
+    "attachment_urls": [
+      "https://congbaocdn.chinhphu.vn/CongBaoCP/VanBan/2025/8/45839/58217-1-20251089-1090226-2025-nd-cp.pdf"
+    ],
     "raw_paths": [
       "data/raw/nd-226-2025-congbao.pdf"
     ],
@@ -735,34 +737,47 @@
   },
   {
     "id": "luat-quy-hoach-2017",
-    "title": "Luật Quy hoạch",
-    "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=192206",
+    "title": "Luật số 21/2017/QH14 luật Quy hoạch.",
+    "url": "https://congbao.chinhphu.vn/van-ban/luat-so-21-2017-qh14-25327.htm",
     "source_kind": "legal",
     "document_number": "21/2017/QH14",
     "issued_on": "2017-11-24",
     "effective_from": "2019-01-01",
-    "effective_to": null,
+    "effective_to": "2026-03-01",
     "jurisdiction": "national",
     "project": null,
     "topics": [
-      "quy hoạch"
+      "đất đai",
+      "bồi thường",
+      "quy hoạch",
+      "khiếu nại",
+      "chuyển tiếp"
     ],
-    "publication_url": null,
-    "review_status": "pending",
-    "notes": "Đã xác định nguồn chính thức nhưng toàn văn chưa đủ điều kiện công bố: PDF ảnh cần kiểm tra OCR hoặc URL chỉ còn trang tải/thuộc tính. Giữ ở staging, không dùng làm căn cứ hiện hành cho đến khi kiểm tra nội dung, số liệu và metadata.",
+    "publication_url": "https://congbao.chinhphu.vn/van-ban/luat-so-21-2017-qh14-25327.htm",
+    "review_status": "verified",
+    "notes": "Bản gốc lịch sử có text. Hết hiệu lực chung từ 01/03/2026 theo Luật112 Điều 57 khoản 6, trừ chuyển tiếp Điều 58. Chưa hợp nhất đầy đủ các sửa đổi2019–2025; không dùng bản gốc để khẳng định mọi quy định lịch sử sau sửa đổi. Đổi bản scan/OCR chưa duyệt sang bản Công báo native text; OCR cũ chỉ là hồ sơ xử lý nguồn đã thay, không dùng để parse nguồn mới.",
     "attachment_urls": [
-      "https://datafiles.chinhphu.vn/cpp/files/vbpq/2017/12/21.signed_01.pdf"
+      "https://congbaocdn.chinhphu.vn/CongBaoCP/VanBan/2017/11/25327/20279-1-20171061-106221-2017-qh14.pdf"
     ],
     "raw_paths": [
-      "data/raw/luat-quy-hoach-2017-attachment-1.pdf"
+      "data/raw/luat-quy-hoach-2017-congbao-native-1.pdf"
     ],
     "metadata_url": "https://vanban.chinhphu.vn/?pageid=27160&docid=192206",
-    "checked_at": "2026-10-11T17:32:27Z",
+    "checked_at": "2026-10-12T22:15:42.135850+00:00",
     "issuer": "Quốc hội",
     "raw_checksums": {
-      "data/raw/luat-quy-hoach-2017-attachment-1.pdf": "0f64dd37724514932710bb88d1085a01806e483e94a83233741489ca8662e80a"
+      "data/raw/luat-quy-hoach-2017-congbao-native-1.pdf": "1484c38f66aec7e3f8fa61e3fa4108ca4e5a56e1dd095277c808e0d438acd37a"
     },
-    "ocr_sidecars": [
+    "ocr_reviewed": false,
+    "source_artifacts": [
+      {
+        "path": "data/raw/luat-quy-hoach-2017-congbao-publication.html",
+        "sha256": "68c71f3506f6ee3c700db02d7a77f5f87a6aed7deeca8efd8f935ffc5659c056"
+      }
+    ],
+    "source_review_notes": "Bản gốc lịch sử có text. Hết hiệu lực chung từ 01/03/2026 theo Luật112 Điều 57 khoản 6, trừ chuyển tiếp Điều 58. Chưa hợp nhất đầy đủ các sửa đổi2019–2025; không dùng bản gốc để khẳng định mọi quy định lịch sử sau sửa đổi. Chưa thẩm định pháp lý độc lập.",
+    "provision_validity": [],
+    "superseded_ocr_sidecars": [
       {
         "raw_path": "data/raw/luat-quy-hoach-2017-attachment-1.pdf",
         "ocr_path": "data/raw/luat-quy-hoach-2017-attachment-1.ocr.txt",
@@ -770,8 +785,7 @@
         "ocr_sha256": "ff660b0e3aef805a907007364fcd6071b43e41dbc4a6e74af273e2f3c4154b77",
         "review_status": "pending"
       }
-    ],
-    "ocr_reviewed": false
+    ]
   },
   {
     "id": "luat-quy-hoach-do-thi-2024",
@@ -878,35 +892,47 @@
   },
   {
     "id": "luat-dat-dai-2013",
-    "title": "Luật Đất đai 2013 (lịch sử)",
-    "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=171639",
+    "title": "Luật số 45/2013/QH13 luật Đất đai.",
+    "url": "https://congbao.chinhphu.vn/van-ban/luat-so-45-2013-qh13-5391/6773.htm",
     "source_kind": "legal",
     "document_number": "45/2013/QH13",
     "issued_on": "2013-11-29",
-    "effective_from": null,
-    "effective_to": null,
+    "effective_from": "2014-07-01",
+    "effective_to": "2024-08-01",
     "jurisdiction": "national",
     "project": null,
     "topics": [
       "đất đai",
+      "bồi thường",
+      "quy hoạch",
+      "khiếu nại",
       "chuyển tiếp"
     ],
-    "publication_url": null,
-    "review_status": "pending",
-    "notes": "Đã xác định nguồn chính thức nhưng toàn văn chưa đủ điều kiện công bố: PDF ảnh cần kiểm tra OCR hoặc URL chỉ còn trang tải/thuộc tính. Giữ ở staging, không dùng làm căn cứ hiện hành cho đến khi kiểm tra nội dung, số liệu và metadata.",
+    "publication_url": "https://congbao.chinhphu.vn/van-ban/luat-so-45-2013-qh13-5391/6773.htm",
+    "review_status": "verified",
+    "notes": "Bản gốc lịch sử. Rà soát chương thu hồi/bồi thường, Điều 74,75,82,83,85,86,93,210,211; mốc chấm dứt chung theo Điều 252 khoản 4 Luật31 cùng Luật43/2024. Các sửa đổi quy hoạch của Luật35/2018 chưa đối chiếu đầy đủ; không khẳng định bản gốc là bản hợp nhất lịch sử cho mọi điều khoản. Đổi bản scan/OCR chưa duyệt sang bản Công báo native text; OCR cũ chỉ là hồ sơ xử lý nguồn đã thay, không dùng để parse nguồn mới.",
     "attachment_urls": [
-      "https://datafiles.chinhphu.vn/cpp/files/vbpq/2014/01/45.pdf"
+      "https://congbaocdn.chinhphu.vn/CongBaoCP/VanBan/2013/11/5391/6773-1-201310111012-452013qh13pdf"
     ],
     "raw_paths": [
-      "data/raw/luat-dat-dai-2013-attachment-1.pdf"
+      "data/raw/luat-dat-dai-2013-congbao-native-1.pdf"
     ],
     "metadata_url": "https://vanban.chinhphu.vn/?pageid=27160&docid=171639",
-    "checked_at": "2026-10-11T17:32:27Z",
+    "checked_at": "2026-10-12T22:15:42.135850+00:00",
     "issuer": "Quốc hội",
     "raw_checksums": {
-      "data/raw/luat-dat-dai-2013-attachment-1.pdf": "924b0ce2dfb4ffebfdcc40bfd69901fdde501aafc871e4fe429685c3ce37f5b3"
+      "data/raw/luat-dat-dai-2013-congbao-native-1.pdf": "e026bb4bd23f8736b484d7afa8bc55489dae61151ad263817c9da25530afd3c3"
     },
-    "ocr_sidecars": [
+    "ocr_reviewed": false,
+    "source_artifacts": [
+      {
+        "path": "data/raw/luat-dat-dai-2013-congbao-publication.html",
+        "sha256": "bbf05ed844d8c1cecd9c9ab71d5b67daeef6838292cddd92c60f5775f57c7815"
+      }
+    ],
+    "source_review_notes": "Bản gốc lịch sử. Rà soát chương thu hồi/bồi thường, Điều 74,75,82,83,85,86,93,210,211; mốc chấm dứt chung theo Điều 252 khoản 4 Luật31 cùng Luật43/2024. Các sửa đổi quy hoạch của Luật35/2018 chưa đối chiếu đầy đủ; không khẳng định bản gốc là bản hợp nhất lịch sử cho mọi điều khoản. Chưa thẩm định pháp lý độc lập.",
+    "provision_validity": [],
+    "superseded_ocr_sidecars": [
       {
         "raw_path": "data/raw/luat-dat-dai-2013-attachment-1.pdf",
         "ocr_path": "data/raw/luat-dat-dai-2013-attachment-1.ocr.txt",
@@ -914,40 +940,51 @@
         "ocr_sha256": "9e27b368d69cc3ba18fdbfee855ebcb89f42997113a9f415fcb3b63ad21a8edc",
         "review_status": "pending"
       }
-    ],
-    "ocr_reviewed": false
+    ]
   },
   {
     "id": "nd-47-2014",
-    "title": "Bồi thường, hỗ trợ, tái định cư (lịch sử)",
-    "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=173972",
+    "title": "Nghị định số 47/2014/NĐ-CP quy định về bồi thường, hỗ trợ, tái định cư khi Nhà nước thu hồi đất.",
+    "url": "https://congbao.chinhphu.vn/van-ban/nghi-dinh-so-47-2014-nd-cp-10330.htm",
     "source_kind": "legal",
     "document_number": "47/2014/NĐ-CP",
     "issued_on": "2014-05-15",
     "effective_from": "2014-07-01",
-    "effective_to": null,
+    "effective_to": "2024-08-01",
     "jurisdiction": "national",
     "project": null,
     "topics": [
+      "đất đai",
       "bồi thường",
+      "quy hoạch",
+      "khiếu nại",
       "chuyển tiếp"
     ],
-    "publication_url": null,
-    "review_status": "pending",
-    "notes": "Đã xác định nguồn chính thức nhưng toàn văn chưa đủ điều kiện công bố: PDF ảnh cần kiểm tra OCR hoặc URL chỉ còn trang tải/thuộc tính. Giữ ở staging, không dùng làm căn cứ hiện hành cho đến khi kiểm tra nội dung, số liệu và metadata.",
+    "publication_url": "https://congbao.chinhphu.vn/van-ban/nghi-dinh-so-47-2014-nd-cp-10330.htm",
+    "review_status": "verified",
+    "notes": "Bản gốc lịch sử. Điều 30 NĐ88/2024 quy định hết hiệu lực 01/08/2024; hồ sơ chuyển tiếp phải đọc Điều 31 NĐ88 và quyết định/phương án thực tế. Bản này chưa hợp nhất sửa đổi NĐ01/2017,06/2020,148/2020; phần phụ thuộc sửa đổi phải trả lời giới hạn. Đổi bản scan/OCR chưa duyệt sang bản Công báo native text; OCR cũ chỉ là hồ sơ xử lý nguồn đã thay, không dùng để parse nguồn mới.",
     "attachment_urls": [
-      "https://datafiles.chinhphu.vn/cpp/files/vbpq/2014/05/47-nd.signed.pdf"
+      "https://congbaocdn.chinhphu.vn/CongBaoCP/VanBan/2014/5/10330/6213-1-2014563-564-472014nd-cppdf"
     ],
     "raw_paths": [
-      "data/raw/nd-47-2014-attachment-1.pdf"
+      "data/raw/nd-47-2014-congbao-native-1.pdf"
     ],
     "metadata_url": "https://vanban.chinhphu.vn/?pageid=27160&docid=173972",
-    "checked_at": "2026-10-11T17:32:27Z",
+    "checked_at": "2026-10-12T22:15:42.135850+00:00",
     "issuer": "Chính phủ",
     "raw_checksums": {
-      "data/raw/nd-47-2014-attachment-1.pdf": "d1544f0758c6c8f99f8d3cba66d6bb13a69a65d2115bc62530f8deba679d0b56"
+      "data/raw/nd-47-2014-congbao-native-1.pdf": "706d20b3cc7bc1c0d9cceeafbd7f68d9783b6b143bc78b45c54f183f25d4ca71"
     },
-    "ocr_sidecars": [
+    "ocr_reviewed": false,
+    "source_artifacts": [
+      {
+        "path": "data/raw/nd-47-2014-congbao-publication.html",
+        "sha256": "9fea8633ea96e579ea96ca8df170ba3fa4675a3bcfdb40e33924ad5c7e31be6b"
+      }
+    ],
+    "source_review_notes": "Bản gốc lịch sử. Điều 30 NĐ88/2024 quy định hết hiệu lực 01/08/2024; hồ sơ chuyển tiếp phải đọc Điều 31 NĐ88 và quyết định/phương án thực tế. Bản này chưa hợp nhất sửa đổi NĐ01/2017,06/2020,148/2020; phần phụ thuộc sửa đổi phải trả lời giới hạn. Chưa thẩm định pháp lý độc lập.",
+    "provision_validity": [],
+    "superseded_ocr_sidecars": [
       {
         "raw_path": "data/raw/nd-47-2014-attachment-1.pdf",
         "ocr_path": "data/raw/nd-47-2014-attachment-1.ocr.txt",
@@ -955,8 +992,7 @@
         "ocr_sha256": "0f8b68034ac096b8b13d5816961bad2699696ece050be65aab67014ea23fa666",
         "review_status": "pending"
       }
-    ],
-    "ocr_reviewed": false
+    ]
   },
   {
     "id": "qd-10-2017-hanoi",
@@ -1111,8 +1147,8 @@
   },
   {
     "id": "nd-124-2020",
-    "title": "Chi tiết và biện pháp thi hành Luật Khiếu nại",
-    "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=201363",
+    "title": "Nghị định số 124/2020/NĐ-CP quy định chi tiết một số điều và biện pháp thi hành Luật Khiếu nại.",
+    "url": "https://congbao.chinhphu.vn/van-ban/nghi-dinh-so-124-2020-nd-cp-32304/33027.htm",
     "source_kind": "legal",
     "document_number": "124/2020/NĐ-CP",
     "issued_on": "2020-10-19",
@@ -1121,24 +1157,37 @@
     "jurisdiction": "national",
     "project": null,
     "topics": [
-      "khiếu nại"
+      "đất đai",
+      "bồi thường",
+      "quy hoạch",
+      "khiếu nại",
+      "chuyển tiếp"
     ],
-    "publication_url": null,
-    "review_status": "pending",
-    "notes": "Đã xác định nguồn chính thức nhưng toàn văn chưa đủ điều kiện công bố: PDF ảnh cần kiểm tra OCR hoặc URL chỉ còn trang tải/thuộc tính. Giữ ở staging, không dùng làm căn cứ hiện hành cho đến khi kiểm tra nội dung, số liệu và metadata.",
+    "publication_url": "https://congbao.chinhphu.vn/van-ban/nghi-dinh-so-124-2020-nd-cp-32304/33027.htm",
+    "review_status": "verified",
+    "notes": "Bản Công báo đầy đủ có text, gồm biểu mẫu gốc. Đối chiếu Điều 43 hiệu lực và toàn bộ sửa đổi NĐ155/2026. Không dùng thời hạn thụ lý 10 ngày của bản gốc cho hiện tại: NĐ155 Điều 10 sửa thành 07 ngày làm việc. Biểu mẫu gốc đã bị thay/bổ sung, không thực hiện thủ tục thay người dùng. Đổi bản scan/OCR chưa duyệt sang bản Công báo native text; OCR cũ chỉ là hồ sơ xử lý nguồn đã thay, không dùng để parse nguồn mới.",
     "attachment_urls": [
-      "https://datafiles.chinhphu.vn/cpp/files/vbpq/2020/10/124.signed.pdf"
+      "https://congbaocdn.chinhphu.vn/CongBaoCP/VanBan/2020/10/32304/33027-1-20201015-1016124-2020-nd-cp.pdf"
     ],
     "raw_paths": [
-      "data/raw/nd-124-2020-attachment-1.pdf"
+      "data/raw/nd-124-2020-congbao-native-1.pdf"
     ],
     "metadata_url": "https://vanban.chinhphu.vn/?pageid=27160&docid=201363",
-    "checked_at": "2026-10-11T17:32:27Z",
+    "checked_at": "2026-10-12T22:15:42.135850+00:00",
     "issuer": "Chính phủ",
     "raw_checksums": {
-      "data/raw/nd-124-2020-attachment-1.pdf": "352d9e745629f669735b667a37ac5e436a1685e585be5a38a480b5fc268a527c"
+      "data/raw/nd-124-2020-congbao-native-1.pdf": "eec7714c55c73746e1bcc333f2e4354f008419ec26d206d8e97258c934a28f77"
     },
-    "ocr_sidecars": [
+    "ocr_reviewed": false,
+    "source_artifacts": [
+      {
+        "path": "data/raw/nd-124-2020-congbao-publication.html",
+        "sha256": "941b13d41896f69543ecab6d144f244615d1906fe86366e4152ed439ff55de4c"
+      }
+    ],
+    "source_review_notes": "Bản Công báo đầy đủ có text, gồm biểu mẫu gốc. Đối chiếu Điều 43 hiệu lực và toàn bộ sửa đổi NĐ155/2026. Không dùng thời hạn thụ lý 10 ngày của bản gốc cho hiện tại: NĐ155 Điều 10 sửa thành 07 ngày làm việc. Biểu mẫu gốc đã bị thay/bổ sung, không thực hiện thủ tục thay người dùng. Chưa thẩm định pháp lý độc lập.",
+    "provision_validity": [],
+    "superseded_ocr_sidecars": [
       {
         "raw_path": "data/raw/nd-124-2020-attachment-1.pdf",
         "ocr_path": "data/raw/nd-124-2020-attachment-1.ocr.txt",
@@ -1146,8 +1195,7 @@
         "ocr_sha256": "0f6b105d6e9b316bf3efe1a4c1247eaea32b3554e5089af1d8324061f3a5acc6",
         "review_status": "pending"
       }
-    ],
-    "ocr_reviewed": false
+    ]
   },
   {
     "id": "luat-136-2025",
@@ -2211,7 +2259,10 @@
         "sha256": "80a442c28055e4c2b630d6d52b20f0549bfa8b89da3cb2a9e1206d5385f89e22"
       }
     ],
-    "source_review_notes": "PDF scan 10 trang được liên kết từ cổng phường Phú Diễn, có watermark của Thư Viện Pháp Luật. Không chứng nhận PDF ký số gốc. OCR đã đối chiếu toàn bộ trang; áp dụng dự án phải kiểm tra chuyển tiếp Luật Thủ đô 2026 và chính sách HĐND cụ thể."
+    "source_review_notes": "PDF scan 10 trang được liên kết từ cổng phường Phú Diễn, có watermark của Thư Viện Pháp Luật. Không chứng nhận PDF ký số gốc. OCR đã đối chiếu toàn bộ trang; áp dụng dự án phải kiểm tra chuyển tiếp Luật Thủ đô 2026 và chính sách HĐND cụ thể.",
+    "attachment_urls": [
+      "https://sqhx-hanoi.mediacdn.vn/91579363132710912/2026/2/3/nghi-quyet-so-258-2025qh15-cua-quoc-hoi-ve-thi-diem-mot-so-co-che-chinh-sach-dac-thu-de-thuc-hien-cac-du-an-lon-quan-trong-tai-thu-do-17701114104892119951309.pdf"
+    ]
   },
   {
     "source_kind": "legal",
@@ -2265,7 +2316,10 @@
     ],
     "raw_checksums": {
       "data/raw/luat-71-2025.pdf": "d65911c89cedad9cb0948824d742363776b9a39428969200951af089ea217468"
-    }
+    },
+    "attachment_urls": [
+      "https://congbaocdn.chinhphu.vn/CongBaoCP/VanBan/2025/6/45555/57751-1-2025965-96671-2025-qh15.pdf"
+    ]
   },
   {
     "source_kind": "legal",
@@ -2322,5 +2376,579 @@
     "raw_checksums": {
       "data/raw/nq-90-2026-hanoi.pdf": "2c2c468a5f3a69776fd436ff1a1df79901a0a944527ac663c6bd044d24c9f60f"
     }
+  },
+  {
+    "id": "luat-58-2024",
+    "title": "Luật số 58/2024/QH15 luật Đầu tư công.",
+    "url": "https://congbao.chinhphu.vn/van-ban/luat-so-58-2024-qh15-43571/53709.htm",
+    "publication_url": "https://congbao.chinhphu.vn/van-ban/luat-so-58-2024-qh15-43571/53709.htm",
+    "source_kind": "legal",
+    "document_number": "58/2024/QH15",
+    "issuer": "Quốc hội",
+    "jurisdiction": "national",
+    "project": null,
+    "topics": [
+      "đất đai",
+      "sửa đổi",
+      "hiệu lực",
+      "quy hoạch"
+    ],
+    "issued_on": "2024-11-29",
+    "effective_from": "2025-01-01",
+    "effective_to": null,
+    "review_status": "verified",
+    "checked_at": "2026-10-12T21:58:49.611662+00:00",
+    "raw_paths": [
+      "data/raw/luat-58-2024-congbao-1.pdf",
+      "data/raw/luat-58-2024-congbao-2.pdf"
+    ],
+    "attachment_urls": [
+      "https://congbaocdn.chinhphu.vn/CongBaoCP/VanBan/2024/11/43571/53709-1-20241525-152658-2024-qh15.pdf",
+      "https://congbaocdn.chinhphu.vn/CongBaoCP/VanBan/2024/11/43571/53712-1-20241527-152858-2024-qh15.pdf"
+    ],
+    "raw_checksums": {
+      "data/raw/luat-58-2024-congbao-1.pdf": "47d65a27a98863f648f254ef2f06bc11d9bee48e62eebdac2ffc66d208021308",
+      "data/raw/luat-58-2024-congbao-2.pdf": "22c86ac475e4ee6141ba6159f056a921b3910c17500c38885611bd369c0454a8"
+    },
+    "source_artifacts": [
+      {
+        "path": "data/raw/luat-58-2024-publication.html",
+        "sha256": "bbfa9e3bf469b209fcd4a4fef3a7ba39c860de651106de1446c6cdafe5ffe923"
+      }
+    ],
+    "ocr_reviewed": false,
+    "notes": "PDF Công báo đầy đủ có text; đối chiếu số/ngày, toàn bộ phần sửa Luật Đất đai, điều khoản hiệu lực và chuyển tiếp. Sửa điều kiện đưa dự án đầu tư công vào kế hoạch sử dụng đất; không tự xác định một thửa đất bị thu hồi.",
+    "source_review_notes": "Rà soát tập trung vào sửa đổi Luật Đất đai và mốc hiệu lực. Các quy định chuyên ngành khác trong bản gốc cần đối chiếu văn bản sửa đổi riêng; chưa thẩm định pháp lý độc lập. Sửa điều kiện đưa dự án đầu tư công vào kế hoạch sử dụng đất; không tự xác định một thửa đất bị thu hồi.",
+    "provision_validity": []
+  },
+  {
+    "id": "luat-84-2025",
+    "title": "Luật số 84/2025/QH15 luật Thanh tra.",
+    "url": "https://congbao.chinhphu.vn/van-ban/luat-so-84-2025-qh15-45518.htm",
+    "publication_url": "https://congbao.chinhphu.vn/van-ban/luat-so-84-2025-qh15-45518.htm",
+    "source_kind": "legal",
+    "document_number": "84/2025/QH15",
+    "issuer": "Quốc hội",
+    "jurisdiction": "national",
+    "project": null,
+    "topics": [
+      "đất đai",
+      "sửa đổi",
+      "hiệu lực",
+      "quy hoạch"
+    ],
+    "issued_on": "2025-06-25",
+    "effective_from": "2025-07-01",
+    "effective_to": null,
+    "review_status": "verified",
+    "checked_at": "2026-10-12T21:58:49.611662+00:00",
+    "raw_paths": [
+      "data/raw/luat-84-2025-congbao-1.pdf"
+    ],
+    "attachment_urls": [
+      "https://congbaocdn.chinhphu.vn/CongBaoCP/VanBan/2025/6/45518/57593-1-2025953-95484-2025-qh15.pdf"
+    ],
+    "raw_checksums": {
+      "data/raw/luat-84-2025-congbao-1.pdf": "bb18d676b262c7dc02bf49bbb8e3833c691f3156d56cf52c3fcf64d4a9adc41b"
+    },
+    "source_artifacts": [
+      {
+        "path": "data/raw/luat-84-2025-publication.html",
+        "sha256": "ee7ed078407597aabbe7f7f00583285dd8cb074aa16fd43e612c544b8fa22747"
+      }
+    ],
+    "ocr_reviewed": false,
+    "notes": "PDF Công báo đầy đủ có text; đối chiếu số/ngày, toàn bộ phần sửa Luật Đất đai, điều khoản hiệu lực và chuyển tiếp. Chỉ bãi bỏ cụm từ “thanh tra,” ở các vị trí được nêu; không bãi bỏ toàn điều hoặc toàn Luật Đất đai.",
+    "source_review_notes": "Rà soát tập trung vào sửa đổi Luật Đất đai và mốc hiệu lực. Các quy định chuyên ngành khác trong bản gốc cần đối chiếu văn bản sửa đổi riêng; chưa thẩm định pháp lý độc lập. Chỉ bãi bỏ cụm từ “thanh tra,” ở các vị trí được nêu; không bãi bỏ toàn điều hoặc toàn Luật Đất đai.",
+    "provision_validity": []
+  },
+  {
+    "id": "luat-93-2025",
+    "title": "Luật số 93/2025/QH15 luật Khoa học, công nghệ và đổi mới sáng tạo.",
+    "url": "https://congbao.chinhphu.vn/van-ban/luat-so-93-2025-qh15-45589.htm",
+    "publication_url": "https://congbao.chinhphu.vn/van-ban/luat-so-93-2025-qh15-45589.htm",
+    "source_kind": "legal",
+    "document_number": "93/2025/QH15",
+    "issuer": "Quốc hội",
+    "jurisdiction": "national",
+    "project": null,
+    "topics": [
+      "đất đai",
+      "sửa đổi",
+      "hiệu lực",
+      "quy hoạch"
+    ],
+    "issued_on": "2025-06-27",
+    "effective_from": "2025-10-01",
+    "effective_to": null,
+    "review_status": "verified",
+    "checked_at": "2026-10-12T21:58:49.611662+00:00",
+    "raw_paths": [
+      "data/raw/luat-93-2025-congbao-1.pdf"
+    ],
+    "attachment_urls": [
+      "https://congbaocdn.chinhphu.vn/CongBaoCP/VanBan/2025/6/45589/57763-1-2025973-97493-2025-qh15.pdf"
+    ],
+    "raw_checksums": {
+      "data/raw/luat-93-2025-congbao-1.pdf": "d6c8b502da1964481435007454ffc0ade7fff1eee897edd81b20e9fbaa8ce35f"
+    },
+    "source_artifacts": [
+      {
+        "path": "data/raw/luat-93-2025-publication.html",
+        "sha256": "2b460f1605c23d12c26b75fa4848039ecc61378363555784f95591e731b06e5e"
+      }
+    ],
+    "ocr_reviewed": false,
+    "notes": "PDF Công báo đầy đủ có text; đối chiếu số/ngày, toàn bộ phần sửa Luật Đất đai, điều khoản hiệu lực và chuyển tiếp. Bổ sung trường hợp miễn, giảm tiền sử dụng/thuê đất về khoa học, công nghệ; không mở rộng thành quyền bồi thường hộ dân.",
+    "source_review_notes": "Rà soát tập trung vào sửa đổi Luật Đất đai và mốc hiệu lực. Các quy định chuyên ngành khác trong bản gốc cần đối chiếu văn bản sửa đổi riêng; chưa thẩm định pháp lý độc lập. Bổ sung trường hợp miễn, giảm tiền sử dụng/thuê đất về khoa học, công nghệ; không mở rộng thành quyền bồi thường hộ dân.",
+    "provision_validity": [
+      {
+        "locator": "Điều 15",
+        "effective_from": "2025-07-01",
+        "effective_to": null,
+        "source_url": "https://congbao.chinhphu.vn/van-ban/luat-so-93-2025-qh15-45589.htm",
+        "note": "Khoản 2 Điều 72: hiệu lực sớm; không áp cho Điều 71 khoản 4."
+      },
+      {
+        "locator": "Điều 61",
+        "effective_from": "2025-07-01",
+        "effective_to": null,
+        "source_url": "https://congbao.chinhphu.vn/van-ban/luat-so-93-2025-qh15-45589.htm",
+        "note": "Khoản 2 Điều 72: hiệu lực sớm; không áp cho Điều 71 khoản 4."
+      },
+      {
+        "locator": "Điều 62",
+        "effective_from": "2025-07-01",
+        "effective_to": null,
+        "source_url": "https://congbao.chinhphu.vn/van-ban/luat-so-93-2025-qh15-45589.htm",
+        "note": "Khoản 2 Điều 72: hiệu lực sớm; không áp cho Điều 71 khoản 4."
+      },
+      {
+        "locator": "Điều 63",
+        "effective_from": "2025-07-01",
+        "effective_to": null,
+        "source_url": "https://congbao.chinhphu.vn/van-ban/luat-so-93-2025-qh15-45589.htm",
+        "note": "Khoản 2 Điều 72: hiệu lực sớm; không áp cho Điều 71 khoản 4."
+      },
+      {
+        "locator": "Điều 64",
+        "effective_from": "2025-07-01",
+        "effective_to": null,
+        "source_url": "https://congbao.chinhphu.vn/van-ban/luat-so-93-2025-qh15-45589.htm",
+        "note": "Khoản 2 Điều 72: hiệu lực sớm; không áp cho Điều 71 khoản 4."
+      },
+      {
+        "locator": "Điều 65",
+        "effective_from": "2025-07-01",
+        "effective_to": null,
+        "source_url": "https://congbao.chinhphu.vn/van-ban/luat-so-93-2025-qh15-45589.htm",
+        "note": "Khoản 2 Điều 72: hiệu lực sớm; không áp cho Điều 71 khoản 4."
+      },
+      {
+        "locator": "Điều 66",
+        "effective_from": "2025-07-01",
+        "effective_to": null,
+        "source_url": "https://congbao.chinhphu.vn/van-ban/luat-so-93-2025-qh15-45589.htm",
+        "note": "Khoản 2 Điều 72: hiệu lực sớm; không áp cho Điều 71 khoản 4."
+      }
+    ]
+  },
+  {
+    "id": "luat-95-2025",
+    "title": "Luật số 95/2025/QH15 luật Đường sắt.",
+    "url": "https://congbao.chinhphu.vn/van-ban/luat-so-95-2025-qh15-45582.htm",
+    "publication_url": "https://congbao.chinhphu.vn/van-ban/luat-so-95-2025-qh15-45582.htm",
+    "source_kind": "legal",
+    "document_number": "95/2025/QH15",
+    "issuer": "Quốc hội",
+    "jurisdiction": "national",
+    "project": null,
+    "topics": [
+      "đất đai",
+      "sửa đổi",
+      "hiệu lực",
+      "quy hoạch"
+    ],
+    "issued_on": "2025-06-27",
+    "effective_from": "2026-01-01",
+    "effective_to": null,
+    "review_status": "verified",
+    "checked_at": "2026-10-12T21:58:49.611662+00:00",
+    "raw_paths": [
+      "data/raw/luat-95-2025-congbao-1.pdf"
+    ],
+    "attachment_urls": [
+      "https://congbaocdn.chinhphu.vn/CongBaoCP/VanBan/2025/6/45582/57738-1-2025971-97295-2025-qh15.pdf"
+    ],
+    "raw_checksums": {
+      "data/raw/luat-95-2025-congbao-1.pdf": "d9080a605510072664b9390477d4ba580725a3465d32b067633b57d6b15ae815"
+    },
+    "source_artifacts": [
+      {
+        "path": "data/raw/luat-95-2025-publication.html",
+        "sha256": "8ccdd8c4df046c03a2bc62e61f831180044052ff645d6893e84675e2cc0685dd"
+      }
+    ],
+    "ocr_reviewed": false,
+    "notes": "PDF Công báo đầy đủ có text; đối chiếu số/ngày, toàn bộ phần sửa Luật Đất đai, điều khoản hiệu lực và chuyển tiếp. Sửa đất dành cho đường sắt và bổ sung giao Chính phủ quy định. Điều 57 khoản 2 có cơ chế áp dụng riêng đường sắt đô thị Hà Nội.",
+    "source_review_notes": "Rà soát tập trung vào sửa đổi Luật Đất đai và mốc hiệu lực. Các quy định chuyên ngành khác trong bản gốc cần đối chiếu văn bản sửa đổi riêng; chưa thẩm định pháp lý độc lập. Sửa đất dành cho đường sắt và bổ sung giao Chính phủ quy định. Điều 57 khoản 2 có cơ chế áp dụng riêng đường sắt đô thị Hà Nội.",
+    "provision_validity": [
+      {
+        "locator": "khoản 1 Điều 56",
+        "effective_from": "2025-07-01",
+        "effective_to": null,
+        "source_url": "https://congbao.chinhphu.vn/van-ban/luat-so-95-2025-qh15-45582.htm",
+        "note": "Khoản 2 Điều 58: hiệu lực sớm; sửa Luật Đất đai tại khoản 4 Điều 56 dùng mốc chung."
+      },
+      {
+        "locator": "điểm b khoản 3 Điều 56",
+        "effective_from": "2025-07-01",
+        "effective_to": null,
+        "source_url": "https://congbao.chinhphu.vn/van-ban/luat-so-95-2025-qh15-45582.htm",
+        "note": "Khoản 2 Điều 58: hiệu lực sớm; sửa Luật Đất đai tại khoản 4 Điều 56 dùng mốc chung."
+      },
+      {
+        "locator": "Mục 2 Chương II",
+        "effective_from": "2025-07-01",
+        "effective_to": null,
+        "source_url": "https://congbao.chinhphu.vn/van-ban/luat-so-95-2025-qh15-45582.htm",
+        "note": "Khoản 2 Điều 58: hiệu lực sớm; sửa Luật Đất đai tại khoản 4 Điều 56 dùng mốc chung."
+      },
+      {
+        "locator": "Mục 3 Chương II",
+        "effective_from": "2025-07-01",
+        "effective_to": null,
+        "source_url": "https://congbao.chinhphu.vn/van-ban/luat-so-95-2025-qh15-45582.htm",
+        "note": "Khoản 2 Điều 58: hiệu lực sớm; sửa Luật Đất đai tại khoản 4 Điều 56 dùng mốc chung."
+      }
+    ]
+  },
+  {
+    "id": "luat-116-2025",
+    "title": "Luật số 116/2025/QH15 luật An ninh mạng",
+    "url": "https://congbao.chinhphu.vn/van-ban/luat-so-116-2025-qh15-468678/61574.htm",
+    "publication_url": "https://congbao.chinhphu.vn/van-ban/luat-so-116-2025-qh15-468678/61574.htm",
+    "source_kind": "legal",
+    "document_number": "116/2025/QH15",
+    "issuer": "Quốc hội",
+    "jurisdiction": "national",
+    "project": null,
+    "topics": [
+      "đất đai",
+      "sửa đổi",
+      "hiệu lực",
+      "quy hoạch"
+    ],
+    "issued_on": "2025-12-10",
+    "effective_from": "2026-07-01",
+    "effective_to": null,
+    "review_status": "verified",
+    "checked_at": "2026-10-12T21:58:49.611662+00:00",
+    "raw_paths": [
+      "data/raw/luat-116-2025-congbao-1.pdf"
+    ],
+    "attachment_urls": [
+      "https://congbaocdn.chinhphu.vn/180507251028987904/2026/1/23/116signed-1769163678477753319408.pdf"
+    ],
+    "raw_checksums": {
+      "data/raw/luat-116-2025-congbao-1.pdf": "8e19e14fd57666baec8f16b7ca2832cbf7f24030a5e6ee0c574e15d0d48ad971"
+    },
+    "source_artifacts": [
+      {
+        "path": "data/raw/luat-116-2025-publication.html",
+        "sha256": "464ece57e0772770c87e5d5aa58badc63f439fb1c92756a7e68cf2a9f9d8fe9f"
+      }
+    ],
+    "ocr_reviewed": false,
+    "notes": "PDF Công báo đầy đủ có text; đối chiếu số/ngày, toàn bộ phần sửa Luật Đất đai, điều khoản hiệu lực và chuyển tiếp. Chỉ thay thuật ngữ “an toàn thông tin mạng” bằng “an ninh mạng”.",
+    "source_review_notes": "Rà soát tập trung vào sửa đổi Luật Đất đai và mốc hiệu lực. Các quy định chuyên ngành khác trong bản gốc cần đối chiếu văn bản sửa đổi riêng; chưa thẩm định pháp lý độc lập. Chỉ thay thuật ngữ “an toàn thông tin mạng” bằng “an ninh mạng”.",
+    "provision_validity": []
+  },
+  {
+    "id": "luat-130-2025",
+    "title": "Luật số 130/2025/QH15 luật Hàng không dân dụng Việt Nam",
+    "url": "https://congbao.chinhphu.vn/van-ban/luat-so-130-2025-qh15-468690.htm",
+    "publication_url": "https://congbao.chinhphu.vn/van-ban/luat-so-130-2025-qh15-468690.htm",
+    "source_kind": "legal",
+    "document_number": "130/2025/QH15",
+    "issuer": "Quốc hội",
+    "jurisdiction": "national",
+    "project": null,
+    "topics": [
+      "đất đai",
+      "sửa đổi",
+      "hiệu lực",
+      "quy hoạch"
+    ],
+    "issued_on": "2025-12-10",
+    "effective_from": "2026-07-01",
+    "effective_to": null,
+    "review_status": "verified",
+    "checked_at": "2026-10-12T21:58:49.611662+00:00",
+    "raw_paths": [
+      "data/raw/luat-130-2025-congbao-1.pdf"
+    ],
+    "attachment_urls": [
+      "https://congbaocdn.chinhphu.vn/180507251028987904/2026/1/24/130signed-17692430406351586892590.pdf"
+    ],
+    "raw_checksums": {
+      "data/raw/luat-130-2025-congbao-1.pdf": "21e76dad3f387d108839ab519873d761596e5acd4ebb2ce85e129690659c9ed0"
+    },
+    "source_artifacts": [
+      {
+        "path": "data/raw/luat-130-2025-publication.html",
+        "sha256": "b6322a91dc7e31525260945490649509ee79cc9588141cb4f50d89f535c86f97"
+      }
+    ],
+    "ocr_reviewed": false,
+    "notes": "PDF Công báo đầy đủ có text; đối chiếu số/ngày, toàn bộ phần sửa Luật Đất đai, điều khoản hiệu lực và chuyển tiếp. Sửa quyền sử dụng đất và quản lý đất cảng hàng không; khoản 9 Điều 260 là chuyển tiếp riêng đất cảng hàng không, không phải khoản 3.",
+    "source_review_notes": "Rà soát tập trung vào sửa đổi Luật Đất đai và mốc hiệu lực. Các quy định chuyên ngành khác trong bản gốc cần đối chiếu văn bản sửa đổi riêng; chưa thẩm định pháp lý độc lập. Sửa quyền sử dụng đất và quản lý đất cảng hàng không; khoản 9 Điều 260 là chuyển tiếp riêng đất cảng hàng không, không phải khoản 3.",
+    "provision_validity": []
+  },
+  {
+    "id": "luat-142-2025",
+    "title": "Luật số 142/2025/QH15 luật Phục hồi, phá sản",
+    "url": "https://congbao.chinhphu.vn/van-ban/luat-so-142-2025-qh15-468702.htm",
+    "publication_url": "https://congbao.chinhphu.vn/van-ban/luat-so-142-2025-qh15-468702.htm",
+    "source_kind": "legal",
+    "document_number": "142/2025/QH15",
+    "issuer": "Quốc hội",
+    "jurisdiction": "national",
+    "project": null,
+    "topics": [
+      "đất đai",
+      "sửa đổi",
+      "hiệu lực",
+      "quy hoạch"
+    ],
+    "issued_on": "2025-12-11",
+    "effective_from": "2026-03-01",
+    "effective_to": null,
+    "review_status": "verified",
+    "checked_at": "2026-10-12T21:58:49.611662+00:00",
+    "raw_paths": [
+      "data/raw/luat-142-2025-congbao-1.pdf"
+    ],
+    "attachment_urls": [
+      "https://congbaocdn.chinhphu.vn/180507251028987904/2026/1/27/142signed-17694806700781867490897.pdf"
+    ],
+    "raw_checksums": {
+      "data/raw/luat-142-2025-congbao-1.pdf": "fdabaa9bc1bb8cc49f4979f46f75704f2eb607b69e4c8c8072866b8b196e945e"
+    },
+    "source_artifacts": [
+      {
+        "path": "data/raw/luat-142-2025-publication.html",
+        "sha256": "d2fa833c8df7089653103a7a9b47db35426a92a2fba1c1e4bc2891e89a52d6b4"
+      }
+    ],
+    "ocr_reviewed": false,
+    "notes": "PDF Công báo đầy đủ có text; đối chiếu số/ngày, toàn bộ phần sửa Luật Đất đai, điều khoản hiệu lực và chuyển tiếp. Thay cụm từ “pháp luật về phá sản” thành “pháp luật về phục hồi, phá sản”; toàn văn Luật Đất đai gốc có cụm từ này tại khoản 3 Điều 36. Không thay mọi lần xuất hiện hai từ “phá sản”.",
+    "source_review_notes": "Rà soát tập trung vào sửa đổi Luật Đất đai và mốc hiệu lực. Các quy định chuyên ngành khác trong bản gốc cần đối chiếu văn bản sửa đổi riêng; chưa thẩm định pháp lý độc lập. Thay cụm từ “pháp luật về phá sản” thành “pháp luật về phục hồi, phá sản”; toàn văn Luật Đất đai gốc có cụm từ này tại khoản 3 Điều 36. Không thay mọi lần xuất hiện hai từ “phá sản”.",
+    "provision_validity": [
+      {
+        "locator": "khoản 3 Điều 38",
+        "effective_from": "2026-07-01",
+        "effective_to": null,
+        "source_url": "https://congbao.chinhphu.vn/van-ban/luat-so-142-2025-qh15-468702.htm",
+        "note": "Khoản 1 Điều 87: mốc riêng cho khoản 3 Điều 38; không áp cho sửa thuật ngữ ở Điều 86."
+      }
+    ]
+  },
+  {
+    "id": "luat-147-2025",
+    "title": "Luật số 147/2025/QH15 luật sửa đổi, bổ sung một số điều của Luật Địa chất và khoáng sản",
+    "url": "https://congbao.chinhphu.vn/van-ban/luat-so-147-2025-qh15-468707.htm",
+    "publication_url": "https://congbao.chinhphu.vn/van-ban/luat-so-147-2025-qh15-468707.htm",
+    "source_kind": "legal",
+    "document_number": "147/2025/QH15",
+    "issuer": "Quốc hội",
+    "jurisdiction": "national",
+    "project": null,
+    "topics": [
+      "đất đai",
+      "sửa đổi",
+      "hiệu lực",
+      "quy hoạch"
+    ],
+    "issued_on": "2025-12-11",
+    "effective_from": "2026-01-01",
+    "effective_to": null,
+    "review_status": "verified",
+    "checked_at": "2026-10-12T21:58:49.611662+00:00",
+    "raw_paths": [
+      "data/raw/luat-147-2025-congbao-1.pdf"
+    ],
+    "attachment_urls": [
+      "https://congbaocdn.chinhphu.vn/180507251028987904/2026/1/27/147signed-17694806123901984414047.pdf"
+    ],
+    "raw_checksums": {
+      "data/raw/luat-147-2025-congbao-1.pdf": "369480ced5193812e447bdf1c52e4a453a8a8fc218af337c101bb2e452a9cced"
+    },
+    "source_artifacts": [
+      {
+        "path": "data/raw/luat-147-2025-publication.html",
+        "sha256": "161807b18e46d397513693797f84f4ef307189314ba8857679b8847608f66cb7"
+      }
+    ],
+    "ocr_reviewed": false,
+    "notes": "PDF Công báo đầy đủ có text; đối chiếu số/ngày, toàn bộ phần sửa Luật Đất đai, điều khoản hiệu lực và chuyển tiếp. Bổ sung sử dụng đất thăm dò/khai thác khoáng sản nhóm III/IV cho dự án đủ điều kiện; không tự suy ra mọi hoạt động khai thác được miễn chuyển mục đích.",
+    "source_review_notes": "Rà soát tập trung vào sửa đổi Luật Đất đai và mốc hiệu lực. Các quy định chuyên ngành khác trong bản gốc cần đối chiếu văn bản sửa đổi riêng; chưa thẩm định pháp lý độc lập. Bổ sung sử dụng đất thăm dò/khai thác khoáng sản nhóm III/IV cho dự án đủ điều kiện; không tự suy ra mọi hoạt động khai thác được miễn chuyển mục đích.",
+    "provision_validity": []
+  },
+  {
+    "id": "luat-quy-hoach-2025",
+    "title": "Luật số 112/2025/QH15 luật Quy hoạch",
+    "url": "https://congbao.chinhphu.vn/van-ban/luat-so-112-2025-qh15-468674/61642.htm",
+    "publication_url": "https://congbao.chinhphu.vn/van-ban/luat-so-112-2025-qh15-468674/61642.htm",
+    "source_kind": "legal",
+    "document_number": "112/2025/QH15",
+    "issuer": "Quốc hội",
+    "jurisdiction": "national",
+    "project": null,
+    "topics": [
+      "đất đai",
+      "bồi thường",
+      "quy hoạch",
+      "khiếu nại",
+      "chuyển tiếp"
+    ],
+    "issued_on": "2025-12-10",
+    "effective_from": "2026-03-01",
+    "effective_to": null,
+    "review_status": "verified",
+    "checked_at": "2026-10-12T22:15:42.135850+00:00",
+    "raw_paths": [
+      "data/raw/luat-quy-hoach-2025-congbao-native-1.pdf"
+    ],
+    "attachment_urls": [
+      "https://congbaocdn.chinhphu.vn/180507251028987904/2026/1/24/112signed-1769241287237757225866.pdf"
+    ],
+    "raw_checksums": {
+      "data/raw/luat-quy-hoach-2025-congbao-native-1.pdf": "8d9208d6105c96a44547f1232af9f2127ba0b4c2661ee08acb7d04573f342e8b"
+    },
+    "source_artifacts": [
+      {
+        "path": "data/raw/luat-quy-hoach-2025-congbao-publication.html",
+        "sha256": "cd1ec5a393c36600d17804a5f0024dee0810bbab607bbc05f746f9d487071f74"
+      }
+    ],
+    "ocr_reviewed": false,
+    "notes": "Đối chiếu Điều 3,5,6 hệ thống/quan hệ quy hoạch, công bố, Điều 48,55,57,58 và phụ lục đầy đủ. Điều 48 hiệu lực sớm ngày thông qua 10/12/2025. Điều 56 giai đoạn tạm thời có ngoại lệ quy hoạch biển/đất đến không quá 30/06/2026. Khoản6 Điều 57 PDF Công báo ghi “21/2017/QH15”, trong khi Điều 58 và văn bản gốc ghi21/2017/QH14; giữ nguyên nguồn và công khai sai biệt, không tự sửa PDF.",
+    "source_review_notes": "Đối chiếu Điều 3,5,6 hệ thống/quan hệ quy hoạch, công bố, Điều 48,55,57,58 và phụ lục đầy đủ. Điều 48 hiệu lực sớm ngày thông qua 10/12/2025. Điều 56 giai đoạn tạm thời có ngoại lệ quy hoạch biển/đất đến không quá 30/06/2026. Khoản6 Điều 57 PDF Công báo ghi “21/2017/QH15”, trong khi Điều 58 và văn bản gốc ghi21/2017/QH14; giữ nguyên nguồn và công khai sai biệt, không tự sửa PDF. Chưa thẩm định pháp lý độc lập.",
+    "provision_validity": [
+      {
+        "locator": "Điều 48",
+        "effective_from": "2025-12-10",
+        "effective_to": null,
+        "source_url": "https://congbao.chinhphu.vn/van-ban/luat-so-112-2025-qh15-468674/61642.htm",
+        "note": "Điều 57 khoản 2: hiệu lực từ ngày thông qua."
+      },
+      {
+        "locator": "Điều 56",
+        "effective_from": "2025-12-10",
+        "effective_to": "2026-03-01",
+        "source_url": "https://congbao.chinhphu.vn/van-ban/luat-so-112-2025-qh15-468674/61642.htm",
+        "note": "Điều 57 khoản 3: đến hết28/02/2026, trừ phần quy hoạch không gian biển/đất quốc gia2021–2030 tại khoản 4."
+      },
+      {
+        "locator": "Điều 56 — phần điều chỉnh quy hoạch không gian biển/quy hoạch sử dụng đất quốc gia2021–2030",
+        "effective_from": "2025-12-10",
+        "effective_to": "2026-07-01",
+        "source_url": "https://congbao.chinhphu.vn/van-ban/luat-so-112-2025-qh15-468674/61642.htm",
+        "note": "Điều 57 khoản 4: đến khi điều chỉnh được phê duyệt, nhưng không quá30/06/2026; không suy luôn đủ thời hạn nếu đã phê duyệt sớm."
+      }
+    ]
+  },
+  {
+    "id": "nd-141-2025",
+    "title": "Nghị định số 141/2025/NĐ-CP quy định về phân định thẩm quyền của chính quyền địa phương 02 cấp trong lĩnh vực quản lý nhà nước của Thanh tra Chính phủ.",
+    "url": "https://congbao.chinhphu.vn/van-ban/nghi-dinh-so-141-2025-nd-cp-45063/56732.htm",
+    "publication_url": "https://congbao.chinhphu.vn/van-ban/nghi-dinh-so-141-2025-nd-cp-45063/56732.htm",
+    "source_kind": "legal",
+    "document_number": "141/2025/NĐ-CP",
+    "issuer": "Chính phủ",
+    "jurisdiction": "national",
+    "project": null,
+    "topics": [
+      "đất đai",
+      "bồi thường",
+      "quy hoạch",
+      "khiếu nại",
+      "chuyển tiếp"
+    ],
+    "issued_on": "2025-06-12",
+    "effective_from": "2025-07-01",
+    "effective_to": "2027-03-01",
+    "review_status": "verified",
+    "checked_at": "2026-10-12T22:15:42.135850+00:00",
+    "raw_paths": [
+      "data/raw/nd-141-2025-congbao-native-1.pdf"
+    ],
+    "attachment_urls": [
+      "https://congbaocdn.chinhphu.vn/CongBaoCP/VanBan/2025/6/45063/56732-1-2025777-778141-2025-nd-cp.pdf"
+    ],
+    "raw_checksums": {
+      "data/raw/nd-141-2025-congbao-native-1.pdf": "9a1728df491792441ad09842f5615cd32c400c6d5fcf10a9233eb861b003f60b"
+    },
+    "source_artifacts": [
+      {
+        "path": "data/raw/nd-141-2025-congbao-publication.html",
+        "sha256": "03758e76058c3882c9772918cbc537078190031bd49fc1e1e6f3db5f14602a37"
+      }
+    ],
+    "ocr_reviewed": false,
+    "notes": "Đọc toàn bộ5 trang, đặc biệt Điều 4 thẩm quyền, Điều 7 khoản 2 và Điều 8 chuyển tiếp huyện cũ. Mốc hết hiệu lực01/03/2027 có ngoại lệ gia hạn/thay thế sớm từng quy định; phải đọc Luật136/2025 và NĐ155/2026 cho hiện tại, không diễn giải còn áp dụng toàn bộ đến2027.",
+    "source_review_notes": "Đọc toàn bộ5 trang, đặc biệt Điều 4 thẩm quyền, Điều 7 khoản 2 và Điều 8 chuyển tiếp huyện cũ. Mốc hết hiệu lực01/03/2027 có ngoại lệ gia hạn/thay thế sớm từng quy định; phải đọc Luật136/2025 và NĐ155/2026 cho hiện tại, không diễn giải còn áp dụng toàn bộ đến2027. Chưa thẩm định pháp lý độc lập.",
+    "provision_validity": []
+  },
+  {
+    "id": "nd-155-2026",
+    "title": "Nghị định số 155/2026/NĐ-CP sửa đổi, bổ sung một số điều của Nghị định số 124/2020/NĐ-CP ngày 19 tháng 10 năm 2020 của Chính phủ quy định chi tiết một số điều và biện pháp thi hành Luật Khiếu nại",
+    "url": "https://congbao.chinhphu.vn/van-ban/nghi-dinh-so-155-2026-nd-cp-469547.htm",
+    "publication_url": "https://congbao.chinhphu.vn/van-ban/nghi-dinh-so-155-2026-nd-cp-469547.htm",
+    "source_kind": "legal",
+    "document_number": "155/2026/NĐ-CP",
+    "issuer": "Chính phủ",
+    "jurisdiction": "national",
+    "project": null,
+    "topics": [
+      "đất đai",
+      "bồi thường",
+      "quy hoạch",
+      "khiếu nại",
+      "chuyển tiếp"
+    ],
+    "issued_on": "2026-05-15",
+    "effective_from": "2026-07-01",
+    "effective_to": null,
+    "review_status": "verified",
+    "checked_at": "2026-10-12T22:15:42.135850+00:00",
+    "raw_paths": [
+      "data/raw/nd-155-2026-congbao-native-1.pdf"
+    ],
+    "attachment_urls": [
+      "https://congbaocdn.chinhphu.vn/180507251028987904/2026/5/29/469547-1779940840_v1_1780042045_signed.pdf"
+    ],
+    "raw_checksums": {
+      "data/raw/nd-155-2026-congbao-native-1.pdf": "53ccbbcd9d668d924ccc5c8c201d2fe814e18149380942bbc8cfce2e0c358708"
+    },
+    "source_artifacts": [
+      {
+        "path": "data/raw/nd-155-2026-congbao-publication.html",
+        "sha256": "3f3bf3d92f5dc27c50397cdfd3e4f1f5bde0326e8427ad5a251b708dab880b55"
+      }
+    ],
+    "ocr_reviewed": false,
+    "notes": "Đọc toàn bộ phần sửa đổi23 điều, điều khoản hiệu lực/chuyển tiếp và danh mục biểu mẫu. Thụ lý07 ngày làm việc, thông báo đối thoại ít nhất05 ngày, tạm đình chỉ/đình chỉ giải quyết khác tạm đình chỉ thi hành quyết định. Điều 21 khoản 2: yêu cầu công chứng văn bản uỷ quyền cá nhân hết hiệu lực01/01/2027; không suy hết hiệu lực toàn nghị định.",
+    "source_review_notes": "Đọc toàn bộ phần sửa đổi23 điều, điều khoản hiệu lực/chuyển tiếp và danh mục biểu mẫu. Thụ lý07 ngày làm việc, thông báo đối thoại ít nhất05 ngày, tạm đình chỉ/đình chỉ giải quyết khác tạm đình chỉ thi hành quyết định. Điều 21 khoản 2: yêu cầu công chứng văn bản uỷ quyền cá nhân hết hiệu lực01/01/2027; không suy hết hiệu lực toàn nghị định. Chưa thẩm định pháp lý độc lập.",
+    "provision_validity": [
+      {
+        "locator": "Điều 3 — quy định công chứng văn bản uỷ quyền khiếu nại cá nhân",
+        "effective_from": "2026-07-01",
+        "effective_to": "2027-01-01",
+        "source_url": "https://congbao.chinhphu.vn/van-ban/nghi-dinh-so-155-2026-nd-cp-469547.htm",
+        "note": "Khoản2 Điều 21: mốc chấm dứt riêng; không coi cảĐiều 3 và toàn nghị định hết hiệu lực."
+      }
+    ]
   }
 ]

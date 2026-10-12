@@ -97,17 +97,31 @@ def relation_chunks(doc, locator):
     return (selected or doc.chunks)[:3]
 
 
+def citation_source_url(item):
+    """Link a physical page only when its exact source attachment is known."""
+    prefix = item.document.id + '-'
+    if not item.chunk.id.startswith(prefix) or not item.chunk.page:
+        return None
+    index = item.chunk.id[len(prefix):].split('-', 1)[0]
+    if not index.isdigit():
+        return None
+    for source in item.document.source_files:
+        if source.first_page_index <= int(index) <= source.last_page_index:
+            return str(source.url).split('#')[0] + f'#page={item.chunk.page}'
+    return None
+
+
 def relation_may_affect(relation, doc_id, passages):
     """Skip only a verified complete amendment scope outside retrieved articles."""
     if (relation.target_id != doc_id or relation.type not in {'amends', 'repeals'}
             or not relation.target_locators_complete):
         return True
-    articles = {n for locator in relation.target_locators
-                for n in re.findall(r'Điều\s+(\d+)', locator, re.IGNORECASE)}
+    articles = {n.lower() for locator in relation.target_locators
+                for n in re.findall(r'Điều\s+(\d+[a-z]?)', locator, re.IGNORECASE)}
     if not articles:
         return True
     return any(p.document.id == doc_id and any(
-        re.search(rf'^Điều {n}(?:\D|$)', p.chunk.locator) for n in articles) for p in passages)
+        re.search(rf'^Điều {n}(?:\s|$)', p.chunk.locator, re.IGNORECASE) for n in articles) for p in passages)
 
 
 def dates_in(text):
@@ -553,8 +567,8 @@ class Agent:
                     if not starts or date.fromisoformat(starts) > state["as_of"]:
                         continue
                     affected_articles = [n for locator in relation.get("target_locators", [])
-                                         for n in re.findall(r"Điều\s+(\d+)", locator, flags=re.IGNORECASE)]
-                    affected = not relation.get('target_locators_complete') or any(re.search(rf"^Điều {n}(?:\D|$)", item.chunk.locator) for n in affected_articles)
+                                         for n in re.findall(r"Điều\s+(\d+[a-z]?)", locator, flags=re.IGNORECASE)]
+                    affected = not relation.get('target_locators_complete') or any(re.search(rf"^Điều {n}(?:\s|$)", item.chunk.locator, re.IGNORECASE) for n in affected_articles)
                     if affected and relation["source_id"] not in cited_documents:
                         structural_issues.append(f"Claim {index}: điều khoản có sửa đổi/bãi bỏ một phần; cần dẫn cả văn bản tác động")
         cited_ids={citation_id for claim in draft.claims for citation_id in claim.citation_ids}
@@ -659,9 +673,10 @@ class Agent:
         cited_ids = list(dict.fromkeys(i for c in claims for i in c.citation_ids))
         citations = [Citation(id=i, document_id=evidence[i].document.id, title=evidence[i].document.title,
                               document_number=evidence[i].document.document_number, url=str(evidence[i].document.url),
-                              locator=evidence[i].chunk.locator, excerpt=evidence[i].chunk.text[:1600],
+                              locator=evidence[i].chunk.locator, excerpt=evidence[i].chunk.text,
                               checked_at=evidence[i].document.checked_at, applicability=evidence[i].applicability,
-                              source_review_notes=evidence[i].document.source_review_notes) for i in cited_ids]
+                              source_review_notes=evidence[i].document.source_review_notes,
+                              page=evidence[i].chunk.page, source_url=citation_source_url(evidence[i])) for i in cited_ids]
         status = draft.status
         if draft.claims and (len(claims) != len(draft.claims) or check.issues):
             status = "insufficient_evidence"

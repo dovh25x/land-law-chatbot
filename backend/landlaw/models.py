@@ -1,7 +1,7 @@
 from datetime import date, datetime
 from typing import Literal
 
-from pydantic import BaseModel, Field, HttpUrl
+from pydantic import BaseModel, Field, HttpUrl, model_validator
 
 ProjectID = Literal["ring4", "songhong", "olympic"]
 Status = Literal["answered", "clarification_needed", "insufficient_evidence", "limited", "error"]
@@ -17,6 +17,19 @@ class Chunk(BaseModel):
     embedding: list[float] | None = Field(default=None, exclude=True)
     embedding_model: str | None = None
     checksum: str
+
+
+class SourceFile(BaseModel):
+    url: HttpUrl
+    checksum: str
+    first_page_index: int = Field(ge=0)
+    last_page_index: int = Field(ge=0)
+
+    @model_validator(mode='after')
+    def ordered_page_range(self):
+        if self.last_page_index < self.first_page_index:
+            raise ValueError('Source page range is reversed')
+        return self
 
 
 class Document(BaseModel):
@@ -38,6 +51,7 @@ class Document(BaseModel):
     checked_at: datetime
     checksum: str
     source_review_notes: str = ''
+    source_files: list[SourceFile] = Field(default_factory=list)
     chunks: list[Chunk] = Field(default_factory=list)
 
 
@@ -71,6 +85,8 @@ class Citation(BaseModel):
     checked_at: datetime
     applicability: str
     source_review_notes: str = ''
+    page: int | None = None
+    source_url: str | None = None
 
 
 class TraceEvent(BaseModel):

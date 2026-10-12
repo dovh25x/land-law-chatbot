@@ -8,6 +8,35 @@ from landlaw.ingest import coverage, json_write
 from landlaw.security import digest, official_url, utcnow
 
 
+def source_file_provenance(document, source, contents):
+    """Reject attachment substitution and ambiguous page-to-file mappings."""
+    files = document.get('source_files', [])
+    known_urls = source.get('attachment_urls') or []
+    if not known_urls and source['url'].split('?')[0].endswith('.pdf'):
+        known_urls = [source['url']]
+    expected = [(url, digest(raw)) for url, raw in zip(known_urls, contents, strict=True)
+                if raw.startswith(b'%PDF')] if len(known_urls) == len(contents) else []
+    if expected and [(f['url'], f['checksum']) for f in files] != expected:
+        return False
+    previous_end = -1
+    for f in files:
+        if (not official_url(f['url'], document.get('publication_url') or source['url'])
+                or f['checksum'] not in source['raw_checksums'].values()
+                or f['first_page_index'] <= previous_end
+                or f['last_page_index'] < f['first_page_index']):
+            return False
+        previous_end = f['last_page_index']
+    if files:
+        prefix = document['id'] + '-'
+        for chunk in document['chunks']:
+            if chunk.get('page') is None:
+                continue
+            index = chunk['id'][len(prefix):].split('-', 1)[0] if chunk['id'].startswith(prefix) else ''
+            if not index.isdigit() or sum(f['first_page_index'] <= int(index) <= f['last_page_index'] for f in files) != 1:
+                return False
+    return True
+
+
 def main(path):
     settings = Settings()
     release = json.loads(Path(path).read_text())
@@ -28,6 +57,7 @@ def main(path):
             'unique_chunks':len({c['id'] for c in document['chunks']})==len(document['chunks']),
             'personal_data_review':not source.get('contains_personal_data') or source.get('anonymisation_reviewed') is True,
             'checked_at':bool(document.get('checked_at')),
+            'pdf_citation_provenance':source_file_provenance(document, source, contents),
             'source_artifacts':all(digest(Path(item['path']).read_bytes())==item['sha256'] for item in artifacts),
             'ocr_review':all(item.get('review_status')=='verified'
                 and digest(Path(item['ocr_path']).read_bytes())==item['ocr_sha256']

@@ -6,12 +6,12 @@ Thời điểm tải và đối chiếu: 11–12/10/2026 UTC; snapshot QĐ56 đ�
 
 | Nhóm | Danh mục | Toàn văn đã kiểm tra | Chờ kiểm tra/cách ly |
 |---|---:|---:|---:|
-| Văn bản pháp lý | 45 | 37 | 8 |
+| Văn bản pháp lý | 56 | 52 | 4 |
 | Vành đai 4 | 6 | 1 nghị quyết + 4 bài chính thức | 1 nghị quyết PDF ảnh |
 | Trục đại lộ cảnh quan sông Hồng | 5 | 5 | 0 |
 | Khu đô thị thể thao Olympic | 5 | 5 | 0 |
 
-Tổng cộng 56 nguồn, 28 quan hệ pháp lý có vị trí điều khoản và URL chứng minh. Số lượng văn bản đã kiểm tra đáp ứng mức 30 văn bản pháp lý, toàn văn lịch sử QĐ56 đã bổ sung; NQ106/NQ-CP và các nguồn khác còn cách ly được ghi trong coverage_gaps. Không đánh dấu M1 hoàn tất chỉ từ số lượng.
+Tổng cộng 72 nguồn, 100 quan hệ pháp lý có vị trí điều khoản và URL chứng minh. Số lượng văn bản đã kiểm tra đáp ứng mức 30 văn bản pháp lý, toàn văn lịch sử QĐ56 đã bổ sung; NQ106/NQ-CP và các nguồn khác còn cách ly được ghi trong coverage_gaps. Không đánh dấu M1 hoàn tất chỉ từ số lượng.
 
 ## Kết quả kiểm tra quan trọng
 
@@ -137,4 +137,17 @@ Kiểm tra cấu trúc/checksum: data/raw/source_asset_audit.json. Mọi ID quan
 - NĐ226: dùng toàn văn Công báo 44 trang thay HTML tóm tắt có locator sai. Phân số chi phí đầu tư còn lại tại trang PDF15 được đối chiếu trực quan và chuẩn hóa dấu ngoặc; PDF gốc giữ nguyên. NĐ49 sau đó có sửa đổi/bãi bỏ theo phạm vi cụ thể, không ghi cả NĐ226 hết hiệu lực.
 - Phụ lục NQ56/2022 Vành đai 4: hai trang bảng xoay được đọc trực quan, chép lại theo tên cột, đơn vị và số gốc; ô trống không quy thành 0. Các trang nghị quyết giữ native text. Sidecar và hồ sơ xử lý được lưu trong manifest/Storage riêng tư. Dữ liệu này là sơ bộ năm 2022, không phải đơn giá bồi thường hộ.
 
-Manifest hiện có 49 quan hệ với phạm vi và nguồn chứng minh. Quan hệ rà soát chưa đủ toàn bộ mục sửa đổi mang `scope_complete=false`; đầu mút lịch sử chưa có vẫn nằm trong báo cáo khoảng trống. Luật144 bãi bỏ cả Điều24/28 của Luật47 và một số khoản/điểm riêng; Điều2 của Luật144 có kỳ áp dụng riêng đến trước 01/03/2027. Không gán mốc này cho toàn Luật144.
+Manifest hiện có 100 quan hệ với phạm vi và nguồn chứng minh. Quan hệ rà soát chưa đủ toàn bộ mục sửa đổi mang `target_locators_complete=false`; đầu mút lịch sử chưa có vẫn nằm trong báo cáo khoảng trống. Luật144 bãi bỏ cả Điều24/28 của Luật47 và một số khoản/điểm riêng; Điều2 của Luật144 có kỳ áp dụng riêng đến trước 01/03/2027. Không gán mốc này cho toàn Luật144.
+
+
+## Đối chiếu bổ sung và PDF theo trang
+
+Luật58/2024,84/2025,93/2025,95/2025,116/2025,130/2025,142/2025 và147/2025 được lấy đủ PDF Công báo native text. Đối chiếu toàn bộ phần sửa Luật Đất đai và mốc hiệu lực/ngoại lệ, lưu phạm vi điều khoản. Luật84 chỉ bỏ cụm từ “thanh tra,” tại190(5a),234(3); Luật130 sửa260(9), không phải260(3). Luật142 chỉ đổi các cụm từ được chỉ rõ; trong Luật Đất đai gốc “pháp luật về phá sản” nằm tại36(3). Luật47/2024 Điều57 khoản2,5,6 có quan hệ thuật ngữ riêng đến luật đất đai, nhà ở và Thủ đô2024. Phạm vi rà soát không chứng nhận toàn bộ phần chuyên ngành khác đã được hợp nhất hiện hành.
+
+Luật Quy hoạch112/2025 hiệu lực chung01/03/2026; Điều48 từ10/12/2025, Điều56 có thời hạn riêng và ngoại lệ theo57(3,4). Đã đọc định nghĩa, hệ thống/quan hệ quy hoạch, công bố và chuyển tiếp. PDF Công báo57(6) ghi21/2017/QH15, còn58 và luật gốc ghi21/2017/QH14; giữ nguyên nguồn và công khai sai biệt. Luật21/2017 lịch sử dùng bản Công báo47 trang native text, không coi mọi quy hoạch đã duyệt hết hiệu lực vì thay luật.
+
+Luật Đất đai45/2013 (118 trang) và NĐ47/2014 (24 trang) dùng bản Công báo text thay scan chưa duyệt. Giữ các mốc lịch sử và quan hệ thay thế/chuyển tiếp từ Luật31+43 và NĐ88. Phạm vi sửa bởi Luật35/2018, NĐ01/2017,06/2020,148/2020 còn thiếu toàn văn đã kiểm tra, được giữ ở unresolved_relations; kết luận phụ thuộc phần chưa xác minh bị chặn. Không coi bản gốc là bản hợp nhất đầy đủ.
+
+NĐ124/2020 có bản Công báo text51 trang; đọc cùng NĐ155/2026 (23 trang) từ01/07/2026. Các quan hệ sửa/bãi bỏ tách theo điều nguồn, tránh mở đầu văn bản khi hỏi điều thụ lý ở cuối. Thụ lý07 ngày làm việc, thông báo đối thoại ít nhất05 ngày và yêu cầu công chứng uỷ quyền cá nhân có mốc chấm dứt riêng01/01/2027. NĐ141/2025 được đọc toàn bộ5 trang: thẩm quyền/việc huyện cũ, mốc01/03/2027 có ngoại lệ kéo dài hoặc thay thế sớm. Đọc Luật136/2025 cho hiện tại.
+
+Trích dẫn giữ trang vật lý và mapping đúng tệp khi văn bản chia nhiều PDF. Liên kết PDF gốc chỉ hiện khi URL/tệp được xác minh; bản ghép ảnh NQ254 không được gắn nhãn PDF ký số gốc. CDN lưu trữ VNPT chỉ chấp nhận đường dẫn gov-hni với trang công bố chính thức. Audit từ chối đổi tệp hoặc phạm vi trang chồng lấp. Parser13 tách phụ lục và biểu mẫu khỏi các điều khoản chính, kể cả HTML đặt toàn văn và phụ lục trong cùng body.
