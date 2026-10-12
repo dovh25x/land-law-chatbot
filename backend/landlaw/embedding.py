@@ -14,7 +14,10 @@ def workers_ai_retry_after(response):
         except (ValueError,TypeError):pass
     try:
         errors=response.json().get('errors',[])
-        daily=any(item.get('code')==3036 for item in errors)
+        daily=any(item.get('code')==3036 or (
+            'daily' in str(item.get('message','')).lower() and
+            any(word in str(item.get('message','')).lower() for word in ('allocation','neurons')))
+            for item in errors)
     except (ValueError,TypeError,AttributeError):daily=False
     if daily:
         now=datetime.now(timezone.utc)

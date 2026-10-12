@@ -150,3 +150,7 @@ def test_workers_ai_daily_allocation_and_capacity_have_distinct_waits():
     assert 1<=workers_ai_retry_after(daily)<=86400
     assert workers_ai_retry_after(busy)==60
     assert workers_ai_retry_after(httpx.Response(429,headers={'Retry-After':'37.5'}))==38
+    # The compatible endpoint can use a generic error code for free allocation.
+    generic=httpx.Response(429,json={'errors':[{'code':1000,
+        'message':'Account has exhausted its daily free allocation of Neurons.'}]})
+    assert 1<=workers_ai_retry_after(generic)<=86400

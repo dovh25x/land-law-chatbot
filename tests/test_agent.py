@@ -65,6 +65,41 @@ async def test_commencement_clause_does_not_exclude_all_historical_files(store,s
     assert any('chuyển tiếp' in event.summary for event in result.trace)
 
 
+def test_prompt_keeps_passages_and_deduplicates_document_legal_metadata(store,settings):
+    from landlaw.models import Evidence
+    law=document()
+    relation={'source_id':'amendment','target_id':'law','type':'amends','target_locators':['Điều 1']}
+    second=law.chunks[0].model_copy(update={'id':'law-2','text':'Đoạn chứng cứ thứ hai.'})
+    state={'evidence':[Evidence(chunk=law.chunks[0],document=law),Evidence(chunk=second,document=law)],
+        'release':{'documents':[law.model_dump(mode='json')],'relations':[relation]}}
+    agent=Agent(store,FakeProvider(settings))
+    passages,documents=agent.prompt_context(state)
+    assert [p['citation_id'] for p in passages]==['law-1','law-2']
+    assert passages[1]['text']==second.text and len(documents)==1
+    assert documents[0]['legal_relations'][0]['target_locators']==['Điều 1']
+    assert all('legal_relations' not in passage for passage in passages)
+    selected,metadata=agent.prompt_context(state,{'law-2'})
+    assert len(selected)==len(metadata)==1 and selected[0]['citation_id']=='law-2'
+
+
+async def test_missing_tool_identifier_falls_back_and_never_becomes_public_question(store,settings):
+    law=document(document_number='31/2024/QH15',issued_on=date(2024,1,18))
+    release(store,[law]);sid,_=session(store)
+    class Provider(FakeProvider):
+        async def generate(self,schema,instruction,payload,budget):
+            if schema is Plan:
+                budget.llm()
+                return Plan(tools=[ToolCall(name='check_effectivity')],missing_facts=[
+                    'document_id của văn bản','Ngày ban hành Luật 31/2024/QH15','Ngày phê duyệt phương án của gia đình'])
+            return await super().generate(schema,instruction,payload,budget)
+    result=await Agent(store,Provider(settings)).run(ChatRequest(session_id=sid,
+        message='Điều kiện bồi thường khi thu hồi đất?'),noop)
+    assert result.verified_claims and result.status=='clarification_needed'
+    assert result.missing_facts==['Ngày phê duyệt phương án của gia đình']
+    assert any('Không mở được' in event.summary for event in result.trace)
+    assert result.tool_calls<=12 and result.llm_calls<=6
+
+
 @pytest.mark.parametrize('span,citation,expected', [('law-1:span:0','law-1','answered'),
     ('invented:span:0','law-1','insufficient_evidence'),('law-1:span:0','other','insufficient_evidence')])
 async def test_source_span_selection_is_exact_and_scoped_to_citation(store,settings,span,citation,expected):

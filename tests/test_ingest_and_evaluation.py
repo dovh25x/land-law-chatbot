@@ -90,3 +90,16 @@ def test_benchmark_has_real_distinct_questions_and_no_fabricated_results():
 def test_publication_requires_real_coverage_and_embeddings():
     report = coverage({"id": "empty", "documents": [], "checked_at": "2026-10-12"})
     assert not report["publication_ready"] and not report["coverage_passed"]
+
+
+def test_resuming_preserves_failed_attempt_without_overwriting_it(tmp_path):
+    import json
+    from landlaw.evaluation import preserve_attempt
+    failed={'case_id':'S01','mode':'baseline','result':{'status':'error','trace_id':'first'}}
+    path=preserve_attempt(tmp_path,failed)
+    original=path.read_bytes()
+    assert preserve_attempt(tmp_path,failed)==path and path.read_bytes()==original
+    succeeded={**failed,'result':{'status':'answered','trace_id':'second'}}
+    next_path=preserve_attempt(tmp_path,succeeded)
+    assert next_path!=path and len(list(tmp_path.glob('*.json')))==2
+    assert json.loads(path.read_text())['record']['result']['status']=='error'

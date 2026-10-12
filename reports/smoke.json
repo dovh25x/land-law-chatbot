@@ -1,7 +1,7 @@
 {
   "status": "awaiting_review",
   "dataset_sha256": "f5ff57d611431f57647871345069564a43a1c13b3ba509efe0242d7e71da1843",
-  "generated_at": "2026-10-12T19:40:11.895763+00:00",
+  "generated_at": "2026-10-12T19:51:40.243482+00:00",
   "cases": 20,
   "completed_pairs": 1,
   "results": [
@@ -26,22 +26,22 @@
       "mode": "agentic",
       "completed": 1,
       "reviewed": 0,
-      "recall_at_8": 1.0,
+      "recall_at_8": 0.0,
       "answer_pass_rate": null,
       "citation_id_valid_rate": 1.0,
       "claim_support_rate": null,
       "unsupported_claims": 0,
       "source_review_complete": false,
-      "p95_seconds": 35.372,
-      "llm_calls": 5,
-      "embedding_calls": 1,
-      "tool_calls": 5,
+      "p95_seconds": null,
+      "llm_calls": 1,
+      "embedding_calls": 0,
+      "tool_calls": 0,
       "critical_failed": [],
-      "limited_or_error": 0
+      "limited_or_error": 1
     }
   ],
   "acceptance_passed": false,
-  "run_id": "corpus-a6af9cf431b26f71-@cf_qwen_qwen3-30b-a3b-fp8-smoke-f5ff57d6-f709cb7b-c2",
+  "run_id": "corpus-a6af9cf431b26f71-@cf_qwen_qwen3-30b-a3b-fp8-smoke-f5ff57d6-cecebd7e-c2",
   "release": "corpus-a6af9cf431b26f71",
   "model": "@cf/qwen/qwen3-30b-a3b-fp8",
   "llm_provider": "cloudflare",
@@ -53,11 +53,18 @@
     "Development runs on incomplete staging cannot certify acceptance; query embedding failures fall back to lexical retrieval."
   ],
   "as_of": "2026-10-13",
-  "configuration_sha256": "f709cb7b84c50be6ac34fb14d2a35f87ce3e98c99a31408668e2b24b8e86c4c1",
+  "configuration_sha256": "cecebd7e759c9d280ea817cf7a26d4ebaea0c0ab07bc6ed2907a3d0525df5f6e",
   "execution_concurrency": 2,
+  "attempt_history": {
+    "attempts": 2,
+    "retry_attempts": 0,
+    "limited_or_error_attempts": 2,
+    "scope": "Every new attempt is retained; legacy checkpoints imported as latest results only.",
+    "directory": "reports/runs/corpus-a6af9cf431b26f71-@cf_qwen_qwen3-30b-a3b-fp8-smoke-f5ff57d6-cecebd7e-c2/attempts"
+  },
   "latency_scope": "Paired CLI run, concurrency 2; public API single-user p95 measured separately.",
   "source_audit_passed": true,
   "source_audit_sha256": "8af64ecd4c8668ebfb78d8355ce62b19f14e6e2135fd92ecfe168c10bae5d1d2",
   "runtime_tests_passed": true,
-  "runtime_tests_sha256": "b67e12f5b6155e33a90560114548f08b73d86085a34e49d1baeb2159f194b75e"
+  "runtime_tests_sha256": "06f9d47e67dcb9d4208ef3c1199533c934a232808d8dfa818e2c22d7aa3e29e4"
 }

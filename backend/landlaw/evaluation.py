@@ -19,6 +19,15 @@ def dataset(path: Path):
     return cases
 
 
+def preserve_attempt(folder,record,origin='executed'):
+    """Keep immutable results before replacing a failed resumable checkpoint."""
+    checksum=hashlib.sha256(json.dumps(record,sort_keys=True,ensure_ascii=False).encode()).hexdigest()
+    path=folder/f'{checksum}.json'
+    if not path.exists():
+        json_write(path,{'recorded_at':utcnow().isoformat(),'origin':origin,'record':record})
+    return path
+
+
 def summarise(records, cases, fingerprint, reviews=None):
     reviews, by_id = reviews or {}, {c["id"]: c for c in cases}
     summary = {"status": "awaiting_review", "dataset_sha256": fingerprint, "generated_at": utcnow().isoformat(),
@@ -98,6 +107,9 @@ async def evaluate(settings, store, provider, split="dev", release_id=None, limi
     metadata = json.loads(metadata_path.read_text()) if metadata_path.exists() else {"as_of": str(local_date()), "configuration_sha256": configuration}
     json_write(metadata_path, metadata)
     records = json.loads(records_path.read_text()) if records_path.exists() else []
+    attempts_path=records_path.parent/'attempts'
+    for record in records:
+        preserve_attempt(attempts_path,record,'imported_latest_checkpoint')
     agent, executed = Agent(store, provider), 0
     async def emit(_):
         pass
@@ -119,6 +131,7 @@ async def evaluate(settings, store, provider, split="dev", release_id=None, limi
     for start in range(0,len(pending),concurrency):
         results=await asyncio.gather(*(execute(c,m) for c,m in pending[start:start+concurrency]))
         for result in results:
+            preserve_attempt(attempts_path,result)
             records=[r for r in records if not (r['case_id']==result['case_id'] and r['mode']==result['mode'])]
             records.append(result)
             json_write(records_path,records)
@@ -132,6 +145,11 @@ async def evaluate(settings, store, provider, split="dev", release_id=None, limi
                    "corpus_embedded": release.get("embedded", False), "publication_candidate": False,
                    "notes": ["Development runs on incomplete staging cannot certify acceptance; query embedding failures fall back to lexical retrieval."], **metadata})
     report['execution_concurrency'] = concurrency
+    attempts=[json.loads(p.read_text()) for p in attempts_path.glob('*.json')]
+    report['attempt_history']={'attempts':len(attempts),'retry_attempts':len(attempts)-len(records),
+        'limited_or_error_attempts':sum(a['record']['result']['status'] in {'limited','error'} for a in attempts),
+        'scope':'Every new attempt is retained; legacy checkpoints imported as latest results only.',
+        'directory':str(attempts_path)}
     report['acceptance_passed'] = bool(report['acceptance_passed'] and split=='acceptance'
         and len(cases)==80 and all(c.get('ground_truth_status')=='source_checked' for c in cases)
         and all(r['reviewed']==80 and r['source_review_complete'] for r in report['results']))

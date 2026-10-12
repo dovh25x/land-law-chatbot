@@ -149,6 +149,15 @@ def source_effective_dates(text):
     return result
 
 
+def public_missing_facts(facts,release):
+    known=['/'.join(normalize(d.get('document_number') or '').split('/')[:2])
+        for d in (release or {}).get('documents',[]) if d.get('issued_on')]
+    return list(dict.fromkeys(fact for fact in facts
+        if not any(key in fact.lower() for key in ('document_id','citation_id'))
+        and not ('ngay ban hanh' in normalize(fact)
+            and any(number and number in normalize(fact) for number in known))))
+
+
 def source_spans(evidence):
     """Number exact overlapping source passages; the model cannot supply their text."""
     result={}
@@ -221,13 +230,16 @@ class Agent:
                 {"question": redact(request.message), "project": request.project, "as_of": str(state["as_of"]),
                  "history": state["history"], "catalogue": self.catalogue(state["release"]),
                  "coverage_gaps":(state['release'] or {}).get('coverage_gaps',[])}, state["budget"])
+            # Internal identifiers and dates already available in the source
+            # catalogue are tool inputs, not facts a citizen must supply.
+            state['plan'].missing_facts=public_missing_facts(state['plan'].missing_facts,state['release'])
         await self.event(state, "plan", f"Đã chọn {len(state['plan'].tools)} công cụ; chế độ {request.mode}.")
         return state
 
     @staticmethod
     def catalogue(release):
         return [{"id": d["id"], "title": d["title"], 'document_number':d.get('document_number'), "project": d.get("project"),
-                 'effective_from':d.get('effective_from'),'effective_to':d.get('effective_to')}
+                 'issued_on':d.get('issued_on'),'effective_from':d.get('effective_from'),'effective_to':d.get('effective_to')}
                 for d in (release or {}).get("documents", [])][:100]
 
     async def search(self, state, query, project=None):
@@ -278,8 +290,8 @@ class Agent:
             results = []
             if call.name in {"search_law", "search_project"}:
                 results = await self.search(state, call.query or state["request"].message, state["request"].project)
-            elif call.name in {"open_article", "check_effectivity"} and call.document_id:
-                doc = (await asyncio.to_thread(self.store.open_effectivity,call.document_id,release_id)
+            elif call.name in {"open_article", "check_effectivity"}:
+                doc = None if not call.document_id else (await asyncio.to_thread(self.store.open_effectivity,call.document_id,release_id)
                        if call.name=='check_effectivity' else
                        await asyncio.to_thread(self.store.open_document, call.document_id, release_id, call.locator))
                 if doc:
@@ -347,6 +359,24 @@ class Agent:
                  "provision_validity": e.document.provision_validity,
                  "legal_relations": self.relation_context(e, state)} for e in state["evidence"]]
 
+    def prompt_context(self,state,selected_ids=None):
+        """Send each document's legal relationships once, preserving every passage.
+
+        Repeating a long amendment graph for each chunk can overflow a free
+        model's context and distract from the actual operative text.
+        """
+        passages,documents=[],{}
+        for item in self.context(state):
+            if selected_ids is not None and item['citation_id'] not in selected_ids:
+                continue
+            document_id=item['document_id']
+            documents.setdefault(document_id,{key:item[key] for key in (
+                'document_id','title','document_number','kind','effective_from','effective_to',
+                'provision_validity','legal_relations')})
+            passages.append({key:item[key] for key in (
+                'citation_id','document_id','page','locator','text','applicability')})
+        return passages,list(documents.values())
+
     def relation_context(self, evidence, state):
         docs = {d["id"]: d for d in (state["release"] or {}).get("documents", [])}
         result = []
@@ -367,7 +397,8 @@ class Agent:
                                    missing_facts=state["plan"].missing_facts)
         else:
             aliases={item.chunk.id:f'C{index+1}' for index,item in enumerate(state['evidence'])}
-            contexts=[{**item,'citation_id':aliases[item['citation_id']]} for item in self.context(state)]
+            contexts,documents=self.prompt_context(state)
+            contexts=[{**item,'citation_id':aliases[item['citation_id']]} for item in contexts]
             state["draft"] = await self.provider.generate(Draft,
                 "Tạo câu trả lời có cấu trúc. summary chỉ giới thiệu kết quả và giới hạn, không chứa kết luận pháp lý "
                 "không dẫn nguồn. MỌI kết luận pháp lý nằm trong claims, gắn citation_ids có trong evidence. "
@@ -395,6 +426,7 @@ class Agent:
                 "Câu hỏi chỉ về hiệu lực/thay thế một văn bản nên có một hoặc hai claims, kind=applicability, không lặp các mốc ở nhiều claims.",
                 {"question": redact(state["request"].message), "as_of": str(state["as_of"]), "history": state["history"],
                  "missing_facts": state["plan"].missing_facts, "tool_results": state["tool_notes"], "evidence": contexts,
+                 "documents":documents,
                  'allowed_citation_ids':list(aliases.values()),
                  "coverage_gaps": (state['release'] or {}).get('coverage_gaps', []),
                  "unresolved_relations": (state['release'] or {}).get('unresolved_relations', []),
@@ -482,7 +514,7 @@ class Agent:
         cited_ids={citation_id for claim in draft.claims for citation_id in claim.citation_ids}
         selected=[item for item in state['evidence'] if item.chunk.id in cited_ids]
         spans=source_spans(selected)
-        verification_context=[item for item in self.context(state) if not cited_ids or item['citation_id'] in cited_ids]
+        verification_context,documents=self.prompt_context(state,cited_ids or None)
         aliases={item['citation_id']:f'C{index+1}' for index,item in enumerate(verification_context)}
         actual={value:key for key,value in aliases.items()}
         span_aliases={key:f'S{index+1}' for index,key in enumerate(spans)}
@@ -516,7 +548,7 @@ class Agent:
             "để xác nhận cách xử lý hồ sơ cũ, không suy đoán từ metadata hoặc mốc bắt đầu. "
             "Không có span chứng minh thì bỏ index và yêu cầu truy xuất bổ sung. Nếu đáp án bỏ sót câu hỏi trực tiếp, ghi issues để sửa.",
             {"question": redact(state["request"].message), "as_of": str(state["as_of"]),
-             "draft": checked_draft, "evidence": model_context,'source_spans':model_spans,
+             "draft": checked_draft, "evidence": model_context,'source_spans':model_spans,'documents':documents,
              "coverage_gaps": (state['release'] or {}).get('coverage_gaps', []),
              "unresolved_relations": (state['release'] or {}).get('unresolved_relations', [])}, state["budget"])
         checked.supporting_quotes=[quote.model_copy(update={'citation_id':actual.get(quote.citation_id,quote.citation_id)})
@@ -607,7 +639,7 @@ class Agent:
             content='Câu hỏi nằm ngoài phạm vi pháp luật đất đai và quy hoạch Hà Nội.'
         if claims:
             content += "\n\n" + "\n\n".join(c.text + " " + " ".join(f"[{cited_ids.index(i)+1}]" for i in c.citation_ids) for c in claims)
-        missing = list(dict.fromkeys(state["plan"].missing_facts + draft.missing_facts))
+        missing = public_missing_facts(state["plan"].missing_facts + draft.missing_facts,release)
         if outside:missing=[]
         if missing and status == "answered":
             status = "clarification_needed"
