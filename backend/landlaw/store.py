@@ -271,6 +271,26 @@ class Store:
                 return json.loads(value)
         return None
 
+    def retire_staging(self, release_ids, backup_path):
+        """Retire unpublished staging only after a recoverable full backup."""
+        if not release_ids or len(set(release_ids)) != len(release_ids):
+            raise ValueError('Choose distinct staging releases')
+        protected = {self.state('active_release'), self.state('previous_release')}
+        for release_id in release_ids:
+            if release_id in protected or self.publication(release_id) or not self.release(release_id, metadata_only=True):
+                raise ValueError('Only existing unpublished staging releases can be retired')
+        self.backup(backup_path, include_sessions=True)
+        with self.transaction() as conn:
+            for release_id in release_ids:
+                # Recheck pointers inside the deletion transaction.
+                for key in ('active_release', 'previous_release'):
+                    row = self.execute(conn, 'SELECT value FROM app_state WHERE key=?', (key,)).fetchone()
+                    if row and row['value'] == release_id:
+                        raise ValueError('Release became protected; retirement canceled')
+                self.execute(conn, 'DELETE FROM chunks WHERE release_id=?', (release_id,))
+                self.execute(conn, 'DELETE FROM documents WHERE release_id=?', (release_id,))
+                self.execute(conn, 'DELETE FROM releases WHERE id=?', (release_id,))
+
     def unpublish(self):
         """Withdraw the first release without deleting sessions or corpus."""
         with self.transaction() as conn:
@@ -325,6 +345,19 @@ class Store:
         release_id = release_id or self.state("active_release")
         rows = self.rows("SELECT * FROM chunks WHERE release_id=? AND id=?", (release_id, chunk_id))
         return self._chunk(rows[0]) if rows else None
+
+    def open_effectivity(self, doc_id, release_id=None):
+        """Read operative effectivity text instead of a preamble or arbitrary first article."""
+        release_id=release_id or self.state('active_release')
+        doc=self.document(doc_id,release_id)
+        if not doc:return None
+        rows=self.rows('SELECT id,document_id,text,locator,parent_id,page,checksum,embedding_model FROM chunks '
+            'WHERE release_id=? AND document_id=? AND text LIKE ? ORDER BY length(text),id LIMIT 20',
+            (release_id,doc_id,'%hiệu lực%'))
+        selected=[row for row in rows if any(phrase in normalize(row['text']) for phrase in
+            ('quyet dinh nay co hieu luc','nghi dinh nay co hieu luc','luat nay co hieu luc','nghi quyet nay co hieu luc'))]
+        doc.chunks=[self._chunk(row) for row in selected[:3]]
+        return doc
 
     @staticmethod
     def _chunk(row):

@@ -1,42 +1,23 @@
 # Bằng chứng triển khai
 
-Cập nhật trong đợt tăng tốc bắt đầu 12/10/2026 16:44 UTC; hạn ưu tiên 13/10/2026 07:44 UTC. Kế hoạch M0–M6 chưa hoàn tất. Cho phép demo sau gate riêng; nghiệm thu đầy đủ vẫn giữ tiêu chí gốc.
+Đợt tăng tốc bắt đầu 12/10/2026 16:44:23 UTC, hạn ưu tiên 13/10/2026 07:44:23 UTC. Kế hoạch M0–M6 chưa hoàn tất. Demo chỉ công bố sau gate riêng; toàn bộ tiêu chí nghiệm thu gốc giữ nguyên.
 
-Đợt tăng tốc: bỏ trần gọi API theo ngày trong ứng dụng/Render/Actions, gọi Workers AI BGE-M3 thật sau Gemini quota dài hạn. Đủ 5.250 vector 1024 chiều, 46 tài liệu (31 legal; 5 mỗi dự án), release staging `corpus-7ad6a91c3e015adb`. Chạy lại cached ingestion tái tạo đúng ID. Source audit checksum/locator/provenance pass. Migration hai chiều đã áp dụng trên Supabase; database khoảng 290 MB dưới reserve 350 MB. Bộ smoke 20 ca đã đối chiếu nguồn đang chạy/review với provider thật; chưa công bố trước khi gate đạt. 48 pytest, 2 Vitest và 6 Playwright desktop/mobile pass. Khôi phục PostgreSQL độc lập và deployment mới đang được kiểm chứng.
+Snapshot tiến độ 12/10/2026: release staging `corpus-0c2649525acfb8f3` có 47 tài liệu, 32 văn bản pháp lý đã kiểm tra, năm nguồn chính thức mỗi dự án và đủ 5.294 vector BGE-M3 1.024 chiều. QĐ56/2024 lịch sử đã lấy từ toàn văn snapshot chính thức VBPL, lưu cả nguồn gốc và cách chuẩn hóa; giới hạn tuổi cache được ghi rõ trong SOURCES. Source audit đạt. Sau backup mã hóa và dọn bốn staging cũ, PostgreSQL khoảng 273 MB; giữ release BGE đầy đủ trước đó và release mới. Storage private khoảng 239 MB sau seed mới. 7.297 checkpoint giữ được, có shard/manifest/checksum để phục hồi.
+
+Gemini nhanh trả quota theo ngày; model Gemini còn khả dụng có độ trễ gây timeout. Chủ dự án đã cho phép Qwen miễn phí qua Workers AI làm dự phòng. Adapter có JSON schema, kiểm tra Pydantic, cùng verifier và không hiển thị reasoning. Hai chế độ dùng cùng Qwen/BGE/corpus khi chạy smoke. Các run trước đó chưa đạt và không được dùng để công bố. Không có trần LLM/embedding theo ngày do ứng dụng đặt; giới hạn mỗi lượt và chống lạm dụng public vẫn giữ. Không bật billing hoặc nâng gói.
 
 | Mốc | Trạng thái | Bằng chứng / việc còn thiếu |
 |---|---|---|
-| M0 | Hạ tầng và lượt gọi thật đã đạt | GitHub CI Python 3.12/frontend/Docker pass; Cloudflare và Render Docker Free đã live. Smoke URL thực: database, CORS, cách ly phiên, lưu hội thoại và một lần gọi Gemini qua SSE đều pass. Model/embedding/quota đã kiểm tra; memory quan sát khoảng 90 MB / giới hạn 512 MB, chưa là tải corpus đầy đủ. |
-| M1 | Chưa hoàn tất | Staging 46 tài liệu: 31 legal verified và 5 nguồn mỗi dự án; 5.250 đoạn; 687 vector thật khớp nội dung parser mới và được tái sử dụng (checkpoint cũ vẫn giữ). Thiếu toàn văn lịch sử QĐ56/2024 và embedding còn lại; publication_ready=false. 60 objects nguồn/manifest đã lưu Storage private, khoảng 50 MB. |
-| M2 | Đã có luồng thật trên staging | PostgreSQL FTS/pgvector/RRF, baseline, SSE và hội thoại đã triển khai. Có development benchmark gọi Gemini thật; chưa đủ corpus/80 câu nghiệm thu. |
-| M3 | Đã có luồng thật trên staging | LangGraph, công cụ đọc, hiệu lực cấp điều khoản, partial amendments, hỏi lại, verifier, sửa JSON một lần và ngân sách hữu hạn đã kiểm thử. Có lượt thật truy xuất bổ sung; chưa đạt chứng nhận benchmark. |
-| M4 | Giao diện đã QA và có URL | https://hanoi-land-law.pages.dev đã nối API https://land-law-chatbot.onrender.com, hiển thị corpus đang chờ công bố. 6 browser checks pass desktop/mobile, 2 SSE protocol tests pass; kiểm tra trình duyệt mobile trên URL thật đã qua. Còn kiểm tra luồng hỏi đáp pháp lý sau khi công bố corpus. |
-| M5 | Hoàn thành nhiều kiểm tra, chưa nghiệm thu | 40 backend tests pass; npm audit 0 vulnerabilities. Live PostgreSQL privileges/session isolation/atomic quota/RLS pass, database khoảng 142 MB. Restore/rollback với corpus thật và backup hội thoại mã hóa pass trên database thử nghiệm tách biệt; backup GitHub Actions thật đã tải về và restore đối chiếu thành công. Còn benchmark cố định, cold start và fault smoke trên URL. |
-| M6 | Chưa hoàn tất | Mã nguồn, Docker, migration, workflow, benchmark, pipeline, tài liệu vận hành và demo đã có. Frontend/API đã live và smoke hạ tầng pass. Còn công bố corpus đầy đủ và nghiệm thu pháp lý/hiệu năng cuối. |
+| M0 | Hạ tầng và lượt gọi thật đã đạt | Pages và Render Free live; Supabase role riêng, Gemini/Workers AI gọi thật. CI trước đợt sửa mới đạt; chờ CI/deploy cấu hình Qwen mới. |
+| M1 | Corpus đầy đủ vector đang staging | 47 tài liệu/32 legal/5 nguồn mỗi dự án; source audit đạt. QĐ56 đã bổ sung. Nguồn OCR/chưa duyệt và quan hệ thiếu đầu mút tiếp tục cách ly, khai báo coverage_gaps. Chưa công bố release. |
+| M2 | Luồng baseline thật trên staging | Hybrid FTS/pgvector/RRF, hội thoại, dẫn nguồn và SSE đã có. Chờ smoke pháp lý đạt trên cấu hình cuối và kiểm chứng URL. |
+| M3 | Luồng graph thật trên staging | Công cụ đọc, hiệu lực cấp điều khoản, quan hệ sửa đổi, verifier có quote, retry hữu hạn. Đang sửa lỗi phát hiện bằng lượt provider thật; chưa đạt gate 20 ca. |
+| M4 | Giao diện đã QA và có URL | Desktop/mobile và SSE protocol đã qua kiểm thử. URL hiện hiển thị corpus chưa công bố; cần QA hỏi đáp sau phát hành. |
+| M5 | Nhiều kiểm tra đạt, chưa nghiệm thu | Suite backend mới, PostgreSQL permissions/session isolation/atomic quota đạt; backup mã hóa, restore PostgreSQL độc lập đã có bằng chứng thật cho corpus trước. Còn recovery với release mới, full benchmark, p95, cold start/restart sau công bố. |
+| M6 | Chưa hoàn tất | Repo, Docker, migration, CI/CD, pipeline, vận hành và demo có sẵn. Còn gate, deploy cuối, URL hỏi đáp corpus mới và báo cáo nghiệm thu. |
 
-## Báo cáo kiểm chứng
+Website: https://hanoi-land-law.pages.dev. API: https://land-law-chatbot.onrender.com. Chúng đang live về hạ tầng; chưa đồng nghĩa corpus đã công bố hoặc nghiệm thu pháp lý.
 
-- [Corpus coverage](../reports/corpus-coverage.json): tất cả nguồn staging có checksum/nguồn truy nguyên; nguồn pending/OCR/draft bị cách ly. Độ bao phủ số lượng đạt, điều kiện phát hành chưa đạt.
-- [Parser audit](../reports/parser-audit.json): kiểm tra cấu trúc với Luật Đất đai thật; dòng viện dẫn không bị nhận là tiêu đề, văn xuôi không bị coi là bảng và không có ID đoạn trùng.
-- [PostgreSQL integration](../reports/postgres-integration.json): runtime chỉ đọc corpus, anonymous bị từ chối, hai phiên cách ly, bộ đếm atomic và dung lượng dưới 350 MB.
-- [Storage archive](../reports/storage-archive.json): bucket private, immutable source objects và giới hạn dự phòng 700 MB.
-- [Embedding seed](../reports/embedding-seed.json): 958 checkpoint thật đã upload private và restore đối chiếu vào thư mục tách biệt; Actions khôi phục seed trước khi tiếp tục embedding, không tính lại từ đầu.
-- [Restore rehearsal](../reports/restore-rehearsal.json): dùng corpus thật trong SQLite tách biệt; giữ checksum, số đoạn, hội thoại, trace, token hash, rollback và forward restore. Không đổi pointer PostgreSQL công khai.
-- [Frontend deployment](../reports/frontend-deployment.json): URL HTTP 200/CSP, mobile kết nối API thật và ba hồ sơ dự án; không đồng nghĩa nghiệm thu pháp lý.
-- [Infrastructure smoke](../reports/infrastructure-smoke.json): lượt Gemini thật trên URL, trả thiếu căn cứ đúng khi corpus chưa công bố; không chứng nhận câu trả lời pháp lý.
-- [Render memory](../reports/render-memory.json): số liệu API nền tảng trong bài smoke; chưa đo tải với corpus công bố.
-- [CI](../reports/ci.json): kiểm thử Python 3.12, frontend, audit và Docker thật trên GitHub.
-- [Actions](../reports/actions.json): CI, maintenance và embedding trên commit `1be657f` đều success. [Backup artifact restore](../reports/actions-backup-restore.json) đã khôi phục file mã hóa thật; [embedding artifact](../reports/actions-embedding.json) xác nhận quota dừng đúng, checkpoint còn nguyên, publication_ready=false.
-- [Development benchmark](../reports/latest.json) và [HTML](../reports/benchmark.html): gọi model thật, checkpoint theo corpus/model/dataset/configuration. Số liệu từ vài câu dev không chứng minh tiêu chí 80 câu; recall/nội dung/claim support chưa rà soát là null.
+Bằng chứng được lưu trong `reports/corpus-coverage.json`, `source-audit.json`, `source-discovery.json`, `runtime-tests.json`, `postgres-integration.json`, `storage-archive.json`, `embedding-seed.json`, `checkpoint-restore.json` và `postgres-restore.json`. Báo cáo benchmark/smoke có release/model/configuration fingerprint; phải kiểm tra khớp release và cấu hình đang hoạt động. Các artifact của commit/corpus cũ không xác nhận cấu hình mới.
 
-Lượt phát triển đầu tiên phát hiện tải archive vector quá lớn và thời gian trên 90 giây. Đã tách metadata thành migration 003, giảm dữ liệu trong truy vấn và bỏ transaction không cần thiết cho SELECT; kiểm tra exact-article trên PostgreSQL giảm còn khoảng 3 giây. Timeout hiện bao gồm cả tải metadata/lịch sử. Parser v6 sửa lỗi nhận dòng viện dẫn `Điều 95 của…` là tiêu đề, nhận từ đơn giá trong văn xuôi là bảng và lặp tám dòng đầu bảng. Staging mới `corpus-adcd1a8f9596ccb8` giữ điều khoản nối trang và loại đoạn đuôi thừa; checkpoint chỉ tái sử dụng khi checksum nội dung khớp. Development benchmark đã chạy lại trên release này, vẫn chưa có gold/review nghiệm thu. Một output JSON sai schema đã dẫn đến bổ sung một lần sửa trong ngân sách; các run cũ giữ trong reports/runs (không commit) để đối chiếu.
-
-## Những việc còn chặn phát hành
-
-1. QĐ56/2024: attachment cổng Hà Nội đang là draft số/ngày trống. VBPL legacy bị chặn hoặc không có toàn văn tải được; không dùng draft hay search snippet làm corpus. Tìm kiếm Công báo ngày 12/10 theo từ khóa `56/2024` trả ba văn bản sửa đổi/đính chính, không có bản gốc. Mốc thay thế xác minh từ QĐ40/2026 không cung cấp nội dung lịch sử. Chi tiết tại [SOURCES](SOURCES.md).
-2. Embedding đã hoàn tất bằng BGE-M3 Workers AI, không còn chờ Gemini embedding. Còn gate smoke/review và triển khai cấu hình mới; không gọi API có phí. Các số vector trong bảng mốc bên trên là bằng chứng trước đợt tăng tốc; snapshot mới ở đoạn đầu và corpus-coverage.
-3. Bộ 120 câu (40 dev/80 acceptance) có rubric/reference draft. Cần source-check gold và rà soát kết quả thật; chưa có bằng chứng đạt Recall@8≥85%, rubric≥85%, claim support≥95%, critical temporal zero errors hoặc p95≤60s trên nghiệm thu.
-
-GitHub Secrets/Variables đã được cấu hình sau khi chủ tài khoản bổ sung quyền token. Lịch embedding và backup đã enabled; không tự công bố corpus. Đã chạy workflow thủ công thực tế: restore nguồn/seed, xử lý staging, dừng theo quota và upload artifact đều qua; backup mã hóa đã restore kiểm chứng. Lịch tự động vẫn không bảo đảm chạy đúng giờ.
-
-Danh sách và bằng chứng được cập nhật sau mỗi lần deploy/đánh giá; không tự coi giao diện hoặc development benchmark là hoàn tất M0–M6.
+Bộ 120 câu vẫn cần rà soát gold/rubric theo nguồn và đóng băng 80 câu nghiệm thu trước chạy cuối. Không có bằng chứng đạt Recall@8≥85%, rubric≥85%, claim support≥95% và p95≤60s trên toàn bộ nghiệm thu. Không gán đạt dựa trên giao diện hay vài câu trả lời.

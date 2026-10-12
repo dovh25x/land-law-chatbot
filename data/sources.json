@@ -385,7 +385,7 @@
   {
     "id": "qd-56-2024-hanoi",
     "title": "Quy định một số nội dung bồi thường, hỗ trợ, tái định cư Hà Nội (lịch sử)",
-    "url": "https://vanban.hanoi.gov.vn/?p_steering=210964&pageid=27218",
+    "url": "https://vbpl.vn/hanoi/Pages/ivbpq-toanvan.aspx?ItemID=169992&Keyword=",
     "source_kind": "legal",
     "document_number": "56/2024/QĐ-UBND",
     "issued_on": "2024-09-06",
@@ -399,19 +399,36 @@
       "tái định cư"
     ],
     "publication_url": null,
-    "review_status": "pending",
-    "notes": "Điều 2 bản công báo QĐ 40/2026 xác minh việc thay thế toàn bộ từ 02/04/2026. Thuộc tính VBPL ItemID 169992 ghi cùng mốc. Tệp trên vanban.hanoi.gov.vn có chỗ trống số/ngày ban hành, đã xem trang đầu và cách ly. Chưa tải được bản lịch sử chính thức đủ điều kiện indexing.",
+    "review_status": "verified",
+    "notes": "Toàn văn lịch sử từ bản biểu diễn HTML đầy đủ của CSDL quốc gia, thu nhận qua web tool ngày 12/10/2026; bản cache báo crawl trước đó 5 tháng. Đối chiếu 31 điều (3 điều quyết định và 28 điều quy định), phụ lục, số/ngày, ngày hiệu lực 20/09/2024 và người ký. Mốc hết hiệu lực 02/04/2026 được đối chiếu Điều 2 bản Công báo QĐ40/2026. Không dùng file draft số/ngày trống. Đây là snapshot chuẩn hóa có bản gốc và checksum truy nguyên; không phải PDF chữ ký số hay thẩm định pháp lý độc lập. Footer template CSDL ghi UBND tỉnh; cơ quan ban hành xác định từ tiêu đề quyết định và chữ ký đầu văn bản là UBND thành phố Hà Nội.",
     "attachment_urls": [],
     "raw_paths": [
-      "data/raw/qd-56-2024-hanoi.html"
+      "data/raw/qd56-normalized-official-snapshot.html"
     ],
-    "metadata_url": "https://vanban.hanoi.gov.vn/?p_steering=210964&pageid=27218",
-    "checked_at": "2026-10-11T17:32:27Z",
+    "metadata_url": "https://vbpl.vn/hanoi/Pages/vbpq-thuoctinh.aspx?ItemID=169992",
+    "checked_at": "2026-10-12T18:45:49.416322+00:00",
     "issuer": "UBND thành phố Hà Nội",
     "raw_checksums": {
-      "data/raw/qd-56-2024-hanoi.html": "c812812631054f072a97a14de71d269bd3ac12e8076d13101e6bbef8a672316d"
+      "data/raw/qd56-normalized-official-snapshot.html": "1dea8996967d54c298f45c85616ca6b0cada32c289ac5b8b063f3e41f86eb7fc"
     },
-    "quarantine_reason": "Historical fulltext unavailable or incomplete draft attachment; metadata can be checked separately."
+    "source_snapshot": {
+      "publication_url": "https://vbpl.vn/hanoi/Pages/ivbpq-toanvan.aspx?ItemID=169992&Keyword=",
+      "retrieved_at": "2026-10-12T18:01:14.424916+00:00",
+      "cache_age": "Crawled five months earlier per web retrieval metadata",
+      "raw_snapshots": [
+        {
+          "path": "data/raw/qd56-web-snapshot-first.txt",
+          "sha256": "e220060fdaeb1240e2c0536cfe487920cbe59d3875a994e5e699ad0cf96a63db"
+        },
+        {
+          "path": "data/raw/qd56-web-snapshot-middle.txt",
+          "sha256": "47225d7d918c5a2b041e91f9bf614f77c31490b82ef608162a5ff5e17b066bc2"
+        }
+      ],
+      "complete_lines": 391,
+      "overlap_matches": true,
+      "normalized_sha256": "1dea8996967d54c298f45c85616ca6b0cada32c289ac5b8b063f3e41f86eb7fc"
+    }
   },
   {
     "id": "qd-38-2025-hanoi",

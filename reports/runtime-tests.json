@@ -1,17 +1,11 @@
 {
   "passed": true,
-  "release": "corpus-7ad6a91c3e015adb",
-  "checked_at": "2026-10-12T17:59:26.637754+00:00",
-  "configuration_sha256": "4cc20b0a42bdec053b7bd69b198c689f48cd78998d45c73c8ca5378f9eb96d88",
-  "checks": {
-    "backend_tests": 54,
-    "frontend_protocol_tests": 2,
-    "desktop_mobile_browser_tests": 6,
-    "secret_scan": true,
-    "postgres_live": true,
-    "ingestion_idempotent": true,
-    "postgres_isolated_restore": true,
-    "checkpoint_seed_restore": true
-  },
-  "scope": "Executed pytest, Vitest, Playwright desktop/mobile, secret scan, live PostgreSQL and cached ingestion; cloud deployment/recovery tracked separately."
+  "checked_at": "2026-10-12T19:06:01.838696+00:00",
+  "release": "corpus-0c2649525acfb8f3",
+  "configuration_sha256": "ac41a8d31e5e4588e26813f017b694e65d913f6f4009b93ca0d6988fb8c590fd",
+  "backend_tests": 71,
+  "frontend_unit_tests": 2,
+  "browser_tests": 6,
+  "frontend_scope": "Previously passed after frontend configuration-warning change; backend provider changes do not change frontend bundle. CI rerun pending.",
+  "scope": "Actual pytest on local Python 3.14, covers schema/provider quota, bounded workflow, session isolation, source checkpoint, date/scope grounding, SSE durability and recoverable retirement. CI Python 3.12 pending."
 }

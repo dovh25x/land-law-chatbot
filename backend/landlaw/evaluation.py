@@ -72,15 +72,17 @@ def summarise(records, cases, fingerprint, reviews=None):
 
 
 def configuration_fingerprint(settings):
-    files = [Path(__file__).with_name(name) for name in ("agent.py", "provider.py", "embedding.py", "store.py", "config.py", "publication.py", "models.py", "security.py")]
-    configuration = {"model": settings.gemini_model, "embedding_model": settings.embedding_model,
+    files = [Path(__file__).with_name(name) for name in ("agent.py", "provider.py", "embedding.py", "store.py", "config.py", "publication.py", "models.py", "security.py", "api.py")]
+    configuration = {"model": settings.generation_model, "llm_provider": settings.llm_provider, "embedding_model": settings.embedding_model,
                      "dimensions": settings.embedding_dimensions, 'embedding_provider':settings.embedding_provider,
                      "timeout_seconds": settings.turn_timeout_seconds,
                      "llm_budget": 6, "tool_budget": 12, "retrieval_rounds": 2}
     return hashlib.sha256(json.dumps(configuration, sort_keys=True).encode()+b"".join(p.read_bytes() for p in files)).hexdigest()
 
 
-async def evaluate(settings, store, provider, split="dev", release_id=None, limit=None):
+async def evaluate(settings, store, provider, split="dev", release_id=None, limit=None, concurrency=2):
+    if concurrency not in {1,2}:
+        raise ValueError('Evaluation concurrency must be one or two')
     path = settings.data_dir / ('evaluation/smoke.jsonl' if split=='smoke' else 'evaluation/questions.jsonl')
     fingerprint = hashlib.sha256(path.read_bytes()).hexdigest()
     cases = [c for c in dataset(path) if c["split"] == split]
@@ -90,7 +92,7 @@ async def evaluate(settings, store, provider, split="dev", release_id=None, limi
     if not release:
         raise ValueError("No corpus release to evaluate")
     configuration = configuration_fingerprint(settings)
-    run_id = f"{release['id']}-{provider.settings.gemini_model}-{split}-{fingerprint[:8]}-{configuration[:8]}"
+    run_id = f"{release['id']}-{provider.settings.generation_model.replace('/', '_')}-{split}-{fingerprint[:8]}-{configuration[:8]}-c{concurrency}"
     records_path = settings.reports_dir / "runs" / run_id / "records.json"
     metadata_path = records_path.with_name("metadata.json")
     metadata = json.loads(metadata_path.read_text()) if metadata_path.exists() else {"as_of": str(local_date()), "configuration_sha256": configuration}
@@ -114,8 +116,8 @@ async def evaluate(settings, store, provider, split="dev", release_id=None, limi
         result = await agent.run(ChatRequest(session_id=session_id,message=case['question'],
             project=case.get('project'),as_of=case.get('as_of') or metadata['as_of'],mode=mode),emit,release['id'])
         return {'case_id':case['id'],'mode':mode,'result':result.model_dump(mode='json')}
-    for start in range(0,len(pending),2):
-        results=await asyncio.gather(*(execute(c,m) for c,m in pending[start:start+2]))
+    for start in range(0,len(pending),concurrency):
+        results=await asyncio.gather(*(execute(c,m) for c,m in pending[start:start+concurrency]))
         for result in results:
             records=[r for r in records if not (r['case_id']==result['case_id'] and r['mode']==result['mode'])]
             records.append(result)
@@ -124,15 +126,16 @@ async def evaluate(settings, store, provider, split="dev", release_id=None, limi
             break
     review_path = settings.data_dir / ('evaluation/smoke-reviews.json' if split=='smoke' else 'evaluation/reviews.json')
     report = summarise(records, cases, fingerprint, json.loads(review_path.read_text()) if review_path.exists() else {})
-    report.update({"run_id": run_id, "release": release["id"], "model": provider.settings.gemini_model,
+    report.update({"run_id": run_id, "release": release["id"], "model": provider.settings.generation_model,
+                   "llm_provider": provider.settings.llm_provider,
                    "embedding_model": provider.settings.embedding_model, "split": split,
                    "corpus_embedded": release.get("embedded", False), "publication_candidate": False,
                    "notes": ["Development runs on incomplete staging cannot certify acceptance; query embedding failures fall back to lexical retrieval."], **metadata})
-    report['execution_concurrency'] = 2
+    report['execution_concurrency'] = concurrency
     report['acceptance_passed'] = bool(report['acceptance_passed'] and split=='acceptance'
         and len(cases)==80 and all(c.get('ground_truth_status')=='source_checked' for c in cases)
         and all(r['reviewed']==80 and r['source_review_complete'] for r in report['results']))
-    report['latency_scope'] = 'Paired CLI run, concurrency 2; public API single-user p95 measured separately.'
+    report['latency_scope'] = f'Paired CLI run, concurrency {concurrency}; public API single-user p95 measured separately.'
     for name in ('source-audit','runtime-tests'):
         evidence_path = settings.reports_dir/f'{name}.json'
         evidence = json.loads(evidence_path.read_text()) if evidence_path.exists() else {}

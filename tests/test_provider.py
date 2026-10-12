@@ -92,3 +92,44 @@ def test_llm_budget_and_bad_vectors():
     for vector in [[0.0]*768, [math.nan]*768, [1.0]*767]:
         with pytest.raises(ProviderUnavailable):
             Gemini.normalize_vector(vector)
+
+
+async def test_workers_ai_generation_validates_schema_and_ignores_reasoning(settings, store):
+    selected=settings.model_copy(update={'llm_provider':'cloudflare','cloudflare_account_id':'a'*32,
+        'cloudflare_ai_api_token':settings.gemini_api_key})
+    def handle(request):
+        assert request.url.host=='api.cloudflare.com' and 'test-key' not in str(request.url)
+        assert request.headers['authorization']=='Bearer test-key'
+        body=json.loads(request.content)
+        assert body['model']==selected.generation_model
+        assert body['response_format']['json_schema']['properties']['ok']['type']=='boolean'
+        assert body['response_format']['json_schema']['required']==['ok']
+        return httpx.Response(200,json={'choices':[{'message':{'content':'{"ok":true}','reasoning_content':'private thoughts'}}],
+            'usage':{'total_tokens':42,'neurons':1.25}})
+    provider=Gemini(selected,store,httpx.AsyncClient(transport=httpx.MockTransport(handle)))
+    budget=Budget()
+    assert (await provider.generate(Probe,'probe',{},budget)).ok
+    assert budget.tokens==42 and budget.llm_calls==1
+    assert store.rows("SELECT value FROM counters WHERE key LIKE 'usage:workers-ai-millineurons:%'")[0]['value']==1250
+    await provider.close()
+
+
+async def test_workers_ai_quota_remains_provider_limit_and_is_sanitized(settings,store):
+    selected=settings.model_copy(update={'llm_provider':'cloudflare','cloudflare_account_id':'a'*32,
+        'cloudflare_ai_api_token':settings.gemini_api_key})
+    provider=Gemini(selected,store,httpx.AsyncClient(transport=httpx.MockTransport(lambda _:
+        httpx.Response(429,headers={'Retry-After':'7200'},json={'errors':[{'message':'test-key private prompt'}]}))))
+    budget=Budget()
+    with pytest.raises(RateLimited) as error: await provider.generate(Probe,'probe',{},budget)
+    assert error.value.source=='provider' and error.value.retry_after==7200 and budget.llm_calls==1
+    assert 'test-key' not in str(error.value)
+    await provider.close()
+
+
+def test_workers_ai_daily_allocation_and_capacity_have_distinct_waits():
+    from landlaw.embedding import workers_ai_retry_after
+    daily=httpx.Response(429,json={'errors':[{'code':3036,'message':'daily allocation'}]})
+    busy=httpx.Response(429,json={'errors':[{'code':3040,'message':'capacity'}]})
+    assert 1<=workers_ai_retry_after(daily)<=86400
+    assert workers_ai_retry_after(busy)==60
+    assert workers_ai_retry_after(httpx.Response(429,headers={'Retry-After':'37.5'}))==38

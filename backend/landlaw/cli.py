@@ -18,6 +18,13 @@ from .store import Store
 app = typer.Typer(no_args_is_help=True)
 
 
+def reviewed_source_files(source):
+    """Include original cached official responses as well as normalized parser input."""
+    files = [(raw, source.get('raw_checksums', {}).get(raw)) for raw in source.get('raw_paths', [])]
+    files.extend((item['path'], item['sha256']) for item in (source.get('source_snapshot') or {}).get('raw_snapshots', []))
+    return files
+
+
 @app.command()
 def provision_runtime(rotate_existing: bool = False):
     """Create a restricted backend login; keep owner credentials offline in .env."""
@@ -168,7 +175,8 @@ def publish(release_id: str, profile: str = 'accepted'):
 
 
 @app.command()
-def benchmark(split: str = "dev", release_id: str | None = None, limit: int | None = None):
+def benchmark(split: str = "dev", release_id: str | None = None, limit: int | None = None,
+              concurrency: int = typer.Option(2,min=1,max=2)):
     """Run/resume real paired benchmark. Evaluate staging before publishing."""
     if split not in {"dev", "acceptance", "smoke"}:
         raise typer.BadParameter("split must be dev, acceptance or smoke")
@@ -177,7 +185,7 @@ def benchmark(split: str = "dev", release_id: str | None = None, limit: int | No
         store, provider = Store(settings), None
         try:
             provider = Gemini(settings, store)
-            return await evaluate(settings, store, provider, split, release_id, limit)
+            return await evaluate(settings, store, provider, split, release_id, limit,concurrency)
         finally:
             if provider:
                 await provider.close()
@@ -191,6 +199,25 @@ def backup(output: Path = Path("data/backups/latest.json"), include_sessions: bo
     try:
         store.backup(output, include_sessions=include_sessions)
         typer.echo(f"Backup: {output}. Sessions {'encrypted' if include_sessions else 'excluded'}.")
+    finally:
+        store.close()
+
+
+@app.command()
+def retire_staging(release_ids: list[str]):
+    """Back up, then retire only unpublished obsolete staging; preserve live/history pointers."""
+    settings = Settings().for_operator()
+    store = Store(settings)
+    try:
+        target = settings.data_dir/'backups'/f"pre-retirement-{utcnow().strftime('%Y%m%dT%H%M%S')}.enc"
+        store.retire_staging(release_ids, target)
+        typer.echo(f'Retired {len(release_ids)} staging releases; encrypted backup: {target}')
+        if store.postgres:
+            # Reclaim free-tier disk outside a transaction; operator-only maintenance.
+            with store.pool.connection() as conn:
+                for table in ('chunks', 'documents', 'release_metadata', 'releases'):
+                    conn.execute(f'VACUUM (FULL, ANALYZE) public.{table}')
+            typer.echo('Reclaimed PostgreSQL space; sessions and publication pointers preserved.')
     finally:
         store.close()
 
@@ -285,16 +312,16 @@ def archive_sources():
     for source in manifest:
         if source.get('review_status') != 'verified':
             continue
-        for raw in source.get('raw_paths', []):
+        for raw, expected in reviewed_source_files(source):
             path = Path(raw)
             if not path.resolve().is_relative_to((settings.data_dir / 'raw').resolve()):
                 raise ValueError('Raw archive path outside data/raw')
             content = path.read_bytes()
             checksum = digest(content)
-            if checksum not in source.get('raw_checksums', {}).values():
+            if checksum != expected:
                 raise ValueError('Source checksum no longer reviewed')
             name = f'raw/{checksum}{path.suffix}'
-            files[name] = (name, content, 'application/pdf' if path.suffix == '.pdf' else 'text/html')
+            files[name] = (name, content, 'application/pdf' if path.suffix == '.pdf' else 'text/plain' if path.suffix == '.txt' else 'text/html')
         reviewed.append(source)
     body = json.dumps(reviewed, ensure_ascii=False, sort_keys=True).encode()
     name = f'manifests/{digest(body)}.json'
@@ -325,11 +352,10 @@ def restore_sources():
             for source in manifest:
                 if source.get('review_status') != 'verified':
                     continue
-                for raw in source.get('raw_paths',[]):
+                for raw, checksum in reviewed_source_files(source):
                     path = Path(raw)
                     if not path.resolve().is_relative_to((settings.data_dir/'raw').resolve()):
                         raise ValueError('Raw restore path outside data/raw')
-                    checksum = source.get('raw_checksums',{}).get(raw)
                     if not checksum:
                         raise ValueError('Reviewed checksum missing')
                     if path.exists() and digest(path.read_bytes()) == checksum:

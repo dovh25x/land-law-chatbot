@@ -49,6 +49,7 @@ def create_app(settings: Settings | None = None, store: Store | None = None, pro
     @app.middleware("http")
     async def metadata(request, call_next):
         request_id = str(uuid.uuid4())
+        request.state.request_id=request_id
         started = time.monotonic()
         try:
             response = await call_next(request)
@@ -98,6 +99,8 @@ def create_app(settings: Settings | None = None, store: Store | None = None, pro
                 "checked_at": (release or {}).get("checked_at"), "storage": "postgresql" if state["store"].postgres else "sqlite-development"}
         publication = await asyncio.to_thread(state['store'].publication)
         data.update(public_status(release, publication))
+        if (publication or {}).get('profile')=='accepted' and publication.get('configuration_sha256')!=state['configuration']:
+            data['quality_status']='acceptance_pending'
         return JSONResponse(data, status_code=200 if configured and release else 503)
 
     @app.post("/api/v1/sessions", status_code=201)
@@ -151,6 +154,11 @@ def create_app(settings: Settings | None = None, store: Store | None = None, pro
         smoke = json.loads(smoke_path.read_text()) if smoke_path.exists() else None
         return {**report, 'evaluation_release':report.get('release'), 'active_release':active,
                 'demo_smoke':smoke, 'smoke_matches_active_release':bool(smoke and active==smoke.get('release')),
+                'active_configuration_sha256':state['configuration'],
+                'matches_active_configuration':report.get('configuration_sha256')==state['configuration'],
+                'smoke_matches_active_configuration':bool(smoke and smoke.get('configuration_sha256')==state['configuration']),
+                'acceptance_valid_for_active':bool(report.get('acceptance_passed') and active==report.get('release')
+                    and report.get('configuration_sha256')==state['configuration']),
                 'matches_active_release':bool(active and active==report.get('release'))}
 
     @app.post("/api/v1/chat")
@@ -177,7 +185,7 @@ def create_app(settings: Settings | None = None, store: Store | None = None, pro
                     release_id = await asyncio.to_thread(state["store"].state, "active_release")
                     history = await asyncio.to_thread(state["store"].messages, body.session_id, 8)
                     cache_key = digest(json.dumps({"session": body.session_id, "question": body.message,
-                        "history": history, "release": release_id, "model": settings.gemini_model,
+                        "history": history, "release": release_id, "model": settings.generation_model,
                         "configuration": state["configuration"],
                         "embedding": settings.embedding_model, "as_of": str(body.as_of or local_date()),
                         "project": body.project, "mode": body.mode}, sort_keys=True, ensure_ascii=False))
@@ -195,15 +203,21 @@ def create_app(settings: Settings | None = None, store: Store | None = None, pro
                             "llm_calls": 0, "embedding_calls": 0, "tool_calls": 0, "token_usage": 0, "elapsed_ms": 0,
                             "trace": [TraceEvent(step="cache", summary="Đã dùng kết quả đã kiểm tra của cùng phiên và phạm vi câu hỏi.")]})
                     else:
-                        result = await state["agent"].run(body, emit)
+                        result = await state["agent"].run(body, emit,release_id)
                         await asyncio.to_thread(state["store"].cache_answer, cache_key, body.session_id, result)
+                    publication = await asyncio.to_thread(state['store'].publication,result.corpus_release)
+                    if (publication or {}).get('profile')=='accepted' and publication.get('configuration_sha256')!=state['configuration']:
+                        result=result.model_copy(update={'quality_status':'acceptance_pending'})
                     # A successful result is not delivered until durable storage succeeds.
                     await asyncio.to_thread(state["store"].save_turn, body.session_id, redact(body.message), result)
                     await queue.put(("result", result.model_dump(mode="json")))
                     logger.info(json.dumps({"event": "turn_finished", "trace_id": result.trace_id,
+                        'request_id':request.state.request_id,
                         "status": result.status, "model": result.model, "llm_calls": result.llm_calls,
                         "tool_calls": result.tool_calls, "tokens": result.token_usage, "elapsed_ms": result.elapsed_ms}))
-                except Exception:
+                except Exception as exc:
+                    logger.error(json.dumps({'event':'turn_failed','request_id':request.state.request_id,
+                                             'model':settings.generation_model,'error_type':type(exc).__name__}))
                     await queue.put(("failure", {"status": "error", "content": "Dịch vụ dữ liệu chưa sẵn sàng; kết quả chưa được lưu."}))
                 finally:
                     await queue.put(("done", {}))

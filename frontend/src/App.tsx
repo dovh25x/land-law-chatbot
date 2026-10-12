@@ -109,8 +109,8 @@ function App() {
 
   const ready = readiness?.status === 'ready'
   const evaluationWarning = evaluation && evaluation.status !== 'not_run' &&
-    (!evaluation.matches_active_release || evaluation.status !== 'reviewed')
-    ? 'Báo cáo này chưa chứng nhận chất lượng bản đang hoạt động: kết quả có thể thuộc corpus khác hoặc chưa được rà soát đầy đủ.' : ''
+    (!evaluation.matches_active_release || !evaluation.matches_active_configuration || evaluation.status !== 'reviewed')
+    ? 'Báo cáo này chưa chứng nhận chất lượng bản đang hoạt động: kết quả có thể thuộc corpus/cấu hình model khác hoặc chưa được rà soát đầy đủ.' : ''
   return <div className="app-shell">
     <aside className="sidebar">
       <a className="brand" href="#" onClick={e => { e.preventDefault(); setPage('chat') }}><span className="brand-mark"><Landmark size={23}/></span><span>Hà Nội<span className="brand-sub">PHÁP LUẬT ĐẤT ĐAI</span></span></a>

@@ -1,6 +1,6 @@
 """Restore the real encrypted backup into a disposable local PostgreSQL database.
 
-The source connection is read for backup. All restore, rollback and restart
+Backup reads the source and runs its normal expired-session cleanup. All restore, rollback and restart
 operations are restricted to a loopback PostgreSQL service, never Supabase.
 """
 import json
@@ -63,7 +63,7 @@ def main():
             session_id,token=str(uuid.uuid4()),new_token()
             target.create_session(session_id,token)
             answer=ChatResult(status='insufficient_evidence',content='Isolated recovery exercise',as_of=local_date(),
-                trace_id=str(uuid.uuid4()),model=settings.gemini_model,embedding_model=settings.embedding_model,mode='baseline')
+                trace_id=str(uuid.uuid4()),model=settings.generation_model,embedding_model=settings.embedding_model,mode='baseline')
             target.save_turn(session_id,'Isolated recovery exercise',answer)
             releases=target.rows('SELECT id FROM releases ORDER BY created_at')
             target.publish(releases[-1]['id']); target.publish(releases[0]['id'])

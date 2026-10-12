@@ -11,7 +11,7 @@ from pydantic import BaseModel
 from .config import Settings
 from .security import utcnow
 from .store import RateLimited, Store
-from .embedding import contract, CloudflareEmbeddings
+from .embedding import contract, CloudflareEmbeddings, workers_ai_retry_after
 
 
 class ProviderUnavailable(Exception):
@@ -83,6 +83,8 @@ class Gemini:
 
     @property
     def configured(self):
+        if self.settings.llm_provider == 'cloudflare':
+            return bool(self.settings.cloudflare_account_id and self.settings.cloudflare_ai_api_token.get_secret_value())
         return bool(self.settings.gemini_api_key.get_secret_value())
 
     async def close(self):
@@ -96,7 +98,7 @@ class Gemini:
         await self.record_usage('embedding-items', items)
 
     async def _request(self, model, operation, body):
-        if not self.configured:
+        if not self.settings.gemini_api_key.get_secret_value():
             raise ProviderUnavailable("GEMINI_API_KEY chưa được cấu hình")
         try:
             response = await self.client.post(
@@ -122,6 +124,49 @@ class Gemini:
             raise ProviderUnavailable(f"Gemini trả HTTP {response.status_code}", retryable=response.status_code>=500) from None
         return response.json()
 
+    async def _cloudflare_generate(self, schema, body):
+        if not self.configured:
+            raise ProviderUnavailable('Workers AI chưa được cấu hình')
+        shape=generation_schema(schema)
+        def require_fields(node):
+            if isinstance(node,dict):
+                if node.get('type')=='object' and 'properties' in node:
+                    node['required']=list(node['properties'])
+                for value in node.values():require_fields(value)
+            elif isinstance(node,list):
+                for value in node:require_fields(value)
+        require_fields(shape)
+        format_note='\nTrả tất cả trường trong JSON schema dưới đây.'
+        if 'supporting_quotes' in shape.get('properties',{}):
+            format_note+=' Mỗi supported_claim_indexes cần supporting_quotes sao chép nguyên văn tại mọi citation_id của claim; không có quote thì không xác nhận index.'
+        try:
+            response = await self.client.post(
+                f'https://api.cloudflare.com/client/v4/accounts/{self.settings.cloudflare_account_id}/ai/v1/chat/completions',
+                headers={'Authorization':'Bearer '+self.settings.cloudflare_ai_api_token.get_secret_value()},
+                json={'model':self.settings.cloudflare_llm_model,'temperature':0,'max_tokens':4096,
+                      'messages':[{'role':'system','content':body['systemInstruction']['parts'][0]['text']+
+                          format_note+'\n'+json.dumps(shape,ensure_ascii=False)+'\n/no_think'},
+                                  {'role':'user','content':body['contents'][0]['parts'][0]['text']}],
+                      'response_format':{'type':'json_schema','json_schema':shape}})
+        except httpx.HTTPError:
+            raise ProviderUnavailable('Không kết nối được Workers AI',retryable=True) from None
+        if response.status_code == 429:
+            raise RateLimited(workers_ai_retry_after(response),source='provider')
+        if response.status_code >= 400:
+            raise ProviderUnavailable(f'Workers AI trả HTTP {response.status_code}',retryable=response.status_code>=500)
+        result=response.json()
+        # Normalize the transport only; local schema/grounding checks remain identical.
+        usage=result.get('usage',{})
+        # Provider consumption remains observable and never becomes an app cap.
+        neurons=usage.get('neurons')
+        if isinstance(neurons,(int,float)) and math.isfinite(neurons) and neurons>=0:
+            await self.record_usage('workers-ai-millineurons',math.ceil(neurons*1000))
+        try: content=result['choices'][0]['message']['content']
+        except (KeyError,IndexError,TypeError):
+            raise ProviderUnavailable('Workers AI không trả kết quả đúng schema') from None
+        return {'candidates':[{'content':{'parts':[{'text':content}]}}],
+                'usageMetadata':{'totalTokenCount':usage.get('total_tokens',0)}}
+
     async def generate(self, schema: type[BaseModel], instruction: str, payload: dict, budget: Budget):
         body = {
             "systemInstruction": {"parts": [{"text": SYSTEM_BOUNDARY + instruction}]},
@@ -131,12 +176,15 @@ class Gemini:
         }
         if self.settings.gemini_model == "gemini-2.5-flash":
             body["generationConfig"]["thinkingConfig"] = {"thinkingBudget": 512}
+        elif self.settings.gemini_model in {'gemini-3.6-flash','gemini-3.8-flash'}:
+            body['generationConfig']['thinkingConfig']={'thinkingLevel':'low'}
         schema_failures = 0
         for attempt in range(3):
             budget.llm()
             await self.record_usage("llm")
             try:
-                result = await self._request(self.settings.gemini_model, "generateContent", body)
+                result = (await self._cloudflare_generate(schema,body) if self.settings.llm_provider=='cloudflare'
+                          else await self._request(self.settings.gemini_model, "generateContent", body))
             except RateLimited as exc:
                 remaining = self.settings.turn_timeout_seconds - (time.monotonic()-budget.started)
                 if exc.retry_after > min(60,remaining-15) or attempt == 2:
@@ -157,7 +205,7 @@ class Gemini:
             except (KeyError, IndexError, ValueError):
                 schema_failures += 1
                 if schema_failures >= 2 or attempt == 2:
-                    raise ProviderUnavailable("Gemini không trả kết quả đúng schema") from None
+                    raise ProviderUnavailable("Provider không trả kết quả đúng schema") from None
                 # Retries count as actual calls inside the same per-turn budget.
                 body['systemInstruction']['parts'][0]['text'] += '\nLượt trước không khớp schema. Trả duy nhất JSON đúng responseJsonSchema; dùng đúng kiểu trường và giá trị enum, không có markdown.'
 

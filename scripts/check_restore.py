@@ -33,7 +33,7 @@ def main():
             sid, token = str(uuid.uuid4()), new_token()
             original.create_session(sid, token)
             answer = ChatResult(status='insufficient_evidence', content='Technical recovery exercise', as_of=local_date(),
-                trace_id=str(uuid.uuid4()), model=settings.gemini_model, embedding_model=settings.embedding_model, mode='baseline')
+                trace_id=str(uuid.uuid4()), model=settings.generation_model, embedding_model=settings.embedding_model, mode='baseline')
             original.save_turn(sid, 'Technical recovery exercise', answer)
             backup = folder/'private.enc'
             original.backup(backup, include_sessions=True)

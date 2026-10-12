@@ -17,6 +17,7 @@ def main():
     desired = {'APP_ENV':'production','DATABASE_URL':settings.database_url.get_secret_value(),
         'GEMINI_API_KEY':settings.gemini_api_key.get_secret_value(),'IP_HASH_SECRET':settings.ip_hash_secret.get_secret_value(),
         'CORS_ORIGINS':origin,'GEMINI_MODEL':settings.gemini_model,'EMBEDDING_MODEL':settings.embedding_model,
+        'LLM_PROVIDER':settings.llm_provider,'CLOUDFLARE_LLM_MODEL':settings.cloudflare_llm_model,
         'EMBEDDING_PROVIDER':settings.embedding_provider,'EMBEDDING_DIMENSIONS':str(settings.embedding_dimensions),
         'CLOUDFLARE_ACCOUNT_ID':settings.cloudflare_account_id,'CLOUDFLARE_AI_API_TOKEN':settings.cloudflare_ai_api_token.get_secret_value(),
         'TRUST_PROXY_HEADERS':'false','MAX_CONCURRENT_REQUESTS':'2','TURN_TIMEOUT_SECONDS':'90','SESSION_RETENTION_DAYS':'7'}

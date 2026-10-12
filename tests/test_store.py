@@ -86,6 +86,18 @@ def test_exact_article_number_retrieves_without_keyword_overlap(store):
     assert "chunks" not in store.release(metadata_only=True)["documents"][0]
 
 
+def test_effectivity_tool_opens_operative_article_not_preamble(store):
+    from landlaw.models import Chunk
+    from landlaw.security import digest
+    doc=document()
+    texts=[('preamble','Căn cứ văn bản khác có hiệu lực ngày 01/01/2020.'),
+           ('operative','Điều 260. Luật này có hiệu lực thi hành từ ngày 01 tháng 8 năm 2024.')]
+    doc.chunks=[Chunk(id=key,document_id=doc.id,text=text,locator='Điều 260' if key=='operative' else 'Mở đầu',
+        checksum=digest(text)) for key,text in texts]
+    release(store,[doc])
+    assert [c.id for c in store.open_effectivity(doc.id).chunks]==['operative']
+
+
 def test_encrypted_restore_preserves_session_isolation_and_rejects_plaintext_sessions(store, settings, tmp_path):
     from cryptography.fernet import Fernet
     from landlaw.store import Store

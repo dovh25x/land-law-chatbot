@@ -82,3 +82,13 @@ Workflow `recovery.yml` sao lưu mã hóa thật, restore toàn bộ vào Postgr
 Render service đã tạo: chạy `python scripts/configure_render.py` để xác nhận Free/Docker/repo, đặt runtime credentials và /healthz; chạy `python scripts/deploy.py backend`, rồi `frontend`. Backend chỉ có DATABASE_URL runtime; ADMIN_DATABASE_URL, Storage service role và khóa backup không đưa lên API. `frontend-preview` chỉ công bố giao diện với thông báo chưa có backend.
 
 Đặt BACKUP_ENCRYPTION_KEY trong GitHub Secrets riêng biệt để workflow maintenance sao lưu hội thoại mã hóa; không có khóa thì workflow chỉ sao lưu corpus. Job cần MAINTENANCE_ENABLED=true. GitHub token quản trị phải có quyền Secrets đọc/ghi để cấu hình qua API; Contents/Workflows không tự cấp quyền này. Kiểm tra thực tế bằng `scripts/check_postgres.py`, `scripts/check_restore.py` và browser e2e.
+
+## Provider sinh dự phòng được cho phép
+
+Đặt `LLM_PROVIDER=cloudflare`, `CLOUDFLARE_LLM_MODEL=@cf/qwen/qwen3-30b-a3b-fp8`, account ID và token Workers AI. Gemini vẫn chọn được bằng `LLM_PROVIDER=gemini`; không tự chuyển provider trong một lượt. Qwen dùng JSON schema, Pydantic kiểm tra lại phía server và cùng verifier/chứng cứ như Gemini. Chỉ lấy nội dung trả lời, không lưu/phát reasoning của provider. Report/cache gắn đúng model và fingerprint; đổi provider cần chạy lại gate. Dùng `scripts/configure_render.py` để đồng bộ backend; không đặt token AI trong frontend.
+
+HTTP 429 Workers AI code 3036 là hết phân bổ miễn phí theo ngày, 3040 là capacity tạm thời. Ưu tiên `Retry-After`; khi code 3036 không có header, báo thời gian đến chu kỳ reset UTC theo tài liệu Cloudflare. Bộ đếm `usage:workers-ai-millineurons:*` chỉ quan sát, không chặn API. Không nâng Workers Paid hoặc bật billing.
+
+`archive-sources` và `restore-sources` giữ cả parser input và các snapshot gốc của nguồn đã chuẩn hóa. Corpus lớn dùng phần gzip nhị phân tối đa 20 MB, manifest và checksum; `restore-archive` xác minh mọi phần và nội dung mở rộng rồi ghi tệp, không đổi pointer công khai. Checkpoint seed chia shard để tránh giới hạn 50 MB mỗi object Free.
+
+Để dọn database khi có nhiều staging chưa công bố: `land-law retire-staging corpus-<old> ...`. Lệnh tạo backup đầy đủ có hội thoại mã hóa trước khi xóa, từ chối release active/previous hoặc có hồ sơ công bố, rồi VACUUM FULL các bảng corpus qua kết nối operator. Giữ hai release gần nhất và backup riêng; không dọn khi đang phát hành/đánh giá. Chạy trong khoảng bảo trì vì VACUUM khóa bảng corpus. Hội thoại và pointer không bị xóa. Không đưa quyền owner vào Render.

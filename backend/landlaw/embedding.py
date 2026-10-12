@@ -1,7 +1,26 @@
 """Allowed embedding contracts; generation and embedding credentials are independent."""
 import re
+import math
+from datetime import datetime, timezone, timedelta
 
 from .store import RateLimited
+
+
+def workers_ai_retry_after(response):
+    """Distinguish daily free allocation exhaustion from temporary capacity."""
+    explicit=response.headers.get('retry-after')
+    if explicit:
+        try:return min(86400,max(1,math.ceil(float(explicit))))
+        except (ValueError,TypeError):pass
+    try:
+        errors=response.json().get('errors',[])
+        daily=any(item.get('code')==3036 for item in errors)
+    except (ValueError,TypeError,AttributeError):daily=False
+    if daily:
+        now=datetime.now(timezone.utc)
+        tomorrow=(now+timedelta(days=1)).replace(hour=0,minute=0,second=0,microsecond=0)
+        return max(1,math.ceil((tomorrow-now).total_seconds()))
+    return 60
 
 
 def contract(settings, release=None):
@@ -43,9 +62,7 @@ class CloudflareEmbeddings:
                 raise ProviderUnavailable('Cloudflare embedding connection failed', retryable=True) from None
             raise
         if response.status_code==429:
-            try: retry=int(response.headers.get('Retry-After','60'))
-            except ValueError: retry=60
-            raise RateLimited(max(1,min(86400,retry)),source='provider')
+            raise RateLimited(workers_ai_retry_after(response),source='provider')
         if response.status_code>=400:
             raise ProviderUnavailable(f'Cloudflare embedding HTTP {response.status_code}', retryable=response.status_code>=500)
         result=response.json()

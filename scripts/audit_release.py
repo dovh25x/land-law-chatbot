@@ -16,6 +16,7 @@ def main(path):
     for document in release['documents']:
         source = manifest[document['id']]
         contents = [Path(p).read_bytes() for p in source['raw_paths']]
+        snapshot=source.get('source_snapshot')
         checks = {
             'official_provenance':official_url(document['url'],document.get('publication_url')),
             'reviewed_raw':source.get('review_status')=='verified' and all(digest(b) in source['raw_checksums'].values() for b in contents),
@@ -25,6 +26,11 @@ def main(path):
             'unique_chunks':len({c['id'] for c in document['chunks']})==len(document['chunks']),
             'personal_data_review':not source.get('contains_personal_data') or source.get('anonymisation_reviewed') is True,
             'checked_at':bool(document.get('checked_at')),
+            'snapshot_provenance':not snapshot or bool(official_url(snapshot.get('publication_url',''))
+                and snapshot.get('retrieved_at') and snapshot.get('complete_lines')==391 and snapshot.get('overlap_matches')
+                and snapshot.get('normalized_sha256')==document['checksum']
+                and all(digest(Path(item['path']).read_bytes())==item['sha256'] for item in snapshot.get('raw_snapshots',[]))
+                and len(snapshot.get('raw_snapshots',[]))==2),
         }
         rows.append({'id':document['id'],'checksum':document['checksum'],'chunks':len(document['chunks']),
                      'source_kind':document['source_kind'],'checks':checks,'passed':all(checks.values())})

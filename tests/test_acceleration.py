@@ -115,6 +115,34 @@ def test_normalized_checkpoint_bytes_are_stable():
     assert Gemini.normalize_vector(vector,1024)==vector
 
 
+def test_retirement_requires_backup_and_preserves_published_releases(settings, store, tmp_path):
+    from conftest import document
+    from cryptography.fernet import Fernet
+    from pydantic import SecretStr
+    from landlaw.store import Store
+    store.settings=settings.model_copy(update={'backup_encryption_key':SecretStr(Fernet.generate_key().decode())})
+    for name in ('obsolete', 'live'):
+        store.stage({'id':name,'documents':[document().model_dump(mode='json')]})
+    store.publish('live')
+    path=tmp_path/'retired.enc'
+    with pytest.raises(ValueError): store.retire_staging(['live'],path)
+    assert not path.exists()
+    store.retire_staging(['obsolete'],path)
+    assert store.release('obsolete') is None and store.release()['id']=='live'
+    recovered=Store(store.settings.model_copy(update={'sqlite_path':str(tmp_path/'restored.db')}))
+    try:
+        recovered.restore(path)
+        assert recovered.release('obsolete') and recovered.release()['id']=='live'
+    finally: recovered.close()
+
+
+def test_source_archive_includes_original_official_snapshots():
+    from landlaw.cli import reviewed_source_files
+    source={'raw_paths':['data/raw/normalized.html'],'raw_checksums':{'data/raw/normalized.html':'normalized'},
+        'source_snapshot':{'raw_snapshots':[{'path':'data/raw/official.txt','sha256':'original'}]}}
+    assert reviewed_source_files(source)==[('data/raw/normalized.html','normalized'),('data/raw/official.txt','original')]
+
+
 def test_gemini_schema_simplification_keeps_local_tool_bounds():
     from landlaw.agent import SupportingQuote,ToolCall,Verification
     from landlaw.provider import generation_schema

@@ -1,22 +1,23 @@
 # Danh mục và kiểm tra nguồn
 
-Thời điểm tải và đối chiếu: 11/10/2026 UTC (12/10/2026 tại Hà Nội). Đây là bộ nguồn kỹ thuật đã thu thập từ cơ quan công bố chính thức; việc đọc toàn văn và kiểm tra metadata không thay thế thẩm định pháp lý độc lập. Manifest lưu URL công bố, bản tải, checksum và trạng thái kiểm tra; không chứa tài liệu giả.
+Thời điểm tải và đối chiếu: 11–12/10/2026 UTC; snapshot QĐ56 được lấy và kiểm tra ngày 12/10. Đây là bộ nguồn kỹ thuật đã thu thập từ cơ quan công bố chính thức; việc đọc toàn văn và kiểm tra metadata không thay thế thẩm định pháp lý độc lập. Manifest lưu URL công bố, bản tải, checksum và trạng thái kiểm tra; không chứa tài liệu giả.
 
 ## Độ bao phủ thực tế
 
 | Nhóm | Danh mục | Toàn văn đã kiểm tra | Chờ kiểm tra/cách ly |
 |---|---:|---:|---:|
-| Văn bản pháp lý | 40 | 31 | 9 |
+| Văn bản pháp lý | 40 | 32 | 8 |
 | Vành đai 4 | 6 | 1 nghị quyết + 4 bài chính thức | 1 nghị quyết PDF ảnh |
 | Trục đại lộ cảnh quan sông Hồng | 5 | 5 | 0 |
 | Khu đô thị thể thao Olympic | 5 | 5 | 0 |
 
-Tổng cộng 56 nguồn, 28 quan hệ pháp lý có vị trí điều khoản và URL chứng minh. Số lượng văn bản đã kiểm tra đáp ứng mức 30 văn bản pháp lý, nhưng hạng mục corpus lịch sử QĐ 56/2024 và NQ 106/NQ-CP PDF ảnh chưa hoàn tất. Không đánh dấu M1 hoàn tất chỉ từ số lượng.
+Tổng cộng 56 nguồn, 28 quan hệ pháp lý có vị trí điều khoản và URL chứng minh. Số lượng văn bản đã kiểm tra đáp ứng mức 30 văn bản pháp lý, toàn văn lịch sử QĐ56 đã bổ sung; NQ106/NQ-CP và các nguồn khác còn cách ly được ghi trong coverage_gaps. Không đánh dấu M1 hoàn tất chỉ từ số lượng.
 
 ## Kết quả kiểm tra quan trọng
 
 - QĐ 40/2026/QĐ-UBND: đã tải bản Công báo Hà Nội, đủ số/ngày. Điều 2 thay thế QĐ 47/2016, QĐ 56/2024, QĐ 38/2025 và QĐ 10/2026 từ 02/04/2026. Điều 29 của Quy định kèm theo phải được đọc cho chuyển tiếp.
-- QĐ 56/2024/QĐ-UBND: thuộc tính/lịch sử VBPL ItemID 169992 ghi hết hiệu lực toàn bộ 02/04/2026; cùng mốc được xác minh trực tiếp trong bản QĐ 40/2026. Tệp công bố trên vanban.hanoi.gov.vn có số/ngày để trống trên trang đầu, đã render và kiểm tra trực tiếp, nên không đưa vào raw_paths dùng cho indexing. Chưa tải được bản toàn văn lịch sử chính thức đủ điều kiện. Đường chi tiết văn bản mới vẫn trỏ đúng cùng file draft; bản mirror datafiles có checksum giống hệt. Các biến thể signed và đường tải cũ trả 404. Chi tiết lần kiểm tra cuối ở data/raw/qd56_route_checks.json. Không phục dựng văn bản từ snippet tìm kiếm.
+- QĐ 56/2024/QĐ-UBND: đã lấy toàn văn từ [bản hiển thị chính thức VBPL](https://vbpl.vn/hanoi/Pages/ivbpq-toanvan.aspx?ItemID=169992&Keyword=) qua snapshot của công cụ web. Hai cửa sổ chồng lấp bao phủ đủ 391 dòng, phần chồng khớp nhau. Bản giữ có số 56, ngày 06/09/2024, ngày hiệu lực 20/09/2024, chữ ký, ba điều của quyết định và 28 điều quy định kèm phụ lục. Chuẩn hóa chỉ bỏ navigation/marker công cụ và giữ nguyên nội dung; checksum bản gốc và chuẩn hóa lưu trong manifest và Storage private. Snapshot được công cụ ghi nhận đã crawl khoảng năm tháng trước, nên ngày 12/10 là ngày lấy/kiểm tra snapshot, không phải chứng nhận nguồn được crawl mới trong ngày. Footer mẫu VBPL ghi “Ủy ban nhân dân tỉnh” khác phần quyết định Hà Nội; giữ và công khai khác biệt mẫu, không chỉnh văn bản. Mốc hết hiệu lực 02/04/2026 được đối chiếu trực tiếp Điều 2 QĐ40. Bản PDF draft số/ngày trống tiếp tục bị loại. Không coi snapshot này là PDF ký số gốc hay thẩm định pháp lý độc lập; không phục dựng từ search snippet. Chi tiết tại reports/source-discovery.json.
+
 - QĐ 38/2025 và QĐ 10/2026 có quan hệ bãi bỏ một phần. Quan hệ repeals có locator chỉ điều khoản bị tác động, không biểu thị toàn văn hết hiệu lực tại mốc sửa đổi.
 - QĐ 566/QĐ-UBND ngày 05/02/2026 đính chính phần chữ của 10.000.000 đồng trong QĐ 10/2026; giữ nguyên giá trị số.
 - Bảng giá tại QĐ 71/2024 được tải đủ ba phần Công báo. Kỳ áp dụng kết thúc 31/12/2025. provision_validity.effective_to=2026-01-01 giới hạn kỳ bảng giá; effective_to toàn văn để null vì chưa có chứng cứ bãi bỏ toàn bộ. NQ 52/2025/NQ-HĐND gồm ba phần đã tải, áp dụng bảng giá từ 01/01/2026; QĐ 89/2025 và QĐ 19/2026 cung cấp các hệ số liên quan. Không tự tính tiền bồi thường từ bảng/hệ số.
@@ -53,6 +54,7 @@ Nguồn sông Hồng và Olympic hiện chủ yếu là thông tin chính thức
 | `nd-151-2025` | 151/2025/NĐ-CP | 2025-07-01 | [Nguồn](https://congbao.chinhphu.vn/van-ban/nghi-dinh-so-151-2025-nd-cp-45191.htm) |
 | `nd-226-2025` | 226/2025/NĐ-CP | 2025-08-15 | [Nguồn](https://xaydungchinhsach.chinhphu.vn/nghi-dinh-226-2025-nd-cp-sua-doi-bo-sung-cac-nghi-dinh-quy-dinh-thi-hanh-luat-dat-dai-119250817114021905.htm) |
 | `nd-49-2026` | 49/2026/NĐ-CP | 2026-01-31 | [Nguồn](https://congbao.chinhphu.vn/van-ban/nghi-dinh-so-49-2026-nd-cp-468908.htm) |
+| `qd-56-2024-hanoi` | 56/2024/QĐ-UBND | 2024-09-20; hết hiệu lực 2026-04-02 | [Snapshot nguồn chính thức](https://vbpl.vn/hanoi/Pages/ivbpq-toanvan.aspx?ItemID=169992&Keyword=) |
 | `qd-38-2025-hanoi` | 38/2025/QĐ-UBND | 2025-07-01 | [Nguồn](https://congbao.hanoi.gov.vn/Default.aspx?p_attribute=4875&pageid=45002) |
 | `qd-10-2026-hanoi` | 10/2026/QĐ-UBND | 2026-01-18 | [Nguồn](https://congbao.hanoi.gov.vn/Default.aspx?p_attribute=5204&pageid=45002) |
 | `qd-40-2026-hanoi` | 40/2026/QĐ-UBND | 2026-04-02 | [Nguồn](https://congbao.hanoi.gov.vn/Default.aspx?p_attribute=5335&pageid=45002) |
@@ -78,7 +80,6 @@ Nguồn sông Hồng và Olympic hiện chủ yếu là thông tin chính thức
 
 | ID | Nguyên nhân | Nguồn |
 |---|---|---|
-| `qd-56-2024-hanoi` | Bản draft/metadata; chưa có toàn văn lịch sử | [Nguồn](https://vanban.hanoi.gov.vn/?p_steering=210964&pageid=27218) |
 | `luat-quy-hoach-2017` | PDF ảnh chưa duyệt OCR | [Nguồn](https://vanban.chinhphu.vn/?pageid=27160&docid=192206) |
 | `luat-dat-dai-2013` | PDF ảnh chưa duyệt OCR | [Nguồn](https://vanban.chinhphu.vn/?pageid=27160&docid=171639) |
 | `nd-47-2014` | PDF ảnh chưa duyệt OCR | [Nguồn](https://vanban.chinhphu.vn/?pageid=27160&docid=173972) |
@@ -116,6 +117,6 @@ Nguồn sông Hồng và Olympic hiện chủ yếu là thông tin chính thức
 - data/projects.json: mô tả thận trọng và năm nguồn đã kiểm tra mỗi dự án; câu gợi ý không khẳng định quyền lợi cá nhân.
 - data/raw/: tệp tải thật cùng các báo cáo download và sidecar. Chỉ sử dụng raw_paths trong manifest; không quét tự động mọi tệp vì còn bản draft/metadata/phụ lục trùng để kiểm tra sự cố.
 
-Khi cập nhật: tải staging, kiểm tra checksum, đối chiếu số/ngày và quan hệ cấp điều khoản, chạy regression, rồi mới tạo release. Nếu quá bảy ngày chưa đối chiếu thành công, trả lời “hiện nay” phải nêu giới hạn cập nhật. Chỉ phát hành lịch sử QĐ 56 và các OCR pending sau khi có kiểm tra nội dung thực tế.
+Khi cập nhật: tải staging, kiểm tra checksum, đối chiếu số/ngày và quan hệ cấp điều khoản, chạy regression, rồi mới tạo release. Nếu quá bảy ngày chưa đối chiếu thành công, trả lời “hiện nay” phải nêu giới hạn cập nhật. QĐ56 đã qua kiểm tra nguồn/snapshot; các OCR pending vẫn cần kiểm tra nội dung thực tế trước indexing.
 
 Kiểm tra cấu trúc/checksum: data/raw/source_asset_audit.json. Mọi ID quan hệ hợp lệ, raw_checksums khớp tệp và mỗi hồ sơ dự án có năm source_ids verified. Kiểm tra đọc body thực tế trên toàn bộ nguồn verified đạt >1000 ký tự/nguồn; có cảnh báo font Courier CFF thiếu fontTools, cần kiểm tra chất lượng parse khi ingestion.

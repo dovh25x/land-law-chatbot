@@ -10,7 +10,9 @@ class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
     app_env: str = "development"
     gemini_api_key: SecretStr = SecretStr("")
-    gemini_model: str = "gemini-3.5-flash-lite"
+    gemini_model: str = "gemini-3.8-flash"
+    llm_provider: Literal['gemini', 'cloudflare'] = 'gemini'
+    cloudflare_llm_model: Literal['@cf/qwen/qwen3-30b-a3b-fp8'] = '@cf/qwen/qwen3-30b-a3b-fp8'
     embedding_model: str = "gemini-embedding-2"
     embedding_provider: Literal['gemini','cloudflare'] = 'gemini'
     embedding_dimensions: int = 768
@@ -49,6 +51,10 @@ class Settings(BaseSettings):
             if any("localhost" in x or "*" in x for x in self.origins):
                 raise ValueError("Production CORS_ORIGINS must name deployed frontend origins")
         return self
+
+    @property
+    def generation_model(self):
+        return self.cloudflare_llm_model if self.llm_provider == 'cloudflare' else self.gemini_model
 
     @property
     def origins(self) -> list[str]:

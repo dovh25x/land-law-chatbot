@@ -103,6 +103,37 @@ def dates_in(text):
     return values
 
 
+def quote_matches(quote, text):
+    """Accept exact text or explicitly omitted, ordered verbatim spans.
+
+    Legal quotations often omit the list between an article's subject and point
+    (d). Every retained span must still occur in this same cited passage.
+    """
+    quote,text=normalize(quote),normalize(text)
+    if quote in text:
+        return True
+    spans=re.split(r'\s*(?:\[\.\.\.\]|\[…\]|\.\.\.|…)\s*',quote)
+    if not 2<=len(spans)<=4 or any(len(span)<20 for span in spans):
+        return False
+    start=0
+    for span in spans:
+        position=text.find(span,start)
+        if position<0:
+            return False
+        start=position+len(span)
+    return True
+
+
+def claim_source_dates(text, as_of):
+    """A question's observation date is not a statutory commencement date."""
+    values=dates_in(text)
+    normalized=normalize(text)
+    starts=[match[0] for match in re.finditer(r'co hieu luc(?:\s+thi hanh)?\s+(?:ke tu|tu|ngay)[^.;\n]{0,80}',normalized)]
+    if any(phrase in normalized for phrase in ('tai ngay','vao ngay','den ngay')) and not any(as_of in dates_in(s) for s in starts):
+        values.discard(as_of)
+    return values
+
+
 def resolve_places(aliases, query, as_of):
     query = normalize(query)
     candidates = []
@@ -157,15 +188,17 @@ class Agent:
                 "check_effectivity kiểm tra văn bản theo document_id đã biết; open_article mở điều khoản đã biết; "
                 "normalize_place tìm tên địa bàn theo danh mục. Với câu hỏi quyền lợi cá nhân, liệt kê dữ kiện thiếu. "
                 "Chỉ đánh dấu out_of_scope khi không liên quan đất đai/quy hoạch Hà Nội. "
-                "Không đoán document_id; khi chưa biết dùng search_law.",
+                "Không đoán document_id; khi chưa biết dùng search_law. Câu hỏi đơn giản về một văn bản ưu tiên một công cụ. "
+                "Văn bản trong coverage_gaps không mở được; dùng search_law để tìm văn bản tác động có trong corpus.",
                 {"question": redact(request.message), "project": request.project, "as_of": str(state["as_of"]),
-                 "history": state["history"], "catalogue": self.catalogue(state["release"])}, state["budget"])
+                 "history": state["history"], "catalogue": self.catalogue(state["release"]),
+                 "coverage_gaps":(state['release'] or {}).get('coverage_gaps',[])}, state["budget"])
         await self.event(state, "plan", f"Đã chọn {len(state['plan'].tools)} công cụ; chế độ {request.mode}.")
         return state
 
     @staticmethod
     def catalogue(release):
-        return [{"id": d["id"], "title": d["title"], "project": d.get("project"),
+        return [{"id": d["id"], "title": d["title"], 'document_number':d.get('document_number'), "project": d.get("project"),
                  'effective_from':d.get('effective_from'),'effective_to':d.get('effective_to')}
                 for d in (release or {}).get("documents", [])][:100]
 
@@ -181,12 +214,14 @@ class Agent:
         # An explicitly requested missing historical document can still have a
         # verified replacement. Open that operative clause before generic hits.
         release = state['release'] or {}
-        missing = {g['document_id'] for g in release.get('coverage_gaps', [])
+        requested = {g['document_id'] for g in release.get('coverage_gaps', [])
                    if normalize(g.get('document_number', '')).split('/qd')[0] in normalize(query)
                    and g.get('document_number')}
+        requested.update(d['id'] for d in release.get('documents',[]) if d.get('document_number')
+            and normalize(d['document_number']).split('/qd')[0] in normalize(query))
         priority = {}
         for relation in release.get('relations', []) + release.get('unresolved_relations', []):
-            if relation['target_id'] in missing and relation['type'] in {'replaces', 'repeals'} and state['budget'].tool_calls < 12:
+            if relation['target_id'] in requested and relation['type'] == 'replaces' and state['budget'].tool_calls < 12:
                 state['budget'].tool()
                 doc = await asyncio.to_thread(self.store.open_document, relation['source_id'], release['id'],
                                              relation.get('source_locator') or relation.get('locator'))
@@ -209,15 +244,25 @@ class Agent:
         # Fresh evidence must enter the bounded context on the second round.
         found = {} if state['rounds'] else {e.chunk.id:e for e in previous_evidence}
         for call in calls:
+            if state['budget'].tool_calls>=12:
+                break
             state["budget"].tool()
             results = []
             if call.name in {"search_law", "search_project"}:
                 results = await self.search(state, call.query or state["request"].message, state["request"].project)
             elif call.name in {"open_article", "check_effectivity"} and call.document_id:
-                doc = await asyncio.to_thread(self.store.open_document, call.document_id, release_id, call.locator)
+                doc = (await asyncio.to_thread(self.store.open_effectivity,call.document_id,release_id)
+                       if call.name=='check_effectivity' else
+                       await asyncio.to_thread(self.store.open_document, call.document_id, release_id, call.locator))
                 if doc:
                     results = [Evidence(chunk=c, document=doc) for c in doc.chunks
-                               if not call.locator or normalize(call.locator) in normalize(c.locator)][:3]
+                               if call.name=='check_effectivity' or not call.locator or re.search(r'Điều\s+\d+',call.locator,re.IGNORECASE)
+                               or normalize(call.locator) in normalize(c.locator)][:3]
+                if not results and state['budget'].tool_calls<12:
+                    state['budget'].tool()
+                    results=await self.search(state,state['request'].message,state['request'].project)
+                    await self.event(state,'tool','Không mở được tài liệu/điều khoản yêu cầu; đã tìm căn cứ và văn bản tác động trong corpus.','search_law',
+                                     sorted({e.document.id for e in results}))
             elif call.name == "normalize_place":
                 aliases = state["release"].get("place_aliases", [])
                 matched = resolve_places(aliases, call.query or state["request"].message, state["as_of"])
@@ -267,6 +312,7 @@ class Agent:
 
     def context(self, state):
         return [{"citation_id": e.chunk.id, "document_id": e.document.id, "title": e.document.title,
+                 'document_number':e.document.document_number,'page':e.chunk.page,
                  "kind": e.document.source_kind, "locator": e.chunk.locator, "text": e.chunk.text,
                  "applicability": e.applicability, "effective_from": str(e.document.effective_from),
                  "effective_to": str(e.document.effective_to),
@@ -324,6 +370,26 @@ class Agent:
             state["verification"] = Verification()
             return state
         evidence = {e.chunk.id: e for e in state["evidence"]}
+        repaired=[]
+        for index,claim in enumerate(draft.claims):
+            claim_dates=claim_source_dates(claim.text,state['as_of'])
+            if 'hieu luc' not in normalize(claim.text) or not claim_dates:
+                continue
+            if any(i not in evidence for i in claim.citation_ids):
+                continue
+            doc_ids={evidence[i].document.id for i in claim.citation_ids}
+            if len(doc_ids)!=1 or any('hieu luc' in normalize(evidence[i].chunk.text) and
+                    claim_dates<=dates_in(evidence[i].chunk.text) for i in claim.citation_ids):
+                continue
+            candidates=[e for e in evidence.values() if e.document.id in doc_ids
+                        and 'hieu luc' in normalize(e.chunk.text) and claim_dates<=dates_in(e.chunk.text)]
+            if candidates:
+                candidate=min(candidates,key=lambda e:(len(e.chunk.text),e.chunk.id))
+                draft.claims[index]=claim.model_copy(update={'citation_ids':[candidate.chunk.id]})
+                repaired.append(candidate.document.id)
+        if repaired:
+            await self.event(state,'verification','Đã chọn đúng đoạn quy định ngày hiệu lực trong cùng văn bản trước khi đối chiếu nội dung.',
+                             docs=sorted(set(repaired)))
         structural_issues = []
         for index, claim in enumerate(draft.claims):
             if any(i not in evidence for i in claim.citation_ids):
@@ -332,11 +398,15 @@ class Agent:
                    (evidence[i].applicability=='future' and claim.kind!='applicability')) for i in claim.citation_ids):
                 structural_issues.append(f"Claim {index}: căn cứ chưa xác minh tính áp dụng")
             normalized_claim=normalize(claim.text)
+            if claim.kind=='applicability' and any(evidence[i].applicability=='future' for i in claim.citation_ids if i in evidence):
+                if any(phrase in normalized_claim for phrase in ('duoc boi thuong','duoc ho tro','co quyen','dong/','trieu dong')):
+                    structural_issues.append(f'Claim {index}: không dùng nhãn hiệu lực để áp dụng quyền lợi từ văn bản tương lai')
             cited_text=' '.join(evidence[i].chunk.text for i in claim.citation_ids if i in evidence)
-            if dates_in(claim.text)-dates_in(cited_text):
+            claimed_dates=claim_source_dates(claim.text,state['as_of'])
+            if claimed_dates-dates_in(cited_text):
                 structural_issues.append(f'Claim {index}: ngày nêu trong kết luận không xuất hiện trong đoạn được dẫn')
-            if 'hieu luc' in normalized_claim and dates_in(claim.text) and not any(
-                    'hieu luc' in normalize(evidence[i].chunk.text) and dates_in(claim.text) <= dates_in(evidence[i].chunk.text)
+            if 'hieu luc' in normalized_claim and claimed_dates and not any(
+                    'hieu luc' in normalize(evidence[i].chunk.text) and claimed_dates <= dates_in(evidence[i].chunk.text)
                     for i in claim.citation_ids if i in evidence):
                 structural_issues.append(f'Claim {index}: cần đoạn quy định hiệu lực có đúng ngày, không dùng ngày ban hành')
             if 'chuyen giao cho uy ban nhan dan cap xa' in normalized_claim:
@@ -385,7 +455,7 @@ class Agent:
         checked.issues = structural_issues + checked.issues
         for index,claim in enumerate(draft.claims):
             proven = {q.citation_id for q in checked.supporting_quotes if q.claim_index==index
-                and q.citation_id in evidence and normalize(q.quote) in normalize(evidence[q.citation_id].chunk.text)}
+                and q.citation_id in evidence and quote_matches(q.quote,evidence[q.citation_id].chunk.text)}
             if set(claim.citation_ids)-proven:
                 checked.issues.append(f'Claim {index}: thiếu trích đoạn nguyên văn chứng minh tại đúng citation_id')
                 structural_issues.append(f'Claim {index}: thiếu chứng cứ trích dẫn trực tiếp')
@@ -404,7 +474,8 @@ class Agent:
     @staticmethod
     def route(state):
         verification = state["verification"]
-        can_retry = state["request"].mode == "agentic" and state["rounds"] < 2 and state["budget"].llm_calls <= 4
+        can_retry = (state["request"].mode == "agentic" and state["rounds"] < 2
+                     and state["budget"].llm_calls <= 4 and state['budget'].tool_calls<12)
         if can_retry and verification.needs_more_evidence:
             return "retry"
         incomplete = len(verification.supported_claim_indexes) < len(state['draft'].claims)
@@ -473,7 +544,7 @@ class Agent:
             corpus_release=(release or {}).get("id"), trace_id=str(uuid.uuid4()), trace=state["trace"], missing_facts=missing,
             llm_calls=budget.llm_calls, tool_calls=budget.tool_calls, token_usage=budget.tokens,
             embedding_calls=budget.embedding_calls,
-            elapsed_ms=int((time.monotonic()-budget.started)*1000), model=self.provider.settings.gemini_model,
+            elapsed_ms=int((time.monotonic()-budget.started)*1000), model=self.provider.settings.generation_model,
             embedding_model=(state['release'] or {}).get('embedding_model', self.provider.settings.embedding_model), mode=state["request"].mode,
             support_level="full" if status == "answered" else "partial" if citations else "insufficient",
             retrieved_chunk_ids=[e.chunk.id for e in state["evidence"][:8]],
@@ -502,13 +573,16 @@ class Agent:
                 return output["result"]
         except (ProviderUnavailable, RateLimited, BudgetExceeded, TimeoutError) as exc:
             status = "limited" if isinstance(exc, (RateLimited, BudgetExceeded)) else "error"
-            content = "Đã hết giới hạn miễn phí hoặc ngân sách của lượt hỏi. Vui lòng thử lại sau." if status == "limited" else (
+            content = (f"Nhà cung cấp AI đang giới hạn request. Vui lòng thử lại sau {exc.retry_after} giây."
+                       if isinstance(exc,RateLimited) else "Lượt hỏi đã đạt giới hạn thực thi. Hãy tách câu hỏi hoặc thử lại."
+                       if isinstance(exc,BudgetExceeded) else (
                 "Lượt hỏi đã quá thời gian xử lý. Vui lòng thử lại." if isinstance(exc, TimeoutError) else str(exc))
+                       )
             publication = await asyncio.to_thread(self.store.publication, (state['release'] or {}).get('id'))
             return ChatResult(**public_status(state['release'], publication), status=status, content=content, as_of=state["as_of"],
                 corpus_release=(state["release"] or {}).get("id"), trace_id=str(uuid.uuid4()), trace=state["trace"],
                 llm_calls=budget.llm_calls, tool_calls=budget.tool_calls, token_usage=budget.tokens,
                 embedding_calls=budget.embedding_calls,
-                elapsed_ms=int((time.monotonic()-budget.started)*1000), model=self.provider.settings.gemini_model,
+                elapsed_ms=int((time.monotonic()-budget.started)*1000), model=self.provider.settings.generation_model,
                 embedding_model=(state['release'] or {}).get('embedding_model', self.provider.settings.embedding_model), mode=request.mode,
                 retry_after=exc.retry_after if isinstance(exc, RateLimited) else None)

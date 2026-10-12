@@ -46,3 +46,61 @@ def test_readiness_without_key_does_not_fake_success(settings, store):
         assert client.get("/healthz").status_code == 200
         ready = client.get("/readyz")
         assert ready.status_code == 503 and not ready.json()["llm_configured"]
+
+
+def test_evaluation_for_another_model_does_not_certify_current_app(settings,store):
+    payload=release(store)
+    settings.reports_dir.mkdir(parents=True,exist_ok=True)
+    report={'status':'reviewed','release':payload['id'],'configuration_sha256':'previous-model-config',
+            'acceptance_passed':True,'results':[]}
+    (settings.reports_dir/'latest.json').write_text(json.dumps(report))
+    (settings.reports_dir/'smoke.json').write_text(json.dumps(report))
+    with TestClient(create_app(settings,store,FakeProvider(settings))) as client:
+        result=client.get('/api/v1/evaluations/latest').json()
+        assert result['matches_active_release']
+        assert not result['matches_active_configuration']
+        assert not result['smoke_matches_active_configuration']
+        assert not result['acceptance_valid_for_active']
+
+
+def test_database_outage_readiness_is_sanitized(settings,store,monkeypatch):
+    def fail():raise RuntimeError('private database credentials must not be returned')
+    monkeypatch.setattr(store,'ready',fail)
+    with TestClient(create_app(settings,store,FakeProvider(settings))) as client:
+        response=client.get('/readyz')
+        assert response.status_code==503 and response.json()['reason']=='database_unavailable'
+        assert 'credentials' not in response.text
+
+
+def test_failed_durable_save_never_streams_success(settings,store,monkeypatch):
+    release(store)
+    def fail(*args):raise RuntimeError('private database credentials must not be returned')
+    monkeypatch.setattr(store,'save_turn',fail)
+    with TestClient(create_app(settings,store,FakeProvider(settings))) as client:
+        sid=client.post('/api/v1/sessions').json()
+        response=client.post('/api/v1/chat',headers={'Authorization':'Bearer '+sid['token']},
+                             json={'session_id':sid['session_id'],'message':'bồi thường thu hồi đất'})
+        assert 'event: failure' in response.text and 'event: result' not in response.text
+        assert 'credentials' not in response.text
+
+
+def test_chat_pins_release_when_publication_changes_during_request(settings,store,monkeypatch):
+    from conftest import document
+    old=release(store,release_id='old')
+    staged={**old,'id':'new','documents':[document('new-law').model_dump(mode='json')]}
+    store.stage(staged)
+    original=store.messages
+    switched=[]
+    def switch(*args):
+        if not switched:
+            store.publish('new');switched.append(True)
+        return original(*args)
+    monkeypatch.setattr(store,'messages',switch)
+    with TestClient(create_app(settings,store,FakeProvider(settings))) as client:
+        sid=client.post('/api/v1/sessions').json()
+        response=client.post('/api/v1/chat',headers={'Authorization':'Bearer '+sid['token']},
+                             json={'session_id':sid['session_id'],'message':'bồi thường thu hồi đất'})
+        frames=[json.loads(l[6:]) for l in response.text.splitlines() if l.startswith('data: ')]
+        result=next(f for f in frames if 'trace_id' in f)
+        assert result['status']=='answered' and result['corpus_release']=='old'
+        assert store.state('active_release')=='new'

@@ -39,6 +39,14 @@ async def noop(_):
     pass
 
 
+def test_as_of_observation_is_distinct_from_claimed_commencement_date():
+    from landlaw.agent import claim_source_dates
+    assert claim_source_dates('Văn bản không còn hiệu lực vào ngày 12/10/2026.',date(2026,10,12))==set()
+    assert claim_source_dates('Văn bản có hiệu lực từ ngày 12/10/2026.',date(2026,10,12))=={date(2026,10,12)}
+    assert claim_source_dates('Tại ngày 12/10/2026, văn bản có hiệu lực từ 12/10/2026.',date(2026,10,12))=={date(2026,10,12)}
+    assert claim_source_dates('Tại ngày 12/10/2026, văn bản có hiệu lực từ 02/04/2026.',date(2026,10,12))=={date(2026,4,2)}
+
+
 def test_clause_effective_date_does_not_change_the_whole_document():
     law = document()
     law.effective_from = date(2026,7,1)
@@ -207,3 +215,77 @@ async def test_date_cannot_be_borrowed_from_a_different_passage(store, settings)
         text='Quy định có hiệu lực từ ngày 01 tháng 7 năm 2025.',citation_ids=['law-1'])])
     result=await Agent(store,FakeProvider(settings,draft)).run(ChatRequest(session_id=sid,message='hiệu lực?'),noop)
     assert not result.verified_claims
+
+
+def test_omitted_quote_spans_must_be_verbatim_in_order_in_the_same_passage():
+    from landlaw.agent import quote_matches
+    heading='Thẩm quyền chuyển giao cho Chủ tịch Ủy ban nhân dân cấp xã'
+    clause='d) Quyết định phê duyệt phương án bồi thường, hỗ trợ, tái định cư;'
+    text=heading+' a) Nội dung khác; b) Nội dung khác; '+clause
+    assert quote_matches(heading+' ... '+clause,text)
+    assert not quote_matches(clause+' ... '+heading,text)
+    assert not quote_matches(heading+' ... '+'d) Tất cả hộ dân được bồi thường;',text)
+    assert not quote_matches(heading+' ... '+clause,heading)
+
+
+async def test_missing_tool_document_recovers_with_corpus_search(store,settings):
+    release(store)
+    sid,_=session(store)
+    class Missing(FakeProvider):
+        async def generate(self,schema,instruction,payload,budget):
+            if schema is Plan:
+                budget.llm()
+                return Plan(tools=[ToolCall(name='check_effectivity',document_id='missing-history')])
+            return await super().generate(schema,instruction,payload,budget)
+    result=await Agent(store,Missing(settings)).run(ChatRequest(session_id=sid,message='bồi thường thu hồi đất'),noop)
+    assert result.status=='answered' and result.citations[0].id=='law-1'
+    assert any(e.tool=='search_law' for e in result.trace)
+    assert result.tool_calls<=12
+
+
+async def test_real_workflow_timeout_cancels_the_pending_provider(store,settings):
+    import asyncio
+    release(store)
+    sid,_=session(store)
+    settings.turn_timeout_seconds=1
+    cancelled=[]
+    class Slow(FakeProvider):
+        async def generate(self,*args):
+            try:await asyncio.sleep(100)
+            finally:cancelled.append(True)
+    result=await Agent(store,Slow(settings)).run(ChatRequest(session_id=sid,message='bồi thường'),noop)
+    assert result.status=='error' and 'quá thời gian' in result.content
+    assert cancelled and result.elapsed_ms<2500
+
+
+async def test_effectivity_citation_is_aligned_before_semantic_verification(store,settings):
+    from landlaw.models import Chunk
+    from landlaw.security import digest
+    law=document(text='Hà Nội, ngày 18 tháng 01 năm 2026. Quyết định ban hành quy định bồi thường.')
+    text='Điều 2. Quyết định bồi thường này có hiệu lực thi hành kể từ ngày 18 tháng 01 năm 2026.'
+    law.chunks.append(Chunk(id='law-2',document_id='law',text=text,locator='Điều 2',checksum=digest(text)))
+    release(store,[law]);sid,_=session(store)
+    draft=Draft(status='answered',summary='Kết quả',claims=[Claim(kind='applicability',
+        text='Quyết định có hiệu lực thi hành từ ngày 18/01/2026.',citation_ids=['law-1'])])
+    result=await Agent(store,FakeProvider(settings,draft)).run(ChatRequest(session_id=sid,message='ngày hiệu lực bồi thường?'),noop)
+    assert result.status=='answered' and result.citations[0].id=='law-2'
+
+
+async def test_applicability_label_cannot_hide_future_entitlement(store,settings):
+    from landlaw.security import local_date
+    law=document(text='Quy định này có hiệu lực từ năm sau. Hộ đủ điều kiện được hỗ trợ 5 triệu đồng.')
+    law.effective_from=local_date()+timedelta(days=10)
+    release(store,[law]);sid,_=session(store)
+    draft=Draft(status='answered',summary='Kết quả',claims=[Claim(kind='applicability',
+        text='Hộ đủ điều kiện được hỗ trợ 5 triệu đồng.',citation_ids=['law-1'])])
+    result=await Agent(store,FakeProvider(settings,draft)).run(ChatRequest(session_id=sid,message='hỗ trợ bồi thường?'),noop)
+    assert not result.verified_claims
+
+
+def test_tool_exhaustion_repairs_existing_evidence_without_retrieval_overflow():
+    from landlaw.provider import Budget
+    budget=Budget(llm_calls=3,tool_calls=12)
+    state={'budget':budget,'request':ChatRequest(session_id='t'*36,message='bồi thường'),
+           'rounds':1,'draft':Draft(status='insufficient_evidence',summary='Thiếu căn cứ'),
+           'verification':Verification(needs_more_evidence=True,issues=['Cần kiểm tra căn cứ']), 'repairs':0}
+    assert Agent.route(state)=='repair'

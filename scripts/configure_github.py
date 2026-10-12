@@ -25,6 +25,9 @@ def main():
                  'EMBEDDING_PROVIDER': env.get('EMBEDDING_PROVIDER','gemini'),
                  'EMBEDDING_MODEL': env.get('EMBEDDING_MODEL','gemini-embedding-2'),
                  'EMBEDDING_DIMENSIONS': env.get('EMBEDDING_DIMENSIONS','768'),
+                 'LLM_PROVIDER': env.get('LLM_PROVIDER','gemini'),
+                 'GEMINI_MODEL': env.get('GEMINI_MODEL','gemini-3.8-flash'),
+                 'CLOUDFLARE_LLM_MODEL': env.get('CLOUDFLARE_LLM_MODEL','@cf/qwen/qwen3-30b-a3b-fp8'),
                  'EMBEDDING_RESUME_ENABLED': 'true', 'MAINTENANCE_ENABLED': 'true'}
     if not env.get('GITHUB_TOKEN') or any(not env.get(n) for n in names) or any(not v for v in variables.values()):
         raise SystemExit('Missing operator credentials or checkpoint seed; configure .env first')

@@ -6,7 +6,7 @@ Web chatbot tiếng Việt dùng FastAPI, LangGraph, Gemini, PostgreSQL/pgvector
 
 Website: https://hanoi-land-law.pages.dev; API: https://land-law-chatbot.onrender.com. Hạ tầng đã live và một lượt Gemini/SSE thật đã qua smoke. Corpus chưa công bố; đây chưa phải bản phát hành đã nghiệm thu M0–M6. Xem [bằng chứng và hạng mục còn mở](docs/IMPLEMENTATION_STATUS.md), [nguồn thật và khoảng trống](docs/SOURCES.md), [benchmark](docs/BENCHMARK.md). Không có câu trả lời hay chỉ số chất lượng giả trong runtime. SQLite dành cho phát triển; production bắt buộc PostgreSQL.
 
-Model sinh hiện là `gemini-3.5-flash-lite` cho cả hai chế độ, sau khi model dự kiến `gemini-2.5-flash` trả HTTP 404. Gemini embedding Free đã bị quota thật, nên corpus hoàn chỉnh dùng Workers AI `@cf/baai/bge-m3`, 1.024 chiều; đủ 5.250 vector trên 46 tài liệu. Không có trần gọi API theo ngày do ứng dụng đặt. Model/provider được gắn với release và benchmark; không chuyển sang API có phí. Xem [cấu hình và quota](docs/OPERATIONS.md).
+Provider sinh được chọn rõ bằng `LLM_PROVIDER`: Gemini hoặc Cloudflare Workers AI `@cf/qwen/qwen3-30b-a3b-fp8`. Qwen là dự phòng miễn phí được chủ dự án cho phép khi các model Gemini nhanh trả quota theo ngày. Hai chế độ dùng cùng model; cấu hình/provider có fingerprint riêng và không ghép kết quả đánh giá. Corpus mới `corpus-0c2649525acfb8f3` có 47 tài liệu, 32 văn bản pháp lý, 5 nguồn mỗi dự án và đủ 5.294 vector BGE-M3 1.024 chiều. Đây vẫn là staging cho đến khi gate demo đạt. Không có trần gọi API theo ngày do ứng dụng đặt; giữ điểm dừng workflow và chống lạm dụng website. Không bật billing hoặc nâng gói.
 
 ## Chạy phát triển
 
