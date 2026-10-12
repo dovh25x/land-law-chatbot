@@ -53,6 +53,18 @@ def test_effectivity_clause_does_not_inherit_replaced_act_issue_dates():
     assert source_effective_dates(text)=={date(2026,4,2)}
 
 
+async def test_commencement_clause_does_not_exclude_all_historical_files(store,settings):
+    law=document(text='Điều 2. Quyết định về bồi thường khi thu hồi đất này có hiệu lực thi hành kể từ ngày 02 tháng 4 năm 2026.')
+    release(store,[law])
+    sid,_=session(store)
+    draft=Draft(status='answered',summary='',claims=[Claim(kind='applicability',
+        text='Quyết định có hiệu lực từ 02/04/2026 và không áp dụng cho các hồ sơ được xử lý trước ngày đó.',citation_ids=['law-1'])])
+    result=await Agent(store,FakeProvider(settings,draft=draft)).run(ChatRequest(
+        session_id=sid,message='Hồ sơ cũ có áp dụng chính sách mới không?',as_of=date(2026,3,1)),noop)
+    assert result.status=='insufficient_evidence' and result.verified_claims==[]
+    assert any('chuyển tiếp' in event.summary for event in result.trace)
+
+
 @pytest.mark.parametrize('span,citation,expected', [('law-1:span:0','law-1','answered'),
     ('invented:span:0','law-1','insufficient_evidence'),('law-1:span:0','other','insufficient_evidence')])
 async def test_source_span_selection_is_exact_and_scoped_to_citation(store,settings,span,citation,expected):

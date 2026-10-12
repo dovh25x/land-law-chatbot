@@ -6,7 +6,7 @@ import time
 from dataclasses import dataclass
 
 import httpx
-from pydantic import BaseModel
+from pydantic import BaseModel, ValidationError
 
 from .config import Settings
 from .security import utcnow
@@ -127,7 +127,13 @@ class Gemini:
     async def _cloudflare_generate(self, schema, body):
         if not self.configured:
             raise ProviderUnavailable('Workers AI chưa được cấu hình')
-        shape=generation_schema(schema)
+        # Workers AI accepts JSON Schema bounds. Keep them during decoding as
+        # well as local validation, unlike Gemini's restricted grammar.
+        shape=schema.model_json_schema()
+        if 'supporting_spans' in shape.get('properties',{}):
+            # Exact span IDs avoid long copied quotes, truncation and accidental
+            # paraphrases. The local model still accepts legacy quote responses.
+            shape['properties'].pop('supporting_quotes',None)
         def require_fields(node):
             if isinstance(node,dict):
                 if node.get('type')=='object' and 'properties' in node:
@@ -137,8 +143,8 @@ class Gemini:
                 for value in node:require_fields(value)
         require_fields(shape)
         format_note='\nTrả tất cả trường trong JSON schema dưới đây.'
-        if 'supporting_quotes' in shape.get('properties',{}):
-            format_note+=' Every supported index needs supporting_spans selected from source_spans for every cited passage, or a verbatim supporting_quote. Without proof, do not confirm the index.'
+        if 'supporting_spans' in shape.get('properties',{}):
+            format_note+=' Every supported index needs supporting_spans selected from source_spans for every cited passage. Return short span IDs only. Without proof, do not confirm the index.'
         try:
             response = await self.client.post(
                 f'https://api.cloudflare.com/client/v4/accounts/{self.settings.cloudflare_account_id}/ai/v1/chat/completions',
@@ -202,8 +208,15 @@ class Gemini:
                 candidate = result["candidates"][0]
                 text = "".join(part.get("text", "") for part in candidate["content"]["parts"] if not part.get("thought"))
                 return schema.model_validate_json(text)
-            except (KeyError, IndexError, ValueError):
+            except (KeyError, IndexError, ValueError) as exc:
                 schema_failures += 1
+                if isinstance(exc,ValidationError):
+                    # Record only fixed validation categories, never provider
+                    # output, source text, prompts or credentials.
+                    categories=sorted({e['type'] for e in exc.errors(include_input=False,include_context=False,include_url=False)})
+                    for category in categories:
+                        await self.record_usage('schema-validation:'+category)
+                    body['systemInstruction']['parts'][0]['text']+='\nCorrect these validation categories without adding fields: '+', '.join(categories)
                 if schema_failures >= 2 or attempt == 2:
                     raise ProviderUnavailable("Provider không trả kết quả đúng schema") from None
                 # Retries count as actual calls inside the same per-turn budget.

@@ -114,6 +114,23 @@ async def test_workers_ai_generation_validates_schema_and_ignores_reasoning(sett
     await provider.close()
 
 
+async def test_workers_ai_verifier_uses_bounded_span_schema(settings,store):
+    from landlaw.agent import Verification
+    selected=settings.model_copy(update={'llm_provider':'cloudflare','cloudflare_account_id':'a'*32,
+        'cloudflare_ai_api_token':settings.gemini_api_key})
+    def handle(request):
+        shape=json.loads(request.content)['response_format']['json_schema']
+        assert 'supporting_quotes' not in shape['properties']
+        assert shape['properties']['supporting_spans']['maxItems']==80
+        assert shape['$defs']['SupportingSpan']['properties']['claim_index']['maximum']==9
+        return httpx.Response(200,json={'choices':[{'message':{'content':json.dumps({
+            'supported_claim_indexes':[],'supporting_spans':[],'issues':[],
+            'needs_more_evidence':False,'followup_query':''})}}]})
+    provider=Gemini(selected,store,httpx.AsyncClient(transport=httpx.MockTransport(handle)))
+    assert (await provider.generate(Verification,'verify',{},Budget())).supporting_quotes==[]
+    await provider.close()
+
+
 async def test_workers_ai_quota_remains_provider_limit_and_is_sanitized(settings,store):
     selected=settings.model_copy(update={'llm_provider':'cloudflare','cloudflare_account_id':'a'*32,
         'cloudflare_ai_api_token':settings.gemini_api_key})

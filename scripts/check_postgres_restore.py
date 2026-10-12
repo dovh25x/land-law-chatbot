@@ -4,6 +4,7 @@ Backup reads the source and runs its normal expired-session cleanup. All restore
 operations are restricted to a loopback PostgreSQL service, never Supabase.
 """
 import json
+import math
 import os
 import tempfile
 import uuid
@@ -54,7 +55,18 @@ def main():
             checks['release_pointer']=source.state('active_release')==target.state('active_release')
             checks['publication_evidence']=source.rows("SELECT * FROM app_state WHERE key LIKE 'publication:%' ORDER BY key")==target.rows("SELECT * FROM app_state WHERE key LIKE 'publication:%' ORDER BY key")
             dimensions={r['n'] for r in target.rows('SELECT DISTINCT vector_dims(embedding) AS n FROM chunks WHERE embedding IS NOT NULL')}
-            checks['both_embedding_dimensions']={768,1024}<=dimensions
+            checks['restored_embedding_dimensions']=dimensions=={r['n'] for r in source.rows('SELECT DISTINCT vector_dims(embedding) AS n FROM chunks WHERE embedding IS NOT NULL')}
+            # Retiring obsolete staging can leave only the active provider's dimension
+            # in the real backup. Exercise the absent dimension in this disposable
+            # database with an explicitly synthetic storage fixture, never Supabase.
+            for dimension in {768,1024}-dimensions:
+                fixture_id=f'isolated-technical-vector-{dimension}'
+                fixture={'id':fixture_id,'documents':[{'id':fixture_id,'title':'Isolated technical vector fixture; no legal evidence',
+                    'url':'https://example.com/isolated-fixture','source_kind':'official_news','checked_at':utcnow().isoformat(),
+                    'checksum':digest(fixture_id),'chunks':[{'id':fixture_id,'document_id':fixture_id,
+                    'text':'Isolated technical vector fixture; no legal evidence','locator':'technical fixture','checksum':digest(fixture_id),
+                    'embedding_model':fixture_id,'embedding':[1/math.sqrt(dimension)]*dimension}]}]}
+                target.stage(fixture)
             for dimension in (768,1024):
                 row=target.rows('SELECT release_id,id,embedding_model FROM chunks WHERE vector_dims(embedding)=? LIMIT 1',(dimension,))[0]
                 chunk=target.chunk(row['id'],row['release_id'])
@@ -65,7 +77,7 @@ def main():
             answer=ChatResult(status='insufficient_evidence',content='Isolated recovery exercise',as_of=local_date(),
                 trace_id=str(uuid.uuid4()),model=settings.generation_model,embedding_model=settings.embedding_model,mode='baseline')
             target.save_turn(session_id,'Isolated recovery exercise',answer)
-            releases=target.rows('SELECT id FROM releases ORDER BY created_at')
+            releases=[r for r in target.rows('SELECT id FROM releases ORDER BY created_at') if r['id'] in original_ids]
             target.publish(releases[-1]['id']); target.publish(releases[0]['id'])
             checks['rollback']=target.state('active_release')==releases[0]['id'] and target.state('previous_release')==releases[-1]['id']
             target.unpublish()
@@ -74,7 +86,7 @@ def main():
             checks['restart']=target.state('active_release')==releases[-1]['id'] and target.authenticate(session_id,token) and target.trace(answer.trace_id,session_id) is not None
             report={'passed':all(checks.values()),'checked_at':utcnow().isoformat(),'checks':checks,
                 'backup_sha256':digest(backup.read_bytes()),'release':releases[-1]['id'],'releases':len(original_ids),
-                'scope':'Full real encrypted source backup restored into a disposable separate PostgreSQL database on a loopback service. Production pointer unchanged.'}
+                'scope':'Full real encrypted source backup restored into a disposable separate PostgreSQL database on a loopback service. Absent embedding dimensions exercised with clearly labelled synthetic technical fixtures only in that disposable database. Production pointer unchanged.'}
         Path('reports/postgres-restore.json').write_text(json.dumps(report,indent=2))
         print(json.dumps(report,indent=2))
         if not report['passed']: raise SystemExit(1)

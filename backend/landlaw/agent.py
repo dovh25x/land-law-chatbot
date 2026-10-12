@@ -387,6 +387,10 @@ class Agent:
                 "Không thêm ngày hiệu lực nếu câu hỏi không yêu cầu. Nếu nêu ngày hiệu lực, phải dẫn đúng đoạn "
                 "quy định hiệu lực và chứa ngày đó; metadata ngày ban hành không chứng minh ngày hiệu lực. "
                 "Ưu tiên ít claims rõ ràng, mỗi claim dẫn đoạn chứng minh trực tiếp; không ghép thêm căn cứ không cần thiết. "
+                "Tối đa ba claims, không lặp lại cùng kết luận. Ngày có hiệu lực chỉ chứng minh mốc bắt đầu, "
+                "không chứng minh mọi hồ sơ cũ đều bị loại hay tự động chuyển sang chính sách mới. "
+                "Kết luận về áp dụng hồ sơ cũ cần điều khoản chuyển tiếp cụ thể; nếu chưa có, hỏi ngày quyết định "
+                "thu hồi, ngày duyệt phương án và nêu chưa xác định quyền lợi của hồ sơ. "
                 "citation_ids chỉ được chọn mã C1, C2,... có trong allowed_citation_ids; không tạo mã hoặc dùng document_id. "
                 "Câu hỏi chỉ về hiệu lực/thay thế một văn bản nên có một hoặc hai claims, kind=applicability, không lặp các mốc ở nhiều claims.",
                 {"question": redact(state["request"].message), "as_of": str(state["as_of"]), "history": state["history"],
@@ -439,6 +443,10 @@ class Agent:
                 if any(phrase in normalized_claim for phrase in ('duoc boi thuong','duoc ho tro','co quyen','dong/','trieu dong')):
                     structural_issues.append(f'Claim {index}: không dùng nhãn hiệu lực để áp dụng quyền lợi từ văn bản tương lai')
             cited_text=' '.join(evidence[i].chunk.text for i in claim.citation_ids if i in evidence)
+            if ('khong ap dung' in normalized_claim and 'ho so' in normalized_claim
+                    and any(word in normalized_claim for word in ('truoc','cu'))
+                    and not any(word in normalize(cited_text) for word in ('chuyen tiep','phuong an','ho so'))):
+                structural_issues.append(f'Claim {index}: mốc hiệu lực không chứng minh cách xử lý mọi hồ sơ cũ; cần căn cứ chuyển tiếp')
             claimed_dates=claim_source_dates(claim.text,state['as_of'])
             if claimed_dates-dates_in(cited_text):
                 structural_issues.append(f'Claim {index}: ngày nêu trong kết luận không xuất hiện trong đoạn được dẫn')
@@ -502,9 +510,11 @@ class Agent:
             "kind=applicability có thể dùng future để nói CHƯA có hiệu lực và nêu ngày bắt đầu đã xác minh; "
             "không cho phép quyền lợi/nghĩa vụ hiện tại từ future. Trích dẫn phải hỗ trợ chính nội dung claim, "
             "không chỉ cùng tên hoặc số hiệu văn bản. Với MỖI citation_id của MỖI claim được hỗ trợ, "
-            "trả supporting_quotes gồm claim_index, citation_id, quote sao chép nguyên văn từ text của chính citation đó. "
-            "Quote phải chứng minh nội dung claim tương ứng; đoạn mở đầu/căn cứ tên văn bản không chứng minh điều khoản ở trang khác. "
-            "Không có quote chứng minh thì bỏ index và yêu cầu truy xuất bổ sung. Nếu đáp án bỏ sót câu hỏi trực tiếp, ghi issues để sửa.",
+            "trả supporting_spans gồm claim_index, citation_id, span_id từ source_spans của chính citation đó. "
+            "Span phải chứng minh nội dung claim tương ứng; đoạn mở đầu/căn cứ tên văn bản không chứng minh điều khoản ở trang khác. "
+            "Ngày hiệu lực không chứng minh mọi hồ sơ được xử lý trước đó đều bị loại; cần điều khoản chuyển tiếp "
+            "để xác nhận cách xử lý hồ sơ cũ, không suy đoán từ metadata hoặc mốc bắt đầu. "
+            "Không có span chứng minh thì bỏ index và yêu cầu truy xuất bổ sung. Nếu đáp án bỏ sót câu hỏi trực tiếp, ghi issues để sửa.",
             {"question": redact(state["request"].message), "as_of": str(state["as_of"]),
              "draft": checked_draft, "evidence": model_context,'source_spans':model_spans,
              "coverage_gaps": (state['release'] or {}).get('coverage_gaps', []),
