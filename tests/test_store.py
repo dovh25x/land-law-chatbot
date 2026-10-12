@@ -86,6 +86,18 @@ def test_exact_article_number_retrieves_without_keyword_overlap(store):
     assert "chunks" not in store.release(metadata_only=True)["documents"][0]
 
 
+def test_open_article_and_search_distinguish_added_article_suffix(store):
+    law = document()
+    law.document_number = '124/2020/NĐ-CP'
+    original = law.chunks[0].model_copy(update={'locator':'Điều 28','text':'Thủ tục ban đầu.'})
+    added = original.model_copy(update={'id':'law-added','locator':'Điều 28a','text':'Thủ tục bổ sung khác.'})
+    law.chunks = [original, added]
+    release(store,[law])
+    assert [c.id for c in store.open_document('law',locator='Điều 28a').chunks] == ['law-added']
+    assert [c.id for c in store.open_document('law',locator='Điều 28').chunks] == [original.id]
+    assert store.search('Điều 28a của 124/2020/NĐ-CP')[0].chunk.id == 'law-added'
+
+
 def test_effectivity_tool_opens_operative_article_not_preamble(store):
     from landlaw.models import Chunk
     from landlaw.security import digest

@@ -1,0 +1,31 @@
+{
+  "checked_at": "2026-10-12T22:33:47.017767+00:00",
+  "commit": "9a7bfe04f0efa70931f04d38491c07ba620c3ca6",
+  "backend_url": "https://land-law-chatbot.onrender.com",
+  "frontend_url": "https://hanoi-land-law.pages.dev",
+  "render_deploy_id": "dep-db6ltnij9qps73cv7ci0",
+  "render_status": "live",
+  "render_commit": "9a7bfe04f0efa70931f04d38491c07ba620c3ca6",
+  "checks": {
+    "exact_backend_commit": true,
+    "health": true,
+    "frontend_http": true,
+    "frontend_csp": true,
+    "unpublished_readiness": true
+  },
+  "readiness": {
+    "status": "not_ready",
+    "database": true,
+    "llm_configured": true,
+    "corpus_release": null,
+    "checked_at": null,
+    "storage": "postgresql",
+    "publication_profile": "staging",
+    "quality_status": "acceptance_pending",
+    "retrieval_mode": "unavailable",
+    "coverage_gaps": []
+  },
+  "corpus_published": false,
+  "acceptance_passed": false,
+  "scope": "deployment and truthful readiness; no generation or legal acceptance tested"
+}

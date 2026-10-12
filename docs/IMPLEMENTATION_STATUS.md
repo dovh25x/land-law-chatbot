@@ -2,7 +2,7 @@
 
 Đợt tăng tốc bắt đầu 12/10/2026 16:44:23 UTC, hạn ưu tiên 13/10/2026 07:44:23 UTC. Kế hoạch M0–M6 chưa hoàn tất. Demo chỉ công bố sau gate riêng; toàn bộ tiêu chí nghiệm thu gốc giữ nguyên.
 
-Snapshot 12/10/2026 22:23 UTC: corpus mới `corpus-c30fb243d71ebd2d` có 67 tài liệu, 52 văn bản pháp lý đã đối chiếu, năm nguồn chính thức mỗi dự án; 4,555/7,566 vector BGE-M3 1.024 chiều, còn 3,011 vector. Source audit đạt về provenance/checksum/parse/PDF mapping; điều này không thay thế thẩm định pháp lý. Đã bổ sung các sửa đổi Luật Đất đai, Luật Quy hoạch112/2025 và NĐ155/2026 sửa thủ tục khiếu nại. Giữ các khoảng trống sửa đổi lịch sử chưa xác minh. PDF theo trang và parser phân biệt biểu mẫu đã kiểm thử.
+Snapshot 12/10/2026 22:44 UTC: corpus mới `corpus-c30fb243d71ebd2d` có 67 tài liệu, 52 văn bản pháp lý đã đối chiếu, năm nguồn chính thức mỗi dự án; 4,555/7,566 vector BGE-M3 1.024 chiều, còn 3,011 vector. Khôi phục đủ 135 tệp nguồn/OCR vào thư mục trống và đối chiếu checksum đạt. Source audit đạt về provenance/checksum/parse/PDF mapping; điều này không thay thế thẩm định pháp lý. Đã bổ sung các sửa đổi Luật Đất đai, Luật Quy hoạch112/2025 và NĐ155/2026 sửa thủ tục khiếu nại. Giữ các khoảng trống sửa đổi lịch sử chưa xác minh. PDF theo trang và parser phân biệt biểu mẫu đã kiểm thử.
 
 Supabase đã giữ corpus BGE trước `corpus-a6af9cf431b26f71` (47 tài liệu/5.149 vector) chưa công bố. Staging cũ `corpus-217042b8f95fb72f` được dọn sau backup mã hóa có hội thoại; kiểm tra thật sau đó đạt quyền runtime/cách ly phiên và database 158,47 MiB. Storage private: 136 object nguồn đã kiểm tra, dự kiến 479.706.305 byte; còn dự phòng. Seed 8.074 checkpoint trước đó đã restore kiểm tra thành công; checkpoint mới cần archive lại sau embedding.
 
@@ -10,12 +10,12 @@ Gemini 3.5 Flash Lite từng trả lời probe thật nhanh, nhưng các lượt
 
 | Mốc | Trạng thái | Bằng chứng / việc còn thiếu |
 |---|---|---|
-| M0 | Hạ tầng và lượt gọi thật đã đạt | Pages và Render Free live; Supabase role riêng, Gemini/Workers AI gọi thật. CI commit 1d1cf8ba đạt; bản sửa mới cần CI/deploy riêng. |
+| M0 | Hạ tầng và lượt gọi thật đã đạt | Pages và Render Free live; Supabase role riêng, Gemini/Workers AI gọi thật. CI commit 9a7bfe04 đạt; đúng commit đã deploy Render và Pages. Sửa bổ sung cấp điều khoản cần CI riêng. |
 | M1 | Corpus mở rộng đang staging | 67 tài liệu/52 legal/5 nguồn mỗi dự án. Còn 3,011 vector và kiểm chứng indexing trên DB; không công bố index thiếu vector. Nguồn pending/quan hệ thiếu đầu mút được khai báo. |
 | M2 | Luồng baseline thật trên staging | Hybrid FTS/pgvector/RRF, hội thoại, dẫn nguồn và SSE đã có. Còn smoke pháp lý đạt trên cấu hình cuối và kiểm chứng URL. |
 | M3 | Graph thật, đang xác minh chất lượng | Công cụ đọc, hiệu lực cấp điều khoản, sửa đổi có phạm vi, verifier bằng source spans và retry hữu hạn. Đã sửa đếm công cụ liên quan, lỗi nhầm ngày ban hành/hiệu lực và hỏi lại quá mức cho câu chung; cần chạy lại provider thật sau quota. |
 | M4 | Giao diện có URL và kiểm thử | 2 Vitest, build và 6 Playwright desktop/mobile đạt trên bản sửa modal nguồn. URL hiện corpus chưa công bố; còn QA hỏi đáp công khai sau phát hành. |
-| M5 | Kỹ thuật nhiều phần đạt, chưa nghiệm thu | 100 pytest đạt; Postgres isolation/permissions/reserve đạt. Backup và restore PostgreSQL độc lập đã đạt cho corpus trước. 120 rubric đã đối chiếu nguồn/hành vi, 93 đoạn tham chiếu, 80 acceptance đã khóa checksum. Còn đánh giá câu trả lời thật, recovery release mới, p95/cold start/restart sau công bố. |
+| M5 | Kỹ thuật nhiều phần đạt, chưa nghiệm thu | 102 pytest đạt; Postgres isolation/permissions/reserve đạt. Backup và restore PostgreSQL độc lập đã đạt cho corpus trước. 120 rubric đã đối chiếu nguồn/hành vi, 93 đoạn tham chiếu, 80 acceptance đã khóa checksum. Còn đánh giá câu trả lời thật, recovery release mới, p95/cold start/restart sau công bố. |
 | M6 | Chưa hoàn tất | Repo, Docker, migration, CI/CD, pipeline, tài liệu vận hành và kịch bản demo có sẵn. Còn gate demo, URL hỏi đáp corpus mới và báo cáo nghiệm thu đầy đủ. |
 
 Website: https://hanoi-land-law.pages.dev. API: https://land-law-chatbot.onrender.com. Hạ tầng live chưa đồng nghĩa corpus đã công bố hoặc chất lượng đã nghiệm thu.

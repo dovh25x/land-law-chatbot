@@ -78,8 +78,8 @@ def applicability(doc: Document, as_of: date, chunk=None):
             ends = scope.get('effective_to')
             if ends and as_of >= date.fromisoformat(ends) and 'bang gia' in normalize(scope.get('locator','')) and '[BẢNG / ĐƠN GIÁ' in chunk.text:
                 return 'historical'
-            numbers = re.findall(r"Điều\s+(\d+)", scope.get('locator',''),flags=re.IGNORECASE)
-            if any(re.search(rf'^Điều {n}(?:\D|$)',chunk.locator) for n in numbers):
+            numbers = re.findall(r"Điều\s+(\d+[a-z]?)", scope.get('locator',''),flags=re.IGNORECASE)
+            if any(re.search(rf'^Điều {n}(?:\s|$)',chunk.locator,re.IGNORECASE) for n in numbers):
                 starts, ends = scope.get('effective_from'), scope.get('effective_to')
                 if (starts and doc.effective_from and date.fromisoformat(starts) != doc.effective_from) or (ends and as_of >= date.fromisoformat(ends)):
                     return 'provision_specific'
@@ -92,8 +92,8 @@ def applicability(doc: Document, as_of: date, chunk=None):
 
 def relation_chunks(doc, locator):
     """Open the cited article in an amendment/transition instead of its first pages."""
-    numbers = re.findall(r"Điều\s+(\d+)", locator or "", flags=re.IGNORECASE)
-    selected = [c for c in doc.chunks if any(re.search(rf"^Điều {n}(?:\D|$)", c.locator) for n in numbers)]
+    numbers = re.findall(r"Điều\s+(\d+[a-z]?)", locator or "", flags=re.IGNORECASE)
+    selected = [c for c in doc.chunks if any(re.search(rf"^Điều {n}(?:\s|$)", c.locator,re.IGNORECASE) for n in numbers)]
     return (selected or doc.chunks)[:3]
 
 

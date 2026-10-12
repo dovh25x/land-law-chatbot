@@ -199,6 +199,20 @@ def test_clause_effective_date_does_not_change_the_whole_document():
     assert applicability(law,date(2026,10,12)) == 'current'
 
 
+def test_added_article_scope_does_not_apply_to_original_article():
+    from landlaw.agent import relation_chunks
+    law = document()
+    original = law.chunks[0]
+    original.locator = 'Điều 28'
+    added = original.model_copy(update={'id':'law-added','locator':'Điều 28a'})
+    law.chunks = [original, added]
+    law.provision_validity = [{'locator':'khoản 1 Điều 28a','effective_from':'2024-08-01','effective_to':'2026-01-01'}]
+    assert applicability(law,date(2026,10,12),original) == 'current'
+    assert applicability(law,date(2026,10,12),added) == 'provision_specific'
+    assert relation_chunks(law,'Điều 28') == [original]
+    assert relation_chunks(law,'Điều 28a') == [added]
+
+
 async def test_graph_calls_tools_and_verifies_before_answer(store, settings):
     release(store)
     sid, _ = session(store)

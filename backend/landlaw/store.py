@@ -332,7 +332,7 @@ class Store:
         doc = next((d for d in self.documents(release_id) if d.id == doc_id), None)
         if not doc:
             return None
-        articles = list(dict.fromkeys(re.findall(r'\bdieu\s+(\d+)', normalize(locator or ''))))[:3]
+        articles = list(dict.fromkeys(re.findall(r'\bdieu\s+(\d+[a-z]?)\b', normalize(locator or ''))))[:3]
         projection = 'id,document_id,text,locator,parent_id,page,checksum,embedding_model'
         base = f'SELECT {projection} FROM chunks WHERE release_id=? AND document_id=?'
         if not articles:
@@ -397,7 +397,7 @@ class Store:
         projection = 'c.id,c.document_id,c.text,c.locator,c.parent_id,c.page,c.checksum,c.embedding_model' if self.postgres else 'c.*'
         docs = {d.id: d for d in self.documents(release_id)}
         exact_docs = [d.id for d in docs.values() if d.document_number and normalize(d.document_number) in normalize(query)]
-        article = re.search(r"\bdieu\s+(\d+)\b", normalize(query))
+        article = re.search(r"\bdieu\s+(\d+[a-z]?)\b", normalize(query))
         exact = []
         if exact_docs:
             exact_sql = " AND d.id IN (" + ",".join("?" for _ in exact_docs) + ")"
