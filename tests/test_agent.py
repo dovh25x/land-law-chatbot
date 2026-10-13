@@ -181,6 +181,19 @@ async def test_verifier_cannot_expand_partial_repeal_or_infer_universal_practice
     assert any('phạm vi' in e.summary or 'tổng quát' in e.summary for e in result.trace)
 
 
+async def test_repeal_cannot_be_attributed_to_a_different_act_even_if_model_approves(store,settings):
+    law=document(document_number='38/2025/QĐ-UBND',
+        text='Điều 3. Bãi bỏ khoản 3 Điều 3, Điều 23 của Quy định ban hành kèm Quyết định số 56/2024/QĐ-UBND.')
+    release(store,[law]);sid,_=session(store)
+    draft=Draft(status='answered',summary='',claims=[Claim(kind='applicability',
+        text='Quyết định 10/2026/QĐ-UBND bãi bỏ khoản 3 Điều 3 và Điều 23 của Quyết định 38/2025/QĐ-UBND.',
+        citation_ids=['law-1'])])
+    result=await Agent(store,FakeProvider(settings,draft=draft)).run(ChatRequest(session_id=sid,
+        message='Điều 3 của 38/2025/QĐ-UBND bãi bỏ những gì?',mode='baseline'),noop)
+    assert result.status=='insufficient_evidence' and not result.verified_claims
+    assert any('số văn bản' in event.summary for event in result.trace)
+
+
 def test_prompt_keeps_passages_and_deduplicates_document_legal_metadata(store,settings):
     from landlaw.models import Evidence
     law=document()

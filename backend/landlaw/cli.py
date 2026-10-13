@@ -15,7 +15,7 @@ from .provider import Budget, Gemini
 from .security import utcnow
 from .store import Store
 
-app = typer.Typer(no_args_is_help=True)
+app = typer.Typer(no_args_is_help=True, pretty_exceptions_show_locals=False)
 
 
 def reviewed_source_files(source):

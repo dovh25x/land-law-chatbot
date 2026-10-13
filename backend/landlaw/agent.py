@@ -646,6 +646,15 @@ class Agent:
                     structural_issues.append(f'Claim {index}: không dùng nhãn hiệu lực để áp dụng quyền lợi từ văn bản tương lai')
             cited_text=' '.join(evidence[i].chunk.text for i in claim.citation_ids if i in evidence)
             normalized_source=normalize(cited_text)
+            number_pattern=r'(?<![\d/])(\d{1,6})/((?:19|20)\d{2})(?!/\d)'
+            def act_numbers(text):
+                return {f'{int(sequence)}/{year}' for sequence,year in re.findall(number_pattern,text)}
+            claimed_numbers=act_numbers(normalized_claim)
+            source_numbers=act_numbers(normalized_source)
+            source_numbers.update(number for citation_id in claim.citation_ids if citation_id in evidence
+                for number in act_numbers(normalize(evidence[citation_id].document.document_number or '')))
+            if claimed_numbers-source_numbers:
+                structural_issues.append(f'Claim {index}: số văn bản trong kết luận không được đoạn dẫn hoặc metadata nguồn chứng minh')
             if 'bai bo' in normalized_claim:
                 for unit in ('khoan','dieu'):
                     extra=re.search(r'\b(?:va|cung)\s+(?:mot so|cac|nhieu)\s+'+unit+r'\b',normalized_claim)

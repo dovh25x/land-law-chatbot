@@ -103,5 +103,55 @@
       false
     ],
     "notes": "Đã đọc hai claims và hai nguồn đầy đủ. Claim đầu thêm \"và một số khoản\" sau bãi bỏ Điều 2 QĐ38, trong khi Điều 2 QĐ10 chỉ quy định Điều 2 QĐ38 và QĐ47; phạm vi mở rộng không được đoạn này hỗ trợ. Claim thứ hai đúng phần liệt kê của Điều 3 QĐ38 nhưng suy \"việc bãi bỏ thường diễn ra theo từng khoản, không toàn văn\" từ một trường hợp, không đủ chứng cứ cho kết luận tổng quát. Verifier model cho qua nhưng reviewer không chấm đạt; phải sửa kiểm tra/phát biểu, không nới rubric."
+  },
+  "S01:baseline:2ef40aeb5236990c5f2c5b7a6f9887939dde1ee789ac365875993c66445dd296": {
+    "passed": true,
+    "source_checked": true,
+    "claim_support": [
+      true,
+      true
+    ],
+    "notes": "Đã đọc toàn bộ content và claims: Điều 2 QĐ40/2026 chứng minh ngày hiệu lực 02/04/2026 và thay QĐ56/2024; tại ngày hỏi 12/10/2026 QĐ56 không còn hiệu lực. ID qd-40-2026-hanoi-0-2-0 đúng và đã đối chiếu nguyên văn. Không suy quyền lợi hoặc loại hồ sơ cũ. Các bước tiếp theo chỉ hướng dẫn đối chiếu. "
+  },
+  "S01:agentic:9cee7137ef241ac72a2c2c9342c54fffc37c03005175a4289c56ef594dee2bae": {
+    "passed": true,
+    "source_checked": true,
+    "claim_support": [
+      true
+    ],
+    "notes": "Đã đọc toàn bộ content và claims: Điều 2 QĐ40/2026 chứng minh ngày hiệu lực 02/04/2026 và thay QĐ56/2024; tại ngày hỏi 12/10/2026 QĐ56 không còn hiệu lực. ID qd-40-2026-hanoi-0-2-0 đúng và đã đối chiếu nguyên văn. Không suy quyền lợi hoặc loại hồ sơ cũ. Các bước tiếp theo chỉ hướng dẫn đối chiếu. Đã đối chiếu riêng Điều 29 qd-40-2026-hanoi-17-2-0 là Điều khoản chuyển tiếp; hướng dẫn tham khảo điều này đúng, không áp dụng tự động cho mọi hồ sơ."
+  },
+  "S02:baseline:26eefe506b7464105488828fa3fa968e14516d8b7a521474781b8b01c8b4b7b0": {
+    "passed": true,
+    "source_checked": true,
+    "claim_support": [
+      true
+    ],
+    "notes": "Đã đọc đầy đủ đáp án cấu hình ebc032b9. Một claim xác định QĐ40 có hiệu lực 02/04/2026 và chưa hiệu lực tại 01/03/2026; Điều 2 qd-40-2026-hanoi-0-2-0 chứng minh mốc này. Hỏi ngày thu hồi/phê duyệt phương án và loại đất/giấy tờ ẩn danh, hướng dẫn đối chiếu chuyển tiếp; không suy kết quả mọi hồ sơ cũ hoặc tính quyền lợi. Clarification phù hợp rubric, citation ID đúng evidence."
+  },
+  "S02:agentic:8ccc4ee76d9924117f2141a0c3c76691a3fe42d6b84f1e80a4eb892c43d1ac91": {
+    "passed": true,
+    "source_checked": true,
+    "claim_support": [
+      true
+    ],
+    "notes": "Đã đọc đầy đủ đáp án cấu hình ebc032b9. Một claim xác định QĐ40 có hiệu lực 02/04/2026 và chưa hiệu lực tại 01/03/2026; Điều 2 qd-40-2026-hanoi-0-2-0 chứng minh mốc này. Hỏi ngày thu hồi/phê duyệt phương án và loại đất/giấy tờ ẩn danh, hướng dẫn đối chiếu chuyển tiếp; không suy kết quả mọi hồ sơ cũ hoặc tính quyền lợi. Clarification phù hợp rubric, citation ID đúng evidence."
+  },
+  "S03:baseline:5c862b8e5ffb5bf1fc1321a8c79b8938bee2c493ab319f3e81af0ca435e95c1f": {
+    "passed": true,
+    "source_checked": true,
+    "claim_support": [
+      true
+    ],
+    "notes": "Đã đọc claim và content. Điều 2 QĐ10, qd-10-2026-hanoi-4-1-0, chỉ bãi bỏ Điều 2 QĐ38/2025: kết luận không bãi bỏ toàn bộ đúng phạm vi và mốc 20/01/2026. Mốc 18/01 trong bước đối chiếu đã được xác nhận bằng Điều 3 qd-10-2026-hanoi-4-2-0 ở source-check trước. Hướng dẫn tham khảo bản sao công chứng là lời gợi ý không cần thiết; không được diễn giải thành nghĩa vụ hay điều kiện pháp lý. Không có quyền lợi, số tiền hoặc phạm vi bãi bỏ bổ sung."
+  },
+  "S03:agentic:1ddd950a02444d1b7e50679c09b29d2d1cbbff0ea046351c770983d446444883": {
+    "passed": false,
+    "source_checked": true,
+    "claim_support": [
+      true,
+      false
+    ],
+    "notes": "Claim đầu đúng Điều 2 QĐ10. Claim thứ hai sai chủ thể và đối tượng: đoạn được dẫn là Điều 3 QĐ38, bãi bỏ khoản 3 Điều 3 và Điều 23 của Quy định kèm QĐ56; không chứng minh QĐ10 bãi bỏ các khoản này của QĐ38. Đã đọc nguyên văn cả hai citations. Verifier model cho qua nhưng kiểm tra thủ công không chấm đạt; cần đối chiếu số văn bản trong claim với đoạn và metadata trước hiển thị."
   }
 }

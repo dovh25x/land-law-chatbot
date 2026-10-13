@@ -249,6 +249,7 @@ class Gemini:
             raise ProviderUnavailable('GROQ_API_KEY chưa được cấu hình')
         shape=strict_generation_schema(schema)
         instruction=body['systemInstruction']['parts'][0]['text']
+        instruction+=' Return only a JSON object conforming to the provided schema. Fields such as tools are plain data for a separate application; do not call any tool or function.'
         if 'supporting_spans' in shape.get('properties',{}):
             instruction+=' Every supported index needs supporting_spans selected from source_spans for every cited passage. Return short span IDs only; do not rewrite source text.'
         payload=json.loads(body['contents'][0]['parts'][0]['text'])
@@ -258,7 +259,7 @@ class Gemini:
         # question/history remains in its own request, after that common prefix.
         ordered={key:payload[key] for key in shared_fields if key in payload}
         ordered.update({key:value for key,value in payload.items() if key not in ordered})
-        request={'model':self.settings.groq_model,'temperature':0,'max_completion_tokens':2048,
+        request={'model':self.settings.groq_model,'temperature':0,'max_completion_tokens':2048,'tool_choice':'none',
                  'messages':[{'role':'system','content':instruction},
                              {'role':'user','content':json.dumps(ordered,ensure_ascii=False,separators=(',',':'))}],
                  'response_format':{'type':'json_schema','json_schema':{'name':schema.__name__,

@@ -1,7 +1,7 @@
 {
-  "checked_at": "2026-10-13T11:38:02.341450+00:00",
+  "checked_at": "2026-10-13T11:54:30.566532+00:00",
   "release": "corpus-de584c31fc95f9a2",
-  "configuration_sha256": "ebc032b95b8b0263af3cbfbca0fa7e7da707221bd1e4577a0b9f351c3199c4f9",
+  "configuration_sha256": "2754aa6df288dbfa260cf60f9f118cc715a3ce6747a8144d8d9d30b5df86629a",
   "passed": false,
   "checks": {
     "postgres_runtime": true,
@@ -10,8 +10,11 @@
     "postgres_historical_partial_repeal_context": true,
     "postgres_named_article_lookup": true,
     "server_rejects_unproven_repeal_scope": true,
-    "backend_tests_125": true,
-    "observation_date_not_commencement": true
+    "observation_date_not_commencement": true,
+    "backend_tests_126": true,
+    "claim_act_attribution": true,
+    "provider_remote_tools_disabled": true,
+    "cli_traceback_locals_disabled": true
   },
-  "scope": "125 isolated backend tests; observed repeal/generalization rejection and observation-vs-commencement date regression. Real Supabase lookups/parity/isolation retained from recorded checks; exact final CI pending, publication blocked until it passes."
+  "scope": "126 isolated tests; canonical act-number attribution, grounded repeal scope and dates, provider tools disabled. Free 20B schema probe successful; both modes now evaluated on 20B. Exact final CI and full source review pending."
 }

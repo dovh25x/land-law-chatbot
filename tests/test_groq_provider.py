@@ -34,6 +34,8 @@ async def test_groq_transport_has_no_remote_tools_and_does_not_expose_reasoning(
     try:
         assert (await provider.generate(Probe,'Return JSON',{},budget)).ok
         assert 'tools' not in seen[0]
+        assert seen[0]['tool_choice']=='none'
+        assert 'plain data for a separate application' in seen[0]['messages'][0]['content']
         assert seen[0]['response_format']['json_schema']['strict']
         assert budget.llm_calls==1 and budget.tokens==17
         assert config.generation_model=='openai/gpt-oss-120b'
