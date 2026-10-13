@@ -1,12 +1,13 @@
 {
-  "checked_at": "2026-10-13T14:13:15.535551+00:00",
-  "backup_sha256": "988943a4d48d922df95c069d14f7f7fc0d3c7c7987a0a756cdf79c63c72b872a",
-  "bytes": 140507660,
-  "checks": {
-    "encrypted_roundtrip": true,
-    "publication_state_unpublished": true,
-    "two_real_corpora": true
-  },
+  "checked_at": "2026-10-13T16:14:22.964382+00:00",
+  "path": "data/backups/pre-technical-demo-20261013T161255.enc",
+  "sha256": "685d9057e0aba28cb7bca02e36c656cb03c5a0b1f3d1f1b815579f993e49e3ea",
+  "bytes": 140519416,
+  "encrypted": true,
+  "include_sessions": true,
+  "fernet_roundtrip_passed": true,
+  "releases": 2,
+  "active_release_before_publication": null,
   "passed": true,
-  "scope": "Fresh full encrypted backup; decrypted locally to validate roundtrip without printing document/session data. Separate PostgreSQL restore exercise is recorded in postgres-restore.json; this receipt does not claim another database restore."
+  "scope": "Fresh encrypted prepublication backup with successful decrypt/JSON roundtrip; PostgreSQL restore rehearsal evidence is separate."
 }

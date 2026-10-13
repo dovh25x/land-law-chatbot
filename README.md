@@ -4,9 +4,9 @@ Web chatbot tiếng Việt dùng FastAPI, LangGraph, Gemini/Groq/Workers AI, E5 
 
 ## Trạng thái
 
-Website: https://hanoi-land-law.pages.dev; API: https://land-law-chatbot.onrender.com. Hạ tầng đã live; Groq/SSE, cách ly phiên và lưu hội thoại đã qua smoke thật. Corpus chưa công bố; đây chưa phải bản phát hành đã nghiệm thu M0–M6. Xem [bằng chứng và hạng mục còn mở](docs/IMPLEMENTATION_STATUS.md), [nguồn thật và khoảng trống](docs/SOURCES.md), [benchmark](docs/BENCHMARK.md). Không có câu trả lời hay chỉ số chất lượng giả trong runtime. SQLite dành cho phát triển; production bắt buộc PostgreSQL.
+Website: https://hanoi-land-law.pages.dev; API: https://land-law-chatbot.onrender.com. Corpus đã công bố ở chế độ **demo kỹ thuật — chưa nghiệm thu pháp lý**. Baseline/agentic trả lời thật trên URL, có nguồn, trace, cách ly phiên và lưu hội thoại; desktop/mobile đã kiểm tra không dùng mocks. Đây chưa phải bản nghiệm thu toàn bộ M0–M6. Xem [bằng chứng và hạng mục còn mở](docs/IMPLEMENTATION_STATUS.md), [nguồn thật và khoảng trống](docs/SOURCES.md), [benchmark](docs/BENCHMARK.md). Không tạo số liệu chất lượng mẫu. SQLite dành cho phát triển; production bắt buộc PostgreSQL.
 
-Provider sinh được chọn rõ bằng `LLM_PROVIDER`: `gemini`, `cloudflare` (Qwen), hoặc `groq` (GPT-OSS 120B/20B, Qwen 3.8 27B). Cấu hình đang đánh giá dùng Groq Free `openai/gpt-oss-20b`. Cả GPT-OSS20B/120B và Qwen27B đã gặp quota token/ngày thực tế; Workers AI hết quota và Gemini trả lỗi với request pháp luật dài. Evaluation giữ checkpoint và chờ theo Retry-After, không bật billing. Hai chế độ dùng cùng model và fingerprint; không ghép số liệu từ model khác nhau. Corpus có 69 tài liệu, 54 văn bản pháp lý, năm nguồn mỗi dự án và đủ 7.610 vector E5 ONNX Q8 **384 chiều**, xử lý miễn phí trên Colab CPU. Vector truy vấn trên backend đã đối chiếu khớp Colab; Docker thực tế đạt kiểm tra hard limit 512 MB. Model/checkpoint cũ giữ riêng; corpus chỉ công bố sau gate pháp lý. Không có trần gọi API theo ngày do ứng dụng đặt; giữ điểm dừng workflow và chống lạm dụng website. Không bật billing hoặc nâng gói.
+Provider sinh được chọn rõ bằng `LLM_PROVIDER`: `gemini`, `cloudflare` (Qwen), hoặc `groq` (GPT-OSS 120B/20B, Qwen 3.8 27B). Bản demo dùng Groq Free `openai/gpt-oss-20b`. Evaluation giữ checkpoint và xử lý quota theo Retry-After; hai chế độ dùng cùng model và fingerprint, không ghép số liệu khác cấu hình. Corpus có 69 tài liệu, 54 văn bản pháp lý, năm nguồn mỗi dự án và đủ 7.610 vector E5 ONNX Q8 **384 chiều**, xử lý miễn phí trên Colab CPU. Vector truy vấn trên backend khớp Colab; Docker Python 3.12 peak RSS khoảng 354 MiB dưới hard limit 512 MiB. Model/checkpoint cũ giữ riêng. Không có trần gọi API theo ngày do ứng dụng đặt; giữ điểm dừng workflow và chống lạm dụng website. Không bật billing hoặc nâng gói.
 
 ## Chạy phát triển
 
@@ -48,6 +48,9 @@ Manifest `data/sources.json` chứa nguồn chính thức, checksum raw và meta
 # Demo sớm: chỉ sau khi source audit/runtime tests và 20 ca smoke ở cả hai chế độ qua review
 .venv/bin/land-law benchmark --split smoke --release-id corpus-<id>
 .venv/bin/land-law publish corpus-<id> --profile demo
+# Demo kỹ thuật theo điều chỉnh phạm vi: corpus đầy đủ, CI/runtime/audit và sáu core reviews
+.venv/bin/land-law benchmark --split smoke --release-id corpus-<id> --case-ids S01,S07,S09 --concurrency 1
+.venv/bin/land-law publish corpus-<id> --profile technical_demo
 ```
 
 Embedding theo batch tối đa tám Content độc lập, một vector cho mỗi đoạn, checkpoint theo model/định dạng/title/checksum. Chạy lại tiếp tục checkpoint và không nhân đôi release cùng nội dung/metadata. `publish` từ chối khi thiếu nguồn bắt buộc (gồm QĐ 56/2024 lịch sử), độ bao phủ, metadata, embedding hoặc báo cáo nghiệm thu đã rà soát cho đúng release. Benchmark chạy được trên staging trước công bố; không cần bypass gate để đánh giá.
@@ -71,4 +74,4 @@ GitHub Actions kiểm tra Python 3.12, build web, audit và build Docker. Thu th
 
 [Hướng dẫn triển khai, quota, cập nhật và khôi phục](docs/OPERATIONS.md), [kịch bản demo](docs/DEMO.md). Hosting mục tiêu: Cloudflare Pages Free, Render Free một worker, Supabase Free. Secret ở backend/.env/GitHub Secrets; trình duyệt chỉ gọi API. Không bật thanh toán hoặc nâng gói. Không nhận upload hồ sơ cá nhân, tính tiền tự động hoặc tra cứu GIS từng thửa.
 
-Embedding offline trên Colab CPU: [notebook và hướng dẫn](docs/COLAB_EMBEDDINGS.md). Corpus E5 hiện đủ 7.610 vector 384 chiều; chỉ công bố sau khi gate demo đạt.
+Embedding offline trên Colab CPU: [notebook và hướng dẫn](docs/COLAB_EMBEDDINGS.md). Corpus E5 hiện đủ 7.610 vector 384 chiều và đã công bố qua gate `technical_demo`; full smoke/acceptance tiếp tục riêng.

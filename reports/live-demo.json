@@ -1,0 +1,122 @@
+{
+  "checked_at": "2026-10-13T16:29:53.640830+00:00",
+  "base_url": "https://land-law-chatbot.onrender.com",
+  "frontend": "https://hanoi-land-law.pages.dev",
+  "passed": true,
+  "release": "corpus-de584c31fc95f9a2",
+  "configuration_sha256": "b059cbbd63657681e6520f095c156b107423911a999e0845d57a94568a107444",
+  "publication_profile": "technical_demo",
+  "acceptance_passed": false,
+  "checks": {
+    "health_https": true,
+    "published_hybrid_ready": true,
+    "honest_quality_label": true,
+    "minimum_legal_documents": true,
+    "three_project_source_sets": true,
+    "three_project_profiles": true,
+    "active_configuration_matches": true,
+    "no_false_acceptance": true,
+    "cors_frontend": true,
+    "session_isolation": true,
+    "baseline_sse_transport": true,
+    "baseline_real_grounded_answer": true,
+    "baseline_verification_precedes_result": true,
+    "baseline_no_draft_content_in_progress": true,
+    "baseline_trace_authenticated": true,
+    "baseline_trace_isolated": true,
+    "baseline_citation_luat-dat-dai-2024-104-1-0": true,
+    "agentic_sse_transport": true,
+    "agentic_real_grounded_answer": true,
+    "agentic_verification_precedes_result": true,
+    "agentic_no_draft_content_in_progress": true,
+    "agentic_trace_authenticated": true,
+    "agentic_trace_isolated": true,
+    "agentic_citation_luat-dat-dai-2024-104-1-0": true,
+    "history_persisted": true
+  },
+  "answers": [
+    {
+      "mode": "baseline",
+      "status": "answered",
+      "model": "openai/gpt-oss-20b",
+      "elapsed_ms": 21254,
+      "https_seconds": 27.373,
+      "llm_calls": 2,
+      "trace_id": "aab38a2f-d72c-482c-a88c-f90298c217f3",
+      "verified_claims": [
+        {
+          "kind": "legal_rule",
+          "text": "Điều 104 Luật Đất đai 2024 quy định Nhà nước bồi thường chi phí tháo dỡ, di chuyển, lắp đặt tài sản khi thu hồi đất, bao gồm cả hệ thống máy móc, dây chuyền sản xuất, và Ủy ban nhân dân cấp tỉnh quy định mức bồi thường tại khoản 1 Điều này.",
+          "citation_ids": [
+            "luat-dat-dai-2024-104-1-0"
+          ]
+        }
+      ],
+      "citations": [
+        {
+          "id": "luat-dat-dai-2024-104-1-0",
+          "document_id": "luat-dat-dai-2024",
+          "title": "Luật Đất đai",
+          "document_number": "31/2024/QH15",
+          "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=211189",
+          "locator": "Điều 104",
+          "excerpt": "Điều 104. Bồi thường chi phí di chuyển tài sản khi Nhà nước thu hồi đất 1. Khi Nhà nước thu hồi đất mà phải di chuyển tài sản thì được Nhà nước bồi thường chi phí để tháo dỡ, di chuyển, lắp đặt; trường hợp phải di chuyển hệ thống máy móc, dây chuyền sản xuất còn được bồi thường đối với thiệt hại khi tháo dỡ, vận chuyển, lắp đặt. 2. Ủy ban nhân dân cấp tỉnh quy định mức bồi thường tại khoản 1 Điều này.",
+          "checked_at": "2026-10-11T17:32:27Z",
+          "applicability": "current",
+          "source_review_notes": "",
+          "page": 12,
+          "source_url": "https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/9/31-2024-qh15_2.pdf#page=12"
+        }
+      ],
+      "source_review": {
+        "checked": true,
+        "claim_support": [
+          true
+        ],
+        "notes": "Đã đọc toàn bộ claim và excerpt khoản1–2 Điều104. Chi phí tháo dỡ/di chuyển/lắp đặt và cơ quan UBND tỉnh định mức được nguồn hỗ trợ; cụm mức tại khoản1 là dẫn loại chi phí, thẩm quyền nằm khoản2. Hai đáp án live chưa nêu riêng phần thiệt hại khi di chuyển máy móc/dây chuyền, nên không chấm như câu benchmark S07 đầy đủ. Đây là hạn chế nội dung được ghi nhận trong demo kỹ thuật; không chứng nhận nghiệm thu."
+      }
+    },
+    {
+      "mode": "agentic",
+      "status": "answered",
+      "model": "openai/gpt-oss-20b",
+      "elapsed_ms": 54244,
+      "https_seconds": 60.239,
+      "llm_calls": 5,
+      "trace_id": "0097919d-3789-4f0c-af37-dec03c673246",
+      "verified_claims": [
+        {
+          "kind": "legal_rule",
+          "text": "Điều 104 Luật Đất đai 2024 quy định Nhà nước bồi thường chi phí tháo dỡ, di chuyển, lắp đặt tài sản khi thu hồi đất, bao gồm cả hệ thống máy móc, dây chuyền sản xuất, và Ủy ban nhân dân cấp tỉnh quy định mức bồi thường tại khoản 1 Điều này.",
+          "citation_ids": [
+            "luat-dat-dai-2024-104-1-0"
+          ]
+        }
+      ],
+      "citations": [
+        {
+          "id": "luat-dat-dai-2024-104-1-0",
+          "document_id": "luat-dat-dai-2024",
+          "title": "Luật Đất đai",
+          "document_number": "31/2024/QH15",
+          "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=211189",
+          "locator": "Điều 104",
+          "excerpt": "Điều 104. Bồi thường chi phí di chuyển tài sản khi Nhà nước thu hồi đất 1. Khi Nhà nước thu hồi đất mà phải di chuyển tài sản thì được Nhà nước bồi thường chi phí để tháo dỡ, di chuyển, lắp đặt; trường hợp phải di chuyển hệ thống máy móc, dây chuyền sản xuất còn được bồi thường đối với thiệt hại khi tháo dỡ, vận chuyển, lắp đặt. 2. Ủy ban nhân dân cấp tỉnh quy định mức bồi thường tại khoản 1 Điều này.",
+          "checked_at": "2026-10-11T17:32:27Z",
+          "applicability": "current",
+          "source_review_notes": "",
+          "page": 12,
+          "source_url": "https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/9/31-2024-qh15_2.pdf#page=12"
+        }
+      ],
+      "source_review": {
+        "checked": true,
+        "claim_support": [
+          true
+        ],
+        "notes": "Đã đọc toàn bộ claim và excerpt khoản1–2 Điều104. Chi phí tháo dỡ/di chuyển/lắp đặt và cơ quan UBND tỉnh định mức được nguồn hỗ trợ; cụm mức tại khoản1 là dẫn loại chi phí, thẩm quyền nằm khoản2. Hai đáp án live chưa nêu riêng phần thiệt hại khi di chuyển máy móc/dây chuyền, nên không chấm như câu benchmark S07 đầy đủ. Đây là hạn chế nội dung được ghi nhận trong demo kỹ thuật; không chứng nhận nghiệm thu."
+      }
+    }
+  ],
+  "scope": "Two uncached real HTTPS legal answers plus source/trace/session checks; no acceptance or p95 claim."
+}

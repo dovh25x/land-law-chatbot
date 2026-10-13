@@ -605,5 +605,229 @@
     "source_checked": true,
     "claim_support": [],
     "notes": "Nguồn Điều 95 khoản 1–3 có đủ trong retrieval. Verifier chặn thiếu điều kiện đối tượng khoản 1; model sửa một lần vẫn bỏ sót nên trả insufficient_evidence. Hành vi không phát claim thiếu điều kiện là đúng bảo vệ, nhưng ca có nguồn xác định chưa trả lời đầy đủ nên không đạt demo."
+  },
+  "S01:baseline:dcdc6e710abd6905a7821598b8633c203ef36904d68ae0d1baab0c86f26ebdea": {
+    "passed": true,
+    "source_checked": true,
+    "claim_support": [
+      true
+    ],
+    "notes": "Điều 2 QĐ40/2026 chứng minh thay thế QĐ56 từ 02/04/2026 và không còn hiệu lực ngày 12/10/2026. Không suy quyền lợi hồ sơ cá nhân. Đã đọc kết quả mới cả hai chế độ và nguyên văn nguồn."
+  },
+  "S01:agentic:f82f8e4009cabe018b4576355f9453bd5edcd2d4fce06e0536ce3a9d5c0c446f": {
+    "passed": true,
+    "source_checked": true,
+    "claim_support": [
+      true
+    ],
+    "notes": "Điều 2 QĐ40/2026 chứng minh thay thế QĐ56 từ 02/04/2026 và không còn hiệu lực ngày 12/10/2026. Không suy quyền lợi hồ sơ cá nhân. Đã đọc kết quả mới cả hai chế độ và nguyên văn nguồn."
+  },
+  "S02:baseline:641ac8e3bc915ccf86784d0cf90c6d7af41b8d12e703f93603bd2aa50216e2d4": {
+    "passed": true,
+    "source_checked": true,
+    "claim_support": [
+      true
+    ],
+    "notes": "Điều 2 QĐ40/2026 chứng minh chưa hiệu lực ngày 01/03/2026; chỉ nêu mốc và hỏi thời điểm/loại đất/giấy tờ, đối chiếu chuyển tiếp, không tính quyền lợi từ văn bản tương lai. Hai chế độ đều không cần LLM, nguồn thật vẫn được truy xuất và kiểm tra."
+  },
+  "S02:agentic:3175ad8f2f700cfff23e900ebc24a9c3bea27d5a59376519033ba53c407a1a34": {
+    "passed": true,
+    "source_checked": true,
+    "claim_support": [
+      true
+    ],
+    "notes": "Điều 2 QĐ40/2026 chứng minh chưa hiệu lực ngày 01/03/2026; chỉ nêu mốc và hỏi thời điểm/loại đất/giấy tờ, đối chiếu chuyển tiếp, không tính quyền lợi từ văn bản tương lai. Hai chế độ đều không cần LLM, nguồn thật vẫn được truy xuất và kiểm tra."
+  },
+  "S03:baseline:e924e95638230d76b7db6a2467a4af95c7d1231ada053b452b52786ea84d67b4": {
+    "passed": true,
+    "source_checked": true,
+    "claim_support": [
+      true
+    ],
+    "notes": "Điều 2 QĐ10/2026 bãi bỏ đúng Điều 2 QĐ38/2025, không toàn văn. Tại 20/01/2026 không áp ngày thay thế toàn bộ 02/04/2026. Đã đọc nguyên văn nguồn và hai kết quả mới."
+  },
+  "S03:agentic:c703686ebe475a78b0fec79dffc71a3f77d32c225ab30e0b385a0c3f2830f01a": {
+    "passed": true,
+    "source_checked": true,
+    "claim_support": [
+      true
+    ],
+    "notes": "Điều 2 QĐ10/2026 bãi bỏ đúng Điều 2 QĐ38/2025, không toàn văn. Tại 20/01/2026 không áp ngày thay thế toàn bộ 02/04/2026. Đã đọc nguyên văn nguồn và hai kết quả mới."
+  },
+  "S04:baseline:05ccc127079d7d6d056f2b4e11a95c3525b1bebb9c14c8aa7d0225a8e0f093be": {
+    "passed": true,
+    "source_checked": true,
+    "claim_support": [
+      true
+    ],
+    "notes": "Điều 31 khoản 2 NĐ88/2024: đã thu hồi và phê duyệt phương án trước hiệu lực nhưng chưa thực hiện thì tiếp tục phương án đã phê duyệt, không làm lại toàn bộ. Không nhầm khoản 1 chưa phê duyệt. Baseline nêu đầy đủ xử lý trả chậm theo pháp luật tại thời điểm quyết định thu hồi."
+  },
+  "S04:agentic:2aa1bafa23007c8e713696aadb1b7b01eb9146f9ffc87ff1a706ef1c5819f2c1": {
+    "passed": true,
+    "source_checked": true,
+    "claim_support": [
+      true
+    ],
+    "notes": "Điều 31 khoản 2 NĐ88/2024: đã thu hồi và phê duyệt phương án trước hiệu lực nhưng chưa thực hiện thì tiếp tục phương án đã phê duyệt, không làm lại toàn bộ. Không nhầm khoản 1 chưa phê duyệt. Agentic trả lời đúng câu hỏi có phải làm lại; chưa giải thích trả chậm trong nội dung chính. Quy tắc trả chậm xuất hiện trong excerpt nguyên văn của citation; không coi đây là tư vấn đã giải thích phần trả chậm."
+  },
+  "S05:baseline:4d67383fc68b593af273a737d2981e4a8a9337aa35a3109308d3c6b4ff173d43": {
+    "passed": true,
+    "source_checked": true,
+    "claim_support": [
+      true
+    ],
+    "notes": "Điều 5 khoản 1 điểm d NĐ151/2025 chuyển từ UBND cấp huyện sang Chủ tịch UBND cấp xã thẩm quyền phê duyệt phương án tại điểm c khoản 3 Điều 87 Luật Đất đai. Hai đáp án nêu đủ đúng chủ thể, mốc xét 02/07/2025; không thêm Chủ tịch huyện và không áp sửa đổi tương lai. Đã đọc nguồn và claim thực tế trên cấu hình 7d9045ee."
+  },
+  "S05:agentic:87cba32cb4ea52fe60b3f0bf5f0dc8c38d035c29561383c8a8d1531b30ca8014": {
+    "passed": true,
+    "source_checked": true,
+    "claim_support": [
+      true
+    ],
+    "notes": "Điều 5 khoản 1 điểm d NĐ151/2025 chuyển từ UBND cấp huyện sang Chủ tịch UBND cấp xã thẩm quyền phê duyệt phương án tại điểm c khoản 3 Điều 87 Luật Đất đai. Hai đáp án nêu đủ đúng chủ thể, mốc xét 02/07/2025; không thêm Chủ tịch huyện và không áp sửa đổi tương lai. Đã đọc nguồn và claim thực tế trên cấu hình 7d9045ee."
+  },
+  "S06:baseline:634320858a8c532e8e8414ab737c80d0d3c38d393667a5472ee55c2b84050585": {
+    "passed": true,
+    "source_checked": true,
+    "claim_support": [
+      true
+    ],
+    "notes": "Điều 95 khoản 2 điểm a/b, đoạn 98-0-1, chứng minh giấy chứng nhận là một điều kiện thay thế cùng quyết định giao/thuê/chuyển mục đích có thẩm quyền. Cả hai đáp án giữ nguyên văn điều kiện các trường hợp thuộc khoản 1; không bảo đảm mọi trường hợp không sổ đều được bồi thường, không ghi sai khoản. Baseline dẫn thêm khoản 1 điểm a (hộ/cá nhân không thuê trả tiền hằng năm). Agentic nói các quyết định hành chính khác sau danh sách ba loại đã nêu, được hiểu trong danh sách này, không phải mọi quyết định hành chính. Đã đọc claim đầy đủ sau guard và nguyên văn nguồn, không chỉ dựa verifier."
+  },
+  "S06:agentic:374c1eefaaa83ca1f2835bf2e287cc9e2db8b96d72d152a2cdd889ce50e77f18": {
+    "passed": true,
+    "source_checked": true,
+    "claim_support": [
+      true
+    ],
+    "notes": "Điều 95 khoản 2 điểm a/b, đoạn 98-0-1, chứng minh giấy chứng nhận là một điều kiện thay thế cùng quyết định giao/thuê/chuyển mục đích có thẩm quyền. Cả hai đáp án giữ nguyên văn điều kiện các trường hợp thuộc khoản 1; không bảo đảm mọi trường hợp không sổ đều được bồi thường, không ghi sai khoản. Baseline dẫn thêm khoản 1 điểm a (hộ/cá nhân không thuê trả tiền hằng năm). Agentic nói các quyết định hành chính khác sau danh sách ba loại đã nêu, được hiểu trong danh sách này, không phải mọi quyết định hành chính. Đã đọc claim đầy đủ sau guard và nguyên văn nguồn, không chỉ dựa verifier."
+  },
+  "S07:baseline:4d312a5bc761491d77b6c34caf9f5f17e5b1b3c41bdcb18eeb4a02bb8a50014f": {
+    "passed": true,
+    "source_checked": true,
+    "claim_support": [
+      true
+    ],
+    "notes": "Điều 104 khoản 1 chứng minh chi phí tháo dỡ, di chuyển, lắp đặt và thiệt hại khi phải chuyển máy móc/dây chuyền. Không tự tạo đơn giá hoặc số tiền. Câu bổ sung về UBND tỉnh có căn cứ khoản 2 (quy định mức cho các chi phí khoản 1); không phải nguồn quy định mức số tiền cụ thể. 1)/2)/3) trong đáp án là thứ tự liệt kê, không được hiểu là ba khoản của Điều 104. Đã đọc claim đầy đủ và nguyên văn đoạn 104-1-0."
+  },
+  "S07:agentic:2856425cee4f4cac375e4174aa4898f1f5c93edca6e52536d3177dabf91ab0aa": {
+    "passed": true,
+    "source_checked": true,
+    "claim_support": [
+      true
+    ],
+    "notes": "Điều 104 khoản 1 chứng minh chi phí tháo dỡ, di chuyển, lắp đặt và thiệt hại khi phải chuyển máy móc/dây chuyền. Không tự tạo đơn giá hoặc số tiền. Đã đọc claim đầy đủ và nguyên văn đoạn 104-1-0."
+  },
+  "S08:baseline:2335fa64cee5ffd25da788f928e9e2a9c055259c60b01d47d8d26d3784b7321f": {
+    "passed": true,
+    "source_checked": true,
+    "claim_support": [
+      true
+    ],
+    "notes": "Điều 108 khoản 1 đoạn 106-1-0 chứng minh đủ sáu nhóm hỗ trợ. Đáp án giữ đúng đ) tái định cư theo khoản 8 Điều 111 và e) tháo dỡ/phá dỡ/di dời theo khoản 3 Điều 105; không đổi thành e)/f) như kết quả cũ. Không tạo tiền/tỷ lệ hoặc khẳng định quyền tự động cho mọi hộ. Đã đọc toàn bộ claim và nguồn."
+  },
+  "S08:agentic:d3abe2dfcaadb626fc9c68d4679f8bf89e1c65b7c1e4834c471ac82b9f41090d": {
+    "passed": true,
+    "source_checked": true,
+    "claim_support": [
+      true
+    ],
+    "notes": "Đã đọc toàn bộ claim, citation và đoạn canonical luat-dat-dai-2024-106-1-0 (Điều 108, trang PDF 14). Sáu nhóm hỗ trợ đúng khoản 1 a,b,c,d,đ,e; hỗ trợ tái định cư giữ điều kiện khoản 8 Điều 111 và tháo dỡ/di dời giữ khoản 3 Điều 105. Không tạo tỷ lệ, tiền hoặc quyền tự động cho mọi hộ; không suy hỗ trợ khác tại khoản 2. ID nguồn và locator khớp staging; ngày 02/08/2024 thuộc hiệu lực Luật sau sửa đổi ngày bắt đầu. Review thủ công ca cụ thể, không thẩm định pháp lý độc lập."
+  },
+  "S09:baseline:38632a6cb571ae2ffda9087f3ade48c49fa2eab9ed9c51d476f3816099cf9540": {
+    "passed": false,
+    "source_checked": true,
+    "claim_support": [
+      false
+    ],
+    "notes": "Đã đọc toàn bộ đáp án và nguồn QĐ56 Điều19. Tại 12/10/2026 văn bản đã bị thay thế từ 02/04/2026, không có nguồn chuyển tiếp trong claim. Đáp án thiếu hỏi loại đất, điều kiện bồi thường đất ở, di chuyển chỗ ở và mốc hồ sơ; một quy định chung không chứng minh quyền tái định cư của hộ. Gate trọng yếu không đạt; không dùng model verifier làm căn cứ chấm đạt."
+  },
+  "S01:baseline:03f7037e2713e99eff9a0d17288f3e022a57cad4180762e2ebbf34193ba82b27": {
+    "passed": true,
+    "source_checked": true,
+    "claim_support": [
+      true
+    ],
+    "notes": "Đã đọc claim thay thế toàn văn, ngày 02/04/2026 và Điều 2 QĐ40 canonical (qd-40-2026-hanoi-0-2-0). Đúng hết hiệu lực QĐ56 tại 12/10/2026; không suy quyền lợi hoặc chuyển tiếp hộ. ID, trang PDF và excerpt khớp nguồn. Review ca demo kỹ thuật; không thẩm định pháp lý độc lập hoặc chứng nhận toàn bộ benchmark."
+  },
+  "S01:agentic:bdd553d46100f160f1f44ea5323bd6b300754a3488039f9f4d180330f81c2af6": {
+    "passed": true,
+    "source_checked": true,
+    "claim_support": [
+      true
+    ],
+    "notes": "Đã đọc claim thay thế toàn văn, ngày 02/04/2026 và Điều 2 QĐ40 canonical (qd-40-2026-hanoi-0-2-0). Đúng hết hiệu lực QĐ56 tại 12/10/2026; không suy quyền lợi hoặc chuyển tiếp hộ. ID, trang PDF và excerpt khớp nguồn. Review ca demo kỹ thuật; không thẩm định pháp lý độc lập hoặc chứng nhận toàn bộ benchmark."
+  },
+  "S07:baseline:56f76e7b5bfadb9569698d38a7e42af9bac9c1f84ab614de6e47fee3c1d8a7bc": {
+    "passed": true,
+    "source_checked": true,
+    "claim_support": [
+      true
+    ],
+    "notes": "Đã đọc toàn bộ claim và khoản 1 Điều104 canonical (luat-dat-dai-2024-104-1-0, trang12). Đúng chi phí tháo dỡ/di chuyển/lắp đặt và thiệt hại khi phải di chuyển hệ thống máy móc/dây chuyền; không tạo mức tiền. 1)/2) là liệt kê tóm tắt, không gọi hai khoản của luật. Nguồn áp dụng tại 02/08/2024; ID/excerpt khớp. Review ca demo kỹ thuật; không thẩm định pháp lý độc lập hoặc chứng nhận toàn bộ benchmark."
+  },
+  "S07:agentic:007cb14e2e7b564cdeae6146f9b31f2486e2d0860d4f1d2d62d4b1e188358fca": {
+    "passed": true,
+    "source_checked": true,
+    "claim_support": [
+      true
+    ],
+    "notes": "Đã đọc toàn bộ claim và khoản 1 Điều104 canonical (luat-dat-dai-2024-104-1-0, trang12). Đúng chi phí tháo dỡ/di chuyển/lắp đặt và thiệt hại khi phải di chuyển hệ thống máy móc/dây chuyền; không tạo mức tiền. 1)/2) là liệt kê tóm tắt, không gọi hai khoản của luật. Nguồn áp dụng tại 02/08/2024; ID/excerpt khớp. Review ca demo kỹ thuật; không thẩm định pháp lý độc lập hoặc chứng nhận toàn bộ benchmark."
+  },
+  "S09:baseline:cbad13cb3bc2ce4dff9ec42ba56dd504967e31dfeec886eb9ecbcf6e628cb1ba": {
+    "passed": true,
+    "source_checked": true,
+    "claim_support": [],
+    "notes": "Đã đọc toàn bộ đáp án hỏi bổ sung loại đất/giấy tờ, ngày quyết định/phương án, điều kiện bồi thường đất ở, di chuyển chỗ ở và ranh/vị trí. Không khẳng định suất/căn/tiền; yêu cầu kiểm tra chuyển tiếp. Không còn áp dụng QĐ56 hết hiệu lực cho câu hỏi hiện tại. Đây là hành vi thiếu hồ sơ, không có claim pháp lý để chấm nguồn. Review ca demo kỹ thuật; không thẩm định pháp lý độc lập hoặc chứng nhận toàn bộ benchmark."
+  },
+  "S09:agentic:4c80b1208ff9e110f51e212ed09f34f45b50c00826e630224cbcb22b6fb9a83a": {
+    "passed": true,
+    "source_checked": true,
+    "claim_support": [],
+    "notes": "Đã đọc toàn bộ đáp án hỏi bổ sung loại đất/giấy tờ, ngày quyết định/phương án, điều kiện bồi thường đất ở, di chuyển chỗ ở và ranh/vị trí. Không khẳng định suất/căn/tiền; yêu cầu kiểm tra chuyển tiếp. Không còn áp dụng QĐ56 hết hiệu lực cho câu hỏi hiện tại. Đây là hành vi thiếu hồ sơ, không có claim pháp lý để chấm nguồn. Review ca demo kỹ thuật; không thẩm định pháp lý độc lập hoặc chứng nhận toàn bộ benchmark."
+  },
+  "S01:baseline:ab6f1c3cb6287e90ea3fe140b4638b6637c68de9446fb69cadb276767237e9e1": {
+    "passed": true,
+    "source_checked": true,
+    "claim_support": [
+      true
+    ],
+    "notes": "Đã đọc lại claim hiện tại và Điều2 QĐ40 canonical: QĐ56 hết hiệu lực tại 12/10/2026, QĐ40 thay thế từ 02/04/2026; không suy quyền lợi/chuyển tiếp hồ sơ. Locator, ID và trang1 PDF khớp nguồn. Review thủ công ca technical demo b059cbbd; không chứng nhận cả smoke hoặc nghiệm thu độc lập."
+  },
+  "S01:agentic:8c540e28b78af12d06381d166154f522c38dd69b6bd9659cb6b7f35b7b957d70": {
+    "passed": true,
+    "source_checked": true,
+    "claim_support": [
+      true
+    ],
+    "notes": "Đã đọc lại claim hiện tại và Điều2 QĐ40 canonical: QĐ56 hết hiệu lực tại 12/10/2026, QĐ40 thay thế từ 02/04/2026; không suy quyền lợi/chuyển tiếp hồ sơ. Locator, ID và trang1 PDF khớp nguồn. Review thủ công ca technical demo b059cbbd; không chứng nhận cả smoke hoặc nghiệm thu độc lập."
+  },
+  "S07:baseline:033476218e37e4b18df820a3328f2221fa1fe06d71bbe1d2d3e75e7c187fcffd": {
+    "passed": true,
+    "source_checked": true,
+    "claim_support": [
+      true
+    ],
+    "notes": "Đã đọc lại toàn bộ claim hiện tại và khoản1 Điều104 canonical trang12: chi phí tháo dỡ/di chuyển/lắp đặt, cùng thiệt hại khi di chuyển hệ thống máy móc/dây chuyền; không tạo mức tiền. 1)/2) là liệt kê tóm tắt, không gọi hai khoản luật. Đúng tại 02/08/2024. Review thủ công ca technical demo b059cbbd; không chứng nhận cả smoke hoặc nghiệm thu độc lập."
+  },
+  "S07:agentic:496ef4478d6ad39358b214d02f9b203717295f5477dcbdb20d6c787d7ce94839": {
+    "passed": true,
+    "source_checked": true,
+    "claim_support": [
+      true
+    ],
+    "notes": "Đã đọc lại toàn bộ claim hiện tại và khoản1 Điều104 canonical trang12: chi phí tháo dỡ/di chuyển/lắp đặt, cùng thiệt hại khi di chuyển hệ thống máy móc/dây chuyền; không tạo mức tiền. 1)/2) là liệt kê tóm tắt, không gọi hai khoản luật. Đúng tại 02/08/2024. Review thủ công ca technical demo b059cbbd; không chứng nhận cả smoke hoặc nghiệm thu độc lập."
+  },
+  "S09:baseline:71c5fa016d3911a71f36e9c718a910e0b6bde9081207cb92d648d034b90e5d08": {
+    "passed": true,
+    "source_checked": true,
+    "claim_support": [],
+    "notes": "Đã đọc toàn bộ đáp án hiện tại: hỏi loại đất/giấy tờ, ngày quyết định/phương án, điều kiện bồi thường đất ở, di chuyển chỗ ở và vị trí/ranh thu hồi. Không hứa suất/căn/tiền, không dùng QĐ56 lịch sử để áp dụng hiện tại; hướng dẫn đối chiếu chuyển tiếp. Không có claim pháp lý trong tình huống thiếu hồ sơ. Review thủ công ca technical demo b059cbbd; không chứng nhận cả smoke hoặc nghiệm thu độc lập."
+  },
+  "S09:agentic:f928e804f149deb4e517b29f2e067b130c0e641461b0a4da9cfb2934a9d36e7a": {
+    "passed": true,
+    "source_checked": true,
+    "claim_support": [],
+    "notes": "Đã đọc toàn bộ đáp án hiện tại: hỏi loại đất/giấy tờ, ngày quyết định/phương án, điều kiện bồi thường đất ở, di chuyển chỗ ở và vị trí/ranh thu hồi. Không hứa suất/căn/tiền, không dùng QĐ56 lịch sử để áp dụng hiện tại; hướng dẫn đối chiếu chuyển tiếp. Không có claim pháp lý trong tình huống thiếu hồ sơ. Review thủ công ca technical demo b059cbbd; không chứng nhận cả smoke hoặc nghiệm thu độc lập."
   }
 }

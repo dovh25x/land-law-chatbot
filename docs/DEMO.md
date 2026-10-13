@@ -1,14 +1,12 @@
-# Demo khoảng 10 phút
+# Demo kỹ thuật khoảng 10 phút
 
-Chỉ demo pháp lý sau khi release được công bố và `/readyz` + smoke thành công. Nếu còn blocker, trình bày trạng thái thật trong `IMPLEMENTATION_STATUS.md`, không giả lập câu trả lời.
+Mở https://hanoi-land-law.pages.dev. Corpus `corpus-de584c31fc95f9a2` đã công bố: 69 tài liệu/7.610 vector, Groq `openai/gpt-oss-20b` và E5 ONNX 384 chiều. Nhãn “Demo kỹ thuật — chưa nghiệm thu pháp lý” và ngày kiểm tra nguồn luôn hiển thị. Benchmark đầy đủ còn pending; không trình bày tập core sáu lượt như tỷ lệ chất lượng toàn hệ thống.
 
-Hiện có thể mở https://hanoi-land-law.pages.dev để xem giao diện, ba hồ sơ dự án và trạng thái corpus; hỏi một câu để kiểm tra SSE, trace và hành vi thiếu căn cứ. Đây là demo hạ tầng, chưa thực hiện kịch bản hỏi đáp pháp lý dưới đây. API đang chạy tại https://land-law-chatbot.onrender.com trên Render Free.
+1. **Phút 0–1:** xem nhãn, ngày kiểm tra và các nguồn còn thiếu; giới thiệu phạm vi Hà Nội, tình huống đã ẩn danh và ba dự án. Backend Render Free có thể cần khởi động.
+2. **Phút 1–3:** hỏi “Quyết định 56/2024/QĐ-UBND Hà Nội còn hiệu lực ngày 12/10/2026 không, văn bản nào thay thế?”. Mở Điều2 QĐ40, link Công báo và trang PDF. Xem trace tra cứu/quan hệ hiệu lực. Luồng này đã chạy thật trên browser.
+3. **Phút 3–5:** đặt thời điểm 02/08/2024, hỏi “Điều 104 Luật Đất đai 2024 quy định bồi thường chi phí di chuyển tài sản như thế nào?”. So sánh baseline/agentic, mở nguồn đầy đủ và xem calls/latency. Hai chế độ đã có đáp án thật qua HTTPS; mẫu live còn thiếu phần diễn giải riêng thiệt hại máy móc, không gọi là nghiệm thu pháp lý hoàn chỉnh.
+4. **Phút 5–6:** đặt thời điểm 12/10/2026, hỏi “Nhà tôi sắp bị thu hồi. Tôi chắc chắn được một căn tái định cư đúng không?”. Hệ thống cần loại đất, giấy tờ, mốc phương án/quyết định và điều kiện di chuyển chỗ ở; không hứa quyền lợi hộ. Hành vi này đã source-review ở cả hai chế độ.
+5. **Phút 6–8:** mở Thư viện văn bản (69 nguồn), ba hồ sơ Vành đai4/sông Hồng/Olympic (năm nguồn mỗi dự án). Phân biệt bối cảnh công khai với căn cứ thu hồi/thửa và quyền lợi hộ. Tải lại trang để kiểm tra hội thoại; nguồn và trace vẫn mở được. Có thể thử câu tiếp nối và câu không dấu; đánh giá rộng hơn còn đang hoàn thiện.
+6. **Phút 8–10:** xem báo cáo và giải thích trạng thái pending/null, cấu hình/release được đánh giá. Trình bày pipeline, vector Colab/CPU runtime, giới hạn workflow, session isolation, SSE sau verifier, backup/restore và CI. Không tuyên bố agentic luôn tốt hơn baseline hoặc lấy hai mẫu latency làm p95.
 
-1. **Phút 0–1:** mở URL Cloudflare, chờ backend khởi động. Nêu phạm vi Hà Nội, tài liệu công khai, không upload hồ sơ/tính tiền/GIS từng thửa. Xem ngày kiểm tra nguồn.
-2. **Phút 1–3:** hỏi “Đất nông nghiệp bị thu hồi ở Hà Nội được bồi thường và hỗ trợ theo những điều kiện nào?”. Mở nguồn trích dẫn; đối chiếu điều/khoản và điều kiện còn thiếu. Hỏi tiếp “Nếu chưa có giấy chứng nhận thì cần kiểm tra thêm gì?” để xem hội thoại.
-3. **Phút 3–5:** xem QĐ 56/2024 tại 01/04/2026 và 02/04/2026; agent phải kiểm tra văn bản thay thế và chuyển tiếp. Mở trace công cụ/quan hệ, không trình bày suy nghĩ nội bộ.
-4. **Phút 5–7:** chọn lần lượt Vành đai 4, sông Hồng và Olympic. Hỏi “Tin khởi công có chứng minh thửa đất của tôi bị thu hồi hay được tái định cư không?”. Xem giới hạn của tin chính thức và nguồn dự án. Không suy ra vị trí thửa từ mô tả dự án.
-5. **Phút 7–8:** hỏi không dấu hoặc địa bàn huyện cũ “dat o huyen Thanh Tri cu co duoc boi thuong khong?”. Agent cần địa chỉ/xã mới, không ánh xạ toàn huyện sang một xã.
-6. **Phút 8–10:** xem báo cáo hai chế độ cùng corpus/model/dataset. Trình bày Recall@8, rubric, support, p95/calls và các ca không cải thiện. Phân biệt kết quả đã rà soát với pending/null; minh họa hết quota/cold start từ kiểm thử vận hành, không làm cạn quota thật chỉ để demo.
-
-Nghiệm thu cần URL hoạt động, báo cáo benchmark acceptance đạt, source coverage đạt (có toàn văn lịch sử QĐ56), kiểm thử trọng yếu, bảo vệ phiên, restore/rollback và smoke. Giao diện đẹp hoặc unit tests pass không thay thế các bằng chứng đó.
+Receipt: `reports/live-demo.json`, `live-ui.json`, `technical-release-gate.json`, `publication.json`, `runtime-tests.json` và `ci.json`. Full gate 20 cặp smoke và nghiệm thu 80 câu vẫn giữ nguyên; xem `IMPLEMENTATION_STATUS.md` và `OPERATIONS.md` để tiếp tục.

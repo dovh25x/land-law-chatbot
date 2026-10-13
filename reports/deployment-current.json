@@ -1,23 +1,60 @@
 {
-  "checked_at": "2026-10-13T15:16:28.759240+00:00",
+  "checked_at": "2026-10-13T16:36:07.911106+00:00",
   "backend_url": "https://land-law-chatbot.onrender.com",
   "frontend_url": "https://hanoi-land-law.pages.dev",
-  "commit": "c509a5a168337a6ba984327c66732abd87a147a8",
-  "deploy_id": "dep-db74liui0phs738igtt0",
+  "commit": "5063a43ba8c78eb882069f32fe0b7c9fcb910e16",
+  "deploy_id": "dep-db75kq59fdbs73f4bb0g",
   "status": "live",
-  "ready_http": 503,
+  "ready_http": 200,
   "readiness": {
-    "status": "not_ready",
+    "status": "ready",
     "database": true,
     "llm_configured": true,
-    "corpus_release": null,
-    "checked_at": null,
+    "corpus_release": "corpus-de584c31fc95f9a2",
+    "checked_at": "2026-10-11T17:32:27Z",
     "storage": "postgresql",
-    "publication_profile": "staging",
+    "publication_profile": "technical_demo",
     "quality_status": "acceptance_pending",
-    "retrieval_mode": "unavailable",
-    "coverage_gaps": []
+    "retrieval_mode": "hybrid",
+    "coverage_gaps": [
+      {
+        "document_id": "qd-10-2017-hanoi",
+        "document_number": "10/2017/QĐ-UBND",
+        "title": "Quy định bồi thường, hỗ trợ và tái định cư Hà Nội (lịch sử)",
+        "url": "https://vbpl.vn/TW/Pages/vbpq-toanvan.aspx?ItemID=121164",
+        "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+      },
+      {
+        "document_id": "qd-30-2019-hanoi",
+        "document_number": "30/2019/QĐ-UBND",
+        "title": "Quy định và bảng giá các loại đất Hà Nội 2020–2024 (lịch sử)",
+        "url": "https://vanban.hanoi.gov.vn/chi-tiet-van-ban/quyet-dinh-so-30-2019-qd-ubnd-cua-ubnd-tp-ha-noi-ve-viec-ban-hanh-quy-dinh-va-bang-gia-cac-loai-dat-189067",
+        "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+      },
+      {
+        "document_id": "qd-20-2023-hanoi",
+        "document_number": "20/2023/QĐ-UBND",
+        "title": "Sửa đổi bảng giá đất Quyết định 30/2019",
+        "url": "https://vbpl.vn/hanoi/Pages/vbpq-toanvan.aspx?ItemID=164473",
+        "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+      },
+      {
+        "document_id": "nd-123-2024",
+        "document_number": "123/2024/NĐ-CP",
+        "title": "Xử phạt vi phạm hành chính lĩnh vực đất đai",
+        "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=211356",
+        "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+      },
+      {
+        "document_id": "ring4-nq106-2022",
+        "document_number": "106/NQ-CP",
+        "title": "Triển khai Nghị quyết 56/2022/QH15 Vành đai 4",
+        "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=206398",
+        "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+      }
+    ]
   },
-  "legal_qa_published": false,
-  "scope": "Clause/point/eligibility verification correction deployed; critical source review still pending."
+  "legal_qa_published": true,
+  "full_acceptance_passed": false,
+  "scope": "Live published technical demo. Both real HTTPS modes and desktop/mobile sources/trace/history checked; full legal acceptance remains pending."
 }
