@@ -546,9 +546,16 @@ class Agent:
             if selected_ids is not None and item['citation_id'] not in selected_ids:
                 continue
             document_id=item['document_id']
-            documents.setdefault(document_id,{key:item[key] for key in (
+            metadata={key:item[key] for key in (
                 'document_id','title','document_number','kind','effective_from','effective_to',
-                'provision_validity','legal_relations','source_review_notes')})
+                'provision_validity','legal_relations','source_review_notes')}
+            if self.provider.settings.llm_provider=='groq':
+                fields=['source_id','target_id','type','source_locator','target_locators',
+                        'target_locators_complete','source_effective_from','source_verified']
+                metadata['legal_relation_fields']=fields
+                metadata['legal_relations']=[[relation.get(key) for key in fields]
+                                             for relation in item['legal_relations']]
+            documents.setdefault(document_id,metadata)
             passage={key:item[key] for key in (
                 'citation_id','document_id','page','locator','text','applicability')}
             if self.provider.settings.llm_provider=='groq' and selected_ids is None:
@@ -626,6 +633,7 @@ class Agent:
                 "relevant historical or transitional rule. future may support kind=applicability stating NOT yet effective, "
                 "never current rights. provision_specific requires the exact clause's dates, not the whole article's status. "
                 "Preserve actors exactly: Chủ tịch UBND is different from UBND. Explain material conditions/exceptions "
+                    "An article heading may combine different actors; the relevant numbered clause must prove any origin actor. "
                 "in the cited clause, including delayed-payment treatment when explaining an old approved plan. "
                 "Only state requested commencement dates when the operative cited text contains them; issue dates are not "
                 "commencement. Commencement/replacement alone does not exclude every old case: transitions need their own source. "
@@ -808,6 +816,19 @@ class Agent:
                     structural_issues.append(f'Claim {index}: không dùng nhãn hiệu lực để áp dụng quyền lợi từ văn bản tương lai')
             cited_text=' '.join(evidence[i].chunk.text for i in claim.citation_ids if i in evidence)
             normalized_source=normalize(cited_text)
+            references=re.findall(r'\b(?:diem\s+[a-zđ]\s+)?khoan\s+\d+\s+dieu\s+\d+[a-z]?\b',
+                                  normalize(state['request'].message)+' '+normalized_claim)
+            expanded_claim=re.sub(r'\bubnd\b','uy ban nhan dan',normalized_claim)
+            origin=re.search(r'\btu\s+(.+?)\s+(?:sang|cho)\s+',expanded_claim)
+            if origin and 'chu tich uy ban nhan dan cap huyen' in origin[1]:
+                # A heading can name both the committee and its chair while
+                # a numbered clause transfers only the committee's powers.
+                blocks=re.split(r'(?=\b\d+\.\s+tham quyen cua\b)',normalized_source)
+                for block in blocks:
+                    actor=re.match(r'\d+\.\s+tham quyen cua\s+(.+?)\s+(?:theo|chuyen|duoc|quy dinh)\b',block)
+                    if (actor and any(reference in block for reference in references)
+                            and 'chu tich' not in actor[1]):
+                        structural_issues.append(f'Claim {index}: khoản cụ thể chuyển thẩm quyền của UBND cấp huyện, không phải Chủ tịch UBND cấp huyện; tiêu đề chung không chứng minh chủ thể bổ sung')
             number_pattern=r'(?<![\d/])(\d{1,6})/((?:19|20)\d{2})(?!/\d)'
             def act_numbers(text):
                 return {f'{int(sequence)}/{year}' for sequence,year in re.findall(number_pattern,text)}

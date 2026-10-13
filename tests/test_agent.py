@@ -732,3 +732,38 @@ async def test_planner_quota_does_not_trigger_fallback_or_unverified_answer(stor
         ChatRequest(session_id=sid,message='Điều kiện bồi thường?'),noop)
     assert result.status=='limited' and result.tool_calls==0 and not result.verified_claims
     assert result.retry_after==3600
+
+
+@pytest.mark.parametrize('additional_origin', [True,False])
+async def test_authority_origin_is_proven_by_requested_clause_not_combined_heading(store,settings,additional_origin):
+    source=('Điều 5. Thẩm quyền của Ủy ban nhân dân cấp huyện, Chủ tịch Ủy ban nhân dân cấp huyện '
+        'chuyển giao cho Chủ tịch Ủy ban nhân dân cấp xã. '
+        '1. Thẩm quyền của Ủy ban nhân dân cấp huyện theo quy định của Luật Đất đai '
+        'chuyển giao cho Chủ tịch Ủy ban nhân dân cấp xã thực hiện, bao gồm: '
+        'd) Quyết định phê duyệt phương án bồi thường, hỗ trợ, tái định cư quy định tại điểm c khoản 3 Điều 87 Luật Đất đai.')
+    release(store,[document(text=source)])
+    sid,_=session(store)
+    origin='Ủy ban nhân dân cấp huyện, Chủ tịch UBND cấp huyện' if additional_origin else 'Ủy ban nhân dân cấp huyện'
+    draft=Draft(status='answered',claims=[Claim(text=f'Thẩm quyền tại điểm c khoản 3 Điều 87 chuyển từ {origin} sang Chủ tịch Ủy ban nhân dân cấp xã.',citation_ids=['law-1'])])
+    result=await Agent(store,FakeProvider(settings,draft=draft)).run(ChatRequest(session_id=sid,
+        message='Thẩm quyền ở điểm c khoản 3 Điều 87 chuyển cho ai?',mode='baseline'),noop)
+    assert result.status==('insufficient_evidence' if additional_origin else 'answered')
+    if additional_origin:assert not result.verified_claims
+
+
+def test_legal_relation_prose_cannot_crowd_required_statutory_passages_out_of_prompt(store,settings):
+    from landlaw.models import Evidence
+    law=document(text='Điều 95. Khoản 1 xác định đối tượng. Khoản 2 có giấy chứng nhận hoặc các giấy tờ khác.')
+    other=law.chunks[0].model_copy(update={'id':'law-2','text':'Điều 95. Có quyết định giao đất hoặc giấy tờ nhận chuyển nhượng hợp pháp.'})
+    relations=[{'source_id':f'guide-{i}','target_id':law.id,'type':'guides','source_locator':'Điều 3',
+        'target_locators':['Điều 95'],'target_locators_complete':True,'source_url':str(law.url),
+        'explanation':'Bối cảnh dài không thay thế căn cứ. '*150} for i in range(12)]
+    state={'evidence':[Evidence(chunk=law.chunks[0],document=law),Evidence(chunk=other,document=law)],
+        'release':{'documents':[law.model_dump(mode='json')],'relations':relations}}
+    agent=Agent(store,FakeProvider(settings.model_copy(update={'llm_provider':'groq'})))
+    passages,documents=agent.prompt_context(state)
+    assert {p['citation_id'] for p in passages}=={'law-1','law-2'}
+    fields=documents[0]['legal_relation_fields'];rows=documents[0]['legal_relations']
+    assert len(rows)==12 and 'target_locators_complete' in fields
+    assert rows[0][fields.index('target_locators')]==['Điều 95']
+    assert all(p['text'] in {law.chunks[0].text,other.text} for p in passages)

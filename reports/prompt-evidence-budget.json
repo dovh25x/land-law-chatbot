@@ -1,0 +1,25 @@
+{
+  "checked_at": "2026-10-13T14:00:37.628343+00:00",
+  "release": "corpus-de584c31fc95f9a2",
+  "configuration_sha256": "2126675f376cde8cef7efd8ffb79dd0ce3b5bc46eb03a6f2a187e8fc02eabcec",
+  "scope": "Real Supabase/CPU retrieval-only measurement, no LLM. Compact typed relationship rows retain IDs/type/locators/completeness/dates/verification; complete legal passages unchanged. Not an answer quality certification.",
+  "before": {
+    "document_metadata_chars": 5422,
+    "selected_passages": [
+      "luat-dat-dai-2024-99-0-0",
+      "luat-dat-dai-2024-97-1-0"
+    ],
+    "complete_clause_2_heading": false
+  },
+  "after": {
+    "document_metadata_chars": 1892,
+    "total_context_chars": 6439,
+    "selected_passages": [
+      "luat-dat-dai-2024-99-0-0",
+      "luat-dat-dai-2024-97-1-0",
+      "luat-dat-dai-2024-98-0-1",
+      "luat-dat-dai-2024-98-0-parent"
+    ],
+    "complete_clause_2_heading": true
+  }
+}

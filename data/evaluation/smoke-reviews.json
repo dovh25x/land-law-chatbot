@@ -311,5 +311,85 @@
       true
     ],
     "notes": "Điều 2 QĐ40 xác định hiệu lực 02/04/2026 sau ngày hỏi 01/03/2026. Claim chỉ mốc chưa có hiệu lực; hỏi ngày quyết định/phương án và hồ sơ ẩn danh, không tính tiền hoặc khẳng định quyền lợi. Có lặp ý hỏi bổ sung ở agentic nhưng nội dung pháp lý đúng nguồn."
+  },
+  "S01:baseline:c4f28dc1ee63fb98a08df5344080c62390f132afdabc151a3381db3119ba8a0f": {
+    "passed": true,
+    "source_checked": true,
+    "claim_support": [
+      true
+    ],
+    "notes": "Đối chiếu Điều 2 QĐ40: thay thế QĐ56 và hiệu lực từ 02/04/2026; ngày hỏi 12/10/2026 sau mốc. Claim không suy quyền lợi hay cách xử lý mọi hồ sơ cũ."
+  },
+  "S01:agentic:d292b3bacf467a9371a697e826fddda2340fe3b6bcdd8aa08de4c74577260e83": {
+    "passed": true,
+    "source_checked": true,
+    "claim_support": [
+      true
+    ],
+    "notes": "Đối chiếu Điều 2 QĐ40: thay thế QĐ56 và hiệu lực từ 02/04/2026; ngày hỏi 12/10/2026 sau mốc. Claim không suy quyền lợi hay cách xử lý mọi hồ sơ cũ."
+  },
+  "S02:baseline:611139c3a4dd2d1cc8d6f7ede9f55c7689cb512f641c36d54fc412920362237e": {
+    "passed": true,
+    "source_checked": true,
+    "claim_support": [
+      true
+    ],
+    "notes": "Điều 2 QĐ40 xác định 02/04/2026 sau ngày hỏi 01/03/2026; chưa áp dụng ngay để tính quyền lợi. Hỏi mốc quyết định/phương án và loại giấy tờ ẩn danh, không tính tiền hoặc khẳng định entitlement."
+  },
+  "S02:agentic:ea14b9ec8ca83eb91b7ff802463a1b04e57d5a9eb5f7515fbd1c7c7b94dcec6f": {
+    "passed": true,
+    "source_checked": true,
+    "claim_support": [
+      true
+    ],
+    "notes": "Điều 2 QĐ40 xác định 02/04/2026 sau ngày hỏi 01/03/2026; chưa áp dụng ngay để tính quyền lợi. Hỏi mốc quyết định/phương án và loại giấy tờ ẩn danh, không tính tiền hoặc khẳng định entitlement."
+  },
+  "S03:baseline:cfc31f7e5dcf96a35b63f627d211c4582ad9a5b18187d60c62650f29e29f92b0": {
+    "passed": true,
+    "source_checked": true,
+    "claim_support": [
+      true
+    ],
+    "notes": "Nguyên văn Điều 2 QĐ10 chỉ bãi bỏ Điều 2 QĐ38. Claim đúng phạm vi một phần tại 20/01/2026, không suy toàn văn hết hiệu lực hoặc áp dụng QĐ40 trước 02/04."
+  },
+  "S03:agentic:10772f24510ec1d97cc77cfbb972530d38e0847490fcbff3b45dc2151c517c88": {
+    "passed": true,
+    "source_checked": true,
+    "claim_support": [
+      true
+    ],
+    "notes": "Nguyên văn Điều 2 QĐ10 chỉ bãi bỏ Điều 2 QĐ38. Claim đúng phạm vi một phần tại 20/01/2026, không suy toàn văn hết hiệu lực hoặc áp dụng QĐ40 trước 02/04."
+  },
+  "S04:baseline:26dfa93292a6ae1ea1f61d94be557419ef3fe40db738da56476dd3fbd1c2fe9d": {
+    "passed": true,
+    "source_checked": true,
+    "claim_support": [
+      true
+    ],
+    "notes": "Đáp đúng câu hỏi làm lại toàn bộ phương án: khoản 2 Điều 31 NĐ88 cho tiếp tục phương án đã phê duyệt trước hiệu lực nhưng chưa thực hiện. Không nhầm với khoản 1 chưa có phương án. Quy tắc chi trả chậm theo pháp luật tại ngày quyết định thu hồi có trong excerpt dẫn nguồn công khai khi mở citation; nội dung trả lời chính không diễn giải riêng phần chi trả chậm. Tất cả claim được nguồn hỗ trợ."
+  },
+  "S04:agentic:5ddf489acdf32cbc668ee7989f599234888d2b5f183d9eafabbde02461932705": {
+    "passed": true,
+    "source_checked": true,
+    "claim_support": [
+      true
+    ],
+    "notes": "Đáp đúng câu hỏi làm lại toàn bộ phương án: khoản 2 Điều 31 NĐ88 cho tiếp tục phương án đã phê duyệt trước hiệu lực nhưng chưa thực hiện. Không nhầm với khoản 1 chưa có phương án. Quy tắc chi trả chậm theo pháp luật tại ngày quyết định thu hồi có trong excerpt dẫn nguồn công khai khi mở citation; nội dung trả lời chính không diễn giải riêng phần chi trả chậm. Tất cả claim được nguồn hỗ trợ."
+  },
+  "S05:baseline:32c0e99b269b3bf90721a612a23f14706b8232fdb77c3de4cfb081df389a9d05": {
+    "passed": false,
+    "source_checked": true,
+    "claim_support": [
+      false
+    ],
+    "notes": "Khoản 1 điểm d Điều 5 NĐ151 chuyển thẩm quyền UBND cấp huyện cho Chủ tịch UBND cấp xã. Claim gán thêm Chủ tịch cấp huyện vào thẩm quyền chuyển đi của việc phê duyệt phương án; tiêu đề chung Article5 không chứng minh chủ thể cũ cho riêng khoản1 điểm d. Verifier model đã bỏ sót, ca được ghi thất bại và thêm guard bằng operative clause."
+  },
+  "S05:agentic:f28ad5f5ee8e95658b950c69dcd4ce75d2d124ab5a1c3c3638f2fe0627be9c47": {
+    "passed": false,
+    "source_checked": true,
+    "claim_support": [
+      false
+    ],
+    "notes": "Khoản 1 điểm d Điều 5 NĐ151 chuyển thẩm quyền UBND cấp huyện cho Chủ tịch UBND cấp xã. Claim gán thêm Chủ tịch cấp huyện vào thẩm quyền chuyển đi của việc phê duyệt phương án; tiêu đề chung Article5 không chứng minh chủ thể cũ cho riêng khoản1 điểm d. Verifier model đã bỏ sót, ca được ghi thất bại và thêm guard bằng operative clause."
   }
 }
