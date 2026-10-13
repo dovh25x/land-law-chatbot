@@ -1,0 +1,19 @@
+{
+  "scope": "Operator-only exact o200k_harmony tokenizer counts for S01; model output budget included, actual provider request still required. No tokenizer added to Render.",
+  "measurements": [
+    {
+      "schema_name": "Draft",
+      "system_tokens": 834,
+      "payload_tokens": 3404,
+      "schema_tokens": 341,
+      "request_tokens_estimate_with_2048_output": 6627
+    },
+    {
+      "schema_name": "Plan",
+      "system_tokens": 415,
+      "payload_tokens": 3953,
+      "schema_tokens": 269,
+      "request_tokens_estimate_with_2048_output": 6685
+    }
+  ]
+}

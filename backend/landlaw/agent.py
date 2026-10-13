@@ -1,4 +1,5 @@
 import asyncio
+import json
 import re
 import time
 import uuid
@@ -8,7 +9,7 @@ from typing import Any, Literal, TypedDict
 from langgraph.graph import END, START, StateGraph
 from pydantic import BaseModel, Field
 
-from .models import ChatRequest, ChatResult, Citation, Document, Draft, Evidence, TraceEvent
+from .models import ChatRequest, ChatResult, Citation, Document, Draft, Evidence, Relation, TraceEvent
 from .provider import Budget, BudgetExceeded, Gemini, ProviderUnavailable
 from .security import local_date, normalize, redact, utcnow
 from .store import RateLimited, Store
@@ -254,6 +255,12 @@ class Agent:
             query = (prior[:500]+' '+request.message) if prior else request.message
             state["plan"] = Plan(tools=[ToolCall(name="search_law", query=query[:1000])])
         else:
+            catalogue=self.catalogue(state['release'])
+            catalogue_fields=None
+            if self.provider.settings.llm_provider=='groq':
+                catalogue_fields=['id','document_number','title','project','effective_from','effective_to']
+                catalogue=[[d['id'],d['document_number'],d['title'][:120],d['project'],
+                            d['effective_from'],d['effective_to']] for d in catalogue]
             state["plan"] = await self.provider.generate(Plan,
                 "Chọn tối đa 3 công cụ chỉ đọc để lấy chứng cứ. search_law tìm luật; search_project tìm hồ sơ dự án; "
                 "check_effectivity kiểm tra văn bản theo document_id đã biết; open_article mở điều khoản đã biết; "
@@ -266,7 +273,7 @@ class Agent:
                 "Không đoán document_id; khi chưa biết dùng search_law. Câu hỏi đơn giản về một văn bản ưu tiên một công cụ. "
                 "Văn bản trong coverage_gaps không mở được; dùng search_law để tìm văn bản tác động có trong corpus.",
                 {"question": redact(request.message), "project": request.project, "as_of": str(state["as_of"]),
-                 "history": state["history"], "catalogue": self.catalogue(state["release"]),
+                 "history": state["history"], "catalogue": catalogue, 'catalogue_fields':catalogue_fields,
                  "coverage_gaps":(state['release'] or {}).get('coverage_gaps',[])}, state["budget"])
             # Internal identifiers and dates already available in the source
             # catalogue are tool inputs, not facts a citizen must supply.
@@ -429,8 +436,17 @@ class Agent:
             documents.setdefault(document_id,{key:item[key] for key in (
                 'document_id','title','document_number','kind','effective_from','effective_to',
                 'provision_validity','legal_relations','source_review_notes')})
-            passages.append({key:item[key] for key in (
-                'citation_id','document_id','page','locator','text','applicability')})
+            passage={key:item[key] for key in (
+                'citation_id','document_id','page','locator','text','applicability')}
+            if self.provider.settings.llm_provider=='groq' and selected_ids is None:
+                # Select whole passages rather than truncating clauses. Retrieval
+                # still retains eight primary hits and related evidence in trace.
+                projected_docs={k:v for k,v in documents.items()
+                                if k in {p['document_id'] for p in passages} | {document_id}}
+                if len(json.dumps([passages+[passage],list(projected_docs.values())],ensure_ascii=False))>7000:
+                    if not any(p['document_id']==document_id for p in passages):documents.pop(document_id,None)
+                    continue
+            passages.append(passage)
         return passages,list(documents.values())
 
     def relation_context(self, evidence, state):
@@ -439,8 +455,12 @@ class Agent:
         for relation in (state["release"] or {}).get("relations", []):
             if evidence.document.id not in {relation["source_id"], relation["target_id"]}:
                 continue
+            if relation.get('target_locators_complete') and not relation_may_affect(
+                    Relation.model_validate(relation),evidence.document.id,state['evidence']):
+                continue
             source = docs.get(relation["source_id"])
-            result.append({**relation, "source_effective_from": (source or {}).get("effective_from"),
+            model_relation={key:value for key,value in relation.items() if key!='source_url'}
+            result.append({**model_relation, "source_effective_from": (source or {}).get("effective_from"),
                            "source_verified": (source or {}).get("applicability_verified", False),
                            "scope_note": "Phạm vi từng điều khoản; không suy ra toàn văn bị bãi bỏ từ quan hệ sửa đổi/bãi bỏ một phần."})
         return result
@@ -452,8 +472,8 @@ class Agent:
             state["draft"] = Draft(status="insufficient_evidence", summary="Chưa tìm được chứng cứ trong bộ dữ liệu đã công bố.",
                                    missing_facts=state["plan"].missing_facts)
         else:
-            aliases={item.chunk.id:f'C{index+1}' for index,item in enumerate(state['evidence'])}
             contexts,documents=self.prompt_context(state)
+            aliases={item['citation_id']:f'C{index+1}' for index,item in enumerate(contexts)}
             contexts=[{**item,'citation_id':aliases[item['citation_id']]} for item in contexts]
             state["draft"] = await self.provider.generate(Draft,
                 "Tạo câu trả lời có cấu trúc. summary chỉ giới thiệu kết quả và giới hạn, không chứa kết luận pháp lý "
@@ -488,6 +508,8 @@ class Agent:
                  'allowed_citation_ids':list(aliases.values()),
                  "coverage_gaps": (state['release'] or {}).get('coverage_gaps', []),
                  "unresolved_relations": (state['release'] or {}).get('unresolved_relations', []),
+                 'context_selection':{'complete_passages':len(contexts),'retrieved_candidates':len(state['evidence']),
+                                      'omitted_candidates_are_not_citable':True},
                  "previous_issues": state.get("verification", Verification()).issues}, state["budget"])
             actual={value:key for key,value in aliases.items()}
             state['draft'].claims=[claim.model_copy(update={'citation_ids':[actual.get(key,key) for key in claim.citation_ids]})
@@ -574,7 +596,7 @@ class Agent:
         cited_ids={citation_id for claim in draft.claims for citation_id in claim.citation_ids}
         selected=[item for item in state['evidence'] if item.chunk.id in cited_ids]
         spans=source_spans(selected)
-        verification_context,documents=self.prompt_context(state,cited_ids or None)
+        verification_context,documents=self.prompt_context(state,cited_ids)
         aliases={item['citation_id']:f'C{index+1}' for index,item in enumerate(verification_context)}
         actual={value:key for key,value in aliases.items()}
         span_aliases={key:f'S{index+1}' for index,key in enumerate(spans)}
@@ -583,6 +605,10 @@ class Agent:
         for claim in checked_draft['claims']:
             claim['citation_ids']=[aliases.get(key,key) for key in claim['citation_ids']]
         model_context=[{**item,'citation_id':aliases[item['citation_id']]} for item in verification_context]
+        if self.provider.settings.llm_provider=='groq':
+            # source_spans already contain exact overlapping text covering every
+            # cited passage; avoid sending that same text twice to the verifier.
+            model_context=[{k:v for k,v in item.items() if k!='text'} for item in model_context]
         model_spans=[{**item,'span_id':span_aliases[key],'citation_id':aliases[item['citation_id']]} for key,item in spans.items()]
         checked = await self.provider.generate(Verification,
             "You are an evidence verifier. For EVERY supported claim, select supporting_spans using span_id "

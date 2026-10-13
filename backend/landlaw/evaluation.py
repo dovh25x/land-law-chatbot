@@ -206,6 +206,9 @@ async def evaluate(settings, store, provider, split="dev", release_id=None, limi
             records=[r for r in records if not (r['case_id']==result['case_id'] and r['mode']==result['mode'])]
             records.append(result)
             json_write(records_path,records)
+            print(json.dumps({'evaluation_progress':{'case_id':result['case_id'],'mode':result['mode'],
+                'status':result['result']['status'],'elapsed_ms':result['result']['elapsed_ms'],
+                'llm_calls':result['result']['llm_calls'],'checkpoint_records':len(records)}},ensure_ascii=False),flush=True)
         if any(r['result']['status'] in {'limited','error'} for r in results):
             break
     review_path = settings.data_dir / ('evaluation/smoke-reviews.json' if split=='smoke' else 'evaluation/reviews.json')

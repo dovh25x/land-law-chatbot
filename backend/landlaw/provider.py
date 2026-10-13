@@ -197,7 +197,7 @@ class Gemini:
     async def generate(self, schema: type[BaseModel], instruction: str, payload: dict, budget: Budget):
         body = {
             "systemInstruction": {"parts": [{"text": SYSTEM_BOUNDARY + instruction}]},
-            "contents": [{"role": "user", "parts": [{"text": json.dumps(payload, ensure_ascii=False)}]}],
+            "contents": [{"role": "user", "parts": [{"text": json.dumps(payload, ensure_ascii=False,separators=(',',':'))}]}],
             "generationConfig": {"temperature": 0, "maxOutputTokens": 4096,
                                  "responseMimeType": "application/json", "responseJsonSchema": generation_schema(schema)},
         }
@@ -267,6 +267,8 @@ class Gemini:
             try:delay=math.ceil(float(response.headers.get('retry-after','60')))
             except (ValueError,TypeError):delay=60
             raise RateLimited(min(86400,max(1,delay)),source='provider')
+        if response.status_code==413:
+            raise ProviderUnavailable('Ngữ cảnh vượt dung lượng request của Groq Free. Hãy tách câu hỏi để đối chiếu từng vấn đề.')
         if response.status_code>=400:
             raise ProviderUnavailable(f'Groq trả HTTP {response.status_code}',retryable=response.status_code>=500)
         result=response.json()

@@ -147,6 +147,25 @@ def test_prompt_keeps_passages_and_deduplicates_document_legal_metadata(store,se
     assert len(selected)==len(metadata)==1 and selected[0]['citation_id']=='law-2'
 
 
+def test_groq_context_selects_complete_passages_and_never_cites_omitted_text(store,settings):
+    from landlaw.models import Evidence
+    import json
+    law=document()
+    chunks=[law.chunks[0].model_copy(update={'id':f'law-{i}','text':('Điều kiện pháp lý đầy đủ. '*90)+str(i)})
+            for i in range(8)]
+    state={'evidence':[Evidence(chunk=c,document=law) for c in chunks],
+           'release':{'documents':[law.model_dump(mode='json')],'relations':[]}}
+    agent=Agent(store,FakeProvider(settings.model_copy(update={'llm_provider':'groq'})))
+    passages,documents=agent.prompt_context(state)
+    assert 0<len(passages)<8
+    assert len(json.dumps([passages,documents],ensure_ascii=False))<=7000
+    assert all(p['text']==next(c.text for c in chunks if c.id==p['citation_id']) for p in passages)
+    # Verification can always reopen every cited full passage regardless of the
+    # synthesis budget, so unsupported parts cannot disappear during checking.
+    selected,_=agent.prompt_context(state,{c.id for c in chunks})
+    assert len(selected)==8 and len(state['evidence'])==8
+
+
 async def test_missing_tool_identifier_falls_back_and_never_becomes_public_question(store,settings):
     law=document(document_number='31/2024/QH15',issued_on=date(2024,1,18))
     release(store,[law]);sid,_=session(store)
