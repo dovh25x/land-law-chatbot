@@ -783,9 +783,8 @@ async def test_clause_attribution_cannot_use_another_numbered_clause(store,setti
     assert result.status==expected
 
 
-@pytest.mark.parametrize('qualification,expected', [('', 'insufficient_evidence'),
-    ('Các trường hợp phải thuộc đối tượng quy định tại khoản 1 Điều này. ', 'answered')])
-async def test_alternative_conditions_preserve_eligibility_prerequisite(store,settings,qualification,expected):
+@pytest.mark.parametrize('qualification', ['', 'Các trường hợp phải thuộc đối tượng quy định tại khoản 1 Điều này. '])
+async def test_alternative_conditions_preserve_eligibility_prerequisite(store,settings,qualification):
     source=('Điều 95. Điều kiện được bồi thường về đất. '
         '2. Các trường hợp quy định tại khoản 1 Điều này được bồi thường về đất khi có một trong các điều kiện sau đây: '
         'a) Có Giấy chứng nhận quyền sử dụng đất; b) Có quyết định giao đất của cơ quan nhà nước có thẩm quyền;')
@@ -794,11 +793,15 @@ async def test_alternative_conditions_preserve_eligibility_prerequisite(store,se
         'Giấy chứng nhận không phải là điều kiện duy nhất để được bồi thường về đất.',citation_ids=['law-1'])])
     result=await Agent(store,FakeProvider(settings,draft=draft)).run(ChatRequest(session_id=sid,
         message='Giấy chứng nhận có phải điều kiện duy nhất không?',mode='baseline'),noop)
-    assert result.status==expected
+    assert result.status=='answered'
+    assert 'khoản 1' in result.verified_claims[0].text
+    if not qualification:
+        assert 'Các trường hợp quy định tại khoản 1 Điều này được bồi thường về đất khi có một trong các điều kiện sau đây:' in result.verified_claims[0].text
+        assert any('giữ nguyên văn điều kiện' in e.summary for e in result.trace)
 
 
-@pytest.mark.parametrize('letter,expected', [('e','insufficient_evidence'),('đ','answered')])
-async def test_legal_list_point_letters_cannot_be_renumbered(store,settings,letter,expected):
+@pytest.mark.parametrize('letter', ['e','đ'])
+async def test_legal_list_point_letters_cannot_be_renumbered(store,settings,letter):
     source=('Điều 108. Hỗ trợ khi Nhà nước thu hồi đất. 1. Hỗ trợ bao gồm: '
         'a) Hỗ trợ ổn định đời sống; đ) Hỗ trợ tái định cư đối với trường hợp đủ điều kiện; '
         'e) Hỗ trợ để tháo dỡ, phá dỡ, di dời.')
@@ -806,4 +809,34 @@ async def test_legal_list_point_letters_cannot_be_renumbered(store,settings,lett
     draft=Draft(status='answered',claims=[Claim(text=f'Các nhóm hỗ trợ gồm a) Hỗ trợ ổn định đời sống; {letter}) Hỗ trợ tái định cư đối với trường hợp đủ điều kiện.',citation_ids=['law-1'])])
     result=await Agent(store,FakeProvider(settings,draft=draft)).run(ChatRequest(session_id=sid,
         message='Các nhóm hỗ trợ khi thu hồi đất?',mode='baseline'),noop)
-    assert result.status==expected
+    assert result.status=='answered'
+    text=result.verified_claims[0].text
+    assert 'Hỗ trợ tái định cư đối với trường hợp đủ điều kiện.' in text
+    if letter=='e':
+        assert 'e)' not in text and 'a)' not in text
+        assert any('bỏ ký hiệu liệt kê' in e.summary for e in result.trace)
+    else:assert 'đ)' in text
+
+
+async def test_explicit_wrong_legal_point_reference_is_not_silently_reformatted(store,settings):
+    source=('Điều 108. Hỗ trợ khi Nhà nước thu hồi đất. '
+        'a) Hỗ trợ ổn định đời sống; đ) Hỗ trợ tái định cư; e) Hỗ trợ tháo dỡ.')
+    release(store,[document(text=source)]);sid,_=session(store)
+    draft=Draft(status='answered',claims=[Claim(text='Điểm a) Hỗ trợ ổn định đời sống; điểm e) Hỗ trợ tái định cư.',citation_ids=['law-1'])])
+    result=await Agent(store,FakeProvider(settings,draft=draft)).run(ChatRequest(session_id=sid,
+        message='Điểm nào hỗ trợ tái định cư?',mode='baseline'),noop)
+    assert result.status=='insufficient_evidence' and not result.verified_claims
+
+
+async def test_known_future_act_routes_to_evidence_without_inferred_private_rights(store,settings):
+    doc=document(document_number='40/2026/QĐ-UBND',text='Quyết định này có hiệu lực thi hành từ ngày 02 tháng 4 năm 2026.')
+    doc.effective_from=date(2026,4,2)
+    release(store,[doc]);sid,_=session(store)
+    class NoModel(FakeProvider):
+        async def generate(self,*args):raise AssertionError('Future commencement must be proved from the source')
+    result=await Agent(store,NoModel(settings)).run(ChatRequest(session_id=sid,
+        message='Hồ sơ của tôi có áp dụng ngay Quyết định 40/2026/QĐ-UBND để tính quyền lợi không?',
+        as_of=date(2026,3,1),mode='agentic'),noop)
+    assert result.status=='clarification_needed' and result.llm_calls==0
+    assert result.citations and 'chưa có hiệu lực' in result.content
+    assert result.missing_facts and not any(c.kind=='legal_rule' for c in result.verified_claims)

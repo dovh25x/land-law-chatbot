@@ -265,6 +265,11 @@ class Agent:
         direct_effectivity=(1<=len(literal_numbers)<=2 and literal_numbers<=known_numbers
             and any(term in question for term in ('hieu luc','van ban nao thay the','kiem tra mau thuan','bai bo'))
             and not any(term in question for term in ('ho so','quyen loi','tinh tien','tinh boi thuong')))
+        future_date_question=('ap dung ngay' in question and len(literal_numbers)==1 and
+            any(d.get('applicability_verified') and d.get('effective_from') and
+                '/'.join(normalize(d.get('document_number') or '').split('/')[:2]) in literal_numbers and
+                date.fromisoformat(d['effective_from'])>(state.get('as_of') or request.as_of or local_date())
+                for d in (state['release'] or {}).get('documents',[])))
         article=re.search(r'\bdieu\s+(\d+[a-z]?)\b',question)
         named=[]
         for doc in (state['release'] or {}).get('documents',[]):
@@ -279,7 +284,7 @@ class Agent:
             # Baseline also receives the same conversational context; no planner call.
             query = (prior[:500]+' '+request.message) if prior else request.message
             state["plan"] = Plan(tools=[ToolCall(name="search_law", query=query[:1000])])
-        elif direct_effectivity:
+        elif direct_effectivity or future_date_question:
             state['plan']=Plan(tools=[ToolCall(name='search_law',query=request.message[:1000])])
             await self.event(state,'routing','Đã nhận diện số văn bản và yêu cầu kiểm tra hiệu lực; dùng tra cứu trực tiếp.',
                              'search_law')
@@ -824,7 +829,19 @@ class Agent:
                 all_claims=normalize(' '.join(c.text for c in draft.claims))
                 for clause in prerequisites:
                     if not re.search(rf'(?:thuoc|truong hop|doi tuong).{{0,80}}khoan {clause}\b|\bkhoan {clause}.{{0,80}}(?:truong hop|doi tuong|thuoc)',all_claims):
-                        structural_issues.append(f'Claim {index}: các điều kiện thay thế chỉ áp dụng cho trường hợp thuộc khoản {clause}; cần nêu điều kiện về đối tượng trước khi kết luận')
+                        # Preserve an explicit source qualification verbatim;
+                        # never infer eligibility or replace the model's rule.
+                        # The resulting complete claim still goes through the
+                        # same semantic verifier and applicability checks.
+                        opener=re.search(rf'Các trường hợp quy định tại khoản\s+{clause}\s+Điều này được[^.;:]{{1,200}}?khi có[^.;:]{{1,80}}:',cited_text,re.IGNORECASE)
+                        if opener:
+                            claim=claim.model_copy(update={'text':claim.text+' Lưu ý điều kiện áp dụng: “'+opener[0]+'”.'})
+                            draft.claims[index]=claim
+                            normalized_claim=normalize(claim.text)
+                            await self.event(state,'verification','Đã giữ nguyên văn điều kiện về đối tượng trong đoạn dẫn trước khi kiểm tra kết luận.',
+                                docs=sorted({evidence[i].document.id for i in claim.citation_ids if i in evidence}))
+                        else:
+                            structural_issues.append(f'Claim {index}: các điều kiện thay thế chỉ áp dụng cho trường hợp thuộc khoản {clause}; cần nêu điều kiện về đối tượng trước khi kết luận')
             for clause,article in re.findall(r'\bkhoan\s+(\d+)\s+dieu\s+(\d+[a-z]?)\b',normalized_claim):
                 reference=f'khoan {clause} dieu {article}'
                 # A cross-reference in the cited operative text can prove its
@@ -843,11 +860,24 @@ class Agent:
             if len(claimed_points)>1 and len(source_points)>1:
                 def point_body(body):
                     return ' '.join(word for word in re.findall(r'[\w]+',body) if word not in {'de','viec'})
+                wrong_points=[]
                 for letter,body in claimed_points:
                     prefix=' '.join(point_body(body).split()[:5])
                     if not any(letter==source_letter and prefix in point_body(source_body)
                                for source_letter,source_body in source_points):
-                        structural_issues.append(f'Claim {index}: ký hiệu điểm {letter}) không khớp nội dung của danh sách trong nguồn; giữ đúng ký hiệu hoặc dùng gạch đầu dòng')
+                        wrong_points.append(letter)
+                if wrong_points and not re.search(r'\bdiem\s+[a-zđ]\)',normalized_claim):
+                    # A summary's bare alphabetic enumeration is presentation,
+                    # not an inferred statutory point number. Remove misleading
+                    # labels while preserving every word/qualification. Explicit
+                    # legal point references are never silently rewritten.
+                    claim=claim.model_copy(update={'text':re.sub(r'(?<!\w)[a-zđ]\)\s+','',claim.text)})
+                    draft.claims[index]=claim
+                    normalized_claim=normalize(claim.text)
+                    await self.event(state,'verification','Đã bỏ ký hiệu liệt kê không khớp điểm của văn bản; giữ nguyên nội dung để kiểm chứng.',
+                        docs=sorted({evidence[i].document.id for i in claim.citation_ids if i in evidence}))
+                elif wrong_points:
+                    structural_issues.append(f'Claim {index}: ký hiệu điểm {wrong_points[0]}) không khớp nội dung trong nguồn; không thay điểm pháp luật bằng điểm khác')
             references=re.findall(r'\b(?:diem\s+[a-zđ]\s+)?khoan\s+\d+\s+dieu\s+\d+[a-z]?\b',
                                   normalize(state['request'].message)+' '+normalized_claim)
             expanded_claim=re.sub(r'\bubnd\b','uy ban nhan dan',normalized_claim)
