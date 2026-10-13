@@ -176,3 +176,29 @@ def test_encrypted_restore_preserves_session_isolation_and_rejects_plaintext_ses
     assert not restored.authenticate(sid, 'another-token')
     assert restored.state('active_release') == 'r1'
     restored.close()
+
+
+def test_technical_demo_profile_persists_through_restart_restore_and_preserves_quality_precedence(store,settings,tmp_path):
+    from landlaw.store import Store
+    from landlaw.publication import public_status
+    payload=release(store)
+    evidence={'profile':'technical_demo','configuration_sha256':'fixed','evidence_sha256':'reviewed-core'}
+    store.publish(payload['id'],evidence)
+    assert store.publication()==evidence
+    assert public_status(payload,store.publication())['quality_status']=='acceptance_pending'
+    backup=tmp_path/'technical.json';store.backup(backup)
+    restarted=Store(settings)
+    assert restarted.publication()==evidence
+    restarted.close()
+    restored=Store(settings.model_copy(update={'sqlite_path':str(tmp_path/'technical-restore.db')}))
+    try:
+        restored.restore(backup)
+        assert restored.publication()==evidence
+        assert restored.state('active_release')==payload['id']
+        restored.publish(payload['id'],{'profile':'demo','evidence_sha256':'complete-smoke'})
+        assert restored.publication()['profile']=='demo'
+        restored.publish(payload['id'],{'profile':'accepted','evidence_sha256':'full-acceptance'})
+        assert restored.publication()['profile']=='accepted'
+        with pytest.raises(ValueError,match='immutable'):
+            restored.publish(payload['id'],{**evidence,'evidence_sha256':'different'})
+    finally:restored.close()
