@@ -59,7 +59,7 @@ def main():
             # Retiring obsolete staging can leave only the active provider's dimension
             # in the real backup. Exercise the absent dimension in this disposable
             # database with an explicitly synthetic storage fixture, never Supabase.
-            for dimension in {768,1024}-dimensions:
+            for dimension in {384,768,1024}-dimensions:
                 fixture_id=f'isolated-technical-vector-{dimension}'
                 fixture={'id':fixture_id,'documents':[{'id':fixture_id,'title':'Isolated technical vector fixture; no legal evidence',
                     'url':'https://example.com/isolated-fixture','source_kind':'official_news','checked_at':utcnow().isoformat(),
@@ -67,7 +67,7 @@ def main():
                     'text':'Isolated technical vector fixture; no legal evidence','locator':'technical fixture','checksum':digest(fixture_id),
                     'embedding_model':fixture_id,'embedding':[1/math.sqrt(dimension)]*dimension}]}]}
                 target.stage(fixture)
-            for dimension in (768,1024):
+            for dimension in (384,768,1024):
                 row=target.rows('SELECT release_id,id,embedding_model FROM chunks WHERE vector_dims(embedding)=? LIMIT 1',(dimension,))[0]
                 chunk=target.chunk(row['id'],row['release_id'])
                 hits=target.search(chunk.text[:250],chunk.embedding,release_id=row['release_id'],embedding_model=row['embedding_model'])

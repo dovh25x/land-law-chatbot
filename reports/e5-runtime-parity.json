@@ -1,0 +1,38 @@
+{
+  "checked_at": "2026-10-13T04:58:09.114369+00:00",
+  "release": "corpus-de584c31fc95f9a2",
+  "model_spec": {
+    "name": "multilingual-e5-small-onnx-q8-window-v1",
+    "dimensions": 384,
+    "onnx_revision": "761b726dd34fb83930e26aab4e9ac3899aa1fa78",
+    "tokenizer_revision": "614241f622f53c4eeff9890bdc4f31cfecc418b3",
+    "onnx_sha256": "f80102d3f2a1229f387d3c81909990d8945513e347b0eab049f7de3c6f98c193",
+    "tokenizer_sha256": "cfc8146abe2a0488e9e2a0c56de7952f7c11ab059eca145a0a727afce0db2865",
+    "preprocessing": "e5-prefix-each-window-sp-offset1-mask-mean-l2-window-mean-l2-v1",
+    "passage_max_tokens": 512,
+    "query_max_tokens": 128,
+    "overlap_tokens": 64
+  },
+  "parity": [
+    {
+      "document_id": "luat-dat-dai-2024",
+      "max_abs_difference": 0.0,
+      "passed": true
+    },
+    {
+      "document_id": "nd-226-2025",
+      "max_abs_difference": 0.0,
+      "passed": true
+    },
+    {
+      "document_id": "luat-nha-o-2023",
+      "max_abs_difference": 0.0,
+      "passed": true
+    }
+  ],
+  "hybrid_search": {
+    "count": 8,
+    "all_matching_model": true
+  },
+  "passed": true
+}

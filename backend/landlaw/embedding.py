@@ -35,10 +35,18 @@ def contract(settings, release=None):
     else:
         value = {'provider':settings.embedding_provider,'model':settings.embedding_model,
                  'dimensions':settings.embedding_dimensions,'format_version':'v1'}
+        if settings.embedding_provider == 'local_onnx':
+            from .local_embedding import MODEL
+            value['local_model_spec'] = dict(MODEL)
     allowed = {('gemini','gemini-embedding-2',768),('gemini','gemini-embedding-001',768),
-               ('cloudflare','@cf/baai/bge-m3',1024)}
+               ('cloudflare','@cf/baai/bge-m3',1024),
+               ('local_onnx','multilingual-e5-small-onnx-q8-window-v1',384)}
     if (value['provider'],value['model'],value['dimensions']) not in allowed or value.get('format_version')!='v1':
         raise ValueError('Unsupported embedding contract')
+    if value['provider'] == 'local_onnx':
+        from .local_embedding import MODEL
+        if value.get('local_model_spec') != MODEL:
+            raise ValueError('Local embedding release must declare exact pinned model/preprocessing')
     return dict(value)
 
 

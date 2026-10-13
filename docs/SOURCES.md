@@ -1,17 +1,17 @@
 # Danh mục và kiểm tra nguồn
 
-Thời điểm tải và đối chiếu: 11–12/10/2026 UTC; snapshot QĐ56 được lấy và kiểm tra ngày 12/10. Đây là bộ nguồn kỹ thuật đã thu thập từ cơ quan công bố chính thức; việc đọc toàn văn và kiểm tra metadata không thay thế thẩm định pháp lý độc lập. Manifest lưu URL công bố, bản tải, checksum và trạng thái kiểm tra; không chứa tài liệu giả.
+Thời điểm tải và đối chiếu: 11–13/10/2026 UTC; snapshot QĐ56 được lấy và kiểm tra ngày 12/10. Đây là bộ nguồn kỹ thuật đã thu thập từ cơ quan công bố chính thức; việc đọc toàn văn và kiểm tra metadata không thay thế thẩm định pháp lý độc lập. Manifest lưu URL công bố, bản tải, checksum và trạng thái kiểm tra; không chứa tài liệu giả.
 
 ## Độ bao phủ thực tế
 
 | Nhóm | Danh mục | Toàn văn đã kiểm tra | Chờ kiểm tra/cách ly |
 |---|---:|---:|---:|
-| Văn bản pháp lý | 56 | 52 | 4 |
+| Văn bản pháp lý | 58 | 54 | 4 |
 | Vành đai 4 | 6 | 1 nghị quyết + 4 bài chính thức | 1 nghị quyết PDF ảnh |
 | Trục đại lộ cảnh quan sông Hồng | 5 | 5 | 0 |
 | Khu đô thị thể thao Olympic | 5 | 5 | 0 |
 
-Tổng cộng 72 nguồn, 100 quan hệ pháp lý có vị trí điều khoản và URL chứng minh. Số lượng văn bản đã kiểm tra đáp ứng mức 30 văn bản pháp lý, toàn văn lịch sử QĐ56 đã bổ sung; NQ106/NQ-CP và các nguồn khác còn cách ly được ghi trong coverage_gaps. Không đánh dấu M1 hoàn tất chỉ từ số lượng.
+Tổng cộng 74 nguồn, 102 quan hệ pháp lý có vị trí điều khoản và URL chứng minh. Số lượng văn bản đã kiểm tra đáp ứng mức 30 văn bản pháp lý, toàn văn lịch sử QĐ56 đã bổ sung; NQ106/NQ-CP và các nguồn khác còn cách ly được ghi trong coverage_gaps. Không đánh dấu M1 hoàn tất chỉ từ số lượng.
 
 ## Kết quả kiểm tra quan trọng
 
@@ -43,7 +43,7 @@ Nguồn sông Hồng và Olympic hiện chủ yếu là thông tin chính thức
 
 | ID ổn định | Văn bản | Hiệu lực chung đã đối chiếu | Nguồn công bố |
 |---|---|---|---|
-| `luat-dat-dai-2024` | 31/2024/QH15 | 2024-08-01 | [Nguồn](https://vanban.chinhphu.vn/?pageid=27160&docid=211189) |
+| `luat-dat-dai-2024` | 31/2024/QH15 | 2024-08-01; đọc mốc riêng cấp điều khoản | [Nguồn](https://vanban.chinhphu.vn/?pageid=27160&docid=211189) |
 | `luat-43-2024` | 43/2024/QH15 | 2024-08-01 | [Nguồn](https://vanban.chinhphu.vn/?pageid=27160&docid=211201) |
 | `nd-88-2024` | 88/2024/NĐ-CP | 2024-08-01 | [Nguồn](https://xaydungchinhsach.chinhphu.vn/toan-van-nghi-dinh-quy-dinh-ve-boi-thuong-ho-tro-tai-dinh-cu-khi-nha-nuoc-thu-hoi-dat-119240906111916662.htm) |
 | `nd-71-2024` | 71/2024/NĐ-CP | 2024-08-01 | [Nguồn](https://congbao.chinhphu.vn/van-ban/nghi-dinh-so-71-2024-nd-cp-42155.htm) |
@@ -53,47 +53,59 @@ Nguồn sông Hồng và Olympic hiện chủ yếu là thông tin chính thức
 | `nd-104-2024` | 104/2024/NĐ-CP | 2024-08-01 | [Nguồn](https://congbao.chinhphu.vn/van-ban/nghi-dinh-so-104-2024-nd-cp-42495.htm) |
 | `nd-151-2025` | 151/2025/NĐ-CP | 2025-07-01 | [Nguồn](https://congbao.chinhphu.vn/van-ban/nghi-dinh-so-151-2025-nd-cp-45191.htm) |
 | `nd-226-2025` | 226/2025/NĐ-CP | 2025-08-15 | [Nguồn](https://congbao.chinhphu.vn/van-ban/nghi-dinh-so-226-2025-nd-cp-45839/58217.htm) |
-| `nd-49-2026` | 49/2026/NĐ-CP | 2026-01-31 | [Nguồn](https://congbao.chinhphu.vn/van-ban/nghi-dinh-so-49-2026-nd-cp-468908.htm) |
-| `qd-56-2024-hanoi` | 56/2024/QĐ-UBND | 2024-09-20; hết hiệu lực 2026-04-02 | [Snapshot nguồn chính thức](https://vbpl.vn/hanoi/Pages/ivbpq-toanvan.aspx?ItemID=169992&Keyword=) |
-| `qd-38-2025-hanoi` | 38/2025/QĐ-UBND | 2025-07-01 | [Nguồn](https://congbao.hanoi.gov.vn/Default.aspx?p_attribute=4875&pageid=45002) |
-| `qd-10-2026-hanoi` | 10/2026/QĐ-UBND | 2026-01-18 | [Nguồn](https://congbao.hanoi.gov.vn/Default.aspx?p_attribute=5204&pageid=45002) |
+| `nd-49-2026` | 49/2026/NĐ-CP | 2026-01-31; đọc mốc riêng cấp điều khoản | [Nguồn](https://congbao.chinhphu.vn/van-ban/nghi-dinh-so-49-2026-nd-cp-468908.htm) |
+| `qd-56-2024-hanoi` | 56/2024/QĐ-UBND | 2024-09-20; hết hiệu lực 2026-04-02 | [Nguồn](https://vbpl.vn/hanoi/Pages/ivbpq-toanvan.aspx?ItemID=169992&Keyword=) |
+| `qd-38-2025-hanoi` | 38/2025/QĐ-UBND | 2025-07-01; hết hiệu lực 2026-04-02 | [Nguồn](https://congbao.hanoi.gov.vn/Default.aspx?p_attribute=4875&pageid=45002) |
+| `qd-10-2026-hanoi` | 10/2026/QĐ-UBND | 2026-01-18; hết hiệu lực 2026-04-02 | [Nguồn](https://congbao.hanoi.gov.vn/Default.aspx?p_attribute=5204&pageid=45002) |
 | `qd-40-2026-hanoi` | 40/2026/QĐ-UBND | 2026-04-02 | [Nguồn](https://congbao.hanoi.gov.vn/Default.aspx?p_attribute=5335&pageid=45002) |
 | `qd-55-2024-hanoi` | 55/2024/QĐ-UBND | 2024-09-16 | [Nguồn](https://congbao.hanoi.gov.vn/Default.aspx?p_attribute=1904&pageid=45002) |
 | `qd-61-2024-hanoi` | 61/2024/QĐ-UBND | 2024-10-07 | [Nguồn](https://congbao.hanoi.gov.vn/Default.aspx?p_attribute=1917&pageid=45002) |
-| `qd-71-2024-hanoi` | 71/2024/QĐ-UBND | 2024-12-20 | [Nguồn](https://congbao.hanoi.gov.vn/Default.aspx?p_attribute=4654&pageid=45002) |
+| `qd-71-2024-hanoi` | 71/2024/QĐ-UBND | 2024-12-20; đọc mốc riêng cấp điều khoản | [Nguồn](https://congbao.hanoi.gov.vn/Default.aspx?p_attribute=4654&pageid=45002) |
 | `qd-40-2025-hanoi` | 40/2025/QĐ-UBND | 2025-07-01 | [Nguồn](https://congbao.hanoi.gov.vn/Default.aspx?p_attribute=4877&pageid=45002) |
-| `luat-thu-do-2024` | 39/2024/QH15 | 2025-01-01 | [Nguồn](https://vanban.chinhphu.vn/?pageid=27160&docid=211197) |
+| `luat-thu-do-2024` | 39/2024/QH15 | 2025-01-01; hết hiệu lực 2026-07-01 | [Nguồn](https://vanban.chinhphu.vn/?pageid=27160&docid=211197) |
+| `luat-quy-hoach-2017` | 21/2017/QH14 | 2019-01-01; hết hiệu lực 2026-03-01 | [Nguồn](https://congbao.chinhphu.vn/van-ban/luat-so-21-2017-qh14-25327.htm) |
 | `luat-quy-hoach-do-thi-2024` | 47/2024/QH15 | 2025-07-01 | [Nguồn](https://vanban.chinhphu.vn/?pageid=27160&docid=212475) |
-| `luat-144-2025` | 144/2025/QH15 | 2026-01-01 | [Nguồn](https://vanban.chinhphu.vn/?pageid=27160&docid=216526) |
+| `luat-144-2025` | 144/2025/QH15 | 2026-01-01; đọc mốc riêng cấp điều khoản | [Nguồn](https://vanban.chinhphu.vn/?pageid=27160&docid=216526) |
 | `nd-178-2025` | 178/2025/NĐ-CP | 2025-07-01 | [Nguồn](https://congbao.chinhphu.vn/van-ban/nghi-dinh-so-178-2025-nd-cp-45368.htm) |
-| `qd-27-2024-hanoi` | 27/2024/QĐ-UBND | 2024-04-20 | [Nguồn](https://congbao.hanoi.gov.vn/Default.aspx?p_attribute=1805&pageid=45002) |
+| `luat-dat-dai-2013` | 45/2013/QH13 | 2014-07-01; hết hiệu lực 2024-08-01 | [Nguồn](https://congbao.chinhphu.vn/van-ban/luat-so-45-2013-qh13-5391/6773.htm) |
+| `nd-47-2014` | 47/2014/NĐ-CP | 2014-07-01; hết hiệu lực 2024-08-01 | [Nguồn](https://congbao.chinhphu.vn/van-ban/nghi-dinh-so-47-2014-nd-cp-10330.htm) |
+| `qd-27-2024-hanoi` | 27/2024/QĐ-UBND | 2024-04-20; hết hiệu lực 2024-09-20 | [Nguồn](https://congbao.hanoi.gov.vn/Default.aspx?p_attribute=1805&pageid=45002) |
 | `luat-khieu-nai-2011` | 02/2011/QH13 | 2012-07-01 | [Nguồn](https://vanban.chinhphu.vn/?pageid=27160&docid=162374) |
+| `nd-124-2020` | 124/2020/NĐ-CP | 2020-12-10 | [Nguồn](https://congbao.chinhphu.vn/van-ban/nghi-dinh-so-124-2020-nd-cp-32304/33027.htm) |
 | `luat-136-2025` | 136/2025/QH15 | 2026-07-01 | [Nguồn](https://congbao.chinhphu.vn/van-ban/luat-so-136-2025-qh15-468696.htm) |
 | `luat-nha-o-2023` | 27/2023/QH15 | 2024-08-01 | [Nguồn](https://vanban.chinhphu.vn/?pageid=27160&docid=209627) |
-| `luat-thu-do-2026` | 02/2026/QH16 | 2026-07-01 | [Nguồn](https://congbao.chinhphu.vn/van-ban/luat-so-02-2026-qh16-469529.htm) |
+| `luat-thu-do-2026` | 02/2026/QH16 | 2026-07-01; đọc mốc riêng cấp điều khoản | [Nguồn](https://congbao.chinhphu.vn/van-ban/luat-so-02-2026-qh16-469529.htm) |
 | `qd-566-2026-hanoi` | 566/QĐ-UBND | 2026-02-05 | [Nguồn](https://congbao.hanoi.gov.vn/Default.aspx?p_attribute=5255&pageid=45002) |
 | `nq-52-2025-hanoi` | 52/2025/NQ-HĐND | 2026-01-01 | [Nguồn](https://congbao.hanoi.gov.vn/Default.aspx?p_attribute=5054&pageid=45002) |
 | `qd-89-2025-hanoi` | 89/2025/QĐ-UBND | 2026-01-01 | [Nguồn](https://congbao.hanoi.gov.vn/Default.aspx?p_attribute=5098&pageid=45002) |
 | `qd-19-2026-hanoi` | 19/2026/QĐ-UBND | 2026-02-02 | [Nguồn](https://congbao.hanoi.gov.vn/Default.aspx?p_attribute=5252&pageid=45002) |
-
-| `luat-146-2025` | 146/2025/QH15 | 2026-01-01 (đọc hiệu lực từng điều) | [Nguồn](https://congbao.chinhphu.vn/van-ban/luat-so-146-2025-qh15-468706/61741.htm) |
-| `nq-254-2025` | 254/2025/QH15 | 2026-01-01 (đọc hiệu lực từng điều) | [Nguồn](https://xaydungchinhsach.chinhphu.vn/toan-van-nghi-quyet-254-2025-qh15-quy-dinh-mot-so-co-che-chinh-sach-thao-go-kho-khan-vuong-mac-trong-to-chuc-thi-hanh-luat-dat-dai-119251225171010998.htm) |
-| `nq-258-2025` | 258/2025/QH15 | 2025-12-12 (đọc hiệu lực từng điều) | [Nguồn](https://phudien.hanoi.gov.vn/phu-dien-voi-cong-tac-bau-cu-dai-bieu-quoc-hoi-khoa-xvi-va-dai-bieu-hoi-dong-nhan-dan-cac-cap-nhiem-ky-2026-2031/cac-nghi-quyet-thong-qua-cua-quoc-hoi-ve-ky-hop-thu-10-quoc-hoi-khoa-xv-2794260206110358458.htm) |
-| `luat-71-2025` | 71/2025/QH15 | 2026-01-01 (đọc hiệu lực từng điều) | [Nguồn](https://congbao.chinhphu.vn/van-ban/luat-so-71-2025-qh15-45555.htm) |
-| `nq-90-2026-hanoi` | 90/2026/NQ-HĐND | 2026-01-27 (đọc hiệu lực từng điều) | [Nguồn](https://vanban.hanoi.gov.vn/chi-tiet-van-ban/ve-viec-thuc-hien-khoan-4-dieu-7-nghi-quyet-so-258-2025-qh15-ngay-11-thang-12-nam-2025-cua-quoc-hoi-233936) |
+| `luat-146-2025` | 146/2025/QH15 | 2026-01-01; đọc mốc riêng cấp điều khoản | [Nguồn](https://congbao.chinhphu.vn/van-ban/luat-so-146-2025-qh15-468706/61741.htm) |
+| `nq-254-2025` | 254/2025/QH15 | 2026-01-01; đọc mốc riêng cấp điều khoản | [Nguồn](https://xaydungchinhsach.chinhphu.vn/toan-van-nghi-quyet-254-2025-qh15-quy-dinh-mot-so-co-che-chinh-sach-thao-go-kho-khan-vuong-mac-trong-to-chuc-thi-hanh-luat-dat-dai-119251225171010998.htm) |
+| `nq-258-2025` | 258/2025/QH15 | 2025-12-12 | [Nguồn](https://phudien.hanoi.gov.vn/phu-dien-voi-cong-tac-bau-cu-dai-bieu-quoc-hoi-khoa-xvi-va-dai-bieu-hoi-dong-nhan-dan-cac-cap-nhiem-ky-2026-2031/cac-nghi-quyet-thong-qua-cua-quoc-hoi-ve-ky-hop-thu-10-quoc-hoi-khoa-xv-2794260206110358458.htm) |
+| `luat-71-2025` | 71/2025/QH15 | 2026-01-01; đọc mốc riêng cấp điều khoản | [Nguồn](https://congbao.chinhphu.vn/van-ban/luat-so-71-2025-qh15-45555.htm) |
+| `nq-90-2026-hanoi` | 90/2026/NQ-HĐND | 2026-01-27 | [Nguồn](https://vanban.hanoi.gov.vn/chi-tiet-van-ban/ve-viec-thuc-hien-khoan-4-dieu-7-nghi-quyet-so-258-2025-qh15-ngay-11-thang-12-nam-2025-cua-quoc-hoi-233936) |
+| `luat-58-2024` | 58/2024/QH15 | 2025-01-01 | [Nguồn](https://congbao.chinhphu.vn/van-ban/luat-so-58-2024-qh15-43571/53709.htm) |
+| `luat-84-2025` | 84/2025/QH15 | 2025-07-01 | [Nguồn](https://congbao.chinhphu.vn/van-ban/luat-so-84-2025-qh15-45518.htm) |
+| `luat-93-2025` | 93/2025/QH15 | 2025-10-01; đọc mốc riêng cấp điều khoản | [Nguồn](https://congbao.chinhphu.vn/van-ban/luat-so-93-2025-qh15-45589.htm) |
+| `luat-95-2025` | 95/2025/QH15 | 2026-01-01; đọc mốc riêng cấp điều khoản | [Nguồn](https://congbao.chinhphu.vn/van-ban/luat-so-95-2025-qh15-45582.htm) |
+| `luat-116-2025` | 116/2025/QH15 | 2026-07-01 | [Nguồn](https://congbao.chinhphu.vn/van-ban/luat-so-116-2025-qh15-468678/61574.htm) |
+| `luat-130-2025` | 130/2025/QH15 | 2026-07-01 | [Nguồn](https://congbao.chinhphu.vn/van-ban/luat-so-130-2025-qh15-468690.htm) |
+| `luat-142-2025` | 142/2025/QH15 | 2026-03-01; đọc mốc riêng cấp điều khoản | [Nguồn](https://congbao.chinhphu.vn/van-ban/luat-so-142-2025-qh15-468702.htm) |
+| `luat-147-2025` | 147/2025/QH15 | 2026-01-01 | [Nguồn](https://congbao.chinhphu.vn/van-ban/luat-so-147-2025-qh15-468707.htm) |
+| `luat-quy-hoach-2025` | 112/2025/QH15 | 2026-03-01; đọc mốc riêng cấp điều khoản | [Nguồn](https://congbao.chinhphu.vn/van-ban/luat-so-112-2025-qh15-468674/61642.htm) |
+| `nd-141-2025` | 141/2025/NĐ-CP | 2025-07-01; hết hiệu lực 2027-03-01 | [Nguồn](https://congbao.chinhphu.vn/van-ban/nghi-dinh-so-141-2025-nd-cp-45063/56732.htm) |
+| `nd-155-2026` | 155/2026/NĐ-CP | 2026-07-01; đọc mốc riêng cấp điều khoản | [Nguồn](https://congbao.chinhphu.vn/van-ban/nghi-dinh-so-155-2026-nd-cp-469547.htm) |
+| `luat-35-2018` | 35/2018/QH14 | 2019-01-01; đọc mốc riêng cấp điều khoản | [Nguồn](https://congbao.chinhphu.vn/van-ban/nghi-quyet-so-35-2018-qh14-27813/24738.htm) |
+| `nd-06-2020` | 06/2020/NĐ-CP | 2020-02-20; hết hiệu lực 2024-08-01 | [Nguồn](https://vanban.chinhphu.vn/?pageid=27160&docid=198762) |
 
 ## Nguồn pháp lý chờ kiểm tra/cách ly
 
 | ID | Nguyên nhân | Nguồn |
 |---|---|---|
-| `luat-quy-hoach-2017` | PDF ảnh chưa duyệt OCR | [Nguồn](https://vanban.chinhphu.vn/?pageid=27160&docid=192206) |
-| `luat-dat-dai-2013` | PDF ảnh chưa duyệt OCR | [Nguồn](https://vanban.chinhphu.vn/?pageid=27160&docid=171639) |
-| `nd-47-2014` | PDF ảnh chưa duyệt OCR | [Nguồn](https://vanban.chinhphu.vn/?pageid=27160&docid=173972) |
-| `qd-10-2017-hanoi` | VBPL legacy chỉ có trang tải | [Nguồn](https://vbpl.vn/TW/Pages/vbpq-toanvan.aspx?ItemID=121164) |
-| `qd-30-2019-hanoi` | PDF ảnh chưa duyệt OCR | [Nguồn](https://vanban.hanoi.gov.vn/chi-tiet-van-ban/quyet-dinh-so-30-2019-qd-ubnd-cua-ubnd-tp-ha-noi-ve-viec-ban-hanh-quy-dinh-va-bang-gia-cac-loai-dat-189067) |
-| `qd-20-2023-hanoi` | VBPL legacy chỉ có trang tải | [Nguồn](https://vbpl.vn/hanoi/Pages/vbpq-toanvan.aspx?ItemID=164473) |
-| `nd-124-2020` | PDF ảnh chưa duyệt OCR | [Nguồn](https://vanban.chinhphu.vn/?pageid=27160&docid=201363) |
-| `nd-123-2024` | PDF ảnh chưa duyệt OCR | [Nguồn](https://vanban.chinhphu.vn/?pageid=27160&docid=211356) |
+| `qd-10-2017-hanoi` | Toàn văn hoặc OCR/metadata chưa đạt kiểm tra | [Nguồn](https://vbpl.vn/TW/Pages/vbpq-toanvan.aspx?ItemID=121164) |
+| `qd-30-2019-hanoi` | Toàn văn hoặc OCR/metadata chưa đạt kiểm tra | [Nguồn](https://vanban.hanoi.gov.vn/chi-tiet-van-ban/quyet-dinh-so-30-2019-qd-ubnd-cua-ubnd-tp-ha-noi-ve-viec-ban-hanh-quy-dinh-va-bang-gia-cac-loai-dat-189067) |
+| `qd-20-2023-hanoi` | Toàn văn hoặc OCR/metadata chưa đạt kiểm tra | [Nguồn](https://vbpl.vn/hanoi/Pages/vbpq-toanvan.aspx?ItemID=164473) |
+| `nd-123-2024` | Toàn văn hoặc OCR/metadata chưa đạt kiểm tra | [Nguồn](https://vanban.chinhphu.vn/?pageid=27160&docid=211356) |
 
 ## Hồ sơ dự án
 
@@ -137,7 +149,7 @@ Kiểm tra cấu trúc/checksum: data/raw/source_asset_audit.json. Mọi ID quan
 - NĐ226: dùng toàn văn Công báo 44 trang thay HTML tóm tắt có locator sai. Phân số chi phí đầu tư còn lại tại trang PDF15 được đối chiếu trực quan và chuẩn hóa dấu ngoặc; PDF gốc giữ nguyên. NĐ49 sau đó có sửa đổi/bãi bỏ theo phạm vi cụ thể, không ghi cả NĐ226 hết hiệu lực.
 - Phụ lục NQ56/2022 Vành đai 4: hai trang bảng xoay được đọc trực quan, chép lại theo tên cột, đơn vị và số gốc; ô trống không quy thành 0. Các trang nghị quyết giữ native text. Sidecar và hồ sơ xử lý được lưu trong manifest/Storage riêng tư. Dữ liệu này là sơ bộ năm 2022, không phải đơn giá bồi thường hộ.
 
-Manifest hiện có 100 quan hệ với phạm vi và nguồn chứng minh. Quan hệ rà soát chưa đủ toàn bộ mục sửa đổi mang `target_locators_complete=false`; đầu mút lịch sử chưa có vẫn nằm trong báo cáo khoảng trống. Luật144 bãi bỏ cả Điều24/28 của Luật47 và một số khoản/điểm riêng; Điều2 của Luật144 có kỳ áp dụng riêng đến trước 01/03/2027. Không gán mốc này cho toàn Luật144.
+Manifest hiện có 102 quan hệ với phạm vi và nguồn chứng minh. Quan hệ rà soát chưa đủ toàn bộ mục sửa đổi mang `target_locators_complete=false`; đầu mút lịch sử chưa có vẫn nằm trong báo cáo khoảng trống. Luật144 bãi bỏ cả Điều24/28 của Luật47 và một số khoản/điểm riêng; Điều2 của Luật144 có kỳ áp dụng riêng đến trước 01/03/2027. Không gán mốc này cho toàn Luật144.
 
 
 ## Đối chiếu bổ sung và PDF theo trang
@@ -146,8 +158,10 @@ Luật58/2024,84/2025,93/2025,95/2025,116/2025,130/2025,142/2025 và147/2025 đ�
 
 Luật Quy hoạch112/2025 hiệu lực chung01/03/2026; Điều48 từ10/12/2025, Điều56 có thời hạn riêng và ngoại lệ theo57(3,4). Đã đọc định nghĩa, hệ thống/quan hệ quy hoạch, công bố và chuyển tiếp. PDF Công báo57(6) ghi21/2017/QH15, còn58 và luật gốc ghi21/2017/QH14; giữ nguyên nguồn và công khai sai biệt. Luật21/2017 lịch sử dùng bản Công báo47 trang native text, không coi mọi quy hoạch đã duyệt hết hiệu lực vì thay luật.
 
-Luật Đất đai45/2013 (118 trang) và NĐ47/2014 (24 trang) dùng bản Công báo text thay scan chưa duyệt. Giữ các mốc lịch sử và quan hệ thay thế/chuyển tiếp từ Luật31+43 và NĐ88. Phạm vi sửa bởi Luật35/2018, NĐ01/2017,06/2020,148/2020 còn thiếu toàn văn đã kiểm tra, được giữ ở unresolved_relations; kết luận phụ thuộc phần chưa xác minh bị chặn. Không coi bản gốc là bản hợp nhất đầy đủ.
+Luật Đất đai45/2013 (118 trang) và NĐ47/2014 (24 trang) dùng bản Công báo text thay scan chưa duyệt. Giữ các mốc lịch sử và quan hệ thay thế/chuyển tiếp từ Luật31+43 và NĐ88. Đã bổ sung Luật35/2018 Điều6/31 và NĐ06/2020. Các sửa đổi NĐ01/2017 và NĐ148/2020 còn thiếu toàn văn đã kiểm tra, được giữ ở unresolved_relations; kết luận phụ thuộc phần chưa xác minh bị chặn. Không coi bản gốc là bản hợp nhất đầy đủ.
 
 NĐ124/2020 có bản Công báo text51 trang; đọc cùng NĐ155/2026 (23 trang) từ01/07/2026. Các quan hệ sửa/bãi bỏ tách theo điều nguồn, tránh mở đầu văn bản khi hỏi điều thụ lý ở cuối. Thụ lý07 ngày làm việc, thông báo đối thoại ít nhất05 ngày và yêu cầu công chứng uỷ quyền cá nhân có mốc chấm dứt riêng01/01/2027. NĐ141/2025 được đọc toàn bộ5 trang: thẩm quyền/việc huyện cũ, mốc01/03/2027 có ngoại lệ kéo dài hoặc thay thế sớm. Đọc Luật136/2025 cho hiện tại.
 
 Trích dẫn giữ trang vật lý và mapping đúng tệp khi văn bản chia nhiều PDF. Liên kết PDF gốc chỉ hiện khi URL/tệp được xác minh; bản ghép ảnh NQ254 không được gắn nhãn PDF ký số gốc. CDN lưu trữ VNPT chỉ chấp nhận đường dẫn gov-hni với trang công bố chính thức. Audit từ chối đổi tệp hoặc phạm vi trang chồng lấp. Parser13 tách phụ lục và biểu mẫu khỏi các điều khoản chính, kể cả HTML đặt toàn văn và phụ lục trong cùng body.
+
+Luật35/2018: bản Công báo77 trang; trang công bố ghi nhầm loại Nghị quyết nhưng PDF xác nhận Luật. Chỉ index Điều6 và31 đã đọc; chuỗi31 điều của luật sửa đổi xác định đúng cha cho chương trích Điều35–51. Điều6 về Luật45 là lịch sử trước01/08/2024; không gán mốc hết hiệu lực cho toàn Luật35. NĐ06/2020: đối chiếu cả3 trang scan; OCR giữ toàn bộ điều khoản và phân trang, loại dấu đến/nơi nhận khỏi parser input. Điều2 phân biệt phương án cho toàn bộ dự án đã/chưa phê duyệt trước20/02/2020; hết hiệu lực theo NĐ88 từ01/08/2024. PDF gốc không sửa. Parser14 chỉ dùng chuỗi điều đã được rà soát khi manifest yêu cầu; thiếu điều trong chuỗi phải cách ly.

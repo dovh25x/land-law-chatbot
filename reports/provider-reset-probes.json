@@ -1,0 +1,36 @@
+{
+  "checked_at": "2026-10-13T02:44:12.858309+00:00",
+  "probes": [
+    {
+      "probe": "cloudflare_embedding",
+      "http": 429,
+      "server_date": "Tue, 13 Oct 2026 02:44:11 GMT",
+      "retry_after": null,
+      "error_codes": [
+        4006
+      ],
+      "daily_allocation": true,
+      "result_shape": []
+    },
+    {
+      "probe": "gemini_generation",
+      "http": 200,
+      "server_date": "Tue, 13 Oct 2026 02:44:12 GMT",
+      "retry_after": null,
+      "error_status": null,
+      "details": [],
+      "has_candidates": true,
+      "has_embedding": false
+    },
+    {
+      "probe": "gemini_embedding",
+      "http": 200,
+      "server_date": "Tue, 13 Oct 2026 02:44:11 GMT",
+      "retry_after": null,
+      "error_status": null,
+      "details": [],
+      "has_candidates": false,
+      "has_embedding": true
+    }
+  ]
+}

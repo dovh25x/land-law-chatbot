@@ -43,3 +43,4 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - run: docker build -t landlaw:check .
+      - run: docker run --rm --memory=512m --memory-swap=512m --network=none -v "$PWD/scripts/check_runtime_memory.py:/tmp/check_runtime_memory.py:ro" landlaw:check python /tmp/check_runtime_memory.py

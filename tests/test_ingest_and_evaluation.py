@@ -14,6 +14,32 @@ def test_loading_shell_and_metadata_not_legal_text():
         html_text(("<article>Ngày ban hành: 01/01/2026 " + "metadata "*100 + "</article>").encode(), legal=True)
 
 
+def test_source_audit_rejects_date_and_partial_scope_metadata_substitution():
+    import importlib.util
+    from pathlib import Path
+    spec=importlib.util.spec_from_file_location('audit_metadata',Path('scripts/audit_release.py'))
+    audit=importlib.util.module_from_spec(spec);spec.loader.exec_module(audit)
+    source={'title':'Historical act','source_kind':'legal','review_status':'verified',
+            'effective_from':'2019-01-01','effective_to':'2024-08-01','jurisdiction':'national',
+            'provision_validity':[{'locator':'Điều 6','effective_to':'2024-08-01'}],
+            'source_review_notes':'Only articles 6 and 31 reviewed.','index_articles':[6,31]}
+    doc={**source,'applicability_verified':True,'chunks':[{'locator':'Điều 6'}]}
+    assert audit.reviewed_metadata(doc,source)
+    assert not audit.reviewed_metadata({**doc,'effective_to':None},source)
+    assert not audit.reviewed_metadata({**doc,'provision_validity':[]},source)
+    assert not audit.reviewed_metadata({**doc,'chunks':[{'locator':'Điều 7'}]},source)
+
+
+def test_reviewed_amendment_sequence_keeps_quoted_chapter_under_parent():
+    pages = [(1,'Điều 1. Sửa đổi chương của luật cũ.\n“Chương IV\nĐiều 35. Nguyên tắc về đất đai.\nNội dung điều được thay thế.'),
+             (2,'Điều 36. Quy hoạch được thay thế trong chương của luật cũ.”.\nĐiều 2. Chuyển tiếp về hồ sơ có trước ngày ban hành.\nĐiều 3. Hiệu lực từ ngày 01 tháng 01 năm 2019.')]
+    chunks = chunks_for('amendment',pages,expected_article_count=3)
+    assert {c.locator for c in chunks} == {'Điều 1','Điều 2','Điều 3'}
+    assert any(c.locator=='Điều 1' and 'Điều 36.' in c.text for c in chunks)
+    with pytest.raises(Quarantine,match='sequence incomplete'):
+        chunks_for('amendment',pages[:1],expected_article_count=3)
+
+
 def test_hanoi_archival_cdn_requires_official_publication_and_hanoi_path():
     url = 'https://storage-vnportal.vnpt.vn/gov-hni/6249/VanBanCongBao/source.pdf'
     assert official_url(url, 'https://congbao.hanoi.gov.vn/')

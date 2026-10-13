@@ -6,6 +6,8 @@ import math
 import re
 import sqlite3
 import threading
+from collections import OrderedDict
+from copy import deepcopy
 from contextlib import contextmanager
 from datetime import timedelta
 from pathlib import Path
@@ -53,6 +55,7 @@ class Store:
         self._lock = threading.RLock()
         self.pool = None
         self.conn = None
+        self._metadata_cache = OrderedDict()
         if self.postgres:
             from psycopg.rows import dict_row
             from psycopg_pool import ConnectionPool
@@ -213,12 +216,24 @@ class Store:
         if not release_id:
             return None
         if metadata_only:
+            with self._lock:
+                cached = self._metadata_cache.get(release_id)
+                if cached is not None:
+                    self._metadata_cache.move_to_end(release_id)
+                    return deepcopy(cached)
+        if metadata_only:
             rows = self.rows("SELECT payload FROM release_metadata WHERE id=?", (release_id,))
         else:
             rows = self.rows("SELECT payload FROM releases WHERE id=?", (release_id,))
         if not rows:
             return None
-        return json.loads(rows[0]['payload']) if metadata_only else self.decode_release(rows[0]['payload'])
+        result = json.loads(rows[0]['payload']) if metadata_only else self.decode_release(rows[0]['payload'])
+        if metadata_only:
+            with self._lock:
+                self._metadata_cache[release_id] = deepcopy(result)
+                while len(self._metadata_cache) > 2:
+                    self._metadata_cache.popitem(last=False)
+        return result
 
     @staticmethod
     def decode_release(payload):
@@ -323,8 +338,7 @@ class Store:
 
     def document(self, doc_id, release_id=None):
         release_id = release_id or self.state("active_release")
-        rows = self.rows("SELECT payload FROM documents WHERE release_id=? AND id=?", (release_id, doc_id))
-        return Document.model_validate_json(rows[0]["payload"]) if rows else None
+        return next((d for d in self.documents(release_id) if d.id == doc_id),None)
 
     def open_document(self, doc_id, release_id=None, locator=None, query=None):
         """Bounded read tool: fetch relevant passages without the entire price-table archive."""
@@ -425,7 +439,7 @@ class Store:
             semantic = []
             if vector:
                 dimensions = len(vector)
-                if dimensions not in {768,1024}:
+                if dimensions not in {384,768,1024}:
                     raise ValueError('Unsupported query vector dimension')
                 semantic = self.rows(f"""SELECT {projection} FROM chunks c JOIN documents d ON d.id=c.document_id AND d.release_id=c.release_id
                     WHERE c.release_id=? AND c.embedding IS NOT NULL AND c.embedding_model=? AND vector_dims(c.embedding)={dimensions}""" + scope_sql +
@@ -479,6 +493,8 @@ class Store:
         target.chmod(0o600)
 
     def restore(self, source: Path):
+        with self._lock:
+            self._metadata_cache.clear()
         content = source.read_bytes()
         if not content.startswith(b"{"):
             from cryptography.fernet import Fernet

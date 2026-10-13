@@ -1,9 +1,9 @@
 {
   "status": "awaiting_review",
   "dataset_sha256": "56ccf0b0dfe9e13f8215df8cadf195ecc733560e0974d7281373338cf4a27e35",
-  "generated_at": "2026-10-12T21:05:18.863513+00:00",
+  "generated_at": "2026-10-13T05:11:32.823143+00:00",
   "cases": 20,
-  "completed_pairs": 1,
+  "completed_pairs": 0,
   "results": [
     {
       "mode": "baseline",
@@ -24,28 +24,28 @@
     },
     {
       "mode": "agentic",
-      "completed": 1,
+      "completed": 0,
       "reviewed": 0,
-      "recall_at_8": 0.0,
+      "recall_at_8": null,
       "answer_pass_rate": null,
-      "citation_id_valid_rate": 1.0,
+      "citation_id_valid_rate": null,
       "claim_support_rate": null,
       "unsupported_claims": 0,
       "source_review_complete": false,
       "p95_seconds": null,
-      "llm_calls": 2,
-      "embedding_calls": 1,
-      "tool_calls": 12,
+      "llm_calls": 0,
+      "embedding_calls": 0,
+      "tool_calls": 0,
       "critical_failed": [],
-      "limited_or_error": 1
+      "limited_or_error": 0
     }
   ],
   "acceptance_passed": false,
-  "run_id": "corpus-a6af9cf431b26f71-gemini-3.5-flash-lite-smoke-56ccf0b0-7e38886b-c2",
-  "release": "corpus-a6af9cf431b26f71",
-  "model": "gemini-3.5-flash-lite",
-  "llm_provider": "gemini",
-  "embedding_model": "@cf/baai/bge-m3",
+  "run_id": "corpus-de584c31fc95f9a2-openai_gpt-oss-120b-smoke-56ccf0b0-bb25949c-c1",
+  "release": "corpus-de584c31fc95f9a2",
+  "model": "openai/gpt-oss-120b",
+  "llm_provider": "groq",
+  "embedding_model": "multilingual-e5-small-onnx-q8-window-v1",
   "split": "smoke",
   "corpus_embedded": true,
   "publication_candidate": false,
@@ -53,18 +53,18 @@
     "Development runs on incomplete staging cannot certify acceptance; query embedding failures fall back to lexical retrieval."
   ],
   "as_of": "2026-10-13",
-  "configuration_sha256": "7e38886b421389c7a453934c99f96c5f915ecdc60dd98c7d023205181279e036",
-  "execution_concurrency": 2,
+  "configuration_sha256": "bb25949c1ac4da3a34858d9b6a4eae5f6315824cc676a50f634c5db881422ee8",
+  "execution_concurrency": 1,
   "attempt_history": {
-    "attempts": 2,
+    "attempts": 1,
     "retry_attempts": 0,
-    "limited_or_error_attempts": 2,
+    "limited_or_error_attempts": 1,
     "scope": "Every new attempt is retained; legacy checkpoints imported as latest results only.",
-    "directory": "reports/runs/corpus-a6af9cf431b26f71-gemini-3.5-flash-lite-smoke-56ccf0b0-7e38886b-c2/attempts"
+    "directory": "reports/runs/corpus-de584c31fc95f9a2-openai_gpt-oss-120b-smoke-56ccf0b0-bb25949c-c1/attempts"
   },
-  "latency_scope": "Paired CLI run, concurrency 2; public API single-user p95 measured separately.",
-  "source_audit_passed": false,
-  "source_audit_sha256": "384c3ac115e36127449fdb921c7fd39ad6a18847ce458cb87723a448b357af31",
-  "runtime_tests_passed": false,
-  "runtime_tests_sha256": "06f9d47e67dcb9d4208ef3c1199533c934a232808d8dfa818e2c22d7aa3e29e4"
+  "latency_scope": "Paired CLI run, concurrency 1; public API single-user p95 measured separately.",
+  "source_audit_passed": true,
+  "source_audit_sha256": "363afc7997185c2bc1528a869efd6b3eb851945597925a17612a573c5a9340dd",
+  "runtime_tests_passed": true,
+  "runtime_tests_sha256": "df4ba38b5003617e61f62b401f839168aaf38a194d5e797d716075a3ce905d02"
 }

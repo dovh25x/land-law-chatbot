@@ -1,0 +1,73 @@
+name: Paired legal evaluation
+on:
+  workflow_dispatch:
+    inputs:
+      release_id:
+        description: Immutable staged corpus release
+        required: true
+        default: corpus-de584c31fc95f9a2
+      split:
+        type: choice
+        options: [smoke, dev, acceptance]
+        default: smoke
+      limit:
+        description: Maximum pending mode executions for this checkpoint
+        default: '40'
+permissions:
+  contents: read
+concurrency:
+  group: legal-evaluation
+  cancel-in-progress: false
+jobs:
+  evaluate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    environment: production
+    env:
+      DATABASE_URL: ${{ secrets.ADMIN_DATABASE_URL }}
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+      LLM_PROVIDER: ${{ vars.LLM_PROVIDER || 'gemini' }}
+      GEMINI_MODEL: ${{ vars.GEMINI_MODEL || 'gemini-3.5-flash-lite' }}
+      GROQ_MODEL: ${{ vars.GROQ_MODEL || 'openai/gpt-oss-120b' }}
+      CLOUDFLARE_AI_API_TOKEN: ${{ secrets.CLOUDFLARE_AI_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      EMBEDDING_PROVIDER: ${{ vars.EMBEDDING_PROVIDER }}
+      EMBEDDING_MODEL: ${{ vars.EMBEDDING_MODEL }}
+      EMBEDDING_DIMENSIONS: ${{ vars.EMBEDDING_DIMENSIONS }}
+      EVALUATION_RELEASE: ${{ inputs.release_id }}
+      EVALUATION_SPLIT: ${{ inputs.split }}
+      EVALUATION_LIMIT: ${{ inputs.limit }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+      - run: pip install -r requirements.lock && pip install --no-deps -e .
+      - run: pytest -q
+      - name: Prepare pinned query encoder
+        if: vars.EMBEDDING_PROVIDER == 'local_onnx'
+        run: python backend/landlaw/local_embedding.py download models/e5
+      - uses: actions/cache@v4
+        with:
+          path: reports/runs
+          key: legal-evaluation-${{ inputs.release_id }}-${{ github.sha }}-${{ github.run_id }}
+          restore-keys: |
+            legal-evaluation-${{ inputs.release_id }}-${{ github.sha }}-
+      - run: land-law preflight --live
+      - name: Execute without publishing
+        run: python scripts/run_remote_evaluation.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: legal-evaluation-evidence
+          path: |
+            reports/runs/
+            reports/smoke.json
+            reports/smoke.html
+            reports/latest.json
+            reports/benchmark.html
+            reports/preflight.json
+            reports/runtime-tests.json
+          retention-days: 8

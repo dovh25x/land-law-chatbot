@@ -22,6 +22,7 @@ jobs:
       EMBEDDING_PROVIDER: ${{ vars.EMBEDDING_PROVIDER || 'gemini' }}
       EMBEDDING_MODEL: ${{ vars.EMBEDDING_MODEL || 'gemini-embedding-2' }}
       EMBEDDING_DIMENSIONS: ${{ vars.EMBEDDING_DIMENSIONS || '768' }}
+      EMBEDDING_CONCURRENCY: ${{ vars.EMBEDDING_CONCURRENCY || '2' }}
       CLOUDFLARE_AI_API_TOKEN: ${{ secrets.CLOUDFLARE_AI_API_TOKEN }}
       CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
       EMBEDDING_SEED_SHA256: ${{ vars.EMBEDDING_SEED_SHA256 }}
@@ -40,6 +41,9 @@ jobs:
             legal-embeddings-${{ runner.os }}-
       - run: land-law restore-sources
       - run: python scripts/embedding_checkpoint_seed.py restore
+      - name: Prepare pinned CPU model for changed passages
+        if: vars.EMBEDDING_PROVIDER == 'local_onnx'
+        run: python backend/landlaw/local_embedding.py download models/e5
       - name: Resume within free quota; archive staging without filling the database
         run: land-law ingest --offline --embed --no-persist
       - name: Compress staging within free artifact storage

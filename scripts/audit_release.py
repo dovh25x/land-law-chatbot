@@ -8,6 +8,22 @@ from landlaw.ingest import coverage, json_write
 from landlaw.security import digest, official_url, utcnow
 
 
+def reviewed_metadata(document, source):
+    defaults = {'provision_validity':[], 'source_review_notes':'', 'jurisdiction':'Hanoi'}
+    keys = ('title','source_kind','document_number','issuer','jurisdiction','project',
+            'issued_on','effective_from','effective_to','provision_validity','source_review_notes')
+    if any(document.get(key) != source.get(key,defaults.get(key)) for key in keys):
+        return False
+    if document.get('applicability_verified') != bool(source.get('review_status')=='verified' and source.get('effective_from')):
+        return False
+    selected = source.get('index_articles')
+    if selected is not None:
+        allowed = {f'Điều {n}' for n in selected}
+        if not document.get('chunks') or any(c['locator'].split(' · ')[0] not in allowed for c in document['chunks']):
+            return False
+    return True
+
+
 def source_file_provenance(document, source, contents):
     """Reject attachment substitution and ambiguous page-to-file mappings."""
     files = document.get('source_files', [])
@@ -52,6 +68,7 @@ def main(path):
             'official_provenance':official_url(document['url'],document.get('publication_url')),
             'reviewed_raw':source.get('review_status')=='verified' and all(digest(b) in source['raw_checksums'].values() for b in contents),
             'document_checksum':digest(b''.join(contents))==document['checksum'],
+            'reviewed_legal_metadata':reviewed_metadata(document,source),
             'chunk_checksums':all(digest(c['text'])==c['checksum'] for c in document['chunks']),
             'locators':all(c.get('locator') and c.get('text') for c in document['chunks']),
             'unique_chunks':len({c['id'] for c in document['chunks']})==len(document['chunks']),

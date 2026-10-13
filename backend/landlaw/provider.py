@@ -71,18 +71,39 @@ def generation_schema(schema):
     return simplify(schema.model_json_schema())
 
 
+def strict_generation_schema(schema):
+    shape=generation_schema(schema)
+    if 'supporting_spans' in shape.get('properties',{}):
+        shape['properties'].pop('supporting_quotes',None)
+    def close(value):
+        if isinstance(value,dict):
+            value.pop('default',None)
+            if value.get('type')=='object' and 'properties' in value:
+                value['required']=list(value['properties'])
+                value['additionalProperties']=False
+            for child in value.values():close(child)
+        elif isinstance(value,list):
+            for child in value:close(child)
+    close(shape)
+    return shape
+
+
 class Gemini:
     def __init__(self, settings: Settings, store: Store, client: httpx.AsyncClient | None = None):
         self.settings, self.store = settings, store
-        self.client = client or httpx.AsyncClient(timeout=25, limits=httpx.Limits(max_connections=6))
+        self.client = client or httpx.AsyncClient(timeout=25, limits=httpx.Limits(max_connections=8))
         for name in (settings.gemini_model,):
             if not re.fullmatch(r"[a-zA-Z0-9._-]+", name):
                 raise ValueError("Invalid model identifier")
         contract(settings)
         self.cloudflare_embeddings = CloudflareEmbeddings(settings,self.client,self.record_usage,self.normalize_vector)
+        from .local_embedding import LocalE5
+        self.local_embeddings = LocalE5(settings.local_embedding_model_dir)
 
     @property
     def configured(self):
+        if self.settings.llm_provider == 'groq':
+            return bool(self.settings.groq_api_key.get_secret_value())
         if self.settings.llm_provider == 'cloudflare':
             return bool(self.settings.cloudflare_account_id and self.settings.cloudflare_ai_api_token.get_secret_value())
         return bool(self.settings.gemini_api_key.get_secret_value())
@@ -189,7 +210,8 @@ class Gemini:
             budget.llm()
             await self.record_usage("llm")
             try:
-                result = (await self._cloudflare_generate(schema,body) if self.settings.llm_provider=='cloudflare'
+                result = (await self._groq_generate(schema,body) if self.settings.llm_provider=='groq' else
+                          await self._cloudflare_generate(schema,body) if self.settings.llm_provider=='cloudflare'
                           else await self._request(self.settings.gemini_model, "generateContent", body))
             except RateLimited as exc:
                 remaining = self.settings.turn_timeout_seconds - (time.monotonic()-budget.started)
@@ -222,6 +244,38 @@ class Gemini:
                 # Retries count as actual calls inside the same per-turn budget.
                 body['systemInstruction']['parts'][0]['text'] += '\nLượt trước không khớp schema. Trả duy nhất JSON đúng responseJsonSchema; dùng đúng kiểu trường và giá trị enum, không có markdown.'
 
+    async def _groq_generate(self,schema,body):
+        if not self.configured:
+            raise ProviderUnavailable('GROQ_API_KEY chưa được cấu hình')
+        shape=strict_generation_schema(schema)
+        instruction=body['systemInstruction']['parts'][0]['text']
+        if 'supporting_spans' in shape.get('properties',{}):
+            instruction+=' Every supported index needs supporting_spans selected from source_spans for every cited passage. Return short span IDs only; do not rewrite source text.'
+        request={'model':self.settings.groq_model,'temperature':0,'max_completion_tokens':2048,
+                 'messages':[{'role':'system','content':instruction},
+                             {'role':'user','content':body['contents'][0]['parts'][0]['text']}],
+                 'response_format':{'type':'json_schema','json_schema':{'name':schema.__name__,
+                                     'strict':True,'schema':shape}}}
+        if self.settings.groq_model.startswith('openai/gpt-oss-'):
+            request['reasoning_effort']='low'
+        try:
+            response=await self.client.post('https://api.groq.com/openai/v1/chat/completions',
+                headers={'Authorization':'Bearer '+self.settings.groq_api_key.get_secret_value()},json=request)
+        except httpx.HTTPError:
+            raise ProviderUnavailable('Không kết nối được Groq',retryable=True) from None
+        if response.status_code==429:
+            try:delay=math.ceil(float(response.headers.get('retry-after','60')))
+            except (ValueError,TypeError):delay=60
+            raise RateLimited(min(86400,max(1,delay)),source='provider')
+        if response.status_code>=400:
+            raise ProviderUnavailable(f'Groq trả HTTP {response.status_code}',retryable=response.status_code>=500)
+        result=response.json()
+        try:content=result['choices'][0]['message']['content']
+        except (KeyError,IndexError,TypeError):
+            raise ProviderUnavailable('Groq không trả kết quả đúng schema') from None
+        return {'candidates':[{'content':{'parts':[{'text':content}]}}],
+                'usageMetadata':{'totalTokenCount':result.get('usage',{}).get('total_tokens',0)}}
+
     def embedding_body(self, text, title=None, query=False, model=None):
         model = model or self.settings.embedding_model
         if model == "gemini-embedding-001":
@@ -238,7 +292,7 @@ class Gemini:
 
     @staticmethod
     def normalize_vector(values, dimensions=768):
-        if dimensions not in {768,1024} or len(values) != dimensions or not all(isinstance(x, (float, int)) and math.isfinite(x) for x in values):
+        if dimensions not in {384,768,1024} or len(values) != dimensions or not all(type(x) in (float, int) and math.isfinite(x) for x in values):
             raise ProviderUnavailable(f"Embedding không đúng {dimensions} chiều hữu hạn")
         norm = math.sqrt(sum(x*x for x in values))
         if norm == 0:
@@ -253,6 +307,8 @@ class Gemini:
         if budget:
             budget.embedding_calls += 1
         selected = contract(self.settings,release)
+        if selected['provider']=='local_onnx':
+            return (await self._embed_local([text],title,query))[0]
         if selected['provider']=='cloudflare':
             return (await self.cloudflare_embeddings.embed_many([text],title,query))[0]
         await self.reserve_embeddings(1)
@@ -262,6 +318,8 @@ class Gemini:
     async def embed_many(self, texts: list[str], title=None):
         if not 1 <= len(texts) <= 8:
             raise ValueError("Embedding batches must contain 1–8 independent chunks")
+        if self.settings.embedding_provider=='local_onnx':
+            return await self._embed_local(texts,title)
         if self.settings.embedding_provider=='cloudflare':
             return await self.cloudflare_embeddings.embed_many(texts,title)
         await self.reserve_embeddings(len(texts))
@@ -272,3 +330,11 @@ class Gemini:
         if len(embeddings) != len(texts):
             raise ProviderUnavailable("Số embedding không khớp số đoạn")
         return [self.normalize_vector(item.get("values", [])) for item in embeddings]
+
+    async def _embed_local(self,texts,title=None,query=False):
+        await self.record_usage('local-embedding-items',len(texts))
+        try:
+            vectors=await asyncio.to_thread(self.local_embeddings.embed_many,texts,title,query)
+        except (RuntimeError,OSError,ImportError,ValueError):
+            raise ProviderUnavailable('Local embedding model unavailable or invalid') from None
+        return [self.normalize_vector(vector,384) for vector in vectors]

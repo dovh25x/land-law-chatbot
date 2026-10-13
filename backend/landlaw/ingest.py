@@ -164,10 +164,13 @@ def pdf_pages(content: bytes, allow_ocr=False):
     return pages
 
 
-def chunks_for(doc_id, pages):
+def chunks_for(doc_id, pages, expected_article_count=None):
     chunks = []
     active_article = None
     appendix = False
+    next_article = 1
+    if expected_article_count is not None and (not isinstance(expected_article_count,int) or not 1 <= expected_article_count <= 1000):
+        raise Quarantine('Invalid reviewed article sequence')
     for page_index, (page, text) in enumerate(pages):
         # Reclassify old parse caches too: v4 marked any prose mentioning 'đơn giá'.
         text = redact(text).replace(TABLE_MARKER + "\n", "").strip()
@@ -176,7 +179,17 @@ def chunks_for(doc_id, pages):
         appendix_heading = None if appendix else re.search(r'^\s*PHỤ LỤC\s*$', text, re.MULTILINE | re.IGNORECASE)
         appendix_start = appendix_heading.start() if appendix_heading else None
         main_text = text[:appendix_start] if appendix_start is not None else text
-        positions = [] if appendix else [m.start() for m in article_headings(main_text)]
+        positions = []
+        if not appendix:
+            for heading in article_headings(main_text):
+                if expected_article_count is not None:
+                    # A reviewed amendment may quote an entire chapter whose
+                    # unquoted inner headings belong to the amended act. Its
+                    # own consecutive article sequence identifies the parent.
+                    if heading[1] != str(next_article):
+                        continue
+                    next_article += 1
+                positions.append(heading.start())
         boundaries = sorted(set([0, *positions, *([appendix_start] if appendix_start is not None else []), len(text)]))
         for section_index, (start, end) in enumerate(zip(boundaries, boundaries[1:])):
             if appendix_start is not None and start >= appendix_start:
@@ -184,7 +197,7 @@ def chunks_for(doc_id, pages):
             section = text[start:end].strip()
             if len(section) < 30:
                 continue
-            match = None if appendix else ARTICLE_HEADING.match(section)
+            match = None if appendix or (expected_article_count is not None and start not in positions) else ARTICLE_HEADING.match(section)
             if match:
                 active_article = match[1]
             locator = f"Điều {active_article}" if active_article else f"Trang {page}" if page else f"Đoạn {section_index+1}"
@@ -232,6 +245,8 @@ def chunks_for(doc_id, pages):
                 chunk_id = f"{doc_id}-{page_index}-{section_index}-{index}"
                 chunks.append(Chunk(id=chunk_id, document_id=doc_id, text=segment, locator=locator,
                                     page=page, parent_id=parent_id, checksum=digest(segment)))
+    if expected_article_count is not None and next_article != expected_article_count + 1:
+        raise Quarantine('Reviewed article sequence incomplete; source structure needs review')
     if not chunks:
         raise Quarantine("No usable text chunks")
     # Publication headers alone have no rule or context; retain page/locator on
@@ -347,13 +362,24 @@ async def collect_source(source, settings, client, offline=False, allow_ocr=Fals
         source_review_notes=source.get('source_review_notes', ''),
         source_files=source_files,
         checked_at=datetime.fromisoformat(source["checked_at"].replace("Z", "+00:00")) if offline else utcnow(), checksum=checksum,
-        chunks=chunks_for(source_id, pages))
+        chunks=chunks_for(source_id, pages, source.get('expected_article_count')))
+    indexed_articles = source.get('index_articles')
+    if indexed_articles is not None:
+        if not indexed_articles or not all(isinstance(n,int) and n > 0 for n in indexed_articles):
+            raise Quarantine('Invalid reviewed article selection')
+        allowed = {f'Điều {n}' for n in indexed_articles}
+        doc.chunks = [c for c in doc.chunks if c.locator.split(' · ')[0] in allowed]
+        if not doc.chunks:
+            raise Quarantine('Reviewed article selection has no parsed content')
     return doc
 
 
 async def embed_pending(provider, pending, title, issues, doc_id):
     """Checkpoint every successful batch, including peers of a throttled request."""
-    concurrency, successes, offset = 2, 0, 0
+    initial_concurrency = getattr(getattr(provider, 'settings', None), 'embedding_concurrency', 2)
+    concurrency = getattr(provider, '_ingestion_concurrency', initial_concurrency)
+    successes = getattr(provider, '_ingestion_successes', 0)
+    offset = 0
     async def batch_run(batch):
         throttled = False
         for attempt in range(3):
@@ -389,6 +415,8 @@ async def embed_pending(provider, pending, title, issues, doc_id):
             else:
                 successes += 1
         if blocked:
+            provider._ingestion_concurrency = max(1, concurrency // 2)
+            provider._ingestion_successes = 0
             return True
         offset += sum(len(b) for b in batches)
         if any(result[1] for result in results if isinstance(result, tuple)):
@@ -396,6 +424,8 @@ async def embed_pending(provider, pending, title, issues, doc_id):
         elif successes >= 10:
             concurrency = min(8, concurrency*2)
             successes = 0
+        provider._ingestion_concurrency = concurrency
+        provider._ingestion_successes = successes
     return False
 
 
@@ -455,7 +485,7 @@ async def build_corpus(settings: Settings, provider: Gemini | None, offline=Fals
     embedding_contract = contract(settings)
     content_hash = digest(json.dumps({"documents": documents, "relations": valid_relations,
         "unresolved_relations":unresolved,'coverage_gaps':gaps,'embedding_contract':embedding_contract,
-        "place_aliases": aliases, "embedding_model": settings.embedding_model, "parser_version": 13}, sort_keys=True, ensure_ascii=False))[:16]
+        "place_aliases": aliases, "embedding_model": settings.embedding_model, "parser_version": 14}, sort_keys=True, ensure_ascii=False))[:16]
     payload = {"id": f"corpus-{content_hash}", "checked_at": min((d["checked_at"] for d in documents), default=utcnow().isoformat()), "documents": documents,
                "relations": valid_relations, "place_aliases": aliases, "embedding_model": settings.embedding_model,
                "embedding_dimensions":settings.embedding_dimensions,'embedding_contract':embedding_contract,

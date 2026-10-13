@@ -30,7 +30,23 @@ def validate(items):
     return items
 
 
-async def run(command):
+def release_checkpoints(folder, release):
+    """Archive one complete model contract without deleting other local caches."""
+    model, dimensions = release['embedding_model'], release['embedding_dimensions']
+    items = {}
+    for doc in release['documents']:
+        for chunk in doc['chunks']:
+            if chunk.get('embedding_model') != model or len(chunk.get('embedding') or []) != dimensions:
+                raise ValueError('Release must contain complete matching-model vectors')
+            name=digest(f"embedding-format-v1:{model}:{doc['title']}:{chunk['checksum']}")+'.json'
+            checkpoint=json.loads((folder/name).read_text())
+            if checkpoint.get('embedding') != chunk['embedding']:
+                raise ValueError('Release vector differs from its checkpoint')
+            items[name]=checkpoint
+    return validate(items)
+
+
+async def run(command, release_path=None):
     load_dotenv()
     settings = Settings()
     folder = settings.data_dir/'checkpoints'
@@ -38,8 +54,10 @@ async def run(command):
     try:
         await archive.ensure_private()
         if command == 'archive':
-            items = validate({p.name: json.loads(p.read_text()) for p in folder.glob('*.json')
-                              if re.fullmatch(r'[0-9a-f]{64}\.json', p.name)})
+            release = json.loads(release_path.read_text()) if release_path else None
+            items = (release_checkpoints(folder,release) if release else
+                     validate({p.name:json.loads(p.read_text()) for p in folder.glob('*.json')
+                               if re.fullmatch(r'[0-9a-f]{64}\.json',p.name)}))
             raw = json.dumps(items, sort_keys=True, separators=(',', ':')).encode()
             if len(raw) > MAX_BYTES:
                 raise ValueError('Checkpoint seed exceeds the 180 MB expanded limit')
@@ -57,6 +75,8 @@ async def run(command):
             report = await archive.upload_files(files)
             set_key('.env', 'EMBEDDING_SEED_SHA256', checksum)
             report.update({'checkpoints': len(items), 'seed_sha256': checksum,'format':2,'shards':len(shards)})
+            report.update({'release':release.get('id') if release else None,
+                           'scope':'Selected complete release checkpoints; other local model caches retained' if release else 'All local checkpoints'})
             json_write(settings.reports_dir/'embedding-seed.json', report)
             print(json.dumps(report))
         elif command == 'restore':
@@ -111,4 +131,4 @@ async def run(command):
 
 
 if __name__ == '__main__':
-    asyncio.run(run(sys.argv[1]))
+    asyncio.run(run(sys.argv[1],Path(sys.argv[2]) if len(sys.argv)>2 else None))

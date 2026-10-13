@@ -5,6 +5,7 @@ COPY requirements.lock ./requirements.lock
 RUN pip install -r requirements.lock
 COPY pyproject.toml ./
 COPY backend ./backend
+RUN python backend/landlaw/local_embedding.py download /app/models/e5
 RUN pip install --no-deps . && useradd --create-home --uid 10001 app
 COPY data/sources.json data/legal_relations.json data/projects.json ./data/
 COPY data/place_aliases.json ./data/

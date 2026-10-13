@@ -18,6 +18,7 @@ def main():
         raise SystemExit('This setup is scoped to dovh25x/land-law-chatbot')
     names = ['ADMIN_DATABASE_URL', 'GEMINI_API_KEY', 'SUPABASE_URL', 'SUPABASE_SERVICE_ROLE_KEY',
              'BACKUP_ENCRYPTION_KEY', 'RENDER_API_KEY', 'CLOUDFLARE_API_TOKEN', 'CLOUDFLARE_ACCOUNT_ID', 'CLOUDFLARE_AI_API_TOKEN']
+    if env.get('GROQ_API_KEY'):names.append('GROQ_API_KEY')
     variables = {'RENDER_SERVICE_ID': env.get('RENDER_SERVICE_ID'),
                  'CLOUDFLARE_PAGES_PROJECT': env.get('CLOUDFLARE_PAGES_PROJECT'),
                  'API_BASE_URL': env.get('VITE_API_BASE_URL'),
@@ -25,8 +26,10 @@ def main():
                  'EMBEDDING_PROVIDER': env.get('EMBEDDING_PROVIDER','gemini'),
                  'EMBEDDING_MODEL': env.get('EMBEDDING_MODEL','gemini-embedding-2'),
                  'EMBEDDING_DIMENSIONS': env.get('EMBEDDING_DIMENSIONS','768'),
+                 'EMBEDDING_CONCURRENCY': env.get('EMBEDDING_CONCURRENCY','2'),
                  'LLM_PROVIDER': env.get('LLM_PROVIDER','gemini'),
                  'GEMINI_MODEL': env.get('GEMINI_MODEL','gemini-3.5-flash-lite'),
+                 'GROQ_MODEL':env.get('GROQ_MODEL','openai/gpt-oss-120b'),
                  'CLOUDFLARE_LLM_MODEL': env.get('CLOUDFLARE_LLM_MODEL','@cf/qwen/qwen3-30b-a3b-fp8'),
                  'EMBEDDING_RESUME_ENABLED': 'true', 'MAINTENANCE_ENABLED': 'true'}
     if not env.get('GITHUB_TOKEN') or any(not env.get(n) for n in names) or any(not v for v in variables.values()):

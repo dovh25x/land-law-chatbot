@@ -6,7 +6,7 @@ Web chatbot tiếng Việt dùng FastAPI, LangGraph, Gemini, PostgreSQL/pgvector
 
 Website: https://hanoi-land-law.pages.dev; API: https://land-law-chatbot.onrender.com. Hạ tầng đã live và một lượt Gemini/SSE thật đã qua smoke. Corpus chưa công bố; đây chưa phải bản phát hành đã nghiệm thu M0–M6. Xem [bằng chứng và hạng mục còn mở](docs/IMPLEMENTATION_STATUS.md), [nguồn thật và khoảng trống](docs/SOURCES.md), [benchmark](docs/BENCHMARK.md). Không có câu trả lời hay chỉ số chất lượng giả trong runtime. SQLite dành cho phát triển; production bắt buộc PostgreSQL.
 
-Provider sinh được chọn rõ bằng `LLM_PROVIDER`: Gemini hoặc Cloudflare Workers AI `@cf/qwen/qwen3-30b-a3b-fp8`. Qwen là dự phòng miễn phí được chủ dự án cho phép khi các model Gemini nhanh trả quota theo ngày. Hai chế độ dùng cùng model; cấu hình/provider có fingerprint riêng và không ghép kết quả đánh giá. Corpus mới `corpus-c30fb243d71ebd2d` có 67 tài liệu, 52 văn bản pháp lý và 5 nguồn mỗi dự án; đã có 4,555/7,566 vector BGE-M3 1.024 chiều. Còn 3,011 vector cần tiếp tục khi quota provider phục hồi. Bản BGE trước có đủ 5.149 vector vẫn được giữ làm staging. Chưa công bố corpus hoặc đạt gate demo. Không có trần gọi API theo ngày do ứng dụng đặt; giữ điểm dừng workflow và chống lạm dụng website. Không bật billing hoặc nâng gói.
+Provider sinh được chọn rõ bằng `LLM_PROVIDER`: Gemini hoặc Cloudflare Workers AI `@cf/qwen/qwen3-30b-a3b-fp8`. Qwen là dự phòng miễn phí được chủ dự án cho phép khi các model Gemini nhanh trả quota theo ngày. Hai chế độ dùng cùng model; cấu hình/provider có fingerprint riêng và không ghép kết quả đánh giá. Corpus được chọn có 69 tài liệu, 54 văn bản pháp lý, năm nguồn mỗi dự án và 7.610 đoạn. Đang embedding toàn bộ bằng `multilingual-e5-small-onnx-q8-window-v1` 768 chiều sau khi Gemini embedding-2 và Workers AI báo quota theo ngày. Các checkpoint/model cũ được giữ riêng; chưa công bố corpus hoặc đạt gate demo. Không có trần gọi API theo ngày do ứng dụng đặt; giữ điểm dừng workflow và chống lạm dụng website. Không bật billing hoặc nâng gói.
 
 ## Chạy phát triển
 
@@ -68,3 +68,5 @@ GitHub Actions kiểm tra Python 3.12, build web, audit và build Docker. Thu th
 ## Vận hành và bàn giao
 
 [Hướng dẫn triển khai, quota, cập nhật và khôi phục](docs/OPERATIONS.md), [kịch bản demo](docs/DEMO.md). Hosting mục tiêu: Cloudflare Pages Free, Render Free một worker, Supabase Free. Secret ở backend/.env/GitHub Secrets; trình duyệt chỉ gọi API. Không bật thanh toán hoặc nâng gói. Không nhận upload hồ sơ cá nhân, tính tiền tự động hoặc tra cứu GIS từng thửa.
+
+Embedding offline trên Colab CPU: [notebook và hướng dẫn](docs/COLAB_EMBEDDINGS.md). Corpus E5 hiện đủ 7.610 vector 384 chiều; chỉ công bố sau khi gate demo đạt.

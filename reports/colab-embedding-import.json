@@ -1,0 +1,23 @@
+{
+  "checked_at": "2026-10-13T04:53:05.899620+00:00",
+  "status": "imported_not_published",
+  "artifact_sha256": "16dbc26e9975886ae50b42f1e994f79ef5885980d4c5583379c46eab1b2d98cb",
+  "source_release": "corpus-7ae55e5449449e25",
+  "model_spec": {
+    "name": "multilingual-e5-small-onnx-q8-window-v1",
+    "dimensions": 384,
+    "onnx_revision": "761b726dd34fb83930e26aab4e9ac3899aa1fa78",
+    "tokenizer_revision": "614241f622f53c4eeff9890bdc4f31cfecc418b3",
+    "onnx_sha256": "f80102d3f2a1229f387d3c81909990d8945513e347b0eab049f7de3c6f98c193",
+    "tokenizer_sha256": "cfc8146abe2a0488e9e2a0c56de7952f7c11ab059eca145a0a727afce0db2865",
+    "preprocessing": "e5-prefix-each-window-sp-offset1-mask-mean-l2-window-mean-l2-v1",
+    "passage_max_tokens": 512,
+    "query_max_tokens": 128,
+    "overlap_tokens": 64
+  },
+  "chunks": 7610,
+  "created_checkpoints": 7603,
+  "input_sha256": "f790d6c3b37e32b02199af6e6e517658dc2a92b728c363029040a32ee05d65fb",
+  "vectors_sha256": "35bbcc88570b41d6709b05f8dcf4c18c62d6f6eda5f37a6d320fc92f8890a1b6",
+  "colab_run_seconds": 3114.61
+}

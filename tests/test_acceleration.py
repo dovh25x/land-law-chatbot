@@ -42,6 +42,39 @@ async def test_parallel_ingestion_keeps_successful_peer_checkpoint(tmp_path):
     assert json.loads((tmp_path/'0.json').read_text())['embedding'][0]==1
 
 
+async def test_stable_embedding_concurrency_is_retained_between_documents(tmp_path):
+    class Provider:
+        async def embed_many(self,texts,title=None):
+            return [[1.0]+[0.0]*767 for _ in texts]
+    provider = Provider()
+    def pending(doc,count):
+        return [(Chunk(id=f'{doc}-{n}',document_id=doc,text=str(n),locator='Điều 1',checksum=digest(str(n))),
+                 tmp_path/f'{doc}-{n}.json') for n in range(count)]
+    assert not await embed_pending(provider,pending('first',80),'title',[],'first')
+    assert provider._ingestion_concurrency == 4
+    assert not await embed_pending(provider,pending('second',8),'title',[],'second')
+    assert provider._ingestion_concurrency == 4
+    assert len(list(tmp_path.glob('*.json'))) == 88
+
+
+def test_checkpoint_seed_selects_only_matching_complete_release(tmp_path):
+    import importlib.util
+    spec=importlib.util.spec_from_file_location('checkpoint_seed',Path('scripts/embedding_checkpoint_seed.py'))
+    module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module)
+    release_checkpoints=module.release_checkpoints
+    from landlaw.ingest import json_write
+    model='gemini-embedding-001';vector=[1.0]+[0.0]*767;title='Reviewed source';checksum=digest('Article text')
+    name=digest(f'embedding-format-v1:{model}:{title}:{checksum}')+'.json'
+    json_write(tmp_path/name,{'embedding':vector})
+    json_write(tmp_path/(digest('other-model')+'.json'),{'embedding':[1.0]+[0.0]*1023})
+    release={'id':'r','embedding_model':model,'embedding_dimensions':768,'documents':[{'title':title,
+        'chunks':[{'checksum':checksum,'embedding_model':model,'embedding':vector}]}]}
+    assert set(release_checkpoints(tmp_path,release)) == {name}
+    release['documents'][0]['chunks'][0]['embedding_model']='gemini-embedding-2'
+    with pytest.raises(ValueError,match='matching-model'):
+        release_checkpoints(tmp_path,release)
+
+
 async def test_embedding_uses_release_contract_after_rollback(settings, store):
     seen=[]
     def handle(request):
