@@ -1,4 +1,12 @@
-from scripts.resume_evaluation import full_turn_cooldown
+import importlib.util
+from pathlib import Path
+
+
+spec = importlib.util.spec_from_file_location('evaluation_resume',
+    Path(__file__).parents[1] / 'scripts' / 'resume_evaluation.py')
+module = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(module)
+full_turn_cooldown = module.full_turn_cooldown
 
 
 def test_recovery_includes_actual_draft_consumption():
