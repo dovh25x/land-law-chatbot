@@ -57,3 +57,17 @@ def test_metadata_cache_is_bounded_and_returns_independent_immutable_views(store
     release(store,release_id='r3')
     store.release('r2',metadata_only=True);store.release('r3',metadata_only=True)
     assert len(store._metadata_cache)==2
+
+
+def test_unit_fixture_cannot_inherit_operator_database_or_provider_secrets(monkeypatch,tmp_path):
+    from conftest import settings as fixture
+    for name,value in {'DATABASE_URL':'postgresql://owner:private@invalid.example/database',
+                       'ADMIN_DATABASE_URL':'postgresql://owner:private@invalid.example/database',
+                       'LLM_PROVIDER':'groq','GROQ_API_KEY':'operator-private-key',
+                       'EMBEDDING_PROVIDER':'local_onnx','EMBEDDING_MODEL':MODEL['name'],
+                       'EMBEDDING_DIMENSIONS':'384','SUPABASE_SERVICE_ROLE_KEY':'operator-private-key'}.items():
+        monkeypatch.setenv(name,value)
+    isolated=fixture.__wrapped__(tmp_path)
+    assert not isolated.database_url.get_secret_value() and not isolated.admin_database_url.get_secret_value()
+    assert isolated.llm_provider=='gemini' and isolated.embedding_provider=='gemini'
+    assert not isolated.groq_api_key.get_secret_value() and not isolated.supabase_service_role_key.get_secret_value()

@@ -16,7 +16,7 @@ def main():
     repo = env.get('GITHUB_REPOSITORY', '').removeprefix('git@github.com:').removeprefix('https://github.com/').removesuffix('.git').rstrip('/')
     if repo != 'dovh25x/land-law-chatbot':
         raise SystemExit('This setup is scoped to dovh25x/land-law-chatbot')
-    names = ['ADMIN_DATABASE_URL', 'GEMINI_API_KEY', 'SUPABASE_URL', 'SUPABASE_SERVICE_ROLE_KEY',
+    names = ['ADMIN_DATABASE_URL', 'DATABASE_URL', 'GEMINI_API_KEY', 'SUPABASE_URL', 'SUPABASE_SERVICE_ROLE_KEY',
              'BACKUP_ENCRYPTION_KEY', 'RENDER_API_KEY', 'CLOUDFLARE_API_TOKEN', 'CLOUDFLARE_ACCOUNT_ID', 'CLOUDFLARE_AI_API_TOKEN']
     if env.get('GROQ_API_KEY'):names.append('GROQ_API_KEY')
     variables = {'RENDER_SERVICE_ID': env.get('RENDER_SERVICE_ID'),
