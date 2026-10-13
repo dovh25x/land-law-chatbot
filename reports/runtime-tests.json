@@ -1,7 +1,7 @@
 {
-  "checked_at": "2026-10-13T12:12:48.718307+00:00",
+  "checked_at": "2026-10-13T12:27:29.763050+00:00",
   "release": "corpus-de584c31fc95f9a2",
-  "configuration_sha256": "d405550bbcafbaa67ddba1269288c56d98dcdd0655c7f1566d962f84691d0d1e",
+  "configuration_sha256": "ea3166d60c6ec57b1ee8f2b7716872097d8c3f5ce540de70aec6256543b9fc46",
   "passed": false,
   "checks": {
     "postgres_runtime": true,
@@ -14,11 +14,13 @@
     "claim_act_attribution": true,
     "provider_remote_tools_disabled": true,
     "cli_traceback_locals_disabled": true,
-    "backend_tests_129": true,
     "groq_claims_only_answer_schema": true,
     "bounded_json_generation_retry": true,
     "partial_public_quality_withheld": true,
-    "verification_ignores_unrendered_summary": true
+    "verification_ignores_unrendered_summary": true,
+    "backend_tests_130": true,
+    "source_proven_date_comparison": true,
+    "complete_repeal_scope_literal_proof": true
   },
-  "scope": "129 isolated tests. Verification evaluates displayed claims and guidance only; hidden summary omitted. Free Qwen actual-source claims-only probe passed. Exact final CI and complete paired source review pending."
+  "scope": "130 isolated tests: source-proven dates and complete partial-repeal scopes require literal official evidence and produce only exact server-built facts; arbitrary generated claims still use full verifier. Final CI and complete paired source review pending."
 }

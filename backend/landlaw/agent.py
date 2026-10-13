@@ -67,6 +67,8 @@ class State(TypedDict, total=False):
     retrieval_degraded: bool
     result: ChatResult
     tool_notes: list[dict]
+    source_fact_id: str | None
+    source_fact_type: str | None
 
 
 def applicability(doc: Document, as_of: date, chunk=None):
@@ -529,6 +531,8 @@ class Agent:
         return result
 
     async def synthesize(self, state):
+        state['source_fact_id']=None
+        state['source_fact_type']=None
         if state["plan"].out_of_scope:
             state["draft"] = Draft(status="insufficient_evidence", summary="Câu hỏi nằm ngoài phạm vi đất đai và quy hoạch Hà Nội.",out_of_scope=True)
         elif not state["evidence"]:
@@ -538,6 +542,8 @@ class Agent:
             # The source proves commencement, not every historical case's
             # transition. State only that verified date and ask for case facts.
             date_text=future.document.effective_from.strftime('%d/%m/%Y')
+            state['source_fact_id']=future.chunk.id
+            state['source_fact_type']='future_commencement'
             state['draft']=Draft(status='clarification_needed',summary='',
                 claims=[Claim(kind='applicability',
                     text=f'{future.document.document_number} có hiệu lực thi hành từ ngày {date_text}. '
@@ -546,6 +552,11 @@ class Agent:
                 missing_facts=['Ngày ra quyết định thu hồi đất và ngày phê duyệt phương án bồi thường.',
                                'Loại đất và tình trạng giấy tờ của hồ sơ, chỉ cung cấp thông tin đã ẩn danh.'],
                 next_steps=['Đối chiếu căn cứ và điều khoản chuyển tiếp trong quyết định, phương án xử lý hồ sơ.'])
+        elif (partial:=self.partial_repeal(state)) is not None:
+            item,relation,target=partial
+            state['source_fact_id']=item.chunk.id
+            state['source_fact_type']='partial_repeal'
+            state['draft']=Draft(status='answered',claims=[self.partial_repeal_claim(item,relation,target)])
         else:
             contexts,documents=self.prompt_context(state)
             aliases={item['citation_id']:f'C{index+1}' for index,item in enumerate(contexts)}
@@ -609,11 +620,67 @@ class Agent:
                 return item
         return None
 
+    @staticmethod
+    def partial_repeal(state):
+        question=normalize(state['request'].message)
+        if 'bai bo' not in question or not any(term in question for term in ('toan bo','mot phan')):return None
+        pattern=r'(?<![\d/])(\d{1,6})/((?:19|20)\d{2})(?!/\d)'
+        def number(text):return {f'{int(a)}/{b}' for a,b in re.findall(pattern,normalize(text))}
+        requested=number(question)
+        if len(requested)!=2:return None
+        docs={d['id']:d for d in (state['release'] or {}).get('documents',[])}
+        for relation in (state['release'] or {}).get('relations',[]):
+            target=docs.get(relation['target_id'])
+            if (not target or not target.get('applicability_verified') or relation['type']!='repeals' or not relation.get('target_locators_complete')
+                    or not relation.get('target_locators') or not relation.get('source_locator')):continue
+            for item in state['evidence']:
+                if (item.document.id!=relation['source_id'] or item.applicability!='current'
+                        or not item.document.applicability_verified
+                        or (number(item.document.document_number or '') | number(target.get('document_number') or '')) != requested
+                        or item.chunk.locator!=relation['source_locator']):continue
+                source=normalize(item.chunk.text)
+                if ('bai bo' in source and number(target.get('document_number') or '') <= number(source)
+                        and all(normalize(locator) in source for locator in relation['target_locators'])):
+                    return item,relation,target
+        return None
+
+    @staticmethod
+    def partial_repeal_claim(item,relation,target):
+        scope='; '.join(relation['target_locators'])
+        return Claim(kind='applicability',text=f'{item.document.document_number} bãi bỏ {scope} của {target["document_number"]}. '
+            f'Phạm vi bãi bỏ này là một phần; không phải toàn bộ {target["document_number"]}.',citation_ids=[item.chunk.id])
+
     async def verify(self, state):
         draft = state["draft"]
         if not state["evidence"]:
             state["verification"] = Verification()
             return state
+        # This claim is constructed by the server from a source-verified date,
+        # not generated prose about an entitlement or a transition. Recheck
+        # the literal commencement and chronological comparison as proof.
+        future=self.future_commencement(state) if state.get('source_fact_type')=='future_commencement' else None
+        if future and future.chunk.id==state['source_fact_id']:
+            expected=f'{future.document.document_number} có hiệu lực thi hành từ ngày {future.document.effective_from.strftime("%d/%m/%Y")}. '
+            expected+=f'Văn bản này chưa có hiệu lực tại ngày {state["as_of"].strftime("%d/%m/%Y")}.'
+            if (draft.status=='clarification_needed' and len(draft.claims)==1
+                    and draft.claims[0].kind=='applicability' and draft.claims[0].text==expected
+                    and draft.claims[0].citation_ids==[future.chunk.id]
+                    and state['as_of']<future.document.effective_from):
+                state['verification']=Verification(supported_claim_indexes=[0],supporting_quotes=[
+                    SupportingQuote(claim_index=0,citation_id=future.chunk.id,quote=future.chunk.text)])
+                await self.event(state,'verification','Đã đối chiếu mốc hiệu lực trực tiếp trong nguồn với ngày hỏi; chưa kết luận quyền lợi hoặc chuyển tiếp hồ sơ.',
+                                 'check_effectivity',[future.document.id])
+                return state
+        partial=self.partial_repeal(state) if state.get('source_fact_type')=='partial_repeal' else None
+        if partial:
+            item,relation,target=partial
+            if (item.chunk.id==state['source_fact_id'] and draft.status=='answered'
+                    and draft.claims==[self.partial_repeal_claim(item,relation,target)]):
+                state['verification']=Verification(supported_claim_indexes=[0],supporting_quotes=[
+                    SupportingQuote(claim_index=0,citation_id=item.chunk.id,quote=item.chunk.text)])
+                await self.event(state,'verification','Đã đối chiếu phạm vi bãi bỏ một phần đã rà soát với đúng số văn bản và điều khoản nguồn.',
+                                 'check_effectivity',[item.document.id,target['id']])
+                return state
         evidence = {e.chunk.id: e for e in state["evidence"]}
         repaired=[]
         for index,claim in enumerate(draft.claims):

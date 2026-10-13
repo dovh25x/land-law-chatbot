@@ -125,6 +125,32 @@ async def test_historical_partial_repeal_keeps_operative_clause_before_future_re
     assert passages[0]['document_id']!=future.id
 
 
+async def test_partial_repeal_fact_requires_complete_scope_and_literal_source(store,settings):
+    from landlaw.models import Relation
+    source=document('source',document_number='10/2026/QĐ-UBND',
+        text='Điều 2. Bãi bỏ Điều 2 Quyết định số 38/2025/QĐ-UBND.')
+    source.chunks[0].locator='Điều 2'
+    target=document('target',document_number='38/2025/QĐ-UBND')
+    relation=Relation(source_id='source',target_id='target',type='repeals',source_locator='Điều 2',
+        target_locators=['Điều 2'],target_locators_complete=True,source_url=source.url,explanation='Source checked partial repeal')
+    payload=release(store,[source,target],relations=[relation.model_dump(mode='json')]);sid,_=session(store)
+    class NoInference(FakeProvider):
+        async def generate(self,*args):raise AssertionError('Verified repeal scope is read from the source, not inferred by a model')
+    agent=Agent(store,NoInference(settings))
+    result=await agent.run(ChatRequest(session_id=sid,mode='baseline',as_of=date(2026,1,20),
+        message='10/2026/QĐ-UBND bãi bỏ toàn bộ 38/2025/QĐ-UBND hay một phần?'),noop)
+    assert result.status=='answered' and result.llm_calls==0
+    assert 'không phải toàn bộ' in result.content and len(result.verified_claims)==1
+    from landlaw.models import Evidence
+    state={'request':ChatRequest(session_id=sid,message='10/2026/QĐ-UBND bãi bỏ toàn bộ 38/2025/QĐ-UBND không?'),
+        'release':payload,'evidence':[Evidence(document=source,chunk=source.chunks[0],applicability='current')]}
+    payload['relations'][0]['target_locators_complete']=False
+    assert agent.partial_repeal(state) is None
+    payload['relations'][0]['target_locators_complete']=True
+    state['evidence'][0].chunk=source.chunks[0].model_copy(update={'text':'Điều 2. Nội dung khác, không xác định phạm vi.'})
+    assert agent.partial_repeal(state) is None
+
+
 def test_as_of_observation_is_distinct_from_claimed_commencement_date():
     from landlaw.agent import claim_source_dates
     assert claim_source_dates('Văn bản không còn hiệu lực vào ngày 12/10/2026.',date(2026,10,12))==set()
@@ -264,14 +290,13 @@ async def test_future_immediate_application_states_only_verified_start_and_asks_
     release(store,[law]);sid,_=session(store)
     class Provider(FakeProvider):
         async def generate(self,schema,instruction,payload,budget):
-            assert schema is not Draft,'A future commencement check must not invent historical rights'
-            return await super().generate(schema,instruction,payload,budget)
+            raise AssertionError('A literal source date and chronological comparison need no model inference')
     result=await Agent(store,Provider(settings)).run(ChatRequest(session_id=sid,
         message='Hồ sơ xét ngày 01/03/2026 có áp dụng ngay 40/2026/QĐ-UBND để tính quyền lợi không?',
         mode='baseline',as_of=date(2026,3,1)),noop)
     assert result.status=='clarification_needed' and len(result.verified_claims)==1
     assert 'chưa có hiệu lực tại ngày 01/03/2026' in result.content
-    assert result.missing_facts and result.llm_calls==1
+    assert result.missing_facts and result.llm_calls==0
 
 
 async def test_missing_tool_identifier_falls_back_and_never_becomes_public_question(store,settings):

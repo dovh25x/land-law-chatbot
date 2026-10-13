@@ -175,5 +175,33 @@
     "source_checked": true,
     "claim_support": [],
     "notes": "Model Qwen viết kết luận đúng trong summary nhưng để claims rỗng. Summary chưa được kiểm chứng không được phát ra; kết quả insufficient_evidence không đáp ứng ca có đủ căn cứ. Giữ attempt; điều chỉnh schema để model đặt nội dung vào các claims có citation và được kiểm tra, không chuyển summary thành đáp án chưa qua verifier."
+  },
+  "S01:baseline:d19ececb849c3b38d866a140845358ae035f55a1d0bdd55b313c71d71406006e": {
+    "passed": true,
+    "source_checked": true,
+    "claim_support": [
+      true
+    ],
+    "notes": "Đã đọc toàn bộ content và claim của Qwen cấu hình d405550b. Điều 2 QĐ40, qd-40-2026-hanoi-0-2-0, có hiệu lực 02/04/2026 và thay thế QĐ56/2024; kết luận QĐ56 không còn hiệu lực tại ngày hỏi 12/10/2026 đúng. Nguồn đã đối chiếu nguyên văn Công báo, citation ID khớp evidence. Không có quyền lợi cá nhân, phủ nhận chuyển tiếp, mốc tự tạo hoặc nội dung phụ chưa có nguồn."
+  },
+  "S01:agentic:8b3fb4a2fa9c3db244848e79899588f307916e206b870f5a577872c09ef62f36": {
+    "passed": true,
+    "source_checked": true,
+    "claim_support": [
+      true
+    ],
+    "notes": "Đã đọc toàn bộ content và claim của Qwen cấu hình d405550b. Điều 2 QĐ40, qd-40-2026-hanoi-0-2-0, có hiệu lực 02/04/2026 và thay thế QĐ56/2024; kết luận QĐ56 không còn hiệu lực tại ngày hỏi 12/10/2026 đúng. Nguồn đã đối chiếu nguyên văn Công báo, citation ID khớp evidence. Không có quyền lợi cá nhân, phủ nhận chuyển tiếp, mốc tự tạo hoặc nội dung phụ chưa có nguồn."
+  },
+  "S02:baseline:0f6d57fb4dc301e5f1952dcf33d2b4e8334b936f28fb5f34c8da5e302a50ce10": {
+    "passed": false,
+    "source_checked": true,
+    "claim_support": [],
+    "notes": "Chưa nêu được mốc hiệu lực QĐ40 trong đáp án cuối, dù source Điều 2 và Draft server đã xác định đúng 02/04/2026. Verifier xác nhận fact nhưng đòi kết luận luật đang áp dụng cho hồ sơ chưa đủ dữ kiện, làm mất phần giải thích chung. Kết quả không đáp ứng rubric; sửa bằng đối chiếu literal date và lịch cho fact do server dựng, vẫn hỏi dữ kiện và không kết luận quyền lợi/chuyển tiếp."
+  },
+  "S02:agentic:1390bf1ffd7fee44d8578126343d1827b98289444629e3b3e491db404761d35f": {
+    "passed": false,
+    "source_checked": true,
+    "claim_support": [],
+    "notes": "Chưa nêu được mốc hiệu lực QĐ40 trong đáp án cuối, dù source Điều 2 và Draft server đã xác định đúng 02/04/2026. Verifier xác nhận fact nhưng đòi kết luận luật đang áp dụng cho hồ sơ chưa đủ dữ kiện, làm mất phần giải thích chung. Kết quả không đáp ứng rubric; sửa bằng đối chiếu literal date và lịch cho fact do server dựng, vẫn hỏi dữ kiện và không kết luận quyền lợi/chuyển tiếp."
   }
 }
