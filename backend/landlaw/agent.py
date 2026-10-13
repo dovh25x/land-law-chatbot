@@ -713,6 +713,7 @@ class Agent:
         span_aliases={key:f'S{index+1}' for index,key in enumerate(spans)}
         actual_spans={value:key for key,value in span_aliases.items()}
         checked_draft=draft.model_dump()
+        checked_draft.pop('summary',None)
         for claim in checked_draft['claims']:
             claim['citation_ids']=[aliases.get(key,key) for key in claim['citation_ids']]
         model_context=[{**item,'citation_id':aliases[item['citation_id']]} for item in verification_context]
@@ -722,6 +723,9 @@ class Agent:
             model_context=[{k:v for k,v in item.items() if k!='text'} for item in model_context]
         model_spans=[{**item,'span_id':span_aliases[key],'citation_id':aliases[item['citation_id']]} for key,item in spans.items()]
         checked = await self.provider.generate(Verification,
+            "Verify the claims actually stated and the question actually asked, not hypothetical private cases. "
+            "The summary field is not rendered and is intentionally omitted; its absence is NEVER an issue. "
+            "An act's replacement or commencement alone does not require a private-case transition conclusion unless the answer asserts one. "
             "You are an evidence verifier. For EVERY supported claim, select supporting_spans using span_id "
             "from source_spans that actually proves that claim and every citation_id. Never invent a span_id. "
             "The server extracts its exact original source text; do not paraphrase it as a quote. "
@@ -730,7 +734,7 @@ class Agent:
             "never from draft.claims.text. An as_of observation date can be inferred from verified effectivity "
             "dates and relationships; an asserted commencement date must appear in the operative source. "
             "Đối chiếu từng claim với đúng đoạn trích và thời điểm. Chỉ đưa index vào supported_claim_indexes nếu "
-            "chứng cứ hỗ trợ đầy đủ nội dung, phạm vi và tính áp dụng. Kiểm tra summary và next_steps: nếu có kết luận "
+            "chứng cứ hỗ trợ đầy đủ nội dung, phạm vi và tính áp dụng. Kiểm tra next_steps: nếu có kết luận "
             "pháp lý chưa dẫn nguồn, ghi issues. Không xác nhận current từ đoạn unverified. historical chỉ hỗ trợ câu "
             "về quá khứ hoặc điều khoản chuyển tiếp có chứng cứ. Nguồn tin chỉ hỗ trợ sự kiện/bối cảnh, không quyền lợi. "
             "Đặt needs_more_evidence và followup_query khi một lượt truy xuất bổ sung có thể khắc phục. "

@@ -1,7 +1,7 @@
 {
-  "checked_at": "2026-10-13T12:08:55.091273+00:00",
+  "checked_at": "2026-10-13T12:12:48.718307+00:00",
   "release": "corpus-de584c31fc95f9a2",
-  "configuration_sha256": "9c48092f50350f1e95708e1e2e4663d38a81901f5bf158e7bbfb19b49fc85087",
+  "configuration_sha256": "d405550bbcafbaa67ddba1269288c56d98dcdd0655c7f1566d962f84691d0d1e",
   "passed": false,
   "checks": {
     "postgres_runtime": true,
@@ -17,7 +17,8 @@
     "backend_tests_129": true,
     "groq_claims_only_answer_schema": true,
     "bounded_json_generation_retry": true,
-    "partial_public_quality_withheld": true
+    "partial_public_quality_withheld": true,
+    "verification_ignores_unrendered_summary": true
   },
-  "scope": "129 isolated tests; real Free Qwen plan/future-date verification and actual-source claims-only schema probes passed. Public partial quality rates withheld; private raw diagnostics retained. Exact final CI and paired source review pending."
+  "scope": "129 isolated tests. Verification evaluates displayed claims and guidance only; hidden summary omitted. Free Qwen actual-source claims-only probe passed. Exact final CI and complete paired source review pending."
 }
