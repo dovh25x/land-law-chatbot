@@ -1,6 +1,6 @@
 {
   "passed": true,
-  "checked_at": "2026-10-12T19:44:18.540195+00:00",
+  "checked_at": "2026-10-13T05:25:36.303825+00:00",
   "checks": {
     "encrypted_backup": true,
     "all_releases_restored": true,
@@ -9,17 +9,17 @@
     "release_pointer": true,
     "publication_evidence": true,
     "restored_embedding_dimensions": true,
+    "hybrid_384": true,
     "hybrid_768": true,
     "hybrid_1024": true,
     "rollback": true,
     "first_release_withdrawal": true,
     "restart": true
   },
-  "backup_sha256": "f6f2b14394caa0c594dac37ca5253c7bdea50b2c0f68a8accfbb5c62a718fe77",
-  "release": "corpus-a6af9cf431b26f71",
+  "backup_sha256": "f30ecd85f37e17bb7e61c7099f16108b0a9c1956d8c6ab170588538063cab22b",
+  "release": "corpus-de584c31fc95f9a2",
   "releases": 2,
   "scope": "Full real encrypted source backup restored into a disposable separate PostgreSQL database on a loopback service. Absent embedding dimensions exercised with clearly labelled synthetic technical fixtures only in that disposable database. Production pointer unchanged.",
-  "workflow_run": 38299336521,
-  "commit": "f8d41edd2a3b7bb45dd5665bbbf5d67968346bc1",
-  "url": "https://github.com/dovh25x/land-law-chatbot/actions/runs/38299336521"
+  "ci_run": 38351062905,
+  "commit": "45be38c8262a5fd943b4662efa76cd4c5e13dbcc"
 }

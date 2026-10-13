@@ -251,9 +251,16 @@ class Gemini:
         instruction=body['systemInstruction']['parts'][0]['text']
         if 'supporting_spans' in shape.get('properties',{}):
             instruction+=' Every supported index needs supporting_spans selected from source_spans for every cited passage. Return short span IDs only; do not rewrite source text.'
+        payload=json.loads(body['contents'][0]['parts'][0]['text'])
+        shared_fields=('catalogue_fields','catalogue','coverage_gaps','unresolved_relations',
+                       'documents','evidence','source_spans','allowed_citation_ids')
+        # Provider prefix caching can reuse public corpus context; every private
+        # question/history remains in its own request, after that common prefix.
+        ordered={key:payload[key] for key in shared_fields if key in payload}
+        ordered.update({key:value for key,value in payload.items() if key not in ordered})
         request={'model':self.settings.groq_model,'temperature':0,'max_completion_tokens':2048,
                  'messages':[{'role':'system','content':instruction},
-                             {'role':'user','content':body['contents'][0]['parts'][0]['text']}],
+                             {'role':'user','content':json.dumps(ordered,ensure_ascii=False,separators=(',',':'))}],
                  'response_format':{'type':'json_schema','json_schema':{'name':schema.__name__,
                                      'strict':True,'schema':shape}}}
         if self.settings.groq_model.startswith('openai/gpt-oss-'):
@@ -272,6 +279,9 @@ class Gemini:
         if response.status_code>=400:
             raise ProviderUnavailable(f'Groq trả HTTP {response.status_code}',retryable=response.status_code>=500)
         result=response.json()
+        cached=result.get('usage',{}).get('prompt_tokens_details',{}).get('cached_tokens',0)
+        if type(cached)==int and cached>0:
+            await self.record_usage('groq-cached-tokens',cached)
         try:content=result['choices'][0]['message']['content']
         except (KeyError,IndexError,TypeError):
             raise ProviderUnavailable('Groq không trả kết quả đúng schema') from None
