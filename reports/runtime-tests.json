@@ -1,7 +1,7 @@
 {
-  "checked_at": "2026-10-13T13:18:55.197261+00:00",
+  "checked_at": "2026-10-13T13:31:33.608759+00:00",
   "release": "corpus-de584c31fc95f9a2",
-  "configuration_sha256": "abe8493432f3288e80f85d9bb6f13a26518d505e859753e7d321acc344119a1c",
+  "configuration_sha256": "b162d6ff962f322909ca3a0721ef84b73c32fded7ad6154a88c3e2339757c345",
   "passed": false,
   "checks": {
     "postgres_runtime": true,
@@ -26,10 +26,11 @@
     "compact_prompt_backend_regression_131": true,
     "literal_whole_act_replacement_guards": true,
     "exact_reference_context_keeps_related_acts": true,
-    "backend_tests_139": true,
-    "planner_json_lookups_no_provider_tools": true
+    "planner_json_lookups_no_provider_tools": true,
+    "backend_tests_141": true,
+    "explicit_act_article_and_project_read_routes": true
   },
-  "scope": "Source-proof branches check exact server-built date/repeal/replacement facts with literal official passages and verified dates. Arbitrary generated claims still use the full verifier. Exact new CI/image and paired smoke pending.",
-  "ci_run": 38399549008,
-  "commit": "db7a128c45f4c0a9f16af46cde90d63284af4ded"
+  "scope": "139 isolated backend tests, frontend desktop/mobile checks and exact Python 3.12 image memory checks passed. Publication still requires paired source-checked critical smoke cases.",
+  "ci_run": 38404094354,
+  "commit": "2d0d089278e04b44e27e3a6a6b6a2dbda5f907a8"
 }

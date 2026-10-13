@@ -222,6 +222,12 @@ async def evaluate(settings, store, provider, split="dev", release_id=None, limi
     async def observe_provider_capacity(response):
         nonlocal provider_ready_at
         if response.request.url.host!='api.groq.com':return
+        if response.status_code==400:
+            await response.aread()
+            try:code=response.json().get('error',{}).get('code')
+            except (ValueError,AttributeError):code=None
+            print(json.dumps({'evaluation_provider_format_error':code if code in
+                {'tool_use_failed','json_validate_failed'} else 'other'}),flush=True)
         if response.status_code==429:
             await response.aread()
             try:

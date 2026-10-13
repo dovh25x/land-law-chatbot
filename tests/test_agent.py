@@ -687,3 +687,25 @@ async def test_literal_whole_act_replacement_is_verified_without_model_inference
     assert result.status=='answered' and result.llm_calls==0
     assert result.citations[0].id=='new-1' and len(result.verified_claims)==1
     assert '40/2026/QĐ-UBND' in result.content and '02/04/2026' in result.content
+
+
+async def test_explicit_act_and_article_routes_to_bounded_read_without_planner(store,settings):
+    doc=document(document_number='151/2025/NĐ-CP');payload=release(store,[doc])
+    provider=FakeProvider(settings)
+    async def unexpected(*args,**kwargs):raise AssertionError('An explicit known act/article needs no model planner')
+    provider.generate=unexpected
+    state={'request':ChatRequest(session_id='0'*32,message='Theo Điều 5 Nghị định 151/2025/NĐ-CP ai phê duyệt phương án?'),
+        'release':payload,'budget':Budget(),'trace':[],'emit':noop,'history':[]}
+    await Agent(store,provider).plan(state)
+    call=state['plan'].tools[0]
+    assert call.name=='open_article' and call.document_id==doc.id and call.locator=='Điều 5'
+
+
+async def test_user_selected_project_routes_to_read_only_project_search(store,settings):
+    payload=release(store);provider=FakeProvider(settings)
+    async def unexpected(*args,**kwargs):raise AssertionError('The user already selected the project')
+    provider.generate=unexpected
+    state={'request':ChatRequest(session_id='0'*32,message='Nhà tôi có chắc được bồi thường không?',project='ring4'),
+        'release':payload,'budget':Budget(),'trace':[],'emit':noop,'history':[]}
+    await Agent(store,provider).plan(state)
+    assert state['plan'].tools[0].name=='search_project' and state['budget'].llm_calls==0

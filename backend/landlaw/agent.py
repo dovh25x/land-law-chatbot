@@ -265,6 +265,15 @@ class Agent:
         direct_effectivity=(1<=len(literal_numbers)<=2 and literal_numbers<=known_numbers
             and any(term in question for term in ('hieu luc','van ban nao thay the','kiem tra mau thuan','bai bo'))
             and not any(term in question for term in ('ho so','quyen loi','tinh tien','tinh boi thuong')))
+        article=re.search(r'\bdieu\s+(\d+[a-z]?)\b',question)
+        named=[]
+        for doc in (state['release'] or {}).get('documents',[]):
+            number=normalize(doc.get('document_number') or '')
+            title=re.sub(r'^luat so \S+\s+luat\s+','luat ',normalize(doc['title'])).rstrip('.')
+            year=re.search(r'/(\d{4})/',number)
+            law_match=bool(year and title.startswith('luat ') and 'sua doi' not in title
+                and re.search(r'\b'+re.escape(re.sub(r'\s+\d{4}$','',title))+r'(?:\s+nam)?\s+'+year[1]+r'\b',question))
+            if (number and number in question) or law_match:named.append(doc['id'])
         if request.mode == "baseline":
             prior = next((m['content'] for m in reversed(state['history']) if m['role']=='user'), '')
             # Baseline also receives the same conversational context; no planner call.
@@ -274,6 +283,15 @@ class Agent:
             state['plan']=Plan(tools=[ToolCall(name='search_law',query=request.message[:1000])])
             await self.event(state,'routing','Đã nhận diện số văn bản và yêu cầu kiểm tra hiệu lực; dùng tra cứu trực tiếp.',
                              'search_law')
+        elif article and len(named)==1:
+            state['plan']=Plan(tools=[ToolCall(name='open_article',document_id=named[0],
+                locator=f'Điều {article[1]}',query=request.message[:1000])])
+            await self.event(state,'routing','Đã nhận diện văn bản và điều được người dùng chỉ rõ; mở nguồn tương ứng.',
+                             'open_article',named)
+        elif request.project and not named:
+            state['plan']=Plan(tools=[ToolCall(name='search_project',query=request.message[:1000])])
+            await self.event(state,'routing','Đã dùng phạm vi dự án được người dùng chọn để tra hồ sơ và căn cứ liên quan.',
+                             'search_project')
         else:
             catalogue=self.catalogue(state['release'])
             catalogue_fields=None
