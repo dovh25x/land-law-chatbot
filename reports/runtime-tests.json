@@ -1,7 +1,7 @@
 {
-  "checked_at": "2026-10-13T13:07:03.084031+00:00",
+  "checked_at": "2026-10-13T13:13:13.701831+00:00",
   "release": "corpus-de584c31fc95f9a2",
-  "configuration_sha256": "ad5bb8ae5bc8765e8324c47e9a3593f4b60e3332887e1bc3da477b440af00955",
+  "configuration_sha256": "c0eb921a8f23fef62bb3bb905df799d647f24bacbea2749b3621e8c5c83475ec",
   "passed": false,
   "checks": {
     "postgres_runtime": true,
@@ -25,7 +25,8 @@
     "exact_image_hard_memory_limit": false,
     "compact_prompt_backend_regression_131": true,
     "literal_whole_act_replacement_guards": true,
-    "backend_tests_138": true
+    "backend_tests_138": true,
+    "exact_reference_context_keeps_related_acts": true
   },
   "scope": "Source-proof branches check exact server-built date/repeal/replacement facts with literal official passages and verified dates. Arbitrary generated claims still use the full verifier. Exact new CI/image and paired smoke pending.",
   "ci_run": 38399549008,

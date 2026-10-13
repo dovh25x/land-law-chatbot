@@ -298,6 +298,15 @@ def test_reference_in_long_article_reaches_prompt_before_similar_later_clauses(s
     agent=Agent(store,FakeProvider(settings.model_copy(update={'llm_provider':'groq'})))
     passages,_=agent.prompt_context(state)
     assert passages[0]['citation_id']==first.id and passages[0]['text']==first.text
+    assert 'later' not in {passage['citation_id'] for passage in passages}
+    amendment=document('amendment',text='Điều 2. Sửa đổi điểm d khoản 1 Điều 5 của Nghị định 151/2025/NĐ-CP.')
+    state['evidence'].append(Evidence(chunk=amendment.chunks[0],document=amendment))
+    state['release']['documents'].append(amendment.model_dump(mode='json'))
+    state['release']['relations']=[{'source_id':'amendment','target_id':law.id,'type':'amends',
+        'target_locators':['Điều 5'],'target_locators_complete':True,
+        'source_url':str(amendment.url),'explanation':'Verified amendment to the requested article.'}]
+    passages,_=agent.prompt_context(state)
+    assert 'amendment-1' in {passage['citation_id'] for passage in passages}
 
 
 async def test_future_immediate_application_states_only_verified_start_and_asks_case_facts(store,settings):

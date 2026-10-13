@@ -500,6 +500,22 @@ class Agent:
                 timely=not temporal or item['applicability']!='future' or document_match
                 return (exact_article and (document_match or not numbers),timely,reference_matches,body_numbers,operative,document_match,overlap)
             candidates=sorted(candidates,key=relevant,reverse=True)
+            named_docs={item['document_id'] for item in candidates if any(
+                n in normalize(item.get('document_number') or '') for n in numbers)}
+            exact_references=[item for item in candidates if item['document_id'] in named_docs
+                and any(reference in normalize(item['text']) for reference in references)]
+            if exact_references:
+                # An explicit point/clause reference already has a complete
+                # source paragraph. Nearby provisions about different actors
+                # are not substitutes. Retain connected legal evidence, too,
+                # so an effective amendment/transition cannot disappear.
+                related=set()
+                for relation in (state['release'] or {}).get('relations',[]):
+                    if {relation['source_id'],relation['target_id']} & named_docs:
+                        related.update({relation['source_id'],relation['target_id']}-named_docs)
+                exact_ids={item['citation_id'] for item in exact_references}
+                candidates=[item for item in candidates if item['citation_id'] in exact_ids
+                            or item['document_id'] in related]
         for item in candidates:
             if selected_ids is not None and item['citation_id'] not in selected_ids:
                 continue
