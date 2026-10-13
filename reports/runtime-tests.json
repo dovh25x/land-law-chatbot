@@ -1,7 +1,7 @@
 {
-  "checked_at": "2026-10-13T12:58:34.899972+00:00",
+  "checked_at": "2026-10-13T13:07:03.084031+00:00",
   "release": "corpus-de584c31fc95f9a2",
-  "configuration_sha256": "1a8ea929e24ad8f34dd3f45471ab7f87b016267633a9b7223713a51b9d5da9bc",
+  "configuration_sha256": "ad5bb8ae5bc8765e8324c47e9a3593f4b60e3332887e1bc3da477b440af00955",
   "passed": false,
   "checks": {
     "postgres_runtime": true,
@@ -20,13 +20,14 @@
     "verification_ignores_unrendered_summary": true,
     "source_proven_date_comparison": true,
     "complete_repeal_scope_literal_proof": true,
-    "backend_tests_131": true,
     "exact_clause_reference_prompt_priority": true,
     "exact_commit_ci": false,
     "exact_image_hard_memory_limit": false,
-    "compact_prompt_backend_regression_131": true
+    "compact_prompt_backend_regression_131": true,
+    "literal_whole_act_replacement_guards": true,
+    "backend_tests_138": true
   },
-  "scope": "131 isolated backend tests passed after compact control instructions. Full legal evidence is preserved. Exact new CI/image and paired source-checked smoke pending.",
+  "scope": "Source-proof branches check exact server-built date/repeal/replacement facts with literal official passages and verified dates. Arbitrary generated claims still use the full verifier. Exact new CI/image and paired smoke pending.",
   "ci_run": 38399549008,
   "commit": "db7a128c45f4c0a9f16af46cde90d63284af4ded"
 }

@@ -563,6 +563,11 @@ class Agent:
             state['source_fact_id']=item.chunk.id
             state['source_fact_type']='partial_repeal'
             state['draft']=Draft(status='answered',claims=[self.partial_repeal_claim(item,relation,target)])
+        elif (replacement:=self.replacement_fact(state)) is not None:
+            item,target=replacement
+            state['source_fact_id']=item.chunk.id
+            state['source_fact_type']='replacement'
+            state['draft']=Draft(status='answered',claims=[self.replacement_claim(item,target,state['as_of'])])
         else:
             contexts,documents=self.prompt_context(state)
             aliases={item['citation_id']:f'C{index+1}' for index,item in enumerate(contexts)}
@@ -645,6 +650,46 @@ class Agent:
         return Claim(kind='applicability',text=f'{item.document.document_number} bãi bỏ {scope} của {target["document_number"]}. '
             f'Phạm vi bãi bỏ này là một phần; không phải toàn bộ {target["document_number"]}.',citation_ids=[item.chunk.id])
 
+    @staticmethod
+    def replacement_fact(state):
+        """Prove an act's replacement, without drawing private-case conclusions."""
+        question=normalize(state['request'].message)
+        if not any(term in question for term in ('hieu luc','thay the','mau thuan')):return None
+        if any(term in question for term in ('ho so','quyen loi','boi thuong','ho tro','tai dinh cu',
+                                            'thu tuc','dieu kien','tinh tien','bao nhieu')):return None
+        pattern=r'(?<![\d/])(\d{1,6})/((?:19|20)\d{2})(?!/\d)'
+        def numbers(text):return {f'{int(a)}/{b}' for a,b in re.findall(pattern,normalize(text))}
+        requested=numbers(question)
+        if not requested:return None
+        docs={d['id']:d for d in (state['release'] or {}).get('documents',[])}
+        for relation in (state['release'] or {}).get('relations',[]):
+            target=docs.get(relation['target_id'])
+            if (relation['type']!='replaces' or relation.get('target_locators') or not target
+                    or not target.get('applicability_verified')
+                    or not numbers(target.get('document_number') or '')
+                    or not numbers(target.get('document_number') or '')<=requested):continue
+            for item in state['evidence']:
+                source=item.document
+                start=source.effective_from
+                if (source.id!=relation['source_id'] or not source.applicability_verified
+                        or item.applicability!='current' or not start or state['as_of']<start
+                        or target.get('effective_to')!=start.isoformat()
+                        or start not in source_effective_dates(item.chunk.text)):continue
+                body=normalize(item.chunk.text)
+                # Require replacement of an act itself, not an article/point,
+                # and the target number in that operative replacement clause.
+                clause=re.search(r'thay the\s+(?:cac\s+)?(?:quyet dinh|nghi dinh|luat|nghi quyet)\b(.+)',body)
+                if (clause and numbers(target.get('document_number') or '')<=numbers(clause[0])
+                        and requested<=numbers(clause[0])|numbers(source.document_number or '')):
+                    return item,target
+        return None
+
+    @staticmethod
+    def replacement_claim(item,target,as_of):
+        return Claim(kind='applicability',text=f'{target["document_number"]} không còn hiệu lực tại ngày {as_of.strftime("%d/%m/%Y")}; '
+            f'{item.document.document_number} thay thế văn bản này từ ngày {item.document.effective_from.strftime("%d/%m/%Y")}.',
+            citation_ids=[item.chunk.id])
+
     async def verify(self, state):
         draft = state["draft"]
         if not state["evidence"]:
@@ -674,6 +719,16 @@ class Agent:
                 state['verification']=Verification(supported_claim_indexes=[0],supporting_quotes=[
                     SupportingQuote(claim_index=0,citation_id=item.chunk.id,quote=item.chunk.text)])
                 await self.event(state,'verification','Đã đối chiếu phạm vi bãi bỏ một phần đã rà soát với đúng số văn bản và điều khoản nguồn.',
+                                 'check_effectivity',[item.document.id,target['id']])
+                return state
+        replacement=self.replacement_fact(state) if state.get('source_fact_type')=='replacement' else None
+        if replacement:
+            item,target=replacement
+            if (item.chunk.id==state['source_fact_id'] and draft.status=='answered'
+                    and draft.claims==[self.replacement_claim(item,target,state['as_of'])]):
+                state['verification']=Verification(supported_claim_indexes=[0],supporting_quotes=[
+                    SupportingQuote(claim_index=0,citation_id=item.chunk.id,quote=item.chunk.text)])
+                await self.event(state,'verification','Đã đối chiếu số văn bản trong điều khoản thay thế, mốc hiệu lực nguồn và ngày hết hiệu lực đã xác minh của văn bản cũ.',
                                  'check_effectivity',[item.document.id,target['id']])
                 return state
         evidence = {e.chunk.id: e for e in state["evidence"]}

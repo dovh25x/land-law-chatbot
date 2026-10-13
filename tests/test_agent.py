@@ -639,3 +639,42 @@ def test_tool_exhaustion_repairs_existing_evidence_without_retrieval_overflow():
            'rounds':1,'draft':Draft(status='insufficient_evidence',summary='Thiếu căn cứ'),
            'verification':Verification(needs_more_evidence=True,issues=['Cần kiểm tra căn cứ']), 'repairs':0}
     assert Agent.route(state)=='repair'
+
+
+@pytest.mark.parametrize('invalid', ['private_case','future_source','missing_target_number','partial_clause','unverified_target','different_expiry'])
+def test_replacement_fact_never_expands_partial_scope_or_answers_private_entitlements(store,settings,invalid):
+    from landlaw.models import Evidence
+    old=document('old',document_number='56/2024/QĐ-UBND',effective_to=date(2026,4,2))
+    new=document('new',document_number='40/2026/QĐ-UBND',
+        text='Điều 2. Quyết định này có hiệu lực từ ngày 02/04/2026 và thay thế Quyết định 56/2024/QĐ-UBND.')
+    new.effective_from=date(2026,4,2)
+    relation={'source_id':new.id,'target_id':old.id,'type':'replaces','target_locators':[]}
+    question='56/2024/QĐ-UBND còn hiệu lực ngày 12/10/2026 không?'
+    if invalid=='private_case':question+=' Quyền lợi bồi thường của hồ sơ tôi là gì?'
+    if invalid=='missing_target_number':new.chunks[0].text=new.chunks[0].text.replace('56/2024','99/2024')
+    if invalid=='partial_clause':new.chunks[0].text=new.chunks[0].text.replace('thay thế Quyết định','thay thế Điều 2 của Quyết định')
+    if invalid=='unverified_target':old.applicability_verified=False
+    if invalid=='different_expiry':old.effective_to=date(2026,5,1)
+    state={'request':ChatRequest(session_id='0'*32,message=question), 'as_of':date(2026,10,12),
+        'evidence':[Evidence(chunk=new.chunks[0],document=new,applicability='future' if invalid=='future_source' else 'current')],
+        'release':{'documents':[old.model_dump(mode='json'),new.model_dump(mode='json')],'relations':[relation]}}
+    assert Agent.replacement_fact(state) is None
+
+
+async def test_literal_whole_act_replacement_is_verified_without_model_inference(store,settings):
+    old=document('old',document_number='56/2024/QĐ-UBND',effective_to=date(2026,4,2))
+    new=document('new',document_number='40/2026/QĐ-UBND',
+        text='Điều 2. Quyết định này có hiệu lực từ ngày 02/04/2026 và thay thế Quyết định 56/2024/QĐ-UBND.')
+    new.effective_from=date(2026,4,2)
+    new.chunks[0].locator='Điều 2'
+    release(store,[old,new],relations=[{'source_id':new.id,'target_id':old.id,'type':'replaces',
+        'locator':'Điều 2','source_url':str(new.url),'explanation':'Verified replacement of the whole act.'}])
+    sid,_=session(store)
+    class NoInference(FakeProvider):
+        async def generate(self,*args,**kwargs):raise AssertionError('A literal replacement with verified dates needs no model inference')
+    result=await Agent(store,NoInference(settings)).run(ChatRequest(session_id=sid,
+        message='56/2024/QĐ-UBND còn hiệu lực ngày 12/10/2026 không, văn bản nào thay thế?',
+        as_of=date(2026,10,12),mode='baseline'),noop)
+    assert result.status=='answered' and result.llm_calls==0
+    assert result.citations[0].id=='new-1' and len(result.verified_claims)==1
+    assert '40/2026/QĐ-UBND' in result.content and '02/04/2026' in result.content
