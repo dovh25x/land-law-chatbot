@@ -1,7 +1,7 @@
 {
-  "checked_at": "2026-10-13T11:54:30.566532+00:00",
+  "checked_at": "2026-10-13T12:08:55.091273+00:00",
   "release": "corpus-de584c31fc95f9a2",
-  "configuration_sha256": "2754aa6df288dbfa260cf60f9f118cc715a3ce6747a8144d8d9d30b5df86629a",
+  "configuration_sha256": "9c48092f50350f1e95708e1e2e4663d38a81901f5bf158e7bbfb19b49fc85087",
   "passed": false,
   "checks": {
     "postgres_runtime": true,
@@ -11,10 +11,13 @@
     "postgres_named_article_lookup": true,
     "server_rejects_unproven_repeal_scope": true,
     "observation_date_not_commencement": true,
-    "backend_tests_126": true,
     "claim_act_attribution": true,
     "provider_remote_tools_disabled": true,
-    "cli_traceback_locals_disabled": true
+    "cli_traceback_locals_disabled": true,
+    "backend_tests_129": true,
+    "groq_claims_only_answer_schema": true,
+    "bounded_json_generation_retry": true,
+    "partial_public_quality_withheld": true
   },
-  "scope": "126 isolated tests; canonical act-number attribution, grounded repeal scope and dates, provider tools disabled. Free 20B schema probe successful; both modes now evaluated on 20B. Exact final CI and full source review pending."
+  "scope": "129 isolated tests; real Free Qwen plan/future-date verification and actual-source claims-only schema probes passed. Public partial quality rates withheld; private raw diagnostics retained. Exact final CI and paired source review pending."
 }

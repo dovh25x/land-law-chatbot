@@ -153,5 +153,27 @@
       false
     ],
     "notes": "Claim đầu đúng Điều 2 QĐ10. Claim thứ hai sai chủ thể và đối tượng: đoạn được dẫn là Điều 3 QĐ38, bãi bỏ khoản 3 Điều 3 và Điều 23 của Quy định kèm QĐ56; không chứng minh QĐ10 bãi bỏ các khoản này của QĐ38. Đã đọc nguyên văn cả hai citations. Verifier model cho qua nhưng kiểm tra thủ công không chấm đạt; cần đối chiếu số văn bản trong claim với đoạn và metadata trước hiển thị."
+  },
+  "S01:baseline:b020ae60852f9c94b7065eeb15c2c579f448c9dce07b1aa77010d0f4d4566c34": {
+    "passed": true,
+    "source_checked": true,
+    "claim_support": [
+      true
+    ],
+    "notes": "Đã đọc toàn bộ content và claim của model 20B. Điều 2 QĐ40, qd-40-2026-hanoi-0-2-0, quy định hiệu lực 02/04/2026 và thay QĐ56/2024; kết luận văn bản cũ không còn hiệu lực tại 12/10/2026 được hỗ trợ. Không có suy quyền lợi hồ sơ cũ, mốc giả hay nghĩa vụ bổ sung. Citation ID đúng evidence, một claim được nguồn chứng minh."
+  },
+  "S01:agentic:d7ec0d162971dd3253a02b58a2ed9255ad9955bbd28a50217002e51c267f2ed0": {
+    "passed": true,
+    "source_checked": true,
+    "claim_support": [
+      true
+    ],
+    "notes": "Đã đọc toàn bộ content và claim của model 20B. Điều 2 QĐ40, qd-40-2026-hanoi-0-2-0, quy định hiệu lực 02/04/2026 và thay QĐ56/2024; kết luận văn bản cũ không còn hiệu lực tại 12/10/2026 được hỗ trợ. Không có suy quyền lợi hồ sơ cũ, mốc giả hay nghĩa vụ bổ sung. Citation ID đúng evidence, một claim được nguồn chứng minh."
+  },
+  "S01:baseline:a9d3088b657894403ab79882c76414aa2d30c40d7738331bf4e859f92b99bb55": {
+    "passed": false,
+    "source_checked": true,
+    "claim_support": [],
+    "notes": "Model Qwen viết kết luận đúng trong summary nhưng để claims rỗng. Summary chưa được kiểm chứng không được phát ra; kết quả insufficient_evidence không đáp ứng ca có đủ căn cứ. Giữ attempt; điều chỉnh schema để model đặt nội dung vào các claims có citation và được kiểm tra, không chuyển summary thành đáp án chưa qua verifier."
   }
 }

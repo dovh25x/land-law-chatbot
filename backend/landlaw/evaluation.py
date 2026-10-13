@@ -161,6 +161,22 @@ def configuration_fingerprint(settings):
     return hashlib.sha256(json.dumps(configuration, sort_keys=True).encode()+b"".join(p.read_bytes() for p in files)).hexdigest()
 
 
+def public_report(report):
+    """Keep progress public; publish quality rates only after both modes are reviewed."""
+    public=json.loads(json.dumps(report))
+    complete=bool(public.get('cases') and public.get('completed_pairs')==public['cases']
+        and {r.get('mode') for r in public.get('results',[])}=={'baseline','agentic'}
+        and all(r.get('reviewed')==public['cases'] and r.get('source_review_complete')
+                for r in public['results']))
+    public['quality_metrics_status']='reviewed' if complete else 'withheld_pending_full_source_review'
+    if not complete:
+        public['acceptance_passed']=False
+        for row in public.get('results',[]):
+            for field in ('recall_at_8','answer_pass_rate','citation_id_valid_rate','claim_support_rate','unsupported_claims'):
+                row[field]=None
+    return public
+
+
 async def evaluate(settings, store, provider, split="dev", release_id=None, limit=None, concurrency=2):
     if concurrency not in {1,2}:
         raise ValueError('Evaluation concurrency must be one or two')
@@ -276,6 +292,8 @@ async def evaluate(settings, store, provider, split="dev", release_id=None, limi
         report[field+'_passed'] = bool(evidence.get('passed') and evidence.get('release')==release['id']
             and (name=='source-audit' or evidence.get('configuration_sha256')==configuration))
         report[field+'_sha256'] = hashlib.sha256(evidence_path.read_bytes()).hexdigest() if evidence_path.exists() else None
+    json_write(records_path.with_name('summary.json'),report)
+    report=public_report(report)
     json_write(settings.reports_dir / ('smoke.json' if split=='smoke' else 'latest.json'), report)
     from html import escape
     html = "<!doctype html><html lang='vi'><meta charset='utf-8'><title>Benchmark</title>"

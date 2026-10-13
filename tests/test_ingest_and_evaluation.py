@@ -3,6 +3,22 @@ import pytest
 
 from landlaw.config import Settings
 from landlaw.evaluation import dataset, summarise
+
+
+def test_public_evaluation_withholds_partial_quality_but_preserves_private_diagnostics():
+    from landlaw.evaluation import public_report
+    partial={'cases':20,'completed_pairs':2,'acceptance_passed':False,'results':[
+        {'mode':mode,'reviewed':2,'source_review_complete':False,'completed':2,
+         'recall_at_8':1.,'answer_pass_rate':1.,'claim_support_rate':1.}
+        for mode in ('baseline','agentic')]}
+    published=public_report(partial)
+    assert published['results'][0]['recall_at_8'] is None
+    assert published['results'][0]['answer_pass_rate'] is None
+    assert published['results'][0]['completed']==2
+    assert partial['results'][0]['recall_at_8']==1.
+    partial['completed_pairs']=20
+    for row in partial['results']:row.update(reviewed=20,source_review_complete=True)
+    assert public_report(partial)['results'][0]['answer_pass_rate']==1.
 from landlaw.ingest import Quarantine, chunks_for, coverage, html_text, table_layout
 from landlaw.security import official_url, redact
 

@@ -9,6 +9,7 @@ import httpx
 from pydantic import BaseModel, ValidationError
 
 from .config import Settings
+from .models import Draft
 from .security import utcnow
 from .store import RateLimited, Store
 from .embedding import contract, CloudflareEmbeddings, workers_ai_retry_after
@@ -75,6 +76,10 @@ def strict_generation_schema(schema):
     shape=generation_schema(schema)
     if 'supporting_spans' in shape.get('properties',{}):
         shape['properties'].pop('supporting_quotes',None)
+    if schema is Draft:
+        # Summary is never rendered. Do not give the model an unused field in
+        # which to place its legal answer instead of sourced, verified claims.
+        shape['properties'].pop('summary',None)
     def close(value):
         if isinstance(value,dict):
             value.pop('default',None)
@@ -277,6 +282,11 @@ class Gemini:
             raise RateLimited(min(86400,max(1,delay)),source='provider')
         if response.status_code==413:
             raise ProviderUnavailable('Ngữ cảnh vượt dung lượng request của Groq Free. Hãy tách câu hỏi để đối chiếu từng vấn đề.')
+        if response.status_code==400:
+            try:code=response.json().get('error',{}).get('code')
+            except ValueError:code=None
+            if code in {'tool_use_failed','json_validate_failed'}:
+                raise ProviderUnavailable('Groq chưa trả kết quả đúng định dạng.',retryable=True)
         if response.status_code>=400:
             raise ProviderUnavailable(f'Groq trả HTTP {response.status_code}',retryable=response.status_code>=500)
         result=response.json()

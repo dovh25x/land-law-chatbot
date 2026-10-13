@@ -540,7 +540,8 @@ class Agent:
             date_text=future.document.effective_from.strftime('%d/%m/%Y')
             state['draft']=Draft(status='clarification_needed',summary='',
                 claims=[Claim(kind='applicability',
-                    text=f'{future.document.document_number} có hiệu lực thi hành từ ngày {date_text}.',
+                    text=f'{future.document.document_number} có hiệu lực thi hành từ ngày {date_text}. '
+                         f'Văn bản này chưa có hiệu lực tại ngày {state["as_of"].strftime("%d/%m/%Y")}.',
                     citation_ids=[future.chunk.id])],
                 missing_facts=['Ngày ra quyết định thu hồi đất và ngày phê duyệt phương án bồi thường.',
                                'Loại đất và tình trạng giấy tờ của hồ sơ, chỉ cung cấp thông tin đã ẩn danh.'],
@@ -550,6 +551,8 @@ class Agent:
             aliases={item['citation_id']:f'C{index+1}' for index,item in enumerate(contexts)}
             contexts=[{**item,'citation_id':aliases[item['citation_id']]} for item in contexts]
             state["draft"] = await self.provider.generate(Draft,
+                "Put the answer ONLY in claims, with allowed citation_ids. If status is answered, return at least one sourced claim. "
+                "Never put the answer in summary; summary is not displayed. "
                 "Tạo câu trả lời có cấu trúc. summary chỉ giới thiệu kết quả và giới hạn, không chứa kết luận pháp lý "
                 "không dẫn nguồn. MỌI kết luận pháp lý nằm trong claims, gắn citation_ids có trong evidence. "
                 "Đoạn unverified/future không chứng minh quy định hiện hành. historical chỉ dùng khi giải thích lịch sử "

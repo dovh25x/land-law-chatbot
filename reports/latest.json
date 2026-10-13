@@ -11,14 +11,15 @@
       "reviewed": 0,
       "recall_at_8": null,
       "answer_pass_rate": null,
-      "citation_id_valid_rate": 1.0,
+      "citation_id_valid_rate": null,
       "claim_support_rate": null,
       "p95_seconds": 10.296,
       "llm_calls": 4,
       "embedding_calls": 2,
       "tool_calls": 8,
       "critical_failed": [],
-      "limited_or_error": 0
+      "limited_or_error": 0,
+      "unsupported_claims": null
     },
     {
       "mode": "agentic",
@@ -26,14 +27,15 @@
       "reviewed": 0,
       "recall_at_8": null,
       "answer_pass_rate": null,
-      "citation_id_valid_rate": 1.0,
+      "citation_id_valid_rate": null,
       "claim_support_rate": null,
       "p95_seconds": 33.337,
       "llm_calls": 12,
       "embedding_calls": 4,
       "tool_calls": 19,
       "critical_failed": [],
-      "limited_or_error": 0
+      "limited_or_error": 0,
+      "unsupported_claims": null
     }
   ],
   "acceptance_passed": false,
@@ -48,5 +50,6 @@
     "Development runs on incomplete staging cannot certify acceptance; query embedding failures fall back to lexical retrieval."
   ],
   "as_of": "2026-10-12",
-  "configuration_sha256": "16bdd9157e03886d9b92c7d6d847274f576e37d4347b507bd1470fa90e44fd10"
+  "configuration_sha256": "16bdd9157e03886d9b92c7d6d847274f576e37d4347b507bd1470fa90e44fd10",
+  "quality_metrics_status": "withheld_pending_full_source_review"
 }

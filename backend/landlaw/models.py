@@ -114,8 +114,9 @@ class Claim(BaseModel):
 
 class Draft(BaseModel):
     status: Literal["answered", "clarification_needed", "insufficient_evidence"]
-    summary: str = Field(max_length=2000)
-    claims: list[Claim] = Field(default_factory=list, max_length=10)
+    summary: str = Field(default='', max_length=2000, description='Internal introduction; never displayed as an answer.')
+    claims: list[Claim] = Field(default_factory=list, max_length=10,
+        description='The ONLY factual answer text displayed to the user. Must contain at least one sourced claim when status is answered; attach allowed citation IDs to each claim.')
     missing_facts: list[str] = Field(default_factory=list, max_length=6)
     next_steps: list[str] = Field(default_factory=list, max_length=6)
     out_of_scope: bool = False
