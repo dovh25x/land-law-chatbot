@@ -262,8 +262,8 @@ class Agent:
         literal_numbers=set(re.findall(r'(?<![\d/])\d{1,6}/(?:19|20)\d{2}(?!/\d)',question))
         known_numbers={'/'.join(normalize(d.get('document_number') or '').split('/')[:2])
                        for d in (state['release'] or {}).get('documents',[])}
-        direct_effectivity=(len(literal_numbers)==1 and literal_numbers<=known_numbers
-            and any(term in question for term in ('hieu luc','van ban nao thay the','kiem tra mau thuan'))
+        direct_effectivity=(1<=len(literal_numbers)<=2 and literal_numbers<=known_numbers
+            and any(term in question for term in ('hieu luc','van ban nao thay the','kiem tra mau thuan','bai bo'))
             and not any(term in question for term in ('ho so','quyen loi','tinh tien','tinh boi thuong')))
         if request.mode == "baseline":
             prior = next((m['content'] for m in reversed(state['history']) if m['role']=='user'), '')

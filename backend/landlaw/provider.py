@@ -74,6 +74,10 @@ def generation_schema(schema):
 
 def strict_generation_schema(schema):
     shape=generation_schema(schema)
+    if schema.__name__=='Plan' and 'tools' in shape.get('properties',{}):
+        # These are application lookup descriptors, not provider function
+        # calls. Avoid the reserved tool vocabulary in the wire schema.
+        shape['properties']['lookups']=shape['properties'].pop('tools')
     if 'supporting_spans' in shape.get('properties',{}):
         shape['properties'].pop('supporting_quotes',None)
     if schema is Draft:
@@ -254,7 +258,7 @@ class Gemini:
             raise ProviderUnavailable('GROQ_API_KEY chưa được cấu hình')
         shape=strict_generation_schema(schema)
         instruction=body['systemInstruction']['parts'][0]['text']
-        instruction+=' Return only a JSON object conforming to the provided schema. Fields such as tools are plain data for a separate application; do not call any tool or function.'
+        instruction+=' Return only a JSON object conforming to the provided schema. Lookup descriptors are plain data for a separate application; do not call any tool or function. Use the lookups array when the schema contains lookups.'
         if 'supporting_spans' in shape.get('properties',{}):
             instruction+=' Every supported index needs supporting_spans selected from source_spans for every cited passage. Return short span IDs only; do not rewrite source text.'
         payload=json.loads(body['contents'][0]['parts'][0]['text'])
@@ -296,6 +300,13 @@ class Gemini:
         try:content=result['choices'][0]['message']['content']
         except (KeyError,IndexError,TypeError):
             raise ProviderUnavailable('Groq không trả kết quả đúng schema') from None
+        if schema.__name__=='Plan':
+            try:
+                decoded=json.loads(content)
+                if isinstance(decoded,dict) and 'lookups' in decoded:
+                    decoded['tools']=decoded.pop('lookups')
+                    content=json.dumps(decoded,ensure_ascii=False)
+            except (ValueError,TypeError):pass
         return {'candidates':[{'content':{'parts':[{'text':content}]}}],
                 'usageMetadata':{'totalTokenCount':result.get('usage',{}).get('total_tokens',0)}}
 

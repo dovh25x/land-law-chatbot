@@ -90,3 +90,19 @@ async def test_rejected_provider_tool_attempt_retries_only_as_json_and_never_exe
         assert (await provider.generate(Probe,'Return JSON',{},budget)).ok
         assert budget.llm_calls==2 and len(attempts)==2
     finally:await provider.close()
+
+
+async def test_planner_lookups_are_json_data_and_map_back_to_read_only_actions(settings,store):
+    def respond(request):
+        body=json.loads(request.content);shape=body['response_format']['json_schema']['schema']
+        assert 'lookups' in shape['properties'] and 'tools' not in shape['properties']
+        assert 'tools' not in body and body['tool_choice']=='none'
+        return httpx.Response(200,json={'choices':[{'message':{'content':json.dumps({
+            'lookups':[{'name':'open_article','query':'Điều 5','document_id':'nd-151-2025','locator':'Điều 5'}],
+            'missing_facts':[],'out_of_scope':False})}}]})
+    config=settings.model_copy(update={'llm_provider':'groq','groq_api_key':settings.gemini_api_key})
+    provider=Gemini(config,store,httpx.AsyncClient(transport=httpx.MockTransport(respond)))
+    try:
+        result=await provider.generate(Plan,'Return lookup descriptors',{},Budget())
+        assert result.tools[0].name=='open_article' and result.tools[0].document_id=='nd-151-2025'
+    finally:await provider.close()
