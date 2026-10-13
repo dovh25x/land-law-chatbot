@@ -103,7 +103,8 @@ def preserve_attempt(folder,record,origin='executed'):
 def summarise(records, cases, fingerprint, reviews=None):
     reviews, by_id = reviews or {}, {c["id"]: c for c in cases}
     summary = {"status": "awaiting_review", "dataset_sha256": fingerprint, "generated_at": utcnow().isoformat(),
-               "cases": len(cases), "completed_pairs": 0, "results": [], "acceptance_passed": False}
+               "cases": len(cases), "completed_pairs": 0, "results": [], "acceptance_passed": False,
+               "source_reviewed_results": []}
     for mode in ("baseline", "agentic"):
         items = [r for r in records if r["mode"] == mode]
         latencies, recalls, scores, support = [], [], [], []
@@ -122,6 +123,13 @@ def summarise(records, cases, fingerprint, reviews=None):
             if all(c in result.get("evidence_chunk_ids", []) for c in cited):
                 valid += 1
             if review and case.get("ground_truth_status") == "source_checked":
+                summary['source_reviewed_results'].append({'case_id':item['case_id'],'mode':mode,
+                    'status':result['status'],'critical':bool(case.get('critical')),
+                    'passed':bool(review.get('passed')),'source_checked':bool(review.get('source_checked')),
+                    'review_complete':bool(review.get('notes') and len(review.get('claim_support',[]))==len(result.get('verified_claims',[]))),
+                    'unsupported_claims':sum(not value for value in review.get('claim_support',[])),
+                    'citation_ids_valid':all(c in result.get('evidence_chunk_ids',[]) for c in cited),
+                    'result_sha256':result_hash})
                 reviewed += 1
                 scores.append(bool(review.get("passed")))
                 support.extend(review.get("claim_support", []))
@@ -177,7 +185,7 @@ def public_report(report):
     return public
 
 
-async def evaluate(settings, store, provider, split="dev", release_id=None, limit=None, concurrency=2):
+async def evaluate(settings, store, provider, split="dev", release_id=None, limit=None, concurrency=2, case_ids=None):
     if concurrency not in {1,2}:
         raise ValueError('Evaluation concurrency must be one or two')
     path = settings.data_dir / ('evaluation/smoke.jsonl' if split=='smoke' else 'evaluation/questions.jsonl')
@@ -258,6 +266,12 @@ async def evaluate(settings, store, provider, split="dev", release_id=None, limi
         pass
     pending = [(case,mode) for case in cases for mode in ('baseline','agentic')
         if not any(r['case_id']==case['id'] and r['mode']==mode and r['result']['status'] not in {'limited','error'} for r in records)]
+    if case_ids is not None:
+        if not set(case_ids)<={c['id'] for c in cases}:
+            raise ValueError('Unknown evaluation case ID')
+        # Execute a prioritized subset while keeping the original full suite,
+        # dataset checksum and uncompleted cases in the report denominator.
+        pending=[(case,mode) for case,mode in pending if case['id'] in case_ids]
     if limit is not None:
         pending=pending[:limit]
     async def execute(case,mode):

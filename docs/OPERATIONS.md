@@ -44,6 +44,10 @@ Bộ dữ liệu công bố có ID bất biến và lưu chứng cứ benchmark 
 
 `land-law benchmark --split smoke --release-id <id>` chạy 20 ca đã đối chiếu nguồn ở hai chế độ, tối đa hai lượt đồng thời. Review từng kết quả trong `data/evaluation/smoke-reviews.json` bằng khóa `<case>:<mode>:<sha256(result JSON sorted)>`, lưu `passed`, `source_checked`, `notes`, và một giá trị `claim_support` cho từng `verified_claims`. Gắn `reports/source-audit.json` và `reports/runtime-tests.json` đúng release/configuration, rồi chạy lại benchmark để tổng hợp. `land-law publish <id> --profile demo` chỉ qua khi đủ vector, 30 legal/5 nguồn mỗi dự án, cả 40 kết quả được review và mọi ca trọng yếu đạt. Demo công khai coverage gaps, chưa nghiệm thu. Lệnh publish mặc định `accepted` vẫn đòi bộ 80 acceptance và nguồn bắt buộc đầy đủ; không có tùy chọn force. Báo cáo smoke không bao giờ được xem là nghiệm thu 80 câu.
 
+Theo điều chỉnh của chủ dự án ngày 13/10/2026, có chế độ riêng `--profile technical_demo` để trình diễn kỹ thuật trước khi hoàn tất smoke/nghiệm thu pháp lý. Gate này vẫn yêu cầu toàn bộ corpus/vector được kiểm tra, nguồn và runtime evidence đúng cấu hình/checksum, cùng sáu kết quả thật đã đối chiếu nguồn: S01 (hiệu lực), S07 (quy định có dẫn nguồn), S09 (hỏi hồ sơ cá nhân), mỗi câu ở cả baseline/agentic. Một ca trọng yếu đã review nhưng không đạt sẽ chặn phát hành. UI hiển thị “Demo kỹ thuật — chưa nghiệm thu pháp lý”; không công bố tỷ lệ chất lượng từ tập con hoặc gọi chế độ này là accepted. Hai gate `demo`/`accepted` giữ nguyên.
+
+Ưu tiên chạy tập con mà không đổi bộ câu hỏi/checksum/mẫu số báo cáo: `land-law benchmark --split smoke --release-id <id> --case-ids S01,S07,S09 --concurrency 1`. `--limit 0` chỉ tổng hợp lại checkpoint/review, không gọi model. Sau khi gate đạt, backup hội thoại mã hóa, publish và chạy `python scripts/verify_live_demo.py` để kiểm tra hai đáp án thật qua HTTPS, nguồn, trace, session isolation và SSE sau kiểm chứng. Script không chứng nhận nghiệm thu hoặc p95; kiểm tra các claim trong receipt trực tiếp trước bàn giao. Tiếp tục bộ smoke đầy đủ bằng runner bình thường, giữ mọi attempt.
+
 ## Backup, rollback, restore và lưu trữ
 
 ```bash

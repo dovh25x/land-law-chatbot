@@ -134,6 +134,30 @@ def test_demo_gate_rejects_unreviewed_claims_and_wrong_release():
     with pytest.raises(ValueError): validate_demo(raw,corpus,report,'config')
 
 
+@pytest.mark.parametrize('invalid', [None,'missing_mode','unsupported','wrong_configuration','missing_vectors'])
+def test_technical_demo_has_separate_explicit_gate_and_cannot_certify_full_smoke(invalid):
+    from landlaw.publication import validate_technical_demo
+    raw={'id':'technical','embedding_dimensions':384,'documents':[{'checksum':'source','checked_at':'today',
+        'chunks':[{'embedding':[1.0]+[0.0]*383}]}]}
+    corpus={'coverage_passed':True,'verified_legal':54,'legal':54,'embedded':True}
+    rows=[{'case_id':case,'mode':mode,'passed':True,'source_checked':True,'review_complete':True,
+        'citation_ids_valid':True,'unsupported_claims':0,'critical':True,'status':'answered'}
+        for case in ('S01','S07','S09') for mode in ('baseline','agentic')]
+    report={'release':'technical','configuration_sha256':'config','split':'smoke','cases':20,'completed_pairs':3,
+        'source_audit_passed':True,'runtime_tests_passed':True,'source_audit_sha256':'audit','runtime_tests_sha256':'runtime',
+        'source_reviewed_results':rows,'acceptance_passed':False}
+    if invalid=='missing_mode':rows.pop()
+    if invalid=='unsupported':rows[0]['unsupported_claims']=1
+    if invalid=='wrong_configuration':report['configuration_sha256']='previous'
+    if invalid=='missing_vectors':raw['documents'][0]['chunks'][0]['embedding']=[]
+    if invalid:
+        with pytest.raises(ValueError):validate_technical_demo(raw,corpus,report,'config')
+    else:
+        validate_technical_demo(raw,corpus,report,'config')
+        assert report['acceptance_passed'] is False
+    with pytest.raises(ValueError):validate_demo(raw,corpus,report,'config')
+
+
 def test_extreme_table_padding_preserves_rows_and_units():
     from landlaw.ingest import chunks_for
     text='Đơn vị tính: nghìn đồng/m2\nSTT'+(' '*3000)+'Tên đường'+(' '*3000)+'Giá\n1'+(' '*3000)+'Đường A'+(' '*3000)+'12345\n2'+(' '*3000)+'Đường B'+(' '*3000)+'67890'

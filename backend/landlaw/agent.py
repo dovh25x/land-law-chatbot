@@ -69,6 +69,7 @@ class State(TypedDict, total=False):
     tool_notes: list[dict]
     source_fact_id: str | None
     source_fact_type: str | None
+    private_entitlement_check: bool
 
 
 def applicability(doc: Document, as_of: date, chunk=None):
@@ -202,6 +203,19 @@ def public_missing_facts(facts,release):
             and any(number and number in normalize(fact) for number in known))))
 
 
+def private_entitlement_check(question):
+    """A personal guarantee needs file evidence, not a law-search result.
+
+    General questions about eligibility remain legal queries. This guard only
+    catches a request to confirm the questioner's own entitlement or amount.
+    """
+    text=normalize(question)
+    personal=bool(re.search(r'\b(?:nha|dat|ho so|gia dinh|ho gia dinh|thua dat)\s+(?:cua\s+)?(?:toi|minh)\b',text))
+    certainty=any(word in text for word in ('chac chan','khang dinh','bao nhieu tien','bao nhieu dong','dung khong'))
+    entitlement=any(word in text for word in ('boi thuong','tai dinh cu','quyen loi','duoc ho tro'))
+    return personal and certainty and entitlement
+
+
 def source_spans(evidence):
     """Number exact overlapping source passages; the model cannot supply their text."""
     result={}
@@ -279,7 +293,11 @@ class Agent:
             law_match=bool(year and title.startswith('luat ') and 'sua doi' not in title
                 and re.search(r'\b'+re.escape(re.sub(r'\s+\d{4}$','',title))+r'(?:\s+nam)?\s+'+year[1]+r'\b',question))
             if (number and number in question) or law_match:named.append(doc['id'])
-        if request.mode == "baseline":
+        if private_entitlement_check(request.message):
+            tool='search_project' if request.project and request.mode=='agentic' else 'search_law'
+            state['plan']=Plan(tools=[ToolCall(name=tool,query=request.message[:1000])])
+            await self.event(state,'routing','Yêu cầu xác nhận quyền lợi hộ cụ thể cần hồ sơ; tra cứu nguồn và hỏi dữ kiện trước khi kết luận.',tool)
+        elif request.mode == "baseline":
             prior = next((m['content'] for m in reversed(state['history']) if m['role']=='user'), '')
             # Baseline also receives the same conversational context; no planner call.
             query = (prior[:500]+' '+request.message) if prior else request.message
@@ -327,6 +345,14 @@ class Agent:
             # Internal identifiers and dates already available in the source
             # catalogue are tool inputs, not facts a citizen must supply.
             state['plan'].missing_facts=public_missing_facts(state['plan'].missing_facts,state['release'])
+        state['private_entitlement_check']=private_entitlement_check(request.message)
+        if state['private_entitlement_check']:
+            state['plan'].missing_facts=list(dict.fromkeys(state['plan'].missing_facts+[
+                'Loại đất, tình trạng giấy tờ quyền sử dụng đất và nhà ở, chỉ cung cấp thông tin đã ẩn danh.',
+                'Ngày, căn cứ trong thông báo/quyết định thu hồi đất và phương án bồi thường, hỗ trợ, tái định cư.',
+                'Có phải di chuyển chỗ ở, còn nhà hoặc đất ở khác tại địa bàn hay không; hồ sơ xác định điều kiện bồi thường đất ở.',
+                'Vị trí xã/thôn và ranh thu hồi trong hồ sơ; thông tin tổng quan dự án chưa xác định quyền lợi của từng hộ.'
+            ]))[:6]
         await self.event(state, "plan", f"Đã chọn {len(state['plan'].tools)} công cụ; chế độ {request.mode}.")
         return state
 
@@ -595,6 +621,13 @@ class Agent:
         state['source_fact_type']=None
         if state["plan"].out_of_scope:
             state["draft"] = Draft(status="insufficient_evidence", summary="Câu hỏi nằm ngoài phạm vi đất đai và quy hoạch Hà Nội.",out_of_scope=True)
+        elif state.get('private_entitlement_check'):
+            # The corpus contains public law/project records, never this
+            # household's administrative file. Do not turn a general rule
+            # into a guarantee, even if the model's verifier would approve it.
+            state['draft']=Draft(status='clarification_needed',
+                missing_facts=state['plan'].missing_facts,
+                next_steps=['Đối chiếu hồ sơ đã ẩn danh với văn bản áp dụng và điều khoản chuyển tiếp; chưa thể khẳng định suất tái định cư hoặc tiền bồi thường cho hộ cụ thể.'])
         elif not state["evidence"]:
             state["draft"] = Draft(status="insufficient_evidence", summary="Chưa tìm được chứng cứ trong bộ dữ liệu đã công bố.",
                                    missing_facts=state["plan"].missing_facts)
@@ -753,6 +786,10 @@ class Agent:
         if not state["evidence"]:
             state["verification"] = Verification()
             return state
+        if state.get('private_entitlement_check') and not draft.claims:
+            state['verification']=Verification()
+            await self.event(state,'verification','Hồ sơ hộ/thửa chưa được cung cấp; chỉ hỏi bổ sung, không suy quyền lợi từ tài liệu công khai.')
+            return state
         # This claim is constructed by the server from a source-verified date,
         # not generated prose about an entitlement or a transition. Recheck
         # the literal commencement and chronological comparison as proof.
@@ -819,6 +856,24 @@ class Agent:
                    (evidence[i].applicability=='future' and claim.kind!='applicability')) for i in claim.citation_ids):
                 structural_issues.append(f"Claim {index}: căn cứ chưa xác minh tính áp dụng")
             normalized_claim=normalize(claim.text)
+            historical=[evidence[i] for i in claim.citation_ids if i in evidence and evidence[i].applicability=='historical']
+            if historical and claim.kind=='legal_rule':
+                # An expired act remains searchable. Applying it after expiry
+                # requires a cited, operative transition, not an LLM opinion.
+                current_transitions=[evidence[i] for i in claim.citation_ids if i in evidence
+                    and evidence[i].applicability=='current' and any(
+                        term in normalize(evidence[i].chunk.text) for term in ('chuyen tiep','tiep tuc thuc hien'))
+                    and any((old.document.document_number and normalize(old.document.document_number) in normalize(evidence[i].chunk.text))
+                        or any(relation.get('type')=='transition' and relation.get('target_id')==old.document.id
+                            and relation.get('source_id')==evidence[i].document.id
+                            and any(re.match(rf'^Điều {number}(?:\s|$)',evidence[i].chunk.locator,re.IGNORECASE)
+                                for number in re.findall(r'Điều\s+(\d+[a-z]?)',relation.get('source_locator') or relation.get('locator') or '',re.IGNORECASE))
+                            for relation in (state['release'] or {}).get('relations',[]))
+                        for old in historical)]
+                disclosed_history=any(term in normalized_claim for term in ('lich su','da het hieu luc','khong con hieu luc','quy dinh cu','truoc khi'))
+                requested_history=any(term in normalize(state['request'].message) for term in ('lich su','quy dinh cu','truoc khi','so sanh'))
+                if not current_transitions and not (disclosed_history and requested_history):
+                    structural_issues.append(f'Claim {index}: văn bản đã hết hiệu lực tại thời điểm hỏi; cần nguồn chuyển tiếp đang áp dụng hoặc giới hạn rõ việc mô tả quy định lịch sử')
             if claim.kind=='applicability' and any(evidence[i].applicability=='future' for i in claim.citation_ids if i in evidence):
                 if any(phrase in normalized_claim for phrase in ('duoc boi thuong','duoc ho tro','co quyen','dong/','trieu dong')):
                     structural_issues.append(f'Claim {index}: không dùng nhãn hiệu lực để áp dụng quyền lợi từ văn bản tương lai')

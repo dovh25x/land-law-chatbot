@@ -840,3 +840,51 @@ async def test_known_future_act_routes_to_evidence_without_inferred_private_righ
     assert result.status=='clarification_needed' and result.llm_calls==0
     assert result.citations and 'chưa có hiệu lực' in result.content
     assert result.missing_facts and not any(c.kind=='legal_rule' for c in result.verified_claims)
+
+
+@pytest.mark.parametrize('mode', ['baseline','agentic'])
+async def test_personal_entitlement_guarantee_asks_for_file_without_applying_expired_law(store,settings,mode):
+    old=document(text='Điều 19. Hộ có đủ điều kiện được mua căn hộ tái định cư.')
+    old.effective_to=date(2026,4,2)
+    release(store,[old]);sid,_=session(store)
+    class NoModel(FakeProvider):
+        async def generate(self,*args):raise AssertionError('Public law cannot prove this household entitlement')
+    result=await Agent(store,NoModel(settings)).run(ChatRequest(session_id=sid,
+        message='Nhà của tôi chắc chắn được một căn tái định cư đúng không?',as_of=date(2026,10,12),mode=mode),noop)
+    assert result.status=='clarification_needed' and result.llm_calls==0
+    assert not result.citations and not result.verified_claims
+    assert len(result.missing_facts)==4 and 'chưa thể khẳng định' in result.content
+    assert any('chuyển tiếp' in fact or 'đất ở' in fact for fact in result.missing_facts)
+
+
+@pytest.mark.parametrize('question', [
+    'Điều kiện tái định cư theo Luật Đất đai là gì?',
+    'Có giấy chứng nhận là điều kiện duy nhất để được bồi thường đúng không?',
+    'Nhà tôi cần kiểm tra hồ sơ nào để xác định điều kiện tái định cư?'])
+def test_private_guarantee_guard_keeps_general_legal_and_document_guidance_queries(question):
+    from landlaw.agent import private_entitlement_check
+    assert not private_entitlement_check(question)
+
+
+@pytest.mark.parametrize('timing', ['before_expiry','after_expiry','unrelated_transition','operative_transition'])
+async def test_expired_legal_rule_requires_its_actual_operative_transition_even_if_model_approves(store,settings,timing):
+    from landlaw.models import Evidence,Relation
+    old=document('old',document_number='56/2024/QĐ-UBND',text='Điều 19. Hộ đủ điều kiện được mua một căn hộ tái định cư.')
+    old.effective_to=date(2026,4,2)
+    transition=document('new',text='Điều 31. Quy định chuyển tiếp: các phương án đã phê duyệt tiếp tục thực hiện.')
+    transition.chunks[0].locator='Điều 31'
+    relations=[Relation(source_id='new',target_id='old',type='transition',source_locator='Điều 31',
+        source_url=transition.url,explanation='Reviewed transition to the old rule').model_dump(mode='json')]
+    if timing=='unrelated_transition':relations[0]['source_locator']='Điều 99'
+    payload=release(store,[old,transition],relations=relations)
+    cited=['old-1']+(['new-1'] if timing in {'operative_transition','unrelated_transition'} else [])
+    draft=Draft(status='answered',claims=[Claim(text='Hộ đủ điều kiện được mua một căn hộ tái định cư theo phương án cũ.',citation_ids=cited)])
+    state={'request':ChatRequest(session_id='00000000-0000-4000-8000-000000000000',message='Quy định tái định cư nào áp dụng?',mode='baseline'),
+        'budget':Budget(),'release':payload,'as_of':date(2026,4,1) if timing=='before_expiry' else date(2026,10,12),
+        'evidence':[Evidence(chunk=old.chunks[0],document=old,applicability='current' if timing=='before_expiry' else 'historical'),
+            Evidence(chunk=transition.chunks[0],document=transition,applicability='current')],
+        'draft':draft,'trace':[],'emit':noop}
+    result=await Agent(store,FakeProvider(settings,draft=draft)).verify(state)
+    assert bool(result['verification'].supported_claim_indexes)==(timing in {'before_expiry','operative_transition'})
+    if timing in {'after_expiry','unrelated_transition'}:
+        assert any('hết hiệu lực' in issue for issue in result['verification'].issues)

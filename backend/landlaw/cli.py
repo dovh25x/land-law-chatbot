@@ -8,7 +8,7 @@ from pydantic import BaseModel, SecretStr
 
 from .config import Settings
 from .evaluation import evaluate, configuration_fingerprint
-from .publication import validate_demo
+from .publication import validate_demo, validate_technical_demo
 from .security import digest
 from .ingest import build_corpus, coverage, json_write
 from .provider import Budget, Gemini
@@ -156,14 +156,21 @@ def publish(release_id: str, profile: str = 'accepted'):
         if not release:
             raise typer.BadParameter("Unknown release")
         corpus = coverage(release)
-        if profile not in {'demo','accepted'}:
-            raise typer.BadParameter('profile must be demo or accepted')
-        path = settings.reports_dir / ('smoke.json' if profile=='demo' else 'latest.json')
+        if profile not in {'technical_demo','demo','accepted'}:
+            raise typer.BadParameter('profile must be technical_demo, demo or accepted')
+        path = settings.reports_dir / ('smoke.json' if profile in {'demo','technical_demo'} else 'latest.json')
         evaluation = json.loads(path.read_text()) if path.exists() else {}
         configuration = configuration_fingerprint(settings)
-        if profile=='demo':
+        for name in ('source-audit','runtime-tests'):
+            evidence_path=settings.reports_dir/f'{name}.json'
+            evidence=json.loads(evidence_path.read_text()) if evidence_path.exists() else {}
+            if (not evidence.get('passed') or evidence.get('release')!=release_id
+                    or evaluation.get(name.replace('-','_')+'_sha256')!=digest(evidence_path.read_bytes())
+                    or (name=='runtime-tests' and evidence.get('configuration_sha256')!=configuration)):
+                raise typer.BadParameter('Audit/runtime evidence must match actual files, release and configuration')
+        if profile in {'demo','technical_demo'}:
             try:
-                validate_demo(release,corpus,evaluation,configuration)
+                (validate_technical_demo if profile=='technical_demo' else validate_demo)(release,corpus,evaluation,configuration)
             except ValueError as exc:
                 raise typer.BadParameter(str(exc)) from None
         else:
@@ -184,7 +191,7 @@ def publish(release_id: str, profile: str = 'accepted'):
 
 @app.command()
 def benchmark(split: str = "dev", release_id: str | None = None, limit: int | None = None,
-              concurrency: int = typer.Option(2,min=1,max=2)):
+              concurrency: int = typer.Option(2,min=1,max=2), case_ids: str | None = None):
     """Run/resume real paired benchmark. Evaluate staging before publishing."""
     if split not in {"dev", "acceptance", "smoke"}:
         raise typer.BadParameter("split must be dev, acceptance or smoke")
@@ -193,7 +200,8 @@ def benchmark(split: str = "dev", release_id: str | None = None, limit: int | No
         store, provider = Store(settings), None
         try:
             provider = Gemini(settings, store)
-            return await evaluate(settings, store, provider, split, release_id, limit,concurrency)
+            return await evaluate(settings, store, provider, split, release_id, limit,concurrency,
+                set(case_ids.split(',')) if case_ids else None)
         finally:
             if provider:
                 await provider.close()

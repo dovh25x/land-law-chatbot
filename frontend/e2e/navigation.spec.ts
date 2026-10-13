@@ -25,6 +25,16 @@ test('responsive navigation honestly shows unpublished corpus and benchmark', as
   expect(errors).toEqual([])
 })
 
+test('technical demo clearly discloses pending legal acceptance and coverage gaps', async ({ page }) => {
+  await page.route('**/readyz', r => r.fulfill({ json: {status:'ready',database:true,llm_configured:true,
+    corpus_release:'reviewed-test-corpus',publication_profile:'technical_demo',quality_status:'acceptance_pending',
+    checked_at:'2026-10-13T00:00:00Z',coverage_gaps:[{document_id:'missing',title:'Nguồn còn thiếu',reason:'Chưa có toàn văn đạt kiểm tra.'}]}}))
+  await page.goto('/')
+  await expect(page.getByRole('note')).toContainText('Demo kỹ thuật — chưa nghiệm thu pháp lý.')
+  await page.getByText('Các nguồn chưa đủ dữ liệu (1)').click()
+  await expect(page.getByRole('note')).toContainText('Nguồn còn thiếu: Chưa có toàn văn đạt kiểm tra.')
+})
+
 test('API quota errors are displayed without an invented answer', async ({ page }) => {
   await page.route('**/api/v1/sessions', r => r.fulfill({ status: 201, json: { session_id: 'test-session', token: 'test-session-token' } }))
   await page.route('**/api/v1/chat', r => r.fulfill({ status: 429, headers: { 'Retry-After': '37' }, json: { detail: 'limited' } }))
