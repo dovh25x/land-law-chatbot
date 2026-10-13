@@ -133,6 +133,16 @@ def test_as_of_observation_is_distinct_from_claimed_commencement_date():
     assert claim_source_dates('Tại ngày 12/10/2026, văn bản có hiệu lực từ 02/04/2026.',date(2026,10,12))=={date(2026,4,2)}
 
 
+def test_effective_date_parser_distinguishes_observed_negative_status_and_true_commencement():
+    from landlaw.agent import claim_effective_dates
+    as_of=date(2026,10,12)
+    text='Văn bản không còn hiệu lực vào ngày 12/10/2026; văn bản thay thế có hiệu lực từ 02/04/2026.'
+    assert claim_effective_dates(text,as_of)=={date(2026,4,2)}
+    assert claim_effective_dates('Văn bản có hiệu lực từ ngày 12/10/2026.',as_of)=={as_of}
+    assert claim_effective_dates('Văn bản không còn hiệu lực vào ngày 11/10/2026.',as_of)=={date(2026,10,11)}
+    assert claim_effective_dates('Văn bản có hiệu lực từ 12/10/2026 và không còn hiệu lực vào ngày 12/10/2026.',as_of)=={as_of}
+
+
 def test_effectivity_clause_does_not_inherit_replaced_act_issue_dates():
     from landlaw.agent import source_effective_dates
     text='Điều 2. Quyết định này có hiệu lực thi hành kể từ ngày 02 tháng 4 năm 2026 và thay thế Quyết định 56/2024 ngày 06/9/2024.'

@@ -177,11 +177,18 @@ def source_effective_dates(text):
     return result
 
 
-def claim_effective_dates(text):
+def claim_effective_dates(text, as_of=None):
     """Commencement/expiry dates, excluding an act's separately stated issue date."""
     pattern = (r'hieu luc(?:\s+thi hanh)?\s+(?:(?:ke tu|tu|vao|den)\s+)?(?:ngay\s+)?'
                r'(\d{1,2}(?:[/-]\d{1,2}[/-]\d{4}|\s+thang\s+\d{1,2}\s+nam\s+\d{4}))')
-    return {value for match in re.finditer(pattern, normalize(text)) for value in dates_in('ngay ' + match[1])}
+    normalized=normalize(text)
+    values=set()
+    for match in re.finditer(pattern,normalized):
+        observed_status=bool(as_of and 'vao' in match[0] and re.search(
+            r'(?:(?:khong|chua)\s+(?:con|co)|van\s+con|con)\s+$',normalized[:match.start()]))
+        for value in dates_in('ngay '+match[1]):
+            if not (observed_status and value==as_of):values.add(value)
+    return values
 
 
 def public_missing_facts(facts,release):
@@ -607,7 +614,7 @@ class Agent:
         evidence = {e.chunk.id: e for e in state["evidence"]}
         repaired=[]
         for index,claim in enumerate(draft.claims):
-            claim_dates=claim_effective_dates(claim.text)
+            claim_dates=claim_effective_dates(claim.text,state['as_of'])
             if 'hieu luc' not in normalize(claim.text) or not claim_dates:
                 continue
             if any(i not in evidence for i in claim.citation_ids):
@@ -655,7 +662,7 @@ class Agent:
             claimed_dates=claim_source_dates(claim.text,state['as_of'])
             if claimed_dates-dates_in(cited_text):
                 structural_issues.append(f'Claim {index}: ngày nêu trong kết luận không xuất hiện trong đoạn được dẫn')
-            effective_dates = claim_effective_dates(claim.text)
+            effective_dates = claim_effective_dates(claim.text,state['as_of'])
             if effective_dates and not any(
                     effective_dates <= source_effective_dates(evidence[i].chunk.text)
                     for i in claim.citation_ids if i in evidence):

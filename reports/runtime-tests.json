@@ -1,16 +1,17 @@
 {
-  "checked_at": "2026-10-13T11:34:18.500166+00:00",
+  "checked_at": "2026-10-13T11:38:02.341450+00:00",
   "release": "corpus-de584c31fc95f9a2",
-  "configuration_sha256": "babcc946ed53c7c3d2e543e11991f94c95030d84accae940286df136e65ae562",
-  "passed": true,
+  "configuration_sha256": "ebc032b95b8b0263af3cbfbca0fa7e7da707221bd1e4577a0b9f351c3199c4f9",
+  "passed": false,
   "checks": {
     "postgres_runtime": true,
     "e5_colab_runtime_parity_and_hybrid": true,
     "postgres_leaf_sql": true,
     "postgres_historical_partial_repeal_context": true,
     "postgres_named_article_lookup": true,
-    "backend_tests_124": true,
-    "server_rejects_unproven_repeal_scope": true
+    "server_rejects_unproven_repeal_scope": true,
+    "backend_tests_125": true,
+    "observation_date_not_commencement": true
   },
-  "scope": "124 isolated backend tests, including rejection of observed unproven repeal scope/generalization even when the model approves. Real Supabase historical and article lookups retained; exact final CI pending."
+  "scope": "125 isolated backend tests; observed repeal/generalization rejection and observation-vs-commencement date regression. Real Supabase lookups/parity/isolation retained from recorded checks; exact final CI pending, publication blocked until it passes."
 }
