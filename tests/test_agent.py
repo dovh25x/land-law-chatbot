@@ -283,6 +283,23 @@ def test_context_prioritizes_operative_replacement_over_old_preamble(store,setti
     assert passages[0]['citation_id']=='new-1' and passages[0]['text']==new.chunks[0].text
 
 
+def test_reference_in_long_article_reaches_prompt_before_similar_later_clauses(store,settings):
+    from landlaw.models import Evidence
+    law=document(document_number='151/2025/NĐ-CP')
+    first=law.chunks[0].model_copy(update={'locator':'Điều 5','text':
+        'Điều 5. Thẩm quyền chuyển cho Chủ tịch UBND cấp xã. '
+        'd) Phê duyệt phương án bồi thường theo điểm c khoản 3 Điều 87 Luật Đất đai.'})
+    similar=first.model_copy(update={'id':'later','text':
+        'Phê duyệt phương án bồi thường theo khoản 3 Điều 3 Nghị định 88/2024/NĐ-CP.'})
+    state={'request':ChatRequest(session_id='0'*32,message=
+        'Điều 5 Nghị định 151/2025/NĐ-CP chuyển thẩm quyền ở điểm c khoản 3 Điều 87 cho ai?'),
+        'evidence':[Evidence(chunk=similar,document=law),Evidence(chunk=first,document=law)],
+        'release':{'documents':[law.model_dump(mode='json')],'relations':[]}}
+    agent=Agent(store,FakeProvider(settings.model_copy(update={'llm_provider':'groq'})))
+    passages,_=agent.prompt_context(state)
+    assert passages[0]['citation_id']==first.id and passages[0]['text']==first.text
+
+
 async def test_future_immediate_application_states_only_verified_start_and_asks_case_facts(store,settings):
     law=document(text='Điều 2. Quyết định này có hiệu lực thi hành từ ngày 02/04/2026.',
                  document_number='40/2026/QĐ-UBND')

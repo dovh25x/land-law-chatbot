@@ -1,0 +1,48 @@
+{
+  "checked_at": "2026-10-13T12:31:48.636579+00:00",
+  "release": "corpus-de584c31fc95f9a2",
+  "configuration_sha256": "ea3166d60c6ec57b1ee8f2b7716872097d8c3f5ce540de70aec6256543b9fc46",
+  "passed": true,
+  "active_release": null,
+  "scope": "Real Supabase staging/CPU embeddings; literal source date and complete partial repeal scope; model inference prohibited for these exact facts. Does not certify general legal answers.",
+  "results": [
+    {
+      "case_id": "S02",
+      "passed": true,
+      "status": "clarification_needed",
+      "llm_calls": 0,
+      "tool_calls": 5,
+      "claims": [
+        {
+          "kind": "applicability",
+          "text": "40/2026/QĐ-UBND có hiệu lực thi hành từ ngày 02/04/2026. Văn bản này chưa có hiệu lực tại ngày 01/03/2026. Văn bản này chưa có hiệu lực tại ngày 01/03/2026.",
+          "citation_ids": [
+            "qd-40-2026-hanoi-0-2-0"
+          ]
+        }
+      ],
+      "citations": [
+        "qd-40-2026-hanoi-0-2-0"
+      ]
+    },
+    {
+      "case_id": "S03",
+      "passed": true,
+      "status": "answered",
+      "llm_calls": 0,
+      "tool_calls": 12,
+      "claims": [
+        {
+          "kind": "applicability",
+          "text": "10/2026/QĐ-UBND bãi bỏ Điều 2 của 38/2025/QĐ-UBND. Phạm vi bãi bỏ này là một phần; không phải toàn bộ 38/2025/QĐ-UBND.",
+          "citation_ids": [
+            "qd-10-2026-hanoi-4-1-0"
+          ]
+        }
+      ],
+      "citations": [
+        "qd-10-2026-hanoi-4-1-0"
+      ]
+    }
+  ]
+}

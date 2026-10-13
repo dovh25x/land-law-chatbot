@@ -203,5 +203,81 @@
     "source_checked": true,
     "claim_support": [],
     "notes": "Chưa nêu được mốc hiệu lực QĐ40 trong đáp án cuối, dù source Điều 2 và Draft server đã xác định đúng 02/04/2026. Verifier xác nhận fact nhưng đòi kết luận luật đang áp dụng cho hồ sơ chưa đủ dữ kiện, làm mất phần giải thích chung. Kết quả không đáp ứng rubric; sửa bằng đối chiếu literal date và lịch cho fact do server dựng, vẫn hỏi dữ kiện và không kết luận quyền lợi/chuyển tiếp."
+  },
+  "S01:baseline:20a23aee6d54ad7521168dc211ae4ee1cd447bda56da2c3e658302fd92caa975": {
+    "passed": true,
+    "source_checked": true,
+    "claim_support": [
+      true
+    ],
+    "notes": "Đã đọc toàn bộ content và claim Qwen cấu hình ea3166d6. Điều 2 QĐ40/2026, qd-40-2026-hanoi-0-2-0, quy định hiệu lực 02/04/2026 và thay QĐ56/2024; QĐ56 không còn hiệu lực tại 12/10/2026 đúng. Không có suy quyền lợi/chuyển tiếp hoặc nghĩa vụ thêm. Một citation khớp evidence và nguồn Công báo đã đối chiếu."
+  },
+  "S01:agentic:a7ea7a9bf64fc12a5e5dce377c34fa3b06d5fb816e57273bfe8e879fb53bd19e": {
+    "passed": true,
+    "source_checked": true,
+    "claim_support": [
+      true
+    ],
+    "notes": "Đã đọc toàn bộ content và claim Qwen cấu hình ea3166d6. Điều 2 QĐ40/2026, qd-40-2026-hanoi-0-2-0, quy định hiệu lực 02/04/2026 và thay QĐ56/2024; QĐ56 không còn hiệu lực tại 12/10/2026 đúng. Không có suy quyền lợi/chuyển tiếp hoặc nghĩa vụ thêm. Một citation khớp evidence và nguồn Công báo đã đối chiếu."
+  },
+  "S02:baseline:4c8328b6546520ae50f853956431b8b0c9f1d3f44a0f01ecb670cc883c06d2e2": {
+    "passed": true,
+    "source_checked": true,
+    "claim_support": [
+      true
+    ],
+    "notes": "Đối chiếu Điều 2 QĐ40: hiệu lực 02/04/2026 sau ngày hỏi 01/03/2026. Trả lời chưa áp dụng ngay, hỏi mốc quyết định/phương án và giấy tờ; không tính tiền hoặc kết luận quyền lợi. Câu mốc bị lặp là lỗi trình bày, không đổi căn cứ."
+  },
+  "S02:agentic:57a73bc5aefad345d2d01683266165e993ed18a408ded8ec35e931bac179250e": {
+    "passed": true,
+    "source_checked": true,
+    "claim_support": [
+      true
+    ],
+    "notes": "Đối chiếu Điều 2 QĐ40: hiệu lực 02/04/2026 sau ngày hỏi 01/03/2026. Trả lời chưa áp dụng ngay, hỏi mốc quyết định/phương án và giấy tờ; không tính tiền hoặc kết luận quyền lợi. Câu mốc bị lặp là lỗi trình bày, không đổi căn cứ."
+  },
+  "S03:baseline:7d017f7d5bc4b4e5e0f3de0f92787a13d7a3dadb28e7299db706053f3c498315": {
+    "passed": true,
+    "source_checked": true,
+    "claim_support": [
+      true
+    ],
+    "notes": "Đối chiếu nguyên văn Điều 2 QĐ10: bãi bỏ Điều 2 QĐ38/2025. Claim chỉ phạm vi này, không gán bãi bỏ toàn bộ; ngày 20/01/2026 sau hiệu lực QĐ10 và trước QĐ40."
+  },
+  "S03:agentic:c00115205e842b8cb94d2a5317b7c1cef788c47c60d3a8a901c3e6d9c7a298d1": {
+    "passed": true,
+    "source_checked": true,
+    "claim_support": [
+      true
+    ],
+    "notes": "Đối chiếu nguyên văn Điều 2 QĐ10: bãi bỏ Điều 2 QĐ38/2025. Claim chỉ phạm vi này, không gán bãi bỏ toàn bộ; ngày 20/01/2026 sau hiệu lực QĐ10 và trước QĐ40."
+  },
+  "S04:baseline:c5c7c1c910a3bfe59f8db610462a05a0c12aa1362cd4d235eb287e132e3af261": {
+    "passed": false,
+    "source_checked": true,
+    "claim_support": [
+      true
+    ],
+    "notes": "Đối chiếu khoản 2 Điều 31 NĐ88: đã có quyết định thu hồi và phương án phê duyệt trước hiệu lực nhưng chưa thực hiện thì tiếp tục phương án. Claim đúng, không suy phải làm lại. Tuy nhiên thiếu nội dung xử lý chi trả chậm mà rubric yêu cầu; cần trả lời đủ và dẫn đúng khoản."
+  },
+  "S04:agentic:c5e30cf043d7bda43753bd16bdc5eddd2ba7f9f194a4b089580b97933bd2062a": {
+    "passed": false,
+    "source_checked": true,
+    "claim_support": [
+      true
+    ],
+    "notes": "Đối chiếu khoản 2 Điều 31 NĐ88: đã có quyết định thu hồi và phương án phê duyệt trước hiệu lực nhưng chưa thực hiện thì tiếp tục phương án. Claim đúng, không suy phải làm lại. Tuy nhiên thiếu nội dung xử lý chi trả chậm mà rubric yêu cầu; cần trả lời đủ và dẫn đúng khoản."
+  },
+  "S05:baseline:3dbe10d65191e28bdb2b3adcd1ceae114d775f46e3a535a8bf0f9f9681114e75": {
+    "passed": false,
+    "source_checked": true,
+    "claim_support": [],
+    "notes": "Nguồn nd-151-2025-2-2-0 có khoản 1 điểm d Điều 5 chuyển thẩm quyền cho Chủ tịch UBND cấp xã. Kết quả không trả lời được chủ thể dù corpus có nguồn; hỏi người dùng cung cấp nội dung luật là sai hành vi. Không đạt ca trọng yếu."
+  },
+  "S05:agentic:bb1e42cf0e8cd83a2cf69236126348a74296d57ab7fb3e498210cad21870c3d4": {
+    "passed": false,
+    "source_checked": true,
+    "claim_support": [],
+    "notes": "Nguồn nd-151-2025-2-2-0 có khoản 1 điểm d Điều 5 chuyển thẩm quyền cho Chủ tịch UBND cấp xã. Kết quả không trả lời được chủ thể dù corpus có nguồn; hỏi người dùng cung cấp nội dung luật là sai hành vi. Không đạt ca trọng yếu."
   }
 }

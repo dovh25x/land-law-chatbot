@@ -418,6 +418,12 @@ class Agent:
             for relation in relations:
                 if state['budget'].tool_calls >= 12:
                     break
+                source_start=catalogue.get(relation.source_id,{}).get('effective_from')
+                if (source_start and date.fromisoformat(source_start)>state['as_of']
+                        and relation.source_id not in requested_docs):
+                    # Keep the relationship in metadata, but do not crowd a
+                    # historical answer with an unrequested future amendment.
+                    continue
                 if relation.source_id==doc_id and relation.source_locator and state['budget'].tool_calls<12:
                     numbers=re.findall(r'Điều\s+(\d+)',relation.source_locator)
                     if not any(e.document.id==doc_id and any(e.chunk.locator==f'Điều {n}' for n in numbers) for e in found.values()):
@@ -482,17 +488,19 @@ class Agent:
             question=normalize(state['request'].message) if state.get('request') else ''
             numbers=set(re.findall(r'(?<![\d/])\d{1,6}/(?:19|20)\d{2}(?!/\d)',question))
             articles=set(re.findall(r'\bdieu\s+(\d+[a-z]?)\b',question))
+            references=re.findall(r'\b(?:diem\s+[a-zđ]\s+)?khoan\s+\d+\s+dieu\s+\d+[a-z]?\b',question)
             terms=set(re.findall(r'[a-z0-9]{3,}',question))-{'quyet','dinh','dieu','ngay','theo','khong','van','ban','toi'}
             temporal=any(term in question for term in ('hieu luc','thay the','bai bo','ap dung ngay'))
             def relevant(item):
                 body=normalize(item['text']);locator=normalize(item['locator'])
                 exact_article=any(re.match(rf'^dieu {n}(?:\s|$)',locator) for n in articles)
                 body_numbers=sum(n in body for n in numbers)
+                reference_matches=sum(reference in body for reference in references)
                 document_match=any(n in normalize(item.get('document_number') or '') for n in numbers)
                 operative=temporal and any(term in body for term in ('co hieu luc','thay the','bai bo'))
                 overlap=len(terms & set(body.split()))/max(1,len(body.split()))**.5
                 timely=not temporal or item['applicability']!='future' or document_match
-                return (exact_article and (document_match or not numbers),timely,body_numbers,operative,document_match,overlap)
+                return (exact_article and (document_match or not numbers),timely,reference_matches,body_numbers,operative,document_match,overlap)
             candidates=sorted(candidates,key=relevant,reverse=True)
         for item in candidates:
             if selected_ids is not None and item['citation_id'] not in selected_ids:
@@ -877,7 +885,9 @@ class Agent:
         evidence = {e.chunk.id: e for e in state["evidence"]}
         for index,claim in enumerate(claims):
             if claim.kind=='applicability' and all(evidence[i].applicability=='future' for i in claim.citation_ids):
-                claims[index]=claim.model_copy(update={'text':claim.text+f" Văn bản này chưa có hiệu lực tại ngày {state['as_of'].strftime('%d/%m/%Y')}."})
+                qualification=f"Văn bản này chưa có hiệu lực tại ngày {state['as_of'].strftime('%d/%m/%Y')}."
+                if qualification not in claim.text:
+                    claims[index]=claim.model_copy(update={'text':claim.text+' '+qualification})
         cited_ids = list(dict.fromkeys(i for c in claims for i in c.citation_ids))
         citations = [Citation(id=i, document_id=evidence[i].document.id, title=evidence[i].document.title,
                               document_number=evidence[i].document.document_number, url=str(evidence[i].document.url),
