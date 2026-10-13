@@ -13,5 +13,45 @@
     "source_checked": true,
     "claim_support": [],
     "notes": "Lượt agentic bị provider rate limit sau sáu calls, chưa trả lời câu hỏi về hiệu lực. Không coi trạng thái giới hạn là đáp án đạt cho ca có căn cứ xác định; giữ attempt và phải chạy lại."
+  },
+  "S01:baseline:d0a1cbe5b773a4062a63d6e56fee7e6b914eb53b0ebddfb7b9603ad186908e5b": {
+    "passed": true,
+    "source_checked": true,
+    "claim_support": [
+      true,
+      true
+    ],
+    "notes": "Đọc lại đầy đủ Điều 2 QĐ40/2026 trong trích dẫn qd-40-2026-hanoi-0-2-0: hiệu lực từ 02/04/2026 và thay thế QĐ56/2024. Hai claims chỉ kết luận hiệu lực/thay thế văn bản, đúng thời điểm 12/10/2026; không suy quyền lợi hoặc phủ nhận chuyển tiếp của hồ sơ cá nhân. ID nguồn khớp evidence. Hướng dẫn đọc văn bản mới không tạo nghĩa vụ hay số tiền."
+  },
+  "S01:agentic:22afda9459fd41747fc96d306d5f9255b98036a70ed889c503ed101a42eaa433": {
+    "passed": true,
+    "source_checked": true,
+    "claim_support": [
+      true,
+      true
+    ],
+    "notes": "Hai claims được Điều 2 QĐ40/2026 hỗ trợ đầy đủ: hiệu lực 02/04/2026 và thay thế QĐ56/2024. Thời điểm 12/10/2026 đúng. Đã mở trực tiếp Điều 29, qd-40-2026-hanoi-17-2-0, xác nhận đây là Điều khoản chuyển tiếp; bước tiếp theo chỉ hướng dẫn đối chiếu, không kết luận quyền lợi hồ sơ cũ. ID dẫn nguồn khớp evidence."
+  },
+  "S02:baseline:5822d68499f9be29dd3034715dbf0a5a6e73a816c4d65c48749311b49b76e454": {
+    "passed": true,
+    "source_checked": true,
+    "claim_support": [
+      true
+    ],
+    "notes": "Đối chiếu Điều 2 QĐ40/2026: có hiệu lực 02/04/2026, nên chưa có hiệu lực tại thời điểm 01/03/2026. Chỉ nêu mốc hiệu lực, không suy kết quả mọi hồ sơ cũ. Hỏi ngày thu hồi, ngày phê duyệt phương án, loại đất và giấy tờ đã ẩn danh; yêu cầu đối chiếu chuyển tiếp, không tính tiền. Một claim có nguồn đúng, hành vi clarification_needed phù hợp rubric."
+  },
+  "S02:agentic:50262f5a6e98df224a8faa8c5cb29229e72fb93f206e0c72fcd4e53e0bd7d75c": {
+    "passed": true,
+    "source_checked": true,
+    "claim_support": [
+      true
+    ],
+    "notes": "Đối chiếu Điều 2 QĐ40/2026: có hiệu lực 02/04/2026, nên chưa có hiệu lực tại thời điểm 01/03/2026. Chỉ nêu mốc hiệu lực, không suy kết quả mọi hồ sơ cũ. Hỏi ngày thu hồi, ngày phê duyệt phương án, loại đất và giấy tờ đã ẩn danh; yêu cầu đối chiếu chuyển tiếp, không tính tiền. Một claim có nguồn đúng, hành vi clarification_needed phù hợp rubric."
+  },
+  "S03:baseline:cf2dc79819d2bf7a0074afef7fadfba7a6ef3d8f30db2a8fcecbe484881b316b": {
+    "passed": false,
+    "source_checked": true,
+    "claim_support": [],
+    "notes": "Lượt bị giới hạn workflow, chưa trả lời được ca có căn cứ xác định. Draft riêng đã nhầm bãi bỏ một phần thành thay thế toàn bộ; verifier server chặn, không phát qua SSE. Kiểm tra context cho thấy Điều 2 QĐ10 bị mất khi mở quá nhiều quan hệ, còn QĐ40 tương lai được ưu tiên không đúng mốc 20/01/2026. Không chấm đạt; giữ attempt và sửa retrieval theo thời điểm/phạm vi."
   }
 }

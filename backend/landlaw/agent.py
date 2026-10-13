@@ -316,14 +316,23 @@ class Agent:
         requested.update(d['id'] for d in release.get('documents',[]) if d.get('document_number')
             and normalize(d['document_number']).split('/qd')[0] in normalize(query))
         priority = {}
+        catalogue={d['id']:d for d in release.get('documents',[])}
         for relation in release.get('relations', []) + release.get('unresolved_relations', []):
             if relation['target_id'] in requested and relation['type'] == 'replaces' and state['budget'].tool_calls < 12:
+                source=catalogue.get(relation['source_id'],{})
+                starts=source.get('effective_from')
+                if starts and date.fromisoformat(starts)>state['as_of'] and relation['source_id'] not in requested:
+                    continue
                 state['budget'].tool()
                 doc = await asyncio.to_thread(self.store.open_document, relation['source_id'], release['id'],
                                              relation.get('source_locator') or relation.get('locator'))
                 if doc:
                     for chunk in doc.chunks:
                         priority[chunk.id] = Evidence(chunk=chunk, document=doc)
+        # Keep future sources as candidates, but do not let an unrequested
+        # future replacement displace the acts relevant at the question date.
+        hits.sort(key=lambda hit:(hit.document.id in requested,
+            applicability(hit.document,state['as_of'],hit.chunk)!='future'),reverse=True)
         for hit in hits:
             priority.setdefault(hit.chunk.id, hit)
         return list(priority.values())[:8]
@@ -372,7 +381,19 @@ class Agent:
         # Follow legal relationships; deterministic scope checks are never delegated entirely to the LLM.
         catalogue = {d['id']: d for d in state['release']['documents']}
         opened = set()
-        for doc_id in list(dict.fromkeys(e.document.id for e in found.values()))[:4]:
+        operative_ids=set()
+        question=normalize(state['request'].message)
+        requested_numbers=set(re.findall(r'(?<![\d/])\d{1,6}/(?:19|20)\d{2}(?!/\d)',question))
+        requested_docs={d['id'] for d in catalogue.values() if any(
+            number in normalize(d.get('document_number') or '') for number in requested_numbers)}
+        wanted_types={kind for phrase,kind in [('bai bo','repeals'),('thay the','replaces'),('sua doi','amends')]
+                      if phrase in question}
+        def starts_by_question(doc_id):
+            starts=catalogue.get(doc_id,{}).get('effective_from')
+            return bool(starts and date.fromisoformat(starts)<=state['as_of'])
+        doc_ids=list(dict.fromkeys(e.document.id for e in found.values()))
+        doc_ids.sort(key=lambda doc_id:(doc_id in requested_docs,starts_by_question(doc_id)),reverse=True)
+        for doc_id in doc_ids[:4]:
             if state["budget"].tool_calls >= 12:
                 break
             state["budget"].tool()
@@ -380,6 +401,9 @@ class Agent:
             relations = [relation for relation in relations
                          if relation_may_affect(relation, doc_id, list(found.values()))]
             relations.sort(key=lambda relation: (
+                starts_by_question(relation.source_id),
+                relation.type in wanted_types,
+                relation.source_id in requested_docs,
                 relation.target_id == doc_id,
                 catalogue.get(relation.source_id, {}).get('effective_from') or ''), reverse=True)
             for relation in relations:
@@ -392,6 +416,7 @@ class Agent:
                         source=await asyncio.to_thread(self.store.open_document,doc_id,release_id,relation.source_locator,state['request'].message)
                         if source:
                             for chunk in source.chunks:
+                                operative_ids.add(chunk.id)
                                 found.setdefault(chunk.id,Evidence(chunk=chunk,document=source,
                                     applicability=applicability(source,state['as_of'],chunk)))
                             await self.event(state,'tool','Đã mở điều khoản nguồn của quan hệ sửa đổi/thay thế.','open_article',[doc_id])
@@ -406,6 +431,7 @@ class Agent:
                 doc = await asyncio.to_thread(self.store.open_document, related_id, release_id, locator,state['request'].message)
                 if doc:
                     for chunk in relation_chunks(doc, locator):
+                        if related_id==relation.source_id:operative_ids.add(chunk.id)
                         found.setdefault(chunk.id, Evidence(chunk=chunk, document=doc,
                                                            applicability=applicability(doc, state["as_of"],chunk)))
                     await self.event(state, 'tool', 'Đã mở văn bản có quan hệ pháp lý để đối chiếu phạm vi.',
@@ -419,7 +445,9 @@ class Agent:
                 parent = await asyncio.to_thread(self.store.chunk, item.chunk.parent_id, release_id)
                 if parent:
                     found.setdefault(parent.id, Evidence(chunk=parent, document=item.document, applicability=item.applicability))
-        state["evidence"] = list(found.values())[:16]
+        candidates=list(found.values())
+        secondary=sorted(candidates[8:],key=lambda item:item.chunk.id in operative_ids,reverse=True)
+        state["evidence"] = candidates[:8]+secondary[:8]
         state["rounds"] += 1
         return state
 
@@ -454,7 +482,8 @@ class Agent:
                 document_match=any(n in normalize(item.get('document_number') or '') for n in numbers)
                 operative=temporal and any(term in body for term in ('co hieu luc','thay the','bai bo'))
                 overlap=len(terms & set(body.split()))/max(1,len(body.split()))**.5
-                return (exact_article and (document_match or not numbers),body_numbers,operative,document_match,overlap)
+                timely=not temporal or item['applicability']!='future' or document_match
+                return (exact_article and (document_match or not numbers),timely,body_numbers,operative,document_match,overlap)
             candidates=sorted(candidates,key=relevant,reverse=True)
         for item in candidates:
             if selected_ids is not None and item['citation_id'] not in selected_ids:

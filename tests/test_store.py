@@ -98,6 +98,20 @@ def test_primary_retrieval_keeps_leaf_passage_and_parent_remains_openable(store)
     assert store.chunk(parent.id).text==parent.text
 
 
+def test_named_law_year_and_article_resolve_without_statute_number(store):
+    current=document('current',document_number='31/2024/QH15')
+    current.title='Luật Đất đai'
+    current.chunks[0].locator='Điều 95'
+    current.chunks[0].text='Các nhóm điều kiện theo hồ sơ.'
+    old=document('old',document_number='45/2013/QH13')
+    old.title='Luật số 45/2013/QH13 luật Đất đai.'
+    old.chunks[0].locator='Điều 95'
+    old.chunks[0].text='Quy định của phiên bản trước.'
+    release(store,[current,old])
+    assert store.search('Theo Điều 95 Luật Đất đai năm 2024')[0].document.id=='current'
+    assert store.search('dieu 95 luat dat dai 2013')[0].document.id=='old'
+
+
 def test_open_article_and_search_distinguish_added_article_suffix(store):
     law = document()
     law.document_number = '124/2020/NĐ-CP'

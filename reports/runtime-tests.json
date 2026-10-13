@@ -1,13 +1,15 @@
 {
-  "checked_at": "2026-10-13T11:09:48.950541+00:00",
+  "checked_at": "2026-10-13T11:21:06.256409+00:00",
   "release": "corpus-de584c31fc95f9a2",
-  "configuration_sha256": "32e99b2d907337c2be598b664cac1e184a300f4c8d5fa0e400bbf641286e817a",
+  "configuration_sha256": "7ee483e1bc8fe1ebb2296fcbcd7088de4e5b07749bce7a41383732cd854db04d",
   "passed": true,
   "checks": {
     "postgres_runtime": true,
     "e5_colab_runtime_parity_and_hybrid": true,
-    "backend_tests_121": true,
-    "postgres_leaf_sql": true
+    "postgres_leaf_sql": true,
+    "backend_tests_123": true,
+    "postgres_historical_partial_repeal_context": true,
+    "postgres_named_article_lookup": true
   },
-  "scope": "121 isolated backend tests; real Supabase leaf search returns 8 non-parent passages with active release unset. E5 parity and PostgreSQL isolation retained from prior recorded checks; final CI/image evidence pending."
+  "scope": "123 isolated backend tests plus real Supabase checks: historical QD10 Article 2 retained first; unrequested future replacement not prioritized; named Land Law 2024 retrieves Article 95. E5 parity and session isolation retained; exact final CI/image pending."
 }

@@ -96,6 +96,35 @@ async def test_related_document_reads_obey_tool_budget_and_keep_unaffected_artic
     assert result['evidence'] and any(event.tool=='open_article' and event.document_ids!=['law'] for event in result['trace'])
 
 
+async def test_historical_partial_repeal_keeps_operative_clause_before_future_replacement(store,settings):
+    from landlaw.models import Relation
+    original=document('original',document_number='38/2025/QĐ-UBND')
+    amendment=document('amendment',document_number='10/2026/QĐ-UBND')
+    operative=amendment.chunks[0].model_copy(update={'id':'operative','locator':'Điều 2',
+        'text':'Điều 2. Bãi bỏ Điều 2 của Quyết định số 38/2025/QĐ-UBND.'})
+    amendment.chunks=[amendment.chunks[0],operative]
+    future=document('future',document_number='40/2026/QĐ-UBND')
+    future.effective_from=date(2026,4,2)
+    future.chunks[0].text='Quyết định này có hiệu lực ngày 02/04/2026 và thay thế các quyết định cũ.'
+    relations=[Relation(source_id=future.id,target_id=amendment.id,type='replaces',
+        source_locator='Điều 1',source_url=future.url,explanation='Replacement starts after the question date'),
+        Relation(source_id=amendment.id,target_id=original.id,type='repeals',source_locator='Điều 2',
+        target_locators=['Điều 2'],target_locators_complete=True,source_url=amendment.url,
+        explanation='Only Article 2 is repealed at the question date')]
+    payload=release(store,[original,amendment,future],relations=[r.model_dump(mode='json') for r in relations])
+    sid,_=session(store);agent=Agent(store,FakeProvider(settings))
+    state={'request':ChatRequest(session_id=sid,message='10/2026/QĐ-UBND bãi bỏ toàn bộ 38/2025/QĐ-UBND không?',mode='baseline'),
+        'budget':Budget(),'release':payload,'plan':Plan(tools=[ToolCall(name='search_law',query='10/2026/QĐ-UBND bãi bỏ 38/2025/QĐ-UBND')]),
+        'as_of':date(2026,1,20),'evidence':[],'rounds':0,'tool_notes':[],'trace':[],'emit':noop}
+    hits=await agent.search(state,state['request'].message)
+    assert hits[0].document.id!=future.id
+    await agent.tools(state)
+    settings.llm_provider='groq'
+    passages,_=agent.prompt_context(state)
+    assert any(p['citation_id']=='operative' for p in passages)
+    assert passages[0]['document_id']!=future.id
+
+
 def test_as_of_observation_is_distinct_from_claimed_commencement_date():
     from landlaw.agent import claim_source_dates
     assert claim_source_dates('Văn bản không còn hiệu lực vào ngày 12/10/2026.',date(2026,10,12))==set()

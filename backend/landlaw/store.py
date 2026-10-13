@@ -412,7 +412,18 @@ class Store:
         params = (release_id, project) if project else (release_id,)
         projection = 'c.id,c.document_id,c.text,c.locator,c.parent_id,c.page,c.checksum,c.embedding_model' if self.postgres else 'c.*'
         docs = {d.id: d for d in self.documents(release_id)}
-        exact_docs = [d.id for d in docs.values() if d.document_number and normalize(d.document_number) in normalize(query)]
+        normalized_query=normalize(query)
+        def exact_document(document):
+            number=normalize(document.document_number or '')
+            if number and number in normalized_query:return True
+            # Citizens commonly name a law and its year instead of its number.
+            # Preserve the year so similarly named historical laws cannot match.
+            title=re.sub(r'^luat so \S+\s+luat\s+', 'luat ', normalize(document.title)).rstrip('.')
+            year=re.search(r'/(\d{4})/',number)
+            if not year or not title.startswith('luat ') or 'sua doi' in title:return False
+            title=re.sub(r'\s+\d{4}$','',title)
+            return bool(re.search(r'\b'+re.escape(title)+r'(?:\s+nam)?\s+'+year[1]+r'\b',normalized_query))
+        exact_docs = [d.id for d in docs.values() if exact_document(d)]
         article = re.search(r"\bdieu\s+(\d+[a-z]?)\b", normalize(query))
         exact = []
         if exact_docs:
@@ -468,7 +479,7 @@ class Store:
                 rows_by_id[row["id"]] = row
         for chunk_id, row in rows_by_id.items():
             number = docs[row["document_id"]].document_number
-            if number and normalize(number) in normalize(query):
+            if row['document_id'] in exact_docs:
                 scores[chunk_id] += 0.1
             if article and row['id'] in {r['id'] for r in exact}:
                 scores[chunk_id] += 0.2
