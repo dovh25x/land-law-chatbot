@@ -1,0 +1,12 @@
+{
+  "checked_at": "2026-10-13T14:13:15.535551+00:00",
+  "backup_sha256": "988943a4d48d922df95c069d14f7f7fc0d3c7c7987a0a756cdf79c63c72b872a",
+  "bytes": 140507660,
+  "checks": {
+    "encrypted_roundtrip": true,
+    "publication_state_unpublished": true,
+    "two_real_corpora": true
+  },
+  "passed": true,
+  "scope": "Fresh full encrypted backup; decrypted locally to validate roundtrip without printing document/session data. Separate PostgreSQL restore exercise is recorded in postgres-restore.json; this receipt does not claim another database restore."
+}

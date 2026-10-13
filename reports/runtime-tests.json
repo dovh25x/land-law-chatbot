@@ -1,8 +1,8 @@
 {
-  "checked_at": "2026-10-13T14:00:37.628011+00:00",
+  "checked_at": "2026-10-13T14:07:47.288860+00:00",
   "release": "corpus-de584c31fc95f9a2",
   "configuration_sha256": "2126675f376cde8cef7efd8ffb79dd0ce3b5bc46eb03a6f2a187e8fc02eabcec",
-  "passed": false,
+  "passed": true,
   "checks": {
     "postgres_runtime": true,
     "e5_colab_runtime_parity_and_hybrid": true,
@@ -21,8 +21,8 @@
     "source_proven_date_comparison": true,
     "complete_repeal_scope_literal_proof": true,
     "exact_clause_reference_prompt_priority": true,
-    "exact_commit_ci": false,
-    "exact_image_hard_memory_limit": false,
+    "exact_commit_ci": true,
+    "exact_image_hard_memory_limit": true,
     "compact_prompt_backend_regression_131": true,
     "literal_whole_act_replacement_guards": true,
     "exact_reference_context_keeps_related_acts": true,
@@ -34,7 +34,7 @@
     "origin_authority_follows_numbered_clause": true,
     "legal_relation_metadata_preserves_provision_evidence": true
   },
-  "scope": "139 isolated backend tests, frontend desktop/mobile checks and exact Python 3.12 image memory checks passed. Publication still requires paired source-checked critical smoke cases.",
-  "ci_run": 38404094354,
-  "commit": "2d0d089278e04b44e27e3a6a6b6a2dbda5f907a8"
+  "scope": "146 isolated backend tests, frontend desktop/mobile checks and exact Python 3.12 deployment image memory check passed. Legal publication still requires 20 paired source-reviewed critical smoke cases.",
+  "ci_run": 38409772921,
+  "commit": "434e15dc4a532ed2fd236a1dc36a4d71e6ce1812"
 }

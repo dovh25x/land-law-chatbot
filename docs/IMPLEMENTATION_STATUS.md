@@ -1,6 +1,6 @@
 # Bằng chứng triển khai
 
-Cập nhật 13/10/2026 20:07 giờ Việt Nam. Đợt tăng tốc bắt đầu 12/10/2026 16:44:23 UTC; hạn ưu tiên 13/10/2026 07:44:23 UTC đã qua. Kế hoạch M0–M6 chưa hoàn tất. Corpus vẫn staging, con trỏ active release chưa được đặt. Demo chỉ công bố khi toàn bộ 20 ca ở hai chế độ được đối chiếu nguồn và vượt gate; tiêu chí nghiệm thu 80 câu giữ nguyên.
+Cập nhật 13/10/2026 21:12 giờ Việt Nam. Đợt tăng tốc bắt đầu 12/10/2026 16:44:23 UTC; hạn ưu tiên 13/10/2026 07:44:23 UTC đã qua. Kế hoạch M0–M6 chưa hoàn tất. Corpus vẫn staging, con trỏ active release chưa được đặt. Demo chỉ công bố khi toàn bộ 20 ca ở hai chế độ được đối chiếu nguồn và vượt gate; tiêu chí nghiệm thu 80 câu giữ nguyên.
 
 Embedding đã hoàn tất: artifact Colab có 7.610 vector E5 ONNX Q8 384 chiều cho 69 tài liệu, gồm 54 văn bản pháp lý và năm nguồn chính thức cho mỗi dự án. Release `corpus-de584c31fc95f9a2` được staging trên Supabase. Tất cả ID/checksum/contract đã đối chiếu; ba mẫu runtime khớp Colab tuyệt đối. Corpus và checkpoint đã archive private, tải lại đối chiếu byte và khôi phục thành công. Không dùng index trộn model hoặc thiếu vector.
 
@@ -8,12 +8,12 @@ Nguồn QĐ56/2024 đã có toàn văn chính thức để tra cứu lịch sử
 
 | Mốc | Trạng thái | Bằng chứng / việc còn thiếu |
 |---|---|---|
-| M0 | Hạ tầng và lượt gọi thật đạt | Pages, Render Free, Supabase chạy thật; Gemini, Workers AI và Groq từng gọi thành công. Groq Free gọi được local/CI/Render; cấu hình đang đánh giá là Qwen `qwen/qwen3.8-27b`. Cần deploy đúng commit cuối sau CI. |
+| M0 | Hạ tầng và lượt gọi thật đạt | Pages, Render Free, Supabase chạy thật; Gemini, Workers AI và Groq từng gọi thành công. Groq Free gọi được local/CI/Render; cấu hình đang đánh giá là GPT-OSS `openai/gpt-oss-20b`. Commit `434e15d` đã qua CI và deploy Render. |
 | M1 | Embedding và dữ liệu staging đạt; chưa công bố | 69 tài liệu/54 legal/15 nguồn dự án, đủ 7.610 vector. Audit, archive, parity và restore đạt. Còn gate pháp lý, phát hành có backup và đối chiếu danh mục tại ngày phát hành. |
 | M2 | Baseline chạy thật trên staging | Hybrid FTS/pgvector/RRF, hội thoại và dẫn nguồn có sẵn. Đã sửa SQL truy xuất đoạn con; kiểm tra Supabase thật trả tám đoạn không phải đoạn cha. Đang chạy lại 20 smoke paired trên cấu hình nguồn cuối; còn gate đạt và QA URL corpus công bố. |
 | M3 | Graph thật; đang kiểm tra chất lượng | Công cụ đọc, hiệu lực cấp điều khoản, chuyển tiếp, verifier source spans, SSE chỉ phát sau kiểm tra. Đã sửa suy luận quá mức từ mốc hiệu lực sang toàn bộ quyền lợi hồ sơ cũ. Còn bộ smoke và benchmark thật trên cấu hình cuối. |
 | M4 | Giao diện đã triển khai, kiểm thử kỹ thuật đạt | Hai Vitest, sáu Playwright desktop/mobile và build đạt ở CI. Còn QA hỏi đáp, nguồn, trace trên URL sau khi corpus công bố. |
-| M5 | Kỹ thuật nhiều phần đạt; chưa nghiệm thu pháp lý | 138 pytest đạt; CI trước đó đạt; E5 Docker peak RSS 354,02 MiB dưới hard limit 512 MiB. Restore PostgreSQL tách biệt, session isolation, rollback/withdrawal và restart đã đạt. Còn CI image commit cuối, chấm smoke/full benchmark, p95 API sau công bố. |
+| M5 | Kỹ thuật nhiều phần đạt; chưa nghiệm thu pháp lý | 146 pytest đạt; CI commit `434e15d` đạt; E5 Docker peak RSS 355,67 MiB dưới hard limit 512 MiB. Restore PostgreSQL tách biệt, session isolation, rollback/withdrawal và restart đã đạt. Còn chấm smoke/full benchmark và p95 API sau công bố. |
 | M6 | Chưa hoàn tất | Repo, Docker, migration, CI/CD, pipeline và tài liệu đã có. Còn corpus công bố, URL hỏi đáp hợp lệ và báo cáo nghiệm thu đầy đủ. |
 
 Website: https://hanoi-land-law.pages.dev. API: https://land-law-chatbot.onrender.com. Hạ tầng live chưa đồng nghĩa chất lượng pháp lý đã nghiệm thu. `/readyz` hiện báo chưa sẵn sàng vì chưa công bố corpus; chatbot không trả lời nguồn staging như dữ liệu đã phát hành.
@@ -27,3 +27,5 @@ Sự cố unit-test kế thừa DB thật đã được xử lý: dừng workflo
 Bằng chứng: `reports/source-audit.json`, `e5-runtime-parity.json`, `e5-archive-restore.json`, `e5-clean-backup.json`, `postgres-restore.json`, `docker-memory.json`, `cold-start.json`, `infrastructure-smoke.json`, `runtime-tests.json`, `ci.json` và các checkpoint trong `reports/runs`. Kiểm tra release/model/configuration fingerprint và thời điểm từng báo cáo. Báo cáo cấu hình cũ không chứng nhận cấu hình mới.
 
 `data/evaluation/acceptance-freeze.json` giữ 80 câu nghiệm thu; không đổi gold hay ngưỡng để nâng điểm. `reports/retrieval-before-parent-fix.json` lưu chẩn đoán baseline trước sửa đoạn cha, có Recall@8 thấp; đây không phải chứng nhận agentic hoặc đáp án. Chẩn đoán và benchmark mới ghi riêng, không ghép số liệu khác cấu hình. Chưa có bằng chứng đủ Recall@8≥85%, rubric≥85%, claim support≥95% hoặc p95≤60s trên toàn bộ nghiệm thu. Bộ tham chiếu do quá trình triển khai rà soát, không phải thẩm định pháp lý độc lập.
+
+Checkpoint hiện tại `2126675f` đã chạy và rà soát 4/20 cặp smoke (8 kết quả). S05 baseline bị quota TPD: limit 200.000, used 198.434, requested 3.500; provider yêu cầu chờ 836 giây tại 14:04 UTC. Không coi ca bị giới hạn là đạt. Bản sửa mới giữ đủ đầu khoản 2 Điều 95 trong prompt bằng cách nén metadata quan hệ (không cắt luật), và từ chối gán Chủ tịch huyện vào quyền chỉ thuộc UBND huyện nếu điểm chuyển giao không chứng minh. `scripts/resume_evaluation.py` tiếp tục đúng checkpoint sau cooldown; không chấm tự động hoặc công bố corpus. Các kết quả cũ và lỗi đã phát hiện được giữ để đối chiếu.

@@ -1,169 +1,22 @@
 {
-  "checked_at": "2026-10-13T12:50:40.037976+00:00",
-  "backend": "https://land-law-chatbot.onrender.com",
-  "frontend": "https://hanoi-land-law.pages.dev",
-  "deploy_id": "dep-db72h7qj9qps73b00gkg",
+  "checked_at": "2026-10-13T14:08:31.927617+00:00",
+  "backend_url": "https://land-law-chatbot.onrender.com",
+  "frontend_url": "https://hanoi-land-law.pages.dev",
+  "commit": "434e15dc4a532ed2fd236a1dc36a4d71e6ce1812",
+  "deploy_id": "dep-db73lu6k1f9s73c4advg",
   "status": "live",
-  "commit": "db7a128c45f4c0a9f16af46cde90d63284af4ded",
-  "publication_profile": "staging",
-  "legal_acceptance": false,
-  "/healthz": {
-    "http": 200,
-    "body": {
-      "status": "ok",
-      "version": "0.1.0"
-    }
+  "ready_http": 503,
+  "readiness": {
+    "status": "not_ready",
+    "database": true,
+    "llm_configured": true,
+    "corpus_release": null,
+    "checked_at": null,
+    "storage": "postgresql",
+    "publication_profile": "staging",
+    "quality_status": "acceptance_pending",
+    "retrieval_mode": "unavailable",
+    "coverage_gaps": []
   },
-  "/readyz": {
-    "http": 503,
-    "body": {
-      "status": "not_ready",
-      "database": true,
-      "llm_configured": true,
-      "corpus_release": null,
-      "checked_at": null,
-      "storage": "postgresql",
-      "publication_profile": "staging",
-      "quality_status": "acceptance_pending",
-      "retrieval_mode": "unavailable",
-      "coverage_gaps": []
-    }
-  },
-  "/api/v1/evaluations/latest": {
-    "http": 200,
-    "body": {
-      "status": "awaiting_review",
-      "dataset_sha256": "919d297f64d2a14b3dfcf0215be401a16615bdaa2e778af8514d060bb5b5392e",
-      "generated_at": "2026-10-11T19:13:50.796227+00:00",
-      "cases": 40,
-      "completed_pairs": 2,
-      "results": [
-        {
-          "mode": "baseline",
-          "completed": 2,
-          "reviewed": 0,
-          "recall_at_8": null,
-          "answer_pass_rate": null,
-          "citation_id_valid_rate": null,
-          "claim_support_rate": null,
-          "p95_seconds": 10.296,
-          "llm_calls": 4,
-          "embedding_calls": 2,
-          "tool_calls": 8,
-          "critical_failed": [],
-          "limited_or_error": 0,
-          "unsupported_claims": null
-        },
-        {
-          "mode": "agentic",
-          "completed": 2,
-          "reviewed": 0,
-          "recall_at_8": null,
-          "answer_pass_rate": null,
-          "citation_id_valid_rate": null,
-          "claim_support_rate": null,
-          "p95_seconds": 33.337,
-          "llm_calls": 12,
-          "embedding_calls": 4,
-          "tool_calls": 19,
-          "critical_failed": [],
-          "limited_or_error": 0,
-          "unsupported_claims": null
-        }
-      ],
-      "acceptance_passed": false,
-      "run_id": "corpus-adcd1a8f9596ccb8-gemini-3.5-flash-lite-dev-919d297f-16bdd915",
-      "release": "corpus-adcd1a8f9596ccb8",
-      "model": "gemini-3.5-flash-lite",
-      "embedding_model": "gemini-embedding-2",
-      "split": "dev",
-      "corpus_embedded": false,
-      "publication_candidate": false,
-      "notes": [
-        "Development runs on incomplete staging cannot certify acceptance; query embedding failures fall back to lexical retrieval."
-      ],
-      "as_of": "2026-10-12",
-      "configuration_sha256": "16bdd9157e03886d9b92c7d6d847274f576e37d4347b507bd1470fa90e44fd10",
-      "quality_metrics_status": "withheld_pending_full_source_review",
-      "evaluation_release": "corpus-adcd1a8f9596ccb8",
-      "active_release": null,
-      "demo_smoke": {
-        "status": "awaiting_review",
-        "dataset_sha256": "56ccf0b0dfe9e13f8215df8cadf195ecc733560e0974d7281373338cf4a27e35",
-        "generated_at": "2026-10-13T12:43:49.406440+00:00",
-        "cases": 20,
-        "completed_pairs": 0,
-        "results": [
-          {
-            "mode": "baseline",
-            "completed": 1,
-            "reviewed": 0,
-            "recall_at_8": null,
-            "answer_pass_rate": null,
-            "citation_id_valid_rate": null,
-            "claim_support_rate": null,
-            "unsupported_claims": null,
-            "source_review_complete": false,
-            "p95_seconds": null,
-            "llm_calls": 2,
-            "embedding_calls": 1,
-            "tool_calls": 12,
-            "critical_failed": [],
-            "limited_or_error": 1
-          },
-          {
-            "mode": "agentic",
-            "completed": 0,
-            "reviewed": 0,
-            "recall_at_8": null,
-            "answer_pass_rate": null,
-            "citation_id_valid_rate": null,
-            "claim_support_rate": null,
-            "unsupported_claims": null,
-            "source_review_complete": false,
-            "p95_seconds": null,
-            "llm_calls": 0,
-            "embedding_calls": 0,
-            "tool_calls": 0,
-            "critical_failed": [],
-            "limited_or_error": 0
-          }
-        ],
-        "acceptance_passed": false,
-        "run_id": "corpus-de584c31fc95f9a2-openai_gpt-oss-120b-smoke-56ccf0b0-4031dae0-c1",
-        "release": "corpus-de584c31fc95f9a2",
-        "model": "openai/gpt-oss-120b",
-        "llm_provider": "groq",
-        "embedding_model": "multilingual-e5-small-onnx-q8-window-v1",
-        "split": "smoke",
-        "corpus_embedded": true,
-        "publication_candidate": false,
-        "notes": [
-          "Development runs on incomplete staging cannot certify acceptance; query embedding failures fall back to lexical retrieval."
-        ],
-        "as_of": "2026-10-13",
-        "configuration_sha256": "4031dae0d1c70ccd7b74a70224a3ceeebe7acdc613c8a196cc98af19d319a58c",
-        "execution_concurrency": 1,
-        "attempt_history": {
-          "attempts": 1,
-          "retry_attempts": 0,
-          "limited_or_error_attempts": 1,
-          "scope": "Every new attempt is retained; legacy checkpoints imported as latest results only.",
-          "directory": "reports/runs/corpus-de584c31fc95f9a2-openai_gpt-oss-120b-smoke-56ccf0b0-4031dae0-c1/attempts"
-        },
-        "latency_scope": "Paired CLI run, concurrency 1; provider-reported cooldown between turns excluded. Public API single-user p95 measured separately.",
-        "source_audit_passed": true,
-        "source_audit_sha256": "363afc7997185c2bc1528a869efd6b3eb851945597925a17612a573c5a9340dd",
-        "runtime_tests_passed": false,
-        "runtime_tests_sha256": "c5a09e7302d1cd5ec4f40c8fc175476873491d114bc096c89d2913845df9fcb3",
-        "quality_metrics_status": "withheld_pending_full_source_review"
-      },
-      "smoke_matches_active_release": false,
-      "active_configuration_sha256": "4031dae0d1c70ccd7b74a70224a3ceeebe7acdc613c8a196cc98af19d319a58c",
-      "matches_active_configuration": false,
-      "smoke_matches_active_configuration": true,
-      "acceptance_valid_for_active": false,
-      "matches_active_release": false
-    }
-  }
+  "legal_qa_published": false
 }
