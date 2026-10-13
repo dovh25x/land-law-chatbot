@@ -249,11 +249,22 @@ class Agent:
 
     async def plan(self, state):
         request = state["request"]
+        question=normalize(request.message)
+        literal_numbers=set(re.findall(r'(?<![\d/])\d{1,6}/(?:19|20)\d{2}(?!/)',question))
+        known_numbers={'/'.join(normalize(d.get('document_number') or '').split('/')[:2])
+                       for d in (state['release'] or {}).get('documents',[])}
+        direct_effectivity=(len(literal_numbers)==1 and literal_numbers<=known_numbers
+            and any(term in question for term in ('hieu luc','van ban nao thay the','kiem tra mau thuan'))
+            and not any(term in question for term in ('ho so','quyen loi','tinh tien','tinh boi thuong')))
         if request.mode == "baseline":
             prior = next((m['content'] for m in reversed(state['history']) if m['role']=='user'), '')
             # Baseline also receives the same conversational context; no planner call.
             query = (prior[:500]+' '+request.message) if prior else request.message
             state["plan"] = Plan(tools=[ToolCall(name="search_law", query=query[:1000])])
+        elif direct_effectivity:
+            state['plan']=Plan(tools=[ToolCall(name='search_law',query=request.message[:1000])])
+            await self.event(state,'routing','Đã nhận diện số văn bản và yêu cầu kiểm tra hiệu lực; dùng tra cứu trực tiếp.',
+                             'search_law')
         else:
             catalogue=self.catalogue(state['release'])
             catalogue_fields=None
@@ -429,7 +440,23 @@ class Agent:
         model's context and distract from the actual operative text.
         """
         passages,documents=[],{}
-        for item in self.context(state):
+        candidates=self.context(state)
+        if self.provider.settings.llm_provider=='groq' and selected_ids is None:
+            question=normalize(state['request'].message) if state.get('request') else ''
+            numbers=set(re.findall(r'(?<![\d/])\d{1,6}/(?:19|20)\d{2}(?!/)',question))
+            articles=set(re.findall(r'\bdieu\s+(\d+[a-z]?)\b',question))
+            terms=set(re.findall(r'[a-z0-9]{3,}',question))-{'quyet','dinh','dieu','ngay','theo','khong','van','ban','toi'}
+            temporal=any(term in question for term in ('hieu luc','thay the','bai bo','ap dung ngay'))
+            def relevant(item):
+                body=normalize(item['text']);locator=normalize(item['locator'])
+                exact_article=any(re.match(rf'^dieu {n}(?:\s|$)',locator) for n in articles)
+                body_numbers=sum(n in body for n in numbers)
+                document_match=any(n in normalize(item.get('document_number') or '') for n in numbers)
+                operative=temporal and any(term in body for term in ('co hieu luc','thay the','bai bo'))
+                overlap=len(terms & set(body.split()))/max(1,len(body.split()))**.5
+                return (exact_article and (document_match or not numbers),body_numbers,operative,document_match,overlap)
+            candidates=sorted(candidates,key=relevant,reverse=True)
+        for item in candidates:
             if selected_ids is not None and item['citation_id'] not in selected_ids:
                 continue
             document_id=item['document_id']

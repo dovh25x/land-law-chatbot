@@ -4,7 +4,7 @@ import pytest
 
 from landlaw.agent import Agent, Plan, ToolCall, Verification, applicability
 from landlaw.models import ChatRequest, Claim, Draft
-from landlaw.provider import BudgetExceeded, ProviderUnavailable
+from landlaw.provider import Budget, BudgetExceeded, ProviderUnavailable
 from landlaw.security import utcnow
 from landlaw.store import RateLimited
 from conftest import document, release, session
@@ -164,6 +164,33 @@ def test_groq_context_selects_complete_passages_and_never_cites_omitted_text(sto
     # synthesis budget, so unsupported parts cannot disappear during checking.
     selected,_=agent.prompt_context(state,{c.id for c in chunks})
     assert len(selected)==8 and len(state['evidence'])==8
+
+
+async def test_explicit_effectivity_question_routes_to_real_search_without_planner_call(store,settings):
+    law=document(document_number='31/2024/QH15')
+    payload=release(store,[law])
+    provider=FakeProvider(settings)
+    async def unexpected(*args,**kwargs):raise AssertionError('Unnecessary planner request')
+    provider.generate=unexpected
+    state={'request':ChatRequest(session_id='00000000-0000-0000-0000-000000000000',
+        message='31/2024/QH15 còn hiệu lực không?',mode='agentic'),
+        'release':payload,'budget':Budget(),'trace':[],'emit':noop,'history':[]}
+    await Agent(store,provider).plan(state)
+    assert state['plan'].tools[0].name=='search_law' and state['budget'].llm_calls==0
+
+
+def test_context_prioritizes_operative_replacement_over_old_preamble(store,settings):
+    from landlaw.models import Evidence
+    old=document('old',text='Căn cứ Luật năm 2024, ban hành Quyết định 56/2024.',document_number='56/2024/QĐ-UBND')
+    new=document('new',text='Điều 2. Có hiệu lực từ ngày 02/04/2026 và thay thế Quyết định 56/2024.',
+                 document_number='40/2026/QĐ-UBND')
+    state={'request':ChatRequest(session_id='00000000-0000-0000-0000-000000000000',
+        message='56/2024/QĐ-UBND còn hiệu lực không, văn bản nào thay thế?'),
+        'evidence':[Evidence(chunk=old.chunks[0],document=old),Evidence(chunk=new.chunks[0],document=new)],
+        'release':{'documents':[old.model_dump(mode='json'),new.model_dump(mode='json')],'relations':[]}}
+    agent=Agent(store,FakeProvider(settings.model_copy(update={'llm_provider':'groq'})))
+    passages,_=agent.prompt_context(state)
+    assert passages[0]['citation_id']=='new-1' and passages[0]['text']==new.chunks[0].text
 
 
 async def test_missing_tool_identifier_falls_back_and_never_becomes_public_question(store,settings):
