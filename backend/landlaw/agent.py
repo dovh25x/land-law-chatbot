@@ -9,7 +9,7 @@ from typing import Any, Literal, TypedDict
 from langgraph.graph import END, START, StateGraph
 from pydantic import BaseModel, Field
 
-from .models import ChatRequest, ChatResult, Citation, Document, Draft, Evidence, Relation, TraceEvent
+from .models import ChatRequest, ChatResult, Citation, Claim, Document, Draft, Evidence, Relation, TraceEvent
 from .provider import Budget, BudgetExceeded, Gemini, ProviderUnavailable
 from .security import local_date, normalize, redact, utcnow
 from .store import RateLimited, Store
@@ -498,6 +498,17 @@ class Agent:
         elif not state["evidence"]:
             state["draft"] = Draft(status="insufficient_evidence", summary="Chưa tìm được chứng cứ trong bộ dữ liệu đã công bố.",
                                    missing_facts=state["plan"].missing_facts)
+        elif (future:=self.future_commencement(state)) is not None:
+            # The source proves commencement, not every historical case's
+            # transition. State only that verified date and ask for case facts.
+            date_text=future.document.effective_from.strftime('%d/%m/%Y')
+            state['draft']=Draft(status='clarification_needed',summary='',
+                claims=[Claim(kind='applicability',
+                    text=f'{future.document.document_number} có hiệu lực thi hành từ ngày {date_text}.',
+                    citation_ids=[future.chunk.id])],
+                missing_facts=['Ngày ra quyết định thu hồi đất và ngày phê duyệt phương án bồi thường.',
+                               'Loại đất và tình trạng giấy tờ của hồ sơ, chỉ cung cấp thông tin đã ẩn danh.'],
+                next_steps=['Đối chiếu căn cứ và điều khoản chuyển tiếp trong quyết định, phương án xử lý hồ sơ.'])
         else:
             contexts,documents=self.prompt_context(state)
             aliases={item['citation_id']:f'C{index+1}' for index,item in enumerate(contexts)}
@@ -543,6 +554,19 @@ class Agent:
                                    for claim in state['draft'].claims]
         await self.event(state, "synthesis", "Đã tạo bản trả lời; đang kiểm tra trước khi hiển thị.")
         return state
+
+    @staticmethod
+    def future_commencement(state):
+        question=normalize(state['request'].message)
+        if 'ap dung ngay' not in question:return None
+        numbers=set(re.findall(r'(?<![\d/])\d{1,6}/(?:19|20)\d{2}(?!/\d)',question))
+        for item in state['evidence']:
+            doc=item.document
+            number='/'.join(normalize(doc.document_number or '').split('/')[:2])
+            if (number in numbers and doc.applicability_verified and item.applicability=='future'
+                    and doc.effective_from in source_effective_dates(item.chunk.text)):
+                return item
+        return None
 
     async def verify(self, state):
         draft = state["draft"]

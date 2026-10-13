@@ -193,6 +193,23 @@ def test_context_prioritizes_operative_replacement_over_old_preamble(store,setti
     assert passages[0]['citation_id']=='new-1' and passages[0]['text']==new.chunks[0].text
 
 
+async def test_future_immediate_application_states_only_verified_start_and_asks_case_facts(store,settings):
+    law=document(text='Điều 2. Quyết định này có hiệu lực thi hành từ ngày 02/04/2026.',
+                 document_number='40/2026/QĐ-UBND')
+    law.effective_from=date(2026,4,2)
+    release(store,[law]);sid,_=session(store)
+    class Provider(FakeProvider):
+        async def generate(self,schema,instruction,payload,budget):
+            assert schema is not Draft,'A future commencement check must not invent historical rights'
+            return await super().generate(schema,instruction,payload,budget)
+    result=await Agent(store,Provider(settings)).run(ChatRequest(session_id=sid,
+        message='Hồ sơ xét ngày 01/03/2026 có áp dụng ngay 40/2026/QĐ-UBND để tính quyền lợi không?',
+        mode='baseline',as_of=date(2026,3,1)),noop)
+    assert result.status=='clarification_needed' and len(result.verified_claims)==1
+    assert 'chưa có hiệu lực tại ngày 01/03/2026' in result.content
+    assert result.missing_facts and result.llm_calls==1
+
+
 async def test_missing_tool_identifier_falls_back_and_never_becomes_public_question(store,settings):
     law=document(document_number='31/2024/QH15',issued_on=date(2024,1,18))
     release(store,[law]);sid,_=session(store)

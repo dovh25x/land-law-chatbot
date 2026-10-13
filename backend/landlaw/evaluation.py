@@ -1,4 +1,5 @@
 import asyncio
+import contextvars
 import hashlib
 import json
 import math
@@ -188,6 +189,19 @@ async def evaluate(settings, store, provider, split="dev", release_id=None, limi
     for record in records:
         preserve_attempt(attempts_path,record,'imported_latest_checkpoint')
     agent = Agent(store, provider)
+    case_label=contextvars.ContextVar('evaluation_case',default=None)
+    generate=provider.generate
+    async def capture_structured_output(schema,instruction,payload,budget):
+        result=await generate(schema,instruction,payload,budget)
+        label=case_label.get()
+        if label and re.fullmatch(r'[A-Za-z0-9_-]{1,80}',label):
+            output=result.model_dump(mode='json')
+            checksum=hashlib.sha256(json.dumps(output,sort_keys=True,ensure_ascii=False).encode()).hexdigest()
+            json_write(records_path.parent/'model_outputs'/f'{label}-{budget.llm_calls}-{checksum[:16]}.json',
+                {'scope':'Unverified structured model output for developer diagnosis; never delivered as a chatbot answer. No hidden reasoning.',
+                 'schema':schema.__name__,'case_mode':label,'llm_calls':budget.llm_calls,'output':output})
+        return result
+    provider.generate=capture_structured_output
     provider_ready_at=0.0
     async def observe_provider_capacity(response):
         nonlocal provider_ready_at
@@ -216,8 +230,11 @@ async def evaluate(settings, store, provider, split="dev", release_id=None, limi
         session_id = str(uuid.uuid4())
         await asyncio.to_thread(store.create_session,session_id,new_token())
         await asyncio.to_thread(seed_history, store, session_id, case.get('history', []))
-        result = await agent.run(ChatRequest(session_id=session_id,message=case['question'],
-            project=case.get('project'),as_of=case.get('as_of') or metadata['as_of'],mode=mode),emit,release['id'])
+        label_token=case_label.set(f"{case['id']}-{mode}")
+        try:
+            result = await agent.run(ChatRequest(session_id=session_id,message=case['question'],
+                project=case.get('project'),as_of=case.get('as_of') or metadata['as_of'],mode=mode),emit,release['id'])
+        finally:case_label.reset(label_token)
         return {'case_id':case['id'],'mode':mode,'result':result.model_dump(mode='json')}
     for start in range(0,len(pending),concurrency):
         cooldown=provider_ready_at-time.monotonic()

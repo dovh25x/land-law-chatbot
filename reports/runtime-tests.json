@@ -1,12 +1,12 @@
 {
-  "checked_at": "2026-10-13T10:38:49.784923+00:00",
+  "checked_at": "2026-10-13T11:01:55.900661+00:00",
   "release": "corpus-de584c31fc95f9a2",
-  "configuration_sha256": "1867e89492b14fb21becaaae3c91ba2b9261392a401d2f0afaa736d9900388af",
+  "configuration_sha256": "a6e4fdf38fe4a4fddf1f40255f0aaa274994e77311c19399a5475b7c1790edab",
   "passed": true,
   "checks": {
     "postgres_runtime": true,
     "e5_colab_runtime_parity_and_hybrid": true,
-    "backend_tests_119": true
+    "backend_tests_121": true
   },
-  "scope": "119 isolated backend tests plus real Supabase isolation and E5 Colab parity. Operative-source ranking and literal effectivity routing have targeted regressions; exact image memory gate is checked by CI."
+  "scope": "121 isolated backend tests plus real Supabase isolation and E5 Colab parity. Verified future-date facts avoid unsupported transition inference; leaf retrieval preserves parent expansion. CI must verify this exact image."
 }

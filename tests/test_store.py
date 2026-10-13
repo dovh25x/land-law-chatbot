@@ -86,6 +86,18 @@ def test_exact_article_number_retrieves_without_keyword_overlap(store):
     assert "chunks" not in store.release(metadata_only=True)["documents"][0]
 
 
+def test_primary_retrieval_keeps_leaf_passage_and_parent_remains_openable(store):
+    doc=document(text='Điều 1. Điều kiện bồi thường khi thu hồi đất.')
+    child=doc.chunks[0].model_copy(update={'parent_id':'law-0-parent'})
+    parent=child.model_copy(update={'id':'law-0-parent','parent_id':None,
+        'locator':'Điều 1 · ngữ cảnh','text':child.text+' Bồi thường khi thu hồi đất. '*30})
+    doc.chunks=[child,parent]
+    release(store,[doc])
+    hits=store.search('bồi thường thu hồi đất')
+    assert [h.chunk.id for h in hits]==[child.id]
+    assert store.chunk(parent.id).text==parent.text
+
+
 def test_open_article_and_search_distinguish_added_article_suffix(store):
     law = document()
     law.document_number = '124/2020/NĐ-CP'
