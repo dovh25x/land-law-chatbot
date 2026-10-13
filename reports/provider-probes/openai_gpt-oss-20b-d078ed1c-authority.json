@@ -1,0 +1,124 @@
+{
+  "checked_at": "2026-10-13T12:58:12.228487+00:00",
+  "configuration_sha256": "d078ed1c49b5c17084524be11af82a3b46a7318e7be4356633007c36e4b783bf",
+  "provider": "groq",
+  "model": "openai/gpt-oss-20b",
+  "scope": "Real staging legal-query availability probe; not a paired benchmark or publication certification.",
+  "result": {
+    "status": "limited",
+    "publication_profile": "staging",
+    "quality_status": "acceptance_pending",
+    "retrieval_mode": "hybrid",
+    "coverage_gaps": [
+      {
+        "document_id": "qd-10-2017-hanoi",
+        "document_number": "10/2017/QĐ-UBND",
+        "title": "Quy định bồi thường, hỗ trợ và tái định cư Hà Nội (lịch sử)",
+        "url": "https://vbpl.vn/TW/Pages/vbpq-toanvan.aspx?ItemID=121164",
+        "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+      },
+      {
+        "document_id": "qd-30-2019-hanoi",
+        "document_number": "30/2019/QĐ-UBND",
+        "title": "Quy định và bảng giá các loại đất Hà Nội 2020–2024 (lịch sử)",
+        "url": "https://vanban.hanoi.gov.vn/chi-tiet-van-ban/quyet-dinh-so-30-2019-qd-ubnd-cua-ubnd-tp-ha-noi-ve-viec-ban-hanh-quy-dinh-va-bang-gia-cac-loai-dat-189067",
+        "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+      },
+      {
+        "document_id": "qd-20-2023-hanoi",
+        "document_number": "20/2023/QĐ-UBND",
+        "title": "Sửa đổi bảng giá đất Quyết định 30/2019",
+        "url": "https://vbpl.vn/hanoi/Pages/vbpq-toanvan.aspx?ItemID=164473",
+        "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+      },
+      {
+        "document_id": "nd-123-2024",
+        "document_number": "123/2024/NĐ-CP",
+        "title": "Xử phạt vi phạm hành chính lĩnh vực đất đai",
+        "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=211356",
+        "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+      },
+      {
+        "document_id": "ring4-nq106-2022",
+        "document_number": "106/NQ-CP",
+        "title": "Triển khai Nghị quyết 56/2022/QH15 Vành đai 4",
+        "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=206398",
+        "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+      }
+    ],
+    "content": "Nhà cung cấp AI đang giới hạn request. Vui lòng thử lại sau 26 giây.",
+    "citations": [],
+    "verified_claims": [],
+    "as_of": "2025-07-02",
+    "corpus_release": "corpus-de584c31fc95f9a2",
+    "trace_id": "431444a0-2ece-42e8-bf69-1eb16dbf9c6e",
+    "trace": [
+      {
+        "step": "plan",
+        "tool": null,
+        "summary": "Đã chọn 1 công cụ; chế độ baseline.",
+        "document_ids": [],
+        "elapsed_ms": 1256
+      },
+      {
+        "step": "tool",
+        "tool": "search_law",
+        "summary": "Thu được 8 đoạn chứng cứ.",
+        "document_ids": [
+          "nd-151-2025"
+        ],
+        "elapsed_ms": 6888
+      },
+      {
+        "step": "applicability",
+        "tool": "check_effectivity",
+        "summary": "Đã kiểm tra 2 quan hệ pháp lý theo thời điểm.",
+        "document_ids": [
+          "nd-151-2025"
+        ],
+        "elapsed_ms": 6913
+      },
+      {
+        "step": "synthesis",
+        "tool": null,
+        "summary": "Đã tạo bản trả lời; đang kiểm tra trước khi hiển thị.",
+        "document_ids": [],
+        "elapsed_ms": 11540
+      },
+      {
+        "step": "verification",
+        "tool": null,
+        "summary": "0/1 kết luận được hỗ trợ; 1 vấn đề. Claim 0: thiếu trích đoạn nguyên văn chứng minh tại đúng citation_id",
+        "document_ids": [],
+        "elapsed_ms": 18655
+      },
+      {
+        "step": "repair",
+        "tool": null,
+        "summary": "Đang sửa một lần theo các lỗi kiểm chứng trên cùng chứng cứ.",
+        "document_ids": [],
+        "elapsed_ms": 18673
+      },
+      {
+        "step": "synthesis",
+        "tool": null,
+        "summary": "Đã tạo bản trả lời; đang kiểm tra trước khi hiển thị.",
+        "document_ids": [],
+        "elapsed_ms": 54992
+      }
+    ],
+    "missing_facts": [],
+    "llm_calls": 6,
+    "embedding_calls": 1,
+    "tool_calls": 2,
+    "token_usage": 13446,
+    "elapsed_ms": 56319,
+    "model": "openai/gpt-oss-20b",
+    "embedding_model": "multilingual-e5-small-onnx-q8-window-v1",
+    "mode": "baseline",
+    "support_level": "insufficient",
+    "retry_after": 26,
+    "retrieved_chunk_ids": [],
+    "evidence_chunk_ids": []
+  }
+}

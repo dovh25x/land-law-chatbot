@@ -1,7 +1,7 @@
 {
   "status": "awaiting_review",
   "dataset_sha256": "56ccf0b0dfe9e13f8215df8cadf195ecc733560e0974d7281373338cf4a27e35",
-  "generated_at": "2026-10-13T12:43:49.406440+00:00",
+  "generated_at": "2026-10-13T12:53:28.677755+00:00",
   "cases": 20,
   "completed_pairs": 0,
   "results": [
@@ -16,7 +16,7 @@
       "unsupported_claims": null,
       "source_review_complete": false,
       "p95_seconds": null,
-      "llm_calls": 2,
+      "llm_calls": 1,
       "embedding_calls": 1,
       "tool_calls": 12,
       "critical_failed": [],
@@ -56,16 +56,16 @@
   "configuration_sha256": "4031dae0d1c70ccd7b74a70224a3ceeebe7acdc613c8a196cc98af19d319a58c",
   "execution_concurrency": 1,
   "attempt_history": {
-    "attempts": 1,
-    "retry_attempts": 0,
-    "limited_or_error_attempts": 1,
+    "attempts": 3,
+    "retry_attempts": 2,
+    "limited_or_error_attempts": 3,
     "scope": "Every new attempt is retained; legacy checkpoints imported as latest results only.",
     "directory": "reports/runs/corpus-de584c31fc95f9a2-openai_gpt-oss-120b-smoke-56ccf0b0-4031dae0-c1/attempts"
   },
   "latency_scope": "Paired CLI run, concurrency 1; provider-reported cooldown between turns excluded. Public API single-user p95 measured separately.",
   "source_audit_passed": true,
   "source_audit_sha256": "363afc7997185c2bc1528a869efd6b3eb851945597925a17612a573c5a9340dd",
-  "runtime_tests_passed": false,
-  "runtime_tests_sha256": "c5a09e7302d1cd5ec4f40c8fc175476873491d114bc096c89d2913845df9fcb3",
+  "runtime_tests_passed": true,
+  "runtime_tests_sha256": "59f03c9c6894a7a02119671e488af9826f786cb6ed5f675b9d04aaff1292a94c",
   "quality_metrics_status": "withheld_pending_full_source_review"
 }

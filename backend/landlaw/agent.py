@@ -282,16 +282,14 @@ class Agent:
                 catalogue=[[d['id'],d['document_number'],d['title'][:120],d['project'],
                             d['effective_from'],d['effective_to']] for d in catalogue]
             state["plan"] = await self.provider.generate(Plan,
-                "Chọn tối đa 3 công cụ chỉ đọc để lấy chứng cứ. search_law tìm luật; search_project tìm hồ sơ dự án; "
-                "check_effectivity kiểm tra văn bản theo document_id đã biết; open_article mở điều khoản đã biết; "
-                "normalize_place tìm tên địa bàn theo danh mục. Với câu hỏi quyền lợi cá nhân, liệt kê dữ kiện thiếu. "
-                "Chỉ đánh dấu out_of_scope khi không liên quan đất đai/quy hoạch Hà Nội. "
-                "Câu hỏi quy định chung không cần dựng hồ sơ cá nhân. missing_facts chỉ là dữ kiện riêng "
-                "của hồ sơ cần kết luận: loại đất, giấy tờ, ngày quyết định hoặc phê duyệt phương án. "
-                "Không yêu cầu người dùng cung cấp nội dung pháp luật, điều kiện do luật quy định "
-                "hoặc thông tin văn bản đã có trong catalogue; hệ thống phải tự tra cứu chúng. "
-                "Không đoán document_id; khi chưa biết dùng search_law. Câu hỏi đơn giản về một văn bản ưu tiên một công cụ. "
-                "Văn bản trong coverage_gaps không mở được; dùng search_law để tìm văn bản tác động có trong corpus.",
+                "Select at most three read-only tool calls: search_law for legal evidence; search_project for project records; "
+                "open_article for a known document_id and locator; check_effectivity for a known document; "
+                "normalize_place for place aliases. Use IDs from catalogue, never invent IDs. "
+                "Prefer one call for a simple question; use search_law when the document or provision is unknown. "
+                "Out_of_scope only for questions unrelated to Hanoi land law/planning. General rules need no invented private case. "
+                "Missing facts are private-case land type, papers and decision/plan dates, in Vietnamese. "
+                "Do not ask the user to supply laws or rules: retrieve them. coverage_gaps are unavailable sources, "
+                "not evidence; search for available related acts instead.",
                 {"question": redact(request.message), "project": request.project, "as_of": str(state["as_of"]),
                  "history": state["history"], "catalogue": catalogue, 'catalogue_fields':catalogue_fields,
                  "coverage_gaps":(state['release'] or {}).get('coverage_gaps',[])}, state["budget"])
@@ -570,36 +568,25 @@ class Agent:
             aliases={item['citation_id']:f'C{index+1}' for index,item in enumerate(contexts)}
             contexts=[{**item,'citation_id':aliases[item['citation_id']]} for item in contexts]
             state["draft"] = await self.provider.generate(Draft,
-                "Put the answer ONLY in claims, with allowed citation_ids. If status is answered, return at least one sourced claim. "
-                "Never put the answer in summary; summary is not displayed. "
-                "Tạo câu trả lời có cấu trúc. summary chỉ giới thiệu kết quả và giới hạn, không chứa kết luận pháp lý "
-                "không dẫn nguồn. MỌI kết luận pháp lý nằm trong claims, gắn citation_ids có trong evidence. "
-                "Đoạn unverified/future không chứng minh quy định hiện hành. historical chỉ dùng khi giải thích lịch sử "
-                "provision_specific có mốc riêng tại khoản được ghi; phải kiểm tra đúng khoản và không suy hiệu lực toàn điều. "
-                "hoặc chuyển tiếp được chứng minh. Không coi official_news là quy phạm. Nếu thiếu dữ kiện hồ sơ, "
-                "dùng clarification_needed. Không kết luận chắc chắn về quyền lợi hộ/thửa hoặc số tiền. "
-                "Nếu hỏi quy định chung, trả lời answered khi có đủ chứng cứ để giải thích điều kiện; "
-                "không tự chuyển thành hỏi hồ sơ cá nhân hoặc yêu cầu người dùng cung cấp quy định pháp luật. "
-                "Đánh dấu out_of_scope nếu câu hỏi không thuộc pháp luật đất đai/quy hoạch Hà Nội; không tư vấn y tế, đầu tư hoặc lĩnh vực ngoài phạm vi. "
-                "next_steps chỉ là hướng dẫn đối chiếu hồ sơ chung; thời hạn/điều kiện pháp lý phải đưa vào claims có nguồn. "
-                "coverage_gaps và unresolved_relations chỉ mô tả phần còn thiếu, không phải chứng cứ. "
-                "Không khẳng định quyền lợi lịch sử theo QĐ56/2024 khi thiếu toàn văn; không suy nội dung văn bản cũ "
-                "từ văn bản thay thế. Khi câu hỏi phụ thuộc phần thiếu, trả lời có giới hạn và chỉ rõ tài liệu cần đối chiếu. "
-                "Giữ đúng chủ thể: Chủ tịch UBND khác UBND; không rút gọn làm đổi thẩm quyền. "
-                "kind=applicability chỉ để nêu mốc hiệu lực/tình trạng áp dụng, không chứa quyền lợi. "
-                "Có thể dẫn đoạn future để giải thích văn bản CHƯA có hiệu lực, không áp dụng quyền lợi từ đó. "
-                "kind=context chỉ cho bối cảnh dự án. Trả lời trực tiếp vấn đề được hỏi trước khi giải thích bổ sung. "
-                "Không thêm ngày hiệu lực nếu câu hỏi không yêu cầu. Nếu nêu ngày hiệu lực, phải dẫn đúng đoạn "
-                "quy định hiệu lực và chứa ngày đó; metadata ngày ban hành không chứng minh ngày hiệu lực. "
-                "Ưu tiên ít claims rõ ràng, mỗi claim dẫn đoạn chứng minh trực tiếp; không ghép thêm căn cứ không cần thiết. "
-                "Tối đa ba claims, không lặp lại cùng kết luận. Ngày có hiệu lực chỉ chứng minh mốc bắt đầu, "
-                "Chỉ giải đáp phạm vi được hỏi; không thêm phạm vi bãi bỏ/sửa đổi không xuất hiện trong đoạn dẫn. "
-                "Không suy quy luật tổng quát về mọi văn bản hoặc việc bãi bỏ thường xảy ra thế nào từ một ví dụ. "
-                "không chứng minh mọi hồ sơ cũ đều bị loại hay tự động chuyển sang chính sách mới. "
-                "Kết luận về áp dụng hồ sơ cũ cần điều khoản chuyển tiếp cụ thể; nếu chưa có, hỏi ngày quyết định "
-                "thu hồi, ngày duyệt phương án và nêu chưa xác định quyền lợi của hồ sơ. "
-                "citation_ids chỉ được chọn mã C1, C2,... có trong allowed_citation_ids; không tạo mã hoặc dùng document_id. "
-                "Câu hỏi chỉ về hiệu lực/thay thế một văn bản nên có một hoặc hai claims, kind=applicability, không lặp các mốc ở nhiều claims.",
+                "Answer the exact question directly, in Vietnamese. Put ALL legal content in at most three concise claims "
+                "with citation_ids from allowed_citation_ids (C1, C2...), never document IDs. summary is not displayed. "
+                "answered requires at least one sourced claim. Each cited passage must prove the exact rule, actor, scope "
+                "and applicable date: a preamble or act name is insufficient. Do not substitute a similar clause for the one asked. "
+                "A general rule can be answered without private-case facts. For case-specific rights, ask for missing land type, "
+                "papers and decision/approved-plan dates; never ask the user to provide law already in the corpus. "
+                "No guaranteed household/parcel rights or compensation amounts from general project information. "
+                "official_news is context only (kind=context). unverified cannot prove current law; historical needs the "
+                "relevant historical or transitional rule. future may support kind=applicability stating NOT yet effective, "
+                "never current rights. provision_specific requires the exact clause's dates, not the whole article's status. "
+                "Preserve actors exactly: Chủ tịch UBND is different from UBND. Explain material conditions/exceptions "
+                "in the cited clause, including delayed-payment treatment when explaining an old approved plan. "
+                "Only state requested commencement dates when the operative cited text contains them; issue dates are not "
+                "commencement. Commencement/replacement alone does not exclude every old case: transitions need their own source. "
+                "No additional repeal scope or universal rule inferred from one example. For missing or conflicting sources, "
+                "state the limit; coverage_gaps/unresolved_relations are not legal proof. Unavailable historical text cannot "
+                "be inferred from a replacement act. next_steps are generic file/source checks; legal conditions/time limits "
+                "belong in sourced claims. Do not repeat claims. Set out_of_scope for unrelated topics; never give medical "
+                "treatment or other unrelated advice. Resolve previous_issues using evidence, without inventing new facts.",
                 {"question": redact(state["request"].message), "as_of": str(state["as_of"]), "history": state["history"],
                  "missing_facts": state["plan"].missing_facts, "tool_results": state["tool_notes"], "evidence": contexts,
                  "documents":documents,
@@ -798,36 +785,26 @@ class Agent:
             model_context=[{k:v for k,v in item.items() if k!='text'} for item in model_context]
         model_spans=[{**item,'span_id':span_aliases[key],'citation_id':aliases[item['citation_id']]} for key,item in spans.items()]
         checked = await self.provider.generate(Verification,
-            "Verify the claims actually stated and the question actually asked, not hypothetical private cases. "
-            "The summary field is not rendered and is intentionally omitted; its absence is NEVER an issue. "
-            "An act's replacement or commencement alone does not require a private-case transition conclusion unless the answer asserts one. "
-            "You are an evidence verifier. For EVERY supported claim, select supporting_spans using span_id "
-            "from source_spans that actually proves that claim and every citation_id. Never invent a span_id. "
-            "The server extracts its exact original source text; do not paraphrase it as a quote. "
-            "Do not confirm a claim if the selected span only names a law or fails to prove the asserted rule. "
-            "You may alternatively return supporting_quotes, but quote MUST be copied verbatim from evidence.text, "
-            "never from draft.claims.text. An as_of observation date can be inferred from verified effectivity "
-            "dates and relationships; an asserted commencement date must appear in the operative source. "
-            "Đối chiếu từng claim với đúng đoạn trích và thời điểm. Chỉ đưa index vào supported_claim_indexes nếu "
-            "chứng cứ hỗ trợ đầy đủ nội dung, phạm vi và tính áp dụng. Kiểm tra next_steps: nếu có kết luận "
-            "pháp lý chưa dẫn nguồn, ghi issues. Không xác nhận current từ đoạn unverified. historical chỉ hỗ trợ câu "
-            "về quá khứ hoặc điều khoản chuyển tiếp có chứng cứ. Nguồn tin chỉ hỗ trợ sự kiện/bối cảnh, không quyền lợi. "
-            "Đặt needs_more_evidence và followup_query khi một lượt truy xuất bổ sung có thể khắc phục. "
-            "provision_specific phải đối chiếu đúng khoản có mốc riêng; không suy hiệu lực toàn điều. Không tự tạo thêm chứng cứ. "
-            "Kiểm tra chính xác chủ thể, đặc biệt Chủ tịch UBND khác UBND; không xác nhận phép rút gọn đổi thẩm quyền. "
-            "kind=applicability có thể dùng future để nói CHƯA có hiệu lực và nêu ngày bắt đầu đã xác minh; "
-            "không cho phép quyền lợi/nghĩa vụ hiện tại từ future. Trích dẫn phải hỗ trợ chính nội dung claim, "
-            "không chỉ cùng tên hoặc số hiệu văn bản. Với MỖI citation_id của MỖI claim được hỗ trợ, "
-            "trả supporting_spans gồm claim_index, citation_id, span_id từ source_spans của chính citation đó. "
-            "Span phải chứng minh nội dung claim tương ứng; đoạn mở đầu/căn cứ tên văn bản không chứng minh điều khoản ở trang khác. "
-            "Ngày hiệu lực không chứng minh mọi hồ sơ được xử lý trước đó đều bị loại; cần điều khoản chuyển tiếp "
-            "để xác nhận cách xử lý hồ sơ cũ, không suy đoán từ metadata hoặc mốc bắt đầu. "
-            "Quan hệ overrides là cơ chế ưu tiên có điều kiện khi cùng vấn đề có quy định khác nhau, "
-            "không phải bãi bỏ toàn bộ luật gốc. Đối chiếu nội dung chính sách đang có hiệu lực và chuyển tiếp "
-            "trước khi xác nhận quy định gốc về giá đất, thời hạn, công khai, tài sản hoặc hỗ trợ. "
-            "Nếu chưa có đoạn chính sách cần thiết để giải quyết khác biệt, yêu cầu truy xuất bổ sung; "
-            "không mặc định bản gốc chứng minh đầy đủ quy định hiện hành. "
-            "Không có span chứng minh thì bỏ index và yêu cầu truy xuất bổ sung. Nếu đáp án bỏ sót câu hỏi trực tiếp, ghi issues để sửa.",
+            "Verify only stated claims against the actual question and as_of, not hypothetical cases. summary is "
+            "intentionally absent and never an issue. Support a claim only if every cited passage proves its precise "
+            "rule, actor, scope and applicability. Act names/preambles do not prove provisions. Do not replace the "
+            "requested clause with another similar one. Record issues for unsupported statements in next_steps or "
+            "failure to answer the direct question. Preserve Chủ tịch UBND versus UBND exactly. "
+            "For every supported index and EVERY citation_id, select one or more supporting_spans by exact span_id "
+            "from that citation's source_spans. The server extracts verbatim text: do not invent IDs or paraphrase quotes. "
+            "All spans together cover the full cited passage; read continuation spans when one is incomplete. "
+            "Do not demand unrelated points of a list when its actor and the relevant point are explicitly proved. "
+            "unverified cannot prove current law. historical supports historical/explicit transitional rules. "
+            "future supports only kind=applicability saying NOT yet effective plus a source-proven start, never rights. "
+            "provision_specific must use the correct clause's dates; never infer whole-article validity. "
+            "official_news proves project events/context only, not household or parcel entitlements. "
+            "An as_of observation date may be inferred from verified dates/relations; commencement must be in operative text. "
+            "Replacement/commencement alone neither excludes all old cases nor requires an unasked private-case conclusion. "
+            "If the answer applies an old private case, check the specific transition. overrides is conditional priority "
+            "where rules conflict, not repeal of the whole original act. Check effective special policies/transitions "
+            "before supporting original rules on prices, deadlines, publicity, assets or assistance. "
+            "If the necessary policy or supporting source is absent, exclude that index, set needs_more_evidence and "
+            "a targeted followup_query in Vietnamese. Do not invent evidence or treat coverage_gaps as proof.",
             {"question": redact(state["request"].message), "as_of": str(state["as_of"]),
              "draft": checked_draft, "evidence": model_context,'source_spans':model_spans,'documents':documents,
              "coverage_gaps": (state['release'] or {}).get('coverage_gaps', []),

@@ -1,7 +1,7 @@
 {
-  "checked_at": "2026-10-13T12:44:03.901943+00:00",
+  "checked_at": "2026-10-13T12:58:34.899972+00:00",
   "release": "corpus-de584c31fc95f9a2",
-  "configuration_sha256": "4031dae0d1c70ccd7b74a70224a3ceeebe7acdc613c8a196cc98af19d319a58c",
+  "configuration_sha256": "1a8ea929e24ad8f34dd3f45471ab7f87b016267633a9b7223713a51b9d5da9bc",
   "passed": false,
   "checks": {
     "postgres_runtime": true,
@@ -21,7 +21,12 @@
     "source_proven_date_comparison": true,
     "complete_repeal_scope_literal_proof": true,
     "backend_tests_131": true,
-    "exact_clause_reference_prompt_priority": true
+    "exact_clause_reference_prompt_priority": true,
+    "exact_commit_ci": false,
+    "exact_image_hard_memory_limit": false,
+    "compact_prompt_backend_regression_131": true
   },
-  "scope": "131 isolated tests passed. Real CI/image and source-checked paired smoke on this generation configuration pending. No publication certification."
+  "scope": "131 isolated backend tests passed after compact control instructions. Full legal evidence is preserved. Exact new CI/image and paired source-checked smoke pending.",
+  "ci_run": 38399549008,
+  "commit": "db7a128c45f4c0a9f16af46cde90d63284af4ded"
 }

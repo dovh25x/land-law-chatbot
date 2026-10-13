@@ -222,6 +222,18 @@ async def evaluate(settings, store, provider, split="dev", release_id=None, limi
     async def observe_provider_capacity(response):
         nonlocal provider_ready_at
         if response.request.url.host!='api.groq.com':return
+        if response.status_code==429:
+            await response.aread()
+            try:
+                message=response.json().get('error',{}).get('message','')
+            except (ValueError,AttributeError):message=''
+            # Extract only numeric quota telemetry; the provider body may echo
+            # prompts or identify an account and must never enter public logs.
+            scope=re.search(r'\b(TPD|TPM|RPD|RPM)\b',message)
+            usage={name.lower():int(value) for name,value in re.findall(
+                r'\b(Limit|Used|Requested):?\s*(\d+)\b',message,re.IGNORECASE)}
+            print(json.dumps({'evaluation_provider_quota':{
+                'scope':scope[0] if scope else 'unspecified',**usage}}),flush=True)
         try:
             remaining=int(response.headers['x-ratelimit-remaining-tokens'])
             capacity=int(response.headers['x-ratelimit-limit-tokens'])
