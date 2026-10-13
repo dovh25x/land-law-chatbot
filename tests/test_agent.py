@@ -159,6 +159,18 @@ async def test_commencement_clause_does_not_exclude_all_historical_files(store,s
     assert any('chuyển tiếp' in event.summary for event in result.trace)
 
 
+async def test_verifier_cannot_expand_partial_repeal_or_infer_universal_practice(store,settings):
+    law=document(text='Điều 2. Bãi bỏ Điều 2 Quyết định số 38/2025/QĐ-UBND.')
+    release(store,[law]);sid,_=session(store)
+    draft=Draft(status='answered',summary='',claims=[
+        Claim(kind='applicability',text='Bãi bỏ Điều 2 và một số khoản khác của Quyết định 38/2025/QĐ-UBND.',citation_ids=['law-1']),
+        Claim(kind='applicability',text='Việc bãi bỏ thường diễn ra theo từng khoản, không toàn văn.',citation_ids=['law-1'])])
+    provider=FakeProvider(settings,draft=draft,verification=Verification(supported_claim_indexes=[0,1]))
+    result=await Agent(store,provider).run(ChatRequest(session_id=sid,message='Văn bản bị bãi bỏ toàn bộ không?',mode='baseline'),noop)
+    assert result.status=='insufficient_evidence' and result.verified_claims==[]
+    assert any('phạm vi' in e.summary or 'tổng quát' in e.summary for e in result.trace)
+
+
 def test_prompt_keeps_passages_and_deduplicates_document_legal_metadata(store,settings):
     from landlaw.models import Evidence
     law=document()

@@ -53,5 +53,55 @@
     "source_checked": true,
     "claim_support": [],
     "notes": "Lượt bị giới hạn workflow, chưa trả lời được ca có căn cứ xác định. Draft riêng đã nhầm bãi bỏ một phần thành thay thế toàn bộ; verifier server chặn, không phát qua SSE. Kiểm tra context cho thấy Điều 2 QĐ10 bị mất khi mở quá nhiều quan hệ, còn QĐ40 tương lai được ưu tiên không đúng mốc 20/01/2026. Không chấm đạt; giữ attempt và sửa retrieval theo thời điểm/phạm vi."
+  },
+  "S01:baseline:feb7a7f2bf528df6ca5821c2fc2f5dc0568cb5e4f1a200a4be6a6e4d6d0ea644": {
+    "passed": true,
+    "source_checked": true,
+    "claim_support": [
+      true,
+      true
+    ],
+    "notes": "Đã đọc hai claims và toàn bộ content: Điều 2 QĐ40/2026 hỗ trợ hiệu lực 02/04/2026 và thay thế QĐ56/2024, phù hợp mốc 12/10/2026. Citation ID đúng qd-40-2026-hanoi-0-2-0; đã đối chiếu bản gốc ở lượt kiểm tra nguồn. Bước tiếp theo chỉ hướng dẫn đối chiếu hồ sơ, Điều 29 thực sự là Điều khoản chuyển tiếp (qd-40-2026-hanoi-17-2-0 đã mở trực tiếp). Không khẳng định quyền lợi cá nhân hoặc phủ nhận hồ sơ lịch sử."
+  },
+  "S01:agentic:d2d8dfcc72d05bf0776b72aa9128a055ceba9e6cc9e59d85a39fbf94bc9242d3": {
+    "passed": true,
+    "source_checked": true,
+    "claim_support": [
+      true
+    ],
+    "notes": "Đọc đầy đủ content và claim: QĐ40 hiệu lực 02/04/2026 và thay QĐ56; Điều 2 qd-40-2026-hanoi-0-2-0 chứng minh trực tiếp cả hai nội dung. Thời điểm 12/10/2026 đúng. Bước tiếp theo đề nghị đối chiếu văn bản/hồ sơ cũ, không khẳng định quyền lợi hoặc suy mọi hồ sơ cũ bị loại. Một claim và ID source hợp lệ."
+  },
+  "S02:baseline:b42e60a2e523884ee3efc2f2935e4f0cda8bf03a6cf8f0561775094c8d8ffef7": {
+    "passed": true,
+    "source_checked": true,
+    "claim_support": [
+      true
+    ],
+    "notes": "Đã đọc đầy đủ đáp án của cấu hình này: một claim nêu hiệu lực 02/04/2026 và chưa hiệu lực tại 01/03/2026, được Điều 2 QĐ40 chứng minh. Không suy kết quả mọi hồ sơ cũ hoặc tính tiền; hỏi ngày thu hồi, ngày phê duyệt phương án, loại đất và giấy tờ đã ẩn danh; hướng dẫn đối chiếu chuyển tiếp. ID qd-40-2026-hanoi-0-2-0 khớp evidence, clarification_needed phù hợp rubric."
+  },
+  "S02:agentic:f7a2102eb72a97573cf691524fffc879c6f6cc6301a4bfae2b8b210998a5d9b0": {
+    "passed": true,
+    "source_checked": true,
+    "claim_support": [
+      true
+    ],
+    "notes": "Đã đọc đầy đủ đáp án của cấu hình này: một claim nêu hiệu lực 02/04/2026 và chưa hiệu lực tại 01/03/2026, được Điều 2 QĐ40 chứng minh. Không suy kết quả mọi hồ sơ cũ hoặc tính tiền; hỏi ngày thu hồi, ngày phê duyệt phương án, loại đất và giấy tờ đã ẩn danh; hướng dẫn đối chiếu chuyển tiếp. ID qd-40-2026-hanoi-0-2-0 khớp evidence, clarification_needed phù hợp rubric."
+  },
+  "S03:baseline:ae5981ec4dc58356240161e96b5196200900e01db7a5b16e4bdfb90de86ceecb": {
+    "passed": true,
+    "source_checked": true,
+    "claim_support": [
+      true
+    ],
+    "notes": "Đã đọc Điều 2 QĐ10/2026, qd-10-2026-hanoi-4-1-0: bãi bỏ Điều 2 QĐ38/2025, không bãi bỏ toàn bộ. Claim đúng phạm vi tại 20/01/2026. Bước tiếp theo có nhắc 18/01/2026: đã mở riêng Điều 3 qd-10-2026-hanoi-4-2-0 và xác nhận mốc hiệu lực đúng ngày này, không nhầm ngày ban hành. Hướng dẫn đối chiếu các điều khoản còn lại không bảo đảm quyền lợi hồ sơ hoặc bỏ qua sửa đổi."
+  },
+  "S03:agentic:eff809df24e9187d018a842ea5cf213de12b766d8aae724830b848f1c55b9030": {
+    "passed": false,
+    "source_checked": true,
+    "claim_support": [
+      false,
+      false
+    ],
+    "notes": "Đã đọc hai claims và hai nguồn đầy đủ. Claim đầu thêm \"và một số khoản\" sau bãi bỏ Điều 2 QĐ38, trong khi Điều 2 QĐ10 chỉ quy định Điều 2 QĐ38 và QĐ47; phạm vi mở rộng không được đoạn này hỗ trợ. Claim thứ hai đúng phần liệt kê của Điều 3 QĐ38 nhưng suy \"việc bãi bỏ thường diễn ra theo từng khoản, không toàn văn\" từ một trường hợp, không đủ chứng cứ cho kết luận tổng quát. Verifier model cho qua nhưng reviewer không chấm đạt; phải sửa kiểm tra/phát biểu, không nới rubric."
   }
 }

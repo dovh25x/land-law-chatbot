@@ -1,0 +1,1687 @@
+{
+  "checked_at": "2026-10-13T11:30:56.559780+00:00",
+  "release": "corpus-de584c31fc95f9a2",
+  "configuration_sha256": "7ee483e1bc8fe1ebb2296fcbcd7088de4e5b07749bce7a41383732cd854db04d",
+  "completed": 80,
+  "total": 80,
+  "source_changed_during_run": false,
+  "mean_recall_at_8": 0.14912280701754385,
+  "source_validation": {
+    "dataset_sha256": "74a7ffb1d7b1b4224e5a030e10c651afe644174a85e58053fb7995caf42e0f08",
+    "acceptance_cases": 80,
+    "source_checked_cases": 120,
+    "distinct_source_passages": 93,
+    "independent_legal_certification": false,
+    "freeze_sha256": "6b3f0662268b266c623e63c961cf9928c261315a5eca9642ff42e7458ba95ad6"
+  },
+  "scope": "Baseline retrieval-only diagnostic on frozen acceptance questions; no answer generation, no agentic score, no legal acceptance certification. No sessions or publication pointers written. Historical temporal retrieval diagnostic; later verifier changes require separate generation evaluation.",
+  "records": [
+    {
+      "case_id": "HL-041",
+      "gold_chunk_ids": [
+        "luat-dat-dai-2024-99-1-0"
+      ],
+      "retrieved_chunk_ids": [
+        "nd-47-2014-2-1-0",
+        "nd-88-2024-0-8-2",
+        "nd-88-2024-0-8-1",
+        "nd-88-2024-0-12-0",
+        "nd-88-2024-0-18-0",
+        "luat-dat-dai-2013-42-0-0",
+        "luat-dat-dai-2024-191-0-0",
+        "nd-47-2014-5-1-0"
+      ],
+      "recall_at_8": 0.0,
+      "seconds": 11.087,
+      "embedding_calls": 1,
+      "llm_calls": 0,
+      "degraded": false
+    },
+    {
+      "case_id": "HL-042",
+      "gold_chunk_ids": [
+        "luat-dat-dai-2024-99-0-0"
+      ],
+      "retrieved_chunk_ids": [
+        "nd-88-2024-0-13-0",
+        "nd-47-2014-9-1-0",
+        "nd-88-2024-0-4-0",
+        "nd-47-2014-10-2-0",
+        "nd-71-2024-13-1-0",
+        "nd-47-2014-3-1-0",
+        "nd-47-2014-5-1-0",
+        "nd-88-2024-0-5-0"
+      ],
+      "recall_at_8": 0.0,
+      "seconds": 6.245,
+      "embedding_calls": 1,
+      "llm_calls": 0,
+      "degraded": false
+    },
+    {
+      "case_id": "HL-043",
+      "gold_chunk_ids": [
+        "luat-dat-dai-2024-132-2-0",
+        "luat-dat-dai-2024-99-0-0"
+      ],
+      "retrieved_chunk_ids": [
+        "nd-101-2024-0-32-0",
+        "nd-101-2024-0-31-3",
+        "nd-151-2025-125-0-0",
+        "nd-101-2024-0-32-1",
+        "nd-151-2025-129-0-0",
+        "nd-151-2025-129-0-1",
+        "nd-151-2025-92-0-0",
+        "nd-101-2024-0-31-2"
+      ],
+      "recall_at_8": 0.0,
+      "seconds": 5.212,
+      "embedding_calls": 1,
+      "llm_calls": 0,
+      "degraded": false
+    },
+    {
+      "case_id": "HL-044",
+      "gold_chunk_ids": [
+        "luat-dat-dai-2024-105-2-0"
+      ],
+      "retrieved_chunk_ids": [
+        "luat-dat-dai-2024-225-0-0",
+        "nd-102-2024-173-0-0",
+        "luat-dat-dai-2024-189-1-0",
+        "nd-102-2024-189-0-1",
+        "nd-102-2024-172-0-0",
+        "nd-151-2025-235-0-0",
+        "nd-101-2024-0-11-4",
+        "nd-102-2024-171-0-0"
+      ],
+      "recall_at_8": 0.0,
+      "seconds": 6.719,
+      "embedding_calls": 1,
+      "llm_calls": 0,
+      "degraded": false
+    },
+    {
+      "case_id": "HL-045",
+      "gold_chunk_ids": [
+        "luat-dat-dai-2024-102-1-0",
+        "nq-254-2025-2-0-1"
+      ],
+      "retrieved_chunk_ids": [
+        "nd-49-2026-17-0-0",
+        "luat-dat-dai-2024-97-1-0",
+        "nd-151-2025-34-0-0",
+        "luat-dat-dai-2024-15-0-0",
+        "nd-88-2024-0-14-1",
+        "luat-dat-dai-2013-47-1-0",
+        "luat-quy-hoach-2017-45-0-0",
+        "luat-dat-dai-2024-110-0-1"
+      ],
+      "recall_at_8": 0.0,
+      "seconds": 7.955,
+      "embedding_calls": 1,
+      "llm_calls": 0,
+      "degraded": false
+    },
+    {
+      "case_id": "HL-046",
+      "gold_chunk_ids": [
+        "luat-dat-dai-2024-101-1-0",
+        "luat-dat-dai-2024-105-2-0"
+      ],
+      "retrieved_chunk_ids": [
+        "nd-103-2024-57-1-0",
+        "nd-103-2024-57-1-1",
+        "nd-103-2024-71-1-0",
+        "nd-47-2014-2-2-0",
+        "luat-dat-dai-2013-44-0-0",
+        "nd-103-2024-49-1-0",
+        "nd-102-2024-182-0-0",
+        "nd-103-2024-59-0-0"
+      ],
+      "recall_at_8": 0.0,
+      "seconds": 5.501,
+      "embedding_calls": 1,
+      "llm_calls": 0,
+      "degraded": false
+    },
+    {
+      "case_id": "HL-047",
+      "gold_chunk_ids": [
+        "luat-dat-dai-2024-104-2-0",
+        "qd-40-2026-hanoi-11-0-0"
+      ],
+      "retrieved_chunk_ids": [
+        "nd-88-2024-0-8-3",
+        "nd-88-2024-0-14-0",
+        "nd-88-2024-0-14-1",
+        "nd-102-2024-147-0-0",
+        "nd-47-2014-7-1-0",
+        "luat-dat-dai-2013-39-0-0",
+        "luat-dat-dai-2024-102-2-0",
+        "nd-102-2024-43-0-0"
+      ],
+      "recall_at_8": 0.0,
+      "seconds": 6.168,
+      "embedding_calls": 1,
+      "llm_calls": 0,
+      "degraded": false
+    },
+    {
+      "case_id": "HL-048",
+      "gold_chunk_ids": [
+        "luat-dat-dai-2024-102-2-0",
+        "nq-254-2025-3-0-0"
+      ],
+      "retrieved_chunk_ids": [
+        "nd-88-2024-0-14-0",
+        "nd-47-2014-8-0-0",
+        "luat-dat-dai-2024-102-2-0",
+        "nd-88-2024-0-14-1",
+        "luat-dat-dai-2024-71-0-0",
+        "luat-dat-dai-2013-47-1-0",
+        "luat-dat-dai-2013-86-1-0",
+        "luat-thu-do-2024-15-1-0"
+      ],
+      "recall_at_8": 0.5,
+      "seconds": 5.382,
+      "embedding_calls": 1,
+      "llm_calls": 0,
+      "degraded": false
+    },
+    {
+      "case_id": "HL-049",
+      "gold_chunk_ids": [
+        "luat-dat-dai-2024-104-0-0",
+        "qd-40-2026-hanoi-8-2-0"
+      ],
+      "retrieved_chunk_ids": [
+        "luat-dat-dai-2013-48-0-0",
+        "nd-102-2024-136-0-0",
+        "luat-dat-dai-2024-104-0-0",
+        "nd-102-2024-134-0-0",
+        "luat-146-2025-46-0-1",
+        "luat-dat-dai-2024-202-2-0",
+        "luat-146-2025-70-0-1",
+        "nd-102-2024-137-0-0"
+      ],
+      "recall_at_8": 0.5,
+      "seconds": 7.944,
+      "embedding_calls": 1,
+      "llm_calls": 0,
+      "degraded": false
+    },
+    {
+      "case_id": "HL-050",
+      "gold_chunk_ids": [
+        "luat-dat-dai-2024-104-1-0"
+      ],
+      "retrieved_chunk_ids": [
+        "nd-71-2024-88-0-0",
+        "nq-52-2025-hanoi-217-0-0",
+        "luat-142-2025-36-1-0",
+        "nq-52-2025-hanoi-76-0-0",
+        "nd-71-2024-34-0-0",
+        "nq-52-2025-hanoi-225-0-0",
+        "nd-71-2024-13-1-0",
+        "nq-52-2025-hanoi-56-0-0"
+      ],
+      "recall_at_8": 0.0,
+      "seconds": 5.216,
+      "embedding_calls": 1,
+      "llm_calls": 0,
+      "degraded": false
+    },
+    {
+      "case_id": "HL-051",
+      "gold_chunk_ids": [
+        "qd-40-2026-hanoi-6-0-0"
+      ],
+      "retrieved_chunk_ids": [
+        "qd-40-2026-hanoi-6-0-0",
+        "qd-56-2024-hanoi-0-12-0",
+        "qd-56-2024-hanoi-0-12-1",
+        "nd-71-2024-7-0-0",
+        "qd-40-2026-hanoi-6-0-1",
+        "nd-71-2024-34-0-0",
+        "nd-151-2025-220-0-0",
+        "qd-56-2024-hanoi-0-21-1"
+      ],
+      "recall_at_8": 1.0,
+      "seconds": 7.42,
+      "embedding_calls": 1,
+      "llm_calls": 0,
+      "degraded": false
+    },
+    {
+      "case_id": "HL-052",
+      "gold_chunk_ids": [
+        "nd-88-2024-0-25-1"
+      ],
+      "retrieved_chunk_ids": [
+        "nd-47-2014-11-2-0",
+        "nd-71-2024-13-1-0",
+        "luat-dat-dai-2013-47-0-0",
+        "nq-254-2025-10-0-0",
+        "luat-dat-dai-2024-110-0-1",
+        "nd-49-2026-27-0-0",
+        "luat-dat-dai-2024-84-0-1",
+        "nd-71-2024-3-0-1"
+      ],
+      "recall_at_8": 0.0,
+      "seconds": 5.931,
+      "embedding_calls": 1,
+      "llm_calls": 0,
+      "degraded": false
+    },
+    {
+      "case_id": "HL-053",
+      "gold_chunk_ids": [
+        "luat-dat-dai-2024-107-1-0",
+        "nd-88-2024-0-22-0"
+      ],
+      "retrieved_chunk_ids": [
+        "nd-88-2024-0-20-0",
+        "luat-dat-dai-2024-107-1-0",
+        "qd-56-2024-hanoi-0-19-0",
+        "luat-thu-do-2024-39-0-0",
+        "qd-40-2026-hanoi-8-3-0",
+        "nd-88-2024-0-22-0",
+        "luat-dat-dai-2013-45-1-0",
+        "nd-88-2024-0-20-1"
+      ],
+      "recall_at_8": 1.0,
+      "seconds": 7.732,
+      "embedding_calls": 1,
+      "llm_calls": 0,
+      "degraded": false
+    },
+    {
+      "case_id": "HL-054",
+      "gold_chunk_ids": [
+        "nd-49-2026-11-0-1",
+        "qd-40-2026-hanoi-9-1-0"
+      ],
+      "retrieved_chunk_ids": [
+        "nd-88-2024-0-19-0",
+        "qd-56-2024-hanoi-0-19-0",
+        "qd-40-2026-hanoi-8-3-0",
+        "luat-dat-dai-2024-107-1-0",
+        "qd-56-2024-hanoi-0-32-0",
+        "nd-47-2014-15-1-0",
+        "qd-40-2026-hanoi-9-1-0",
+        "nd-88-2024-0-20-1"
+      ],
+      "recall_at_8": 0.5,
+      "seconds": 6.389,
+      "embedding_calls": 1,
+      "llm_calls": 0,
+      "degraded": false
+    },
+    {
+      "case_id": "HL-055",
+      "gold_chunk_ids": [
+        "qd-40-2026-hanoi-8-1-0"
+      ],
+      "retrieved_chunk_ids": [
+        "nd-88-2024-0-21-0",
+        "nd-88-2024-0-3-1",
+        "luat-146-2025-0-0-0",
+        "nd-47-2014-16-1-0",
+        "luat-dat-dai-2024-111-0-1",
+        "luat-nha-o-2023-64-1-0",
+        "nd-124-2020-46-0-0",
+        "nd-88-2024-0-15-0"
+      ],
+      "recall_at_8": 0.0,
+      "seconds": 6.451,
+      "embedding_calls": 1,
+      "llm_calls": 0,
+      "degraded": false
+    },
+    {
+      "case_id": "HL-056",
+      "gold_chunk_ids": [
+        "nd-49-2026-11-0-0",
+        "qd-40-2026-hanoi-10-1-0"
+      ],
+      "retrieved_chunk_ids": [
+        "luat-nha-o-2023-48-0-1",
+        "nd-102-2024-136-0-0",
+        "nd-102-2024-137-0-0",
+        "qd-38-2025-hanoi-1-0-1",
+        "luat-nha-o-2023-12-0-0",
+        "nd-102-2024-134-0-0",
+        "luat-nha-o-2023-50-0-0",
+        "luat-nha-o-2023-50-1-0"
+      ],
+      "recall_at_8": 0.0,
+      "seconds": 6.944,
+      "embedding_calls": 1,
+      "llm_calls": 0,
+      "degraded": false
+    },
+    {
+      "case_id": "HL-057",
+      "gold_chunk_ids": [
+        "qd-40-2026-hanoi-11-1-0"
+      ],
+      "retrieved_chunk_ids": [
+        "qd-56-2024-hanoi-0-21-0",
+        "luat-dat-dai-2024-85-0-0",
+        "luat-dat-dai-2024-96-0-0",
+        "qd-40-2026-hanoi-11-1-0",
+        "nd-88-2024-0-25-0",
+        "qd-10-2026-hanoi-2-0-0",
+        "nd-88-2024-0-25-1",
+        "qd-56-2024-hanoi-0-21-1"
+      ],
+      "recall_at_8": 1.0,
+      "seconds": 8.507,
+      "embedding_calls": 1,
+      "llm_calls": 0,
+      "degraded": false
+    },
+    {
+      "case_id": "HL-058",
+      "gold_chunk_ids": [
+        "luat-dat-dai-2024-106-1-0"
+      ],
+      "retrieved_chunk_ids": [
+        "qd-40-2026-hanoi-11-0-0",
+        "qd-56-2024-hanoi-0-32-0",
+        "qd-40-2026-hanoi-10-2-0",
+        "nd-88-2024-0-22-0",
+        "luat-dat-dai-2013-45-1-0",
+        "nd-88-2024-0-19-1",
+        "luat-dat-dai-2024-91-0-0",
+        "nd-88-2024-0-20-1"
+      ],
+      "recall_at_8": 0.0,
+      "seconds": 5.926,
+      "embedding_calls": 1,
+      "llm_calls": 0,
+      "degraded": false
+    },
+    {
+      "case_id": "HL-059",
+      "gold_chunk_ids": [
+        "luat-dat-dai-2024-107-1-0"
+      ],
+      "retrieved_chunk_ids": [
+        "luat-dat-dai-2013-45-1-0",
+        "luat-dat-dai-2024-96-0-0",
+        "luat-dat-dai-2024-76-0-0",
+        "qd-27-2024-hanoi-2-0-1",
+        "nd-103-2024-71-1-0",
+        "nd-88-2024-0-22-0",
+        "nd-47-2014-5-1-0",
+        "nd-88-2024-0-19-1"
+      ],
+      "recall_at_8": 0.0,
+      "seconds": 7.189,
+      "embedding_calls": 1,
+      "llm_calls": 0,
+      "degraded": false
+    },
+    {
+      "case_id": "HL-060",
+      "gold_chunk_ids": [
+        "nq-254-2025-3-0-1",
+        "qd-40-2026-hanoi-17-2-0"
+      ],
+      "retrieved_chunk_ids": [
+        "qd-10-2026-hanoi-0-0-0",
+        "qd-40-2026-hanoi-11-0-0",
+        "nd-88-2024-0-3-1",
+        "qd-40-2026-hanoi-9-1-1",
+        "nd-88-2024-0-25-0",
+        "qd-40-2026-hanoi-6-0-0",
+        "nd-151-2025-39-0-0",
+        "qd-40-2026-hanoi-10-0-0"
+      ],
+      "recall_at_8": 0.0,
+      "seconds": 6.574,
+      "embedding_calls": 1,
+      "llm_calls": 0,
+      "degraded": false
+    },
+    {
+      "case_id": "HL-061",
+      "gold_chunk_ids": [
+        "luat-dat-dai-2024-110-0-1",
+        "qd-40-2026-hanoi-13-0-0"
+      ],
+      "retrieved_chunk_ids": [
+        "qd-40-2026-hanoi-13-0-0",
+        "nd-47-2014-18-1-0",
+        "nd-47-2014-16-2-0",
+        "nd-88-2024-0-24-0",
+        "luat-dat-dai-2024-110-0-0",
+        "qd-56-2024-hanoi-0-22-1",
+        "luat-dat-dai-2013-46-0-0",
+        "qd-27-2024-hanoi-2-0-1"
+      ],
+      "recall_at_8": 0.5,
+      "seconds": 5.57,
+      "embedding_calls": 1,
+      "llm_calls": 0,
+      "degraded": false
+    },
+    {
+      "case_id": "HL-062",
+      "gold_chunk_ids": [
+        "nd-226-2025-15-0-0",
+        "qd-40-2026-hanoi-13-0-0"
+      ],
+      "retrieved_chunk_ids": [
+        "luat-nha-o-2023-40-1-0",
+        "nd-47-2014-4-0-0",
+        "qd-38-2025-hanoi-1-0-1",
+        "luat-nha-o-2023-48-0-1",
+        "nd-88-2024-0-24-0",
+        "luat-dat-dai-2024-110-0-0",
+        "luat-nha-o-2023-43-1-0",
+        "luat-dat-dai-2013-46-0-0"
+      ],
+      "recall_at_8": 0.0,
+      "seconds": 6.985,
+      "embedding_calls": 1,
+      "llm_calls": 0,
+      "degraded": false
+    },
+    {
+      "case_id": "HL-063",
+      "gold_chunk_ids": [
+        "nd-49-2026-11-0-1",
+        "nd-88-2024-0-25-1"
+      ],
+      "retrieved_chunk_ids": [
+        "nd-88-2024-0-25-0",
+        "nd-88-2024-0-25-1",
+        "nd-47-2014-19-2-0",
+        "luat-dat-dai-2024-97-0-0",
+        "luat-dat-dai-2024-110-0-0",
+        "luat-nha-o-2023-59-0-1",
+        "nd-88-2024-0-3-2",
+        "luat-nha-o-2023-48-0-1"
+      ],
+      "recall_at_8": 0.5,
+      "seconds": 6.89,
+      "embedding_calls": 1,
+      "llm_calls": 0,
+      "degraded": false
+    },
+    {
+      "case_id": "HL-064",
+      "gold_chunk_ids": [
+        "luat-dat-dai-2024-109-0-0",
+        "nq-254-2025-1-0-0"
+      ],
+      "retrieved_chunk_ids": [
+        "nd-47-2014-17-4-0",
+        "luat-dat-dai-2024-109-0-0",
+        "nd-102-2024-136-0-0",
+        "nq-258-2025-6-2-0",
+        "nd-102-2024-134-0-0",
+        "luat-dat-dai-2013-46-0-0",
+        "luat-nha-o-2023-151-0-1",
+        "nd-102-2024-137-0-0"
+      ],
+      "recall_at_8": 0.5,
+      "seconds": 7.078,
+      "embedding_calls": 1,
+      "llm_calls": 0,
+      "degraded": false
+    },
+    {
+      "case_id": "HL-065",
+      "gold_chunk_ids": [
+        "luat-dat-dai-2024-111-0-0"
+      ],
+      "retrieved_chunk_ids": [
+        "qd-40-2026-hanoi-13-0-0",
+        "luat-dat-dai-2024-110-0-0",
+        "qd-38-2025-hanoi-1-0-1",
+        "luat-dat-dai-2024-111-0-1",
+        "luat-dat-dai-2024-85-0-0",
+        "luat-nha-o-2023-48-0-1",
+        "nd-88-2024-0-24-0",
+        "luat-dat-dai-2013-46-0-0"
+      ],
+      "recall_at_8": 0.0,
+      "seconds": 8.439,
+      "embedding_calls": 1,
+      "llm_calls": 0,
+      "degraded": false
+    },
+    {
+      "case_id": "HL-066",
+      "gold_chunk_ids": [
+        "luat-dat-dai-2024-110-0-0"
+      ],
+      "retrieved_chunk_ids": [
+        "luat-nha-o-2023-150-0-0",
+        "nd-102-2024-112-0-0",
+        "luat-nha-o-2023-151-0-1",
+        "nd-151-2025-39-0-0",
+        "nd-151-2025-115-0-1",
+        "nq-254-2025-3-0-1",
+        "nd-151-2025-185-0-1",
+        "nd-88-2024-0-31-0"
+      ],
+      "recall_at_8": 0.0,
+      "seconds": 6.031,
+      "embedding_calls": 1,
+      "llm_calls": 0,
+      "degraded": false
+    },
+    {
+      "case_id": "HL-067",
+      "gold_chunk_ids": [
+        "nd-88-2024-0-23-0",
+        "qd-40-2026-hanoi-13-2-0"
+      ],
+      "retrieved_chunk_ids": [
+        "nd-88-2024-0-25-1",
+        "nd-88-2024-0-25-0",
+        "nd-47-2014-19-2-0",
+        "nd-88-2024-0-3-1",
+        "nd-88-2024-0-3-2",
+        "nd-151-2025-39-0-0",
+        "nd-47-2014-12-0-0",
+        "nd-47-2014-16-2-0"
+      ],
+      "recall_at_8": 0.0,
+      "seconds": 6.487,
+      "embedding_calls": 1,
+      "llm_calls": 0,
+      "degraded": false
+    },
+    {
+      "case_id": "HL-068",
+      "gold_chunk_ids": [
+        "qd-40-2026-hanoi-13-1-0"
+      ],
+      "retrieved_chunk_ids": [
+        "qd-27-2024-hanoi-2-0-0",
+        "nd-88-2024-0-24-0",
+        "nd-102-2024-147-0-0",
+        "qd-27-2024-hanoi-2-0-1",
+        "nd-47-2014-18-1-0",
+        "qd-38-2025-hanoi-1-0-1",
+        "luat-dat-dai-2024-110-0-0",
+        "qd-56-2024-hanoi-0-22-1"
+      ],
+      "recall_at_8": 0.0,
+      "seconds": 6.407,
+      "embedding_calls": 1,
+      "llm_calls": 0,
+      "degraded": false
+    },
+    {
+      "case_id": "HL-069",
+      "gold_chunk_ids": [
+        "luat-144-2025-1-0-0",
+        "luat-quy-hoach-do-thi-2024-1-0-1"
+      ],
+      "retrieved_chunk_ids": [
+        "luat-quy-hoach-2025-41-0-0",
+        "luat-quy-hoach-2025-6-0-0",
+        "luat-quy-hoach-2017-3-1-0",
+        "nd-226-2025-37-0-1",
+        "luat-quy-hoach-2025-5-1-0",
+        "luat-quy-hoach-do-thi-2024-45-0-1",
+        "luat-quy-hoach-do-thi-2024-47-0-0",
+        "nd-178-2025-2-1-0"
+      ],
+      "recall_at_8": 0.0,
+      "seconds": 6.716,
+      "embedding_calls": 1,
+      "llm_calls": 0,
+      "degraded": false
+    },
+    {
+      "case_id": "HL-070",
+      "gold_chunk_ids": [
+        "luat-quy-hoach-do-thi-2024-39-1-0"
+      ],
+      "retrieved_chunk_ids": [
+        "luat-130-2025-38-0-0",
+        "qd-61-2024-hanoi-20-0-0",
+        "luat-dat-dai-2024-70-1-0",
+        "luat-thu-do-2024-46-1-0",
+        "luat-thu-do-2026-31-0-0",
+        "qd-10-2026-hanoi-0-0-0",
+        "nq-52-2025-hanoi-179-0-0",
+        "qd-38-2025-hanoi-1-0-1"
+      ],
+      "recall_at_8": 0.0,
+      "seconds": 6.528,
+      "embedding_calls": 1,
+      "llm_calls": 0,
+      "degraded": false
+    },
+    {
+      "case_id": "HL-071",
+      "gold_chunk_ids": [
+        "luat-dat-dai-2024-68-0-0",
+        "nq-254-2025-14-0-0"
+      ],
+      "retrieved_chunk_ids": [
+        "luat-35-2018-25-0-0",
+        "luat-dat-dai-2013-23-1-0",
+        "luat-dat-dai-2024-63-0-0",
+        "luat-quy-hoach-2025-41-0-0",
+        "luat-quy-hoach-2017-3-1-0",
+        "luat-35-2018-21-0-0",
+        "luat-35-2018-28-0-0",
+        "luat-35-2018-30-0-0"
+      ],
+      "recall_at_8": 0.0,
+      "seconds": 8.099,
+      "embedding_calls": 1,
+      "llm_calls": 0,
+      "degraded": false
+    },
+    {
+      "case_id": "HL-072",
+      "gold_chunk_ids": [],
+      "retrieved_chunk_ids": [
+        "luat-quy-hoach-2017-3-1-0",
+        "luat-quy-hoach-2025-41-0-0",
+        "luat-dat-dai-2024-63-0-0",
+        "luat-quy-hoach-2025-23-2-0",
+        "luat-dat-dai-2013-0-3-0",
+        "nd-178-2025-9-1-0",
+        "luat-quy-hoach-2017-31-0-0",
+        "luat-quy-hoach-2025-6-0-0"
+      ],
+      "recall_at_8": null,
+      "seconds": 6.313,
+      "embedding_calls": 1,
+      "llm_calls": 0,
+      "degraded": false
+    },
+    {
+      "case_id": "HL-073",
+      "gold_chunk_ids": [],
+      "retrieved_chunk_ids": [
+        "luat-146-2025-25-2-0",
+        "luat-146-2025-28-0-0",
+        "luat-quy-hoach-2017-3-1-0",
+        "luat-quy-hoach-2025-6-0-0",
+        "songhong-quyhoach-2026-0-0-1",
+        "luat-146-2025-25-1-0",
+        "luat-146-2025-24-1-0",
+        "luat-quy-hoach-2025-5-1-0"
+      ],
+      "recall_at_8": null,
+      "seconds": 5.344,
+      "embedding_calls": 1,
+      "llm_calls": 0,
+      "degraded": false
+    },
+    {
+      "case_id": "HL-074",
+      "gold_chunk_ids": [
+        "luat-quy-hoach-do-thi-2024-35-1-0",
+        "luat-quy-hoach-do-thi-2024-36-1-1"
+      ],
+      "retrieved_chunk_ids": [
+        "luat-quy-hoach-2025-33-0-0",
+        "luat-quy-hoach-2017-3-1-0",
+        "luat-quy-hoach-2025-41-0-0",
+        "luat-quy-hoach-2025-31-1-0",
+        "luat-quy-hoach-2025-6-0-0",
+        "luat-quy-hoach-2025-32-1-0",
+        "luat-quy-hoach-2025-40-0-0",
+        "luat-quy-hoach-do-thi-2024-35-1-1"
+      ],
+      "recall_at_8": 0.0,
+      "seconds": 5.877,
+      "embedding_calls": 1,
+      "llm_calls": 0,
+      "degraded": false
+    },
+    {
+      "case_id": "HL-075",
+      "gold_chunk_ids": [],
+      "retrieved_chunk_ids": [
+        "nq-254-2025-12-0-1",
+        "nd-151-2025-92-0-0",
+        "nd-226-2025-19-0-0",
+        "luat-dat-dai-2024-225-0-0",
+        "nq-254-2025-6-0-2",
+        "nd-102-2024-125-1-0",
+        "luat-dat-dai-2024-120-1-0",
+        "nd-151-2025-148-0-0"
+      ],
+      "recall_at_8": null,
+      "seconds": 5.74,
+      "embedding_calls": 1,
+      "llm_calls": 0,
+      "degraded": false
+    },
+    {
+      "case_id": "HL-076",
+      "gold_chunk_ids": [
+        "luat-dat-dai-2024-84-0-0",
+        "nq-254-2025-2-0-1"
+      ],
+      "retrieved_chunk_ids": [
+        "luat-58-2024-57-1-0",
+        "luat-quy-hoach-2017-19-0-0",
+        "luat-quy-hoach-2017-18-0-1",
+        "songhong-thongtin-2026-0-0-2",
+        "luat-130-2025-38-0-0",
+        "nd-124-2020-37-0-0",
+        "luat-58-2024-4-1-0",
+        "ring4-nq56-2022-3-0-0"
+      ],
+      "recall_at_8": 0.0,
+      "seconds": 9.15,
+      "embedding_calls": 1,
+      "llm_calls": 0,
+      "degraded": false
+    },
+    {
+      "case_id": "HL-077",
+      "gold_chunk_ids": [
+        "luat-dat-dai-2024-82-1-0"
+      ],
+      "retrieved_chunk_ids": [
+        "luat-142-2025-36-1-0",
+        "nd-101-2024-0-19-1",
+        "nd-88-2024-0-24-0",
+        "luat-71-2025-6-1-0",
+        "nd-151-2025-131-0-0",
+        "nd-47-2014-18-1-0",
+        "luat-dat-dai-2013-52-0-0",
+        "luat-142-2025-54-0-0"
+      ],
+      "recall_at_8": 0.0,
+      "seconds": 5.768,
+      "embedding_calls": 1,
+      "llm_calls": 0,
+      "degraded": false
+    },
+    {
+      "case_id": "HL-078",
+      "gold_chunk_ids": [
+        "luat-dat-dai-2024-82-1-1",
+        "nq-254-2025-2-0-1"
+      ],
+      "retrieved_chunk_ids": [
+        "luat-dat-dai-2013-34-1-0",
+        "nd-102-2024-136-0-0",
+        "nd-49-2026-17-0-0",
+        "nd-102-2024-137-0-0",
+        "nd-102-2024-134-0-0",
+        "nd-88-2024-0-27-2",
+        "luat-84-2025-35-1-0",
+        "luat-84-2025-40-0-0"
+      ],
+      "recall_at_8": 0.0,
+      "seconds": 8.033,
+      "embedding_calls": 1,
+      "llm_calls": 0,
+      "degraded": false
+    },
+    {
+      "case_id": "HL-079",
+      "gold_chunk_ids": [
+        "luat-dat-dai-2024-86-1-0",
+        "luat-dat-dai-2024-88-0-0"
+      ],
+      "retrieved_chunk_ids": [
+        "nd-102-2024-54-2-0",
+        "nd-102-2024-51-1-0",
+        "luat-dat-dai-2013-36-0-0",
+        "luat-dat-dai-2024-87-0-0",
+        "nd-88-2024-0-27-4",
+        "luat-dat-dai-2024-86-1-0",
+        "luat-dat-dai-2013-35-1-0",
+        "luat-dat-dai-2024-89-0-0"
+      ],
+      "recall_at_8": 0.5,
+      "seconds": 6.309,
+      "embedding_calls": 1,
+      "llm_calls": 0,
+      "degraded": false
+    },
+    {
+      "case_id": "HL-080",
+      "gold_chunk_ids": [
+        "luat-dat-dai-2024-96-0-1"
+      ],
+      "retrieved_chunk_ids": [
+        "nq-254-2025-3-0-1",
+        "nd-49-2026-26-1-0",
+        "luat-dat-dai-2024-244-1-0",
+        "nd-47-2014-23-0-0",
+        "luat-dat-dai-2013-36-0-0",
+        "nd-88-2024-0-31-0",
+        "nd-88-2024-0-33-0",
+        "luat-142-2025-27-1-0"
+      ],
+      "recall_at_8": 0.0,
+      "seconds": 6.843,
+      "embedding_calls": 1,
+      "llm_calls": 0,
+      "degraded": false
+    },
+    {
+      "case_id": "HL-081",
+      "gold_chunk_ids": [
+        "luat-dat-dai-2024-97-0-0",
+        "nd-226-2025-14-0-0"
+      ],
+      "retrieved_chunk_ids": [
+        "nd-102-2024-136-0-0",
+        "nq-258-2025-6-2-0",
+        "luat-quy-hoach-2017-45-0-0",
+        "luat-quy-hoach-2025-41-0-0",
+        "luat-146-2025-13-0-0",
+        "nd-102-2024-63-0-1",
+        "nd-101-2024-0-4-1",
+        "nd-49-2026-31-0-1"
+      ],
+      "recall_at_8": 0.0,
+      "seconds": 7.615,
+      "embedding_calls": 1,
+      "llm_calls": 0,
+      "degraded": false
+    },
+    {
+      "case_id": "HL-082",
+      "gold_chunk_ids": [
+        "luat-dat-dai-2024-84-0-1",
+        "nq-254-2025-1-0-0"
+      ],
+      "retrieved_chunk_ids": [
+        "luat-dat-dai-2013-33-1-0",
+        "olympic-chuanbi-2025-0-0-2",
+        "nd-102-2024-47-0-0",
+        "nd-49-2026-17-0-0",
+        "nd-101-2024-0-43-1",
+        "nd-226-2025-22-0-1",
+        "nd-101-2024-0-31-6",
+        "nd-226-2025-22-0-0"
+      ],
+      "recall_at_8": 0.0,
+      "seconds": 8.451,
+      "embedding_calls": 1,
+      "llm_calls": 0,
+      "degraded": false
+    },
+    {
+      "case_id": "HL-083",
+      "gold_chunk_ids": [
+        "luat-dat-dai-2024-70-1-0",
+        "nq-254-2025-1-0-0"
+      ],
+      "retrieved_chunk_ids": [
+        "luat-dat-dai-2013-101-0-0",
+        "nd-47-2014-7-0-0",
+        "luat-dat-dai-2013-102-0-0",
+        "luat-130-2025-17-1-0",
+        "luat-dat-dai-2013-101-1-0",
+        "luat-142-2025-57-1-0",
+        "nd-151-2025-47-0-1",
+        "luat-dat-dai-2013-97-0-0"
+      ],
+      "recall_at_8": 0.0,
+      "seconds": 6.134,
+      "embedding_calls": 1,
+      "llm_calls": 0,
+      "degraded": false
+    },
+    {
+      "case_id": "HL-084",
+      "gold_chunk_ids": [],
+      "retrieved_chunk_ids": [
+        "nd-124-2020-43-0-0",
+        "nd-124-2020-48-0-0",
+        "nd-124-2020-42-0-0",
+        "luat-khieu-nai-2011-0-13-0",
+        "nd-124-2020-20-0-0",
+        "nd-155-2026-20-0-0",
+        "nd-124-2020-19-0-0",
+        "luat-khieu-nai-2011-0-11-0"
+      ],
+      "recall_at_8": null,
+      "seconds": 7.729,
+      "embedding_calls": 1,
+      "llm_calls": 0,
+      "degraded": false
+    },
+    {
+      "case_id": "HL-085",
+      "gold_chunk_ids": [
+        "luat-dat-dai-2024-234-1-0",
+        "luat-khieu-nai-2011-0-7-0"
+      ],
+      "retrieved_chunk_ids": [
+        "luat-khieu-nai-2011-0-11-0",
+        "luat-khieu-nai-2011-0-14-0",
+        "nd-124-2020-43-0-0",
+        "luat-khieu-nai-2011-0-7-0",
+        "nd-124-2020-48-0-0",
+        "nd-124-2020-19-0-0",
+        "nd-124-2020-42-0-0",
+        "luat-khieu-nai-2011-0-12-1"
+      ],
+      "recall_at_8": 0.5,
+      "seconds": 7.229,
+      "embedding_calls": 1,
+      "llm_calls": 0,
+      "degraded": false
+    },
+    {
+      "case_id": "HL-086",
+      "gold_chunk_ids": [
+        "luat-khieu-nai-2011-0-9-0"
+      ],
+      "retrieved_chunk_ids": [
+        "nd-124-2020-20-0-0",
+        "nd-124-2020-2-1-0",
+        "luat-khieu-nai-2011-0-8-0",
+        "nd-124-2020-21-0-0",
+        "nd-124-2020-48-0-0",
+        "nd-124-2020-42-0-0",
+        "luat-khieu-nai-2011-0-13-0",
+        "nd-124-2020-22-1-0"
+      ],
+      "recall_at_8": 0.0,
+      "seconds": 5.965,
+      "embedding_calls": 1,
+      "llm_calls": 0,
+      "degraded": false
+    },
+    {
+      "case_id": "HL-087",
+      "gold_chunk_ids": [
+        "luat-136-2025-4-0-0",
+        "luat-khieu-nai-2011-0-2-0"
+      ],
+      "retrieved_chunk_ids": [
+        "nd-124-2020-20-0-0",
+        "nd-124-2020-2-1-0",
+        "luat-khieu-nai-2011-0-8-0",
+        "nd-124-2020-48-0-0",
+        "luat-136-2025-3-0-0",
+        "luat-136-2025-5-0-0",
+        "luat-khieu-nai-2011-0-14-0",
+        "nd-124-2020-21-0-0"
+      ],
+      "recall_at_8": 0.0,
+      "seconds": 6.198,
+      "embedding_calls": 1,
+      "llm_calls": 0,
+      "degraded": false
+    },
+    {
+      "case_id": "HL-088",
+      "gold_chunk_ids": [
+        "nq-254-2025-1-0-1"
+      ],
+      "retrieved_chunk_ids": [
+        "nd-151-2025-38-0-0",
+        "luat-dat-dai-2024-97-0-0",
+        "nd-47-2014-19-0-0",
+        "nq-254-2025-10-0-0",
+        "qd-55-2024-hanoi-7-0-0",
+        "qd-56-2024-hanoi-0-14-0",
+        "luat-dat-dai-2013-34-1-1",
+        "nd-06-2020-1-0-0"
+      ],
+      "recall_at_8": 0.0,
+      "seconds": 7.065,
+      "embedding_calls": 1,
+      "llm_calls": 0,
+      "degraded": false
+    },
+    {
+      "case_id": "HL-089",
+      "gold_chunk_ids": [
+        "luat-136-2025-7-0-0",
+        "luat-khieu-nai-2011-0-28-0"
+      ],
+      "retrieved_chunk_ids": [
+        "nd-124-2020-20-0-0",
+        "nd-124-2020-2-1-0",
+        "luat-khieu-nai-2011-0-8-0",
+        "nd-124-2020-48-0-0",
+        "nd-124-2020-21-0-0",
+        "nd-124-2020-22-1-0",
+        "luat-khieu-nai-2011-0-14-0",
+        "luat-khieu-nai-2011-0-62-0"
+      ],
+      "recall_at_8": 0.0,
+      "seconds": 5.059,
+      "embedding_calls": 1,
+      "llm_calls": 0,
+      "degraded": false
+    },
+    {
+      "case_id": "HL-090",
+      "gold_chunk_ids": [
+        "luat-dat-dai-2024-244-1-0",
+        "nq-254-2025-3-0-1"
+      ],
+      "retrieved_chunk_ids": [
+        "luat-dat-dai-2024-244-1-0",
+        "luat-dat-dai-2024-104-0-0",
+        "luat-dat-dai-2024-0-0-0",
+        "luat-dat-dai-2024-0-1-0",
+        "luat-dat-dai-2024-0-2-0",
+        "luat-dat-dai-2024-245-0-0",
+        "luat-dat-dai-2024-0-3-0",
+        "luat-dat-dai-2024-1-0-0"
+      ],
+      "recall_at_8": 0.5,
+      "seconds": 5.37,
+      "embedding_calls": 1,
+      "llm_calls": 0,
+      "degraded": false
+    },
+    {
+      "case_id": "HL-091",
+      "gold_chunk_ids": [
+        "qd-40-2026-hanoi-0-2-0"
+      ],
+      "retrieved_chunk_ids": [
+        "qd-56-2024-hanoi-0-0-0",
+        "qd-56-2024-hanoi-0-1-0",
+        "qd-56-2024-hanoi-0-10-0",
+        "qd-56-2024-hanoi-0-11-0",
+        "qd-56-2024-hanoi-0-12-0",
+        "qd-56-2024-hanoi-0-12-1",
+        "qd-56-2024-hanoi-0-13-0",
+        "qd-56-2024-hanoi-0-14-0"
+      ],
+      "recall_at_8": 0.0,
+      "seconds": 4.705,
+      "embedding_calls": 1,
+      "llm_calls": 0,
+      "degraded": false
+    },
+    {
+      "case_id": "HL-092",
+      "gold_chunk_ids": [
+        "qd-40-2026-hanoi-0-2-0"
+      ],
+      "retrieved_chunk_ids": [
+        "qd-40-2026-hanoi-0-2-0",
+        "qd-40-2026-hanoi-2-2-0",
+        "qd-56-2024-hanoi-0-0-0",
+        "qd-56-2024-hanoi-0-1-0",
+        "qd-56-2024-hanoi-0-10-0",
+        "qd-56-2024-hanoi-0-11-0",
+        "qd-56-2024-hanoi-0-12-0",
+        "qd-56-2024-hanoi-0-12-1"
+      ],
+      "recall_at_8": 1.0,
+      "seconds": 6.224,
+      "embedding_calls": 1,
+      "llm_calls": 0,
+      "degraded": false
+    },
+    {
+      "case_id": "HL-093",
+      "gold_chunk_ids": [
+        "qd-10-2026-hanoi-4-1-0",
+        "qd-40-2026-hanoi-0-2-0"
+      ],
+      "retrieved_chunk_ids": [
+        "qd-56-2024-hanoi-0-0-0",
+        "qd-71-2024-hanoi-0-0-0",
+        "nq-90-2026-hanoi-0-0-0",
+        "qd-10-2026-hanoi-0-0-0",
+        "luat-146-2025-0-0-0",
+        "luat-quy-hoach-2017-45-0-0",
+        "luat-quy-hoach-2017-44-0-0",
+        "qd-566-2026-hanoi-0-0-0"
+      ],
+      "recall_at_8": 0.0,
+      "seconds": 6.053,
+      "embedding_calls": 1,
+      "llm_calls": 0,
+      "degraded": false
+    },
+    {
+      "case_id": "HL-094",
+      "gold_chunk_ids": [],
+      "retrieved_chunk_ids": [
+        "luat-quy-hoach-2017-45-0-0",
+        "nd-124-2020-37-0-0",
+        "luat-nha-o-2023-150-0-1",
+        "nd-88-2024-0-10-0",
+        "luat-146-2025-13-0-0",
+        "nq-254-2025-3-0-1",
+        "luat-146-2025-15-0-0",
+        "luat-quy-hoach-do-thi-2024-48-2-0"
+      ],
+      "recall_at_8": null,
+      "seconds": 6.493,
+      "embedding_calls": 1,
+      "llm_calls": 0,
+      "degraded": false
+    },
+    {
+      "case_id": "HL-095",
+      "gold_chunk_ids": [],
+      "retrieved_chunk_ids": [
+        "nd-151-2025-185-0-0",
+        "nd-102-2024-199-0-0",
+        "nd-226-2025-32-0-0",
+        "nd-151-2025-166-0-0",
+        "nd-226-2025-33-0-0",
+        "nd-151-2025-222-0-0",
+        "nq-254-2025-10-0-0",
+        "luat-dat-dai-2013-11-0-0"
+      ],
+      "recall_at_8": null,
+      "seconds": 7.05,
+      "embedding_calls": 1,
+      "llm_calls": 0,
+      "degraded": false
+    },
+    {
+      "case_id": "HL-096",
+      "gold_chunk_ids": [
+        "nd-49-2026-21-1-0",
+        "nd-49-2026-22-0-0",
+        "nd-49-2026-23-2-0"
+      ],
+      "retrieved_chunk_ids": [
+        "nd-141-2025-4-0-1",
+        "nd-151-2025-39-0-0",
+        "nd-151-2025-3-0-1",
+        "nd-88-2024-0-31-0",
+        "luat-dat-dai-2013-35-0-0",
+        "nd-151-2025-39-0-1",
+        "nq-254-2025-3-0-1",
+        "qd-56-2024-hanoi-0-26-0"
+      ],
+      "recall_at_8": 0.0,
+      "seconds": 7.921,
+      "embedding_calls": 1,
+      "llm_calls": 0,
+      "degraded": false
+    },
+    {
+      "case_id": "HL-097",
+      "gold_chunk_ids": [],
+      "retrieved_chunk_ids": [
+        "luat-khieu-nai-2011-0-46-0",
+        "luat-58-2024-67-1-0",
+        "nq-254-2025-3-0-1",
+        "luat-58-2024-69-0-0",
+        "qd-27-2024-hanoi-0-0-0",
+        "luat-58-2024-28-1-0",
+        "qd-10-2026-hanoi-0-0-0",
+        "qd-40-2025-hanoi-0-0-0"
+      ],
+      "recall_at_8": null,
+      "seconds": 6.544,
+      "embedding_calls": 1,
+      "llm_calls": 0,
+      "degraded": false
+    },
+    {
+      "case_id": "HL-098",
+      "gold_chunk_ids": [],
+      "retrieved_chunk_ids": [
+        "nd-88-2024-0-4-0",
+        "qd-38-2025-hanoi-1-0-1",
+        "luat-146-2025-15-0-0",
+        "nd-151-2025-75-0-0",
+        "luat-dat-dai-2024-127-0-0",
+        "luat-dat-dai-2024-96-0-0",
+        "nd-226-2025-31-1-0",
+        "nq-52-2025-hanoi-1-2-0"
+      ],
+      "recall_at_8": null,
+      "seconds": 6.82,
+      "embedding_calls": 1,
+      "llm_calls": 0,
+      "degraded": false
+    },
+    {
+      "case_id": "HL-099",
+      "gold_chunk_ids": [],
+      "retrieved_chunk_ids": [
+        "luat-dat-dai-2013-39-0-0",
+        "qd-71-2024-hanoi-223-0-0",
+        "nd-102-2024-136-0-0",
+        "qd-71-2024-hanoi-221-0-0",
+        "luat-quy-hoach-do-thi-2024-5-0-0",
+        "qd-71-2024-hanoi-222-0-0",
+        "nd-151-2025-185-0-0",
+        "qd-71-2024-hanoi-252-0-0"
+      ],
+      "recall_at_8": null,
+      "seconds": 6.334,
+      "embedding_calls": 1,
+      "llm_calls": 0,
+      "degraded": false
+    },
+    {
+      "case_id": "HL-100",
+      "gold_chunk_ids": [
+        "ring4-nq56-2022-0-1-0"
+      ],
+      "retrieved_chunk_ids": [
+        "luat-dat-dai-2024-44-1-0",
+        "ring4-trienkhai-2022-0-0-0",
+        "nd-102-2024-144-0-0",
+        "ring4-nq56-2022-5-1-0",
+        "luat-dat-dai-2013-37-0-0",
+        "ring4-nq56-2022-0-0-0",
+        "nd-101-2024-0-7-0",
+        "ring4-nq56-2022-1-0-1"
+      ],
+      "recall_at_8": 0.0,
+      "seconds": 6.549,
+      "embedding_calls": 1,
+      "llm_calls": 0,
+      "degraded": false
+    },
+    {
+      "case_id": "HL-101",
+      "gold_chunk_ids": [],
+      "retrieved_chunk_ids": [
+        "nd-226-2025-22-0-0",
+        "qd-10-2026-hanoi-0-0-0",
+        "nd-102-2024-41-0-0",
+        "qd-40-2025-hanoi-1-1-0",
+        "nd-102-2024-40-1-0",
+        "qd-56-2024-hanoi-0-0-0",
+        "nd-102-2024-48-0-0",
+        "ring4-phuluong-2025-0-0-1"
+      ],
+      "recall_at_8": null,
+      "seconds": 6.749,
+      "embedding_calls": 1,
+      "llm_calls": 0,
+      "degraded": false
+    },
+    {
+      "case_id": "HL-102",
+      "gold_chunk_ids": [
+        "nq-254-2025-1-0-1",
+        "nq-90-2026-hanoi-1-3-0"
+      ],
+      "retrieved_chunk_ids": [
+        "nd-71-2024-7-0-0",
+        "nq-52-2025-hanoi-247-0-0",
+        "nd-71-2024-13-1-0",
+        "nq-52-2025-hanoi-214-0-0",
+        "nd-151-2025-71-0-0",
+        "nq-52-2025-hanoi-218-0-0",
+        "nd-71-2024-34-0-0",
+        "nq-52-2025-hanoi-194-0-0"
+      ],
+      "recall_at_8": 0.0,
+      "seconds": 5.758,
+      "embedding_calls": 1,
+      "llm_calls": 0,
+      "degraded": false
+    },
+    {
+      "case_id": "HL-103",
+      "gold_chunk_ids": [
+        "songhong-quyhoach-2026-0-0-0"
+      ],
+      "retrieved_chunk_ids": [
+        "songhong-khoicong-2025-0-0-1",
+        "songhong-khoicong-2025-0-0-0",
+        "songhong-thongtin-2026-0-0-1",
+        "songhong-khoicong-2025-0-0-4",
+        "songhong-thongtin-2026-0-0-7",
+        "songhong-thongtin-2026-0-0-2",
+        "songhong-quyhoach-2026-0-0-1",
+        "luat-146-2025-25-2-0"
+      ],
+      "recall_at_8": 0.0,
+      "seconds": 5.345,
+      "embedding_calls": 1,
+      "llm_calls": 0,
+      "degraded": false
+    },
+    {
+      "case_id": "HL-104",
+      "gold_chunk_ids": [],
+      "retrieved_chunk_ids": [
+        "songhong-thongtin-2026-0-0-7",
+        "songhong-thongtin-2026-0-0-6",
+        "nd-88-2024-0-24-0",
+        "qd-38-2025-hanoi-1-0-1",
+        "luat-dat-dai-2013-46-0-0",
+        "songhong-thongtin-2026-0-0-3",
+        "luat-dat-dai-2024-180-1-0",
+        "qd-566-2026-hanoi-0-0-0"
+      ],
+      "recall_at_8": null,
+      "seconds": 7.879,
+      "embedding_calls": 1,
+      "llm_calls": 0,
+      "degraded": false
+    },
+    {
+      "case_id": "HL-105",
+      "gold_chunk_ids": [
+        "qd-40-2026-hanoi-8-1-0"
+      ],
+      "retrieved_chunk_ids": [
+        "nd-88-2024-0-20-0",
+        "songhong-thongtin-2026-0-0-4",
+        "qd-40-2026-hanoi-11-0-0",
+        "songhong-thongtin-2026-0-0-0",
+        "luat-142-2025-41-1-0",
+        "songhong-quyhoach-2026-0-0-0",
+        "nd-88-2024-0-28-0",
+        "songhong-thongtin-2026-0-0-1"
+      ],
+      "recall_at_8": 0.0,
+      "seconds": 6.749,
+      "embedding_calls": 1,
+      "llm_calls": 0,
+      "degraded": false
+    },
+    {
+      "case_id": "HL-106",
+      "gold_chunk_ids": [
+        "olympic-nhiemvu-khub-2025-0-0-0"
+      ],
+      "retrieved_chunk_ids": [
+        "nd-124-2020-43-0-0",
+        "nd-151-2025-151-0-0",
+        "nd-124-2020-42-0-0",
+        "nd-151-2025-170-0-0",
+        "nd-124-2020-46-0-0",
+        "nd-226-2025-33-0-0",
+        "nd-124-2020-37-0-0",
+        "nq-254-2025-3-0-1"
+      ],
+      "recall_at_8": 0.0,
+      "seconds": 6.489,
+      "embedding_calls": 1,
+      "llm_calls": 0,
+      "degraded": false
+    },
+    {
+      "case_id": "HL-107",
+      "gold_chunk_ids": [
+        "luat-thu-do-2026-38-0-0",
+        "nq-90-2026-hanoi-1-3-0"
+      ],
+      "retrieved_chunk_ids": [
+        "olympic-chuanbi-2025-0-0-1",
+        "olympic-kiemtra-2026-0-0-0",
+        "olympic-nhiemvu-khub-2025-0-0-0",
+        "luat-quy-hoach-do-thi-2024-21-0-0",
+        "nd-102-2024-147-0-0",
+        "olympic-chutruong-2025-0-0-2",
+        "nd-101-2024-0-7-0",
+        "olympic-chutruong-2025-0-0-1"
+      ],
+      "recall_at_8": 0.0,
+      "seconds": 8.495,
+      "embedding_calls": 1,
+      "llm_calls": 0,
+      "degraded": false
+    },
+    {
+      "case_id": "HL-108",
+      "gold_chunk_ids": [],
+      "retrieved_chunk_ids": [
+        "luat-130-2025-38-0-0",
+        "olympic-chutruong-2025-0-0-1",
+        "luat-130-2025-46-2-0",
+        "olympic-nhiemvu-khub-2025-0-0-0",
+        "nd-102-2024-97-0-0",
+        "olympic-nhiemvu-khub-2025-0-0-1",
+        "luat-130-2025-1-0-0",
+        "olympic-chutruong-2025-0-0-3"
+      ],
+      "recall_at_8": null,
+      "seconds": 4.973,
+      "embedding_calls": 1,
+      "llm_calls": 0,
+      "degraded": false
+    },
+    {
+      "case_id": "HL-109",
+      "gold_chunk_ids": [],
+      "retrieved_chunk_ids": [
+        "luat-nha-o-2023-63-0-1",
+        "luat-nha-o-2023-81-1-0",
+        "luat-nha-o-2023-105-1-0",
+        "luat-nha-o-2023-97-0-0",
+        "luat-144-2025-2-0-0",
+        "luat-nha-o-2023-91-0-0",
+        "luat-quy-hoach-do-thi-2024-5-0-0",
+        "qd-38-2025-hanoi-1-0-1"
+      ],
+      "recall_at_8": null,
+      "seconds": 6.537,
+      "embedding_calls": 1,
+      "llm_calls": 0,
+      "degraded": false
+    },
+    {
+      "case_id": "HL-110",
+      "gold_chunk_ids": [
+        "luat-dat-dai-2024-104-2-0"
+      ],
+      "retrieved_chunk_ids": [
+        "nd-102-2024-147-0-0",
+        "nd-88-2024-0-12-2",
+        "luat-dat-dai-2024-99-1-0",
+        "nd-88-2024-0-13-0",
+        "luat-dat-dai-2013-42-2-0",
+        "nd-47-2014-5-1-0",
+        "luat-dat-dai-2024-225-0-0",
+        "qd-56-2024-hanoi-0-14-0"
+      ],
+      "recall_at_8": 0.0,
+      "seconds": 6.559,
+      "embedding_calls": 1,
+      "llm_calls": 0,
+      "degraded": false
+    },
+    {
+      "case_id": "HL-111",
+      "gold_chunk_ids": [],
+      "retrieved_chunk_ids": [
+        "luat-thu-do-2026-37-2-0",
+        "luat-nha-o-2023-149-0-1",
+        "nd-102-2024-83-0-0",
+        "nq-254-2025-3-0-1",
+        "luat-146-2025-15-0-0",
+        "luat-quy-hoach-do-thi-2024-48-2-0",
+        "luat-nha-o-2023-152-0-1",
+        "nd-102-2024-84-0-0"
+      ],
+      "recall_at_8": null,
+      "seconds": 6.652,
+      "embedding_calls": 1,
+      "llm_calls": 0,
+      "degraded": false
+    },
+    {
+      "case_id": "HL-112",
+      "gold_chunk_ids": [],
+      "retrieved_chunk_ids": [
+        "luat-dat-dai-2024-225-0-0",
+        "nq-52-2025-hanoi-188-0-0",
+        "nd-103-2024-9-1-0",
+        "nq-52-2025-hanoi-171-0-0",
+        "nd-102-2024-47-0-0",
+        "qd-71-2024-hanoi-84-0-0",
+        "nd-103-2024-7-0-0",
+        "nq-52-2025-hanoi-247-0-0"
+      ],
+      "recall_at_8": null,
+      "seconds": 6.748,
+      "embedding_calls": 1,
+      "llm_calls": 0,
+      "degraded": false
+    },
+    {
+      "case_id": "HL-113",
+      "gold_chunk_ids": [],
+      "retrieved_chunk_ids": [
+        "nd-47-2014-23-0-0",
+        "luat-142-2025-27-1-0",
+        "nd-88-2024-0-3-3",
+        "nd-102-2024-167-0-0",
+        "nq-254-2025-3-0-1",
+        "luat-142-2025-23-0-0",
+        "nd-88-2024-0-33-1",
+        "luat-142-2025-41-1-0"
+      ],
+      "recall_at_8": null,
+      "seconds": 5.985,
+      "embedding_calls": 1,
+      "llm_calls": 0,
+      "degraded": false
+    },
+    {
+      "case_id": "HL-114",
+      "gold_chunk_ids": [],
+      "retrieved_chunk_ids": [
+        "luat-58-2024-68-0-0",
+        "nq-52-2025-hanoi-168-0-0",
+        "nd-71-2024-17-1-0",
+        "nq-52-2025-hanoi-123-0-0",
+        "nd-151-2025-70-0-0",
+        "nq-52-2025-hanoi-120-0-0",
+        "luat-58-2024-28-1-0",
+        "nq-52-2025-hanoi-146-0-0"
+      ],
+      "recall_at_8": null,
+      "seconds": 5.983,
+      "embedding_calls": 1,
+      "llm_calls": 0,
+      "degraded": false
+    },
+    {
+      "case_id": "HL-115",
+      "gold_chunk_ids": [],
+      "retrieved_chunk_ids": [
+        "luat-116-2025-33-1-0",
+        "nd-88-2024-0-15-0",
+        "luat-146-2025-15-0-0",
+        "luat-dat-dai-2024-44-1-0",
+        "luat-quy-hoach-do-thi-2024-47-0-0",
+        "luat-quy-hoach-do-thi-2024-49-0-0",
+        "luat-thu-do-2026-37-2-0",
+        "nd-226-2025-1-0-1"
+      ],
+      "recall_at_8": null,
+      "seconds": 6.75,
+      "embedding_calls": 1,
+      "llm_calls": 0,
+      "degraded": false
+    },
+    {
+      "case_id": "HL-116",
+      "gold_chunk_ids": [],
+      "retrieved_chunk_ids": [
+        "nd-102-2024-136-0-0",
+        "nd-102-2024-187-0-0",
+        "nd-102-2024-134-0-0",
+        "nd-151-2025-151-0-0",
+        "nd-102-2024-137-0-0",
+        "nd-102-2024-202-0-0",
+        "luat-84-2025-5-0-0",
+        "nd-49-2026-36-0-0"
+      ],
+      "recall_at_8": null,
+      "seconds": 6.655,
+      "embedding_calls": 1,
+      "llm_calls": 0,
+      "degraded": false
+    },
+    {
+      "case_id": "HL-117",
+      "gold_chunk_ids": [],
+      "retrieved_chunk_ids": [
+        "luat-146-2025-0-0-0",
+        "nd-102-2024-173-0-0",
+        "nd-102-2024-136-0-0",
+        "nd-151-2025-151-0-0",
+        "luat-130-2025-51-1-0",
+        "nd-151-2025-170-0-0",
+        "luat-84-2025-22-1-0",
+        "nd-151-2025-150-0-0"
+      ],
+      "recall_at_8": null,
+      "seconds": 6.341,
+      "embedding_calls": 1,
+      "llm_calls": 0,
+      "degraded": false
+    },
+    {
+      "case_id": "HL-118",
+      "gold_chunk_ids": [],
+      "retrieved_chunk_ids": [
+        "nd-102-2024-187-0-0",
+        "luat-dat-dai-2013-1-0-0",
+        "nd-155-2026-20-0-0",
+        "luat-dat-dai-2013-90-1-0",
+        "nd-124-2020-37-0-0",
+        "luat-dat-dai-2024-21-0-0",
+        "nd-124-2020-46-0-0",
+        "luat-146-2025-15-0-0"
+      ],
+      "recall_at_8": null,
+      "seconds": 6.746,
+      "embedding_calls": 1,
+      "llm_calls": 0,
+      "degraded": false
+    },
+    {
+      "case_id": "HL-119",
+      "gold_chunk_ids": [],
+      "retrieved_chunk_ids": [
+        "luat-quy-hoach-2017-45-0-0",
+        "qd-38-2025-hanoi-0-0-0",
+        "nd-103-2024-20-1-0",
+        "qd-38-2025-hanoi-1-0-1",
+        "nd-101-2024-0-20-2",
+        "nd-103-2024-16-0-0",
+        "luat-dat-dai-2024-142-0-0",
+        "nd-103-2024-15-0-0"
+      ],
+      "recall_at_8": null,
+      "seconds": 7.366,
+      "embedding_calls": 1,
+      "llm_calls": 0,
+      "degraded": false
+    },
+    {
+      "case_id": "HL-120",
+      "gold_chunk_ids": [],
+      "retrieved_chunk_ids": [
+        "ring4-trienkhai-2022-0-0-1",
+        "nd-101-2024-0-35-0",
+        "songhong-chuanbi-2025-0-0-0",
+        "luat-dat-dai-2024-74-0-0",
+        "nq-52-2025-hanoi-0-0-0",
+        "luat-71-2025-16-1-0",
+        "qd-19-2026-hanoi-0-0-0",
+        "nd-102-2024-111-1-0"
+      ],
+      "recall_at_8": null,
+      "seconds": 8.433,
+      "embedding_calls": 1,
+      "llm_calls": 0,
+      "degraded": false
+    }
+  ]
+}

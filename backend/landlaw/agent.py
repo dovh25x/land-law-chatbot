@@ -564,6 +564,8 @@ class Agent:
                 "quy định hiệu lực và chứa ngày đó; metadata ngày ban hành không chứng minh ngày hiệu lực. "
                 "Ưu tiên ít claims rõ ràng, mỗi claim dẫn đoạn chứng minh trực tiếp; không ghép thêm căn cứ không cần thiết. "
                 "Tối đa ba claims, không lặp lại cùng kết luận. Ngày có hiệu lực chỉ chứng minh mốc bắt đầu, "
+                "Chỉ giải đáp phạm vi được hỏi; không thêm phạm vi bãi bỏ/sửa đổi không xuất hiện trong đoạn dẫn. "
+                "Không suy quy luật tổng quát về mọi văn bản hoặc việc bãi bỏ thường xảy ra thế nào từ một ví dụ. "
                 "không chứng minh mọi hồ sơ cũ đều bị loại hay tự động chuyển sang chính sách mới. "
                 "Kết luận về áp dụng hồ sơ cũ cần điều khoản chuyển tiếp cụ thể; nếu chưa có, hỏi ngày quyết định "
                 "thu hồi, ngày duyệt phương án và nêu chưa xác định quyền lợi của hồ sơ. "
@@ -636,6 +638,16 @@ class Agent:
                 if any(phrase in normalized_claim for phrase in ('duoc boi thuong','duoc ho tro','co quyen','dong/','trieu dong')):
                     structural_issues.append(f'Claim {index}: không dùng nhãn hiệu lực để áp dụng quyền lợi từ văn bản tương lai')
             cited_text=' '.join(evidence[i].chunk.text for i in claim.citation_ids if i in evidence)
+            normalized_source=normalize(cited_text)
+            if 'bai bo' in normalized_claim:
+                for unit in ('khoan','dieu'):
+                    extra=re.search(r'\b(?:va|cung)\s+(?:mot so|cac|nhieu)\s+'+unit+r'\b',normalized_claim)
+                    named_units=set(re.findall(r'\b'+unit+r'\s+(\d+[a-z]?)\b',normalized_source))
+                    if extra and len(named_units)<(1 if unit=='khoan' else 2):
+                        structural_issues.append(f'Claim {index}: mở rộng phạm vi bãi bỏ ngoài điều/khoản được nguồn chứng minh')
+            generalizations=('thuong dien ra','thuong xay ra','luon dien ra','luon xay ra','moi van ban','tat ca cac van ban')
+            if any(phrase in normalized_claim and phrase not in normalized_source for phrase in generalizations):
+                structural_issues.append(f'Claim {index}: kết luận tổng quát không được đoạn nguồn hỗ trợ')
             if ('khong ap dung' in normalized_claim and 'ho so' in normalized_claim
                     and any(word in normalized_claim for word in ('truoc','cu'))
                     and not any(word in normalize(cited_text) for word in ('chuyen tiep','phuong an','ho so'))):
