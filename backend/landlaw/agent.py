@@ -250,7 +250,7 @@ class Agent:
     async def plan(self, state):
         request = state["request"]
         question=normalize(request.message)
-        literal_numbers=set(re.findall(r'(?<![\d/])\d{1,6}/(?:19|20)\d{2}(?!/)',question))
+        literal_numbers=set(re.findall(r'(?<![\d/])\d{1,6}/(?:19|20)\d{2}(?!/\d)',question))
         known_numbers={'/'.join(normalize(d.get('document_number') or '').split('/')[:2])
                        for d in (state['release'] or {}).get('documents',[])}
         direct_effectivity=(len(literal_numbers)==1 and literal_numbers<=known_numbers
@@ -443,7 +443,7 @@ class Agent:
         candidates=self.context(state)
         if self.provider.settings.llm_provider=='groq' and selected_ids is None:
             question=normalize(state['request'].message) if state.get('request') else ''
-            numbers=set(re.findall(r'(?<![\d/])\d{1,6}/(?:19|20)\d{2}(?!/)',question))
+            numbers=set(re.findall(r'(?<![\d/])\d{1,6}/(?:19|20)\d{2}(?!/\d)',question))
             articles=set(re.findall(r'\bdieu\s+(\d+[a-z]?)\b',question))
             terms=set(re.findall(r'[a-z0-9]{3,}',question))-{'quyet','dinh','dieu','ngay','theo','khong','van','ban','toi'}
             temporal=any(term in question for term in ('hieu luc','thay the','bai bo','ap dung ngay'))

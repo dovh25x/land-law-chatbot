@@ -1,12 +1,12 @@
 {
-  "checked_at": "2026-10-13T05:34:42.859191+00:00",
+  "checked_at": "2026-10-13T10:38:49.784923+00:00",
   "release": "corpus-de584c31fc95f9a2",
-  "configuration_sha256": "8ab96beaa7549d99cbed0de35f55a09466c436cb7f68426e99c3adb54c05f24e",
+  "configuration_sha256": "1867e89492b14fb21becaaae3c91ba2b9261392a401d2f0afaa736d9900388af",
   "passed": true,
   "checks": {
     "postgres_runtime": true,
     "e5_colab_runtime_parity_and_hybrid": true,
-    "backend_tests_117": true
+    "backend_tests_119": true
   },
-  "scope": "117 isolated backend tests plus real restricted Supabase isolation/reserve and E5 384 hybrid search/Colab parity. Exact previous image passed the hard 512 MB memory gate; new context code requires CI recheck."
+  "scope": "119 isolated backend tests plus real Supabase isolation and E5 Colab parity. Operative-source ranking and literal effectivity routing have targeted regressions; exact image memory gate is checked by CI."
 }
