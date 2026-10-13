@@ -348,7 +348,7 @@ class Store:
             return None
         articles = list(dict.fromkeys(re.findall(r'\bdieu\s+(\d+[a-z]?)\b', normalize(locator or ''))))[:3]
         projection = 'id,document_id,text,locator,parent_id,page,checksum,embedding_model'
-        base = f"SELECT {projection} FROM chunks WHERE release_id=? AND document_id=? AND id NOT LIKE '%-parent'"
+        base = f"SELECT {projection} FROM chunks WHERE release_id=? AND document_id=? AND substr(id,length(id)-6) <> '-parent'"
         if not articles:
             rows = self.rows(base + ' ORDER BY id LIMIT 3', (release_id, doc_id))
         else:
@@ -408,7 +408,7 @@ class Store:
             return []
         # Parent rows are expanded after retrieval; letting them compete with
         # their own children crowds out precise article/paragraph citations.
-        scope_sql = " AND c.id NOT LIKE '%-parent'" + (" AND (d.project IS NULL OR d.project=?)" if project else "")
+        scope_sql = " AND substr(c.id,length(c.id)-6) <> '-parent'" + (" AND (d.project IS NULL OR d.project=?)" if project else "")
         params = (release_id, project) if project else (release_id,)
         projection = 'c.id,c.document_id,c.text,c.locator,c.parent_id,c.page,c.checksum,c.embedding_model' if self.postgres else 'c.*'
         docs = {d.id: d for d in self.documents(release_id)}
