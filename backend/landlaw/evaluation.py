@@ -2,7 +2,9 @@ import asyncio
 import hashlib
 import json
 import math
+import re
 import statistics
+import time
 import uuid
 from datetime import timedelta
 from pathlib import Path
@@ -186,6 +188,24 @@ async def evaluate(settings, store, provider, split="dev", release_id=None, limi
     for record in records:
         preserve_attempt(attempts_path,record,'imported_latest_checkpoint')
     agent = Agent(store, provider)
+    provider_ready_at=0.0
+    async def observe_provider_capacity(response):
+        nonlocal provider_ready_at
+        if response.request.url.host!='api.groq.com':return
+        try:
+            remaining=int(response.headers['x-ratelimit-remaining-tokens'])
+            capacity=int(response.headers['x-ratelimit-limit-tokens'])
+        except (KeyError,ValueError):return
+        reset=response.headers.get('x-ratelimit-reset-tokens','')
+        duration=re.fullmatch(r'(?:(\d+(?:\.\d+)?)m)?(?:(\d+(?:\.\d+)?)s)?',reset)
+        if not duration:return
+        seconds=float(duration[1] or 0)*60+float(duration[2] or 0)
+        # Use only provider-reported free capacity, never an application quota.
+        # Start the next benchmark turn after its token bucket recovers so
+        # retry requests do not consume that turn's six-call workflow budget.
+        provider_ready_at=time.monotonic()+seconds if remaining<min(7000,capacity*.85) else 0
+    if settings.llm_provider=='groq':
+        provider.client.event_hooks.setdefault('response',[]).append(observe_provider_capacity)
     async def emit(_):
         pass
     pending = [(case,mode) for case in cases for mode in ('baseline','agentic')
@@ -200,6 +220,10 @@ async def evaluate(settings, store, provider, split="dev", release_id=None, limi
             project=case.get('project'),as_of=case.get('as_of') or metadata['as_of'],mode=mode),emit,release['id'])
         return {'case_id':case['id'],'mode':mode,'result':result.model_dump(mode='json')}
     for start in range(0,len(pending),concurrency):
+        cooldown=provider_ready_at-time.monotonic()
+        if cooldown>0:
+            print(json.dumps({'evaluation_provider_cooldown_seconds':round(cooldown,2)}),flush=True)
+            await asyncio.sleep(cooldown)
         results=await asyncio.gather(*(execute(c,m) for c,m in pending[start:start+concurrency]))
         for result in results:
             preserve_attempt(attempts_path,result)
@@ -227,7 +251,7 @@ async def evaluate(settings, store, provider, split="dev", release_id=None, limi
     report['acceptance_passed'] = bool(report['acceptance_passed'] and split=='acceptance'
         and len(cases)==80 and all(c.get('ground_truth_status')=='source_checked' for c in cases)
         and all(r['reviewed']==80 and r['source_review_complete'] for r in report['results']))
-    report['latency_scope'] = f'Paired CLI run, concurrency {concurrency}; public API single-user p95 measured separately.'
+    report['latency_scope'] = f'Paired CLI run, concurrency {concurrency}; provider-reported cooldown between turns excluded. Public API single-user p95 measured separately.'
     for name in ('source-audit','runtime-tests'):
         evidence_path = settings.reports_dir/f'{name}.json'
         evidence = json.loads(evidence_path.read_text()) if evidence_path.exists() else {}

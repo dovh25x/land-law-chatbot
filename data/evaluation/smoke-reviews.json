@@ -1,0 +1,17 @@
+{
+  "S01:baseline:26fb807fd796f9cd8579f29039ea0034db966d8641fcf40b49cca5256e14b49c": {
+    "passed": true,
+    "source_checked": true,
+    "claim_support": [
+      true,
+      true
+    ],
+    "notes": "Đối chiếu nguyên văn qd-40-2026-hanoi-0-2-0: Điều 2 quy định có hiệu lực 02/04/2026 và thay thế QĐ56/2024. Cả hai claims hiệu lực/thay thế được nguồn hỗ trợ; không khẳng định quyền lợi của hồ sơ cá nhân hay phủ nhận chuyển tiếp. ID trích dẫn khớp đoạn đã truy xuất."
+  },
+  "S01:agentic:5d144361521865e53b82a5f0e506842f219315ea16e3f67ad143c39f14c33796": {
+    "passed": false,
+    "source_checked": true,
+    "claim_support": [],
+    "notes": "Lượt agentic bị provider rate limit sau sáu calls, chưa trả lời câu hỏi về hiệu lực. Không coi trạng thái giới hạn là đáp án đạt cho ca có căn cứ xác định; giữ attempt và phải chạy lại."
+  }
+}

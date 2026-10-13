@@ -1,12 +1,12 @@
 # Hà Nội · Pháp luật đất đai
 
-Web chatbot tiếng Việt dùng FastAPI, LangGraph, Gemini, PostgreSQL/pgvector và React. Hai chế độ baseline/agentic dùng cùng nguồn dữ liệu và model. Agent chỉ có công cụ đọc với tham số định kiểu, giới hạn 6 lần gọi LLM, 12 công cụ, hai vòng retrieval và 90 giây. Chỉ phát câu trả lời qua SSE sau kiểm tra căn cứ; trace là sự kiện thực thi.
+Web chatbot tiếng Việt dùng FastAPI, LangGraph, Gemini/Groq/Workers AI, E5 ONNX, PostgreSQL/pgvector và React. Hai chế độ baseline/agentic dùng cùng nguồn dữ liệu và model. Agent chỉ có công cụ đọc với tham số định kiểu, giới hạn 6 lần gọi LLM, 12 công cụ, hai vòng retrieval và 90 giây. Chỉ phát câu trả lời qua SSE sau kiểm tra căn cứ; trace là sự kiện thực thi.
 
 ## Trạng thái
 
-Website: https://hanoi-land-law.pages.dev; API: https://land-law-chatbot.onrender.com. Hạ tầng đã live và một lượt Gemini/SSE thật đã qua smoke. Corpus chưa công bố; đây chưa phải bản phát hành đã nghiệm thu M0–M6. Xem [bằng chứng và hạng mục còn mở](docs/IMPLEMENTATION_STATUS.md), [nguồn thật và khoảng trống](docs/SOURCES.md), [benchmark](docs/BENCHMARK.md). Không có câu trả lời hay chỉ số chất lượng giả trong runtime. SQLite dành cho phát triển; production bắt buộc PostgreSQL.
+Website: https://hanoi-land-law.pages.dev; API: https://land-law-chatbot.onrender.com. Hạ tầng đã live; Groq/SSE, cách ly phiên và lưu hội thoại đã qua smoke thật. Corpus chưa công bố; đây chưa phải bản phát hành đã nghiệm thu M0–M6. Xem [bằng chứng và hạng mục còn mở](docs/IMPLEMENTATION_STATUS.md), [nguồn thật và khoảng trống](docs/SOURCES.md), [benchmark](docs/BENCHMARK.md). Không có câu trả lời hay chỉ số chất lượng giả trong runtime. SQLite dành cho phát triển; production bắt buộc PostgreSQL.
 
-Provider sinh được chọn rõ bằng `LLM_PROVIDER`: Gemini hoặc Cloudflare Workers AI `@cf/qwen/qwen3-30b-a3b-fp8`. Qwen là dự phòng miễn phí được chủ dự án cho phép khi các model Gemini nhanh trả quota theo ngày. Hai chế độ dùng cùng model; cấu hình/provider có fingerprint riêng và không ghép kết quả đánh giá. Corpus được chọn có 69 tài liệu, 54 văn bản pháp lý, năm nguồn mỗi dự án và 7.610 đoạn. Đang embedding toàn bộ bằng `multilingual-e5-small-onnx-q8-window-v1` 768 chiều sau khi Gemini embedding-2 và Workers AI báo quota theo ngày. Các checkpoint/model cũ được giữ riêng; chưa công bố corpus hoặc đạt gate demo. Không có trần gọi API theo ngày do ứng dụng đặt; giữ điểm dừng workflow và chống lạm dụng website. Không bật billing hoặc nâng gói.
+Provider sinh được chọn rõ bằng `LLM_PROVIDER`: `gemini`, `cloudflare` (Qwen), hoặc `groq` (GPT-OSS 120B/20B, Qwen 3.8 27B). Cấu hình hiện tại dùng Groq Free `openai/gpt-oss-120b` sau khi Gemini và Workers AI hết quota. Hai chế độ dùng cùng model và fingerprint; không ghép số liệu từ model khác nhau. Corpus có 69 tài liệu, 54 văn bản pháp lý, năm nguồn mỗi dự án và đủ 7.610 vector E5 ONNX Q8 **384 chiều**, xử lý miễn phí trên Colab CPU. Vector truy vấn trên backend đã đối chiếu khớp Colab; Docker thực tế đạt kiểm tra hard limit 512 MB. Model/checkpoint cũ giữ riêng; corpus chỉ công bố sau gate pháp lý. Không có trần gọi API theo ngày do ứng dụng đặt; giữ điểm dừng workflow và chống lạm dụng website. Không bật billing hoặc nâng gói.
 
 ## Chạy phát triển
 
@@ -17,7 +17,9 @@ python3 -m venv .venv
 .venv/bin/pip install -r requirements.lock
 .venv/bin/pip install --no-deps -e .
 cp .env.example .env
-# Điền GEMINI_API_KEY; DATABASE_URL để trống nếu dùng SQLite phát triển.
+# Điền khóa provider đã chọn; DATABASE_URL để trống nếu dùng SQLite phát triển.
+# E5 local: đặt contract 384 chiều và tải model bằng
+# python backend/landlaw/local_embedding.py download models/e5
 .venv/bin/land-law preflight --live
 .venv/bin/uvicorn landlaw.api:app --host 127.0.0.1 --port 8000 --no-proxy-headers
 ```
