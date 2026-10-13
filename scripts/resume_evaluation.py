@@ -6,11 +6,24 @@ remain intact. No model/provider changes or application daily quotas are added.
 import argparse
 import datetime
 import json
+import math
 from pathlib import Path
 import re
 import subprocess
 import sys
 import time
+
+
+def full_turn_cooldown(provider_wait, quota, failures):
+    """Estimate recovery for work already lost, from observed provider data."""
+    delay = provider_wait
+    if quota.get('scope') == 'TPD' and all(isinstance(quota.get(k), int)
+            for k in ('limit', 'used', 'requested')):
+        deficit = quota['requested'] - max(0, quota['limit'] - quota['used'])
+        if deficit > 0:
+            consumed = max((r['result'].get('token_usage', 0) for r in failures), default=0)
+            delay += math.ceil(consumed * provider_wait / deficit)
+    return delay
 
 
 def main():
@@ -46,11 +59,22 @@ def main():
             # an invisible model switch inside this checkpoint.
             if configuration_fingerprint(Settings()) != configuration:
                 raise SystemExit('Configuration changed; resume explicitly under the new fingerprint')
-            completed = subprocess.run([sys.executable, '-m', 'landlaw.cli', 'benchmark',
+            quota = {}
+            completed = subprocess.Popen([sys.executable, '-m', 'landlaw.cli', 'benchmark',
                 '--release-id', args.release_id, '--split', args.split,
-                '--limit', '240', '--concurrency', '1'], check=False)
-            if completed.returncode:
-                raise SystemExit(completed.returncode)
+                '--limit', '240', '--concurrency', '1'], stdout=subprocess.PIPE,
+                stderr=subprocess.STDOUT, text=True, bufsize=1)
+            for line in completed.stdout:
+                print(line, end='', flush=True)
+                try:
+                    event = json.loads(line)
+                except ValueError:
+                    continue
+                if isinstance(event, dict) and 'evaluation_provider_quota' in event:
+                    quota = event['evaluation_provider_quota']
+            returncode = completed.wait()
+            if returncode:
+                raise SystemExit(returncode)
             public_path = settings.reports_dir / ('smoke.json' if args.split == 'smoke' else 'latest.json')
             report = json.loads(public_path.read_text())
             if report.get('configuration_sha256') != configuration or report.get('release') != args.release_id:
@@ -66,9 +90,16 @@ def main():
             waits = [r['result'].get('retry_after') for r in failures]
             if any(not isinstance(wait, (int, float)) or wait <= 0 for wait in waits):
                 raise SystemExit('Non-quota failure requires inspection; checkpoint preserved')
-            delay = max(waits)
+            provider_wait = max(waits)
+            # A completed draft is not reusable after a failed turn. Waiting
+            # only for the failed verifier's deficit would spend all newly
+            # refilled tokens on another draft, starving verification forever.
+            # Infer refill timing from actual provider quota/Retry-After and
+            # include tokens already consumed by this same failed turn.
+            delay = full_turn_cooldown(provider_wait, quota, failures)
             next_attempt = datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(seconds=delay)
-            print(json.dumps({'provider_retry_after_seconds': delay,
+            print(json.dumps({'provider_retry_after_seconds': provider_wait,
+                'estimated_full_turn_wait_seconds': delay,
                 'resume_at': next_attempt.isoformat(), 'run_id': report['run_id']}), flush=True)
             time.sleep(delay)
 
