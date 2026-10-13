@@ -1,7 +1,7 @@
 {
-  "checked_at": "2026-10-13T13:31:33.608759+00:00",
+  "checked_at": "2026-10-13T13:37:23.819805+00:00",
   "release": "corpus-de584c31fc95f9a2",
-  "configuration_sha256": "b162d6ff962f322909ca3a0721ef84b73c32fded7ad6154a88c3e2339757c345",
+  "configuration_sha256": "69d800c875a5f5293dfa7ead5e24743a69cbf463423a24144deba6d6446c3d04",
   "passed": false,
   "checks": {
     "postgres_runtime": true,
@@ -27,8 +27,10 @@
     "literal_whole_act_replacement_guards": true,
     "exact_reference_context_keeps_related_acts": true,
     "planner_json_lookups_no_provider_tools": true,
-    "backend_tests_141": true,
-    "explicit_act_article_and_project_read_routes": true
+    "explicit_act_article_and_project_read_routes": true,
+    "backend_tests_143": true,
+    "invalid_planner_fallback_keeps_verifier_and_budget": true,
+    "planner_quota_still_stops": true
   },
   "scope": "139 isolated backend tests, frontend desktop/mobile checks and exact Python 3.12 image memory checks passed. Publication still requires paired source-checked critical smoke cases.",
   "ci_run": 38404094354,

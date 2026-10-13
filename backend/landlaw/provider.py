@@ -16,8 +16,8 @@ from .embedding import contract, CloudflareEmbeddings, workers_ai_retry_after
 
 
 class ProviderUnavailable(Exception):
-    def __init__(self, message, retryable=False, retry_after=None):
-        self.retryable, self.retry_after = retryable, retry_after
+    def __init__(self, message, retryable=False, retry_after=None, format_failure=False):
+        self.retryable, self.retry_after, self.format_failure = retryable, retry_after, format_failure
         super().__init__(message)
 
 
@@ -249,7 +249,7 @@ class Gemini:
                         await self.record_usage('schema-validation:'+category)
                     body['systemInstruction']['parts'][0]['text']+='\nCorrect these validation categories without adding fields: '+', '.join(categories)
                 if schema_failures >= 2 or attempt == 2:
-                    raise ProviderUnavailable("Provider không trả kết quả đúng schema") from None
+                    raise ProviderUnavailable("Provider không trả kết quả đúng schema",format_failure=True) from None
                 # Retries count as actual calls inside the same per-turn budget.
                 body['systemInstruction']['parts'][0]['text'] += '\nLượt trước không khớp schema. Trả duy nhất JSON đúng responseJsonSchema; dùng đúng kiểu trường và giá trị enum, không có markdown.'
 
@@ -290,7 +290,7 @@ class Gemini:
             try:code=response.json().get('error',{}).get('code')
             except ValueError:code=None
             if code in {'tool_use_failed','json_validate_failed'}:
-                raise ProviderUnavailable('Groq chưa trả kết quả đúng định dạng.',retryable=True)
+                raise ProviderUnavailable('Groq chưa trả kết quả đúng định dạng.',retryable=True,format_failure=True)
         if response.status_code>=400:
             raise ProviderUnavailable(f'Groq trả HTTP {response.status_code}',retryable=response.status_code>=500)
         result=response.json()

@@ -299,18 +299,26 @@ class Agent:
                 catalogue_fields=['id','document_number','title','project','effective_from','effective_to']
                 catalogue=[[d['id'],d['document_number'],d['title'][:120],d['project'],
                             d['effective_from'],d['effective_to']] for d in catalogue]
-            state["plan"] = await self.provider.generate(Plan,
-                "Select at most three read-only tool calls: search_law for legal evidence; search_project for project records; "
-                "open_article for a known document_id and locator; check_effectivity for a known document; "
-                "normalize_place for place aliases. Use IDs from catalogue, never invent IDs. "
-                "Prefer one call for a simple question; use search_law when the document or provision is unknown. "
-                "Out_of_scope only for questions unrelated to Hanoi land law/planning. General rules need no invented private case. "
-                "Missing facts are private-case land type, papers and decision/plan dates, in Vietnamese. "
-                "Do not ask the user to supply laws or rules: retrieve them. coverage_gaps are unavailable sources, "
-                "not evidence; search for available related acts instead.",
-                {"question": redact(request.message), "project": request.project, "as_of": str(state["as_of"]),
-                 "history": state["history"], "catalogue": catalogue, 'catalogue_fields':catalogue_fields,
-                 "coverage_gaps":(state['release'] or {}).get('coverage_gaps',[])}, state["budget"])
+            try:
+                state["plan"] = await self.provider.generate(Plan,
+                    "Select at most three read-only tool calls: search_law for legal evidence; search_project for project records; "
+                    "open_article for a known document_id and locator; check_effectivity for a known document; "
+                    "normalize_place for place aliases. Use IDs from catalogue, never invent IDs. "
+                    "Prefer one call for a simple question; use search_law when the document or provision is unknown. "
+                    "Out_of_scope only for questions unrelated to Hanoi land law/planning. General rules need no invented private case. "
+                    "Missing facts are private-case land type, papers and decision/plan dates, in Vietnamese. "
+                    "Do not ask the user to supply laws or rules: retrieve them. coverage_gaps are unavailable sources, "
+                    "not evidence; search for available related acts instead.",
+                    {"question": redact(request.message), "project": request.project, "as_of": str(state["as_of"]),
+                     "history": state["history"], "catalogue": catalogue, 'catalogue_fields':catalogue_fields,
+                     "coverage_gaps":(state['release'] or {}).get('coverage_gaps',[])}, state["budget"])
+            except ProviderUnavailable as exc:
+                if not exc.format_failure:raise
+                prior=next((m['content'] for m in reversed(state['history']) if m['role']=='user'),'')
+                query=(prior[:500]+' '+request.message) if prior else request.message
+                tool='search_project' if request.project else 'search_law'
+                state['plan']=Plan(tools=[ToolCall(name=tool,query=query[:1000])])
+                await self.event(state,'routing','Planner chưa trả đúng schema sau retry; dùng tra cứu chỉ đọc và vẫn kiểm chứng câu trả lời.',tool)
             # Internal identifiers and dates already available in the source
             # catalogue are tool inputs, not facts a citizen must supply.
             state['plan'].missing_facts=public_missing_facts(state['plan'].missing_facts,state['release'])

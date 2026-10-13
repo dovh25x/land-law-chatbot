@@ -709,3 +709,26 @@ async def test_user_selected_project_routes_to_read_only_project_search(store,se
         'release':payload,'budget':Budget(),'trace':[],'emit':noop,'history':[]}
     await Agent(store,provider).plan(state)
     assert state['plan'].tools[0].name=='search_project' and state['budget'].llm_calls==0
+
+
+async def test_invalid_planner_falls_back_only_to_bounded_read_and_still_verifies(store,settings):
+    release(store);sid,_=session(store)
+    class FormatFailure(FakeProvider):
+        async def generate(self,schema,instruction,payload,budget):
+            if schema is Plan:
+                for _ in range(3):budget.llm()
+                raise ProviderUnavailable('Invalid planning JSON',format_failure=True)
+            return await super().generate(schema,instruction,payload,budget)
+    result=await Agent(store,FormatFailure(settings)).run(ChatRequest(session_id=sid,message='Điều kiện bồi thường?'),noop)
+    assert result.status=='answered' and result.llm_calls==5
+    assert result.citations and any(e.step=='verification' for e in result.trace)
+    assert any('Planner chưa trả đúng schema' in e.summary and e.tool=='search_law' for e in result.trace)
+    assert all(e.tool in {None,'search_law','open_article','check_effectivity'} for e in result.trace)
+
+
+async def test_planner_quota_does_not_trigger_fallback_or_unverified_answer(store,settings):
+    release(store);sid,_=session(store)
+    result=await Agent(store,FakeProvider(settings,failure=RateLimited(3600,source='provider'))).run(
+        ChatRequest(session_id=sid,message='Điều kiện bồi thường?'),noop)
+    assert result.status=='limited' and result.tool_calls==0 and not result.verified_claims
+    assert result.retry_after==3600
