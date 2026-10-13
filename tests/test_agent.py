@@ -767,3 +767,43 @@ def test_legal_relation_prose_cannot_crowd_required_statutory_passages_out_of_pr
     assert len(rows)==12 and 'target_locators_complete' in fields
     assert rows[0][fields.index('target_locators')]==['Điều 95']
     assert all(p['text'] in {law.chunks[0].text,other.text} for p in passages)
+
+
+@pytest.mark.parametrize('clause,expected', [('1','insufficient_evidence'),('2','answered')])
+async def test_clause_attribution_cannot_use_another_numbered_clause(store,settings,clause,expected):
+    source=('Điều 95. Điều kiện được bồi thường về đất. '
+        '2. Các trường hợp quy định tại khoản 1 Điều này được bồi thường về đất khi có một trong các điều kiện sau đây: '
+        'a) Có Giấy chứng nhận quyền sử dụng đất; b) Có quyết định giao đất của cơ quan nhà nước có thẩm quyền;')
+    doc=document(text=source)
+    doc.chunks[0].locator='Điều 95'
+    release(store,[doc]);sid,_=session(store)
+    draft=Draft(status='answered',claims=[Claim(text=f'Các trường hợp phải thuộc khoản 1 Điều này. Quyết định giao đất là điều kiện được quy định trong khoản {clause} Điều 95.',citation_ids=['law-1'])])
+    result=await Agent(store,FakeProvider(settings,draft=draft)).run(ChatRequest(session_id=sid,
+        message='Giấy chứng nhận có phải điều kiện duy nhất theo Điều 95 không?',mode='baseline'),noop)
+    assert result.status==expected
+
+
+@pytest.mark.parametrize('qualification,expected', [('', 'insufficient_evidence'),
+    ('Các trường hợp phải thuộc đối tượng quy định tại khoản 1 Điều này. ', 'answered')])
+async def test_alternative_conditions_preserve_eligibility_prerequisite(store,settings,qualification,expected):
+    source=('Điều 95. Điều kiện được bồi thường về đất. '
+        '2. Các trường hợp quy định tại khoản 1 Điều này được bồi thường về đất khi có một trong các điều kiện sau đây: '
+        'a) Có Giấy chứng nhận quyền sử dụng đất; b) Có quyết định giao đất của cơ quan nhà nước có thẩm quyền;')
+    release(store,[document(text=source)]);sid,_=session(store)
+    draft=Draft(status='answered',claims=[Claim(text=qualification+
+        'Giấy chứng nhận không phải là điều kiện duy nhất để được bồi thường về đất.',citation_ids=['law-1'])])
+    result=await Agent(store,FakeProvider(settings,draft=draft)).run(ChatRequest(session_id=sid,
+        message='Giấy chứng nhận có phải điều kiện duy nhất không?',mode='baseline'),noop)
+    assert result.status==expected
+
+
+@pytest.mark.parametrize('letter,expected', [('e','insufficient_evidence'),('đ','answered')])
+async def test_legal_list_point_letters_cannot_be_renumbered(store,settings,letter,expected):
+    source=('Điều 108. Hỗ trợ khi Nhà nước thu hồi đất. 1. Hỗ trợ bao gồm: '
+        'a) Hỗ trợ ổn định đời sống; đ) Hỗ trợ tái định cư đối với trường hợp đủ điều kiện; '
+        'e) Hỗ trợ để tháo dỡ, phá dỡ, di dời.')
+    release(store,[document(text=source)]);sid,_=session(store)
+    draft=Draft(status='answered',claims=[Claim(text=f'Các nhóm hỗ trợ gồm a) Hỗ trợ ổn định đời sống; {letter}) Hỗ trợ tái định cư đối với trường hợp đủ điều kiện.',citation_ids=['law-1'])])
+    result=await Agent(store,FakeProvider(settings,draft=draft)).run(ChatRequest(session_id=sid,
+        message='Các nhóm hỗ trợ khi thu hồi đất?',mode='baseline'),noop)
+    assert result.status==expected

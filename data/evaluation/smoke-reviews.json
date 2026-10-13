@@ -455,5 +455,69 @@
       true
     ],
     "notes": "Đối chiếu Điều 31 khoản 2 NĐ88/2024: tiếp tục phương án đã phê duyệt, không làm lại; câu trả lời không nhầm với trường hợp chưa phê duyệt ở khoản 1. Quy tắc chi trả chậm theo thời điểm quyết định thu hồi có trong excerpt công khai của citation; phần lời đáp chưa diễn giải riêng quy tắc phụ này. Câu hỏi chính về làm lại phương án được trả lời đúng; không chứng nhận áp dụng quy định chi trả mới."
+  },
+  "S05:baseline:0279eaa3f2d93652750dddca297eadd69720a787bbcf9dc1f593b829b84101ab": {
+    "passed": true,
+    "source_checked": true,
+    "claim_support": [
+      true
+    ],
+    "notes": "Đối chiếu Điều 5 khoản 1 điểm d NĐ151/2025: chuyển quyền phê duyệt phương án tại điểm c khoản 3 Điều 87 từ UBND cấp huyện sang Chủ tịch UBND cấp xã. Lời đáp mới chỉ nêu UBND huyện ở phía chuyển giao, không thêm Chủ tịch huyện từ tiêu đề chung; đúng thời điểm 02/07/2025, không áp sửa đổi tương lai. ID/locator/excerpt đúng nguồn Công báo. Lỗi actor ở các kết quả cũ vẫn giữ trạng thái failed."
+  },
+  "S05:agentic:321e6f93f4221f102fa602fc2d7c54a17f599d6ef67b446633d86ac0e84550b6": {
+    "passed": true,
+    "source_checked": true,
+    "claim_support": [
+      true
+    ],
+    "notes": "Đối chiếu Điều 5 khoản 1 điểm d NĐ151/2025: quyền phê duyệt phương án tại điểm c khoản 3 Điều 87 giao Chủ tịch UBND cấp xã, đúng 02/07/2025. Bản nháp gán thêm Chủ tịch huyện đã bị structural verifier chặn; chỉ câu đã sửa, kiểm tra đạt được trả công khai. Một claim, đúng ID/locator/trích dẫn. 6 lần gọi gồm retry TPM, 52,638 giây; không ghép draft sai thành đáp án."
+  },
+  "S06:baseline:e0dd89e3c2c88d754767cf998dfeaa5e201e055c4a4c39640ba331185c791b7e": {
+    "passed": false,
+    "source_checked": true,
+    "claim_support": [
+      true
+    ],
+    "notes": "Khoản 2 Điều 95, đoạn 98-0-1 chứng minh giấy chứng nhận không phải điều kiện duy nhất, còn quyết định giao/thuê/chuyển mục đích. Claim đúng nhưng đáp án bỏ điều kiện phải thuộc các trường hợp khoản 1; chưa đạt rubric đầy đủ của ca trọng yếu."
+  },
+  "S06:agentic:f882c73a2d8a2bb342eb3d4f74c0e83b5aee8b0b4b3e90d5c5ecaab5d66d7352": {
+    "passed": false,
+    "source_checked": true,
+    "claim_support": [
+      false
+    ],
+    "notes": "Đối chiếu Điều 95 toàn bộ khoản 1–3: quyết định giao đất và điều kiện giấy tờ thay thế nằm khoản 2, không phải khoản 1 như claim đã ghi; verifier đã bỏ sót. Không đạt; giữ attempt để regression."
+  },
+  "S07:baseline:75c880942d9fcb19eea57fe040f0a278cfd42d4dca9e11d74281734dc21b79bf": {
+    "passed": true,
+    "source_checked": true,
+    "claim_support": [
+      true
+    ],
+    "notes": "Điều 104 khoản 1 đoạn 104-1-0 chứng minh tháo dỡ, di chuyển, lắp đặt và thiệt hại khi di chuyển máy móc/dây chuyền. Không tạo số tiền hoặc đơn giá. Khoản 2 về mức của UBND tỉnh không được hỏi."
+  },
+  "S07:agentic:fbdb443cc8b843d45910763014e60ef43d7a0605d2f693564e8496ad3f84ba67": {
+    "passed": true,
+    "source_checked": true,
+    "claim_support": [
+      true
+    ],
+    "notes": "Điều 104 khoản 1 đoạn 104-1-0 chứng minh đúng hai nhóm chi phí và điều kiện phải di chuyển máy móc/dây chuyền; không tạo đơn giá hoặc tiền."
+  },
+  "S08:baseline:1da8069d3970af8b7d260090c93524c3c96b4b0f585f3acfcabd233b7b00d70b": {
+    "passed": false,
+    "source_checked": true,
+    "claim_support": [
+      false
+    ],
+    "notes": "Các nhóm nội dung và điều kiện Điều 111/105 có trong Điều 108 khoản 1 nhưng đáp án đổi ký hiệu đ),e) thành e),f); không khớp điểm pháp luật được dẫn. Chưa đạt source check chính xác."
+  },
+  "S08:agentic:5cd4c9413f42b2be86c131c172fbfccc07f61e833e1f9d0f4892f463ddad3cfe": {
+    "passed": false,
+    "source_checked": true,
+    "claim_support": [
+      false
+    ],
+    "notes": "Đối chiếu đoạn 106-1-0: hỗ trợ tái định cư là điểm đ), hỗ trợ tháo dỡ là điểm e). Claim gán thành e),f); giữ lỗi để kiểm tra sửa ký hiệu trước phát hành."
   }
 }

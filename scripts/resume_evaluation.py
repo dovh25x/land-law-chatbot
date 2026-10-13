@@ -14,7 +14,7 @@ import sys
 import time
 
 
-def full_turn_cooldown(provider_wait, quota, failures):
+def full_turn_cooldown(provider_wait, quota, failures, observed_paired_tokens=0):
     """Estimate recovery for work already lost, from observed provider data."""
     delay = provider_wait
     if quota.get('scope') == 'TPD' and all(isinstance(quota.get(k), int)
@@ -22,8 +22,23 @@ def full_turn_cooldown(provider_wait, quota, failures):
         deficit = quota['requested'] - max(0, quota['limit'] - quota['used'])
         if deficit > 0:
             consumed = max((r['result'].get('token_usage', 0) for r in failures), default=0)
-            delay += math.ceil(consumed * provider_wait / deficit)
+            # The paired mode may have already completed this same question.
+            # Use its measured full-turn cost when the first request was
+            # blocked, so a subsequent draft does not starve its verifier.
+            remaining_work = max(consumed, observed_paired_tokens - quota['requested'])
+            delay += math.ceil(remaining_work * provider_wait / deficit)
     return delay
+
+
+def wait_for_recovery(seconds, credentials_changed):
+    """A newly supplied credential needs a new capacity check, not old backoff."""
+    until = time.monotonic() + seconds
+    while time.monotonic() < until:
+        if credentials_changed():
+            print(json.dumps({'provider_credentials_changed': True,
+                'action': 'recheck_capacity_with_same_generation_configuration'}), flush=True)
+            return
+        time.sleep(min(5, max(0, until - time.monotonic())))
 
 
 def main():
@@ -38,6 +53,16 @@ def main():
     from landlaw.evaluation import configuration_fingerprint
     settings = Settings()
     configuration = configuration_fingerprint(settings)
+    def credentials_changed():
+        nonlocal settings
+        current = Settings()
+        if configuration_fingerprint(current) != configuration:
+            raise SystemExit('Configuration changed; resume explicitly under the new fingerprint')
+        if (current.llm_provider == 'groq' and current.groq_api_key.get_secret_value()
+                and current.groq_api_key.get_secret_value() != settings.groq_api_key.get_secret_value()):
+            settings = current
+            return True
+        return False
     # One runner per fixed release/configuration, including independent shells.
     import fcntl
     lock_path = settings.reports_dir / f'.resume-{args.release_id}-{configuration}.lock'
@@ -53,7 +78,7 @@ def main():
                 parser.error('--not-before requires a timezone')
             delay = max(0, when.timestamp() - time.time())
             print(json.dumps({'provider_cooldown_seconds': round(delay, 2)}), flush=True)
-            time.sleep(delay)
+            wait_for_recovery(delay, credentials_changed)
         while True:
             # Changing .env or generation code requires a separate run, never
             # an invisible model switch inside this checkpoint.
@@ -96,12 +121,15 @@ def main():
             # refilled tokens on another draft, starving verification forever.
             # Infer refill timing from actual provider quota/Retry-After and
             # include tokens already consumed by this same failed turn.
-            delay = full_turn_cooldown(provider_wait, quota, failures)
+            failed_cases = {r['case_id'] for r in failures}
+            observed_paired_tokens = max((r['result'].get('token_usage', 0) for r in records
+                if r['case_id'] in failed_cases and r['result']['status'] not in {'limited', 'error'}), default=0)
+            delay = full_turn_cooldown(provider_wait, quota, failures, observed_paired_tokens)
             next_attempt = datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(seconds=delay)
             print(json.dumps({'provider_retry_after_seconds': provider_wait,
                 'estimated_full_turn_wait_seconds': delay,
                 'resume_at': next_attempt.isoformat(), 'run_id': report['run_id']}), flush=True)
-            time.sleep(delay)
+            wait_for_recovery(delay, credentials_changed)
 
 
 if __name__ == '__main__':

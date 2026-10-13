@@ -1,9 +1,9 @@
 {
   "status": "awaiting_review",
   "dataset_sha256": "56ccf0b0dfe9e13f8215df8cadf195ecc733560e0974d7281373338cf4a27e35",
-  "generated_at": "2026-10-13T14:08:01.937592+00:00",
+  "generated_at": "2026-10-13T14:45:28.038139+00:00",
   "cases": 20,
-  "completed_pairs": 4,
+  "completed_pairs": 5,
   "results": [
     {
       "mode": "baseline",
@@ -15,16 +15,16 @@
       "claim_support_rate": null,
       "unsupported_claims": null,
       "source_review_complete": false,
-      "p95_seconds": 11.055,
+      "p95_seconds": 16.654,
       "llm_calls": 4,
       "embedding_calls": 5,
       "tool_calls": 33,
       "critical_failed": [],
-      "limited_or_error": 1
+      "limited_or_error": 0
     },
     {
       "mode": "agentic",
-      "completed": 4,
+      "completed": 5,
       "reviewed": 4,
       "recall_at_8": null,
       "answer_pass_rate": null,
@@ -33,11 +33,11 @@
       "unsupported_claims": null,
       "source_review_complete": false,
       "p95_seconds": 11.15,
-      "llm_calls": 3,
+      "llm_calls": 4,
       "embedding_calls": 4,
-      "tool_calls": 31,
+      "tool_calls": 33,
       "critical_failed": [],
-      "limited_or_error": 0
+      "limited_or_error": 1
     }
   ],
   "acceptance_passed": false,
@@ -56,9 +56,9 @@
   "configuration_sha256": "2126675f376cde8cef7efd8ffb79dd0ce3b5bc46eb03a6f2a187e8fc02eabcec",
   "execution_concurrency": 1,
   "attempt_history": {
-    "attempts": 9,
-    "retry_attempts": 0,
-    "limited_or_error_attempts": 1,
+    "attempts": 11,
+    "retry_attempts": 1,
+    "limited_or_error_attempts": 2,
     "scope": "Every new attempt is retained; legacy checkpoints imported as latest results only.",
     "directory": "reports/runs/corpus-de584c31fc95f9a2-openai_gpt-oss-20b-smoke-56ccf0b0-2126675f-c1/attempts"
   },
@@ -66,6 +66,6 @@
   "source_audit_passed": true,
   "source_audit_sha256": "363afc7997185c2bc1528a869efd6b3eb851945597925a17612a573c5a9340dd",
   "runtime_tests_passed": true,
-  "runtime_tests_sha256": "08ba0d4b4055d15d42aa4baeff46b1605ad5de99f5d59505d83225f4a09aa34e",
+  "runtime_tests_sha256": "62d9f78bd3a78d815b665709698d62c9e701f6d0413b7f81e183fd808d174d58",
   "quality_metrics_status": "withheld_pending_full_source_review"
 }

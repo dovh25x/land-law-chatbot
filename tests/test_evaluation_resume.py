@@ -22,7 +22,21 @@ def test_first_request_quota_wait_is_not_artificially_extended():
     assert full_turn_cooldown(1512, quota, [{'result': {'token_usage': 0}}]) == 1512
 
 
+def test_actual_paired_cost_funds_verifier_after_first_request_was_blocked():
+    # Subsequent S05 agentic telemetry; baseline had used 6,921 tokens for
+    # its complete answer. Waiting for only 3,348 tokens loses another draft.
+    quota = {'scope': 'TPD', 'limit': 200000, 'used': 199730, 'requested': 3348}
+    assert full_turn_cooldown(1330, quota, [{'result': {'token_usage': 0}}], 6921) == 2874
+
+
 def test_does_not_infer_daily_recovery_from_minute_or_missing_telemetry():
     failure = [{'result': {'token_usage': 3483}}]
     assert full_turn_cooldown(60, {'scope': 'TPM', 'limit': 8000, 'used': 7980, 'requested': 3500}, failure) == 60
     assert full_turn_cooldown(60, {}, failure) == 60
+
+
+def test_new_credential_interrupts_old_account_cooldown_without_a_request(monkeypatch):
+    sleeps = []
+    monkeypatch.setattr(module.time, 'sleep', lambda seconds: sleeps.append(seconds))
+    module.wait_for_recovery(1330, lambda: True)
+    assert sleeps == []

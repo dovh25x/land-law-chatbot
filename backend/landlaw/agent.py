@@ -626,6 +626,9 @@ class Agent:
                 "with citation_ids from allowed_citation_ids (C1, C2...), never document IDs. summary is not displayed. "
                 "answered requires at least one sourced claim. Each cited passage must prove the exact rule, actor, scope "
                 "and applicable date: a preamble or act name is insufficient. Do not substitute a similar clause for the one asked. "
+                "Preserve numbered clauses and legal point letters exactly; use bullets if you are renumbering a summary. "
+                "When alternative conditions apply only to cases defined in another clause, explicitly retain that "
+                "eligibility prerequisite, even when answering whether a certificate is the sole condition. "
                 "A general rule can be answered without private-case facts. For case-specific rights, ask for missing land type, "
                 "papers and decision/approved-plan dates; never ask the user to provide law already in the corpus. "
                 "No guaranteed household/parcel rights or compensation amounts from general project information. "
@@ -816,6 +819,35 @@ class Agent:
                     structural_issues.append(f'Claim {index}: không dùng nhãn hiệu lực để áp dụng quyền lợi từ văn bản tương lai')
             cited_text=' '.join(evidence[i].chunk.text for i in claim.citation_ids if i in evidence)
             normalized_source=normalize(cited_text)
+            prerequisites=re.findall(r'cac truong hop quy dinh tai khoan (\d+) dieu nay duoc .{0,120}?khi co',normalized_source)
+            if prerequisites and 'dieu kien' in normalized_claim and 'duoc' in normalized_claim:
+                all_claims=normalize(' '.join(c.text for c in draft.claims))
+                for clause in prerequisites:
+                    if not re.search(rf'(?:thuoc|truong hop|doi tuong).{{0,80}}khoan {clause}\b|\bkhoan {clause}.{{0,80}}(?:truong hop|doi tuong|thuoc)',all_claims):
+                        structural_issues.append(f'Claim {index}: các điều kiện thay thế chỉ áp dụng cho trường hợp thuộc khoản {clause}; cần nêu điều kiện về đối tượng trước khi kết luận')
+            for clause,article in re.findall(r'\bkhoan\s+(\d+)\s+dieu\s+(\d+[a-z]?)\b',normalized_claim):
+                reference=f'khoan {clause} dieu {article}'
+                # A cross-reference in the cited operative text can prove its
+                # own reference. Otherwise a local clause attribution needs
+                # the actual numbered clause, not just the article heading or
+                # a continuation belonging to another numbered clause.
+                if reference in normalized_source:
+                    continue
+                local=[evidence[i] for i in claim.citation_ids if i in evidence and
+                       re.match(rf'^dieu {article}(?:\s|$)',normalize(evidence[i].chunk.locator))]
+                if local and not any(re.search(rf'(?<![\d/])\b{clause}\.\s',normalize(e.chunk.text)) for e in local):
+                    structural_issues.append(f'Claim {index}: chưa có đoạn khoản {clause} Điều {article} được dẫn để chứng minh số khoản; không thay bằng khoản khác')
+            point_pattern=r'\b([a-zđ])\)\s+(.+?)(?=\s+[a-zđ]\)\s|;|$)'
+            claimed_points=re.findall(point_pattern,normalized_claim)
+            source_points=re.findall(point_pattern,normalized_source)
+            if len(claimed_points)>1 and len(source_points)>1:
+                def point_body(body):
+                    return ' '.join(word for word in re.findall(r'[\w]+',body) if word not in {'de','viec'})
+                for letter,body in claimed_points:
+                    prefix=' '.join(point_body(body).split()[:5])
+                    if not any(letter==source_letter and prefix in point_body(source_body)
+                               for source_letter,source_body in source_points):
+                        structural_issues.append(f'Claim {index}: ký hiệu điểm {letter}) không khớp nội dung của danh sách trong nguồn; giữ đúng ký hiệu hoặc dùng gạch đầu dòng')
             references=re.findall(r'\b(?:diem\s+[a-zđ]\s+)?khoan\s+\d+\s+dieu\s+\d+[a-z]?\b',
                                   normalize(state['request'].message)+' '+normalized_claim)
             expanded_claim=re.sub(r'\bubnd\b','uy ban nhan dan',normalized_claim)
@@ -908,6 +940,8 @@ class Agent:
             "rule, actor, scope and applicability. Act names/preambles do not prove provisions. Do not replace the "
             "requested clause with another similar one. Record issues for unsupported statements in next_steps or "
             "failure to answer the direct question. Preserve Chủ tịch UBND versus UBND exactly. "
+            "Check every stated clause number and point letter against its operative text: an article heading, "
+            "a reference to eligible cases, or a continuation of another clause cannot prove the attributed clause. "
             "For every supported index and EVERY citation_id, select one or more supporting_spans by exact span_id "
             "from that citation's source_spans. The server extracts verbatim text: do not invent IDs or paraphrase quotes. "
             "All spans together cover the full cited passage; read continuation spans when one is incomplete. "
