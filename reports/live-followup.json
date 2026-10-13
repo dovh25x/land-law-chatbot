@@ -1,0 +1,156 @@
+{
+  "checked_at": "2026-10-13T16:49:01.855227+00:00",
+  "passed": false,
+  "checks": {
+    "answered": false,
+    "correct_replaced_decisions_present": false,
+    "source_article_2_cited": false,
+    "same_generation_configuration": true,
+    "history_four_turns": true
+  },
+  "release": "corpus-de584c31fc95f9a2",
+  "configuration_sha256": "b059cbbd63657681e6520f095c156b107423911a999e0845d57a94568a107444",
+  "model": "openai/gpt-oss-20b",
+  "status": "limited",
+  "content": "Lượt hỏi đã đạt giới hạn thực thi. Hãy tách câu hỏi hoặc thử lại.",
+  "retry_after": null,
+  "elapsed_ms": 55700,
+  "llm_calls": 6,
+  "tool_calls": 12,
+  "token_usage": 10181,
+  "claims": [],
+  "citations": [],
+  "trace": [
+    {
+      "step": "plan",
+      "tool": null,
+      "summary": "Đã chọn 0 công cụ; chế độ agentic.",
+      "document_ids": [],
+      "elapsed_ms": 2071
+    },
+    {
+      "step": "tool",
+      "tool": "search_law",
+      "summary": "Thu được 8 đoạn chứng cứ.",
+      "document_ids": [
+        "luat-116-2025",
+        "luat-quy-hoach-do-thi-2024",
+        "nd-124-2020",
+        "nd-151-2025",
+        "nd-226-2025",
+        "qd-40-2025-hanoi"
+      ],
+      "elapsed_ms": 3758
+    },
+    {
+      "step": "tool",
+      "tool": "open_article",
+      "summary": "Đã mở văn bản có quan hệ pháp lý để đối chiếu phạm vi.",
+      "document_ids": [
+        "nd-155-2026"
+      ],
+      "elapsed_ms": 3941
+    },
+    {
+      "step": "tool",
+      "tool": "open_article",
+      "summary": "Đã mở văn bản có quan hệ pháp lý để đối chiếu phạm vi.",
+      "document_ids": [
+        "nd-155-2026"
+      ],
+      "elapsed_ms": 4120
+    },
+    {
+      "step": "tool",
+      "tool": "open_article",
+      "summary": "Đã mở điều khoản nguồn của quan hệ sửa đổi/thay thế.",
+      "document_ids": [
+        "nd-124-2020"
+      ],
+      "elapsed_ms": 4477
+    },
+    {
+      "step": "tool",
+      "tool": "open_article",
+      "summary": "Đã mở văn bản có quan hệ pháp lý để đối chiếu phạm vi.",
+      "document_ids": [
+        "luat-khieu-nai-2011"
+      ],
+      "elapsed_ms": 4650
+    },
+    {
+      "step": "applicability",
+      "tool": "check_effectivity",
+      "summary": "Đã kiểm tra 3 quan hệ pháp lý theo thời điểm.",
+      "document_ids": [
+        "nd-124-2020"
+      ],
+      "elapsed_ms": 4650
+    },
+    {
+      "step": "tool",
+      "tool": "open_article",
+      "summary": "Đã mở văn bản có quan hệ pháp lý để đối chiếu phạm vi.",
+      "document_ids": [
+        "luat-144-2025"
+      ],
+      "elapsed_ms": 4833
+    },
+    {
+      "step": "tool",
+      "tool": "open_article",
+      "summary": "Đã mở văn bản có quan hệ pháp lý để đối chiếu phạm vi.",
+      "document_ids": [
+        "nd-178-2025"
+      ],
+      "elapsed_ms": 5013
+    },
+    {
+      "step": "tool",
+      "tool": "open_article",
+      "summary": "Đã mở văn bản có quan hệ pháp lý để đối chiếu phạm vi.",
+      "document_ids": [
+        "luat-dat-dai-2024"
+      ],
+      "elapsed_ms": 5539
+    },
+    {
+      "step": "tool",
+      "tool": "open_article",
+      "summary": "Đã mở văn bản có quan hệ pháp lý để đối chiếu phạm vi.",
+      "document_ids": [
+        "luat-nha-o-2023"
+      ],
+      "elapsed_ms": 6065
+    },
+    {
+      "step": "tool",
+      "tool": "open_article",
+      "summary": "Đã mở văn bản có quan hệ pháp lý để đối chiếu phạm vi.",
+      "document_ids": [
+        "luat-thu-do-2024"
+      ],
+      "elapsed_ms": 6593
+    },
+    {
+      "step": "applicability",
+      "tool": "check_effectivity",
+      "summary": "Đã kiểm tra 5 quan hệ pháp lý theo thời điểm.",
+      "document_ids": [
+        "luat-quy-hoach-do-thi-2024"
+      ],
+      "elapsed_ms": 6593
+    },
+    {
+      "step": "synthesis",
+      "tool": null,
+      "summary": "Đã tạo bản trả lời; đang kiểm tra trước khi hiển thị.",
+      "document_ids": [],
+      "elapsed_ms": 19981
+    }
+  ],
+  "full_acceptance_passed": false,
+  "source_review_status": "reviewed_operational_failure_no_claims",
+  "prior_attempt": "reports/live-attempts/followup-provider-limit-20261013.json",
+  "scope": "Second live followup attempt after the prior provider Retry-After elapsed; genuine preceding source answer, no history fixtures or model changes. Separate from frozen paired benchmark."
+}

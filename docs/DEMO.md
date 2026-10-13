@@ -10,3 +10,5 @@ Mở https://hanoi-land-law.pages.dev. Corpus `corpus-de584c31fc95f9a2` đã cô
 6. **Phút 8–10:** xem báo cáo và giải thích trạng thái pending/null, cấu hình/release được đánh giá. Trình bày pipeline, vector Colab/CPU runtime, giới hạn workflow, session isolation, SSE sau verifier, backup/restore và CI. Không tuyên bố agentic luôn tốt hơn baseline hoặc lấy hai mẫu latency làm p95.
 
 Receipt: `reports/live-demo.json`, `live-ui.json`, `technical-release-gate.json`, `publication.json`, `runtime-tests.json` và `ci.json`. Full gate 20 cặp smoke và nghiệm thu 80 câu vẫn giữ nguyên; xem `IMPLEMENTATION_STATUS.md` và `OPERATIONS.md` để tiếp tục.
+
+Hạn chế đã biết: ca hỏi tiếp nối “Văn bản thay thế vừa nêu thay thế những quyết định nào?” sau câu QĐ56→QĐ40 chưa thành công trong hai lượt live vì throttling/budget và truy xuất chưa giải tham chiếu ổn định. Luồng lưu/tải lại hội thoại đã đạt; không trình bày hai việc này là một. Trong demo có thể nêu rõ số văn bản/điều để tra cứu, và trình bày ca limited như hạn chế đã ghi nhận.

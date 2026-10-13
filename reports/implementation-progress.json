@@ -1,5 +1,5 @@
 {
-  "checked_at": "2026-10-13T16:36:07.924688+00:00",
+  "checked_at": "2026-10-13T16:53:58.110157+00:00",
   "release": "corpus-de584c31fc95f9a2",
   "configuration_sha256": "b059cbbd63657681e6520f095c156b107423911a999e0845d57a94568a107444",
   "run_id": "corpus-de584c31fc95f9a2-openai_gpt-oss-20b-smoke-56ccf0b0-b059cbbd-c1",
@@ -16,5 +16,15 @@
   "full_acceptance_passed": false,
   "scope_change": "User prioritized technical demo and permitted minor quality imperfections; full smoke/acceptance gates unchanged.",
   "live_https_smoke_passed": true,
-  "live_ui_passed": true
+  "live_ui_passed": true,
+  "deployed_commit": "3aec9245ed6f01667a934c0b2f20e21f43baea76",
+  "deployed_ci_run": 38431929277,
+  "postpublication_backup_run": 38432785890,
+  "restart_persistence_passed": true,
+  "live_followup_passed": false,
+  "known_limitations": [
+    "Frozen 80-case acceptance and full paired smoke remain incomplete.",
+    "Natural-language followup failed twice: provider throttling, then six-call/twelve-tool workflow budget; no unsupported answer released.",
+    "Earlier baseline retrieval diagnostic below original Recall@8 acceptance target."
+  ]
 }
