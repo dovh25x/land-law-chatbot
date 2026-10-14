@@ -13,6 +13,14 @@ on:
       limit:
         description: Maximum pending mode executions for this checkpoint
         default: '40'
+      concurrency:
+        description: Paired execution concurrency; API single-user latency measured separately
+        type: choice
+        options: ['1', '2']
+        default: '2'
+      case_ids:
+        description: Optional priority IDs, comma separated; full suite denominator is unchanged
+        default: ''
 permissions:
   contents: read
 concurrency:
@@ -40,6 +48,8 @@ jobs:
       EVALUATION_RELEASE: ${{ inputs.release_id }}
       EVALUATION_SPLIT: ${{ inputs.split }}
       EVALUATION_LIMIT: ${{ inputs.limit }}
+      EVALUATION_CONCURRENCY: ${{ inputs.concurrency || '1' }}
+      EVALUATION_CASE_IDS: ${{ inputs.case_ids }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5

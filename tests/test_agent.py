@@ -888,3 +888,23 @@ async def test_expired_legal_rule_requires_its_actual_operative_transition_even_
     assert bool(result['verification'].supported_claim_indexes)==(timing in {'before_expiry','operative_transition'})
     if timing in {'after_expiry','unrelated_transition'}:
         assert any('hết hiệu lực' in issue for issue in result['verification'].issues)
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize('mode',['baseline','agentic'])
+async def test_clinical_request_stops_without_provider_or_retrieval(store,settings,mode):
+    release(store);sid,_=session(store)
+    provider=FakeProvider(settings,failure=ProviderUnavailable('Must not be called'))
+    async def emit(event):pass
+    result=await Agent(store,provider).run(ChatRequest(session_id=sid,message='Tư vấn phác đồ điều trị viêm phổi và liều kháng sinh.',mode=mode),emit)
+    assert result.status=='insufficient_evidence'
+    assert result.llm_calls==0 and result.tool_calls==0 and result.embedding_calls==0
+    assert not result.verified_claims and not result.citations and 'ngoài phạm vi' in result.content
+
+
+@pytest.mark.asyncio
+async def test_hospital_land_planning_stays_in_scope(store,settings):
+    release(store);sid,_=session(store)
+    async def emit(event):pass
+    result=await Agent(store,FakeProvider(settings)).run(ChatRequest(session_id=sid,message='Quy hoạch bệnh viện có đồng nghĩa đã quyết định thu hồi đất không?',mode='agentic'),emit)
+    assert result.tool_calls>0 and 'ngoài phạm vi' not in result.content

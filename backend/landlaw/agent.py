@@ -302,7 +302,12 @@ class Agent:
             law_match=bool(year and title.startswith('luat ') and 'sua doi' not in title
                 and re.search(r'\b'+re.escape(re.sub(r'\s+\d{4}$','',title))+r'(?:\s+nam)?\s+'+year[1]+r'\b',question))
             if (number and number in question) or law_match:named.append(doc['id'])
-        if private_entitlement_check(request.message):
+        legal_topic=any(term in question for term in ('thu hoi','boi thuong','tai dinh cu','quy hoach','dat dai','khieu nai','quyen su dung dat','ho tro'))
+        unrelated=any(term in question for term in ('phac do dieu tri','lieu khang sinh','chan doan benh','ly hon','luat hoa ky','luat hoa ki'))
+        if unrelated and not legal_topic:
+            state['plan']=Plan(out_of_scope=True)
+            await self.event(state,'routing','Câu hỏi thuộc lĩnh vực ngoài phạm vi pháp luật đất đai và quy hoạch Hà Nội.')
+        elif private_entitlement_check(request.message):
             tool='search_project' if request.project and request.mode=='agentic' else 'search_law'
             state['plan']=Plan(tools=[ToolCall(name=tool,query=request.message[:1000])])
             await self.event(state,'routing','Yêu cầu xác nhận quyền lợi hộ cụ thể cần hồ sơ; tra cứu nguồn và hỏi dữ kiện trước khi kết luận.',tool)
@@ -689,6 +694,9 @@ class Agent:
                 "papers and decision/approved-plan dates; never ask the user to provide law already in the corpus. "
                 "No guaranteed household/parcel rights or compensation amounts from general project information. "
                 "official_news is context only (kind=context). unverified cannot prove current law; historical needs the "
+                "For a question about what an official news article establishes, cite kind=context for its stated "
+                "approval stage and limits: a report of planning tasks does not itself establish approved plans or "
+                "individual land recovery. Do not require the unpublished original decision just to explain those limits. "
                 "relevant historical or transitional rule. future may support kind=applicability stating NOT yet effective, "
                 "never current rights. provision_specific requires the exact clause's dates, not the whole article's status. "
                 "Preserve actors exactly: Chủ tịch UBND is different from UBND. Explain material conditions/exceptions "
@@ -801,6 +809,11 @@ class Agent:
 
     async def verify(self, state):
         draft = state["draft"]
+        if state.get('plan',Plan()).out_of_scope or draft.out_of_scope:
+            # Finish renders a fixed scope notice and discards all claims.
+            state['verification']=Verification()
+            await self.event(state,'verification','Chỉ trả thông báo ngoài phạm vi; không có kết luận pháp lý hoặc hướng dẫn chuyên ngành khác.')
+            return state
         if not state["evidence"]:
             state["verification"] = Verification()
             return state
