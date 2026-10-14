@@ -273,6 +273,15 @@ class Agent:
     async def plan(self, state):
         request = state["request"]
         question=normalize(request.message)
+        contextual_query=request.message
+        if not re.search(r'\d{1,6}/(?:19|20)\d{2}',question) and any(
+                phrase in question for phrase in ('van ban do','van ban vua neu','van ban thay the vua neu','quyet dinh nay')):
+            last=next((m for m in reversed(state['history']) if m['role']=='assistant'),{})
+            cited={c.get('document_id') for c in last.get('citations',[]) if c.get('document_id')}
+            known={d['id']:d for d in (state['release'] or {}).get('documents',[])}
+            if len(cited)==1 and next(iter(cited)) in known:
+                number=known[next(iter(cited))].get('document_number')
+                if number:contextual_query=f'{number}: {request.message}'
         literal_numbers=set(re.findall(r'(?<![\d/])\d{1,6}/(?:19|20)\d{2}(?!/\d)',question))
         known_numbers={'/'.join(normalize(d.get('document_number') or '').split('/')[:2])
                        for d in (state['release'] or {}).get('documents',[])}
@@ -300,8 +309,11 @@ class Agent:
         elif request.mode == "baseline":
             prior = next((m['content'] for m in reversed(state['history']) if m['role']=='user'), '')
             # Baseline also receives the same conversational context; no planner call.
-            query = (prior[:500]+' '+request.message) if prior else request.message
+            query = contextual_query if contextual_query!=request.message else ((prior[:500]+' '+request.message) if prior else request.message)
             state["plan"] = Plan(tools=[ToolCall(name="search_law", query=query[:1000])])
+        elif contextual_query!=request.message:
+            state['plan']=Plan(tools=[ToolCall(name='search_law',query=contextual_query[:1000])])
+            await self.event(state,'routing','Đã đối chiếu tham chiếu với nguồn trong lượt trả lời trước; tiếp tục tra văn bản đó.','search_law')
         elif direct_effectivity or future_date_question:
             state['plan']=Plan(tools=[ToolCall(name='search_law',query=request.message[:1000])])
             await self.event(state,'routing','Đã nhận diện số văn bản và yêu cầu kiểm tra hiệu lực; dùng tra cứu trực tiếp.',
@@ -317,6 +329,8 @@ class Agent:
                              'search_project')
         else:
             catalogue=self.catalogue(state['release'])
+            suggested=await asyncio.to_thread(self.store.article_candidates,request.message,
+                                              state['release']['id'],state['as_of'],request.project)
             catalogue_fields=None
             if self.provider.settings.llm_provider in {'groq','nvidia'}:
                 catalogue_fields=['id','document_number','title','project','effective_from','effective_to']
@@ -326,6 +340,8 @@ class Agent:
                 state["plan"] = await self.provider.generate(Plan,
                     "Select at most three read-only tool calls: search_law for legal evidence; search_project for project records; "
                     "open_article for a known document_id and locator; check_effectivity for a known document; "
+                    "candidate_articles contain actual source headings, not conclusions. Prefer opening the relevant "
+                    "article(s) for a substantive legal question; search_law can supplement unknown provisions. "
                     "normalize_place for place aliases. Use IDs from catalogue, never invent IDs. "
                     "Prefer one call for a simple question; use search_law when the document or provision is unknown. "
                     "Out_of_scope only for questions unrelated to Hanoi land law/planning. General rules need no invented private case. "
@@ -334,6 +350,7 @@ class Agent:
                     "not evidence; search for available related acts instead.",
                     {"question": redact(request.message), "project": request.project, "as_of": str(state["as_of"]),
                      "history": state["history"], "catalogue": catalogue, 'catalogue_fields':catalogue_fields,
+                     "candidate_articles":suggested,
                      "coverage_gaps":(state['release'] or {}).get('coverage_gaps',[])}, state["budget"])
             except ProviderUnavailable as exc:
                 if not exc.format_failure:raise
@@ -370,7 +387,7 @@ class Agent:
             state['retrieval_degraded']=True
             await self.event(state, "retrieval", "Embedding chưa khả dụng; dùng tìm kiếm từ khóa trong lượt này.")
         hits = await asyncio.to_thread(self.store.search, query, vector, project,
-                                      (state["release"] or {}).get("id"), (state['release'] or {}).get('embedding_model', self.provider.settings.embedding_model))
+                                      (state["release"] or {}).get("id"), (state['release'] or {}).get('embedding_model', self.provider.settings.embedding_model),state['as_of'])
         # An explicitly requested missing historical document can still have a
         # verified replacement. Open that operative clause before generic hits.
         release = state['release'] or {}
@@ -594,7 +611,8 @@ class Agent:
                 # still retains eight primary hits and related evidence in trace.
                 projected_docs={k:v for k,v in documents.items()
                                 if k in {p['document_id'] for p in passages} | {document_id}}
-                if len(json.dumps([passages+[passage],list(projected_docs.values())],ensure_ascii=False))>7000:
+                context_limit=32000 if self.provider.settings.llm_provider=='nvidia' else 7000
+                if len(json.dumps([passages+[passage],list(projected_docs.values())],ensure_ascii=False))>context_limit:
                     if not any(p['document_id']==document_id for p in passages):documents.pop(document_id,None)
                     continue
             passages.append(passage)
@@ -1042,7 +1060,7 @@ class Agent:
             "before supporting original rules on prices, deadlines, publicity, assets or assistance. "
             "If the necessary policy or supporting source is absent, exclude that index, set needs_more_evidence and "
             "a targeted followup_query in Vietnamese. Do not invent evidence or treat coverage_gaps as proof.",
-            {"question": redact(state["request"].message), "as_of": str(state["as_of"]),
+            {"question": redact(state["request"].message), "as_of": str(state["as_of"]),"history":state.get('history',[]),
              "draft": checked_draft, "evidence": model_context,'source_spans':model_spans,'documents':documents,
              "coverage_gaps": (state['release'] or {}).get('coverage_gaps', []),
              "unresolved_relations": (state['release'] or {}).get('unresolved_relations', [])}, state["budget"])

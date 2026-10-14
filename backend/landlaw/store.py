@@ -15,6 +15,7 @@ from pathlib import Path
 from .config import Settings
 from .models import Chunk, Document, Evidence, Relation
 from .security import digest, normalize, utcnow
+from .retrieval import HeadingIndex, terms
 
 SQLITE_SCHEMA = """
 CREATE TABLE IF NOT EXISTS releases(id TEXT PRIMARY KEY, payload TEXT NOT NULL, created_at TEXT NOT NULL);
@@ -56,6 +57,7 @@ class Store:
         self.pool = None
         self.conn = None
         self._metadata_cache = OrderedDict()
+        self._heading_cache = OrderedDict()
         if self.postgres:
             from psycopg.rows import dict_row
             from psycopg_pool import ConnectionPool
@@ -402,7 +404,26 @@ class Store:
         return [Relation.model_validate(r) for r in (release or {}).get("relations", [])
                 if r["source_id"] == doc_id or r["target_id"] == doc_id]
 
-    def search(self, query, vector=None, project=None, release_id=None, embedding_model=None):
+    def heading_index(self, release_id):
+        with self._lock:
+            headings=self._heading_cache.get(release_id)
+            if headings is None:
+                rows=self.rows("SELECT id,document_id,locator,substr(text,1,700) AS prefix FROM chunks WHERE release_id=? AND substr(id,length(id)-6)<>'-parent'",(release_id,))
+                headings=HeadingIndex(rows)
+                self._heading_cache[release_id]=headings
+                while len(self._heading_cache)>1:self._heading_cache.popitem(last=False)
+            return headings
+
+    def article_candidates(self, query, release_id, as_of, project=None):
+        docs=self.documents(release_id)
+        eligible={d.id for d in docs if (not project or d.project in {None,project})
+                  and (not d.effective_from or d.effective_from<=as_of)
+                  and (not d.effective_to or as_of<d.effective_to)}
+        # Historical documents remain in the catalogue and searchable tools;
+        # this suggestion list prioritizes headings at the requested time.
+        return self.heading_index(release_id).articles(query,eligible)
+
+    def search(self, query, vector=None, project=None, release_id=None, embedding_model=None, as_of=None):
         release_id = release_id or self.state("active_release")
         if not release_id:
             return []
@@ -424,9 +445,16 @@ class Store:
             title=re.sub(r'\s+\d{4}$','',title)
             return bool(re.search(r'\b'+re.escape(title)+r'(?:\s+nam)?\s+'+year[1]+r'\b',normalized_query))
         exact_docs = [d.id for d in docs.values() if exact_document(d)]
+        headings = self.heading_index(release_id)
+        eligible={d.id for d in docs.values() if not project or d.project in {None,project}}
+        heading_scores=headings.rank(query,eligible,exact_docs)
+        heading_ids=[item[1] for item in heading_scores]
+        heading_rows=self.rows(f"SELECT {projection} FROM chunks c JOIN documents d ON d.id=c.document_id AND d.release_id=c.release_id WHERE c.release_id=? AND c.id IN ({','.join('?' for _ in heading_ids)})", (release_id,*heading_ids)) if heading_ids else []
+        heading_lookup={r['id']:r for r in heading_rows}
+        heading_rows=[heading_lookup[i] for i in heading_ids]
         article = re.search(r"\bdieu\s+(\d+[a-z]?)\b", normalize(query))
         exact = []
-        if exact_docs:
+        if exact_docs and article:
             exact_sql = " AND d.id IN (" + ",".join("?" for _ in exact_docs) + ")"
             exact_params = [*params, *exact_docs]
             if article:
@@ -440,9 +468,9 @@ class Store:
                 WHERE c.release_id=? AND c.search_tsv @@ websearch_to_tsquery('simple',?)""" + scope_sql +
                 " ORDER BY rank DESC,c.id LIMIT 20", (normalize(query), release_id, normalize(query), *params[1:]))
             if len(lexical) < 8:
-                terms = list(dict.fromkeys(re.findall(r"[a-z0-9]{2,}", normalize(query))))[:40]
-                if terms:
-                    disjunction = " OR ".join(terms)
+                keywords = list(dict.fromkeys(terms(query)))[:40]
+                if keywords:
+                    disjunction = " OR ".join(keywords)
                     fallback = self.rows(f"""SELECT {projection}, ts_rank_cd(c.search_tsv, websearch_to_tsquery('simple',?)) AS rank
                         FROM chunks c JOIN documents d ON d.id=c.document_id AND d.release_id=c.release_id
                         WHERE c.release_id=? AND c.search_tsv @@ websearch_to_tsquery('simple',?)""" + scope_sql +
@@ -473,7 +501,7 @@ class Store:
                 semantic = sorted((r for r in candidates if r["embedding"] and r["embedding_model"] == embedding_model
                     and len(json.loads(r['embedding']))==len(vector)), key=cosine, reverse=True)[:20]
         scores, rows_by_id = {}, {}
-        for branch in (lexical, semantic, exact):
+        for branch in (lexical, semantic, heading_rows, exact):
             for position, row in enumerate(branch, 1):
                 scores[row["id"]] = scores.get(row["id"], 0) + 1 / (60 + position)
                 rows_by_id[row["id"]] = row
@@ -483,6 +511,11 @@ class Store:
                 scores[chunk_id] += 0.1
             if article and row['id'] in {r['id'] for r in exact}:
                 scores[chunk_id] += 0.2
+            doc=docs[row['document_id']]
+            temporal=any(t in normalized_query for t in ('lich su','chuyen tiep','hieu luc','thay the','bai bo','nam 2023','nam 2013'))
+            if as_of and doc.id not in exact_docs and not temporal:
+                if (doc.effective_to and as_of>=doc.effective_to) or (doc.effective_from and as_of<doc.effective_from):
+                    scores[chunk_id] *= .35
         return [Evidence(chunk=self._chunk(rows_by_id[i]), document=docs[rows_by_id[i]["document_id"]], score=scores[i])
                 for i in sorted(scores, key=lambda i: (-scores[i], i))[:8]]
 

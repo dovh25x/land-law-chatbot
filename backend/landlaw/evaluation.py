@@ -161,7 +161,7 @@ def summarise(records, cases, fingerprint, reviews=None):
 
 
 def configuration_fingerprint(settings):
-    files = [Path(__file__).with_name(name) for name in ("agent.py", "provider.py", "embedding.py", "local_embedding.py", "store.py", "config.py", "publication.py", "models.py", "security.py", "api.py")]
+    files = [Path(__file__).with_name(name) for name in ("agent.py", "provider.py", "embedding.py", "local_embedding.py", "store.py", "retrieval.py", "config.py", "publication.py", "models.py", "security.py", "api.py")]
     configuration = {"model": settings.generation_model, "llm_provider": settings.llm_provider, "embedding_model": settings.embedding_model,
                      "dimensions": settings.embedding_dimensions, 'embedding_provider':settings.embedding_provider,
                      "timeout_seconds": settings.turn_timeout_seconds,
