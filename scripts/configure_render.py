@@ -51,7 +51,8 @@ def main():
         set_key('.env','CORS_ORIGINS',origin)
         report = {'frontend':origin,'backend':details['url'],'render_service_id':service_id,'render_plan':'free',
             'runtime':'docker','health_check':'/healthz','configured_environment_keys':sorted(desired),
-            'corpus_published':False,'acceptance_passed':False}
+            'corpus_published':None,'acceptance_passed':False,
+            'scope':'Environment configuration only; verify live publication/provider after deploy using readiness and authenticated smoke.'}
         Path('reports/cloud-resources.json').write_text(json.dumps(report,indent=2))
         print(json.dumps(report,indent=2))
 

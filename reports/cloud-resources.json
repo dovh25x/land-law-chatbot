@@ -22,10 +22,15 @@
     "IP_HASH_SECRET",
     "LLM_PROVIDER",
     "MAX_CONCURRENT_REQUESTS",
+    "NVIDIA_API_KEY",
+    "NVIDIA_MODEL",
     "SESSION_RETENTION_DAYS",
     "TRUST_PROXY_HEADERS",
     "TURN_TIMEOUT_SECONDS"
   ],
-  "corpus_published": false,
-  "acceptance_passed": false
+  "corpus_published": true,
+  "acceptance_passed": false,
+  "llm_provider": "nvidia",
+  "llm_model": "nvidia/nemotron-3-super-120b-a12b",
+  "scope": "Render environment configured and active hybrid corpus observed; public NVIDIA answers verified separately in live-demo.json."
 }

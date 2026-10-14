@@ -829,5 +829,50 @@
     "source_checked": true,
     "claim_support": [],
     "notes": "Đã đọc toàn bộ đáp án hiện tại: hỏi loại đất/giấy tờ, ngày quyết định/phương án, điều kiện bồi thường đất ở, di chuyển chỗ ở và vị trí/ranh thu hồi. Không hứa suất/căn/tiền, không dùng QĐ56 lịch sử để áp dụng hiện tại; hướng dẫn đối chiếu chuyển tiếp. Không có claim pháp lý trong tình huống thiếu hồ sơ. Review thủ công ca technical demo b059cbbd; không chứng nhận cả smoke hoặc nghiệm thu độc lập."
+  },
+  "S01:baseline:7d36b05cb0cb1e4e219ca8fb2bac52a4eef30071df5266c37bebdd2183b07970": {
+    "passed": true,
+    "source_checked": true,
+    "claim_support": [
+      true
+    ],
+    "notes": "Đã đọc hai đáp án và Điều2 QĐ40 canonical: QĐ40 thay thế QĐ56 từ 02/04/2026, đúng trạng thái tại 12/10/2026. Không suy quyền lợi/chuyển tiếp hộ. ID và trang1 PDF khớp nguồn. Review thủ công NVIDIA 2d7103d1, không chứng nhận toàn bộ smoke/acceptance hoặc thẩm định độc lập."
+  },
+  "S01:agentic:12fe763df8671d7aab97b6e8168b5534e7a48a34543be38535e651507a92fb4b": {
+    "passed": true,
+    "source_checked": true,
+    "claim_support": [
+      true
+    ],
+    "notes": "Đã đọc hai đáp án và Điều2 QĐ40 canonical: QĐ40 thay thế QĐ56 từ 02/04/2026, đúng trạng thái tại 12/10/2026. Không suy quyền lợi/chuyển tiếp hộ. ID và trang1 PDF khớp nguồn. Review thủ công NVIDIA 2d7103d1, không chứng nhận toàn bộ smoke/acceptance hoặc thẩm định độc lập."
+  },
+  "S07:baseline:43f2e438f1a71f977471b6c1292b06c36333f7d8221b8128b8a7dd5c8fe3e0ce": {
+    "passed": true,
+    "source_checked": true,
+    "claim_support": [
+      true
+    ],
+    "notes": "Đã đọc từng claim và khoản1–2 Điều104 canonical trang12. Giữ điều kiện phải di chuyển tài sản, ba chi phí tháo dỡ/di chuyển/lắp đặt và phần thiệt hại khi phải di chuyển máy móc/dây chuyền. Agentic thêm nguyên văn UBND tỉnh định mức loại chi phí khoản1 (thẩm quyền nằm khoản2); baseline không tạo thêm authority/mức tiền. Đúng tại 02/08/2024. Review thủ công NVIDIA 2d7103d1, không chứng nhận toàn bộ smoke/acceptance hoặc thẩm định độc lập."
+  },
+  "S07:agentic:f355e038b6a149becb530a972fe04dd00ea0c143fd2eac70fe624f47072c44e6": {
+    "passed": true,
+    "source_checked": true,
+    "claim_support": [
+      true,
+      true
+    ],
+    "notes": "Đã đọc từng claim và khoản1–2 Điều104 canonical trang12. Giữ điều kiện phải di chuyển tài sản, ba chi phí tháo dỡ/di chuyển/lắp đặt và phần thiệt hại khi phải di chuyển máy móc/dây chuyền. Agentic thêm nguyên văn UBND tỉnh định mức loại chi phí khoản1 (thẩm quyền nằm khoản2); baseline không tạo thêm authority/mức tiền. Đúng tại 02/08/2024. Review thủ công NVIDIA 2d7103d1, không chứng nhận toàn bộ smoke/acceptance hoặc thẩm định độc lập."
+  },
+  "S09:baseline:a177f266ae29d024a8f414a7441b24630bd4dfdb0d08e5ad4ee8df3912317d0e": {
+    "passed": true,
+    "source_checked": true,
+    "claim_support": [],
+    "notes": "Đã đọc trọn đáp án hỏi loại đất/giấy tờ, quyết định/phương án và ngày, tình trạng chuyển chỗ ở/nhà đất khác, điều kiện bồi thường đất ở và vị trí/ranh. Không hứa suất/căn/tiền, không áp dụng QĐ56 lịch sử cho hiện tại. Không có claim pháp lý trong tình huống thiếu hồ sơ. Review thủ công NVIDIA 2d7103d1, không chứng nhận toàn bộ smoke/acceptance hoặc thẩm định độc lập."
+  },
+  "S09:agentic:3192bca3137ed26d5d2d4afc1c30066a0619dc90478b18a2f8bcff1138695cf5": {
+    "passed": true,
+    "source_checked": true,
+    "claim_support": [],
+    "notes": "Đã đọc trọn đáp án hỏi loại đất/giấy tờ, quyết định/phương án và ngày, tình trạng chuyển chỗ ở/nhà đất khác, điều kiện bồi thường đất ở và vị trí/ranh. Không hứa suất/căn/tiền, không áp dụng QĐ56 lịch sử cho hiện tại. Không có claim pháp lý trong tình huống thiếu hồ sơ. Review thủ công NVIDIA 2d7103d1, không chứng nhận toàn bộ smoke/acceptance hoặc thẩm định độc lập."
   }
 }

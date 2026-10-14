@@ -1,5 +1,9 @@
 # Bằng chứng triển khai
 
+Cập nhật NVIDIA 14/10/2026: provider ưu tiên `nvidia`, model `nvidia/nemotron-3-super-120b-a12b`, fingerprint `2d7103d1`. Khóa thật đã xác thực, sáu kết quả core S01/S07/S09 được đối chiếu nguồn, 185 tests và CI `38503262312` đạt; peak Docker 353,75 MiB dưới giới hạn 512 MiB. Render đã triển khai commit `3d24a5a`; cả baseline và agentic trả lời qua HTTPS bằng NVIDIA, trích dẫn Điều104 khớp nguồn, cách ly phiên/trace/lịch sử đạt. Corpus/E5 giữ nguyên. Bằng chứng công bố Groq được giữ bất biến; báo cáo của cấu hình cũ không chứng nhận NVIDIA. Benchmark đầy đủ còn pending. Xem `reports/nvidia-integration.json` và `reports/live-demo.json` để xác nhận tình trạng kiểm tra HTTPS mới nhất.
+
+Các số liệu và hạn chế dưới đây là checkpoint Groq ngày 13/10, được giữ để đối chiếu lịch sử; không phải điểm đánh giá NVIDIA.
+
 Cập nhật 13/10/2026 23:53 giờ Việt Nam. Chủ dự án đã ưu tiên demo kỹ thuật và cho phép hoàn thiện đánh giá pháp lý sau. Chế độ `technical_demo` có gate riêng; không đổi gate `demo` đầy đủ hoặc `accepted`. Corpus đã công bố ở chế độ demo kỹ thuật; `/readyz` HTTP 200 và hai đáp án baseline/agentic qua HTTPS đạt kiểm tra vận hành. Giao diện desktop/mobile, nguồn, trace và lịch sử đã kiểm tra thật, không dùng mocks. Kế hoạch M0–M6 ban đầu chưa nghiệm thu toàn bộ, hạn ưu tiên 15 giờ đã qua.
 
 Embedding hoàn tất: **7.610 vector E5 ONNX Q8, 384 chiều**, cho **69 tài liệu** (54 pháp lý và năm nguồn chính thức mỗi dự án), release `corpus-de584c31fc95f9a2`. Runtime đối chiếu ba mẫu Colab khớp tuyệt đối; archive/checkpoint private và restore đạt. Backend dùng CPU ONNX, không Torch/OCR; không trộn model. Toàn văn QĐ56/2024 lịch sử đã có; QĐ40/2026 thay thế từ 02/04/2026 được chứng minh bằng Điều 2. Coverage tối thiểu và nguồn bắt buộc đạt; năm nguồn bổ sung còn thiếu và bốn quan hệ thiếu đầu mút vẫn công khai, không dùng làm căn cứ quyền lợi.

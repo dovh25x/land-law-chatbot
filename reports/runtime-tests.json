@@ -1,7 +1,7 @@
 {
-  "checked_at": "2026-10-13T16:22:50.725854+00:00",
+  "checked_at": "2026-10-14T02:58:31.938923+00:00",
   "release": "corpus-de584c31fc95f9a2",
-  "configuration_sha256": "b059cbbd63657681e6520f095c156b107423911a999e0845d57a94568a107444",
+  "configuration_sha256": "2d7103d1d627a6b28a6b5ebd30b72ea46b4d07cb4228c894b9b613020a09db3b",
   "passed": true,
   "checks": {
     "postgres_runtime": true,
@@ -45,9 +45,13 @@
     "publication_evidence_matches_actual_artifact_hashes": true,
     "technical_demo_warning_desktop_mobile": true,
     "backend_and_runner_tests_174": true,
-    "technical_profile_restart_restore_and_precedence": true
+    "technical_profile_restart_restore_and_precedence": true,
+    "backend_and_runner_tests_185": true,
+    "nvidia_transport_real_probe": true,
+    "nvidia_selected_key_no_implicit_fallback": true,
+    "nvidia_graph_invalid_citation_rejected": true
   },
-  "scope": "174 isolated backend/runner tests, two Vitest and eight Playwright desktop/mobile cases, build and exact Python 3.12 image memory check passed in CI. Technical demo is an explicit limited profile; full smoke/acceptance pending.",
-  "ci_run": 38429670145,
-  "commit": "5063a43ba8c78eb882069f32fe0b7c9fcb910e16"
+  "scope": "185 isolated backend/runner tests including NVIDIA transport and graph citation rejection, frontend checks and Docker hard 512 MiB image check passed. This is not full legal acceptance.",
+  "ci_run": 38503262312,
+  "commit": "3d24a5add43bdb4076f6d3734e300c78b480db94"
 }

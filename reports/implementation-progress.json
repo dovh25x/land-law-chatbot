@@ -1,8 +1,8 @@
 {
-  "checked_at": "2026-10-13T16:53:58.110157+00:00",
+  "checked_at": "2026-10-14T03:18:08.530478+00:00",
   "release": "corpus-de584c31fc95f9a2",
-  "configuration_sha256": "b059cbbd63657681e6520f095c156b107423911a999e0845d57a94568a107444",
-  "run_id": "corpus-de584c31fc95f9a2-openai_gpt-oss-20b-smoke-56ccf0b0-b059cbbd-c1",
+  "configuration_sha256": "2d7103d1d627a6b28a6b5ebd30b72ea46b4d07cb4228c894b9b613020a09db3b",
+  "run_id": "corpus-de584c31fc95f9a2-nvidia_nemotron-3-super-120b-a12b-smoke-56ccf0b0-2d7103d1-c1",
   "active_release": "corpus-de584c31fc95f9a2",
   "status": "technical_demo_live",
   "total_smoke_pairs": 20,
@@ -11,20 +11,23 @@
   "passed_source_checked_mode_results": 6,
   "quality_metrics_status": "withheld_pending_full_source_review",
   "legal_qa_published": true,
-  "ci_run": 38429670145,
-  "commit": "5063a43ba8c78eb882069f32fe0b7c9fcb910e16",
+  "ci_run": 38503262312,
+  "commit": "3d24a5add43bdb4076f6d3734e300c78b480db94",
   "full_acceptance_passed": false,
   "scope_change": "User prioritized technical demo and permitted minor quality imperfections; full smoke/acceptance gates unchanged.",
   "live_https_smoke_passed": true,
   "live_ui_passed": true,
-  "deployed_commit": "3aec9245ed6f01667a934c0b2f20e21f43baea76",
-  "deployed_ci_run": 38431929277,
+  "deployed_commit": "3d24a5add43bdb4076f6d3734e300c78b480db94",
+  "deployed_ci_run": 38503262312,
   "postpublication_backup_run": 38432785890,
   "restart_persistence_passed": true,
   "live_followup_passed": false,
   "known_limitations": [
     "Frozen 80-case acceptance and full paired smoke remain incomplete.",
-    "Natural-language followup failed twice: provider throttling, then six-call/twelve-tool workflow budget; no unsupported answer released.",
+    "Natural-language followup failed under previous Groq configuration; not yet broadly evaluated on NVIDIA.",
     "Earlier baseline retrieval diagnostic below original Recall@8 acceptance target."
-  ]
+  ],
+  "llm_provider": "nvidia",
+  "model": "nvidia/nemotron-3-super-120b-a12b",
+  "live_ui_scope": "Previously verified Pages desktop/mobile; frontend code unchanged by provider activation."
 }
