@@ -908,3 +908,61 @@ async def test_hospital_land_planning_stays_in_scope(store,settings):
     async def emit(event):pass
     result=await Agent(store,FakeProvider(settings)).run(ChatRequest(session_id=sid,message='Quy hoạch bệnh viện có đồng nghĩa đã quyết định thu hồi đất không?',mode='agentic'),emit)
     assert result.tool_calls>0 and 'ngoài phạm vi' not in result.content
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize('mode',['baseline','agentic'])
+async def test_freshness_question_uses_metadata_and_does_not_fabricate_law(store,settings,mode):
+    release(store);sid,_=session(store)
+    async def emit(event):pass
+    result=await Agent(store,FakeProvider(settings,failure=ProviderUnavailable('Must not be called'))).run(
+        ChatRequest(session_id=sid,message='Nếu dữ liệu chatbot nhiều ngày chưa kiểm tra nguồn, có thể bảo đảm quy định hiện nay không?',mode=mode),emit)
+    assert result.status=='insufficient_evidence' and result.llm_calls==0
+    assert 'Không thể bảo đảm' in result.content and 'mốc kiểm tra' in result.content
+    assert not result.citations and not result.verified_claims
+    assert 'ngoài phạm vi' not in result.content
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize('mode',['baseline','agentic'])
+async def test_unknown_old_county_needs_finer_location_not_guessed_new_commune(store,settings,mode):
+    release(store);sid,_=session(store)
+    async def emit(event):pass
+    result=await Agent(store,FakeProvider(settings,failure=ProviderUnavailable('Must not be called'))).run(
+        ChatRequest(session_id=sid,message='Hồ sơ chỉ ghi huyện Tân Phú cũ, có thể tự đổi thành xã Tân Phú mới và xác định đất thuộc dự án không?',mode=mode),emit)
+    assert result.status=='clarification_needed' and result.llm_calls==0
+    assert any(t.tool=='normalize_place' for t in result.trace)
+    assert 'Tên xã/phường' in result.content and 'chưa đủ' in result.content
+    assert not result.citations and not result.verified_claims
+
+
+@pytest.mark.asyncio
+async def test_planning_task_news_only_describes_source_limits_with_literal_proof(store,settings):
+    from landlaw.models import Evidence
+    from landlaw.agent import State
+    text='Cổng thông tin công bố Quyết định 1234/QĐ-UBND phê duyệt Nhiệm vụ quy hoạch phân khu đô thị, tỷ lệ 1/2000.'
+    news=document('news',text=text).model_copy(update={'source_kind':'official_news'})
+    payload=release(store,[news]);sid,_=session(store)
+    async def emit(event):pass
+    agent=Agent(store,FakeProvider(settings,failure=ProviderUnavailable('Must not be called')))
+    state=State(request=ChatRequest(session_id=sid,message='Bài về 1234/QĐ-UBND phê duyệt nhiệm vụ quy hoạch có đồng nghĩa toàn bộ đồ án và thu hồi từng hộ đã được phê duyệt?'),
+        plan=Plan(),release=payload,evidence=[Evidence(document=news,chunk=news.chunks[0],applicability='context')],history=[],as_of=date(2026,10,14),budget=Budget(),trace=[],emit=emit)
+    await agent.synthesize(state);await agent.verify(state)
+    assert state['draft'].claims[0].kind=='context'
+    assert state['verification'].supported_claim_indexes==[0]
+    assert state['verification'].supporting_quotes[0].quote in text
+    assert 'chưa đủ' in state['draft'].claims[0].text and state['budget'].llm_calls==0
+    state['request']=state['request'].model_copy(update={'message':'Bài về 9876/QĐ-UBND phê duyệt nhiệm vụ quy hoạch có đồng nghĩa toàn bộ đồ án đã phê duyệt?'})
+    assert agent.planning_task_news(state) is None
+    state['request']=state['request'].model_copy(update={'message':'Bài phê duyệt nhiệm vụ quy hoạch có đồng nghĩa toàn bộ đồ án đã phê duyệt?'})
+    news.source_kind='project_decision'
+    assert agent.planning_task_news(state) is None
+
+
+@pytest.mark.parametrize('prefix',['dự kiến','chưa','đề xuất','đang xin'])
+def test_proposed_or_unapproved_planning_task_never_becomes_approved_fact(prefix):
+    from landlaw.models import Evidence
+    news=document('news',text=f'Cơ quan {prefix} phê duyệt Nhiệm vụ quy hoạch phân khu đô thị.').model_copy(update={'source_kind':'official_news'})
+    state={'request':ChatRequest(session_id='00000000-0000-0000-0000-000000000000',message='Bài phê duyệt nhiệm vụ quy hoạch có đồng nghĩa toàn bộ đồ án đã phê duyệt?'),
+           'evidence':[Evidence(document=news,chunk=news.chunks[0],applicability='context')]}
+    assert Agent.planning_task_news(state) is None

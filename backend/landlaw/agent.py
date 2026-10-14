@@ -70,6 +70,8 @@ class State(TypedDict, total=False):
     source_fact_id: str | None
     source_fact_type: str | None
     private_entitlement_check: bool
+    freshness_question: bool
+    place_clarification: bool
 
 
 def applicability(doc: Document, as_of: date, chunk=None):
@@ -211,7 +213,7 @@ def private_entitlement_check(question):
     """
     text=normalize(question)
     personal=bool(re.search(r'\b(?:nha|dat|ho so|gia dinh|ho gia dinh|thua dat)\s+(?:cua\s+)?(?:toi|minh)\b',text))
-    certainty=any(word in text for word in ('chac chan','khang dinh','bao nhieu tien','bao nhieu dong','dung khong'))
+    certainty=any(word in text for word in ('chac chan','co chac','khang dinh','bao nhieu tien','bao nhieu dong','dung khong'))
     entitlement=any(word in text for word in ('boi thuong','tai dinh cu','quyen loi','duoc ho tro'))
     return personal and certainty and entitlement
 
@@ -304,13 +306,24 @@ class Agent:
             if (number and number in question) or law_match:named.append(doc['id'])
         legal_topic=any(term in question for term in ('thu hoi','boi thuong','tai dinh cu','quy hoach','dat dai','khieu nai','quyen su dung dat','ho tro'))
         unrelated=any(term in question for term in ('phac do dieu tri','lieu khang sinh','chan doan benh','ly hon','luat hoa ky','luat hoa ki'))
-        if unrelated and not legal_topic:
+        freshness=('du lieu' in question and any(t in question for t in ('chatbot','kiem tra nguon'))
+                   and any(t in question for t in ('bao dam','cap nhat','qua han')))
+        place_question=('huyen' in question and 'cu' in question and 'xa' in question
+                        and any(t in question for t in ('doi','moi','dia ban')))
+        if freshness:
+            state['freshness_question']=True
+            state['plan']=Plan()
+            await self.event(state,'routing','Câu hỏi về mức cập nhật dữ liệu; đối chiếu metadata, không suy hiệu lực văn bản.')
+        elif unrelated and not legal_topic:
             state['plan']=Plan(out_of_scope=True)
             await self.event(state,'routing','Câu hỏi thuộc lĩnh vực ngoài phạm vi pháp luật đất đai và quy hoạch Hà Nội.')
         elif private_entitlement_check(request.message):
             tool='search_project' if request.project and request.mode=='agentic' else 'search_law'
             state['plan']=Plan(tools=[ToolCall(name=tool,query=request.message[:1000])])
             await self.event(state,'routing','Yêu cầu xác nhận quyền lợi hộ cụ thể cần hồ sơ; tra cứu nguồn và hỏi dữ kiện trước khi kết luận.',tool)
+        elif place_question:
+            state['plan']=Plan(tools=[ToolCall(name='normalize_place',query=request.message[:1000])])
+            await self.event(state,'routing','Đối chiếu tên địa bàn cũ/mới trước khi xác định phạm vi hồ sơ.','normalize_place')
         elif request.mode == "baseline":
             prior = next((m['content'] for m in reversed(state['history']) if m['role']=='user'), '')
             # Baseline also receives the same conversational context; no planner call.
@@ -328,10 +341,6 @@ class Agent:
                 locator=f'Điều {article[1]}',query=request.message[:1000])])
             await self.event(state,'routing','Đã nhận diện văn bản và điều được người dùng chỉ rõ; mở nguồn tương ứng.',
                              'open_article',named)
-        elif request.project and not named:
-            state['plan']=Plan(tools=[ToolCall(name='search_project',query=request.message[:1000])])
-            await self.event(state,'routing','Đã dùng phạm vi dự án được người dùng chọn để tra hồ sơ và căn cứ liên quan.',
-                             'search_project')
         else:
             catalogue=self.catalogue(state['release'])
             suggested=await asyncio.to_thread(self.store.article_candidates,request.message,
@@ -424,7 +433,7 @@ class Agent:
         return list(priority.values())[:8]
 
     async def tools(self, state):
-        if state["plan"].out_of_scope or not state["release"]:
+        if state["plan"].out_of_scope or state.get('freshness_question') or not state["release"]:
             return state
         if state["rounds"]:
             calls = [ToolCall(name="search_law", query=state["verification"].followup_query or state["request"].message)]
@@ -457,6 +466,11 @@ class Agent:
             elif call.name == "normalize_place":
                 aliases = state["release"].get("place_aliases", [])
                 matched = resolve_places(aliases, call.query or state["request"].message, state["as_of"])
+                if not matched or any(m['normalization_status']!='verified' for m in matched):
+                    state['place_clarification']=True
+                    state['plan'].missing_facts=['Tên xã/phường, thôn hoặc tổ dân phố trong hồ sơ cũ; địa chỉ chỉ ở mức đã ẩn danh.',
+                        'Thời điểm lập hồ sơ và nguồn xác nhận địa bàn sau sắp xếp.',
+                        'Ranh giới dự án và thông báo/quyết định thu hồi đối với thửa đất, nếu cần đối chiếu phạm vi.']
                 state["tool_notes"].append({"tool": call.name, "matches": matched[:6]})
                 await self.event(state, "tool", f"Tìm thấy {len(matched)} ánh xạ địa bàn có nguồn; thiếu ánh xạ thì cần hỏi lại.", call.name)
             for item in results:
@@ -644,6 +658,10 @@ class Agent:
         state['source_fact_type']=None
         if state["plan"].out_of_scope:
             state["draft"] = Draft(status="insufficient_evidence", summary="Câu hỏi nằm ngoài phạm vi đất đai và quy hoạch Hà Nội.",out_of_scope=True)
+        elif state.get('freshness_question'):
+            state['draft']=Draft(status='insufficient_evidence')
+        elif state.get('place_clarification'):
+            state['draft']=Draft(status='clarification_needed',missing_facts=state['plan'].missing_facts)
         elif state.get('private_entitlement_check'):
             # The corpus contains public law/project records, never this
             # household's administrative file. Do not turn a general rule
@@ -668,6 +686,10 @@ class Agent:
                 missing_facts=['Ngày ra quyết định thu hồi đất và ngày phê duyệt phương án bồi thường.',
                                'Loại đất và tình trạng giấy tờ của hồ sơ, chỉ cung cấp thông tin đã ẩn danh.'],
                 next_steps=['Đối chiếu căn cứ và điều khoản chuyển tiếp trong quyết định, phương án xử lý hồ sơ.'])
+        elif (news:=self.planning_task_news(state)) is not None:
+            state['source_fact_id']=news.chunk.id
+            state['source_fact_type']='planning_task_news'
+            state['draft']=Draft(status='answered',claims=[self.planning_task_claim(news)])
         elif (partial:=self.partial_repeal(state)) is not None:
             item,relation,target=partial
             state['source_fact_id']=item.chunk.id
@@ -723,6 +745,28 @@ class Agent:
                                    for claim in state['draft'].claims]
         await self.event(state, "synthesis", "Đã tạo bản trả lời; đang kiểm tra trước khi hiển thị.")
         return state
+
+    @staticmethod
+    def planning_task_news(state):
+        question=normalize(state['request'].message)
+        if ('nhiem vu quy hoach' not in question or 'do an' not in question
+                or not any(t in question for t in ('dong nghia','du ket luan'))):return None
+        references=re.findall(r'\b\d{1,6}/qd-ubnd\b',question)
+        for item in state['evidence']:
+            body=normalize(item.chunk.text)
+            position=body.find('phe duyet nhiem vu quy hoach')
+            prefix=body[max(0,position-160):position]
+            proposed=bool(re.search(r'\b(?:khong|chua|se|du kien|de xuat|xin|du thao|kien nghi)\b',prefix))
+            if (item.document.source_kind=='official_news' and position>=0 and not proposed
+                    and all(ref in body for ref in references)):
+                return item
+        return None
+
+    @staticmethod
+    def planning_task_claim(item):
+        return Claim(kind='context',text='Nguồn được trích dẫn công bố việc phê duyệt nhiệm vụ quy hoạch. '
+            'Đây là thông tin bối cảnh, chưa đủ để chứng minh toàn bộ đồ án và việc thu hồi đất từng hộ đã được phê duyệt; '
+            'cần đối chiếu quyết định phê duyệt đồ án và hồ sơ thu hồi tương ứng.',citation_ids=[item.chunk.id])
 
     @staticmethod
     def future_commencement(state):
@@ -809,6 +853,10 @@ class Agent:
 
     async def verify(self, state):
         draft = state["draft"]
+        if state.get('freshness_question') or (state.get('place_clarification') and not draft.claims):
+            state['verification']=Verification()
+            await self.event(state,'verification','Chỉ giải thích giới hạn dữ liệu hoặc hỏi địa bàn còn thiếu; không kết luận quyền lợi hay phạm vi từng thửa.')
+            return state
         if state.get('plan',Plan()).out_of_scope or draft.out_of_scope:
             # Finish renders a fixed scope notice and discards all claims.
             state['verification']=Verification()
@@ -816,6 +864,12 @@ class Agent:
             return state
         if not state["evidence"]:
             state["verification"] = Verification()
+            return state
+        news=self.planning_task_news(state) if state.get('source_fact_type')=='planning_task_news' else None
+        if news and news.chunk.id==state.get('source_fact_id') and draft.claims==[self.planning_task_claim(news)]:
+            state['verification']=Verification(supported_claim_indexes=[0],supporting_quotes=[
+                SupportingQuote(claim_index=0,citation_id=news.chunk.id,quote=news.chunk.text[:1600])])
+            await self.event(state,'verification','Đã đối chiếu đoạn công bố nhiệm vụ; chỉ mô tả thông tin bối cảnh và giới hạn chứng cứ, không suy việc thu hồi hộ.')
             return state
         if state.get('private_entitlement_check') and not draft.claims:
             state['verification']=Verification()
@@ -1165,6 +1219,13 @@ class Agent:
         if stale and state["as_of"] >= local_date():
             intro = "Bộ dữ liệu đã quá bảy ngày chưa được kiểm tra nguồn; chưa thể xác nhận quy định hiện hành."
         content = intro
+        if state.get('freshness_question'):
+            content='Không thể bảo đảm tính hiện hành chỉ từ dữ liệu chưa được kiểm tra lại. '
+            content+='Nếu quá bảy ngày chưa kiểm tra nguồn thành công, cần nêu giới hạn cập nhật và đối chiếu văn bản chính thức, mốc hiệu lực, sửa đổi và chuyển tiếp trước khi kết luận. '
+            content+=('Corpus thực tế đã quá bảy ngày chưa kiểm tra nguồn.' if stale else
+                      'Giả định dữ liệu cũ trong câu hỏi không có nghĩa corpus thực tế đã quá hạn; mốc kiểm tra được ghi bên dưới.')
+        if state.get('place_clarification'):
+            content='Tên huyện cũ chưa đủ để ánh xạ tới một xã/phường mới hoặc xác định một thửa đất thuộc dự án. Cần đối chiếu địa bàn chi tiết và ranh giới/hồ sơ thu hồi.'
         if outside:
             content='Câu hỏi nằm ngoài phạm vi pháp luật đất đai và quy hoạch Hà Nội.'
         if claims:
