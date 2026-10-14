@@ -281,3 +281,37 @@ def test_source_backup_includes_reviewed_ocr_and_original_provenance():
         'source_artifacts':[{'path':'data/raw/publication.html','sha256':'publication'}]}
     assert reviewed_source_files(source)==[('data/raw/source.pdf','pdf'),
         ('data/raw/source.ocr.txt','ocr'),('data/raw/publication.html','publication')]
+
+
+@pytest.mark.asyncio
+async def test_inline_publication_gazette_never_replaces_reviewed_pdf_attachment(settings,monkeypatch):
+    import landlaw.ingest as ingestion
+    from landlaw.security import digest
+    approved=b'%PDF-reviewed-attachment';portal=b'%PDF-whole-publication-gazette'
+    publication='https://vanban.chinhphu.vn/publication';attachment='https://datafiles.chinhphu.vn/approved.pdf';calls=[]
+    async def download(client,url,publication_url=None):
+        calls.append(url);return (approved if url==attachment else portal),url
+    monkeypatch.setattr(ingestion,'download',download)
+    monkeypatch.setattr(ingestion,'pdf_pages',lambda raw,ocr: [(1,'Điều 1. '+('Nội dung kiểm thử tài liệu và nguồn được đối chiếu. '*30))])
+    source={'id':'reviewed-doc','title':'Technical fixture only','url':publication,'source_kind':'legal','review_status':'verified',
+       'effective_from':'2024-08-01','attachment_urls':[attachment],'raw_checksums':{'approved.pdf':digest(approved)}}
+    doc=await ingestion.collect_source(source,settings,None)
+    assert calls==[publication,attachment] and doc.checksum==digest(approved)
+    assert str(doc.source_files[0].url)==attachment
+
+
+@pytest.mark.asyncio
+async def test_reviewed_html_never_selects_unrelated_sidebar_pdf(settings,monkeypatch):
+    import landlaw.ingest as ingestion
+    from landlaw.security import digest
+    url='https://xaydungchinhsach.chinhphu.vn/official-law'
+    raw=('<article>Điều 1. '+('Nội dung pháp luật dùng làm fixture kiểm thử nguồn. '*30)+
+         '</article><aside><a href="https://datafiles.chinhphu.vn/unrelated.pdf">Tin khác</a></aside>').encode()
+    calls=[]
+    async def download(client,link,publication_url=None):
+        calls.append(link);assert link==url;return raw,link
+    monkeypatch.setattr(ingestion,'download',download)
+    source={'id':'html-doc','title':'Technical fixture only','url':url,'source_kind':'legal','review_status':'verified',
+       'effective_from':'2024-08-01','raw_paths':['data/raw/html-doc.html'],'raw_checksums':{'html-doc.html':digest(raw)}}
+    doc=await ingestion.collect_source(source,settings,None)
+    assert calls==[url] and doc.checksum==digest(raw)

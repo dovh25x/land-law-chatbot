@@ -985,3 +985,18 @@ def test_unrelated_source_gaps_never_replace_verified_evidence_in_prompt():
     state['release']['unresolved_relations']=[{'source_id':'missing-price','target_id':'law','type':'amends'}]
     assert Agent.relevant_gaps(state)[0]['document_id']=='missing-price'
     assert len(Agent.relevant_unresolved(state))==1
+
+
+@pytest.mark.parametrize('basis,scope,expected',[
+    ('Theo khoản 1 Điều 19, các đối tượng được xét hỗ trợ.',['Khoản 3 Điều 19'],False),
+    ('Theo khoản 3 Điều 19, mức hỗ trợ được xác định.',['Khoản 3 Điều 19'],True),
+    ('Theo khoản 1 Điều 19, các đối tượng được xét hỗ trợ.',['Điều 19'],True),
+    ('Các trường hợp tại khoản 1 được hỗ trợ khi có giấy tờ.',['Khoản 3 Điều 19'],True)])
+def test_partial_amendment_never_invalidates_proven_different_clause(basis,scope,expected):
+    from landlaw.agent import amendment_affects_claim
+    from landlaw.models import Evidence,Claim
+    law=document();item=Evidence(document=law,chunk=law.chunks[0].model_copy(update={'locator':'Điều 19'}))
+    relation={'target_locators_complete':True,'target_locators':scope}
+    assert amendment_affects_claim(relation,item,Claim(text=basis,citation_ids=[item.chunk.id])) is expected
+    relation['target_locators_complete']=False
+    assert amendment_affects_claim(relation,item,Claim(text=basis,citation_ids=[item.chunk.id]))

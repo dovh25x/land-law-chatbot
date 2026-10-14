@@ -281,16 +281,21 @@ async def collect_source(source, settings, client, offline=False, allow_ocr=Fals
             paths.append(path)
     else:
         content, final_url = await download(client, source["url"], source.get("publication_url"))
-        if content.startswith(b"%PDF"):
+        if content.startswith(b"%PDF") and not file_urls:
             (raw_dir / f"{source_id}.pdf").write_bytes(content)
             contents.append(content)
             paths.append(raw_dir / f"{source_id}.pdf")
             file_urls = [source['url']]
         else:
-            (raw_dir / f"{source_id}.html").write_bytes(content)
-            soup = BeautifulSoup(content, "html.parser")
+            # A publication portal may serve a whole gazette as an inline PDF.
+            # Explicitly reviewed attachments remain the document's sources;
+            # never substitute that portal response for them.
+            if not content.startswith(b'%PDF'):
+                (raw_dir / f"{source_id}.html").write_bytes(content)
+            soup = BeautifulSoup(content if not content.startswith(b'%PDF') else '', "html.parser")
             links = source.get("attachment_urls", [])
-            if not links and source["source_kind"] == "legal":
+            reviewed_html=source.get('review_status')=='verified' and any(Path(p).suffix.lower()=='.html' for p in source.get('raw_paths',[]))
+            if not links and source["source_kind"] == "legal" and not reviewed_html:
                 links = [urljoin(final_url, str(a["href"])) for a in soup.select("a[href]")
                          if ".pdf" in str(a["href"]).lower()][:8]
             if links:

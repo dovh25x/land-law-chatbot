@@ -131,6 +131,26 @@ def relation_may_affect(relation, doc_id, passages):
         re.search(rf'^Điều {n}(?:\s|$)', p.chunk.locator, re.IGNORECASE) for n in articles) for p in passages)
 
 
+def amendment_affects_claim(relation, item, claim):
+    """Exclude only proven different clauses in a complete amendment scope.
+
+    An eligibility cross-reference alone is not the claim's legal basis. Require
+    an explicit clause+article attribution matching the cited article. Unknown
+    or whole-article scopes remain conservative.
+    """
+    if not relation.get('target_locators_complete'):return True
+    article=re.match(r'^Điều (\d+[a-z]?)\b',item.chunk.locator,re.I)
+    if not article:return True
+    basis=set(re.findall(r'\bkhoan\s+(\d+)\s+dieu\s+'+re.escape(article[1])+r'\b',normalize(claim.text)))
+    if not basis:return True
+    targets=[normalize(loc) for loc in relation.get('target_locators',[])
+             if re.search(r'\bdieu\s+'+re.escape(article[1])+r'\b',normalize(loc))]
+    if not targets:return False
+    if any(not re.search(r'\bkhoan\s+\d+\b',t) for t in targets):return True
+    affected={n for t in targets for n in re.findall(r'\bkhoan\s+(\d+)\b',t)}
+    return bool(basis & affected)
+
+
 def dates_in(text):
     text = normalize(text)
     values = set()
@@ -733,6 +753,8 @@ class Agent:
                 "answered requires at least one sourced claim. Each cited passage must prove the exact rule, actor, scope "
                 "and applicable date: a preamble or act name is insufficient. Do not substitute a similar clause for the one asked. "
                 "Preserve numbered clauses and legal point letters exactly; use bullets if you are renumbering a summary. "
+                "When explaining a provision, explicitly state its clause and article as the legal basis so a "
+                "partial amendment to a DIFFERENT clause is not mistaken for amendment of the stated rule. "
                 "When alternative conditions apply only to cases defined in another clause, explicitly retain that "
                 "eligibility prerequisite, even when answering whether a certificate is the sole condition. "
                 "A general rule can be answered without private-case facts. For case-specific rights, ask for missing land type, "
@@ -1110,7 +1132,7 @@ class Agent:
                     affected_articles = [n for locator in relation.get("target_locators", [])
                                          for n in re.findall(r"Điều\s+(\d+[a-z]?)", locator, flags=re.IGNORECASE)]
                     affected = not relation.get('target_locators_complete') or any(re.search(rf"^Điều {n}(?:\s|$)", item.chunk.locator, re.IGNORECASE) for n in affected_articles)
-                    if affected and relation["source_id"] not in cited_documents:
+                    if affected and amendment_affects_claim(relation,item,claim) and relation["source_id"] not in cited_documents:
                         structural_issues.append(f"Claim {index}: {item.chunk.locator} có sửa đổi/bãi bỏ một phần bởi {relation['source_id']} ({relation.get('source_locator')}); cần đối chiếu và dẫn phần tác động phù hợp")
         cited_ids={citation_id for claim in draft.claims for citation_id in claim.citation_ids}
         selected=[item for item in state['evidence'] if item.chunk.id in cited_ids]
