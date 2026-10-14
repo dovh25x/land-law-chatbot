@@ -1,9 +1,9 @@
 {
-  "checked_at": "2026-10-14T03:18:08.530478+00:00",
+  "checked_at": "2026-10-14T03:21:44.380984+00:00",
   "backend_url": "https://land-law-chatbot.onrender.com",
   "frontend_url": "https://hanoi-land-law.pages.dev",
-  "commit": "3d24a5add43bdb4076f6d3734e300c78b480db94",
-  "deploy_id": "dep-db7f0cjbc2fs73evbakg",
+  "commit": "12f56184789ff10221a6c5ac2176f1a96f0a1be8",
+  "deploy_id": "dep-db7f95dg1s2s73aal0a0",
   "status": "live",
   "ready_http": 200,
   "readiness": {
@@ -61,5 +61,7 @@
   "llm_provider": "nvidia",
   "model": "nvidia/nemotron-3-super-120b-a12b",
   "configuration_sha256": "2d7103d1d627a6b28a6b5ebd30b72ea46b4d07cb4228c894b9b613020a09db3b",
-  "restart_persistence_scope": "Previously verified on the same corpus under Groq; NVIDIA deployment retained active corpus and new authenticated history."
+  "restart_persistence_scope": "Previously verified on the same corpus under Groq; NVIDIA deployment retained active corpus and new authenticated history.",
+  "active_smoke_matches_configuration": true,
+  "ci_run": 38505571052
 }
