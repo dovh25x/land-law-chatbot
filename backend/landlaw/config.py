@@ -13,7 +13,7 @@ class Settings(BaseSettings):
     gemini_model: str = "gemini-3.5-flash-lite"
     llm_provider: Literal['gemini', 'cloudflare', 'groq', 'nvidia'] = 'gemini'
     nvidia_api_key: SecretStr = SecretStr('')
-    nvidia_model: Literal['nvidia/nemotron-3-super-120b-a12b'] = 'nvidia/nemotron-3-super-120b-a12b'
+    nvidia_model: Literal['nvidia/nemotron-3-super-120b-a12b','nvidia/nemotron-3-ultra-550b-a55b'] = 'nvidia/nemotron-3-super-120b-a12b'
     groq_api_key: SecretStr = SecretStr('')
     groq_model: Literal['openai/gpt-oss-120b','openai/gpt-oss-20b','qwen/qwen3.8-27b'] = 'openai/gpt-oss-120b'
     cloudflare_llm_model: Literal['@cf/qwen/qwen3-30b-a3b-fp8'] = '@cf/qwen/qwen3-30b-a3b-fp8'

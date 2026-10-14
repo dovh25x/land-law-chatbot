@@ -18,13 +18,14 @@ def configuration(settings):
     return settings.model_copy(update={'llm_provider':'nvidia','nvidia_api_key':SecretStr('nvidia-test-only')})
 
 
-async def test_nvidia_selection_keeps_embedding_contract_and_never_calls_other_providers(settings,store):
-    config=configuration(settings)
+@pytest.mark.parametrize('model',['nvidia/nemotron-3-super-120b-a12b','nvidia/nemotron-3-ultra-550b-a55b'])
+async def test_nvidia_selection_keeps_embedding_contract_and_never_calls_other_providers(settings,store,model):
+    config=configuration(settings).model_copy(update={'nvidia_model':model})
     def respond(request):
         assert str(request.url)=='https://integrate.api.nvidia.com/v1/chat/completions'
         assert request.headers['Authorization']=='Bearer nvidia-test-only'
         body=json.loads(request.content)
-        assert body['model']=='nvidia/nemotron-3-super-120b-a12b'
+        assert body['model']==model
         assert body['stream'] is False and body['reasoning_effort']=='none'
         assert 'tools' not in body and 'tool_choice' not in body
         return httpx.Response(200,json={'choices':[{'message':{'content':'{"ok":true}','reasoning_content':'private reasoning'}}],

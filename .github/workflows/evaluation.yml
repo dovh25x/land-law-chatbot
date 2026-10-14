@@ -21,6 +21,11 @@ on:
       case_ids:
         description: Optional priority IDs, comma separated; full suite denominator is unchanged
         default: ''
+      nvidia_model:
+        description: Optional NVIDIA model for a separate evaluation configuration
+        type: choice
+        options: ['', 'nvidia/nemotron-3-super-120b-a12b', 'nvidia/nemotron-3-ultra-550b-a55b']
+        default: ''
 permissions:
   contents: read
 concurrency:
@@ -36,7 +41,7 @@ jobs:
       GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
       GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
       NVIDIA_API_KEY: ${{ secrets.NVIDIA_API_KEY }}
-      NVIDIA_MODEL: ${{ vars.NVIDIA_MODEL || 'nvidia/nemotron-3-super-120b-a12b' }}
+      NVIDIA_MODEL: ${{ inputs.nvidia_model || vars.NVIDIA_MODEL || 'nvidia/nemotron-3-super-120b-a12b' }}
       LLM_PROVIDER: ${{ vars.LLM_PROVIDER || 'gemini' }}
       GEMINI_MODEL: ${{ vars.GEMINI_MODEL || 'gemini-3.5-flash-lite' }}
       GROQ_MODEL: ${{ vars.GROQ_MODEL || 'openai/gpt-oss-120b' }}

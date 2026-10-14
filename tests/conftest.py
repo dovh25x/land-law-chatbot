@@ -13,6 +13,7 @@ from landlaw.store import Store
 def settings(tmp_path):
     return Settings(_env_file=None, app_env='development', database_url='', admin_database_url='',
                     llm_provider='gemini', groq_model='openai/gpt-oss-120b',
+                    nvidia_model='nvidia/nemotron-3-super-120b-a12b',
                     embedding_provider='gemini', embedding_model='gemini-embedding-2',
                     embedding_dimensions=768, groq_api_key='', nvidia_api_key='', cloudflare_ai_api_token='',
                     backup_encryption_key='', supabase_url='', supabase_service_role_key='',
