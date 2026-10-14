@@ -35,6 +35,21 @@ test('technical demo clearly discloses pending legal acceptance and coverage gap
   await expect(page.getByRole('note')).toContainText('Nguồn còn thiếu: Chưa có toàn văn đạt kiểm tra.')
 })
 
+test('acceptance label follows current configuration quality and keeps coverage gaps', async ({ page }) => {
+  const readiness={status:'ready',database:true,llm_configured:true,corpus_release:'reviewed-test-corpus',
+    publication_profile:'accepted',quality_status:'acceptance_pending',checked_at:'2026-10-14T00:00:00Z',
+    coverage_gaps:[{document_id:'missing',title:'Nguồn bổ sung còn thiếu',reason:'Chưa xác minh.'}]}
+  await page.route('**/readyz', r => r.fulfill({json:readiness}))
+  await page.goto('/')
+  await expect(page.getByRole('note')).toContainText('Demo — chưa hoàn tất nghiệm thu.')
+  await page.getByText('Các nguồn chưa đủ dữ liệu (1)').click()
+  await expect(page.getByRole('note')).toContainText('Nguồn bổ sung còn thiếu')
+  readiness.quality_status='accepted'
+  await page.getByRole('button',{name:'Sẵn sàng tra cứu'}).click()
+  await expect(page.getByRole('note')).toContainText('Đã đạt bộ kiểm thử nghiệm thu đối chiếu nguồn.')
+  await expect(page.getByRole('note')).toContainText('Các nguồn chưa đủ dữ liệu (1)')
+})
+
 test('API quota errors are displayed without an invented answer', async ({ page }) => {
   await page.route('**/api/v1/sessions', r => r.fulfill({ status: 201, json: { session_id: 'test-session', token: 'test-session-token' } }))
   await page.route('**/api/v1/chat', r => r.fulfill({ status: 429, headers: { 'Retry-After': '37' }, json: { detail: 'limited' } }))

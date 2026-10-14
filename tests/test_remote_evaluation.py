@@ -6,6 +6,12 @@ spec=importlib.util.spec_from_file_location('remote_evaluation',Path(__file__).p
 module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module)
 
 
+@pytest.fixture(autouse=True)
+def isolated_runner_environment(monkeypatch):
+    for key in ('EVALUATION_RELEASE','EVALUATION_SPLIT','EVALUATION_LIMIT','EVALUATION_CONCURRENCY','EVALUATION_CASE_IDS'):
+        monkeypatch.delenv(key,raising=False)
+
+
 def test_remote_evaluation_keeps_selected_suite_release_and_bounded_concurrency(monkeypatch):
     monkeypatch.setenv('EVALUATION_RELEASE','corpus-de584c31fc95f9a2');monkeypatch.setenv('EVALUATION_SPLIT','acceptance')
     monkeypatch.setenv('EVALUATION_LIMIT','160');monkeypatch.setenv('EVALUATION_CONCURRENCY','2')
