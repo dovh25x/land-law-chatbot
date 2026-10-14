@@ -111,6 +111,8 @@ class Gemini:
 
     @property
     def configured(self):
+        if self.settings.llm_provider == 'nvidia':
+            return bool(self.settings.nvidia_api_key.get_secret_value())
         if self.settings.llm_provider == 'groq':
             return bool(self.settings.groq_api_key.get_secret_value())
         if self.settings.llm_provider == 'cloudflare':
@@ -219,7 +221,8 @@ class Gemini:
             budget.llm()
             await self.record_usage("llm")
             try:
-                result = (await self._groq_generate(schema,body) if self.settings.llm_provider=='groq' else
+                result = (await self._nvidia_generate(schema,body) if self.settings.llm_provider=='nvidia' else
+                          await self._groq_generate(schema,body) if self.settings.llm_provider=='groq' else
                           await self._cloudflare_generate(schema,body) if self.settings.llm_provider=='cloudflare'
                           else await self._request(self.settings.gemini_model, "generateContent", body))
             except RateLimited as exc:
@@ -252,6 +255,55 @@ class Gemini:
                     raise ProviderUnavailable("Provider không trả kết quả đúng schema",format_failure=True) from None
                 # Retries count as actual calls inside the same per-turn budget.
                 body['systemInstruction']['parts'][0]['text'] += '\nLượt trước không khớp schema. Trả duy nhất JSON đúng responseJsonSchema; dùng đúng kiểu trường và giá trị enum, không có markdown.'
+
+    async def _nvidia_generate(self,schema,body):
+        if not self.configured:
+            raise ProviderUnavailable('NVIDIA_API_KEY chưa được cấu hình')
+        shape=strict_generation_schema(schema)
+        # Hosted Super documents the standard chat fields and reasoning_effort.
+        # Schema travels as plain instructions; Pydantic and grounding checks
+        # enforce it locally. Do not assume hosted JSON-schema decoding support.
+        instruction=body['systemInstruction']['parts'][0]['text']
+        instruction+=' Return ONLY a JSON object conforming to this schema. No markdown, reasoning, tools or function calls. Lookup descriptors in lookups are plain data for the read-only application.\n'+json.dumps(shape,ensure_ascii=False,separators=(',',':'))
+        if 'supporting_spans' in shape.get('properties',{}):
+            instruction+=' Select exact source span IDs for every supported claim and citation. Do not rewrite source text.'
+        request={'model':self.settings.nvidia_model,'temperature':0,'max_tokens':4096,
+                 'reasoning_effort':'none','stream':False,
+                 'messages':[{'role':'system','content':instruction},
+                             {'role':'user','content':body['contents'][0]['parts'][0]['text']}]}
+        try:
+            response=await self.client.post('https://integrate.api.nvidia.com/v1/chat/completions',
+                headers={'Authorization':'Bearer '+self.settings.nvidia_api_key.get_secret_value(),
+                         'Accept':'application/json'},json=request,timeout=45)
+        except httpx.HTTPError:
+            raise ProviderUnavailable('Không kết nối được NVIDIA NIM',retryable=True) from None
+        if response.status_code==429:
+            try:delay=math.ceil(float(response.headers.get('retry-after','60')))
+            except (ValueError,TypeError,OverflowError):delay=60
+            raise RateLimited(min(86400,max(1,delay)),source='provider')
+        if response.status_code==202:
+            # Never replay an accepted asynchronous invocation as a new billable
+            # request. The workflow stops honestly when no final JSON is ready.
+            raise ProviderUnavailable('NVIDIA đang xử lý bất đồng bộ; chưa có kết quả để kiểm chứng.')
+        if response.status_code>=400:
+            raise ProviderUnavailable(f'NVIDIA NIM trả HTTP {response.status_code}',retryable=response.status_code>=500)
+        try:
+            result=response.json()
+            content=result['choices'][0]['message']['content']
+            if not isinstance(content,str):raise ValueError('Missing text')
+            tokens=result.get('usage',{}).get('total_tokens',0)
+            if type(tokens)!=int or tokens<0:tokens=0
+        except (ValueError,KeyError,IndexError,TypeError,AttributeError):
+            raise ProviderUnavailable('NVIDIA không trả nội dung JSON để kiểm chứng',format_failure=True) from None
+        if schema.__name__=='Plan':
+            try:
+                decoded=json.loads(content)
+                if isinstance(decoded,dict) and 'lookups' in decoded:
+                    decoded['tools']=decoded.pop('lookups')
+                    content=json.dumps(decoded,ensure_ascii=False)
+            except (ValueError,TypeError):pass
+        return {'candidates':[{'content':{'parts':[{'text':content}]}}],
+                'usageMetadata':{'totalTokenCount':tokens}}
 
     async def _groq_generate(self,schema,body):
         if not self.configured:

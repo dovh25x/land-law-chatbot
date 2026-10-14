@@ -72,6 +72,8 @@ def preflight(live: bool = False):
     """Inspect configuration; --live performs real generation and embedding probes."""
     settings = Settings()
     checks = {"gemini_key": bool(settings.gemini_api_key.get_secret_value()),
+              "llm_provider": settings.llm_provider, "generation_model": settings.generation_model,
+              "nvidia_key": bool(settings.nvidia_api_key.get_secret_value()),
               "postgresql": bool(settings.database_url.get_secret_value()),
               "supabase_storage": bool(settings.supabase_url and settings.supabase_service_role_key.get_secret_value()),
               "production_config": settings.app_env == "production"}

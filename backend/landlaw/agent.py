@@ -318,7 +318,7 @@ class Agent:
         else:
             catalogue=self.catalogue(state['release'])
             catalogue_fields=None
-            if self.provider.settings.llm_provider=='groq':
+            if self.provider.settings.llm_provider in {'groq','nvidia'}:
                 catalogue_fields=['id','document_number','title','project','effective_from','effective_to']
                 catalogue=[[d['id'],d['document_number'],d['title'][:120],d['project'],
                             d['effective_from'],d['effective_to']] for d in catalogue]
@@ -539,7 +539,7 @@ class Agent:
         """
         passages,documents=[],{}
         candidates=self.context(state)
-        if self.provider.settings.llm_provider=='groq' and selected_ids is None:
+        if self.provider.settings.llm_provider in {'groq','nvidia'} and selected_ids is None:
             question=normalize(state['request'].message) if state.get('request') else ''
             numbers=set(re.findall(r'(?<![\d/])\d{1,6}/(?:19|20)\d{2}(?!/\d)',question))
             articles=set(re.findall(r'\bdieu\s+(\d+[a-z]?)\b',question))
@@ -580,7 +580,7 @@ class Agent:
             metadata={key:item[key] for key in (
                 'document_id','title','document_number','kind','effective_from','effective_to',
                 'provision_validity','legal_relations','source_review_notes')}
-            if self.provider.settings.llm_provider=='groq':
+            if self.provider.settings.llm_provider in {'groq','nvidia'}:
                 fields=['source_id','target_id','type','source_locator','target_locators',
                         'target_locators_complete','source_effective_from','source_verified']
                 metadata['legal_relation_fields']=fields
@@ -589,7 +589,7 @@ class Agent:
             documents.setdefault(document_id,metadata)
             passage={key:item[key] for key in (
                 'citation_id','document_id','page','locator','text','applicability')}
-            if self.provider.settings.llm_provider=='groq' and selected_ids is None:
+            if self.provider.settings.llm_provider in {'groq','nvidia'} and selected_ids is None:
                 # Select whole passages rather than truncating clauses. Retrieval
                 # still retains eight primary hits and related evidence in trace.
                 projected_docs={k:v for k,v in documents.items()
@@ -1014,7 +1014,7 @@ class Agent:
         for claim in checked_draft['claims']:
             claim['citation_ids']=[aliases.get(key,key) for key in claim['citation_ids']]
         model_context=[{**item,'citation_id':aliases[item['citation_id']]} for item in verification_context]
-        if self.provider.settings.llm_provider=='groq':
+        if self.provider.settings.llm_provider in {'groq','nvidia'}:
             # source_spans already contain exact overlapping text covering every
             # cited passage; avoid sending that same text twice to the verifier.
             model_context=[{k:v for k,v in item.items() if k!='text'} for item in model_context]
@@ -1176,7 +1176,7 @@ class Agent:
                         "as_of": request.as_of or local_date(), "release": None, "history": [], 'repairs':0}
         try:
             if not self.provider.configured:
-                raise ProviderUnavailable("GEMINI_API_KEY chưa được cấu hình; không sinh câu trả lời giả")
+                raise ProviderUnavailable("API key của provider được chọn chưa được cấu hình; không sinh câu trả lời giả")
             async with asyncio.timeout(self.provider.settings.turn_timeout_seconds):
                 state["release"] = await asyncio.to_thread(self.store.release, release_id, True)
                 history = await asyncio.to_thread(self.store.messages, request.session_id, 8)

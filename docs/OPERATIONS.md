@@ -120,3 +120,11 @@ Groq Free được chủ dự án cho phép: đặt `LLM_PROVIDER=groq`, `GROQ_A
 Nếu một lượt đã tiêu thụ token tạo bản nháp rồi bị quota TPD ở verifier, runner ước tính thời gian phục hồi cả lượt từ `Limit/Used/Requested`, Retry-After và `token_usage` thực tế. Log phân biệt Retry-After do provider trả với thời gian chờ cả lượt được ước tính. Cách này tránh liên tục tạo lại bản nháp rồi hết token trước khi kiểm tra; đây không phải trần quota của ứng dụng. Ba regression kiểm tra trường hợp thực tế S05, request đầu tiên bị chặn, và telemetry TPM/thiếu dữ liệu.
 
 Runner theo dõi thay đổi `GROQ_API_KEY` trong `.env` khi chờ quota: khóa mới chỉ kích hoạt kiểm tra dung lượng lại, không thay model/fingerprint và không log secret. Ước tính phục hồi cả lượt dùng token đã tiêu thụ và chi phí chế độ paired cùng câu đã đo; `Retry-After` provider và thời gian ước tính được ghi riêng. Không phải hạn mức ứng dụng hoặc bảo đảm quota. Năm regression runner kiểm tra các nhánh này.
+
+## NVIDIA làm provider ưu tiên
+
+Đặt `NVIDIA_API_KEY` trong `.env`, `LLM_PROVIDER=nvidia` và `NVIDIA_MODEL=nvidia/nemotron-3-super-120b-a12b`. Endpoint cố định `https://integrate.api.nvidia.com/v1/chat/completions`; khóa chỉ ở backend/GitHub Secrets. Embedding E5 và corpus hiện có được giữ. Model chạy trên NVIDIA hosted API, không tải model sinh lên Render.
+
+Tích hợp theo [API Nemotron 3 Super chính thức](https://docs.api.nvidia.com/nim/reference/nvidia-nemotron-3-super-120b-a12b-infer): `stream=false`, `reasoning_effort=none`, JSON schema trong hướng dẫn và kiểm tra Pydantic/grounding phía server. Không giả định endpoint hosted hỗ trợ constrained JSON-schema decoding. Retry/usage tính trong workflow; không tự chuyển provider, bật billing hoặc thêm trần theo ngày. HTTP202 được báo chưa có kết quả, không tự gửi lại invocation đã được nhận.
+
+Sau khi điền khóa: chạy `land-law preflight --live`, kiểm tra ca pháp luật thật ở cả hai chế độ trên fingerprint NVIDIA mới, rồi `python scripts/configure_render.py` và `python scripts/configure_github.py` trước deploy. Hai script từ chối đổi provider live nếu thiếu NVIDIA_API_KEY. Workflow evaluation nhận secret NVIDIA_API_KEY và variable NVIDIA_MODEL; runner phát hiện thay khóa khi đang chờ quota. Báo cáo Groq cũ không chứng nhận model NVIDIA. Chưa có khóa thì chỉ hoàn tất tích hợp local; website hiện có tiếp tục provider đang chạy.

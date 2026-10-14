@@ -192,7 +192,7 @@ async def evaluate(settings, store, provider, split="dev", release_id=None, limi
     fingerprint = hashlib.sha256(path.read_bytes()).hexdigest()
     cases = [c for c in dataset(path) if c["split"] == split]
     if not provider.configured:
-        raise ValueError("Cannot evaluate without real GEMINI_API_KEY")
+        raise ValueError("Cannot evaluate without the selected provider API key")
     release = store.release(release_id, metadata_only=True)
     if not release:
         raise ValueError("No corpus release to evaluate")

@@ -14,7 +14,7 @@ def settings(tmp_path):
     return Settings(_env_file=None, app_env='development', database_url='', admin_database_url='',
                     llm_provider='gemini', groq_model='openai/gpt-oss-120b',
                     embedding_provider='gemini', embedding_model='gemini-embedding-2',
-                    embedding_dimensions=768, groq_api_key='', cloudflare_ai_api_token='',
+                    embedding_dimensions=768, groq_api_key='', nvidia_api_key='', cloudflare_ai_api_token='',
                     backup_encryption_key='', supabase_url='', supabase_service_role_key='',
                     sqlite_path=str(tmp_path / "local.db"), data_dir=tmp_path / "data",
                     reports_dir=tmp_path / "reports", gemini_api_key="test-key", ip_hash_secret="a"*32)

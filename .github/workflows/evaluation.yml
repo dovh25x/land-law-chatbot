@@ -27,6 +27,8 @@ jobs:
       DATABASE_URL: ${{ secrets.DATABASE_URL }}
       GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
       GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+      NVIDIA_API_KEY: ${{ secrets.NVIDIA_API_KEY }}
+      NVIDIA_MODEL: ${{ vars.NVIDIA_MODEL || 'nvidia/nemotron-3-super-120b-a12b' }}
       LLM_PROVIDER: ${{ vars.LLM_PROVIDER || 'gemini' }}
       GEMINI_MODEL: ${{ vars.GEMINI_MODEL || 'gemini-3.5-flash-lite' }}
       GROQ_MODEL: ${{ vars.GROQ_MODEL || 'openai/gpt-oss-120b' }}
@@ -46,7 +48,7 @@ jobs:
           cache: pip
       - run: pip install -r requirements.lock && pip install --no-deps -e .
       - name: Verify in isolated test environment
-        run: env -u DATABASE_URL -u ADMIN_DATABASE_URL -u GEMINI_API_KEY -u GROQ_API_KEY -u CLOUDFLARE_AI_API_TOKEN -u LLM_PROVIDER -u EMBEDDING_PROVIDER -u EMBEDDING_MODEL -u EMBEDDING_DIMENSIONS pytest -q
+        run: env -u DATABASE_URL -u ADMIN_DATABASE_URL -u GEMINI_API_KEY -u GROQ_API_KEY -u NVIDIA_API_KEY -u CLOUDFLARE_AI_API_TOKEN -u LLM_PROVIDER -u EMBEDDING_PROVIDER -u EMBEDDING_MODEL -u EMBEDDING_DIMENSIONS pytest -q
       - name: Prepare pinned query encoder
         if: vars.EMBEDDING_PROVIDER == 'local_onnx'
         run: python backend/landlaw/local_embedding.py download models/e5

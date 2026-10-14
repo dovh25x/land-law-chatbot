@@ -11,7 +11,9 @@ class Settings(BaseSettings):
     app_env: str = "development"
     gemini_api_key: SecretStr = SecretStr("")
     gemini_model: str = "gemini-3.5-flash-lite"
-    llm_provider: Literal['gemini', 'cloudflare', 'groq'] = 'gemini'
+    llm_provider: Literal['gemini', 'cloudflare', 'groq', 'nvidia'] = 'gemini'
+    nvidia_api_key: SecretStr = SecretStr('')
+    nvidia_model: Literal['nvidia/nemotron-3-super-120b-a12b'] = 'nvidia/nemotron-3-super-120b-a12b'
     groq_api_key: SecretStr = SecretStr('')
     groq_model: Literal['openai/gpt-oss-120b','openai/gpt-oss-20b','qwen/qwen3.8-27b'] = 'openai/gpt-oss-120b'
     cloudflare_llm_model: Literal['@cf/qwen/qwen3-30b-a3b-fp8'] = '@cf/qwen/qwen3-30b-a3b-fp8'
@@ -62,6 +64,8 @@ class Settings(BaseSettings):
 
     @property
     def generation_model(self):
+        if self.llm_provider == 'nvidia':
+            return self.nvidia_model
         if self.llm_provider == 'groq':
             return self.groq_model
         return self.cloudflare_llm_model if self.llm_provider == 'cloudflare' else self.gemini_model

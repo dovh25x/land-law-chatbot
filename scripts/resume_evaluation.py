@@ -58,8 +58,9 @@ def main():
         current = Settings()
         if configuration_fingerprint(current) != configuration:
             raise SystemExit('Configuration changed; resume explicitly under the new fingerprint')
-        if (current.llm_provider == 'groq' and current.groq_api_key.get_secret_value()
-                and current.groq_api_key.get_secret_value() != settings.groq_api_key.get_secret_value()):
+        key_field={'groq':'groq_api_key','nvidia':'nvidia_api_key'}.get(current.llm_provider)
+        if (key_field and getattr(current,key_field).get_secret_value()
+                and getattr(current,key_field).get_secret_value()!=getattr(settings,key_field).get_secret_value()):
             settings = current
             return True
         return False
