@@ -539,7 +539,9 @@ class Agent:
                     break
                 state['budget'].tool()
                 opened.add((related_id, locator))
-                doc = await asyncio.to_thread(self.store.open_document, related_id, release_id, locator,state['request'].message)
+                affected_locators=' '.join(dict.fromkeys(e.chunk.locator for e in found.values() if e.document.id==doc_id))[:250]
+                relation_query=(state['request'].message[:700]+' '+affected_locators)[:1000]
+                doc = await asyncio.to_thread(self.store.open_document, related_id, release_id, locator,relation_query)
                 if doc:
                     for chunk in relation_chunks(doc, locator):
                         if related_id==relation.source_id:operative_ids.add(chunk.id)
@@ -1109,7 +1111,7 @@ class Agent:
                                          for n in re.findall(r"Điều\s+(\d+[a-z]?)", locator, flags=re.IGNORECASE)]
                     affected = not relation.get('target_locators_complete') or any(re.search(rf"^Điều {n}(?:\s|$)", item.chunk.locator, re.IGNORECASE) for n in affected_articles)
                     if affected and relation["source_id"] not in cited_documents:
-                        structural_issues.append(f"Claim {index}: điều khoản có sửa đổi/bãi bỏ một phần; cần dẫn cả văn bản tác động")
+                        structural_issues.append(f"Claim {index}: {item.chunk.locator} có sửa đổi/bãi bỏ một phần bởi {relation['source_id']} ({relation.get('source_locator')}); cần đối chiếu và dẫn phần tác động phù hợp")
         cited_ids={citation_id for claim in draft.claims for citation_id in claim.citation_ids}
         selected=[item for item in state['evidence'] if item.chunk.id in cited_ids]
         spans=source_spans(selected)
