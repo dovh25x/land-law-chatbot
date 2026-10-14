@@ -72,6 +72,7 @@ class State(TypedDict, total=False):
     private_entitlement_check: bool
     freshness_question: bool
     place_clarification: bool
+    general_rule_question: bool
 
 
 def applicability(doc: Document, as_of: date, chunk=None):
@@ -365,7 +366,7 @@ class Agent:
                     {"question": redact(request.message), "project": request.project, "as_of": str(state["as_of"]),
                      "history": state["history"], "catalogue": catalogue, 'catalogue_fields':catalogue_fields,
                      "candidate_articles":suggested,
-                     "coverage_gaps":(state['release'] or {}).get('coverage_gaps',[])}, state["budget"])
+                     "coverage_gaps":self.relevant_gaps(state)}, state["budget"])
             except ProviderUnavailable as exc:
                 if not exc.format_failure:raise
                 prior=next((m['content'] for m in reversed(state['history']) if m['role']=='user'),'')
@@ -377,6 +378,10 @@ class Agent:
             # catalogue are tool inputs, not facts a citizen must supply.
             state['plan'].missing_facts=public_missing_facts(state['plan'].missing_facts,state['release'])
         state['private_entitlement_check']=private_entitlement_check(request.message)
+        personal=bool(re.search(r'\btoi\b',question)) or any(t in question for t in ('cua minh','nha minh','ho so nay','thua dat nay','bao nhieu tien','may can','chac chan'))
+        general=not personal and any(t in question for t in ('dieu kien','khac nhau','nhom','dong nghia','theo dieu','quy dinh','co luon','co nen','nhung buoc','nguyen tac','doi tuong','can kiem tra','phan biet','co phai','tu dong','co duoc'))
+        state['general_rule_question']=general
+        if general:state['plan'].missing_facts=[]
         if state['private_entitlement_check']:
             state['plan'].missing_facts=list(dict.fromkeys(state['plan'].missing_facts+[
                 'Loại đất, tình trạng giấy tờ quyền sử dụng đất và nhà ở, chỉ cung cấp thông tin đã ẩn danh.',
@@ -567,6 +572,22 @@ class Agent:
                  'source_review_notes':e.document.source_review_notes,
                  "legal_relations": self.relation_context(e, state)} for e in state["evidence"]]
 
+    @staticmethod
+    def relevant_gaps(state):
+        question=normalize(state['request'].message)
+        selected={e.document.id for e in state.get('evidence',[])}
+        missing={r['source_id'] for r in (state.get('release') or {}).get('unresolved_relations',[])
+                 if r['target_id'] in selected and r['type'] in {'amends','repeals','overrides'}}
+        return [g for g in (state.get('release') or {}).get('coverage_gaps',[]) if g['document_id'] in missing
+                or (g.get('document_number') and normalize(g['document_number']).split('/qd')[0] in question)]
+
+    @staticmethod
+    def relevant_unresolved(state):
+        selected={e.document.id for e in state.get('evidence',[])}
+        selected.update(g['document_id'] for g in Agent.relevant_gaps(state))
+        return [r for r in (state.get('release') or {}).get('unresolved_relations',[])
+                if {r['source_id'],r['target_id']} & selected]
+
     def prompt_context(self,state,selected_ids=None):
         """Send each document's legal relationships once, preserving every passage.
 
@@ -713,6 +734,8 @@ class Agent:
                 "When alternative conditions apply only to cases defined in another clause, explicitly retain that "
                 "eligibility prerequisite, even when answering whether a certificate is the sole condition. "
                 "A general rule can be answered without private-case facts. For case-specific rights, ask for missing land type, "
+                "When question_kind is general_rule, explain the sourced rule and its conditions instead of asking for a "
+                "real household's facts. Do not mistake scoped source gaps for the supplied verified evidence. "
                 "papers and decision/approved-plan dates; never ask the user to provide law already in the corpus. "
                 "No guaranteed household/parcel rights or compensation amounts from general project information. "
                 "official_news is context only (kind=context). unverified cannot prove current law; historical needs the "
@@ -735,8 +758,9 @@ class Agent:
                  "missing_facts": state["plan"].missing_facts, "tool_results": state["tool_notes"], "evidence": contexts,
                  "documents":documents,
                  'allowed_citation_ids':list(aliases.values()),
-                 "coverage_gaps": (state['release'] or {}).get('coverage_gaps', []),
-                 "unresolved_relations": (state['release'] or {}).get('unresolved_relations', []),
+                 "coverage_gaps": self.relevant_gaps(state),
+                 'question_kind':'general_rule' if state.get('general_rule_question') else 'case_or_other',
+                 "unresolved_relations": self.relevant_unresolved(state),
                  'context_selection':{'complete_passages':len(contexts),'retrieved_candidates':len(state['evidence']),
                                       'omitted_candidates_are_not_citable':True},
                  "previous_issues": state.get("verification", Verification()).issues}, state["budget"])
@@ -1129,8 +1153,9 @@ class Agent:
             "a targeted followup_query in Vietnamese. Do not invent evidence or treat coverage_gaps as proof.",
             {"question": redact(state["request"].message), "as_of": str(state["as_of"]),"history":state.get('history',[]),
              "draft": checked_draft, "evidence": model_context,'source_spans':model_spans,'documents':documents,
-             "coverage_gaps": (state['release'] or {}).get('coverage_gaps', []),
-             "unresolved_relations": (state['release'] or {}).get('unresolved_relations', [])}, state["budget"])
+             "coverage_gaps": self.relevant_gaps(state),
+             'question_kind':'general_rule' if state.get('general_rule_question') else 'case_or_other',
+             "unresolved_relations": self.relevant_unresolved(state)}, state["budget"])
         checked.supporting_quotes=[quote.model_copy(update={'citation_id':actual.get(quote.citation_id,quote.citation_id)})
                                    for quote in checked.supporting_quotes]
         for reference in checked.supporting_spans:
@@ -1231,6 +1256,7 @@ class Agent:
         if claims:
             content += "\n\n" + "\n\n".join(c.text + " " + " ".join(f"[{cited_ids.index(i)+1}]" for i in c.citation_ids) for c in claims)
         missing = public_missing_facts(state["plan"].missing_facts + draft.missing_facts,release)
+        if state.get('general_rule_question'):missing=[]
         if outside:missing=[]
         if missing and status == "answered":
             status = "clarification_needed"

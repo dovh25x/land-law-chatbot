@@ -325,7 +325,10 @@ async def test_future_immediate_application_states_only_verified_start_and_asks_
     assert result.missing_facts and result.llm_calls==0
 
 
-async def test_missing_tool_identifier_falls_back_and_never_becomes_public_question(store,settings):
+@pytest.mark.parametrize('question,status,facts',[
+    ('Điều kiện bồi thường khi thu hồi đất?','answered',[]),
+    ('Nhà tôi cần kiểm tra điều kiện bồi thường khi thu hồi đất?','clarification_needed',['Ngày phê duyệt phương án của gia đình'])])
+async def test_missing_tool_identifier_falls_back_and_never_becomes_public_question(store,settings,question,status,facts):
     law=document(document_number='31/2024/QH15',issued_on=date(2024,1,18))
     release(store,[law]);sid,_=session(store)
     class Provider(FakeProvider):
@@ -336,9 +339,9 @@ async def test_missing_tool_identifier_falls_back_and_never_becomes_public_quest
                     'document_id của văn bản','Ngày ban hành Luật 31/2024/QH15','Ngày phê duyệt phương án của gia đình'])
             return await super().generate(schema,instruction,payload,budget)
     result=await Agent(store,Provider(settings)).run(ChatRequest(session_id=sid,
-        message='Điều kiện bồi thường khi thu hồi đất?'),noop)
-    assert result.verified_claims and result.status=='clarification_needed'
-    assert result.missing_facts==['Ngày phê duyệt phương án của gia đình']
+        message=question),noop)
+    assert result.verified_claims and result.status==status
+    assert result.missing_facts==facts
     assert any('Không mở được' in event.summary for event in result.trace)
     assert result.tool_calls<=12 and result.llm_calls<=6
 
@@ -966,3 +969,19 @@ def test_proposed_or_unapproved_planning_task_never_becomes_approved_fact(prefix
     state={'request':ChatRequest(session_id='00000000-0000-0000-0000-000000000000',message='Bài phê duyệt nhiệm vụ quy hoạch có đồng nghĩa toàn bộ đồ án đã phê duyệt?'),
            'evidence':[Evidence(document=news,chunk=news.chunks[0],applicability='context')]}
     assert Agent.planning_task_news(state) is None
+
+
+def test_unrelated_source_gaps_never_replace_verified_evidence_in_prompt():
+    from landlaw.models import Evidence
+    law=document()
+    state={'request':ChatRequest(session_id='00000000-0000-0000-0000-000000000000',message='Điều kiện bồi thường?'),
+       'evidence':[Evidence(document=law,chunk=law.chunks[0])],
+       'release':{'coverage_gaps':[{'document_id':'missing-price','document_number':'30/2019/QĐ-UBND'}],
+                  'unresolved_relations':[]}}
+    assert Agent.relevant_gaps(state)==[]
+    state['request']=state['request'].model_copy(update={'message':'Theo 30/2019/QĐ-UBND, mức giá là gì?'})
+    assert Agent.relevant_gaps(state)[0]['document_id']=='missing-price'
+    state['request']=state['request'].model_copy(update={'message':'Điều kiện bồi thường?'})
+    state['release']['unresolved_relations']=[{'source_id':'missing-price','target_id':'law','type':'amends'}]
+    assert Agent.relevant_gaps(state)[0]['document_id']=='missing-price'
+    assert len(Agent.relevant_unresolved(state))==1
