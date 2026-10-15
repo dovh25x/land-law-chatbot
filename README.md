@@ -2,6 +2,10 @@
 
 Web chatbot tiếng Việt dùng FastAPI, LangGraph, Gemini/Groq/Workers AI, E5 ONNX, PostgreSQL/pgvector và React. Hai chế độ baseline/agentic dùng cùng nguồn dữ liệu và model. Agent chỉ có công cụ đọc với tham số định kiểu, giới hạn 6 lần gọi LLM, 12 công cụ, hai vòng retrieval và 90 giây. Chỉ phát câu trả lời qua SSE sau kiểm tra căn cứ; trace là sự kiện thực thi.
 
+## Giao diện
+
+UI đã triển khai theo [thiết kế Figma](https://www.figma.com/design/E8ntRTL3j3J29fhMM62mDk/Hanoi-Land-Law-UI-Redesign): font Be Vietnam Pro, chat responsive, panel nguồn/trace và menu mobile. Xem [chi tiết triển khai UI](docs/UI_DESIGN.md) và bằng chứng `reports/ui-redesign.json`, `reports/ui-redesign-live.json`.
+
 ## Phạm vi bài nộp
 
 **Nguyên mẫu học thuật — chưa được thẩm định pháp lý độc lập.** Tập trung tra cứu bồi thường, hỗ trợ và tái định cư tại Hà Nội; Vành đai 4 là ví dụ chính. Giữ hệ thống hiện có, không yêu cầu đạt nghiệm thu production M0–M6 hay benchmark 120 câu để nộp học phần.

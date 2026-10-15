@@ -21,5 +21,18 @@
   },
   "screenshots_scope": "isolated Playwright fixtures; not legal benchmark",
   "legal_acceptance": false,
-  "live_receipt": "reports/ui-redesign-live.json"
+  "live_receipt": "reports/ui-redesign-live.json",
+  "source_commit": "2e2c4c0",
+  "deployment": {
+    "id": "1800776d",
+    "url": "https://hanoi-land-law.pages.dev",
+    "preview_url": "https://1800776d.hanoi-land-law.pages.dev",
+    "html_sha256": "130c7fa789d056df421d084dc431ce6dc80612b4224ecfd1c7f113d72a1bb007"
+  },
+  "ci": {
+    "run_id": 38683325095,
+    "conclusion": "success",
+    "url": "https://github.com/dovh25x/land-law-chatbot/actions/runs/38683325095"
+  },
+  "live_verification": "passed for UI navigation, font, documents, projects and explicit quota handling; no new grounded chat answer due to public daily IP limit"
 }
