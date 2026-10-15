@@ -16,7 +16,7 @@ Mục tiêu: minh họa xử lý dữ liệu văn bản, hybrid RAG, điều ph�
 ## Điều kiện nộp nội bộ
 
 1. URL hoặc bản chạy local hoạt động; nguồn và trace mở được, hội thoại được lưu.
-2. Có kết quả 20 câu agentic đúng cấu hình cloud; từng câu ghi kết quả thực tế và trạng thái rà soát. Không tự coi kết quả kỹ thuật là chấm đúng pháp lý.
+2. Có kết quả 20 câu agentic từ CLI quản trị trên đúng mã nguồn/corpus/model bản nộp; HTTPS/browser được kiểm chứng riêng. Từng câu ghi kết quả thực tế và trạng thái rà soát. Không tự coi kết quả kỹ thuật là chấm đúng pháp lý.
 3. Kiểm thử phần mềm và build đạt; không lộ secret, không truy cập chéo phiên.
 4. Báo cáo, slide, kịch bản và video phản ánh đúng phiên bản chạy.
 5. Công khai lỗi và giới hạn; không tuyên bố đã nghiệm thu pháp lý hay đạt các ngưỡng chất lượng chưa đo.

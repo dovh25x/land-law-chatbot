@@ -1,55 +1,31 @@
 {
-  "status": "awaiting_review",
-  "dataset_sha256": "919d297f64d2a14b3dfcf0215be401a16615bdaa2e778af8514d060bb5b5392e",
-  "generated_at": "2026-10-11T19:13:50.796227+00:00",
-  "cases": 40,
-  "completed_pairs": 2,
+  "status": "reviewed",
+  "checked_at": "2026-10-15T05:29:41.487786+00:00",
+  "model": "openai/gpt-oss-20b",
+  "mode": "agentic",
+  "scope": "Actual Groq generation with deployed backend code and Supabase corpus via operator CLI; not an HTTP/browser latency benchmark.",
+  "suite_sha256": "56ccf0b0dfe9e13f8215df8cadf195ecc733560e0974d7281373338cf4a27e35",
+  "split": "academic_smoke",
+  "cases": 20,
+  "release": "corpus-de584c31fc95f9a2",
+  "configuration_sha256": "6d9a50e0ef58602cb5efc551848ee0e8bc1ce347ccc6618a0f4f9204453d3467",
+  "acceptance_passed": false,
+  "independent_legal_certification": false,
+  "transport": "operator_cli",
   "results": [
     {
-      "mode": "baseline",
-      "completed": 2,
-      "reviewed": 0,
-      "recall_at_8": null,
-      "answer_pass_rate": null,
-      "citation_id_valid_rate": null,
-      "claim_support_rate": null,
-      "p95_seconds": 10.296,
-      "llm_calls": 4,
-      "embedding_calls": 2,
-      "tool_calls": 8,
-      "critical_failed": [],
-      "limited_or_error": 0,
-      "unsupported_claims": null
-    },
-    {
       "mode": "agentic",
-      "completed": 2,
-      "reviewed": 0,
-      "recall_at_8": null,
-      "answer_pass_rate": null,
-      "citation_id_valid_rate": null,
-      "claim_support_rate": null,
-      "p95_seconds": 33.337,
-      "llm_calls": 12,
-      "embedding_calls": 4,
-      "tool_calls": 19,
-      "critical_failed": [],
-      "limited_or_error": 0,
-      "unsupported_claims": null
+      "completed": 20,
+      "reviewed": 20,
+      "pass": 16,
+      "partial": 3,
+      "fail": 1,
+      "citation_sources_match_corpus": true
     }
   ],
-  "acceptance_passed": false,
-  "run_id": "corpus-adcd1a8f9596ccb8-gemini-3.5-flash-lite-dev-919d297f-16bdd915",
-  "release": "corpus-adcd1a8f9596ccb8",
-  "model": "gemini-3.5-flash-lite",
-  "embedding_model": "gemini-embedding-2",
-  "split": "dev",
-  "corpus_embedded": false,
-  "publication_candidate": false,
-  "notes": [
-    "Development runs on incomplete staging cannot certify acceptance; query embedding failures fall back to lexical retrieval."
-  ],
-  "as_of": "2026-10-12",
-  "configuration_sha256": "16bdd9157e03886d9b92c7d6d847274f576e37d4347b507bd1470fa90e44fd10",
-  "quality_metrics_status": "withheld_pending_full_source_review"
+  "limitations": [
+    "20-case academic rubric review only; not the original 80-case acceptance benchmark.",
+    "Source IDs/excerpts matching the corpus do not prove every generated legal statement.",
+    "S06 fails full claim support; S04, S11 and S16 are partial. See submission/results.md."
+  ]
 }

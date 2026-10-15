@@ -1,3 +1,11 @@
+# Bản MVP học thuật dùng Groq — 15/10/2026
+
+Phạm vi hiện hành là đồ án liên ngành, không còn lấy M0–M6 production làm điều kiện nộp. Bản nộp chọn Groq `openai/gpt-oss-20b`, E5 ONNX Q8 384 chiều, corpus 69 tài liệu / 7.610 vector. Render không chứa NVIDIA_API_KEY. Đủ 20 ca agentic CLI đã thực thi và rà soát: 16 pass, 3 partial, 1 fail; chi tiết tại [kết quả](../reports/submission/results.md). HTTPS/browser và video được ghi riêng, không suy từ CLI.
+
+Bằng chứng mới: `reports/submission/evaluation.json`, `reviews.json`, `mvp-handoff.json`; báo cáo và 10 slide trong `docs/submission/`. Mọi nội dung bên dưới là lịch sử của yêu cầu production và không chứng nhận chất lượng bản Groq. Ca S06 còn diễn giải chưa được đoạn dẫn hỗ trợ đủ; không tuyên bố thẩm định pháp lý độc lập.
+
+---
+
 > **Phạm vi hiện hành:** đồ án học thuật theo [SCOPE](submission/SCOPE.md). Các mốc production và tiêu chí bên dưới được giữ như lịch sử, không còn là điều kiện nộp học phần. Không đổi nghĩa trạng thái nghiệm thu cũ.
 
 # Bằng chứng triển khai

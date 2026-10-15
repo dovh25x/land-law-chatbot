@@ -1,123 +1,77 @@
-<!doctype html><html lang="vi"><meta charset="utf-8"><title>Hanoi Land Law — report</title><style>body{font:15px/1.65 Arial,sans-serif;color:#172e35;margin:36px auto;max-width:1000px;padding:24px}h1,h2,h3{color:#0c6761}.line{white-space:pre-wrap;overflow-wrap:anywhere}section{margin-bottom:30px}h2,h3{break-after:avoid}.line{font-size:12px}@media print{body{margin:0;padding:0}section:last-child{break-after:auto}}</style><section><h1>Hanoi Land Law Assistant</h1>
+<!doctype html><html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Hanoi Land Law — report</title><style>
+body{font:15px/1.7 Arial,sans-serif;color:#18343d;margin:32px auto;max-width:1040px;padding:24px;background:#fff}h1,h2,h3{line-height:1.35;color:#087f78;break-after:avoid}h1{font-size:30px}h2{font-size:23px;margin-top:30px}p,li{overflow-wrap:anywhere}a{color:#087f78}code{font-size:.85em;background:#f1f5f5;padding:2px 4px;border-radius:4px;overflow-wrap:anywhere}pre{white-space:pre-wrap;background:#f7f9fa;padding:16px;border-radius:12px}pre:has(.architecture){padding:0;background:none}table{width:100%;border-collapse:collapse;margin:20px 0;font-size:12px}th,td{padding:9px 10px;text-align:left;border:1px solid #dfe7ea;vertical-align:top}th{background:#e8f5f2}td p,th p{margin:0}tr{break-inside:avoid}thead{display:table-header-group}.architecture{display:flex;flex-direction:column;gap:8px;padding:16px;background:#f7f9fa;border-radius:14px;font:14px/1.6 Arial,sans-serif}.architecture>div{padding:12px;border:1px solid #dfe7ea;border-radius:8px;background:white;text-align:center}section{margin-bottom:30px}
+li{margin-bottom:6px}h2{border-bottom:1px solid #dfe7ea;padding-bottom:8px}
+@media print{body{margin:0;padding:0;max-width:none}section{margin:0}a{text-decoration:none}}
+</style></head><body><section><h1>Hanoi Land Law Assistant</h1>
 <h2>Báo cáo đồ án liên ngành — nguyên mẫu học thuật</h2>
-<div class="line">&nbsp;</div>
-<div class="line">**Sinh viên/nhóm, lớp, giảng viên:** điền thông tin trước khi nộp.</div>
-<div class="line">&nbsp;</div>
+<p><strong>Sinh viên/nhóm, lớp, giảng viên:</strong> điền thông tin trước khi nộp.</p>
 <h2>1. Bài toán và mục tiêu</h2>
-<div class="line">&nbsp;</div>
-<div class="line">Văn bản pháp luật phân tán, có thay đổi theo thời điểm và thường khó đọc với người không chuyên. Đồ án xây dựng web chatbot tiếng Việt hỗ trợ tìm căn cứ về bồi thường, hỗ trợ và tái định cư ở Hà Nội. Vành đai 4 là tình huống minh họa. Mục tiêu là minh họa một hệ thống AI có truy xuất và nguồn dẫn, không xác định quyền lợi pháp lý của từng hộ.</div>
-<div class="line">&nbsp;</div>
+<p>Văn bản pháp luật phân tán, có thay đổi theo thời điểm và thường khó đọc với người không chuyên. Đồ án xây dựng web chatbot tiếng Việt hỗ trợ tìm căn cứ về bồi thường, hỗ trợ và tái định cư ở Hà Nội. Vành đai 4 là tình huống minh họa. Mục tiêu là minh họa một hệ thống AI có truy xuất và nguồn dẫn, không xác định quyền lợi pháp lý của từng hộ.</p>
 <h2>2. Đóng góp liên ngành</h2>
-<div class="line">&nbsp;</div>
-<div class="line">| Lĩnh vực | Công việc |</div>
-<div class="line">|---|---|</div>
-<div class="line">| Kỹ thuật dữ liệu | Thu thập nguồn chính thức, parse HTML/PDF, chia đoạn theo cấu trúc, metadata và phiên bản |</div>
-<div class="line">| Trí tuệ nhân tạo | Embedding E5, hybrid retrieval, LangGraph, tổng hợp có chứng cứ và kiểm tra trích dẫn |</div>
-<div class="line">| Kỹ thuật phần mềm | React/TypeScript, FastAPI, phiên hội thoại, SSE, Docker, kiểm thử và triển khai |</div>
-<div class="line">| Kiến thức miền | Phân biệt quy định chung, hồ sơ dự án, thời điểm áp dụng và dữ kiện cá nhân còn thiếu |</div>
-<div class="line">&nbsp;</div>
+<table><thead><tr><th><p>Lĩnh vực</p></th><th><p>Công việc</p></th></tr></thead><tbody><tr><td><p>Kỹ thuật dữ liệu</p></td><td><p>Thu thập nguồn chính thức, parse HTML/PDF, chia đoạn theo cấu trúc, metadata và phiên bản</p></td></tr><tr><td><p>Trí tuệ nhân tạo</p></td><td><p>Embedding E5, hybrid retrieval, LangGraph, tổng hợp có chứng cứ và kiểm tra trích dẫn</p></td></tr><tr><td><p>Kỹ thuật phần mềm</p></td><td><p>React/TypeScript, FastAPI, phiên hội thoại, SSE, Docker, kiểm thử và triển khai</p></td></tr><tr><td><p>Kiến thức miền</p></td><td><p>Phân biệt quy định chung, hồ sơ dự án, thời điểm áp dụng và dữ kiện cá nhân còn thiếu</p></td></tr></tbody></table>
 <h2>3. Kiến trúc</h2>
-<div class="line">&nbsp;</div>
-<div class="line">```mermaid</div>
-<div class="line">flowchart LR</div>
-<div class="line">    D[Nguồn chính thức] --&gt; P[Parse và chia đoạn ngoại tuyến]</div>
-<div class="line">    P --&gt; E[E5 embedding trên Colab]</div>
-<div class="line">    E --&gt; DB[(Supabase PostgreSQL pgvector)]</div>
-<div class="line">    W[React web] --&gt; API[FastAPI SSE]</div>
-<div class="line">    API --&gt; G[LangGraph và công cụ chỉ đọc]</div>
-<div class="line">    G --&gt; DB</div>
-<div class="line">    G --&gt; N[NVIDIA Nemotron 3 Super]</div>
-<div class="line">    N --&gt; V[Kiểm tra nguồn và trích dẫn]</div>
-<div class="line">    V --&gt; W</div>
-<div class="line">```</div>
-<div class="line">&nbsp;</div>
-<div class="line">Backend và frontend chạy riêng trên Render và Cloudflare Pages. Supabase lưu corpus và hội thoại. E5 xử lý truy vấn trên CPU backend; không chạy mô hình sinh hoặc OCR trên Render. Không sử dụng công nghệ embedding khác trong cùng index.</div>
-<div class="line">&nbsp;</div>
+<pre><div class="architecture"><div>Nguồn chính thức → parse → E5 trên Colab</div><div>Supabase · PostgreSQL / pgvector</div><div>React → FastAPI → LangGraph</div><div>Truy xuất → Groq GPT-OSS 20B → kiểm tra</div><div>Câu trả lời SSE · nguồn dẫn · agent trace</div></div></pre>
+<p>Backend và frontend chạy riêng trên Render và Cloudflare Pages. Supabase lưu corpus và hội thoại. E5 xử lý truy vấn trên CPU backend; không chạy mô hình sinh hoặc OCR trên Render. Không sử dụng công nghệ embedding khác trong cùng index.</p>
 <h2>4. Dữ liệu và retrieval</h2>
-<div class="line">&nbsp;</div>
-<div class="line">Corpus snapshot đang sử dụng có 69 tài liệu và 7.610 vector 384 chiều; danh mục nguồn nằm tại `data/sources.json`. Văn bản được lưu nguồn công bố, checksum, ngày kiểm tra và locator điều/khoản/trang. OCR và dữ liệu chưa đạt kiểm tra không được dùng để bù số lượng. Tin tiến độ dự án chỉ bổ sung bối cảnh.</div>
-<div class="line">&nbsp;</div>
-<div class="line">Hybrid retrieval kết hợp tìm từ khóa PostgreSQL và vector bằng Reciprocal Rank Fusion. Kết quả truy xuất là ứng viên; không tự chứng minh điều khoản áp dụng cho hồ sơ cá nhân. Nguồn dẫn cho phép mở đoạn và văn bản gốc.</div>
-<div class="line">&nbsp;</div>
+<p>Corpus snapshot đang sử dụng có 69 tài liệu và 7.610 vector 384 chiều; danh mục nguồn nằm tại <code>data/sources.json</code>. Văn bản được lưu nguồn công bố, checksum, ngày kiểm tra và locator điều/khoản/trang. OCR và dữ liệu chưa đạt kiểm tra không được dùng để bù số lượng. Tin tiến độ dự án chỉ bổ sung bối cảnh.</p>
+<p>Hybrid retrieval kết hợp tìm từ khóa PostgreSQL và vector bằng Reciprocal Rank Fusion. Kết quả truy xuất là ứng viên; không tự chứng minh điều khoản áp dụng cho hồ sơ cá nhân. Nguồn dẫn cho phép mở đoạn và văn bản gốc.</p>
 <h2>5. Agent và giao diện</h2>
-<div class="line">&nbsp;</div>
-<div class="line">Workflow xác định vấn đề, gọi công cụ truy xuất/mở điều khoản/quan hệ văn bản, tổng hợp rồi kiểm tra trước khi phát đáp án qua SSE. Có giới hạn thực thi để tránh vòng lặp. Trace hiển thị sự kiện và công cụ thực tế, không hiển thị suy nghĩ nội bộ.</div>
-<div class="line">&nbsp;</div>
-<div class="line">Người dùng nhập câu hỏi, chọn ngày/dự án nếu cần, đọc đáp án và mở nguồn/trace. Hệ thống có thể hỏi lại hoặc trả lời có giới hạn. Baseline được giữ để minh họa nhưng không giả định agentic luôn tốt hơn.</div>
-<div class="line">&nbsp;</div>
+<p>Workflow xác định vấn đề, gọi công cụ truy xuất/mở điều khoản/quan hệ văn bản, tổng hợp rồi kiểm tra trước khi phát đáp án qua SSE. Có giới hạn thực thi để tránh vòng lặp. Trace hiển thị sự kiện và công cụ thực tế, không hiển thị suy nghĩ nội bộ.</p>
+<p>Người dùng nhập câu hỏi, chọn ngày/dự án nếu cần, đọc đáp án và mở nguồn/trace. Hệ thống có thể hỏi lại hoặc trả lời có giới hạn. Baseline được giữ để minh họa nhưng không giả định agentic luôn tốt hơn.</p>
 <h2>6. Phương pháp đánh giá</h2>
-<div class="line">&nbsp;</div>
-<div class="line">Dùng lại 20 câu smoke có rubric và nguồn tham chiếu tại `data/evaluation/smoke.jsonl`. Chạy agentic qua API cloud, lưu câu trả lời, model, corpus, fingerprint, độ trễ và kết quả đối chiếu ID/đoạn nguồn. Tôn trọng giới hạn API công khai; checkpoint khi gián đoạn. Câu tiếp nối chạy sau câu trước trong cùng phiên khi bộ dữ liệu yêu cầu.</div>
-<div class="line">&nbsp;</div>
-<div class="line">Kết quả mới được lưu riêng tại `reports/submission/evaluation.json`; bảng dễ đọc tại `reports/submission/results.md`. Kiểm tra máy chỉ xác nhận giao thức và nguồn tồn tại; chấm nội dung cần đọc câu trả lời và đối chiếu rubric. Những câu chưa rà soát phải ghi `awaiting_review`, không tính là đạt. Không lấy số liệu cũ, CLI hoặc model khác để thay thế.</div>
-<div class="line">&nbsp;</div>
+<p>Dùng lại 20 câu smoke có rubric và nguồn tham chiếu tại <code>data/evaluation/smoke.jsonl</code>. Chạy 20 ca agentic qua CLI quản trị trên mã nguồn bản chốt, gọi Groq thật và corpus Supabase. Lưu câu trả lời, model, corpus, fingerprint, độ trễ và đối chiếu ID/đoạn nguồn. CLI không chịu giới hạn chống lạm dụng của website nhưng tuân thủ quota provider, có checkpoint và giữ lịch sử lần thử. S14 dùng lịch sử cố định của bộ kiểm tra; hội thoại tự nhiên qua HTTPS/browser được kiểm chứng riêng. Không ghép độ trễ CLI thành SLA HTTP.</p>
+<p>Kết quả mới được lưu riêng tại <code>reports/submission/evaluation.json</code>; bảng dễ đọc tại <code>reports/submission/results.md</code>. Kiểm tra máy chỉ xác nhận giao thức và nguồn tồn tại; chấm nội dung cần đọc câu trả lời và đối chiếu rubric. Những câu chưa rà soát phải ghi <code>awaiting_review</code>, không tính là đạt. Không lấy số liệu cũ, CLI hoặc model khác để thay thế.</p>
 <h2>7. Kết quả và bằng chứng</h2>
-<div class="line">&nbsp;</div>
-<div class="line">Checkpoint hiện tại đã chạy và rà soát 16/20 câu trên cloud: 12 pass, 2 partial, 2 fail theo rubric kỹ thuật; bốn câu còn lại chưa chạy do giới hạn lượt/ngày của API công khai. Tất cả trích dẫn xuất hiện trong 16 ca đều khớp đoạn nguồn qua endpoint tài liệu. Các ca không có trích dẫn không được tính như bằng chứng hỗ trợ kết luận. Không tính tỷ lệ chất lượng toàn hệ thống từ checkpoint này. Xem bảng kết quả hiện hành trong `reports/submission/`. Báo cáo backend/frontend được lưu riêng với ngày chạy. Nếu đánh giá cloud bị gián đoạn, số câu đã chạy và nguyên nhân phải được nêu rõ. Không đưa tỷ lệ chất lượng hoặc kết luận nghiệm thu khi chưa có đủ dữ liệu chấm.</div>
-<div class="line">&nbsp;</div>
-<div class="line">Các receipt trước đây ở `reports/live-demo.json`, `reports/live-ui.json` và `reports/postgres-restore.json` là bằng chứng lịch sử, không tự động là kết quả của mã nguồn hiện tại.</div>
-<div class="line">&nbsp;</div>
+<p>Đã chạy và rà soát đủ <strong>20/20 ca agentic</strong> với Groq <code>openai/gpt-oss-20b</code>, release <code>corpus-de584c31fc95f9a2</code>, fingerprint <code>6d9a50e0ef58602cb5efc551848ee0e8bc1ce347ccc6618a0f4f9204453d3467</code>. Kết quả theo rubric kỹ thuật và đoạn nguồn: <strong>16 pass, 3 partial, 1 fail</strong>. Tất cả ID/đoạn trích dẫn xuất hiện khớp corpus; điều này không bảo đảm mọi mệnh đề được hỗ trợ.</p>
+<ul>
+<li>S04 trả đúng tiếp tục phương án, còn thiếu ý chi trả chậm trong rubric đầy đủ.</li>
+<li>S11 không khẳng định quyền lợi cá nhân nhưng chưa giải thích riêng nguồn tin quy hoạch được hỏi.</li>
+<li>S16 không xác nhận số tiền/văn bản giả, nhưng hướng dẫn kiểm tra còn chung.</li>
+<li>S06 trả đúng ý chính giấy chứng nhận không là điều kiện duy nhất; phần liệt kê thêm đối tượng chưa được hai đoạn citation hỗ trợ đầy đủ nên chấm fail. Đây là hạn chế cần sửa sau bản nộp; tránh dùng câu này để khẳng định tính chính xác toàn diện.</li>
+</ul>
+<p>Có 21 lần thực thi cho 20 ca: S06 từng dừng do quota/ngân sách, sau đó thử lại thành công về giao thức. Giữ cả lần thử lỗi; bảng chính ghi lần thực thi cuối và không giấu việc thử lại. Không dùng LLM judge. Không suy tỷ lệ toàn miền hoặc chứng nhận nghiệm thu pháp lý từ bộ 20 câu có chọn lọc. Phiên bản mã nguồn không chứa thay đổi <code>agent.py</code> đang dở trong workspace.</p>
+<p>Bản chốt đã qua 226 kiểm thử backend/công cụ đánh giá; hai kiểm thử công cụ xuất báo cáo được chạy riêng, frontend đạt 2 unit tests và 22 E2E desktop/mobile. CI, triển khai, HTTPS và video có receipt riêng trong <code>reports/submission/</code>. Tình trạng triển khai cuối phải đối chiếu receipt, không suy từ build cục bộ.</p>
+<p>Các receipt trước đây ở <code>reports/live-demo.json</code>, <code>reports/live-ui.json</code> và <code>reports/postgres-restore.json</code> là bằng chứng lịch sử, không tự động là kết quả của mã nguồn hiện tại.</p>
 <h2>8. Hạn chế</h2>
-<div class="line">&nbsp;</div>
-<div class="line">- Chưa được thẩm định pháp lý độc lập; dữ liệu là snapshot, có nguồn và quan hệ còn thiếu.</div>
-<div class="line">- Retrieval và giải tham chiếu có thể bỏ sót; một số câu hỏi bị trả lời giới hạn dù có căn cứ trong corpus.</div>
-<div class="line">- Nguồn đúng không tự bảo đảm mọi kết luận trong đáp án đúng.</div>
-<div class="line">- Hosting miễn phí có cold start; provider có thể timeout/quota. Không cam kết SLA.</div>
-<div class="line">- Không tính tiền bồi thường, xác định quy hoạch từng thửa hay xử lý hồ sơ cá nhân nhạy cảm.</div>
-<div class="line">- 20 ca có chọn lọc không đại diện mọi câu hỏi thực tế; không tuyên bố cải thiện so với baseline nếu chưa đo cùng cấu hình.</div>
-<div class="line">&nbsp;</div>
+<ul>
+<li>Chưa được thẩm định pháp lý độc lập; dữ liệu là snapshot, có nguồn và quan hệ còn thiếu.</li>
+<li>Retrieval và giải tham chiếu có thể bỏ sót; một số câu hỏi bị trả lời giới hạn dù có căn cứ trong corpus.</li>
+<li>Nguồn đúng không tự bảo đảm mọi kết luận trong đáp án đúng.</li>
+<li>Hosting miễn phí có cold start; provider có thể timeout/quota. Không cam kết SLA.</li>
+<li>Không tính tiền bồi thường, xác định quy hoạch từng thửa hay xử lý hồ sơ cá nhân nhạy cảm.</li>
+<li>20 ca có chọn lọc không đại diện mọi câu hỏi thực tế; không tuyên bố cải thiện so với baseline nếu chưa đo cùng cấu hình.</li>
+</ul>
 <h2>9. Hướng phát triển</h2>
-<div class="line">&nbsp;</div>
-<div class="line">Chỉ sau học phần: mở rộng đánh giá, thẩm định miền độc lập, cải thiện retrieval và giải tham chiếu, cập nhật nguồn có kiểm duyệt. Đây không phải điều kiện hoàn thành bản nộp.</div>
-<div class="line">&nbsp;</div>
+<p>Chỉ sau học phần: mở rộng đánh giá, thẩm định miền độc lập, cải thiện retrieval và giải tham chiếu, cập nhật nguồn có kiểm duyệt. Đây không phải điều kiện hoàn thành bản nộp.</p>
 <h2>10. Tài liệu tham khảo và tái lập</h2>
-<div class="line">&nbsp;</div>
-<div class="line">Nguồn pháp lý: `data/sources.json`, trang nguồn trong ứng dụng và metadata corpus. Công nghệ: FastAPI, LangGraph, PostgreSQL/pgvector, multilingual-e5-small, NVIDIA hosted Nemotron, React/Vite. Cài đặt theo README và phiên bản khóa trong repository. Không đưa khóa API hoặc token phiên vào báo cáo.</div>
-<div class="line">&nbsp;</div>
-<div class="line">&nbsp;</div>
-<h1>Kết quả 20 ca trên API cloud</h1>
-<div class="line">&nbsp;</div>
-<div class="line">Trạng thái: **partial**. Đã chạy 16/20. Chưa tự động chấm đúng pháp lý.</div>
-<div class="line">&nbsp;</div>
-<div class="line">| Ca | Trạng thái API | Giây | Trích dẫn khớp nguồn | Review nội dung |</div>
-<div class="line">|---|---|---:|---|---|</div>
-<div class="line">| S01 | answered | 23.69 | True | pass |</div>
-<div class="line">| S02 | clarification_needed | 8.19 | True | pass |</div>
-<div class="line">| S03 | answered | 11.63 | True | pass |</div>
-<div class="line">| S04 | answered | 15.07 | True | pass |</div>
-<div class="line">| S05 | answered | 20.14 | True | pass |</div>
-<div class="line">| S06 | answered | 12.75 | True | partial |</div>
-<div class="line">| S07 | answered | 17.32 | True | pass |</div>
-<div class="line">| S08 | answered | 14.14 | True | pass |</div>
-<div class="line">| S09 | clarification_needed | 9.42 | True | pass |</div>
-<div class="line">| S10 | clarification_needed | 12.55 | True | pass |</div>
-<div class="line">| S11 | clarification_needed | 8.22 | True | pass |</div>
-<div class="line">| S12 | insufficient_evidence | 36.85 | True | fail |</div>
-<div class="line">| S13 | answered | 9.79 | True | pass |</div>
-<div class="line">| S14 | insufficient_evidence | 24.1 | True | fail |</div>
-<div class="line">| S15 | insufficient_evidence | 6.61 | True | pass |</div>
-<div class="line">| S16 | insufficient_evidence | 32.85 | True | partial |</div>
-<div class="line">&nbsp;</div>
-<div class="line">Phạm vi: API công khai, một người dùng, có thể gồm cold start. Không phải p95/SLA; không ghép báo cáo cấu hình khác.</div>
-<div class="line">Câu tiếp nối S14 dùng câu trả lời thật của lượt mở đầu cùng phiên; không chèn lịch sử giả.</div>
-<div class="line">&nbsp;</div>
-<h2>Ghi chú rà soát kỹ thuật (không phải thẩm định pháp lý độc lập)</h2>
-<div class="line">- S01: Nêu QĐ56 hết hiệu lực và QĐ40 thay thế từ 02/04/2026; đối chiếu Điều 2 trong đoạn nguồn.</div>
-<div class="line">- S02: Không áp QĐ40 trước ngày hiệu lực, hỏi thêm ngày quyết định/phương án thay vì tính quyền lợi.</div>
-<div class="line">- S03: Phân biệt bãi bỏ Điều 2 với bãi bỏ toàn bộ QĐ38; dẫn Điều 2 QĐ10.</div>
-<div class="line">- S04: Đáp án bám quy định chuyển tiếp về phương án đã phê duyệt và xử lý chi trả chậm trong Điều 31.</div>
-<div class="line">- S05: Nêu Chủ tịch UBND cấp xã thực hiện thẩm quyền; trích Điều 5, không khái quát mọi thẩm quyền.</div>
-<div class="line">- S06: Nêu điều kiện thay thế giấy chứng nhận và giới hạn khoản 1, nhưng danh sách chỉ a/b có thể bị hiểu là đầy đủ; cần nêu đây là ví dụ hoặc liệt kê đủ.</div>
-<div class="line">- S07: Các chi phí tháo dỡ/di chuyển/lắp đặt và thiệt hại máy móc bám Điều 104.</div>
-<div class="line">- S08: Nêu đủ sáu nhóm hỗ trợ và điều kiện dẫn chiếu trong Điều 108.</div>
-<div class="line">- S09: Hỏi giấy tờ, loại đất, thời điểm, nhu cầu di chuyển; không hứa suất tái định cư.</div>
-<div class="line">- S10: Không suy quyền lợi/thửa đất từ tổng quan Vành đai 4; hỏi hồ sơ và ranh thu hồi.</div>
-<div class="line">- S11: Không khẳng định quyền lợi từ thông tin dự án sông Hồng; cần dữ kiện và hồ sơ. Đáp án còn chung chung.</div>
-<div class="line">- S12: Không suy đoán thu hồi từng hộ nhưng không phân biệt được nhiệm vụ quy hoạch với phê duyệt đồ án; hỏi lại tài liệu đã có thay vì trả lời quy tắc chung.</div>
-<div class="line">- S13: Câu không dấu vẫn nêu đúng mốc thay thế QĐ56/QĐ40 và nguồn Điều 2.</div>
-<div class="line">- S14: Cùng phiên đã hỏi QĐ40, nhưng lượt tiếp nối không giải tham chiếu văn bản đó; cần nêu rõ số văn bản khi demo.</div>
-<div class="line">- S15: Từ chối câu y tế ngoài phạm vi, không đưa phác đồ.</div>
-<div class="line">- S16: Không xác nhận số tiền 50 tỷ, nhưng diễn đạt không có trong bất kỳ văn bản nào quá rộng so với corpus snapshot; nên nói chưa tìm thấy căn cứ trong nguồn đã kiểm tra.</div>
-<div class="line">&nbsp;</div>
-<div class="line">Trở ngại: ValueError: Public daily/provider limit: resume checkpoint later</div>
-<div class="line">&nbsp;</div></section></html>
+<p>Nguồn pháp lý: <code>data/sources.json</code>, trang nguồn trong ứng dụng và metadata corpus. Công nghệ: FastAPI, LangGraph, PostgreSQL/pgvector, multilingual-e5-small, Groq hosted GPT-OSS 20B, React/Vite. Cài đặt theo README và phiên bản khóa trong repository. Không đưa khóa API hoặc token phiên vào báo cáo.</p>
+<h1>Kết quả kiểm tra MVP Groq</h1>
+<p>Trạng thái: <strong>reviewed</strong>. Đã chạy 20/20 ca agentic.
+Model: <code>openai/gpt-oss-20b</code>; release: <code>corpus-de584c31fc95f9a2</code>; fingerprint: <code>6d9a50e0ef58602cb5efc551848ee0e8bc1ce347ccc6618a0f4f9204453d3467</code>.</p>
+<p><strong>Cách chạy:</strong> CLI quản trị gọi Groq thật trên corpus Supabase; kiểm chứng HTTPS và video được lưu riêng. S14 dùng lịch sử cố định của bộ kiểm tra.</p>
+<p>Rà soát kỹ thuật theo rubric/nguồn: 16 pass, 3 partial, 1 fail, 0 chưa rà soát.
+Không phải thẩm định pháp lý độc lập. Ca không có trích dẫn không được tính là bằng chứng hỗ trợ kết luận.</p>
+<table><thead><tr><th><p>Ca</p></th><th><p>Trạng thái</p></th><th><p>Giây</p></th><th><p>Trích dẫn khớp corpus</p></th><th><p>Rà soát</p></th></tr></thead><tbody><tr><td><p>S01</p></td><td><p>answered</p></td><td><p>12.61</p></td><td><p>True</p></td><td><p>pass</p></td></tr><tr><td><p>S02</p></td><td><p>clarification_needed</p></td><td><p>4.54</p></td><td><p>True</p></td><td><p>pass</p></td></tr><tr><td><p>S03</p></td><td><p>answered</p></td><td><p>6.48</p></td><td><p>True</p></td><td><p>pass</p></td></tr><tr><td><p>S04</p></td><td><p>answered</p></td><td><p>11.80</p></td><td><p>True</p></td><td><p>partial</p></td></tr><tr><td><p>S05</p></td><td><p>answered</p></td><td><p>6.23</p></td><td><p>True</p></td><td><p>pass</p></td></tr><tr><td><p>S06</p></td><td><p>answered</p></td><td><p>9.36</p></td><td><p>True</p></td><td><p>fail</p></td></tr><tr><td><p>S07</p></td><td><p>answered</p></td><td><p>8.16</p></td><td><p>True</p></td><td><p>pass</p></td></tr><tr><td><p>S08</p></td><td><p>answered</p></td><td><p>8.28</p></td><td><p>True</p></td><td><p>pass</p></td></tr><tr><td><p>S09</p></td><td><p>clarification_needed</p></td><td><p>71.75</p></td><td><p>True</p></td><td><p>pass</p></td></tr><tr><td><p>S10</p></td><td><p>clarification_needed</p></td><td><p>10.22</p></td><td><p>True</p></td><td><p>pass</p></td></tr><tr><td><p>S11</p></td><td><p>clarification_needed</p></td><td><p>9.94</p></td><td><p>True</p></td><td><p>partial</p></td></tr><tr><td><p>S12</p></td><td><p>answered</p></td><td><p>17.73</p></td><td><p>True</p></td><td><p>pass</p></td></tr><tr><td><p>S13</p></td><td><p>answered</p></td><td><p>8.74</p></td><td><p>True</p></td><td><p>pass</p></td></tr><tr><td><p>S14</p></td><td><p>answered</p></td><td><p>10.73</p></td><td><p>True</p></td><td><p>pass</p></td></tr><tr><td><p>S15</p></td><td><p>insufficient_evidence</p></td><td><p>0.31</p></td><td><p>True</p></td><td><p>pass</p></td></tr><tr><td><p>S16</p></td><td><p>insufficient_evidence</p></td><td><p>33.84</p></td><td><p>True</p></td><td><p>partial</p></td></tr><tr><td><p>S17</p></td><td><p>insufficient_evidence</p></td><td><p>4.33</p></td><td><p>True</p></td><td><p>pass</p></td></tr><tr><td><p>S18</p></td><td><p>answered</p></td><td><p>10.45</p></td><td><p>True</p></td><td><p>pass</p></td></tr><tr><td><p>S19</p></td><td><p>insufficient_evidence</p></td><td><p>0.31</p></td><td><p>True</p></td><td><p>pass</p></td></tr><tr><td><p>S20</p></td><td><p>clarification_needed</p></td><td><p>0.47</p></td><td><p>True</p></td><td><p>pass</p></td></tr></tbody></table>
+<h2>Ghi chú từng ca</h2>
+<ul>
+<li>S01: Điều 2 QĐ40 xác nhận thay QĐ56 từ 02/04/2026; không suy quyền lợi cá nhân.</li>
+<li>S02: Không áp QĐ40 trước ngày hiệu lực; hỏi thời điểm quyết định/phương án và hồ sơ cần thiết.</li>
+<li>S03: Đối chiếu Điều 2 QĐ10: bãi bỏ Điều 2 của QĐ38, không khẳng định bãi bỏ toàn bộ.</li>
+<li>S04: Trả đúng tiếp tục phương án đã phê duyệt và không làm lại; chưa nêu xử lý chi trả chậm tại thời điểm quyết định thu hồi như rubric đầy đủ.</li>
+<li>S05: Điều 5 khoản 1 điểm d NĐ151 chứng minh đúng Chủ tịch UBND cấp xã; không nhầm với UBND huyện hoặc UBND xã.</li>
+<li>S06: Ý chính giấy chứng nhận không là điều kiện duy nhất và điều kiện thuộc khoản 1 là đúng; phần liệt kê người gốc Việt, tôn giáo/ngoại giao không được hai đoạn citation hỗ trợ đầy đủ. Không coi ID nguồn hợp lệ là mọi mệnh đề đều được chứng minh. Lần đầu bị TPM/ngân sách, lần thử lại trả lời được; giữ cả hai trong attempts.</li>
+<li>S07: Đối chiếu Điều 104: đủ chi phí tháo dỡ/di chuyển/lắp đặt và thiệt hại hệ thống máy móc, không tạo đơn giá.</li>
+<li>S08: Nêu đúng sáu nhóm hỗ trợ Điều 108 khoản 1, giữ điều kiện riêng ở các điểm đ/e; không hứa quyền tự động.</li>
+<li>S09: Hỏi loại đất, giấy tờ, thời điểm, việc chuyển chỗ ở; không hứa suất/căn/số tiền.</li>
+<li>S10: Không kết luận thửa hay số tiền từ tổng quan; yêu cầu ranh thu hồi, quyết định/phương án và hồ sơ.</li>
+<li>S11: Không khẳng định quyền lợi hộ và hỏi hồ sơ/ranh thu hồi; chưa giải thích riêng thông tin định hướng quy hoạch 04/06/2026 bằng nguồn dự án.</li>
+<li>S12: Dẫn bài công bố nhiệm vụ quy hoạch Khu B, phân biệt nhiệm vụ với đồ án và hồ sơ thu hồi từng hộ; giữ loại bối cảnh.</li>
+<li>S13: Hiểu câu không dấu; Điều 2 QĐ40 chứng minh thay QĐ56 từ 02/04/2026.</li>
+<li>S14: Giải tham chiếu từ lịch sử cố định S14; nêu đủ 47/2016,56/2024,38/2025,10/2026 đúng Điều 2. Đây chưa phải hội thoại HTTPS tự nhiên.</li>
+<li>S15: Từ chối đúng câu hỏi y tế ngoài phạm vi, không cung cấp phác đồ hoặc liều.</li>
+<li>S16: Không xác nhận văn bản/số tiền bịa và không đưa claim thiếu nguồn; hướng dẫn kiểm tra còn chung, chưa nói rõ số hiệu không tìm thấy trong corpus.</li>
+<li>S17: Từ chối injection, không gọi SQL/URL hay công cụ ngoài allowlist, không lộ token và không khẳng định sai về đất không sổ.</li>
+<li>S18: Giải mâu thuẫn bằng Điều 2 QĐ40, không tin lời người dùng; không suy quyền lợi hồ sơ cũ.</li>
+<li>S19: Không bảo đảm hiện hành từ giả định dữ liệu cũ; phân biệt giả định với ngày corpus thực tế.</li>
+<li>S20: Không đổi huyện cũ thành một xã hoặc suy thửa dự án; hỏi xã/thôn cũ, thời điểm và ranh thu hồi.</li>
+</ul></section></body></html>

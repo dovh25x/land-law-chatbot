@@ -47,13 +47,22 @@ Người dùng nhập câu hỏi, chọn ngày/dự án nếu cần, đọc đá
 
 ## 6. Phương pháp đánh giá
 
-Dùng lại 20 câu smoke có rubric và nguồn tham chiếu tại `data/evaluation/smoke.jsonl`. Chạy agentic qua API cloud, lưu câu trả lời, model, corpus, fingerprint, độ trễ và kết quả đối chiếu ID/đoạn nguồn. Tôn trọng giới hạn API công khai; checkpoint khi gián đoạn. Câu tiếp nối chạy sau câu trước trong cùng phiên khi bộ dữ liệu yêu cầu.
+Dùng lại 20 câu smoke có rubric và nguồn tham chiếu tại `data/evaluation/smoke.jsonl`. Chạy 20 ca agentic qua CLI quản trị trên mã nguồn bản chốt, gọi Groq thật và corpus Supabase. Lưu câu trả lời, model, corpus, fingerprint, độ trễ và đối chiếu ID/đoạn nguồn. CLI không chịu giới hạn chống lạm dụng của website nhưng tuân thủ quota provider, có checkpoint và giữ lịch sử lần thử. S14 dùng lịch sử cố định của bộ kiểm tra; hội thoại tự nhiên qua HTTPS/browser được kiểm chứng riêng. Không ghép độ trễ CLI thành SLA HTTP.
 
 Kết quả mới được lưu riêng tại `reports/submission/evaluation.json`; bảng dễ đọc tại `reports/submission/results.md`. Kiểm tra máy chỉ xác nhận giao thức và nguồn tồn tại; chấm nội dung cần đọc câu trả lời và đối chiếu rubric. Những câu chưa rà soát phải ghi `awaiting_review`, không tính là đạt. Không lấy số liệu cũ, CLI hoặc model khác để thay thế.
 
 ## 7. Kết quả và bằng chứng
 
-Checkpoint hiện tại đã chạy và rà soát 16/20 câu trên cloud: 12 pass, 2 partial, 2 fail theo rubric kỹ thuật; bốn câu còn lại chưa chạy do giới hạn lượt/ngày của API công khai. Tất cả trích dẫn xuất hiện trong 16 ca đều khớp đoạn nguồn qua endpoint tài liệu. Các ca không có trích dẫn không được tính như bằng chứng hỗ trợ kết luận. Không tính tỷ lệ chất lượng toàn hệ thống từ checkpoint này. Xem bảng kết quả hiện hành trong `reports/submission/`. Báo cáo backend/frontend được lưu riêng với ngày chạy. Nếu đánh giá cloud bị gián đoạn, số câu đã chạy và nguyên nhân phải được nêu rõ. Không đưa tỷ lệ chất lượng hoặc kết luận nghiệm thu khi chưa có đủ dữ liệu chấm.
+Đã chạy và rà soát đủ **20/20 ca agentic** với Groq `openai/gpt-oss-20b`, release `corpus-de584c31fc95f9a2`, fingerprint `6d9a50e0ef58602cb5efc551848ee0e8bc1ce347ccc6618a0f4f9204453d3467`. Kết quả theo rubric kỹ thuật và đoạn nguồn: **16 pass, 3 partial, 1 fail**. Tất cả ID/đoạn trích dẫn xuất hiện khớp corpus; điều này không bảo đảm mọi mệnh đề được hỗ trợ.
+
+- S04 trả đúng tiếp tục phương án, còn thiếu ý chi trả chậm trong rubric đầy đủ.
+- S11 không khẳng định quyền lợi cá nhân nhưng chưa giải thích riêng nguồn tin quy hoạch được hỏi.
+- S16 không xác nhận số tiền/văn bản giả, nhưng hướng dẫn kiểm tra còn chung.
+- S06 trả đúng ý chính giấy chứng nhận không là điều kiện duy nhất; phần liệt kê thêm đối tượng chưa được hai đoạn citation hỗ trợ đầy đủ nên chấm fail. Đây là hạn chế cần sửa sau bản nộp; tránh dùng câu này để khẳng định tính chính xác toàn diện.
+
+Có 21 lần thực thi cho 20 ca: S06 từng dừng do quota/ngân sách, sau đó thử lại thành công về giao thức. Giữ cả lần thử lỗi; bảng chính ghi lần thực thi cuối và không giấu việc thử lại. Không dùng LLM judge. Không suy tỷ lệ toàn miền hoặc chứng nhận nghiệm thu pháp lý từ bộ 20 câu có chọn lọc. Phiên bản mã nguồn không chứa thay đổi `agent.py` đang dở trong workspace.
+
+Bản chốt đã qua 226 kiểm thử backend/công cụ đánh giá; hai kiểm thử công cụ xuất báo cáo được chạy riêng, frontend đạt 2 unit tests và 22 E2E desktop/mobile. CI, triển khai, HTTPS và video có receipt riêng trong `reports/submission/`. Tình trạng triển khai cuối phải đối chiếu receipt, không suy từ build cục bộ.
 
 Các receipt trước đây ở `reports/live-demo.json`, `reports/live-ui.json` và `reports/postgres-restore.json` là bằng chứng lịch sử, không tự động là kết quả của mã nguồn hiện tại.
 

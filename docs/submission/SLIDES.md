@@ -25,7 +25,7 @@ Tra cứu và mở điều khoản → tổng hợp → kiểm tra → trả l�
 Hỏi Điều 104 → mở nguồn → mở trace → hỏi tiếp → xem Vành đai 4 → câu hỏi thiếu dữ kiện. Có video dự phòng.
 
 ## 9. Đánh giá
-Checkpoint cloud: đã chạy và rà soát 16/20 câu; 12 pass, 2 partial, 2 fail theo rubric kỹ thuật. Bốn câu còn chờ giới hạn API công khai đặt lại. Trích dẫn xuất hiện đều khớp đoạn nguồn; không đồng nghĩa nội dung luôn đúng. Câu tiếp nối và phân biệt nhiệm vụ quy hoạch là hạn chế đã ghi nhận. Không gọi đây là nghiệm thu pháp lý.
+20/20 ca agentic chạy bằng Groq thật qua CLI quản trị trên corpus Supabase: 16 pass, 3 partial, 1 fail sau rà soát rubric/nguồn. S06 từng bị quota và được thử lại; giữ cả 21 lần thực thi. S14 dùng lịch sử cố định; HTTP/browser kiểm chứng riêng. ID trích dẫn khớp không bảo đảm mọi mệnh đề đúng. Không gọi đây là nghiệm thu pháp lý hoặc kết quả SLA.
 
 ## 10. Hạn chế và bàn giao
 Snapshot, truy xuất bỏ sót, provider/hosting miễn phí. URL, repo, hướng dẫn tái lập và kết quả từng ca. Hướng phát triển được tách khỏi phạm vi bài nộp.

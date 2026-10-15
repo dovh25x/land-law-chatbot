@@ -20,7 +20,13 @@ try {
  await page.getByLabel('Thời điểm áp dụng, để trống là hôm nay').fill('2024-08-02')
  await page.getByRole('button',{name:'Xong',exact:true}).click()
  await page.getByLabel('Câu hỏi pháp luật').fill('Điều 104 Luật Đất đai 2024 quy định bồi thường chi phí di chuyển tài sản như thế nào?')
+ const responsePromise=page.waitForResponse(r=>r.url().endsWith('/api/v1/chat')&&r.request().method()==='POST')
  await page.getByRole('button',{name:'Gửi câu hỏi'}).click()
+ const response=await responsePromise
+ const events=(await response.text()).split('\n').filter(line=>line.startsWith('data: ')).map(line=>JSON.parse(line.slice(6)))
+ const answer=events.find(e=>e.trace_id)
+ receipt.model=answer?.model;receipt.corpus_release=answer?.corpus_release
+ if(!answer||answer.status!=='answered'||!answer.citations?.length)throw new Error('Verified answer unavailable')
  await page.locator('.message.assistant').waitFor({timeout:150000})
  receipt.checks.answer=await page.locator('.message.assistant .message-body').innerText()
  await wait(25)
@@ -30,6 +36,16 @@ try {
  if(await page.getByRole('button',{name:/Xem quá trình kiểm chứng/}).count()) {
   await page.getByRole('button',{name:/Xem quá trình kiểm chứng/}).click();await wait(25);await page.keyboard.press('Escape')
  }
+ await page.getByLabel('Câu hỏi pháp luật').fill('Theo Điều 104 vừa nêu, cơ quan nào quy định mức bồi thường?')
+ await page.getByRole('button',{name:'Gửi câu hỏi'}).click()
+ await page.locator('.message.assistant').nth(1).waitFor({timeout:150000})
+ receipt.checks.followup=await page.locator('.message.assistant .message-body').nth(1).innerText()
+ await wait(20)
+ await page.getByLabel('Câu hỏi pháp luật').fill('Nhà tôi sắp bị thu hồi. Tôi chắc chắn được một căn tái định cư đúng không?')
+ await page.getByRole('button',{name:'Gửi câu hỏi'}).click()
+ await page.locator('.message.assistant').nth(2).waitFor({timeout:150000})
+ receipt.checks.missing_facts=await page.locator('.message.assistant .message-body').nth(2).innerText()
+ await wait(15)
  await page.getByRole('button',{name:'Thư viện văn bản',exact:true}).click();await wait(30)
  await page.getByRole('button',{name:'Dự án trọng điểm',exact:true}).click();await wait(30)
  await page.getByRole('button',{name:'Đánh giá đồ án',exact:true}).click();await wait(25)
