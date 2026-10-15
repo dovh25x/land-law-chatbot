@@ -14,7 +14,9 @@ test('responsive navigation honestly shows unpublished corpus and benchmark', as
   await page.goto('/')
   await expect(page.getByRole('heading', { name: /Tìm đúng căn cứ/ })).toBeVisible()
   await expect(page.getByLabel('Câu hỏi pháp luật')).toBeVisible()
+  await page.getByRole('button', { name: 'Phạm vi tra cứu', exact: true }).click()
   await expect(page.getByLabel('Dự án', { exact: true })).toBeVisible()
+  await page.keyboard.press('Escape')
   await expect(page.getByRole('button', { name: 'Gửi câu hỏi' })).toBeDisabled()
   await page.screenshot({ path: `../reports/ui-${info.project.name}.png`, fullPage: true })
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBeTruthy()
@@ -32,10 +34,10 @@ test('technical demo clearly discloses pending legal acceptance and coverage gap
     corpus_release:'reviewed-test-corpus',publication_profile:'technical_demo',quality_status:'acceptance_pending',
     checked_at:'2026-10-13T00:00:00Z',coverage_gaps:[{document_id:'missing',title:'Nguồn còn thiếu',reason:'Chưa có toàn văn đạt kiểm tra.'}]}}))
   await page.goto('/')
+  await page.getByRole('button', { name: 'Thông tin dữ liệu và kết nối' }).click()
   await expect(page.getByRole('note')).toContainText('Nguyên mẫu học thuật — chưa được thẩm định pháp lý độc lập.')
-  await page.getByText('Về dữ liệu và phạm vi sử dụng', { exact: false }).click()
   await page.getByText('Các nguồn chưa đủ dữ liệu (1)').click()
-  await expect(page.getByRole('note')).toContainText('Nguồn còn thiếu: Chưa có toàn văn đạt kiểm tra.')
+  await expect(page.getByRole('dialog')).toContainText('Nguồn còn thiếu: Chưa có toàn văn đạt kiểm tra.')
 })
 
 test('acceptance label follows current configuration quality and keeps coverage gaps', async ({ page }) => {
@@ -44,14 +46,14 @@ test('acceptance label follows current configuration quality and keeps coverage 
     coverage_gaps:[{document_id:'missing',title:'Nguồn bổ sung còn thiếu',reason:'Chưa xác minh.'}]}
   await page.route('**/readyz', r => r.fulfill({json:readiness}))
   await page.goto('/')
+  await page.getByRole('button', { name: 'Thông tin dữ liệu và kết nối' }).click()
   await expect(page.getByRole('note')).toContainText('Demo — chưa hoàn tất nghiệm thu.')
-  await page.getByText('Về dữ liệu và phạm vi sử dụng', { exact: false }).click()
   await page.getByText('Các nguồn chưa đủ dữ liệu (1)').click()
-  await expect(page.getByRole('note')).toContainText('Nguồn bổ sung còn thiếu')
+  await expect(page.getByRole('dialog')).toContainText('Nguồn bổ sung còn thiếu')
   readiness.quality_status='accepted'
-  await page.getByRole('button',{name:'Sẵn sàng tra cứu'}).click()
+  await page.getByRole('button',{name:'Kiểm tra lại kết nối'}).click()
   await expect(page.getByRole('note')).toContainText('Đã đạt bộ kiểm thử nghiệm thu đối chiếu nguồn.')
-  await expect(page.getByRole('note')).toContainText('Các nguồn chưa đủ dữ liệu (1)')
+  await expect(page.getByRole('dialog')).toContainText('Các nguồn chưa đủ dữ liệu (1)')
 })
 
 test('API quota errors are displayed without an invented answer', async ({ page }) => {

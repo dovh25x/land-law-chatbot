@@ -1,8 +1,9 @@
 import { useEffect, useRef, useState } from 'react'
 import ReactMarkdown from 'react-markdown'
-import { ArrowUp, ArrowUpRight, BookOpen, ChevronDown, ChevronRight, Clock3, FileText, GitBranch, Landmark, LoaderCircle, MapPin, Menu, Plus, Search, ShieldCheck, SlidersHorizontal, Square, X } from 'lucide-react'
+import { ArrowUp, ArrowUpRight, BookOpen, ChevronDown, ChevronRight, CircleHelp, FileText, GitBranch, Landmark, LoaderCircle, MapPin, Menu, Plus, Search, ShieldCheck, Square, X } from 'lucide-react'
 import { ask, BASE, BACKEND_CONFIGURED, getJSON, getSession, restoreSession, type Citation, type LegalDocument, type Project, type Readiness, type Result, type Session, type Trace } from './api'
-import { DocumentRow, formatDate, SourcePanel, TracePanel } from './ui'
+import { DataPanel, DocumentRow, formatDate, SourcePanel, TracePanel } from './ui'
+import { ScopeControl } from './ChatScope'
 
 type Page = 'chat' | 'sources' | 'projects' | 'evaluation'
 type Message = { id: string; role: 'user' | 'assistant'; content: string; result?: Result }
@@ -18,8 +19,8 @@ const labels: Record<string, string> = { answered: 'Có căn cứ', clarificatio
 function App() {
   const [page, setPage] = useState<Page>('chat')
   const [navOpen, setNavOpen] = useState(false), [projectTab, setProjectTab] = useState('ring4')
-  const [compact, setCompact] = useState(() => window.matchMedia('(max-width: 600px)').matches)
   const [project, setProject] = useState(''), [asOf, setAsOf] = useState(''), [mode, setMode] = useState('agentic')
+  const [dataOpen, setDataOpen] = useState(false)
   const [input, setInput] = useState(''), [messages, setMessages] = useState<Message[]>([])
   const [busy, setBusy] = useState(false), [error, setError] = useState('')
   const [readiness, setReadiness] = useState<Readiness | null>(null), [connecting, setConnecting] = useState(false)
@@ -31,12 +32,6 @@ function App() {
   const navTriggerRef = useRef<HTMLButtonElement | null>(null)
   const sessionRef = useRef<Session | null>(null), abortRef = useRef<AbortController | null>(null), bottom = useRef<HTMLDivElement>(null)
 
-  useEffect(() => {
-    const media = window.matchMedia('(max-width: 600px)')
-    const update = () => setCompact(media.matches)
-    media.addEventListener('change', update)
-    return () => media.removeEventListener('change', update)
-  }, [])
   useEffect(() => {
     const textarea = inputRef.current
     if (textarea) { textarea.style.height = 'auto'; textarea.style.height = `${Math.min(textarea.scrollHeight, 140)}px` }
@@ -73,13 +68,13 @@ function App() {
     return () => c.abort()
   }, [])
   useEffect(() => {
-    if (!traceOpen && !selectedSource && !navOpen) return
+    if (!traceOpen && !selectedSource && !navOpen && !dataOpen) return
     const previous = document.activeElement as HTMLElement | null
     const dialog = document.querySelector<HTMLElement>('[role="dialog"]')
     const controls = () => Array.from(dialog?.querySelectorAll<HTMLElement>('button,a[href],input,select,textarea,[tabindex="0"]') || [])
     controls()[0]?.focus()
     const handler = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') { setTraceOpen(false); setSelectedSource(null); setNavOpen(false) }
+      if (e.key === 'Escape') { setTraceOpen(false); setSelectedSource(null); setNavOpen(false); setDataOpen(false) }
       if (e.key === 'Tab') {
         const elements = controls(), first = elements[0], last = elements.at(-1)
         if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last?.focus() }
@@ -88,7 +83,7 @@ function App() {
     }
     window.addEventListener('keydown', handler)
     return () => { window.removeEventListener('keydown', handler); if (navOpen) navTriggerRef.current?.focus(); else previous?.focus() }
-  }, [traceOpen, selectedSource, navOpen])
+  }, [traceOpen, selectedSource, navOpen, dataOpen])
   useEffect(() => { bottom.current?.scrollIntoView({ behavior: 'smooth', block: 'end' }) }, [messages, busy])
   useEffect(() => () => abortRef.current?.abort(), [])
 
@@ -124,20 +119,18 @@ function App() {
   }
 
   const ready = readiness?.status === 'ready'
-  const panelOpen = traceOpen || !!selectedSource
+  const panelOpen = traceOpen || !!selectedSource || dataOpen
   const activeProject = projects.find(p => p.id === projectTab) || projects[0]
   const filteredDocs = docs.filter(d => `${d.title} ${d.document_number || ''}`.normalize('NFC').toLocaleLowerCase('vi').includes(search.normalize('NFC').toLocaleLowerCase('vi')))
   const evaluationWarning = evaluation && evaluation.status !== 'not_run' &&
     (!evaluation.matches_active_release || !evaluation.matches_active_configuration || evaluation.status !== 'reviewed')
     ? 'Chưa hoàn tất đánh giá trên cấu hình đang hoạt động. Không diễn giải kết quả của phiên bản khác thành chất lượng bản hiện tại.' : ''
-  const openSource = (source: Citation | LegalDocument) => { setTraceOpen(false); setSelectedSource(source) }
-  const navigate = (target: Page) => { setPage(target); setNavOpen(false); setTraceOpen(false); setSelectedSource(null) }
-  const publicationLabel = readiness?.quality_status === 'accepted' ? 'Đã đạt bộ kiểm thử nghiệm thu đối chiếu nguồn.'
-    : readiness?.publication_profile === 'technical_demo' ? 'Nguyên mẫu học thuật — chưa được thẩm định pháp lý độc lập.' : 'Demo — chưa hoàn tất nghiệm thu.'
+  const openSource = (source: Citation | LegalDocument) => { setDataOpen(false); setTraceOpen(false); setSelectedSource(source) }
+  const navigate = (target: Page) => { setDataOpen(false); setPage(target); setNavOpen(false); setTraceOpen(false); setSelectedSource(null) }
 
-  const modeControl = <div className="mode-control"><SlidersHorizontal size={16}/><label className="sr-only" htmlFor="mode">Chế độ truy xuất</label><select id="mode" value={mode} onChange={e => setMode(e.target.value)}><option value="agentic">Agentic RAG</option><option value="baseline">RAG thông thường</option></select></div>
+  const modeControl = <div className="mode-control"><label className="sr-only" htmlFor="mode">Chế độ truy xuất</label><select id="mode" value={mode} onChange={e => setMode(e.target.value)}><option value="agentic">Agentic RAG</option><option value="baseline">RAG thông thường</option></select></div>
 
-  return <div className={`app-shell page-${page} ${['demo', 'technical_demo', 'accepted'].includes(readiness?.publication_profile || '') ? 'has-publication-note' : ''} ${panelOpen ? 'panel-open' : ''} ${navOpen ? 'nav-open' : ''}`}>
+  return <div className={`app-shell page-${page} ${panelOpen ? 'panel-open' : ''} ${navOpen ? 'nav-open' : ''}`}>
     <a className="skip-link" href="#main-content">Đến nội dung chính</a>
     {navOpen && <button className="nav-scrim" tabIndex={-1} onClick={() => setNavOpen(false)} aria-label="Đóng menu điều hướng"/>}
     <aside className="sidebar" id="main-navigation" role={navOpen ? 'dialog' : undefined} aria-modal={navOpen || undefined} aria-label={navOpen ? 'Menu điều hướng' : undefined}>
@@ -149,13 +142,11 @@ function App() {
       <div className="sidebar-note"><ShieldCheck size={20}/><strong>Nguyên mẫu học thuật</strong><p>Tra cứu từ nguồn chính thức.<br/>Luôn đối chiếu hồ sơ thực tế.</p></div>
     </aside>
     <main className="main" id="main-content" inert={navOpen}>
-      <header className="topbar"><div className="topbar-title"><button className="icon-button mobile-menu" ref={navTriggerRef} onClick={() => setNavOpen(true)} aria-label="Mở menu điều hướng" aria-expanded={navOpen} aria-controls="main-navigation"><Menu size={20}/></button><span className="desktop-page-title">{pageLabels[page]}</span><span className="mobile-page-title">Hà Nội · Đất đai</span></div><div className="topbar-actions"><span className="academic-badge">Nguyên mẫu học thuật</span><button className="status-chip" onClick={() => void refresh()} disabled={connecting} title="Kiểm tra trạng thái backend"><span className={ready ? 'status-dot ready' : 'status-dot'}/>{connecting ? 'Đang kết nối' : ready ? 'Sẵn sàng tra cứu' : 'Kiểm tra kết nối'}{connecting && <LoaderCircle size={12} className="spin"/>}</button><button className="icon-button mobile-new-chat" onClick={newConversation} disabled={busy} aria-label="Cuộc trò chuyện mới"><Plus size={20}/></button></div></header>
-      {['demo', 'technical_demo', 'accepted'].includes(readiness?.publication_profile || '') && <details className="publication-note" role="note"><summary>Về dữ liệu và phạm vi sử dụng{readiness?.checked_at && <span> · {formatDate(readiness.checked_at)}</span>}<ChevronDown size={14}/></summary><div><strong>{publicationLabel}</strong><p>Chỉ trả lời trong phạm vi nguồn đã kiểm tra. Dữ liệu kiểm tra: {formatDate(readiness?.checked_at)}.</p>{!!readiness?.coverage_gaps?.length && <details><summary>Các nguồn chưa đủ dữ liệu ({readiness.coverage_gaps.length})</summary><ul>{readiness.coverage_gaps.map(g => <li key={g.document_id}>{g.title}: {g.reason}</li>)}</ul></details>}</div></details>}
+      <header className="topbar"><div className="topbar-title"><button className="icon-button mobile-menu" ref={navTriggerRef} onClick={() => setNavOpen(true)} aria-label="Mở menu điều hướng" aria-expanded={navOpen} aria-controls="main-navigation"><Menu size={20}/></button><span>{page === 'chat' ? 'Hanoi Land Law' : pageLabels[page]}</span></div><div className="topbar-actions"><button className="icon-button data-trigger" onClick={() => { setSelectedSource(null); setTraceOpen(false); setDataOpen(true) }} aria-label="Thông tin dữ liệu và kết nối" title="Thông tin dữ liệu và kết nối"><CircleHelp size={20}/><span className={ready ? 'status-dot ready' : 'status-dot'}/></button><button className="icon-button mobile-new-chat" onClick={newConversation} disabled={busy} aria-label="Cuộc trò chuyện mới"><Plus size={20}/></button></div></header>
       {page === 'chat' && <>
-        <div className="filterbar"><div className="scope-control"><MapPin size={16}/><label className="sr-only" htmlFor="project">Dự án</label><select id="project" value={project} onChange={e => setProject(e.target.value)}><option value="">Hà Nội</option><option value="ring4">Vành đai 4</option><option value="songhong">Trục cảnh quan sông Hồng</option><option value="olympic">Khu đô thị thể thao Olympic</option></select></div><span className="filter-divider"/><div className="date-control"><Clock3 size={16}/><input type="date" value={asOf} onChange={e => setAsOf(e.target.value)} aria-label="Thời điểm áp dụng, để trống là hôm nay"/></div>{!compact && modeControl}</div>
-        <div className={`chat-workspace ${panelOpen ? 'has-panel' : ''}`}>
+        <div className={`chat-workspace ${panelOpen ? 'has-panel' : ''} ${messages.length ? '' : 'is-empty'}`}>
           <div className="chat-scroll">
-            {!messages.length ? <div className="welcome"><div className="eyebrow"><BookOpen size={compact ? 28 : 18}/><span>CĂN CỨ RÕ RÀNG · DỄ DÀNG ĐỐI CHIẾU</span></div><h1><span className="desktop-welcome-title">Hiểu quy định.<br/></span>Tìm đúng căn cứ.</h1><p className="intro">{compact ? 'Tra cứu bồi thường, hỗ trợ và tái định cư tại Hà Nội.' : <>Bạn muốn tìm hiểu điều gì về bồi thường, hỗ trợ<br/> và tái định cư tại Hà Nội?</>}</p><div className="topic-grid">{suggestions.map(({title, description, question, icon: Icon}) => <button key={title} onClick={() => void send(question)} disabled={busy}><Icon size={20} className="topic-icon"/><strong>{title}</strong><p>{description}</p><ArrowUpRight size={16}/></button>)}</div></div>
+            {!messages.length ? <div className="welcome"><h1>Tìm đúng căn cứ.</h1><p className="intro">Tra cứu pháp luật đất đai Hà Nội, kèm nguồn để đối chiếu.</p></div>
             : <div className="messages">{messages.map(message => <article key={message.id} className={`message ${message.role}`}>
               <div className="message-label">{message.role === 'user' ? 'Bạn' : <><Landmark size={20}/>Hanoi Land Law</>}</div>
               {message.result && <span className={`answer-status ${message.result.status}`}>{labels[message.result.status] || message.result.status}</span>}
@@ -166,7 +157,7 @@ function App() {
           </div>
           <div className="composer-area">{error && <div className="error-banner" role="alert"><div><strong>Chưa thể hoàn tất lượt hỏi</strong><p>{error}</p></div><button className="icon-button" onClick={() => setError('')} aria-label="Đóng thông báo"><X size={18}/></button></div>}
             {!ready && <div className="connection-note" role="status">{connecting ? 'Đang kết nối backend. Lần khởi động đầu có thể mất khoảng một phút…' : readiness?.status === 'not_deployed' ? 'Bản xem trước giao diện. Backend chưa được triển khai.' : readiness?.database && !readiness.llm_configured ? 'Chưa cấu hình API AI; hệ thống sẽ báo rõ giới hạn khi gửi câu hỏi.' : readiness?.database && !readiness.corpus_release ? 'Bộ dữ liệu đang chờ công bố.' : 'Backend có thể đang khởi động. Bạn có thể thử kết nối lại.'}</div>}
-            <form className="composer" onSubmit={e => { e.preventDefault(); void send() }}><textarea ref={inputRef} value={input} onChange={e => setInput(e.target.value)} placeholder="Nhập câu hỏi của bạn…" maxLength={4000} rows={1} aria-label="Câu hỏi pháp luật" onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey && !e.nativeEvent.isComposing) { e.preventDefault(); void send() } }}/><div className="composer-bottom">{compact ? modeControl : <span title="Chỉ nhập tình huống đã ẩn danh">Câu hỏi rõ hơn, căn cứ phù hợp hơn.</span>}{busy ? <button type="button" className="send-button" onClick={() => abortRef.current?.abort()} aria-label="Dừng lượt hỏi"><Square size={18}/></button> : <button className="send-button" type="submit" disabled={!input.trim()} aria-label="Gửi câu hỏi"><ArrowUp size={20}/></button>}</div></form><p className="disclaimer">Nguyên mẫu học thuật · Chưa được thẩm định pháp lý độc lập. Chỉ nhập tình huống đã ẩn danh.</p>
+            <div className="composer"><form id="chat-form" className="composer-input" onSubmit={e => { e.preventDefault(); void send() }}><textarea ref={inputRef} value={input} onChange={e => setInput(e.target.value)} placeholder="Nhập câu hỏi của bạn…" maxLength={4000} rows={1} aria-label="Câu hỏi pháp luật" onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey && !e.nativeEvent.isComposing) { e.preventDefault(); void send() } }}/></form><div className="composer-bottom"><ScopeControl project={project} asOf={asOf} onProjectChange={setProject} onDateChange={setAsOf}/>{modeControl}{busy ? <button type="button" className="send-button" onClick={() => abortRef.current?.abort()} aria-label="Dừng lượt hỏi"><Square size={18}/></button> : <button className="send-button" type="submit" form="chat-form" disabled={!input.trim()} aria-label="Gửi câu hỏi"><ArrowUp size={20}/></button>}</div></div>{!messages.length && <div className="topic-grid">{suggestions.map(({title, description, question, icon: Icon}) => <button key={title} onClick={() => void send(question)} disabled={busy}><Icon size={20} className="topic-icon"/><strong>{title}</strong><p>{description}</p><ArrowUpRight size={16}/></button>)}</div>}<p className="disclaimer">Nguyên mẫu học thuật · Chưa được thẩm định pháp lý độc lập. Chỉ nhập tình huống đã ẩn danh.</p>
           </div>
         </div>
       </>}
@@ -176,6 +167,7 @@ function App() {
         {!evaluation || evaluation.status === 'not_run' ? <div className="empty-state"><GitBranch size={28}/><h2>Chưa có kết quả benchmark</h2><p>Hệ thống không tạo số liệu đánh giá mẫu.</p><button className="button button-secondary" onClick={() => void refresh()}>Kiểm tra báo cáo mới</button></div> : <details className="evaluation-details"><summary>Chi tiết báo cáo · {String(evaluation.status)}<ChevronDown size={16}/></summary><pre>{JSON.stringify(evaluation, null, 2)}</pre></details>}
         <div className="method-grid"><article><h2>RAG thông thường</h2><p>Truy xuất và tổng hợp từ chứng cứ.</p><small>Chỉ so sánh khi cùng dữ liệu và cấu hình.</small></article><article><h2>Agentic RAG</h2><p>Có điều phối công cụ và kiểm tra chứng cứ.</p><small>Không mặc định agentic luôn tốt hơn baseline.</small></article></div></section>}
     </main>
+    {dataOpen && <DataPanel readiness={readiness} connecting={connecting} onRefresh={() => void refresh()} onClose={() => setDataOpen(false)}/>}
     {selectedSource && <SourcePanel source={selectedSource} onClose={() => setSelectedSource(null)}/>}
     {traceOpen && <TracePanel trace={trace} onClose={() => setTraceOpen(false)}/>}
   </div>

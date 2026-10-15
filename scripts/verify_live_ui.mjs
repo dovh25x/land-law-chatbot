@@ -4,6 +4,7 @@ import { writeFile } from 'node:fs/promises'
 
 const url = 'https://hanoi-land-law.pages.dev'
 const checks = {}, errors = [], observations = {}
+const skipChat = process.argv.includes('--skip-chat')
 const browser = await chromium.launch({ headless: true })
 const navigate = async (page, name) => {
   const menu = page.getByRole('button', { name: 'Mở menu điều hướng' })
@@ -17,12 +18,22 @@ try {
     page.on('pageerror', error => errors.push({ viewport: name, message: error.message }))
     await page.goto(url, { waitUntil: 'networkidle', timeout: 180000 })
     await page.getByRole('heading', { name: /Tìm đúng căn cứ/ }).waitFor()
+    const dataButton = page.getByRole('button', { name: 'Thông tin dữ liệu và kết nối' })
+    await dataButton.click()
     await page.getByRole('note').waitFor({ timeout: 180000 })
+    checks[`${name}_data_disclosure`] = await page.getByRole('note').isVisible()
+    await page.keyboard.press('Escape')
+    checks[`${name}_header_56px`] = (await page.locator('.topbar').boundingBox()).height === 56
     await page.evaluate(() => document.fonts.ready)
     checks[`${name}_figma_heading`] = true
     checks[`${name}_self_hosted_font`] = await page.evaluate(() => document.fonts.check('16px "Be Vietnam Pro"'))
     checks[`${name}_no_horizontal_overflow`] = await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)
-    await page.screenshot({ path: `reports/ui-live-${name}.png`, fullPage: true })
+    await page.screenshot({ path: `reports/ui-live-compact-${name}.png`, fullPage: true })
+    await page.getByRole('button', { name: 'Phạm vi tra cứu', exact: true }).click()
+    await page.getByLabel('Dự án', { exact: true }).selectOption('ring4')
+    await page.getByLabel('Thời điểm áp dụng, để trống là hôm nay').fill('2024-08-02')
+    await page.getByRole('button', { name: 'Xong', exact: true }).click()
+    checks[`${name}_scope_summary`] = (await page.getByRole('button', { name: 'Phạm vi tra cứu', exact: true }).innerText()).includes('Vành đai 4 · 02/08/2024')
     await navigate(page, 'Thư viện văn bản')
     await page.locator('.document-row').first().waitFor({ timeout: 60000 })
     observations[`${name}_document_count`] = await page.locator('.document-row').count()
@@ -31,7 +42,7 @@ try {
     const source = page.getByRole('dialog', { name: 'Chi tiết nguồn' })
     await source.waitFor()
     checks[`${name}_official_source_link`] = (await source.getByRole('link', { name: 'Mở nguồn chính thức' }).getAttribute('href')).startsWith('https://')
-    await page.screenshot({ path: `reports/ui-live-${name}-source.png`, fullPage: true })
+    await page.screenshot({ path: `reports/ui-live-compact-${name}-source.png`, fullPage: true })
     await page.keyboard.press('Escape')
     await navigate(page, 'Dự án trọng điểm')
     checks[`${name}_three_project_tabs`] = await page.getByRole('tab').count() === 3
@@ -41,9 +52,11 @@ try {
     }
     await navigate(page, 'Đánh giá đồ án')
     checks[`${name}_evaluation_visible`] = await page.locator('.evaluation-summary').isVisible()
-    if (name === 'desktop') {
+    if (name === 'desktop' && !skipChat) {
       await navigate(page, 'Hỏi đáp pháp luật')
+      await page.getByRole('button', { name: 'Phạm vi tra cứu', exact: true }).click()
       await page.getByLabel('Thời điểm áp dụng, để trống là hôm nay').fill('2024-08-02')
+      await page.getByRole('button', { name: 'Xong', exact: true }).click()
       await page.getByLabel('Câu hỏi pháp luật').fill('Điều 104 Luật Đất đai 2024 quy định bồi thường chi phí di chuyển tài sản như thế nào?')
       await page.getByRole('button', { name: 'Gửi câu hỏi' }).click()
       await Promise.race([
@@ -63,7 +76,7 @@ try {
         }
         await page.getByRole('button', { name: /Xem quá trình kiểm chứng/ }).last().click()
         checks.desktop_actual_trace = await page.locator('.trace-timeline li').count() > 0
-        await page.screenshot({ path: 'reports/ui-live-desktop-trace.png', fullPage: true })
+        await page.screenshot({ path: 'reports/ui-live-compact-desktop-trace.png', fullPage: true })
         await page.keyboard.press('Escape')
         await page.reload({ waitUntil: 'networkidle' })
         await page.locator('.message.assistant').waitFor({ timeout: 30000 })
@@ -75,9 +88,9 @@ try {
   }
   checks.no_browser_runtime_errors = errors.length === 0
   const report = { checked_at: new Date().toISOString(), url, passed: Object.values(checks).every(Boolean), checks, observations, errors,
-    interception_used: false, legal_acceptance: false,
-    scope: 'Live deployed frontend navigation, fonts, sources, projects and one chat attempt. Explicit chat quota/error is recorded, not graded as a grounded answer.' }
-  await writeFile('reports/ui-redesign-live.json', JSON.stringify(report, null, 2) + '\n')
+    interception_used: false, legal_acceptance: false, chat_skipped: skipChat,
+    scope: skipChat ? 'Live compact header, scope controls, navigation, fonts, sources and projects. No chat request or legal evaluation.' : 'Live frontend navigation and one chat attempt; explicit chat quota/error is not a grounded answer.' }
+  await writeFile('reports/ui-compact-live.json', JSON.stringify(report, null, 2) + '\n')
   console.log(JSON.stringify(report))
   if (!report.passed) process.exitCode = 1
 } finally { await browser.close() }

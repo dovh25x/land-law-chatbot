@@ -12,3 +12,11 @@ Tham chiếu chính: desktop bắt đầu `5:2`, đáp án `5:137`, nguồn `5:2
 - Trạng thái hiệu lực/nghiệm thu lấy từ API; có thể mở phạm vi dữ liệu và nguồn còn thiếu. Báo cáo không khớp cấu hình luôn có thông báo, dữ liệu chi tiết đặt trong phần mở rộng.
 
 Kiểm tra: `npm test`, `npm run build`, `npm run test:e2e` trong `frontend/`. E2E dùng fixture tách biệt để kiểm tra UI, không phải benchmark pháp luật. `scripts/verify_live_ui.mjs` kiểm tra URL thật không mock và lưu receipt riêng; quota của API công khai được ghi rõ, không dùng kết quả fixture thay thế lượt hỏi thật.
+
+## Thanh đầu trang gọn (15/10/2026)
+
+Theo yêu cầu cập nhật, phần đầu trang còn một hàng 56 px trên desktop/mobile; thay cho tổng 176 px của ba hàng desktop trước đó. Dự án và ngày áp dụng chuyển vào popover “Phạm vi” cạnh ô nhập; phạm vi đã chọn hiện bằng nhãn rút gọn. Agentic/Baseline đặt cạnh đó ở cả hai kích thước. Nút thông tin góc phải mở trạng thái kết nối, ngày kiểm tra, corpus, giới hạn dữ liệu và nút thử lại.
+
+Màn hình bắt đầu đặt tiêu đề và ô nhập ở giữa, gợi ý thành các nút nhỏ. Khi có hội thoại, ô nhập ở dưới và nội dung cuộn riêng. Các nguồn và agent trace giữ nguyên. Popover hỗ trợ Escape, click ngoài, đặt lại và giới hạn trong viewport; panel hỗ trợ focus trap và trả focus khi đóng.
+
+`reports/ui-compact-live.json` ghi kiểm tra UI đã triển khai, tách khỏi bằng chứng pháp lý và các lượt chat trước. Chạy `node scripts/verify_live_ui.mjs --skip-chat` để xác minh thay đổi giao diện mà không phát sinh lượt gọi LLM.
