@@ -1,10 +1,10 @@
 import { useEffect, useRef, useState } from 'react'
 import { Clock3, MapPin, SlidersHorizontal, X } from 'lucide-react'
 
-const projectLabels: Record<string, string> = { ring4: 'Vành đai 4', songhong: 'Sông Hồng', olympic: 'Olympic' }
+const projectLabels: Record<string, string> = { ring4: 'Vành đai 4' }
 
-export function ScopeControl({ project, asOf, onProjectChange, onDateChange }: {
-  project: string; asOf: string; onProjectChange: (value: string) => void; onDateChange: (value: string) => void,
+export function ScopeControl({ compact = false, project, asOf, onProjectChange, onDateChange }: {
+  compact?: boolean; project: string; asOf: string; onProjectChange: (value: string) => void; onDateChange: (value: string) => void,
 }) {
   const [open, setOpen] = useState(false)
   const [position, setPosition] = useState({ left: 16, bottom: 16, maxHeight: 360 })
@@ -31,16 +31,16 @@ export function ScopeControl({ project, asOf, onProjectChange, onDateChange }: {
   const dateLabel = asOf ? asOf.split('-').reverse().join('/') : ''
   const summary = [projectLabels[project], dateLabel].filter(Boolean).join(' · ')
   return <div className="scope-picker" ref={root}>
-    <button className={`composer-tool ${summary ? 'has-scope' : ''}`} ref={trigger} type="button" aria-label="Phạm vi tra cứu" title={summary || 'Chọn dự án và thời điểm'} aria-expanded={open} aria-controls="scope-options" onClick={() => setOpen(value => !value)}>
+    <button className={`composer-tool ${summary ? 'has-scope' : ''} ${compact ? 'compact' : ''}`} ref={trigger} type="button" aria-label="Phạm vi tra cứu" title={summary || 'Chọn dự án và thời điểm'} aria-expanded={open} aria-controls="scope-options" onClick={() => setOpen(value => !value)}>
       <SlidersHorizontal size={16}/><span>{summary || 'Phạm vi'}</span>
     </button>
     {open && <div className="scope-popover" style={position} id="scope-options" role="group" aria-label="Thiết lập phạm vi tra cứu">
       <header><h2>Phạm vi tra cứu</h2><button className="icon-button" type="button" onClick={close} aria-label="Đóng phạm vi"><X size={18}/></button></header>
       <label htmlFor="project"><MapPin size={16}/>Dự án</label>
-      <select id="project" value={project} onChange={e => onProjectChange(e.target.value)}><option value="">Toàn Hà Nội</option><option value="ring4">Vành đai 4</option><option value="songhong">Trục cảnh quan sông Hồng</option><option value="olympic">Khu đô thị thể thao Olympic</option></select>
+      <select id="project" value={project} onChange={e => onProjectChange(e.target.value)}><option value="">Toàn Hà Nội</option><option value="ring4">Vành đai 4</option></select>
       <label htmlFor="as-of"><Clock3 size={16}/>Thời điểm áp dụng</label>
       <input id="as-of" type="date" value={asOf} onChange={e => onDateChange(e.target.value)} aria-label="Thời điểm áp dụng, để trống là hôm nay"/>
-      <p>Để trống ngày để tra cứu theo hôm nay.</p>
+      <p>Để trống ngày để tra cứu theo hôm nay. Phạm vi dự án chỉ hỗ trợ Vành đai 4; nguồn dự án khác trong thư viện chỉ để tham khảo.</p>
       <footer><button type="button" className="scope-reset" onClick={() => { onProjectChange(''); onDateChange('') }}>Đặt lại</button><button type="button" className="button button-primary" onClick={close}>Xong</button></footer>
     </div>}
   </div>

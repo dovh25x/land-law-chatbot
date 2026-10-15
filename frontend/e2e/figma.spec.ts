@@ -2,7 +2,7 @@ import { test, expect, type Page } from '@playwright/test'
 
 const law = { id: 'law-ui-fixture', title: 'Văn bản kiểm thử giao diện', document_number: 'UI/TEST', source_kind: 'legal', checked_at: '2026-10-11T00:00:00Z', applicability_verified: true, url: 'https://hanoi.gov.vn/' }
 const projectDoc = { ...law, id: 'ring4-ui-fixture', title: 'Nguồn dự án kiểm thử', project: 'ring4', source_kind: 'official_news' }
-const projects = ['ring4', 'songhong', 'olympic'].map((id, i) => ({ id, name: ['Vành đai 4 — Vùng Thủ đô', 'Trục cảnh quan sông Hồng', 'Khu đô thị thể thao Olympic'][i], description: 'Hồ sơ công khai trong fixture kiểm thử; không phải xác nhận pháp lý.', source_ids: i === 0 ? ['ring4-ui-fixture'] : [], questions: [`Cần đối chiếu hồ sơ ${id} nào?`] }))
+const projects = ['ring4', 'ring4', 'olympic'].map((id, i) => ({ id, name: ['Vành đai 4 — Vùng Thủ đô', 'Trục cảnh quan sông Hồng', 'Khu đô thị thể thao Olympic'][i], description: 'Hồ sơ công khai trong fixture kiểm thử; không phải xác nhận pháp lý.', source_ids: i === 0 ? ['ring4-ui-fixture'] : [], questions: [`Cần đối chiếu hồ sơ ${id} nào?`] }))
 
 async function navigate(page: Page, name: string) {
   const menu = page.getByRole('button', { name: 'Mở menu điều hướng' })
@@ -56,7 +56,7 @@ test('library search, document content and keyboard focus stay usable', async ({
   await expect(row).toBeFocused()
 })
 
-test('project selection prepares the actual chat filters and preserves baseline/date payload', async ({ page }) => {
+test('project selection prepares the actual chat filters and preserves project/date payload', async ({ page }) => {
   let payload: Record<string, unknown> = {}
   await page.route('**/api/v1/sessions', r => r.fulfill({ status: 201, json: { session_id: 'fixture-session', token: 'fixture-token' } }))
   await page.route('**/api/v1/chat', async r => {
@@ -64,20 +64,20 @@ test('project selection prepares the actual chat filters and preserves baseline/
     await r.fulfill({ contentType: 'text/event-stream', body: 'event: result\ndata: '+JSON.stringify({ trace_id: 'fixture-trace', status: 'clarification_needed', content: 'Kết quả kiểm thử.', citations: [], trace: [], tool_calls: 0, elapsed_ms: 50 })+'\n\n' })
   })
   await page.goto('/')
-  await navigate(page, 'Dự án trọng điểm')
-  await page.getByRole('tab', { name: 'Sông Hồng', exact: true }).click()
-  await expect(page.getByRole('tabpanel')).toContainText('Trục cảnh quan sông Hồng')
-  await page.getByRole('button', { name: 'Hỏi về Sông Hồng' }).click()
+  await navigate(page, 'Vành đai 4')
+  await expect(page.locator('.project-tabs')).toHaveCount(0)
+  await expect(page.locator('.content-page')).toContainText('hiện chỉ hỗ trợ Vành đai 4')
+  await page.getByRole('button', { name: 'Hỏi về Vành đai 4' }).click()
   await page.getByRole('button', { name: 'Phạm vi tra cứu', exact: true }).click()
-  await expect(page.getByLabel('Dự án', { exact: true })).toHaveValue('songhong')
-  await expect(page.getByLabel('Câu hỏi pháp luật')).toHaveValue(projects[1].questions[0])
+  await expect(page.getByLabel('Dự án', { exact: true })).toHaveValue('ring4')
+  await expect(page.getByLabel('Câu hỏi pháp luật')).toHaveValue(projects[0].questions[0])
   await page.getByLabel('Thời điểm áp dụng, để trống là hôm nay').fill('2024-08-02')
   await page.getByRole('button', { name: 'Xong', exact: true }).click()
-  await expect(page.getByRole('button', { name: 'Phạm vi tra cứu', exact: true })).toContainText('Sông Hồng · 02/08/2024')
-  await page.getByLabel('Chế độ truy xuất').selectOption('baseline')
+  await expect(page.getByRole('button', { name: 'Phạm vi tra cứu', exact: true })).toContainText('Vành đai 4 · 02/08/2024')
+  await expect(page.getByLabel('Chế độ truy xuất')).toHaveCount(0)
   await page.getByRole('button', { name: 'Gửi câu hỏi' }).click()
   await expect(page.locator('.message.assistant')).toContainText('Kết quả kiểm thử.')
-  expect(payload).toMatchObject({ project: 'songhong', as_of: '2024-08-02', mode: 'baseline' })
+  expect(payload).toMatchObject({ project: 'ring4', as_of: '2024-08-02' })
 })
 
 test('evaluation makes a mismatched report explicit instead of presenting invented metrics', async ({ page }) => {
@@ -85,9 +85,8 @@ test('evaluation makes a mismatched report explicit instead of presenting invent
   await navigate(page, 'Đánh giá đồ án')
   await expect(page.getByRole('status')).toContainText('Chưa hoàn tất đánh giá trên cấu hình đang hoạt động')
   await expect(page.locator('.evaluation-summary')).toContainText('Chưa có báo cáo khớp')
-  await expect(page.getByText('old-test-model')).toBeHidden()
-  await page.getByText('Chi tiết báo cáo · awaiting_review').click()
-  await expect(page.locator('.evaluation-details pre')).toContainText('old-test-model')
+  await expect(page.locator('.evaluation-details pre')).toHaveCount(0)
+  await expect(page.getByText('old-test-model')).toBeVisible()
 })
 
 test('compact header preserves data disclosure and returns keyboard focus', async ({ page }, info) => {
@@ -110,17 +109,17 @@ test('scope controls fit a narrow screen and can be reset without submitting cha
   await page.goto('/')
   const trigger = page.getByRole('button', { name: 'Phạm vi tra cứu', exact: true })
   await trigger.click()
-  await page.getByLabel('Dự án', { exact: true }).selectOption('olympic')
+  await page.getByLabel('Dự án', { exact: true }).selectOption('ring4')
   await page.getByLabel('Thời điểm áp dụng, để trống là hôm nay').fill('2024-08-02')
   const popup = await page.getByRole('group', { name: 'Thiết lập phạm vi tra cứu' }).boundingBox()
   expect(popup!.y).toBeGreaterThanOrEqual(56)
   expect(popup!.x + popup!.width).toBeLessThanOrEqual(320)
   await page.getByRole('button', { name: 'Xong', exact: true }).click()
-  await expect(trigger).toContainText('Olympic · 02/08/2024')
+  await expect(trigger).toContainText('Vành đai 4 · 02/08/2024')
   await expect(page.getByRole('button', { name: 'Gửi câu hỏi' })).toBeInViewport()
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBeTruthy()
   await trigger.click()
-  await expect(page.getByLabel('Dự án', { exact: true })).toHaveValue('olympic')
+  await expect(page.getByLabel('Dự án', { exact: true })).toHaveValue('ring4')
   await page.getByRole('button', { name: 'Đặt lại', exact: true }).click()
   await page.keyboard.press('Escape')
   await expect(trigger).toBeFocused()

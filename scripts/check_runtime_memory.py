@@ -6,7 +6,7 @@ import resource
 from landlaw.api import create_app
 from landlaw.config import Settings
 from landlaw.local_embedding import MODEL
-from landlaw.provider import Gemini
+from landlaw.provider import GroqProvider
 from landlaw.store import Store
 from landlaw.retrieval import HeadingIndex
 
@@ -15,7 +15,7 @@ async def main():
     settings=Settings(_env_file=None,sqlite_path='/tmp/memory-check.db',embedding_provider='local_onnx',
         embedding_model=MODEL['name'],embedding_dimensions=384,local_embedding_model_dir='/app/models/e5')
     store=Store(settings)
-    provider=Gemini(settings,store)
+    provider=GroqProvider(settings,store)
     app=create_app(settings,store,provider)
     try:
         async with app.router.lifespan_context(app):

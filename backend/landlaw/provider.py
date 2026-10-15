@@ -1,7 +1,6 @@
 import asyncio
 import json
 import math
-import re
 import time
 from dataclasses import dataclass
 
@@ -12,7 +11,7 @@ from .config import Settings
 from .models import Draft
 from .security import utcnow
 from .store import RateLimited, Store
-from .embedding import contract, CloudflareEmbeddings, workers_ai_retry_after
+from .embedding import contract
 
 
 class ProviderUnavailable(Exception):
@@ -60,8 +59,7 @@ Không tiết lộ suy nghĩ nội bộ. Chỉ báo quyết định công cụ, 
 def generation_schema(schema):
     """Keep types/enums for decoding, validate bounds strictly with Pydantic.
 
-    Gemini rejects some deeply nested bounded string/array grammars with 400.
-    Removing decoding bounds never removes server-side validation.
+    Server-side Pydantic validation always enforces bounds.
     """
     def simplify(value):
         if isinstance(value,dict):
@@ -97,27 +95,17 @@ def strict_generation_schema(schema):
     return shape
 
 
-class Gemini:
+class GroqProvider:
     def __init__(self, settings: Settings, store: Store, client: httpx.AsyncClient | None = None):
         self.settings, self.store = settings, store
         self.client = client or httpx.AsyncClient(timeout=25, limits=httpx.Limits(max_connections=8))
-        for name in (settings.gemini_model,):
-            if not re.fullmatch(r"[a-zA-Z0-9._-]+", name):
-                raise ValueError("Invalid model identifier")
         contract(settings)
-        self.cloudflare_embeddings = CloudflareEmbeddings(settings,self.client,self.record_usage,self.normalize_vector)
         from .local_embedding import LocalE5
         self.local_embeddings = LocalE5(settings.local_embedding_model_dir)
 
     @property
     def configured(self):
-        if self.settings.llm_provider == 'nvidia':
-            return bool(self.settings.nvidia_api_key.get_secret_value())
-        if self.settings.llm_provider == 'groq':
-            return bool(self.settings.groq_api_key.get_secret_value())
-        if self.settings.llm_provider == 'cloudflare':
-            return bool(self.settings.cloudflare_account_id and self.settings.cloudflare_ai_api_token.get_secret_value())
-        return bool(self.settings.gemini_api_key.get_secret_value())
+        return bool(self.settings.groq_api_key.get_secret_value())
 
     async def close(self):
         await self.client.aclose()
@@ -125,85 +113,8 @@ class Gemini:
     async def record_usage(self, kind, units=1):
         await asyncio.to_thread(self.store.record_usage, kind, units)
 
-    async def reserve_embeddings(self, items):
-        await self.record_usage('embedding-requests')
-        await self.record_usage('embedding-items', items)
 
-    async def _request(self, model, operation, body):
-        if not self.settings.gemini_api_key.get_secret_value():
-            raise ProviderUnavailable("GEMINI_API_KEY chưa được cấu hình")
-        try:
-            response = await self.client.post(
-                f"https://generativelanguage.googleapis.com/v1beta/models/{model}:{operation}",
-                headers={"x-goog-api-key": self.settings.gemini_api_key.get_secret_value()}, json=body,
-            )
-        except httpx.HTTPError:
-            raise ProviderUnavailable("Không kết nối được Gemini", retryable=True) from None
-        if response.status_code == 429:
-            retry = response.headers.get("retry-after")
-            if not retry:
-                try:
-                    retry = next((str(d["retryDelay"]).rstrip("s") for d in response.json().get("error", {}).get("details", []) if "retryDelay" in d), "60")
-                except (ValueError, TypeError):
-                    retry = "60"
-            try:
-                seconds = math.ceil(float(retry))
-            except (ValueError, TypeError):
-                seconds = 60
-            raise RateLimited(min(86400, max(1, seconds)), source='provider')
-        if response.status_code >= 400:
-            # Never expose provider body: it can echo prompts, credentials or account identifiers.
-            raise ProviderUnavailable(f"Gemini trả HTTP {response.status_code}", retryable=response.status_code>=500) from None
-        return response.json()
 
-    async def _cloudflare_generate(self, schema, body):
-        if not self.configured:
-            raise ProviderUnavailable('Workers AI chưa được cấu hình')
-        # Workers AI accepts JSON Schema bounds. Keep them during decoding as
-        # well as local validation, unlike Gemini's restricted grammar.
-        shape=schema.model_json_schema()
-        if 'supporting_spans' in shape.get('properties',{}):
-            # Exact span IDs avoid long copied quotes, truncation and accidental
-            # paraphrases. The local model still accepts legacy quote responses.
-            shape['properties'].pop('supporting_quotes',None)
-        def require_fields(node):
-            if isinstance(node,dict):
-                if node.get('type')=='object' and 'properties' in node:
-                    node['required']=list(node['properties'])
-                for value in node.values():require_fields(value)
-            elif isinstance(node,list):
-                for value in node:require_fields(value)
-        require_fields(shape)
-        format_note='\nTrả tất cả trường trong JSON schema dưới đây.'
-        if 'supporting_spans' in shape.get('properties',{}):
-            format_note+=' Every supported index needs supporting_spans selected from source_spans for every cited passage. Return short span IDs only. Without proof, do not confirm the index.'
-        try:
-            response = await self.client.post(
-                f'https://api.cloudflare.com/client/v4/accounts/{self.settings.cloudflare_account_id}/ai/v1/chat/completions',
-                headers={'Authorization':'Bearer '+self.settings.cloudflare_ai_api_token.get_secret_value()},
-                json={'model':self.settings.cloudflare_llm_model,'temperature':0,'max_tokens':4096,
-                      'messages':[{'role':'system','content':body['systemInstruction']['parts'][0]['text']+
-                          format_note+'\n'+json.dumps(shape,ensure_ascii=False)+'\n/no_think'},
-                                  {'role':'user','content':body['contents'][0]['parts'][0]['text']}],
-                      'response_format':{'type':'json_schema','json_schema':shape}})
-        except httpx.HTTPError:
-            raise ProviderUnavailable('Không kết nối được Workers AI',retryable=True) from None
-        if response.status_code == 429:
-            raise RateLimited(workers_ai_retry_after(response),source='provider')
-        if response.status_code >= 400:
-            raise ProviderUnavailable(f'Workers AI trả HTTP {response.status_code}',retryable=response.status_code>=500)
-        result=response.json()
-        # Normalize the transport only; local schema/grounding checks remain identical.
-        usage=result.get('usage',{})
-        # Provider consumption remains observable and never becomes an app cap.
-        neurons=usage.get('neurons')
-        if isinstance(neurons,(int,float)) and math.isfinite(neurons) and neurons>=0:
-            await self.record_usage('workers-ai-millineurons',math.ceil(neurons*1000))
-        try: content=result['choices'][0]['message']['content']
-        except (KeyError,IndexError,TypeError):
-            raise ProviderUnavailable('Workers AI không trả kết quả đúng schema') from None
-        return {'candidates':[{'content':{'parts':[{'text':content}]}}],
-                'usageMetadata':{'totalTokenCount':usage.get('total_tokens',0)}}
 
     async def generate(self, schema: type[BaseModel], instruction: str, payload: dict, budget: Budget):
         body = {
@@ -212,19 +123,12 @@ class Gemini:
             "generationConfig": {"temperature": 0, "maxOutputTokens": 4096,
                                  "responseMimeType": "application/json", "responseJsonSchema": generation_schema(schema)},
         }
-        if self.settings.gemini_model == "gemini-2.5-flash":
-            body["generationConfig"]["thinkingConfig"] = {"thinkingBudget": 512}
-        elif self.settings.gemini_model in {'gemini-3.6-flash','gemini-3.8-flash'}:
-            body['generationConfig']['thinkingConfig']={'thinkingLevel':'low'}
         schema_failures = 0
         for attempt in range(3):
             budget.llm()
             await self.record_usage("llm")
             try:
-                result = (await self._nvidia_generate(schema,body) if self.settings.llm_provider=='nvidia' else
-                          await self._groq_generate(schema,body) if self.settings.llm_provider=='groq' else
-                          await self._cloudflare_generate(schema,body) if self.settings.llm_provider=='cloudflare'
-                          else await self._request(self.settings.gemini_model, "generateContent", body))
+                result = await self._groq_generate(schema, body)
             except RateLimited as exc:
                 remaining = self.settings.turn_timeout_seconds - (time.monotonic()-budget.started)
                 if exc.retry_after > min(60,remaining-15) or attempt == 2:
@@ -256,54 +160,6 @@ class Gemini:
                 # Retries count as actual calls inside the same per-turn budget.
                 body['systemInstruction']['parts'][0]['text'] += '\nLượt trước không khớp schema. Trả duy nhất JSON đúng responseJsonSchema; dùng đúng kiểu trường và giá trị enum, không có markdown.'
 
-    async def _nvidia_generate(self,schema,body):
-        if not self.configured:
-            raise ProviderUnavailable('NVIDIA_API_KEY chưa được cấu hình')
-        shape=strict_generation_schema(schema)
-        # Hosted Super documents the standard chat fields and reasoning_effort.
-        # Schema travels as plain instructions; Pydantic and grounding checks
-        # enforce it locally. Do not assume hosted JSON-schema decoding support.
-        instruction=body['systemInstruction']['parts'][0]['text']
-        instruction+=' Return ONLY a JSON object conforming to this schema. No markdown, reasoning, tools or function calls. Lookup descriptors in lookups are plain data for the read-only application.\n'+json.dumps(shape,ensure_ascii=False,separators=(',',':'))
-        if 'supporting_spans' in shape.get('properties',{}):
-            instruction+=' Select exact source span IDs for every supported claim and citation. Do not rewrite source text.'
-        request={'model':self.settings.nvidia_model,'temperature':0,'max_tokens':4096,
-                 'reasoning_effort':'none','stream':False,
-                 'messages':[{'role':'system','content':instruction},
-                             {'role':'user','content':body['contents'][0]['parts'][0]['text']}]}
-        try:
-            response=await self.client.post('https://integrate.api.nvidia.com/v1/chat/completions',
-                headers={'Authorization':'Bearer '+self.settings.nvidia_api_key.get_secret_value(),
-                         'Accept':'application/json'},json=request,timeout=45)
-        except httpx.HTTPError:
-            raise ProviderUnavailable('Không kết nối được NVIDIA NIM',retryable=True) from None
-        if response.status_code==429:
-            try:delay=math.ceil(float(response.headers.get('retry-after','60')))
-            except (ValueError,TypeError,OverflowError):delay=60
-            raise RateLimited(min(86400,max(1,delay)),source='provider')
-        if response.status_code==202:
-            # Never replay an accepted asynchronous invocation as a new billable
-            # request. The workflow stops honestly when no final JSON is ready.
-            raise ProviderUnavailable('NVIDIA đang xử lý bất đồng bộ; chưa có kết quả để kiểm chứng.')
-        if response.status_code>=400:
-            raise ProviderUnavailable(f'NVIDIA NIM trả HTTP {response.status_code}',retryable=response.status_code>=500)
-        try:
-            result=response.json()
-            content=result['choices'][0]['message']['content']
-            if not isinstance(content,str):raise ValueError('Missing text')
-            tokens=result.get('usage',{}).get('total_tokens',0)
-            if type(tokens)!=int or tokens<0:tokens=0
-        except (ValueError,KeyError,IndexError,TypeError,AttributeError):
-            raise ProviderUnavailable('NVIDIA không trả nội dung JSON để kiểm chứng',format_failure=True) from None
-        if schema.__name__=='Plan':
-            try:
-                decoded=json.loads(content)
-                if isinstance(decoded,dict) and 'lookups' in decoded:
-                    decoded['tools']=decoded.pop('lookups')
-                    content=json.dumps(decoded,ensure_ascii=False)
-            except (ValueError,TypeError):pass
-        return {'candidates':[{'content':{'parts':[{'text':content}]}}],
-                'usageMetadata':{'totalTokenCount':tokens}}
 
     async def _groq_generate(self,schema,body):
         if not self.configured:
@@ -362,23 +218,10 @@ class Gemini:
         return {'candidates':[{'content':{'parts':[{'text':content}]}}],
                 'usageMetadata':{'totalTokenCount':result.get('usage',{}).get('total_tokens',0)}}
 
-    def embedding_body(self, text, title=None, query=False, model=None):
-        model = model or self.settings.embedding_model
-        if model == "gemini-embedding-001":
-            formatted = text
-            body = {"model": f"models/{model}", "content": {"parts": [{"text": formatted}]},
-                    "taskType": "RETRIEVAL_QUERY" if query else "RETRIEVAL_DOCUMENT", "outputDimensionality": 768}
-            if title and not query:
-                body["title"] = title
-        else:
-            formatted = f"task: question answering | query: {text}" if query else f"title: {title or 'none'} | text: {text}"
-            body = {"model": f"models/{model}", "content": {"parts": [{"text": formatted}]},
-                    "outputDimensionality": 768}
-        return body
 
     @staticmethod
-    def normalize_vector(values, dimensions=768):
-        if dimensions not in {384,768,1024} or len(values) != dimensions or not all(type(x) in (float, int) and math.isfinite(x) for x in values):
+    def normalize_vector(values, dimensions=384):
+        if dimensions != 384 or len(values) != dimensions or not all(type(x) in (float, int) and math.isfinite(x) for x in values):
             raise ProviderUnavailable(f"Embedding không đúng {dimensions} chiều hữu hạn")
         norm = math.sqrt(sum(x*x for x in values))
         if norm == 0:
@@ -393,29 +236,12 @@ class Gemini:
         if budget:
             budget.embedding_calls += 1
         selected = contract(self.settings,release)
-        if selected['provider']=='local_onnx':
-            return (await self._embed_local([text],title,query))[0]
-        if selected['provider']=='cloudflare':
-            return (await self.cloudflare_embeddings.embed_many([text],title,query))[0]
-        await self.reserve_embeddings(1)
-        result = await self._request(selected['model'], "embedContent", self.embedding_body(text, title, query,selected['model']))
-        return self.normalize_vector(result.get("embedding", {}).get("values", []))
+        return (await self._embed_local([text],title,query))[0]
 
     async def embed_many(self, texts: list[str], title=None):
         if not 1 <= len(texts) <= 8:
             raise ValueError("Embedding batches must contain 1–8 independent chunks")
-        if self.settings.embedding_provider=='local_onnx':
-            return await self._embed_local(texts,title)
-        if self.settings.embedding_provider=='cloudflare':
-            return await self.cloudflare_embeddings.embed_many(texts,title)
-        await self.reserve_embeddings(len(texts))
-        # Each request holds a distinct Content. Multiple Parts in one Content would aggregate into one vector.
-        result = await self._request(self.settings.embedding_model, "batchEmbedContents",
-            {"requests": [self.embedding_body(text, title) for text in texts]})
-        embeddings = result.get("embeddings", [])
-        if len(embeddings) != len(texts):
-            raise ProviderUnavailable("Số embedding không khớp số đoạn")
-        return [self.normalize_vector(item.get("values", [])) for item in embeddings]
+        return await self._embed_local(texts,title)
 
     async def _embed_local(self,texts,title=None,query=False):
         await self.record_usage('local-embedding-items',len(texts))

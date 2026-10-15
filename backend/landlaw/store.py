@@ -283,7 +283,7 @@ class Store:
 
     def publication(self, release_id=None):
         release_id = release_id or self.state('active_release')
-        for profile in ('accepted', 'demo', 'technical_demo'):
+        for profile in ('academic', 'accepted', 'demo', 'technical_demo'):
             value = self.state(f'publication:{release_id}:{profile}') if release_id else None
             if value:
                 return json.loads(value)
@@ -321,7 +321,7 @@ class Store:
         old = self.state("active_release")
         with self.transaction() as conn:
             if publication:
-                if publication.get('profile') not in {'technical_demo','demo','accepted'}:
+                if publication.get('profile') not in {'academic'}:
                     raise ValueError('Invalid publication profile')
                 key = f"publication:{release_id}:{publication['profile']}"
                 value = json.dumps(publication,sort_keys=True,ensure_ascii=False)

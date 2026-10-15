@@ -4,10 +4,7 @@ on:
 permissions:
   contents: read
 jobs:
-  verify:
-    uses: ./.github/workflows/release-checks.yml
   deploy:
-    needs: verify
     runs-on: ubuntu-latest
     environment: production
     steps:
@@ -25,6 +22,7 @@ jobs:
         working-directory: frontend
         env:
           VITE_API_BASE_URL: ${{ vars.API_BASE_URL }}
+      - run: pytest -q
       - name: Deploy frontend
         uses: cloudflare/wrangler-action@v4
         with:

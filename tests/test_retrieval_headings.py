@@ -35,17 +35,3 @@ def test_heading_cache_scoped_to_release(store):
     release(store,[document('first')],'r1');release(store,[document('second')],'r2')
     assert {h.document.id for h in store.search('bồi thường',release_id='r1')}=={'first'}
     assert {h.document.id for h in store.search('bồi thường',release_id='r2')}=={'second'}
-
-
-def test_nvidia_preserves_complete_long_eligibility_passage_in_context(store,settings):
-    from types import SimpleNamespace
-    from landlaw.agent import Agent
-    from landlaw.models import ChatRequest,Evidence
-    text='Điều 1. Điều kiện bồi thường. '+('Nội dung điều kiện cần đối chiếu hồ sơ. '*240)+' Chỉ áp dụng đối với đối tượng tại khoản 1.'
-    doc=document(text=text);payload=release(store,[doc])
-    provider=SimpleNamespace(settings=settings.model_copy(update={'llm_provider':'nvidia'}))
-    state={'release':payload,'as_of':date(2026,1,1),'request':ChatRequest(session_id='00000000-0000-0000-0000-000000000000',message='Điều kiện bồi thường là gì?'),
-           'evidence':[Evidence(document=doc,chunk=doc.chunks[0],applicability='current')]}
-    passages,metadata=Agent(store,provider).prompt_context(state)
-    assert len(passages)==1 and passages[0]['text']==text
-    assert metadata[0]['document_id']=='law'

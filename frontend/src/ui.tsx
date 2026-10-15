@@ -89,8 +89,7 @@ export function TracePanel({ trace, onClose }: { trace: Trace[]; onClose: () => 
 export function DataPanel({ readiness, connecting, onRefresh, onClose }: {
   readiness: import('./api').Readiness | null; connecting: boolean; onRefresh: () => void; onClose: () => void,
 }) {
-  const publicationLabel = readiness?.quality_status === 'accepted' ? 'Đã đạt bộ kiểm thử nghiệm thu đối chiếu nguồn.'
-    : readiness?.publication_profile === 'technical_demo' ? 'Nguyên mẫu học thuật — chưa được thẩm định pháp lý độc lập.' : 'Demo — chưa hoàn tất nghiệm thu.'
+  const publicationLabel = 'Nguyên mẫu học thuật — chưa được thẩm định pháp lý độc lập.'
   return <SidePanel title="Dữ liệu và phạm vi sử dụng" icon={<FileText size={20}/>} onClose={onClose} footer={
     <button className="button button-secondary" onClick={onRefresh} disabled={connecting}>{connecting ? <><LoaderCircle size={16} className="spin"/>Đang kết nối…</> : 'Kiểm tra lại kết nối'}</button>
   }>
@@ -98,6 +97,6 @@ export function DataPanel({ readiness, connecting, onRefresh, onClose }: {
     <div className="data-note" role="note"><strong>{publicationLabel}</strong><p>Chỉ trả lời trong phạm vi nguồn đã kiểm tra. Quyền lợi cụ thể cần đối chiếu hồ sơ và cơ quan có thẩm quyền.</p></div>
     <div className="source-dates"><p>Dữ liệu kiểm tra<br/><strong>{formatDate(readiness?.checked_at)}</strong></p><p>Corpus đang hoạt động<br/><strong>{readiness?.corpus_release || 'Chưa công bố'}</strong></p></div>
     {!!readiness?.coverage_gaps?.length && <details className="data-gaps"><summary>Các nguồn chưa đủ dữ liệu ({readiness.coverage_gaps.length})</summary><ul>{readiness.coverage_gaps.map(g => <li key={g.document_id}><strong>{g.title}:</strong> {g.reason}</li>)}</ul></details>}
-    <p className="secondary-copy">Chỉ nhập tình huống đã ẩn danh. Không gửi hồ sơ cá nhân nhạy cảm.</p>
+    <p className="secondary-copy">Phạm vi dự án hiện chỉ hỗ trợ Vành đai 4. Nguồn dự án khác trong thư viện chỉ để tham khảo. Chỉ nhập tình huống đã ẩn danh.</p>
   </SidePanel>
 }

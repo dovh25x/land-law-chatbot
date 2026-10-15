@@ -7,7 +7,7 @@ import pytest
 
 from landlaw.embedding import contract
 from landlaw.local_embedding import MODEL, Encoder
-from landlaw.provider import Gemini
+from landlaw.provider import GroqProvider
 
 
 def test_colab_and_runtime_have_identical_model_and_encoder():
@@ -23,8 +23,8 @@ def test_colab_and_runtime_have_identical_model_and_encoder():
 
 
 async def test_local_queries_use_release_contract_and_do_not_call_remote_embedding(settings,store):
-    provider=Gemini(settings,store,httpx.AsyncClient(transport=httpx.MockTransport(
-        lambda request: httpx.Response(200,json={'embedding':{'values':[1.0]+[0.0]*767}}))))
+    provider=GroqProvider(settings,store,httpx.AsyncClient(transport=httpx.MockTransport(
+        lambda request: httpx.Response(200,json={'embedding':{'values':[1.0]+[0.0]*383}}))))
     class FixtureLocal:
         def embed_many(self,texts,title,query):
             assert query
@@ -33,9 +33,10 @@ async def test_local_queries_use_release_contract_and_do_not_call_remote_embeddi
     release={'embedding_contract':{'provider':'local_onnx','model':MODEL['name'],'dimensions':384,
                                    'format_version':'v1','local_model_spec':MODEL}}
     assert len(await provider.embed('bồi thường',query=True,release=release))==384
-    assert len(await provider.embed('rollback',query=True,release={'embedding_model':'gemini-embedding-2','embedding_dimensions':768}))==768
+    with pytest.raises(ValueError):
+        await provider.embed('rollback',query=True,release={'embedding_model':'unsupported','embedding_dimensions':384})
     release['embedding_contract']['local_model_spec']={**MODEL,'query_max_tokens':512}
-    with pytest.raises(ValueError,match='exact pinned'):
+    with pytest.raises(ValueError,match='pinned E5'):
         contract(settings,release)
     await provider.close()
 
@@ -69,5 +70,5 @@ def test_unit_fixture_cannot_inherit_operator_database_or_provider_secrets(monke
         monkeypatch.setenv(name,value)
     isolated=fixture.__wrapped__(tmp_path)
     assert not isolated.database_url.get_secret_value() and not isolated.admin_database_url.get_secret_value()
-    assert isolated.llm_provider=='gemini' and isolated.embedding_provider=='gemini'
-    assert not isolated.groq_api_key.get_secret_value() and not isolated.supabase_service_role_key.get_secret_value()
+    assert isolated.llm_provider=='groq' and isolated.embedding_provider=='local_onnx'
+    assert isolated.groq_api_key.get_secret_value()=='test-key'

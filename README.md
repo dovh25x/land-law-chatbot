@@ -1,42 +1,31 @@
-# Hanoi Land Law Assistant — đồ án liên ngành
+# Hanoi Land Law Assistant
 
-Web chatbot tiếng Việt dùng FastAPI, LangGraph, Groq GPT-OSS 20B, E5 ONNX, PostgreSQL/pgvector và React. Hai chế độ baseline/agentic dùng cùng nguồn dữ liệu và model. Agent chỉ có công cụ đọc với tham số định kiểu, giới hạn 6 lần gọi LLM, 12 công cụ, hai vòng retrieval và 90 giây. Chỉ phát câu trả lời qua SSE sau kiểm tra căn cứ; trace là sự kiện thực thi.
+Nguyên mẫu học thuật học phần **CSE703014 — Đồ án liên ngành**: chatbot tiếng Việt tra cứu pháp luật đất đai Hà Nội bằng Agentic RAG, có nguồn dẫn và trace. **Chưa được thẩm định pháp lý độc lập.**
 
-## Giao diện
+Website: https://hanoi-land-law.pages.dev · API: https://land-law-chatbot.onrender.com
 
-UI đã triển khai theo [thiết kế Figma](https://www.figma.com/design/E8ntRTL3j3J29fhMM62mDk/Hanoi-Land-Law-UI-Redesign): font Be Vietnam Pro, chat responsive, panel nguồn/trace và menu mobile. Xem [chi tiết triển khai UI](docs/UI_DESIGN.md) và bằng chứng `reports/ui-redesign.json`, `reports/ui-redesign-live.json`.
+## Phạm vi
+Bồi thường, hỗ trợ, tái định cư và ví dụ dự án Vành đai 4. Thư viện giữ 69 tài liệu/7.610 vector; tài liệu Sông Hồng và Olympic chỉ để tham khảo, không thuộc phạm vi hỏi đáp dự án. Không tiếp nhận hồ sơ cá nhân, tính tiền hoặc xác định thửa đất bằng GIS. Dữ liệu là snapshot, không cập nhật tự động.
 
-## Phạm vi bài nộp
+## Công nghệ và chức năng
+React/TypeScript/Vite; FastAPI/LangGraph; Groq GPT-OSS 120B; E5 ONNX Q8 384 chiều; PostgreSQL/pgvector cloud hoặc SQLite local. Chat hỗ trợ hỏi tiếp, nguồn mở được, trace công cụ và ngày xem xét. Chỉ có Agentic RAG; không có kết quả so sánh đầy đủ để giữ baseline. Không đổi provider/model tự động. Hosting miễn phí có thể ngủ hoặc hết quota.
 
-**Nguyên mẫu học thuật — chưa được thẩm định pháp lý độc lập.** Tập trung tra cứu bồi thường, hỗ trợ và tái định cư tại Hà Nội; Vành đai 4 là ví dụ chính. Giữ hệ thống hiện có, không yêu cầu đạt nghiệm thu production M0–M6 hay benchmark 120 câu để nộp học phần.
-
-Gói bài nộp: [phạm vi](docs/submission/SCOPE.md), [báo cáo](docs/submission/REPORT.md), [10 slide](docs/submission/SLIDES.md), [kịch bản và video](docs/submission/DEMO.md). Kết quả kiểm tra mới nằm riêng trong `reports/submission/`; báo cáo lịch sử bên dưới không thay thế kết quả của bản chốt.
-
-## Trạng thái
-
-Bản Groq đã chạy và rà soát 20 ca agentic: **17 đạt, 3 một phần, 0 chưa đạt**. Xem [kết quả và giới hạn từng ca](reports/submission/results.md). Đây là CLI quản trị gọi model thật trên corpus Supabase; HTTPS/browser được kiểm chứng riêng. Không phải thẩm định pháp lý.
-
-Website: https://hanoi-land-law.pages.dev; API: https://land-law-chatbot.onrender.com. Corpus đã công bố ở chế độ **demo kỹ thuật — chưa nghiệm thu pháp lý**. Baseline/agentic trả lời thật trên URL, có nguồn, trace, cách ly phiên và lưu hội thoại; desktop/mobile đã kiểm tra không dùng mocks. Đây chưa phải bản nghiệm thu toàn bộ M0–M6. Xem [bằng chứng và hạng mục còn mở](docs/IMPLEMENTATION_STATUS.md), [nguồn thật và khoảng trống](docs/SOURCES.md), [benchmark](docs/BENCHMARK.md). Không tạo số liệu chất lượng mẫu. SQLite dành cho phát triển; production bắt buộc PostgreSQL.
-
-Provider sinh được chọn rõ bằng `LLM_PROVIDER`: `nvidia` (Nemotron 3 Super), `gemini`, `cloudflare` (Qwen), hoặc `groq` (GPT-OSS 120B/20B, Qwen 3.8 27B). Bản nộp dùng **Groq `openai/gpt-oss-20b`**; `LLM_PROVIDER=groq`. Không gọi NVIDIA và không tự chuyển provider. Evaluation giữ checkpoint và xử lý quota theo Retry-After; hai chế độ dùng cùng model và fingerprint, không ghép số liệu khác cấu hình. Corpus có 69 tài liệu, 54 văn bản pháp lý, năm nguồn mỗi dự án và đủ 7.610 vector E5 ONNX Q8 **384 chiều**, xử lý miễn phí trên Colab CPU. Vector truy vấn trên backend khớp Colab; Docker Python 3.12 peak RSS khoảng 354 MiB dưới hard limit 512 MiB. Model/checkpoint cũ giữ riêng. Không có trần gọi API theo ngày do ứng dụng đặt; giữ điểm dừng workflow và chống lạm dụng website. Không bật billing hoặc nâng gói.
-
-## Chạy phát triển
-
-Yêu cầu Python 3.12+, Node 24. Có thể đọc giao diện khi chưa cấu hình AI/corpus; trạng thái chưa sẵn sàng được hiển thị rõ.
+## Chạy local
+Python 3.12+ và Node 24. Cần internet để tải model và gọi Groq; không cần Supabase nếu dùng SQLite.
 
 ```bash
 python3 -m venv .venv
 .venv/bin/pip install -r requirements.lock
 .venv/bin/pip install --no-deps -e .
 cp .env.example .env
-# Điền khóa provider đã chọn; DATABASE_URL để trống nếu dùng SQLite phát triển.
-# E5 local: đặt contract 384 chiều và tải model bằng
-# python backend/landlaw/local_embedding.py download models/e5
-.venv/bin/land-law preflight --live
+# Điền GROQ_API_KEY; giữ DATABASE_URL và ADMIN_DATABASE_URL trống cho local.
+.venv/bin/python backend/landlaw/local_embedding.py download models/e5
+# Corpus công khai trong gói bàn giao dist/hanoi-land-law-mvp.zip:
+.venv/bin/land-law restore data/demo/corpus-backup.json
 .venv/bin/uvicorn landlaw.api:app --host 127.0.0.1 --port 8000 --no-proxy-headers
 ```
 
-Terminal thứ hai:
+Terminal khác:
 
 ```bash
 cd frontend
@@ -44,32 +33,9 @@ npm ci
 npm run dev -- --host 127.0.0.1
 ```
 
-Mở http://127.0.0.1:5173. Vite proxy `/api`, `/healthz`, `/readyz` đến backend. Đặt `VITE_API_BASE_URL` khi build hosting tĩnh. Không đặt bất kỳ secret nào vào biến `VITE_*`.
+Mở http://127.0.0.1:5173. Clone repo không tự có corpus: dùng backup công khai trong gói bàn giao hoặc chuẩn bị snapshot theo tài liệu kỹ thuật. Không restore vào database cloud đang chạy. Không đưa secret vào biến `VITE_*`.
 
-## Corpus và phát hành
-
-Manifest `data/sources.json` chứa nguồn chính thức, checksum raw và metadata pháp lý đã rà soát. Chạy ingestion online hoặc offline với raw đã tải. PDF ảnh xử lý ngoại tuyến bằng Tesseract tiếng Việt; `scripts/ocr_offline.py` dùng PDFium và lưu text phân trang cùng diagnostics. Cài tùy chọn `pip install -e ".[ocr]"` trên máy ingestion, không cài OCR vào backend Docker. Nguồn chưa duyệt, draft, shell tải dữ liệu, checksum thay đổi, OCR lỗi và hồ sơ cá nhân chưa ẩn danh đều bị cách ly.
-
-```bash
-.venv/bin/land-law migrate                 # PostgreSQL, quyền owner/admin
-.venv/bin/land-law ingest --offline       # hoặc ingest --ocr để thu thập online
-.venv/bin/land-law ingest --offline --embed
-.venv/bin/land-law benchmark --split dev --release-id corpus-<id>
-.venv/bin/land-law benchmark --split acceptance --release-id corpus-<id>
-.venv/bin/land-law publish corpus-<id>
-# Demo sớm: chỉ sau khi source audit/runtime tests và 20 ca smoke ở cả hai chế độ qua review
-.venv/bin/land-law benchmark --split smoke --release-id corpus-<id>
-.venv/bin/land-law publish corpus-<id> --profile demo
-# Demo kỹ thuật theo điều chỉnh phạm vi: corpus đầy đủ, CI/runtime/audit và sáu core reviews
-.venv/bin/land-law benchmark --split smoke --release-id corpus-<id> --case-ids S01,S07,S09 --concurrency 1
-.venv/bin/land-law publish corpus-<id> --profile technical_demo
-```
-
-Embedding theo batch tối đa tám Content độc lập, một vector cho mỗi đoạn, checkpoint theo model/định dạng/title/checksum. Chạy lại tiếp tục checkpoint và không nhân đôi release cùng nội dung/metadata. `publish` từ chối khi thiếu nguồn bắt buộc (gồm QĐ 56/2024 lịch sử), độ bao phủ, metadata, embedding hoặc báo cáo nghiệm thu đã rà soát cho đúng release. Benchmark chạy được trên staging trước công bố; không cần bypass gate để đánh giá.
-
-Bộ 120 câu hỏi gồm 40 dev/80 acceptance đã có rubric theo nguồn và 93 đoạn tham chiếu; 80 câu nghiệm thu được đóng băng trước chạy đánh giá cuối. Đây là rà soát nguồn của AI engineer, chưa được chuyên gia pháp lý thẩm định độc lập. Từng câu trả lời thật vẫn phải được chấm riêng. `scripts/validate_benchmark_sources.py` kiểm tra checksum/freeze và đối chiếu corpus, không tự chứng nhận độ chính xác pháp lý. Chỉ số chưa đo/rà soát hiển thị `null`; kết quả chưa đủ không được coi là đạt. Các ca benchmark là tình huống giả định, không phải hồ sơ người dân.
-
-## Kiểm tra
+## Kiểm thử và đánh giá
 
 ```bash
 .venv/bin/python -m pytest -q
@@ -77,15 +43,16 @@ Bộ 120 câu hỏi gồm 40 dev/80 acceptance đã có rubric theo nguồn và 
 cd frontend
 npm test
 npm run build
-npm audit
+npm run test:e2e
 ```
 
-GitHub Actions kiểm tra Python 3.12, build web, audit và build Docker. Thu thập nguồn hằng ngày chỉ tạo staging. Lịch Actions không đảm bảo cập nhật thời gian thực.
+Bộ 20 câu được khóa bằng checksum trước khi chạy, kết quả phải được rà soát theo câu trả lời thực tế. [Kết quả hiện hành](reports/submission/results.md) chỉ có giá trị trên corpus/model/fingerprint ghi trong artifact; không phải chứng nhận pháp lý. Không sử dụng số liệu phiên bản cũ để mô tả bản mới.
 
-## Vận hành và bàn giao
+## Tài liệu
+- [PRD](docs/PRD.md): yêu cầu và chuẩn đầu ra học phần.
+- [Thiết kế kỹ thuật](docs/ARCHITECTURE.md): dữ liệu, retrieval, agent và API.
+- [Vận hành](docs/OPERATIONS.md): local, deploy, đánh giá, backup.
+- [Rà soát repo](docs/CLEANUP.md): thành phần giữ/xóa.
+- [Đóng góp](docs/CONTRIBUTIONS.md): chỉ ghi đóng góp thực tế.
 
-[Hướng dẫn triển khai, quota, cập nhật và khôi phục](docs/OPERATIONS.md), [kịch bản demo](docs/DEMO.md). Hosting mục tiêu: Cloudflare Pages Free, Render Free một worker, Supabase Free. Secret ở backend/.env/GitHub Secrets; trình duyệt chỉ gọi API. Không bật thanh toán hoặc nâng gói. Không nhận upload hồ sơ cá nhân, tính tiền tự động hoặc tra cứu GIS từng thửa.
-
-Embedding offline trên Colab CPU: [notebook và hướng dẫn](docs/COLAB_EMBEDDINGS.md). Corpus E5 hiện đủ 7.610 vector 384 chiều và đã công bố qua gate `technical_demo`; full smoke/acceptance tiếp tục riêng.
-
-Bản nộp chọn Groq: đặt `GROQ_API_KEY` trong `.env`, `LLM_PROVIDER=groq`, `GROQ_MODEL=openai/gpt-oss-20b`. Render không chứa khóa NVIDIA. Các adapter cũ được giữ để bảo toàn mã nguồn nhưng không nằm trong đường thực thi của bản nộp. Xem [gói bàn giao](docs/submission/README.md) và [vận hành Groq](docs/OPERATIONS.md#groq-cho-bản-mvp-học-thuật).
+Không tạo báo cáo học phần, slide, kịch bản hoặc video. Sinh viên tự thực hiện phần trình bày bằng lời nói theo yêu cầu giảng viên.

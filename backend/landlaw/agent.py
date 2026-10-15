@@ -10,7 +10,7 @@ from langgraph.graph import END, START, StateGraph
 from pydantic import BaseModel, Field
 
 from .models import ChatRequest, ChatResult, Citation, Claim, Document, Draft, Evidence, Relation, TraceEvent
-from .provider import Budget, BudgetExceeded, Gemini, ProviderUnavailable
+from .provider import Budget, BudgetExceeded, GroqProvider, ProviderUnavailable
 from .security import local_date, normalize, redact, utcnow
 from .store import RateLimited, Store
 from .publication import public_status
@@ -51,6 +51,7 @@ class Verification(BaseModel):
 
 
 class State(TypedDict, total=False):
+    unsupported_project: bool
     request: ChatRequest
     budget: Budget
     emit: Any
@@ -272,7 +273,7 @@ def resolve_places(aliases, query, as_of):
 
 
 class Agent:
-    def __init__(self, store: Store, provider: Gemini):
+    def __init__(self, store: Store, provider: GroqProvider):
         self.store, self.provider = store, provider
         graph = StateGraph(State)
         for name, node in [("plan", self.plan), ("tools", self.tools), ("synthesize", self.synthesize),
@@ -331,7 +332,13 @@ class Agent:
                    and any(t in question for t in ('bao dam','cap nhat','qua han')))
         place_question=('huyen' in question and 'cu' in question and 'xa' in question
                         and any(t in question for t in ('doi','moi','dia ban')))
-        if freshness:
+        unsupported_project = request.project in {'songhong','olympic'} or any(
+            name in question for name in ('song hong','olympic'))
+        if unsupported_project:
+            state['unsupported_project'] = True
+            state['plan'] = Plan(out_of_scope=True)
+            await self.event(state,'routing','Bản MVP chỉ hỗ trợ thao tác dự án Vành đai 4; các dự án khác chỉ có nguồn tham khảo trong thư viện.')
+        elif freshness:
             state['freshness_question']=True
             state['plan']=Plan()
             await self.event(state,'routing','Câu hỏi về mức cập nhật dữ liệu; đối chiếu metadata, không suy hiệu lực văn bản.')
@@ -339,17 +346,12 @@ class Agent:
             state['plan']=Plan(out_of_scope=True)
             await self.event(state,'routing','Câu hỏi thuộc lĩnh vực ngoài phạm vi pháp luật đất đai và quy hoạch Hà Nội.')
         elif private_entitlement_check(request.message):
-            tool='search_project' if request.project and request.mode=='agentic' else 'search_law'
+            tool='search_project' if request.project else 'search_law'
             state['plan']=Plan(tools=[ToolCall(name=tool,query=request.message[:1000])])
             await self.event(state,'routing','Yêu cầu xác nhận quyền lợi hộ cụ thể cần hồ sơ; tra cứu nguồn và hỏi dữ kiện trước khi kết luận.',tool)
         elif place_question:
             state['plan']=Plan(tools=[ToolCall(name='normalize_place',query=request.message[:1000])])
             await self.event(state,'routing','Đối chiếu tên địa bàn cũ/mới trước khi xác định phạm vi hồ sơ.','normalize_place')
-        elif request.mode == "baseline":
-            prior = next((m['content'] for m in reversed(state['history']) if m['role']=='user'), '')
-            # Baseline also receives the same conversational context; no planner call.
-            query = contextual_query if contextual_query!=request.message else ((prior[:500]+' '+request.message) if prior else request.message)
-            state["plan"] = Plan(tools=[ToolCall(name="search_law", query=query[:1000])])
         elif contextual_query!=request.message:
             state['plan']=Plan(tools=[ToolCall(name='search_law',query=contextual_query[:1000])])
             await self.event(state,'routing','Đã đối chiếu tham chiếu với nguồn trong lượt trả lời trước; tiếp tục tra văn bản đó.','search_law')
@@ -367,7 +369,7 @@ class Agent:
             suggested=await asyncio.to_thread(self.store.article_candidates,request.message,
                                               state['release']['id'],state['as_of'],request.project)
             catalogue_fields=None
-            if self.provider.settings.llm_provider in {'groq','nvidia'}:
+            if self.provider.settings.llm_provider == 'groq':
                 catalogue_fields=['id','document_number','title','project','effective_from','effective_to']
                 catalogue=[[d['id'],d['document_number'],d['title'][:120],d['project'],
                             d['effective_from'],d['effective_to']] for d in catalogue]
@@ -618,7 +620,7 @@ class Agent:
         """
         passages,documents=[],{}
         candidates=self.context(state)
-        if self.provider.settings.llm_provider in {'groq','nvidia'} and selected_ids is None:
+        if self.provider.settings.llm_provider == 'groq' and selected_ids is None:
             question=normalize(state['request'].message) if state.get('request') else ''
             numbers=set(re.findall(r'(?<![\d/])\d{1,6}/(?:19|20)\d{2}(?!/\d)',question))
             articles=set(re.findall(r'\bdieu\s+(\d+[a-z]?)\b',question))
@@ -659,7 +661,7 @@ class Agent:
             metadata={key:item[key] for key in (
                 'document_id','title','document_number','kind','effective_from','effective_to',
                 'provision_validity','legal_relations','source_review_notes')}
-            if self.provider.settings.llm_provider in {'groq','nvidia'}:
+            if self.provider.settings.llm_provider == 'groq':
                 fields=['source_id','target_id','type','source_locator','target_locators',
                         'target_locators_complete','source_effective_from','source_verified']
                 metadata['legal_relation_fields']=fields
@@ -668,12 +670,12 @@ class Agent:
             documents.setdefault(document_id,metadata)
             passage={key:item[key] for key in (
                 'citation_id','document_id','page','locator','text','applicability')}
-            if self.provider.settings.llm_provider in {'groq','nvidia'} and selected_ids is None:
+            if self.provider.settings.llm_provider == 'groq' and selected_ids is None:
                 # Select whole passages rather than truncating clauses. Retrieval
                 # still retains eight primary hits and related evidence in trace.
                 projected_docs={k:v for k,v in documents.items()
                                 if k in {p['document_id'] for p in passages} | {document_id}}
-                context_limit=32000 if self.provider.settings.llm_provider=='nvidia' else 7000
+                context_limit=7000
                 if len(json.dumps([passages+[passage],list(projected_docs.values())],ensure_ascii=False))>context_limit:
                     if not any(p['document_id']==document_id for p in passages):documents.pop(document_id,None)
                     continue
@@ -1147,7 +1149,7 @@ class Agent:
         for claim in checked_draft['claims']:
             claim['citation_ids']=[aliases.get(key,key) for key in claim['citation_ids']]
         model_context=[{**item,'citation_id':aliases[item['citation_id']]} for item in verification_context]
-        if self.provider.settings.llm_provider in {'groq','nvidia'}:
+        if self.provider.settings.llm_provider == 'groq':
             # source_spans already contain exact overlapping text covering every
             # cited passage; avoid sending that same text twice to the verifier.
             model_context=[{k:v for k,v in item.items() if k!='text'} for item in model_context]
@@ -1212,7 +1214,7 @@ class Agent:
     @staticmethod
     def route(state):
         verification = state["verification"]
-        can_retry = (state["request"].mode == "agentic" and state["rounds"] < 2
+        can_retry = (state["rounds"] < 2
                      and state["budget"].llm_calls <= 4 and state['budget'].tool_calls<12)
         if can_retry and verification.needs_more_evidence:
             return "retry"
@@ -1276,7 +1278,7 @@ class Agent:
         if state.get('place_clarification'):
             content='Tên huyện cũ chưa đủ để ánh xạ tới một xã/phường mới hoặc xác định một thửa đất thuộc dự án. Cần đối chiếu địa bàn chi tiết và ranh giới/hồ sơ thu hồi.'
         if outside:
-            content='Câu hỏi nằm ngoài phạm vi pháp luật đất đai và quy hoạch Hà Nội.'
+            content=('Phạm vi dự án của bản MVP hiện chỉ hỗ trợ Vành đai 4. Thư viện vẫn lưu tài liệu của các dự án khác để tham khảo.' if state.get('unsupported_project') else 'Câu hỏi nằm ngoài phạm vi pháp luật đất đai và quy hoạch Hà Nội.')
         if claims:
             content += "\n\n" + "\n\n".join(c.text + " " + " ".join(f"[{cited_ids.index(i)+1}]" for i in c.citation_ids) for c in claims)
         missing = public_missing_facts(state["plan"].missing_facts + draft.missing_facts,release)

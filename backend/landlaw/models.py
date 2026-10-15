@@ -102,7 +102,7 @@ class ChatRequest(BaseModel):
     message: str = Field(min_length=1, max_length=4000)
     project: ProjectID | None = None
     as_of: date | None = None
-    mode: Literal["agentic", "baseline"] = "agentic"
+    mode: Literal["agentic"] = "agentic"
 
 
 class Claim(BaseModel):
@@ -125,7 +125,7 @@ class Draft(BaseModel):
 class ChatResult(BaseModel):
     status: Status
     publication_profile: str = 'staging'
-    quality_status: str = 'acceptance_pending'
+    quality_status: str = 'academic_prototype'
     retrieval_mode: str = 'unavailable'
     coverage_gaps: list[dict] = Field(default_factory=list)
     content: str

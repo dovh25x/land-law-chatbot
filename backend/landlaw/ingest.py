@@ -18,7 +18,7 @@ from pypdf import PdfReader
 
 from .config import Settings
 from .models import Chunk, Document, Relation
-from .provider import Gemini, ProviderUnavailable
+from .provider import GroqProvider, ProviderUnavailable
 from .embedding import contract
 from .security import digest, normalize, official_url, public_ip_address, redact, utcnow
 from .store import RateLimited
@@ -434,7 +434,7 @@ async def embed_pending(provider, pending, title, issues, doc_id):
     return False
 
 
-async def build_corpus(settings: Settings, provider: Gemini | None, offline=False, embed=False, allow_ocr=False, cached_embeddings_only=False):
+async def build_corpus(settings: Settings, provider: GroqProvider | None, offline=False, embed=False, allow_ocr=False, cached_embeddings_only=False):
     sources = json.loads((settings.data_dir / "sources.json").read_text())
     relations_path = settings.data_dir / "legal_relations.json"
     relations = json.loads(relations_path.read_text()) if relations_path.exists() else []

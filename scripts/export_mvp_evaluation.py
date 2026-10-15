@@ -70,7 +70,7 @@ def export(run_dir, output, release_path):
     counts = {verdict: sum(r['review'] == verdict for r in rows) for verdict in ('pass', 'partial', 'fail', 'awaiting_review')}
     lines = ['# Kết quả kiểm tra MVP Groq', '', f"Trạng thái: **{report['status']}**. Đã chạy {len(rows)}/{len(cases)} ca agentic.",
         f"Model: `{report['model']}`; release: `{release['id']}`; fingerprint: `{metadata['configuration_sha256']}`.",
-        '', '**Cách chạy:** CLI quản trị gọi Groq thật trên corpus Supabase; kiểm chứng HTTPS và video được lưu riêng. S14 dùng lịch sử cố định của bộ kiểm tra.',
+        '', '**Cách chạy:** CLI quản trị gọi Groq thật trên corpus Supabase; kiểm chứng HTTPS được kiểm chứng riêng. S14 dùng lịch sử cố định của bộ kiểm tra.',
         '', f"Rà soát kỹ thuật theo rubric/nguồn: {counts['pass']} pass, {counts['partial']} partial, {counts['fail']} fail, {counts['awaiting_review']} chưa rà soát.",
         'Không phải thẩm định pháp lý độc lập. Ca không có trích dẫn không được tính là bằng chứng hỗ trợ kết luận.',
         '', '| Ca | Trạng thái | Giây | Trích dẫn khớp corpus | Rà soát |', '|---|---|---:|---|---|']
@@ -100,12 +100,13 @@ if __name__ == '__main__':
             'results': [{'mode': 'agentic', 'completed': len(rows), 'reviewed': len(rows),
                 'pass': sum(r['review']=='pass' for r in rows), 'partial': sum(r['review']=='partial' for r in rows),
                 'fail': sum(r['review']=='fail' for r in rows), 'citation_sources_match_corpus': all(r['citations_valid'] for r in rows)}],
-            'limitations': ['20-case academic rubric review only; not the original 80-case acceptance benchmark.',
+            'limitations': ['20-case academic rubric review only; not independent legal certification.',
                 'Source IDs/excerpts matching the corpus do not prove every generated legal statement.',
                 'Read per-case failures and partial answers in submission/results.md; no independent legal certification.'],
             'failed_case_ids': [r['id'] for r in rows if r['review']=='fail'],
-            'partial_case_ids': [r['id'] for r in rows if r['review']=='partial']})
+            'partial_case_ids': [r['id'] for r in rows if r['review']=='partial'],
+            'case_results':[{'id':r['id'],'status':r['status'],'review':r['review'],'seconds':r['seconds'],'note':r['review_note']} for r in rows]})
         args.public_summary.write_text(json.dumps(summary, ensure_ascii=False, indent=2)+'\n')
-        html = '<!doctype html><html lang="vi"><meta charset="utf-8"><title>Đánh giá MVP Groq</title><style>body{font:15px/1.7 Arial;max-width:1000px;margin:40px auto;padding:24px}pre{white-space:pre-wrap;overflow-wrap:anywhere}</style><h1>Đánh giá MVP học thuật</h1><p>20 ca agentic; không phải nghiệm thu pháp lý hoặc benchmark 80 câu.</p><pre>' + escape(json.dumps(summary, ensure_ascii=False, indent=2)) + '</pre></html>'
+        html = '<!doctype html><html lang="vi"><meta charset="utf-8"><title>Đánh giá MVP Groq</title><style>body{font:15px/1.7 Arial;max-width:1000px;margin:40px auto;padding:24px}pre{white-space:pre-wrap;overflow-wrap:anywhere}</style><h1>Đánh giá MVP học thuật</h1><p>20 ca agentic; không phải nghiệm thu pháp lý.</p><pre>' + escape(json.dumps(summary, ensure_ascii=False, indent=2)) + '</pre></html>'
         destination = args.public_summary.with_name('benchmark.html') if args.public_summary.name == 'latest.json' else args.public_summary.with_suffix('.html')
         destination.write_text(html)

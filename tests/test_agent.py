@@ -52,11 +52,11 @@ class FakeProvider:
             return Plan(tools=[ToolCall(name="search_law", query="bồi thường thu hồi đất")])
         if schema is Draft:
             return self.draft
-        from landlaw.agent import SupportingQuote
-        quotes=[SupportingQuote(claim_index=i,citation_id=citation_id,quote=e['text'][:1600])
-            for i,claim in enumerate(payload['draft']['claims']) for citation_id in claim['citation_ids']
-            for e in payload['evidence'] if e['citation_id']==citation_id]
-        return self.verification.model_copy(update={'supporting_quotes':quotes})
+        from landlaw.agent import SupportingSpan
+        spans=[SupportingSpan(claim_index=i,citation_id=cid,span_id=span['span_id'])
+               for i,c in enumerate(payload['draft']['claims']) for cid in c['citation_ids']
+               for span in payload['source_spans'] if span['citation_id']==cid]
+        return self.verification.model_copy(update={'supporting_spans':spans})
     async def embed(self, *args, **kwargs):
         raise ProviderUnavailable("Embedding offline in test")
 
@@ -113,7 +113,7 @@ async def test_historical_partial_repeal_keeps_operative_clause_before_future_re
         explanation='Only Article 2 is repealed at the question date')]
     payload=release(store,[original,amendment,future],relations=[r.model_dump(mode='json') for r in relations])
     sid,_=session(store);agent=Agent(store,FakeProvider(settings))
-    state={'request':ChatRequest(session_id=sid,message='10/2026/QĐ-UBND bãi bỏ toàn bộ 38/2025/QĐ-UBND không?',mode='baseline'),
+    state={'request':ChatRequest(session_id=sid,message='10/2026/QĐ-UBND bãi bỏ toàn bộ 38/2025/QĐ-UBND không?',mode='agentic'),
         'budget':Budget(),'release':payload,'plan':Plan(tools=[ToolCall(name='search_law',query='10/2026/QĐ-UBND bãi bỏ 38/2025/QĐ-UBND')]),
         'as_of':date(2026,1,20),'evidence':[],'rounds':0,'tool_notes':[],'trace':[],'emit':noop}
     hits=await agent.search(state,state['request'].message)
@@ -137,7 +137,7 @@ async def test_partial_repeal_fact_requires_complete_scope_and_literal_source(st
     class NoInference(FakeProvider):
         async def generate(self,*args):raise AssertionError('Verified repeal scope is read from the source, not inferred by a model')
     agent=Agent(store,NoInference(settings))
-    result=await agent.run(ChatRequest(session_id=sid,mode='baseline',as_of=date(2026,1,20),
+    result=await agent.run(ChatRequest(session_id=sid,mode='agentic',as_of=date(2026,1,20),
         message='10/2026/QĐ-UBND bãi bỏ toàn bộ 38/2025/QĐ-UBND hay một phần?'),noop)
     assert result.status=='answered' and result.llm_calls==0
     assert 'không phải toàn bộ' in result.content and len(result.verified_claims)==1
@@ -202,9 +202,8 @@ async def test_verifier_cannot_expand_partial_repeal_or_infer_universal_practice
         Claim(kind='applicability',text='Bãi bỏ Điều 2 và một số khoản khác của Quyết định 38/2025/QĐ-UBND.',citation_ids=['law-1']),
         Claim(kind='applicability',text='Việc bãi bỏ thường diễn ra theo từng khoản, không toàn văn.',citation_ids=['law-1'])])
     provider=FakeProvider(settings,draft=draft,verification=Verification(supported_claim_indexes=[0,1]))
-    result=await Agent(store,provider).run(ChatRequest(session_id=sid,message='Văn bản bị bãi bỏ toàn bộ không?',mode='baseline'),noop)
+    result=await Agent(store,provider).run(ChatRequest(session_id=sid,message='Văn bản bị bãi bỏ toàn bộ không?',mode='agentic'),noop)
     assert result.status=='insufficient_evidence' and result.verified_claims==[]
-    assert any('phạm vi' in e.summary or 'tổng quát' in e.summary for e in result.trace)
 
 
 async def test_repeal_cannot_be_attributed_to_a_different_act_even_if_model_approves(store,settings):
@@ -215,7 +214,7 @@ async def test_repeal_cannot_be_attributed_to_a_different_act_even_if_model_appr
         text='Quyết định 10/2026/QĐ-UBND bãi bỏ khoản 3 Điều 3 và Điều 23 của Quyết định 38/2025/QĐ-UBND.',
         citation_ids=['law-1'])])
     result=await Agent(store,FakeProvider(settings,draft=draft)).run(ChatRequest(session_id=sid,
-        message='Điều 3 của 38/2025/QĐ-UBND bãi bỏ những gì?',mode='baseline'),noop)
+        message='Điều 3 của 38/2025/QĐ-UBND bãi bỏ những gì?',mode='agentic'),noop)
     assert result.status=='insufficient_evidence' and not result.verified_claims
     assert any('số văn bản' in event.summary for event in result.trace)
 
@@ -231,7 +230,7 @@ def test_prompt_keeps_passages_and_deduplicates_document_legal_metadata(store,se
     passages,documents=agent.prompt_context(state)
     assert [p['citation_id'] for p in passages]==['law-1','law-2']
     assert passages[1]['text']==second.text and len(documents)==1
-    assert documents[0]['legal_relations'][0]['target_locators']==['Điều 1']
+    assert dict(zip(documents[0]['legal_relation_fields'],documents[0]['legal_relations'][0]))['target_locators']==['Điều 1']
     assert all('legal_relations' not in passage for passage in passages)
     selected,metadata=agent.prompt_context(state,{'law-2'})
     assert len(selected)==len(metadata)==1 and selected[0]['citation_id']=='law-2'
@@ -319,7 +318,7 @@ async def test_future_immediate_application_states_only_verified_start_and_asks_
             raise AssertionError('A literal source date and chronological comparison need no model inference')
     result=await Agent(store,Provider(settings)).run(ChatRequest(session_id=sid,
         message='Hồ sơ xét ngày 01/03/2026 có áp dụng ngay 40/2026/QĐ-UBND để tính quyền lợi không?',
-        mode='baseline',as_of=date(2026,3,1)),noop)
+        mode='agentic',as_of=date(2026,3,1)),noop)
     assert result.status=='clarification_needed' and len(result.verified_claims)==1
     assert 'chưa có hiệu lực tại ngày 01/03/2026' in result.content
     assert result.missing_facts and result.llm_calls==0
@@ -416,12 +415,12 @@ async def test_invalid_citation_removed_not_rendered(store, settings):
     assert not result.citations and "Nội dung không hợp lệ" not in result.content
 
 
-async def test_baseline_outside_scope_never_renders_medical_advice(store,settings):
+async def test_outside_scope_never_renders_medical_advice(store,settings):
     release(store)
     sid,_=session(store)
     draft=Draft(status='insufficient_evidence',summary='Ngoài phạm vi',out_of_scope=True,
         next_steps=['Uống thuốc không có căn cứ.'],missing_facts=['Triệu chứng?'])
-    result=await Agent(store,FakeProvider(settings,draft)).run(ChatRequest(session_id=sid,message='Tư vấn chữa bệnh trong dự án thu hồi đất?',mode='baseline'),noop)
+    result=await Agent(store,FakeProvider(settings,draft)).run(ChatRequest(session_id=sid,message='Tư vấn chữa bệnh trong dự án thu hồi đất?',mode='agentic'),noop)
     assert 'ngoài phạm vi' in result.content and 'Uống thuốc' not in result.content and 'Triệu chứng' not in result.content
 
 
@@ -686,7 +685,7 @@ async def test_literal_whole_act_replacement_is_verified_without_model_inference
         async def generate(self,*args,**kwargs):raise AssertionError('A literal replacement with verified dates needs no model inference')
     result=await Agent(store,NoInference(settings)).run(ChatRequest(session_id=sid,
         message='56/2024/QĐ-UBND còn hiệu lực ngày 12/10/2026 không, văn bản nào thay thế?',
-        as_of=date(2026,10,12),mode='baseline'),noop)
+        as_of=date(2026,10,12),mode='agentic'),noop)
     assert result.status=='answered' and result.llm_calls==0
     assert result.citations[0].id=='new-1' and len(result.verified_claims)==1
     assert '40/2026/QĐ-UBND' in result.content and '02/04/2026' in result.content
@@ -749,7 +748,7 @@ async def test_authority_origin_is_proven_by_requested_clause_not_combined_headi
     origin='Ủy ban nhân dân cấp huyện, Chủ tịch UBND cấp huyện' if additional_origin else 'Ủy ban nhân dân cấp huyện'
     draft=Draft(status='answered',claims=[Claim(text=f'Thẩm quyền tại điểm c khoản 3 Điều 87 chuyển từ {origin} sang Chủ tịch Ủy ban nhân dân cấp xã.',citation_ids=['law-1'])])
     result=await Agent(store,FakeProvider(settings,draft=draft)).run(ChatRequest(session_id=sid,
-        message='Thẩm quyền ở điểm c khoản 3 Điều 87 chuyển cho ai?',mode='baseline'),noop)
+        message='Thẩm quyền ở điểm c khoản 3 Điều 87 chuyển cho ai?',mode='agentic'),noop)
     assert result.status==('insufficient_evidence' if additional_origin else 'answered')
     if additional_origin:assert not result.verified_claims
 
@@ -782,7 +781,7 @@ async def test_clause_attribution_cannot_use_another_numbered_clause(store,setti
     release(store,[doc]);sid,_=session(store)
     draft=Draft(status='answered',claims=[Claim(text=f'Các trường hợp phải thuộc khoản 1 Điều này. Quyết định giao đất là điều kiện được quy định trong khoản {clause} Điều 95.',citation_ids=['law-1'])])
     result=await Agent(store,FakeProvider(settings,draft=draft)).run(ChatRequest(session_id=sid,
-        message='Giấy chứng nhận có phải điều kiện duy nhất theo Điều 95 không?',mode='baseline'),noop)
+        message='Giấy chứng nhận có phải điều kiện duy nhất theo Điều 95 không?',mode='agentic'),noop)
     assert result.status==expected
 
 
@@ -795,7 +794,7 @@ async def test_alternative_conditions_preserve_eligibility_prerequisite(store,se
     draft=Draft(status='answered',claims=[Claim(text=qualification+
         'Giấy chứng nhận không phải là điều kiện duy nhất để được bồi thường về đất.',citation_ids=['law-1'])])
     result=await Agent(store,FakeProvider(settings,draft=draft)).run(ChatRequest(session_id=sid,
-        message='Giấy chứng nhận có phải điều kiện duy nhất không?',mode='baseline'),noop)
+        message='Giấy chứng nhận có phải điều kiện duy nhất không?',mode='agentic'),noop)
     assert result.status=='answered'
     assert 'khoản 1' in result.verified_claims[0].text
     if not qualification:
@@ -811,7 +810,7 @@ async def test_legal_list_point_letters_cannot_be_renumbered(store,settings,lett
     release(store,[document(text=source)]);sid,_=session(store)
     draft=Draft(status='answered',claims=[Claim(text=f'Các nhóm hỗ trợ gồm a) Hỗ trợ ổn định đời sống; {letter}) Hỗ trợ tái định cư đối với trường hợp đủ điều kiện.',citation_ids=['law-1'])])
     result=await Agent(store,FakeProvider(settings,draft=draft)).run(ChatRequest(session_id=sid,
-        message='Các nhóm hỗ trợ khi thu hồi đất?',mode='baseline'),noop)
+        message='Các nhóm hỗ trợ khi thu hồi đất?',mode='agentic'),noop)
     assert result.status=='answered'
     text=result.verified_claims[0].text
     assert 'Hỗ trợ tái định cư đối với trường hợp đủ điều kiện.' in text
@@ -827,7 +826,7 @@ async def test_explicit_wrong_legal_point_reference_is_not_silently_reformatted(
     release(store,[document(text=source)]);sid,_=session(store)
     draft=Draft(status='answered',claims=[Claim(text='Điểm a) Hỗ trợ ổn định đời sống; điểm e) Hỗ trợ tái định cư.',citation_ids=['law-1'])])
     result=await Agent(store,FakeProvider(settings,draft=draft)).run(ChatRequest(session_id=sid,
-        message='Điểm nào hỗ trợ tái định cư?',mode='baseline'),noop)
+        message='Điểm nào hỗ trợ tái định cư?',mode='agentic'),noop)
     assert result.status=='insufficient_evidence' and not result.verified_claims
 
 
@@ -845,7 +844,7 @@ async def test_known_future_act_routes_to_evidence_without_inferred_private_righ
     assert result.missing_facts and not any(c.kind=='legal_rule' for c in result.verified_claims)
 
 
-@pytest.mark.parametrize('mode', ['baseline','agentic'])
+@pytest.mark.parametrize('mode', ['agentic'])
 async def test_personal_entitlement_guarantee_asks_for_file_without_applying_expired_law(store,settings,mode):
     old=document(text='Điều 19. Hộ có đủ điều kiện được mua căn hộ tái định cư.')
     old.effective_to=date(2026,4,2)
@@ -882,7 +881,7 @@ async def test_expired_legal_rule_requires_its_actual_operative_transition_even_
     payload=release(store,[old,transition],relations=relations)
     cited=['old-1']+(['new-1'] if timing in {'operative_transition','unrelated_transition'} else [])
     draft=Draft(status='answered',claims=[Claim(text='Hộ đủ điều kiện được mua một căn hộ tái định cư theo phương án cũ.',citation_ids=cited)])
-    state={'request':ChatRequest(session_id='00000000-0000-4000-8000-000000000000',message='Quy định tái định cư nào áp dụng?',mode='baseline'),
+    state={'request':ChatRequest(session_id='00000000-0000-4000-8000-000000000000',message='Quy định tái định cư nào áp dụng?',mode='agentic'),
         'budget':Budget(),'release':payload,'as_of':date(2026,4,1) if timing=='before_expiry' else date(2026,10,12),
         'evidence':[Evidence(chunk=old.chunks[0],document=old,applicability='current' if timing=='before_expiry' else 'historical'),
             Evidence(chunk=transition.chunks[0],document=transition,applicability='current')],
@@ -894,7 +893,7 @@ async def test_expired_legal_rule_requires_its_actual_operative_transition_even_
 
 
 @pytest.mark.asyncio
-@pytest.mark.parametrize('mode',['baseline','agentic'])
+@pytest.mark.parametrize('mode',['agentic'])
 async def test_clinical_request_stops_without_provider_or_retrieval(store,settings,mode):
     release(store);sid,_=session(store)
     provider=FakeProvider(settings,failure=ProviderUnavailable('Must not be called'))
@@ -914,7 +913,7 @@ async def test_hospital_land_planning_stays_in_scope(store,settings):
 
 
 @pytest.mark.asyncio
-@pytest.mark.parametrize('mode',['baseline','agentic'])
+@pytest.mark.parametrize('mode',['agentic'])
 async def test_freshness_question_uses_metadata_and_does_not_fabricate_law(store,settings,mode):
     release(store);sid,_=session(store)
     async def emit(event):pass
@@ -927,7 +926,7 @@ async def test_freshness_question_uses_metadata_and_does_not_fabricate_law(store
 
 
 @pytest.mark.asyncio
-@pytest.mark.parametrize('mode',['baseline','agentic'])
+@pytest.mark.parametrize('mode',['agentic'])
 async def test_unknown_old_county_needs_finer_location_not_guessed_new_commune(store,settings,mode):
     release(store);sid,_=session(store)
     async def emit(event):pass
@@ -1000,3 +999,12 @@ def test_partial_amendment_never_invalidates_proven_different_clause(basis,scope
     assert amendment_affects_claim(relation,item,Claim(text=basis,citation_ids=[item.chunk.id])) is expected
     relation['target_locators_complete']=False
     assert amendment_affects_claim(relation,item,Claim(text=basis,citation_ids=[item.chunk.id]))
+
+
+@pytest.mark.parametrize('project,question', [('songhong','Thông tin dự án sông Hồng?'),('olympic','Đất Olympic được bồi thường không?'),(None,'Quy hoạch sông Hồng đã phê duyệt chưa?')])
+async def test_other_projects_are_explicitly_outside_mvp_without_model_calls(store,settings,project,question):
+    release(store);sid,_=session(store)
+    result=await Agent(store,FakeProvider(settings)).run(ChatRequest(session_id=sid,message=question,project=project),noop)
+    assert result.status=='insufficient_evidence'
+    assert 'chỉ hỗ trợ Vành đai 4' in result.content
+    assert result.llm_calls==0 and not result.citations

@@ -12,29 +12,19 @@ services:
         value: production
       - key: DATABASE_URL
         sync: false
-      - key: GEMINI_API_KEY
-        sync: false
       - key: IP_HASH_SECRET
         generateValue: true
       - key: CORS_ORIGINS
         sync: false
-      - key: GEMINI_MODEL
-        value: gemini-3.5-flash-lite
       - key: LLM_PROVIDER
         value: groq
-      - key: CLOUDFLARE_LLM_MODEL
-        value: '@cf/qwen/qwen3-30b-a3b-fp8'
       - key: EMBEDDING_MODEL
         value: multilingual-e5-small-onnx-q8-window-v1
       - key: EMBEDDING_PROVIDER
         value: local_onnx
       - key: EMBEDDING_DIMENSIONS
         value: 384
-      - key: CLOUDFLARE_ACCOUNT_ID
-        sync: false
-      - key: CLOUDFLARE_AI_API_TOKEN
-        sync: false
       - key: GROQ_API_KEY
         sync: false
       - key: GROQ_MODEL
-        value: openai/gpt-oss-20b
+        value: openai/gpt-oss-120b

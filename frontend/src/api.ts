@@ -67,10 +67,10 @@ export class SSEParser {
   }
 }
 
-export async function ask(session: Session, message: string, project: string, asOf: string, mode: string, signal: AbortSignal, onEvent: (event: string, data: unknown) => void) {
+export async function ask(session: Session, message: string, project: string, asOf: string, signal: AbortSignal, onEvent: (event: string, data: unknown) => void) {
   const response = await fetch(BASE + '/api/v1/chat', {
     method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${session.token}` }, signal,
-    body: JSON.stringify({ session_id: session.session_id, message, project: project || null, as_of: asOf || null, mode }),
+    body: JSON.stringify({ session_id: session.session_id, message, project: project || null, as_of: asOf || null }),
   })
   if (!response.ok) {
     if (response.status === 429) throw new Error(`Đã đạt giới hạn lượt hỏi. Thử lại sau ${response.headers.get('Retry-After') || '60'} giây.`)

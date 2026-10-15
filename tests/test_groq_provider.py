@@ -6,7 +6,7 @@ from pydantic import BaseModel
 
 from landlaw.agent import Plan, Verification
 from landlaw.models import Draft
-from landlaw.provider import Budget, Gemini, strict_generation_schema
+from landlaw.provider import Budget, GroqProvider, strict_generation_schema
 from landlaw.store import RateLimited
 
 
@@ -29,8 +29,8 @@ async def test_groq_answer_has_only_citable_claims_and_no_unused_summary_field(s
         return httpx.Response(200,json={'choices':[{'message':{'content':json.dumps({
             'status':'answered','claims':[{'kind':'legal_rule','text':'Điều kiện có trong nguồn.',
                 'citation_ids':['C1']}],'missing_facts':[],'next_steps':[],'out_of_scope':False})}}]})
-    config=settings.model_copy(update={'llm_provider':'groq','groq_api_key':settings.gemini_api_key})
-    provider=Gemini(config,store,httpx.AsyncClient(transport=httpx.MockTransport(respond)))
+    config=settings.model_copy(update={'llm_provider':'groq','groq_api_key':settings.groq_api_key})
+    provider=GroqProvider(config,store,httpx.AsyncClient(transport=httpx.MockTransport(respond)))
     try:
         draft=await provider.generate(Draft,'Answer in claims',{},Budget())
         assert draft.summary=='' and draft.claims[0].citation_ids==['C1']
@@ -44,8 +44,8 @@ async def test_groq_transport_has_no_remote_tools_and_does_not_expose_reasoning(
         seen.append(json.loads(request.content))
         return httpx.Response(200,json={'choices':[{'message':{'content':'{"ok":true}','reasoning':'private model reasoning'}}],
                                        'usage':{'total_tokens':17}})
-    config=settings.model_copy(update={'llm_provider':'groq','groq_api_key':settings.gemini_api_key})
-    provider=Gemini(config,store,httpx.AsyncClient(transport=httpx.MockTransport(respond)))
+    config=settings.model_copy(update={'llm_provider':'groq','groq_api_key':settings.groq_api_key})
+    provider=GroqProvider(config,store,httpx.AsyncClient(transport=httpx.MockTransport(respond)))
     budget=Budget()
     try:
         assert (await provider.generate(Probe,'Return JSON',{},budget)).ok
@@ -60,8 +60,8 @@ async def test_groq_transport_has_no_remote_tools_and_does_not_expose_reasoning(
 
 async def test_groq_daily_quota_stops_without_retry_loop(settings,store):
     class Probe(BaseModel):ok: bool
-    config=settings.model_copy(update={'llm_provider':'groq','groq_api_key':settings.gemini_api_key})
-    provider=Gemini(config,store,httpx.AsyncClient(transport=httpx.MockTransport(
+    config=settings.model_copy(update={'llm_provider':'groq','groq_api_key':settings.groq_api_key})
+    provider=GroqProvider(config,store,httpx.AsyncClient(transport=httpx.MockTransport(
         lambda _:httpx.Response(429,headers={'Retry-After':'3600.1'},json={'error':{'message':'must never be logged'}}))))
     budget=Budget()
     try:
@@ -75,7 +75,7 @@ async def test_groq_daily_quota_stops_without_retry_loop(settings,store):
 async def test_rejected_provider_tool_attempt_retries_only_as_json_and_never_executes(settings,store,monkeypatch):
     import asyncio
     class Probe(BaseModel):ok: bool
-    config=settings.model_copy(update={'llm_provider':'groq','groq_api_key':settings.gemini_api_key})
+    config=settings.model_copy(update={'llm_provider':'groq','groq_api_key':settings.groq_api_key})
     attempts=[]
     def respond(request):
         body=json.loads(request.content);attempts.append(body)
@@ -85,7 +85,7 @@ async def test_rejected_provider_tool_attempt_retries_only_as_json_and_never_exe
         return httpx.Response(200,json={'choices':[{'message':{'content':'{"ok":true}'}}],'usage':{'total_tokens':12}})
     async def no_wait(_):pass
     monkeypatch.setattr(asyncio,'sleep',no_wait)
-    provider=Gemini(config,store,httpx.AsyncClient(transport=httpx.MockTransport(respond)));budget=Budget()
+    provider=GroqProvider(config,store,httpx.AsyncClient(transport=httpx.MockTransport(respond)));budget=Budget()
     try:
         assert (await provider.generate(Probe,'Return JSON',{},budget)).ok
         assert budget.llm_calls==2 and len(attempts)==2
@@ -100,8 +100,8 @@ async def test_planner_lookups_are_json_data_and_map_back_to_read_only_actions(s
         return httpx.Response(200,json={'choices':[{'message':{'content':json.dumps({
             'lookups':[{'name':'open_article','query':'Điều 5','document_id':'nd-151-2025','locator':'Điều 5'}],
             'missing_facts':[],'out_of_scope':False})}}]})
-    config=settings.model_copy(update={'llm_provider':'groq','groq_api_key':settings.gemini_api_key})
-    provider=Gemini(config,store,httpx.AsyncClient(transport=httpx.MockTransport(respond)))
+    config=settings.model_copy(update={'llm_provider':'groq','groq_api_key':settings.groq_api_key})
+    provider=GroqProvider(config,store,httpx.AsyncClient(transport=httpx.MockTransport(respond)))
     try:
         result=await provider.generate(Plan,'Return lookup descriptors',{},Budget())
         assert result.tools[0].name=='open_article' and result.tools[0].document_id=='nd-151-2025'
@@ -109,7 +109,7 @@ async def test_planner_lookups_are_json_data_and_map_back_to_read_only_actions(s
 
 
 @pytest.mark.parametrize('groq_available', [True, False])
-async def test_groq_selection_never_uses_a_retained_nvidia_key(settings, store, groq_available):
+async def test_groq_requires_its_own_key(settings, store, groq_available):
     from pydantic import SecretStr
     from landlaw.provider import ProviderUnavailable
     class Probe(BaseModel):
@@ -121,9 +121,8 @@ async def test_groq_selection_never_uses_a_retained_nvidia_key(settings, store, 
         assert request.headers['authorization'] == 'Bearer groq-test-placeholder'
         return httpx.Response(200, json={'choices':[{'message':{'content':'{"ok":true}'}}]})
     config = settings.model_copy(update={'llm_provider':'groq', 'groq_model':'openai/gpt-oss-20b',
-        'groq_api_key':SecretStr('groq-test-placeholder' if groq_available else ''),
-        'nvidia_api_key':SecretStr('nvidia-unused-test-placeholder')})
-    provider = Gemini(config, store, httpx.AsyncClient(transport=httpx.MockTransport(respond)))
+        'groq_api_key':SecretStr('groq-test-placeholder' if groq_available else '')})
+    provider = GroqProvider(config, store, httpx.AsyncClient(transport=httpx.MockTransport(respond)))
     try:
         assert provider.configured is groq_available
         if groq_available:

@@ -15,7 +15,7 @@ from .agent import Agent
 from .evaluation import configuration_fingerprint
 from .config import Settings, get_settings
 from .models import ChatRequest, ChatResult, TraceEvent
-from .provider import Gemini
+from .provider import GroqProvider
 from .security import digest, hash_ip, local_date, new_token, redact, utcnow
 from .store import RateLimited, Store
 from .publication import public_status
@@ -30,7 +30,7 @@ def create_app(settings: Settings | None = None, store: Store | None = None, pro
     @asynccontextmanager
     async def lifespan(app):
         state["store"] = store or Store(settings)
-        state["provider"] = provider or Gemini(settings, state["store"])
+        state["provider"] = provider or GroqProvider(settings, state["store"])
         state["agent"] = Agent(state["store"], state["provider"])
         state["semaphore"] = asyncio.Semaphore(settings.max_concurrent_requests)
         state["ip_secret"] = settings.ip_hash_secret.get_secret_value() or secrets.token_hex(32)
@@ -99,8 +99,6 @@ def create_app(settings: Settings | None = None, store: Store | None = None, pro
                 "checked_at": (release or {}).get("checked_at"), "storage": "postgresql" if state["store"].postgres else "sqlite-development"}
         publication = await asyncio.to_thread(state['store'].publication)
         data.update(public_status(release, publication))
-        if (publication or {}).get('profile')=='accepted' and publication.get('configuration_sha256')!=state['configuration']:
-            data['quality_status']='acceptance_pending'
         return JSONResponse(data, status_code=200 if configured and release else 503)
 
     @app.post("/api/v1/sessions", status_code=201)
@@ -141,7 +139,7 @@ def create_app(settings: Settings | None = None, store: Store | None = None, pro
     @app.get("/api/v1/projects")
     async def projects():
         path = settings.data_dir / "projects.json"
-        return {"projects": json.loads(path.read_text()) if path.exists() else []}
+        return {"projects": [p for p in json.loads(path.read_text()) if p["id"] == "ring4"] if path.exists() else []}
 
     @app.get("/api/v1/evaluations/latest")
     async def evaluations():
@@ -150,15 +148,9 @@ def create_app(settings: Settings | None = None, store: Store | None = None, pro
         if not path.exists():
             return {"status": "not_run", "message": "Chưa chạy benchmark với API và corpus thật.", "results": [], 'active_release':active, 'matches_active_release':False}
         report = json.loads(path.read_text())
-        smoke_path = settings.reports_dir/'smoke.json'
-        smoke = json.loads(smoke_path.read_text()) if smoke_path.exists() else None
         return {**report, 'evaluation_release':report.get('release'), 'active_release':active,
-                'demo_smoke':smoke, 'smoke_matches_active_release':bool(smoke and active==smoke.get('release')),
                 'active_configuration_sha256':state['configuration'],
                 'matches_active_configuration':report.get('configuration_sha256')==state['configuration'],
-                'smoke_matches_active_configuration':bool(smoke and smoke.get('configuration_sha256')==state['configuration']),
-                'acceptance_valid_for_active':bool(report.get('acceptance_passed') and active==report.get('release')
-                    and report.get('configuration_sha256')==state['configuration']),
                 'matches_active_release':bool(active and active==report.get('release'))}
 
     @app.post("/api/v1/chat")
@@ -208,8 +200,6 @@ def create_app(settings: Settings | None = None, store: Store | None = None, pro
                         result = await state["agent"].run(body, emit,release_id)
                         await asyncio.to_thread(state["store"].cache_answer, cache_key, body.session_id, result)
                     publication = await asyncio.to_thread(state['store'].publication,result.corpus_release)
-                    if (publication or {}).get('profile')=='accepted' and publication.get('configuration_sha256')!=state['configuration']:
-                        result=result.model_copy(update={'quality_status':'acceptance_pending'})
                     # A successful result is not delivered until durable storage succeeds.
                     await asyncio.to_thread(state["store"].save_turn, body.session_id, redact(body.message), result)
                     await queue.put(("result", result.model_dump(mode="json")))

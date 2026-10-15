@@ -298,3 +298,16 @@ h1 { font-size: 36px; line-height: 48px; font-weight: 600; letter-spacing: -.7px
   .topic-grid .topic-icon { display: none; }
 }
 @media (max-height: 650px) { .chat-workspace.is-empty { justify-content: flex-start; } }
+
+/* Compact conversation composer stays in normal flex flow, never over answers. */
+.has-messages .composer-area { padding: 8px 24px 12px; }
+.has-messages .composer { display:flex; align-items:flex-end; gap:8px; padding:8px; min-height:60px; border-radius:24px; }
+.has-messages .composer-input { flex:1; min-width:0; padding:7px 4px 7px 8px; }
+.has-messages .composer textarea { max-height:120px; }
+.has-messages .composer-bottom { margin-top:0; flex-shrink:0; }
+.has-messages .composer-tool.compact { width:44px; padding:0; justify-content:center; }
+.has-messages .composer-tool.compact span { display:none; }
+.evaluation-table { overflow-x:auto; }
+.evaluation-table table { width:100%; border-collapse:collapse; font-size:14px; }
+.evaluation-table th,.evaluation-table td { padding:12px; text-align:left; border-bottom:1px solid var(--border); vertical-align:top; }
+@media(max-width:600px) { .has-messages .composer-area { padding:8px 12px max(8px,env(safe-area-inset-bottom)); } }
