@@ -4,7 +4,7 @@
 |---|---|---|
 | Thu gọn phạm vi | Hoàn thành | SCOPE.md, README |
 | Giữ corpus/model/hạ tầng | Hoàn thành | freeze.json, evaluation.json; không re-embedding |
-| Website hiện có | Hoạt động; nhãn mới đã deploy Pages | Deployment frontend 8c5ae42c; kiểm tra trực tiếp frontend-live.json |
+| Website hiện có | Hoạt động; nhãn mới đã deploy Pages | Deployment frontend 8c5ae42c; frontend-live.json đã đạt nhãn/bố cục desktop và mobile trên URL thật |
 | Kiểm thử phần mềm | Đạt | 223 backend, 2 frontend, 10 browser; reports/submission/tests.json |
 | Đánh giá 20 câu cloud | **Chưa đủ: 16/20** | evaluation.json và results.md; public daily limit |
 | Chấm 16 câu đã chạy | Hoàn thành rà soát kỹ thuật | 12 pass, 2 partial, 2 fail; reviews.json gắn hash đáp án |
