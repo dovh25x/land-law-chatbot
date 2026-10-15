@@ -194,7 +194,7 @@ def publish(release_id: str, profile: str = 'accepted'):
 @app.command()
 def benchmark(split: str = "dev", release_id: str | None = None, limit: int | None = None,
               concurrency: int = typer.Option(2,min=1,max=2), case_ids: str | None = None, mode: str = "both"):
-    """Run/resume real paired benchmark. Evaluate staging before publishing."""
+    """Run/resume real benchmark; both modes by default, or one academic mode."""
     if split not in {"dev", "acceptance", "smoke"}:
         raise typer.BadParameter("split must be dev, acceptance or smoke")
     if mode not in {"both", "baseline", "agentic"}:

@@ -167,8 +167,10 @@ def create_app(settings: Settings | None = None, store: Store | None = None, pro
         now, ip = utcnow(), identity(request)
         await reserve([(f"minute:{kind}:{who}:{now.strftime('%Y-%m-%dT%H:%M')}", 3, 60)
                        for kind, who in [("session", body.session_id), ("ip", ip)]] +
-                      [(f"daily:{kind}:{who}:{now.date()}", 20, 86400)
-                       for kind, who in [("session", body.session_id), ("ip", ip)]])
+                      # Render's shared ingress IP is not a distinct visitor.
+                      # Keep burst protection by IP and daily protection by session;
+                      # a shared proxy must not lock out the whole demo for a day.
+                      [(f"daily:session:{body.session_id}:{now.date()}", 20, 86400)])
         semaphore = state["semaphore"]
         if semaphore.locked():
             raise HTTPException(429, "Hai lượt hỏi đang được xử lý", headers={"Retry-After": "5"})

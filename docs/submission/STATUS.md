@@ -1,3 +1,11 @@
+# Cập nhật phạm vi MVP Groq
+
+Bản nộp dùng Groq GPT-OSS 20B. Giữ giới hạn 3 lượt/phút theo IP và phiên, 20 lượt/ngày mỗi phiên, tối đa hai lượt đồng thời. Chủ dự án đã đồng ý bỏ trần ngày theo IP chung ngày 15/10/2026; không xóa bộ đếm hoặc thay quota provider. Xem `mvp-handoff.json` và `results.md` cho cấu hình/kết quả cuối.
+
+Các ghi nhận bên dưới là lịch sử trước điều chỉnh và không mô tả quota hiện tại.
+
+---
+
 # Checklist bàn giao học phần
 
 | Hạng mục | Trạng thái | Bằng chứng |

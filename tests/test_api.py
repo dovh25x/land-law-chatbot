@@ -104,3 +104,38 @@ def test_chat_pins_release_when_publication_changes_during_request(settings,stor
         result=next(f for f in frames if 'trace_id' in f)
         assert result['status']=='answered' and result['corpus_release']=='old'
         assert store.state('active_release')=='new'
+
+
+def test_demo_shared_proxy_daily_counter_does_not_lock_out_a_new_session(settings, store):
+    from landlaw.security import hash_ip, utcnow
+    day = utcnow().date()
+    legacy = f"daily:ip:{hash_ip('testclient', settings.ip_hash_secret.get_secret_value())}:{day}"
+    store.consume([(legacy, 20, 86400)] * 20)
+    release(store)
+    with TestClient(create_app(settings, store, FakeProvider(settings))) as client:
+        session = client.post('/api/v1/sessions').json()
+        response = client.post('/api/v1/chat', headers={'Authorization':'Bearer '+session['token']},
+            json={'session_id':session['session_id'], 'message':'Bồi thường thu hồi đất'})
+        assert response.status_code == 200
+        assert store.rows('SELECT value FROM counters WHERE key=?', (legacy,))[0]['value'] == 20
+        key = f"daily:session:{session['session_id']}:{day}"
+        assert store.rows('SELECT value FROM counters WHERE key=?', (key,))[0]['value'] == 1
+
+
+def test_demo_preserves_daily_session_limit_and_shared_ip_burst_limit(settings, store):
+    from landlaw.security import utcnow
+    release(store)
+    with TestClient(create_app(settings, store, FakeProvider(settings))) as client:
+        sessions = [client.post('/api/v1/sessions').json() for _ in range(3)]
+        exhausted = sessions[0]
+        key = f"daily:session:{exhausted['session_id']}:{utcnow().date()}"
+        store.consume([(key, 20, 86400)] * 20)
+        def chat(session):
+            return client.post('/api/v1/chat', headers={'Authorization':'Bearer '+session['token']},
+                json={'session_id':session['session_id'], 'message':'Bồi thường thu hồi đất'})
+        assert chat(exhausted).status_code == 429
+        assert chat(sessions[1]).status_code == 200
+        assert chat(sessions[1]).status_code == 200
+        assert chat(sessions[2]).status_code == 200
+        response = chat(sessions[2])
+        assert response.status_code == 429 and response.headers['retry-after'] == '60'

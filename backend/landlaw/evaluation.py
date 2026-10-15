@@ -321,7 +321,7 @@ async def evaluate(settings, store, provider, split="dev", release_id=None, limi
     report['acceptance_passed'] = bool(report['acceptance_passed'] and split=='acceptance'
         and len(cases)==80 and all(c.get('ground_truth_status')=='source_checked' for c in cases)
         and all(r['reviewed']==80 and r['source_review_complete'] for r in report['results']))
-    report['latency_scope'] = f'Paired CLI run, concurrency {concurrency}; provider-reported cooldown between turns excluded. Public API single-user p95 measured separately.'
+    report['latency_scope'] = f'CLI run, modes {list(modes)}, concurrency {concurrency}; provider-reported cooldown between turns excluded. Public API single-user p95 measured separately.'
     for name in ('source-audit','runtime-tests'):
         evidence_path = settings.reports_dir/f'{name}.json'
         evidence = json.loads(evidence_path.read_text()) if evidence_path.exists() else {}
