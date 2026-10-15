@@ -6,6 +6,7 @@ must match; human/source reviews are bound to the exact answer checksum.
 import argparse
 import hashlib
 import json
+from html import escape
 from pathlib import Path
 
 from landlaw.config import Settings
@@ -58,7 +59,13 @@ def export(run_dir, output, release_path):
         'legal_acceptance': False, 'acceptance_passed': False, 'independent_legal_certification': False,
         'scope': 'Actual Groq generation with deployed backend code and Supabase corpus via operator CLI; not an HTTP/browser latency benchmark.',
         'results': rows}
+    attempts = [json.loads(p.read_text()) for p in sorted((run_dir / 'attempts').glob('*.json'))]
+    report['attempt_history'] = {'available_attempts': len(attempts),
+        'limited_or_error_attempts': sum(a['record']['result']['status'] in {'limited', 'error'} for a in attempts),
+        'scope': 'All retained execution attempts; retries inside a turn are counted in llm_calls.'}
     output.mkdir(parents=True, exist_ok=True)
+    (output / 'attempts.json').write_text(json.dumps({'scope': report['scope'],
+        'configuration_sha256': metadata['configuration_sha256'], 'attempts': attempts}, ensure_ascii=False, indent=2)+'\n')
     (output / 'evaluation.json').write_text(json.dumps(report, ensure_ascii=False, indent=2) + '\n')
     counts = {verdict: sum(r['review'] == verdict for r in rows) for verdict in ('pass', 'partial', 'fail', 'awaiting_review')}
     lines = ['# Kết quả kiểm tra MVP Groq', '', f"Trạng thái: **{report['status']}**. Đã chạy {len(rows)}/{len(cases)} ca agentic.",
@@ -95,5 +102,10 @@ if __name__ == '__main__':
                 'fail': sum(r['review']=='fail' for r in rows), 'citation_sources_match_corpus': all(r['citations_valid'] for r in rows)}],
             'limitations': ['20-case academic rubric review only; not the original 80-case acceptance benchmark.',
                 'Source IDs/excerpts matching the corpus do not prove every generated legal statement.',
-                'S06 fails full claim support; S04, S11 and S16 are partial. See submission/results.md.']})
+                'Read per-case failures and partial answers in submission/results.md; no independent legal certification.'],
+            'failed_case_ids': [r['id'] for r in rows if r['review']=='fail'],
+            'partial_case_ids': [r['id'] for r in rows if r['review']=='partial']})
         args.public_summary.write_text(json.dumps(summary, ensure_ascii=False, indent=2)+'\n')
+        html = '<!doctype html><html lang="vi"><meta charset="utf-8"><title>Đánh giá MVP Groq</title><style>body{font:15px/1.7 Arial;max-width:1000px;margin:40px auto;padding:24px}pre{white-space:pre-wrap;overflow-wrap:anywhere}</style><h1>Đánh giá MVP học thuật</h1><p>20 ca agentic; không phải nghiệm thu pháp lý hoặc benchmark 80 câu.</p><pre>' + escape(json.dumps(summary, ensure_ascii=False, indent=2)) + '</pre></html>'
+        destination = args.public_summary.with_name('benchmark.html') if args.public_summary.name == 'latest.json' else args.public_summary.with_suffix('.html')
+        destination.write_text(html)

@@ -106,3 +106,32 @@ async def test_planner_lookups_are_json_data_and_map_back_to_read_only_actions(s
         result=await provider.generate(Plan,'Return lookup descriptors',{},Budget())
         assert result.tools[0].name=='open_article' and result.tools[0].document_id=='nd-151-2025'
     finally:await provider.close()
+
+
+@pytest.mark.parametrize('groq_available', [True, False])
+async def test_groq_selection_never_uses_a_retained_nvidia_key(settings, store, groq_available):
+    from pydantic import SecretStr
+    from landlaw.provider import ProviderUnavailable
+    class Probe(BaseModel):
+        ok: bool
+    requests = []
+    def respond(request):
+        requests.append(request)
+        assert request.url.host == 'api.groq.com'
+        assert request.headers['authorization'] == 'Bearer groq-test-placeholder'
+        return httpx.Response(200, json={'choices':[{'message':{'content':'{"ok":true}'}}]})
+    config = settings.model_copy(update={'llm_provider':'groq', 'groq_model':'openai/gpt-oss-20b',
+        'groq_api_key':SecretStr('groq-test-placeholder' if groq_available else ''),
+        'nvidia_api_key':SecretStr('nvidia-unused-test-placeholder')})
+    provider = Gemini(config, store, httpx.AsyncClient(transport=httpx.MockTransport(respond)))
+    try:
+        assert provider.configured is groq_available
+        if groq_available:
+            assert (await provider.generate(Probe, 'Return JSON', {}, Budget())).ok
+            assert len(requests) == 1
+        else:
+            with pytest.raises(ProviderUnavailable, match='GROQ_API_KEY'):
+                await provider.generate(Probe, 'Return JSON', {}, Budget())
+            assert requests == []
+    finally:
+        await provider.close()

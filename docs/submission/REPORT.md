@@ -53,16 +53,16 @@ Kết quả mới được lưu riêng tại `reports/submission/evaluation.json
 
 ## 7. Kết quả và bằng chứng
 
-Đã chạy và rà soát đủ **20/20 ca agentic** với Groq `openai/gpt-oss-20b`, release `corpus-de584c31fc95f9a2`, fingerprint `6d9a50e0ef58602cb5efc551848ee0e8bc1ce347ccc6618a0f4f9204453d3467`. Kết quả theo rubric kỹ thuật và đoạn nguồn: **16 pass, 3 partial, 1 fail**. Tất cả ID/đoạn trích dẫn xuất hiện khớp corpus; điều này không bảo đảm mọi mệnh đề được hỗ trợ.
+Đã chạy và rà soát đủ **20/20 ca agentic** với Groq `openai/gpt-oss-20b`, release `corpus-de584c31fc95f9a2`, fingerprint `2952b6bbdef6c0e4c3099762c4cec4cd1911ee25f6c3d5b01ec3a8e8216fe240`. Kết quả theo rubric kỹ thuật và đoạn nguồn: **17 pass, 3 partial, 0 fail**. Tất cả ID/đoạn trích dẫn xuất hiện khớp corpus; điều này không bảo đảm mọi mệnh đề được hỗ trợ.
 
 - S04 trả đúng tiếp tục phương án, còn thiếu ý chi trả chậm trong rubric đầy đủ.
 - S11 không khẳng định quyền lợi cá nhân nhưng chưa giải thích riêng nguồn tin quy hoạch được hỏi.
 - S16 không xác nhận số tiền/văn bản giả, nhưng hướng dẫn kiểm tra còn chung.
-- S06 trả đúng ý chính giấy chứng nhận không là điều kiện duy nhất; phần liệt kê thêm đối tượng chưa được hai đoạn citation hỗ trợ đầy đủ nên chấm fail. Đây là hạn chế cần sửa sau bản nộp; tránh dùng câu này để khẳng định tính chính xác toàn diện.
+- S06 của bản cuối trả lời có nguồn về các điều kiện thay thế và giữ điều kiện thuộc khoản 1, được chấm pass. Run trước trên fingerprint khác từng liệt kê đối tượng chưa được citation hỗ trợ đầy đủ; khác biệt này nhắc rằng một run tốt không bảo đảm mọi lần sinh đúng.
 
-Có 21 lần thực thi cho 20 ca: S06 từng dừng do quota/ngân sách, sau đó thử lại thành công về giao thức. Giữ cả lần thử lỗi; bảng chính ghi lần thực thi cuối và không giấu việc thử lại. Không dùng LLM judge. Không suy tỷ lệ toàn miền hoặc chứng nhận nghiệm thu pháp lý từ bộ 20 câu có chọn lọc. Phiên bản mã nguồn không chứa thay đổi `agent.py` đang dở trong workspace.
+Có 21 lần thực thi cho 20 ca ở fingerprint cuối: S01 từng timeout, sau đó thử lại thành công. S06/S16 có retry do TPM trong ngân sách mỗi lượt. Giữ cả lần thử lỗi; bảng chính ghi lần thực thi cuối và không giấu việc thử lại. Không dùng LLM judge. Không suy tỷ lệ toàn miền hoặc chứng nhận nghiệm thu pháp lý từ bộ 20 câu có chọn lọc. Phiên bản mã nguồn không chứa thay đổi `agent.py` đang dở trong workspace.
 
-Bản chốt đã qua 226 kiểm thử backend/công cụ đánh giá; hai kiểm thử công cụ xuất báo cáo được chạy riêng, frontend đạt 2 unit tests và 22 E2E desktop/mobile. CI, triển khai, HTTPS và video có receipt riêng trong `reports/submission/`. Tình trạng triển khai cuối phải đối chiếu receipt, không suy từ build cục bộ.
+Bản chính sách demo đã qua 230 kiểm thử backend/công cụ; hai regression bổ sung xác nhận Groq không sử dụng khóa NVIDIA, kể cả khi thiếu khóa Groq. Frontend đạt 2 unit tests và 22 E2E desktop/mobile. CI, triển khai, HTTPS và video có receipt riêng trong `reports/submission/`. Baseline và agentic đã được kiểm chứng sinh câu trả lời Groq thật qua HTTPS, có nguồn/trace, lưu hội thoại và cách ly phiên; xem `reports/live-demo.json`. Gói corpus-only đã restore thành công vào SQLite riêng, đủ 69 tài liệu/7.610 vector và không có phiên cá nhân.
 
 Các receipt trước đây ở `reports/live-demo.json`, `reports/live-ui.json` và `reports/postgres-restore.json` là bằng chứng lịch sử, không tự động là kết quả của mã nguồn hiện tại.
 

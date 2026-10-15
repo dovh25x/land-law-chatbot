@@ -1,6 +1,6 @@
 {
   "status": "reviewed",
-  "checked_at": "2026-10-15T05:29:41.487786+00:00",
+  "checked_at": "2026-10-15T05:54:12.642399+00:00",
   "model": "openai/gpt-oss-20b",
   "mode": "agentic",
   "scope": "Actual Groq generation with deployed backend code and Supabase corpus via operator CLI; not an HTTP/browser latency benchmark.",
@@ -8,7 +8,7 @@
   "split": "academic_smoke",
   "cases": 20,
   "release": "corpus-de584c31fc95f9a2",
-  "configuration_sha256": "6d9a50e0ef58602cb5efc551848ee0e8bc1ce347ccc6618a0f4f9204453d3467",
+  "configuration_sha256": "2952b6bbdef6c0e4c3099762c4cec4cd1911ee25f6c3d5b01ec3a8e8216fe240",
   "acceptance_passed": false,
   "independent_legal_certification": false,
   "transport": "operator_cli",
@@ -17,15 +17,21 @@
       "mode": "agentic",
       "completed": 20,
       "reviewed": 20,
-      "pass": 16,
+      "pass": 17,
       "partial": 3,
-      "fail": 1,
+      "fail": 0,
       "citation_sources_match_corpus": true
     }
   ],
   "limitations": [
     "20-case academic rubric review only; not the original 80-case acceptance benchmark.",
     "Source IDs/excerpts matching the corpus do not prove every generated legal statement.",
-    "S06 fails full claim support; S04, S11 and S16 are partial. See submission/results.md."
+    "Read per-case failures and partial answers in submission/results.md; no independent legal certification."
+  ],
+  "failed_case_ids": [],
+  "partial_case_ids": [
+    "S04",
+    "S11",
+    "S16"
   ]
 }

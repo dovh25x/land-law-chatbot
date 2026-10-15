@@ -32,4 +32,24 @@ Chạy CLI trên commit backend được ghi trong receipt, với cấu hình Gr
 .venv/bin/python scripts/export_mvp_evaluation.py --run-dir reports/runs/<run-id>
 ```
 
-Công cụ chỉ xuất đánh giá, không tự chấm nội dung. `reviews.json` gắn với checksum từng câu trả lời; kết quả mới bắt buộc rà soát lại. `--public-summary reports/latest.json` chỉ chạy khi đủ ca được rà soát; báo cáo luôn giữ `acceptance_passed=false`. Bản này có 16 pass / 3 partial / 1 fail, không phải nghiệm thu bộ 80 câu.
+Công cụ chỉ xuất đánh giá, không tự chấm nội dung. `reviews.json` gắn với checksum từng câu trả lời; kết quả mới bắt buộc rà soát lại. `--public-summary reports/latest.json` chỉ chạy khi đủ ca được rà soát; báo cáo luôn giữ `acceptance_passed=false`. Bản này có 17 pass / 3 partial / 0 fail, không phải nghiệm thu bộ 80 câu.
+
+## Gói ZIP chạy lại tại máy
+
+`dist/hanoi-land-law-mvp.zip` là gói bàn giao được tạo bằng `scripts/package_submission.py` sau khi quay video Groq thành công. Gói chỉ chứa mã nguồn đã commit, tài liệu, kết quả, video và **backup corpus công khai**, không có `.env`, phiên hội thoại hay backup riêng. Checksum nằm trong `reports/submission/package.json`. Không nén toàn bộ workspace vì có `.env` và các backup riêng.
+
+Sau khi giải nén, dùng Python 3.12+ và Node 24:
+
+```bash
+python3 -m venv .venv
+.venv/bin/pip install -r requirements.lock
+.venv/bin/pip install --no-deps -e .
+cp .env.example .env
+# Điền GROQ_API_KEY của bạn. Giữ APP_ENV=development,
+# DATABASE_URL/ADMIN_DATABASE_URL trống và contract E5 384 chiều mặc định.
+.venv/bin/python backend/landlaw/local_embedding.py download models/e5
+.venv/bin/land-law restore data/demo/corpus-backup.json
+.venv/bin/uvicorn landlaw.api:app --host 127.0.0.1 --port 8000 --no-proxy-headers
+```
+
+Terminal thứ hai: `cd frontend`, `npm ci`, `npm run dev -- --host 127.0.0.1`; mở http://127.0.0.1:5173. Bản SQLite dành cho demo local, không cần tài khoản Supabase và không embedding lại corpus. Tải E5 và gọi Groq vẫn cần internet; quota Groq phụ thuộc tài khoản. Backup khôi phục đúng snapshot và nhãn kỹ thuật có sẵn, không cấp trạng thái nghiệm thu pháp lý.

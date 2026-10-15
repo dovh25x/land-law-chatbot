@@ -14,7 +14,7 @@ Gói bài nộp: [phạm vi](docs/submission/SCOPE.md), [báo cáo](docs/submiss
 
 ## Trạng thái
 
-Bản Groq đã chạy và rà soát 20 ca agentic: **16 đạt, 3 một phần, 1 chưa đạt**. Xem [kết quả và giới hạn từng ca](reports/submission/results.md). Đây là CLI quản trị gọi model thật trên corpus Supabase; HTTPS/browser được kiểm chứng riêng. Không phải thẩm định pháp lý.
+Bản Groq đã chạy và rà soát 20 ca agentic: **17 đạt, 3 một phần, 0 chưa đạt**. Xem [kết quả và giới hạn từng ca](reports/submission/results.md). Đây là CLI quản trị gọi model thật trên corpus Supabase; HTTPS/browser được kiểm chứng riêng. Không phải thẩm định pháp lý.
 
 Website: https://hanoi-land-law.pages.dev; API: https://land-law-chatbot.onrender.com. Corpus đã công bố ở chế độ **demo kỹ thuật — chưa nghiệm thu pháp lý**. Baseline/agentic trả lời thật trên URL, có nguồn, trace, cách ly phiên và lưu hội thoại; desktop/mobile đã kiểm tra không dùng mocks. Đây chưa phải bản nghiệm thu toàn bộ M0–M6. Xem [bằng chứng và hạng mục còn mở](docs/IMPLEMENTATION_STATUS.md), [nguồn thật và khoảng trống](docs/SOURCES.md), [benchmark](docs/BENCHMARK.md). Không tạo số liệu chất lượng mẫu. SQLite dành cho phát triển; production bắt buộc PostgreSQL.
 
