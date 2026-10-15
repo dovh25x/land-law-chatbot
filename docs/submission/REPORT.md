@@ -62,7 +62,7 @@ Kết quả mới được lưu riêng tại `reports/submission/evaluation.json
 
 Có 21 lần thực thi cho 20 ca ở fingerprint cuối: S01 từng timeout, sau đó thử lại thành công. S06/S16 có retry do TPM trong ngân sách mỗi lượt. Giữ cả lần thử lỗi; bảng chính ghi lần thực thi cuối và không giấu việc thử lại. Không dùng LLM judge. Không suy tỷ lệ toàn miền hoặc chứng nhận nghiệm thu pháp lý từ bộ 20 câu có chọn lọc. Phiên bản mã nguồn không chứa thay đổi `agent.py` đang dở trong workspace.
 
-Bản chính sách demo đã qua 230 kiểm thử backend/công cụ; hai regression bổ sung xác nhận Groq không sử dụng khóa NVIDIA, kể cả khi thiếu khóa Groq. Frontend đạt 2 unit tests và 22 E2E desktop/mobile. CI, triển khai, HTTPS và video có receipt riêng trong `reports/submission/`. Baseline và agentic đã được kiểm chứng sinh câu trả lời Groq thật qua HTTPS, có nguồn/trace, lưu hội thoại và cách ly phiên; xem `reports/live-demo.json`. Gói corpus-only đã restore thành công vào SQLite riêng, đủ 69 tài liệu/7.610 vector và không có phiên cá nhân.
+Bản bàn giao sạch đã qua 232 kiểm thử backend/công cụ, gồm regression xác nhận Groq không sử dụng khóa NVIDIA kể cả khi thiếu khóa Groq. Frontend đạt 2 unit tests và 22 E2E desktop/mobile. CI, triển khai, HTTPS và video có receipt riêng trong `reports/submission/`. Baseline và agentic đã được kiểm chứng sinh câu trả lời Groq thật qua HTTPS, có nguồn/trace, lưu hội thoại và cách ly phiên; xem `reports/live-demo.json`. Gói corpus-only đã restore thành công vào SQLite riêng, đủ 69 tài liệu/7.610 vector và không có phiên cá nhân.
 
 Các receipt trước đây ở `reports/live-demo.json`, `reports/live-ui.json` và `reports/postgres-restore.json` là bằng chứng lịch sử, không tự động là kết quả của mã nguồn hiện tại.
 

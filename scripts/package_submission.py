@@ -27,7 +27,13 @@ def main():
         raise SystemExit('Package must contain exactly the published corpus snapshot')
     video = Path('reports/submission/demo-silent.webm')
     receipt = json.loads(Path('reports/submission/video.json').read_text())
-    if receipt.get('status') != 'recorded' or receipt.get('model') != 'openai/gpt-oss-20b':
+    evaluation = json.loads(Path('reports/submission/evaluation.json').read_text())
+    if (evaluation.get('status') != 'reviewed' or len(evaluation.get('results', [])) != 20
+            or receipt.get('configuration_sha256') != evaluation.get('identity', {}).get('configuration_sha256')
+            or not receipt.get('checks', {}).get('evaluation_matches_active_configuration')
+            or not receipt.get('checks', {}).get('configuration_unchanged')):
+        raise SystemExit('Video and reviewed evaluation must match the final runtime configuration')
+    if receipt.get('status') != 'recorded' or receipt.get('model') != 'openai/gpt-oss-20b' or receipt.get('seconds', 0) < 300:
         raise SystemExit('A successful current Groq demo video is required')
     commit = subprocess.check_output(['git', 'rev-parse', 'HEAD'], text=True).strip()
     archive = subprocess.check_output(['git', 'archive', 'HEAD'])
