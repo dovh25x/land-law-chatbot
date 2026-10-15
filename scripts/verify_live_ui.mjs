@@ -20,10 +20,25 @@ try {
   await page.getByRole('heading',{name:'Vành đai 4',exact:true}).waitFor()
   if(!await page.locator('.content-page').innerText().then(t=>t.includes('hiện chỉ hỗ trợ Vành đai 4')))throw Error('Scope disclosure missing')
   if(await page.getByRole('tab').count())throw Error('Unexpected project tabs')
+  if(width===1440 && process.argv.includes('--chat')) {
+    await page.getByRole('button',{name:'Hỏi đáp pháp luật',exact:true}).click()
+    await page.getByLabel('Câu hỏi pháp luật').fill('Điều 104 Luật Đất đai 2024 quy định chi phí di chuyển tài sản gồm những khoản nào?')
+    await page.getByRole('button',{name:'Gửi câu hỏi'}).click()
+    await page.locator('.message.assistant .citations button').first().waitFor({timeout:180000})
+    const box=await page.locator('.composer').boundingBox()
+    if(box.height>64)throw Error('Composer is not compact after real answer')
+    await page.locator('.message.assistant .citations button').first().click()
+    await page.getByRole('dialog',{name:'Chi tiết nguồn'}).waitFor()
+    await page.keyboard.press('Escape')
+    await page.locator('.message.assistant .trace-link').click()
+    await page.getByRole('dialog').waitFor()
+    await page.keyboard.press('Escape')
+    checks.push({real_chat:true,citation_and_trace_opened:true,composer_height:box.height})
+  }
   await page.screenshot({path:`reports/ui-mvp-${width}.png`,fullPage:true})
   checks.push({width,passed:true});await page.close()
  }
  await mkdir('reports/submission',{recursive:true})
- await writeFile('reports/submission/frontend-live.json',JSON.stringify({passed:true,checked_at:new Date().toISOString(),checks,scope:'Public website UI without mocks; LLM chat checked separately.'},null,2)+'\n')
+ await writeFile('reports/submission/frontend-live.json',JSON.stringify({passed:true,checked_at:new Date().toISOString(),checks,scope:process.argv.includes('--chat')?'Public UI plus actual sourced LLM answer, source and trace.':'Public website UI without mocks; LLM chat checked separately.'},null,2)+'\n')
  console.log(JSON.stringify(checks))
 }finally{await browser.close()}

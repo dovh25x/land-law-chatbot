@@ -37,6 +37,8 @@ Mở http://127.0.0.1:5173. Clone repo không tự có corpus: dùng backup côn
 
 ## Kiểm thử và đánh giá
 
+Bản Groq 120B ngày 15/10/2026: **18/20 đạt, 1 một phần, 1 chưa đạt**. S06 lẫn nhóm đối tượng với điều kiện; S08 còn thiếu giải thích điều kiện riêng. Đây là rà soát kỹ thuật có hỗ trợ AI theo nguồn/rubric, chưa được thẩm định pháp lý độc lập. Backend 161 tests, frontend 2 unit tests và 22 E2E đã đạt.
+
 ```bash
 .venv/bin/python -m pytest -q
 .venv/bin/python scripts/check_secrets.py

@@ -1,0 +1,27 @@
+{
+  "frontend": "https://hanoi-land-law.pages.dev",
+  "backend": "https://land-law-chatbot.onrender.com",
+  "render_service_id": "srv-db5tipks728c7390gs60",
+  "render_plan": "free",
+  "runtime": "docker",
+  "health_check": "/healthz",
+  "configured_environment_keys": [
+    "APP_ENV",
+    "CORS_ORIGINS",
+    "DATABASE_URL",
+    "EMBEDDING_DIMENSIONS",
+    "EMBEDDING_MODEL",
+    "EMBEDDING_PROVIDER",
+    "GROQ_API_KEY",
+    "GROQ_MODEL",
+    "IP_HASH_SECRET",
+    "LLM_PROVIDER",
+    "MAX_CONCURRENT_REQUESTS",
+    "SESSION_RETENTION_DAYS",
+    "TRUST_PROXY_HEADERS",
+    "TURN_TIMEOUT_SECONDS"
+  ],
+  "corpus_published": null,
+  "acceptance_passed": false,
+  "scope": "Environment configuration only; verify live publication/provider after deploy using readiness and authenticated smoke."
+}

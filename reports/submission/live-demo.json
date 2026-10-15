@@ -1,0 +1,34 @@
+{
+  "passed": true,
+  "configuration_sha256": "70ae8b2a24bdb69a7fe2d9291fe33ce77e8013e18b30417faad4d9fec997155e",
+  "matches_evaluation": false,
+  "checks": [
+    {
+      "question": "Điều 104 Luật Đất đai 2024 quy định chi phí di chuyển tài sản gồm những khoản nào?",
+      "status": "answered",
+      "content": "Đã đối chiếu các căn cứ dưới đây.\n\nĐiều 104 Luật Đất đai 2024 quy định rằng khi Nhà nước thu hồi đất và phải di chuyển tài sản, Nhà nước bồi thường chi phí gồm: (1) chi phí tháo dỡ, di chuyển và lắp đặt tài sản; (2) nếu tài sản là hệ thống máy móc, dây chuyền sản xuất, còn được bồi thường thêm chi phí thiệt hại phát sinh khi tháo dỡ, vận chuyển và lắp đặt. [1]\n\nThời điểm xem xét: 15/10/2026. Dữ liệu được kiểm tra: 2026-10-11.",
+      "citations": 1,
+      "llm_calls": 2,
+      "model": "openai/gpt-oss-120b",
+      "elapsed_ms": 7261
+    },
+    {
+      "question": "Văn bản đó quy định cơ quan nào quyết định mức bồi thường tại Điều 104?",
+      "status": "answered",
+      "content": "Đã đối chiếu các căn cứ dưới đây.\n\nTheo Điều 104 Luật Đất đai 2024, mức bồi thường chi phí di chuyển tài sản khi Nhà nước thu hồi đất do \"Ủy ban nhân dân cấp tỉnh\" quy định. [1]\n\nThời điểm xem xét: 15/10/2026. Dữ liệu được kiểm tra: 2026-10-11.",
+      "citations": 1,
+      "llm_calls": 2,
+      "model": "openai/gpt-oss-120b",
+      "elapsed_ms": 37305
+    },
+    {
+      "question": "Thông tin dự án Olympic có đủ xác định tiền bồi thường của hộ không?",
+      "status": "insufficient_evidence",
+      "content": "Phạm vi dự án của bản MVP hiện chỉ hỗ trợ Vành đai 4. Thư viện vẫn lưu tài liệu của các dự án khác để tham khảo.\n\nThời điểm xem xét: 15/10/2026. Dữ liệu được kiểm tra: 2026-10-11.",
+      "citations": 0,
+      "llm_calls": 0,
+      "model": "openai/gpt-oss-120b",
+      "elapsed_ms": 191
+    }
+  ]
+}

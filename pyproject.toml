@@ -5,13 +5,13 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "hanoi-land-law"
 version = "0.1.0"
-description = "Evidence-first agentic RAG for Hanoi land law"
+description = "Academic Agentic RAG prototype for Hanoi land law"
 requires-python = ">=3.12"
 dependencies = [
   "fastapi>=0.115,<1", "uvicorn>=0.34,<1", "pydantic-settings>=2.8,<3",
   "httpx>=0.28,<1", "langgraph>=1,<2", "psycopg[binary]>=3.2,<4",
   "psycopg-pool>=3.2,<4", "beautifulsoup4>=4.13,<5", "pypdf>=5,<7",
-  "pdfplumber>=0.11,<1", "typer>=0.16,<1", "python-dotenv>=1,<2", "cryptography>=46,<51", "fonttools>=4.58,<5",
+  "typer>=0.16,<1", "python-dotenv>=1,<2", "cryptography>=46,<51",
   "onnxruntime>=1.20,<2", "sentencepiece>=0.2,<0.3", "numpy>=2,<3"
 ]
 

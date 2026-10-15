@@ -52,7 +52,7 @@ def main():
             'runtime':'docker','health_check':'/healthz','configured_environment_keys':sorted(desired),
             'corpus_published':None,'acceptance_passed':False,
             'scope':'Environment configuration only; verify live publication/provider after deploy using readiness and authenticated smoke.'}
-        Path('reports/cloud-resources.json').write_text(json.dumps(report,indent=2))
+        Path('reports/submission/deployment-configuration.json').write_text(json.dumps(report,indent=2))
         print(json.dumps(report,indent=2))
 
 

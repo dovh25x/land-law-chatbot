@@ -24,7 +24,7 @@ def dataset(path: Path):
 
 
 def validate_history(history):
-    """Frozen displayed turns, shared by both modes; never generated during scoring."""
+    """Frozen displayed turns; never generated during scoring."""
     if not isinstance(history, list) or len(history) > 8:
         raise ValueError('Benchmark history must contain at most eight fixed turns')
     for index, turn in enumerate(history):
@@ -199,13 +199,7 @@ async def evaluate(settings, store, provider, split="smoke", release_id=None, li
     report['acceptance_passed'] = False
     report['latency_scope'] = f'CLI run, modes {list(modes)}, concurrency {concurrency}; provider-reported cooldown between turns excluded. Public API single-user p95 measured separately.'
     json_write(records_path.with_name('summary.json'),report)
-    report=public_report(report)
-    json_write(settings.reports_dir / ('smoke.json' if split=='smoke' else 'latest.json'), report)
-    from html import escape
-    html = "<!doctype html><html lang='vi'><meta charset='utf-8'><title>Benchmark</title>"
-    html += "<style>body{font:15px system-ui;max-width:1100px;margin:40px auto;padding:20px}pre{white-space:pre-wrap}</style>"
-    html += "<h1>Báo cáo benchmark</h1><p>Kết quả chưa rà soát chưa chứng nhận chất lượng pháp lý.</p><pre>" + escape(json.dumps(report, ensure_ascii=False, indent=2)) + "</pre>"
-    (settings.reports_dir / ('smoke.html' if split=='smoke' else 'benchmark.html')).write_text(html, encoding="utf-8")
+
     return report
 
 

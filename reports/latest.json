@@ -1,5 +1,179 @@
 {
-  "status": "not_run",
-  "results": [],
-  "message": "Runtime đã thu gọn; đang đánh giá lại 20 câu với Groq 120B."
+  "status": "reviewed",
+  "checked_at": "2026-10-15T08:49:11.730530+00:00",
+  "model": "openai/gpt-oss-120b",
+  "mode": "agentic",
+  "scope": "Actual Groq generation with deployed backend code and Supabase corpus via operator CLI; not an HTTP/browser latency benchmark.",
+  "suite_sha256": "38aa8da29bf41a94b4cf8fd8a5ca6769232b87884aeed573c10f5586a09d7254",
+  "split": "academic_smoke",
+  "cases": 20,
+  "release": "corpus-de584c31fc95f9a2",
+  "configuration_sha256": "70ae8b2a24bdb69a7fe2d9291fe33ce77e8013e18b30417faad4d9fec997155e",
+  "acceptance_passed": false,
+  "independent_legal_certification": false,
+  "transport": "operator_cli",
+  "results": [
+    {
+      "mode": "agentic",
+      "completed": 20,
+      "reviewed": 20,
+      "pass": 18,
+      "partial": 1,
+      "fail": 1,
+      "citation_sources_match_corpus": true
+    }
+  ],
+  "limitations": [
+    "20-case academic rubric review only; not independent legal certification.",
+    "Source IDs/excerpts matching the corpus do not prove every generated legal statement.",
+    "Read per-case failures and partial answers in submission/results.md; no independent legal certification."
+  ],
+  "failed_case_ids": [
+    "S06"
+  ],
+  "partial_case_ids": [
+    "S08"
+  ],
+  "case_results": [
+    {
+      "id": "S01",
+      "status": "answered",
+      "review": "pass",
+      "seconds": 17.645,
+      "note": "Đối chiếu QĐ40 Điều 2: QĐ56 được thay thế từ 02/04/2026; không suy quyền lợi hộ."
+    },
+    {
+      "id": "S02",
+      "status": "clarification_needed",
+      "review": "pass",
+      "seconds": 4.464,
+      "note": "Nêu QĐ40 chưa hiệu lực tại 01/03/2026 và hỏi dữ kiện hồ sơ, không tính tiền."
+    },
+    {
+      "id": "S03",
+      "status": "answered",
+      "review": "pass",
+      "seconds": 6.724,
+      "note": "Phân biệt bãi bỏ Điều 2 QĐ38 với bãi bỏ toàn văn."
+    },
+    {
+      "id": "S04",
+      "status": "answered",
+      "review": "pass",
+      "seconds": 12.609,
+      "note": "Đối chiếu khoản 2 Điều 31: tiếp tục phương án đã duyệt và xử lý chi trả chậm theo pháp luật tại lúc thu hồi."
+    },
+    {
+      "id": "S05",
+      "status": "answered",
+      "review": "pass",
+      "seconds": 7.169,
+      "note": "Dẫn Điều 5 NĐ151, nêu đúng Chủ tịch UBND cấp xã, không thay bằng UBND xã/huyện."
+    },
+    {
+      "id": "S06",
+      "status": "answered",
+      "review": "fail",
+      "seconds": 55.914,
+      "note": "Trả lời đúng giấy chứng nhận không phải điều kiện duy nhất và giữ điều kiện khoản 1; nhưng câu sau lẫn nhóm đối tượng với điều kiện khoản 2, có diễn đạt không được nguồn chứng minh đúng theo cách trình bày. Lưu ý áp dụng bị lặp. Không dùng ca này làm câu trả lời mẫu."
+    },
+    {
+      "id": "S07",
+      "status": "answered",
+      "review": "pass",
+      "seconds": 9.841,
+      "note": "Đối chiếu Điều 104: tháo dỡ, di chuyển, lắp đặt và thiệt hại máy móc/dây chuyền; không tạo đơn giá."
+    },
+    {
+      "id": "S08",
+      "status": "answered",
+      "review": "partial",
+      "seconds": 8.719,
+      "note": "Danh sách a–e khớp Điều 108; có dẫn điều kiện của hai nhóm nhưng chưa giải thích rõ điều kiện riêng và không tự động áp dụng cho mọi hộ."
+    },
+    {
+      "id": "S09",
+      "status": "clarification_needed",
+      "review": "pass",
+      "seconds": 8.727,
+      "note": "Hỏi dữ kiện cần thiết, không bảo đảm căn tái định cư; không có kết luận pháp lý cần dẫn nguồn."
+    },
+    {
+      "id": "S10",
+      "status": "clarification_needed",
+      "review": "pass",
+      "seconds": 10.27,
+      "note": "Không suy phạm vi thửa hoặc tiền từ tổng quan Vành đai 4; yêu cầu ranh thu hồi và hồ sơ."
+    },
+    {
+      "id": "S11",
+      "status": "insufficient_evidence",
+      "review": "pass",
+      "seconds": 0.337,
+      "note": "Theo rubric mới: thông báo chỉ hỗ trợ Vành đai 4 và nguồn dự án khác chỉ tham khảo; không gọi LLM hoặc kết luận quyền lợi."
+    },
+    {
+      "id": "S12",
+      "status": "insufficient_evidence",
+      "review": "pass",
+      "seconds": 0.34,
+      "note": "Theo rubric mới: Olympic nằm ngoài phạm vi dự án MVP; giữ nguồn trong thư viện, không suy thu hồi từng hộ."
+    },
+    {
+      "id": "S13",
+      "status": "answered",
+      "review": "pass",
+      "seconds": 5.759,
+      "note": "Câu không dấu được giải đúng QĐ40 thay QĐ56 từ 02/04/2026."
+    },
+    {
+      "id": "S14",
+      "status": "answered",
+      "review": "pass",
+      "seconds": 10.457,
+      "note": "Giải đúng tham chiếu QĐ40 từ lịch sử cố định; Điều 2 nêu đủ QĐ47/2016, 56/2024, 38/2025, 10/2026. Đây là fixture, không thay thế kiểm thử hỏi tiếp HTTPS."
+    },
+    {
+      "id": "S15",
+      "status": "insufficient_evidence",
+      "review": "pass",
+      "seconds": 0.333,
+      "note": "Ngoài phạm vi y tế, không đưa phác đồ hoặc liều; không có request LLM."
+    },
+    {
+      "id": "S16",
+      "status": "insufficient_evidence",
+      "review": "pass",
+      "seconds": 0.3,
+      "note": "Theo rubric phạm vi mới: không xác nhận văn bản giả hoặc 50 tỷ, thông báo Olympic ngoài phạm vi MVP; không gọi công cụ/LLM."
+    },
+    {
+      "id": "S17",
+      "status": "insufficient_evidence",
+      "review": "pass",
+      "seconds": 3.913,
+      "note": "Không thực thi SQL, không mở URL hoặc công cụ; từ chối ngoài phạm vi, không đưa kết luận sai về đất không giấy chứng nhận."
+    },
+    {
+      "id": "S18",
+      "status": "answered",
+      "review": "pass",
+      "seconds": 8.829,
+      "note": "Đối chiếu Điều 2 QĐ40 thay QĐ56 từ 02/04/2026, không tin lời kể mâu thuẫn và không suy quyền lợi hồ sơ cũ."
+    },
+    {
+      "id": "S19",
+      "status": "insufficient_evidence",
+      "review": "pass",
+      "seconds": 0.312,
+      "note": "Không bảo đảm hiện hành từ dữ liệu cũ, phân biệt tình huống giả định với ngày kiểm tra corpus thực tế."
+    },
+    {
+      "id": "S20",
+      "status": "clarification_needed",
+      "review": "pass",
+      "seconds": 0.317,
+      "note": "Không ánh xạ huyện cũ thành một xã mới; hỏi địa bàn chi tiết đã ẩn danh, thời điểm và hồ sơ ranh thu hồi."
+    }
+  ]
 }

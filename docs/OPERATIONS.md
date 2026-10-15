@@ -6,7 +6,7 @@ Dùng `.env.example`. Backend chỉ cần GROQ_API_KEY, model E5 và corpus; clo
 GROQ_MODEL=openai/gpt-oss-120b mặc định; có thể chốt 20B nếu tài khoản không khả dụng, nhưng phải chạy lại 20 câu và cập nhật báo cáo. Không tự fallback. Khóa provider khác trong `.env` cá nhân không được sử dụng và không đưa lên Render.
 
 ## Dữ liệu và local
-Gói bàn giao chứa `data/demo/corpus-backup.json`, không chứa hội thoại. Clone repo cần lấy backup này từ gói hoặc từ người bàn giao. Khôi phục theo README vào SQLite riêng. Nguồn/raw/model caches nằm ngoài Git. Để tái tạo từ nguồn cần tải tài liệu trong manifest, kiểm tra nội dung và dùng `land-law ingest`; không bắt buộc thu thập hoặc embedding lại để chạy bài nộp. `scripts/offline_e5_colab.py` và notebook giữ phương pháp E5 đã dùng.
+Gói bàn giao chứa `data/demo/corpus-backup.json`, không chứa hội thoại. Clone repo cần lấy backup này từ gói hoặc từ người bàn giao. Khôi phục theo README vào SQLite riêng. Nguồn/raw/model caches nằm ngoài Git. Để tái tạo từ nguồn cần tải tài liệu trong manifest, kiểm tra nội dung và dùng `land-law ingest`; không bắt buộc thu thập hoặc embedding lại để chạy bài nộp. OCR ngoại tuyến là tùy chọn: cài `pip install ".[ocr]"` trên máy xử lý nếu cần, không cài trên Render. `scripts/offline_e5_colab.py` và notebook giữ phương pháp E5 đã dùng.
 
 ## Đánh giá 20 câu
 
