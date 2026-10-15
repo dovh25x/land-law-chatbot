@@ -19,9 +19,11 @@ def main():
     names = ['ADMIN_DATABASE_URL', 'DATABASE_URL', 'GEMINI_API_KEY', 'SUPABASE_URL', 'SUPABASE_SERVICE_ROLE_KEY',
              'BACKUP_ENCRYPTION_KEY', 'RENDER_API_KEY', 'CLOUDFLARE_API_TOKEN', 'CLOUDFLARE_ACCOUNT_ID', 'CLOUDFLARE_AI_API_TOKEN']
     if env.get('GROQ_API_KEY'):names.append('GROQ_API_KEY')
+    if env.get('LLM_PROVIDER')=='groq' and not env.get('GROQ_API_KEY'):
+        raise SystemExit('No mutation: GROQ_API_KEY is required before switching Actions to Groq')
     if env.get('LLM_PROVIDER')=='nvidia' and not env.get('NVIDIA_API_KEY'):
         raise SystemExit('No mutation: NVIDIA_API_KEY is required before switching Actions to NVIDIA')
-    if env.get('NVIDIA_API_KEY'):names.append('NVIDIA_API_KEY')
+    if env.get('LLM_PROVIDER')=='nvidia' and env.get('NVIDIA_API_KEY'):names.append('NVIDIA_API_KEY')
     variables = {'RENDER_SERVICE_ID': env.get('RENDER_SERVICE_ID'),
                  'CLOUDFLARE_PAGES_PROJECT': env.get('CLOUDFLARE_PAGES_PROJECT'),
                  'API_BASE_URL': env.get('VITE_API_BASE_URL'),

@@ -26,7 +26,7 @@ flowchart LR
     W[React web] --> API[FastAPI SSE]
     API --> G[LangGraph và công cụ chỉ đọc]
     G --> DB
-    G --> N[NVIDIA Nemotron 3 Super]
+    G --> N[Groq GPT-OSS 20B]
     N --> V[Kiểm tra nguồn và trích dẫn]
     V --> W
 ```
@@ -72,4 +72,4 @@ Chỉ sau học phần: mở rộng đánh giá, thẩm định miền độc l�
 
 ## 10. Tài liệu tham khảo và tái lập
 
-Nguồn pháp lý: `data/sources.json`, trang nguồn trong ứng dụng và metadata corpus. Công nghệ: FastAPI, LangGraph, PostgreSQL/pgvector, multilingual-e5-small, NVIDIA hosted Nemotron, React/Vite. Cài đặt theo README và phiên bản khóa trong repository. Không đưa khóa API hoặc token phiên vào báo cáo.
+Nguồn pháp lý: `data/sources.json`, trang nguồn trong ứng dụng và metadata corpus. Công nghệ: FastAPI, LangGraph, PostgreSQL/pgvector, multilingual-e5-small, Groq hosted GPT-OSS 20B, React/Vite. Cài đặt theo README và phiên bản khóa trong repository. Không đưa khóa API hoặc token phiên vào báo cáo.

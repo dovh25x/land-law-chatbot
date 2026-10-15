@@ -10,11 +10,15 @@ const receipt={started_at:new Date().toISOString(),url:'https://hanoi-land-law.p
 const wait=async seconds=>{for(let i=0;i<seconds;i++) await page.waitForTimeout(1000)}
 try {
  await page.goto(receipt.url,{waitUntil:'networkidle',timeout:150000})
+ await page.getByRole('button',{name:'Thông tin dữ liệu và kết nối'}).click()
  await page.getByRole('note').waitFor({timeout:150000})
  receipt.checks.label=await page.getByRole('note').innerText()
+ await page.keyboard.press('Escape')
  await page.screenshot({path:`${out}/website.png`,fullPage:true})
  await wait(20)
+ await page.getByRole('button',{name:'Phạm vi tra cứu',exact:true}).click()
  await page.getByLabel('Thời điểm áp dụng, để trống là hôm nay').fill('2024-08-02')
+ await page.getByRole('button',{name:'Xong',exact:true}).click()
  await page.getByLabel('Câu hỏi pháp luật').fill('Điều 104 Luật Đất đai 2024 quy định bồi thường chi phí di chuyển tài sản như thế nào?')
  await page.getByRole('button',{name:'Gửi câu hỏi'}).click()
  await page.locator('.message.assistant').waitFor({timeout:150000})
@@ -28,7 +32,7 @@ try {
  }
  await page.getByRole('button',{name:'Thư viện văn bản',exact:true}).click();await wait(30)
  await page.getByRole('button',{name:'Dự án trọng điểm',exact:true}).click();await wait(30)
- await page.getByRole('button',{name:'Đánh giá hệ thống',exact:true}).click();await wait(25)
+ await page.getByRole('button',{name:'Đánh giá đồ án',exact:true}).click();await wait(25)
  await page.getByRole('button',{name:'Hỏi đáp pháp luật',exact:true}).click()
  const elapsed=(Date.now()-Date.parse(receipt.started_at))/1000
  if(elapsed<300) await wait(Math.ceil(300-elapsed))

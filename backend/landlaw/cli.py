@@ -193,17 +193,20 @@ def publish(release_id: str, profile: str = 'accepted'):
 
 @app.command()
 def benchmark(split: str = "dev", release_id: str | None = None, limit: int | None = None,
-              concurrency: int = typer.Option(2,min=1,max=2), case_ids: str | None = None):
+              concurrency: int = typer.Option(2,min=1,max=2), case_ids: str | None = None, mode: str = "both"):
     """Run/resume real paired benchmark. Evaluate staging before publishing."""
     if split not in {"dev", "acceptance", "smoke"}:
         raise typer.BadParameter("split must be dev, acceptance or smoke")
+    if mode not in {"both", "baseline", "agentic"}:
+        raise typer.BadParameter("mode must be both, baseline or agentic")
     async def run():
         settings = Settings().for_operator()
         store, provider = Store(settings), None
         try:
             provider = Gemini(settings, store)
             return await evaluate(settings, store, provider, split, release_id, limit,concurrency,
-                set(case_ids.split(',')) if case_ids else None)
+                set(case_ids.split(',')) if case_ids else None,
+                ('baseline', 'agentic') if mode == 'both' else (mode,))
         finally:
             if provider:
                 await provider.close()

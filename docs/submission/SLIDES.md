@@ -13,7 +13,7 @@ Bồi thường, hỗ trợ, tái định cư Hà Nội. Vành đai 4 minh họa
 Dữ liệu văn bản + AI/RAG + phần mềm web + tri thức miền. Minh họa bảng đóng góp trong báo cáo.
 
 ## 5. Kiến trúc
-React → FastAPI → LangGraph → Supabase và NVIDIA → kiểm tra → SSE. E5 Colab cho corpus và CPU cho truy vấn. Dùng sơ đồ báo cáo.
+React → FastAPI → LangGraph → Supabase và Groq → kiểm tra → SSE. E5 Colab cho corpus và CPU cho truy vấn. Dùng sơ đồ báo cáo.
 
 ## 6. Dữ liệu và retrieval
 Snapshot 69 tài liệu/7.610 vector. Nguồn, locator, checksum; hybrid keyword/vector. Không trộn embedding.

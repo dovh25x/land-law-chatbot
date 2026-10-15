@@ -1,6 +1,6 @@
 # Hanoi Land Law Assistant — đồ án liên ngành
 
-Web chatbot tiếng Việt dùng FastAPI, LangGraph, Gemini/Groq/Workers AI, E5 ONNX, PostgreSQL/pgvector và React. Hai chế độ baseline/agentic dùng cùng nguồn dữ liệu và model. Agent chỉ có công cụ đọc với tham số định kiểu, giới hạn 6 lần gọi LLM, 12 công cụ, hai vòng retrieval và 90 giây. Chỉ phát câu trả lời qua SSE sau kiểm tra căn cứ; trace là sự kiện thực thi.
+Web chatbot tiếng Việt dùng FastAPI, LangGraph, Groq GPT-OSS 20B, E5 ONNX, PostgreSQL/pgvector và React. Hai chế độ baseline/agentic dùng cùng nguồn dữ liệu và model. Agent chỉ có công cụ đọc với tham số định kiểu, giới hạn 6 lần gọi LLM, 12 công cụ, hai vòng retrieval và 90 giây. Chỉ phát câu trả lời qua SSE sau kiểm tra căn cứ; trace là sự kiện thực thi.
 
 ## Giao diện
 
@@ -16,7 +16,7 @@ Gói bài nộp: [phạm vi](docs/submission/SCOPE.md), [báo cáo](docs/submiss
 
 Website: https://hanoi-land-law.pages.dev; API: https://land-law-chatbot.onrender.com. Corpus đã công bố ở chế độ **demo kỹ thuật — chưa nghiệm thu pháp lý**. Baseline/agentic trả lời thật trên URL, có nguồn, trace, cách ly phiên và lưu hội thoại; desktop/mobile đã kiểm tra không dùng mocks. Đây chưa phải bản nghiệm thu toàn bộ M0–M6. Xem [bằng chứng và hạng mục còn mở](docs/IMPLEMENTATION_STATUS.md), [nguồn thật và khoảng trống](docs/SOURCES.md), [benchmark](docs/BENCHMARK.md). Không tạo số liệu chất lượng mẫu. SQLite dành cho phát triển; production bắt buộc PostgreSQL.
 
-Provider sinh được chọn rõ bằng `LLM_PROVIDER`: `nvidia` (Nemotron 3 Super), `gemini`, `cloudflare` (Qwen), hoặc `groq` (GPT-OSS 120B/20B, Qwen 3.8 27B). Bản demo ưu tiên NVIDIA hosted `nvidia/nemotron-3-super-120b-a12b`; Groq được giữ làm lựa chọn cấu hình dự phòng, không tự chuyển provider. Evaluation giữ checkpoint và xử lý quota theo Retry-After; hai chế độ dùng cùng model và fingerprint, không ghép số liệu khác cấu hình. Corpus có 69 tài liệu, 54 văn bản pháp lý, năm nguồn mỗi dự án và đủ 7.610 vector E5 ONNX Q8 **384 chiều**, xử lý miễn phí trên Colab CPU. Vector truy vấn trên backend khớp Colab; Docker Python 3.12 peak RSS khoảng 354 MiB dưới hard limit 512 MiB. Model/checkpoint cũ giữ riêng. Không có trần gọi API theo ngày do ứng dụng đặt; giữ điểm dừng workflow và chống lạm dụng website. Không bật billing hoặc nâng gói.
+Provider sinh được chọn rõ bằng `LLM_PROVIDER`: `nvidia` (Nemotron 3 Super), `gemini`, `cloudflare` (Qwen), hoặc `groq` (GPT-OSS 120B/20B, Qwen 3.8 27B). Bản nộp dùng **Groq `openai/gpt-oss-20b`**; `LLM_PROVIDER=groq`. Không gọi NVIDIA và không tự chuyển provider. Evaluation giữ checkpoint và xử lý quota theo Retry-After; hai chế độ dùng cùng model và fingerprint, không ghép số liệu khác cấu hình. Corpus có 69 tài liệu, 54 văn bản pháp lý, năm nguồn mỗi dự án và đủ 7.610 vector E5 ONNX Q8 **384 chiều**, xử lý miễn phí trên Colab CPU. Vector truy vấn trên backend khớp Colab; Docker Python 3.12 peak RSS khoảng 354 MiB dưới hard limit 512 MiB. Model/checkpoint cũ giữ riêng. Không có trần gọi API theo ngày do ứng dụng đặt; giữ điểm dừng workflow và chống lạm dụng website. Không bật billing hoặc nâng gói.
 
 ## Chạy phát triển
 
@@ -86,4 +86,4 @@ GitHub Actions kiểm tra Python 3.12, build web, audit và build Docker. Thu th
 
 Embedding offline trên Colab CPU: [notebook và hướng dẫn](docs/COLAB_EMBEDDINGS.md). Corpus E5 hiện đủ 7.610 vector 384 chiều và đã công bố qua gate `technical_demo`; full smoke/acceptance tiếp tục riêng.
 
-NVIDIA ưu tiên đã có adapter: đặt `NVIDIA_API_KEY` trong `.env`, `LLM_PROVIDER=nvidia`, `NVIDIA_MODEL=nvidia/nemotron-3-super-120b-a12b`. Khóa đã được kiểm tra bằng API thật và backend đã triển khai NVIDIA; corpus/embedding E5 không đổi. Xem [vận hành NVIDIA](docs/OPERATIONS.md#nvidia-làm-provider-ưu-tiên).
+Bản nộp chọn Groq: đặt `GROQ_API_KEY` trong `.env`, `LLM_PROVIDER=groq`, `GROQ_MODEL=openai/gpt-oss-20b`. Render không chứa khóa NVIDIA. Các adapter cũ được giữ để bảo toàn mã nguồn nhưng không nằm trong đường thực thi của bản nộp. Xem [gói bàn giao](docs/submission/README.md) và [vận hành Groq](docs/OPERATIONS.md#groq-cho-bản-mvp-học-thuật).

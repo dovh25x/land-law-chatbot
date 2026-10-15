@@ -185,7 +185,9 @@ def public_report(report):
     return public
 
 
-async def evaluate(settings, store, provider, split="dev", release_id=None, limit=None, concurrency=2, case_ids=None):
+async def evaluate(settings, store, provider, split="dev", release_id=None, limit=None, concurrency=2, case_ids=None, modes=("baseline", "agentic")):
+    if not modes or len(set(modes)) != len(modes) or not set(modes) <= {'baseline', 'agentic'}:
+        raise ValueError('Evaluation modes must be baseline, agentic, or both')
     if concurrency not in {1,2}:
         raise ValueError('Evaluation concurrency must be one or two')
     path = settings.data_dir / ('evaluation/smoke.jsonl' if split=='smoke' else 'evaluation/questions.jsonl')
@@ -202,6 +204,8 @@ async def evaluate(settings, store, provider, split="dev", release_id=None, limi
             path.with_name('acceptance-freeze.json'), path.with_name('gold-sources.json'), store, release['id'])
     configuration = configuration_fingerprint(settings)
     run_id = f"{release['id']}-{provider.settings.generation_model.replace('/', '_')}-{split}-{fingerprint[:8]}-{configuration[:8]}-c{concurrency}"
+    if tuple(modes) != ('baseline', 'agentic'):
+        run_id += '-' + '-'.join(modes)
     records_path = settings.reports_dir / "runs" / run_id / "records.json"
     metadata_path = records_path.with_name("metadata.json")
     metadata = json.loads(metadata_path.read_text()) if metadata_path.exists() else {"as_of": str(local_date()), "configuration_sha256": configuration}
@@ -264,7 +268,7 @@ async def evaluate(settings, store, provider, split="dev", release_id=None, limi
         provider.client.event_hooks.setdefault('response',[]).append(observe_provider_capacity)
     async def emit(_):
         pass
-    pending = [(case,mode) for case in cases for mode in ('baseline','agentic')
+    pending = [(case,mode) for case in cases for mode in modes
         if not any(r['case_id']==case['id'] and r['mode']==mode and r['result']['status'] not in {'limited','error'} for r in records)]
     if case_ids is not None:
         if not set(case_ids)<={c['id'] for c in cases}:
@@ -307,6 +311,7 @@ async def evaluate(settings, store, provider, split="dev", release_id=None, limi
                    "embedding_model": provider.settings.embedding_model, "split": split,
                    "corpus_embedded": release.get("embedded", False), "publication_candidate": False,
                    "notes": ["Development runs on incomplete staging cannot certify acceptance; query embedding failures fall back to lexical retrieval."], **metadata})
+    report['execution_modes'] = list(modes)
     report['execution_concurrency'] = concurrency
     attempts=[json.loads(p.read_text()) for p in attempts_path.glob('*.json')]
     report['attempt_history']={'attempts':len(attempts),'retry_attempts':len(attempts)-len(records),

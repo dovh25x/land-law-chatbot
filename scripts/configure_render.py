@@ -13,6 +13,8 @@ def main():
     service_id, token = env.get('RENDER_SERVICE_ID'), env.get('RENDER_API_KEY')
     if not service_id or not token:
         raise SystemExit('Render service ID and API key required')
+    if settings.llm_provider=='groq' and not settings.groq_api_key.get_secret_value():
+        raise SystemExit('No mutation: GROQ_API_KEY is required before switching the live backend')
     if settings.llm_provider=='nvidia' and not settings.nvidia_api_key.get_secret_value():
         raise SystemExit('No mutation: NVIDIA_API_KEY is required before switching the live backend')
     origin = 'https://' + (env.get('CLOUDFLARE_PAGES_PROJECT') or 'hanoi-land-law') + '.pages.dev'
@@ -21,10 +23,12 @@ def main():
         'CORS_ORIGINS':origin,'GEMINI_MODEL':settings.gemini_model,'EMBEDDING_MODEL':settings.embedding_model,
         'LLM_PROVIDER':settings.llm_provider,'CLOUDFLARE_LLM_MODEL':settings.cloudflare_llm_model,
         'GROQ_API_KEY':settings.groq_api_key.get_secret_value(),'GROQ_MODEL':settings.groq_model,
-        'NVIDIA_API_KEY':settings.nvidia_api_key.get_secret_value(),'NVIDIA_MODEL':settings.nvidia_model,
+        'NVIDIA_MODEL':settings.nvidia_model,
         'EMBEDDING_PROVIDER':settings.embedding_provider,'EMBEDDING_DIMENSIONS':str(settings.embedding_dimensions),
         'CLOUDFLARE_ACCOUNT_ID':settings.cloudflare_account_id,'CLOUDFLARE_AI_API_TOKEN':settings.cloudflare_ai_api_token.get_secret_value(),
         'TRUST_PROXY_HEADERS':'false','MAX_CONCURRENT_REQUESTS':'2','TURN_TIMEOUT_SECONDS':'90','SESSION_RETENTION_DAYS':'7'}
+    if settings.llm_provider == 'nvidia':
+        desired['NVIDIA_API_KEY'] = settings.nvidia_api_key.get_secret_value()
     Settings(_env_file=None,**{key.lower():value for key,value in desired.items()})
     with httpx.Client(base_url='https://api.render.com/v1',timeout=45,headers={'Authorization':'Bearer '+token}) as client:
         r = client.get('/services/'+service_id)
@@ -40,6 +44,8 @@ def main():
         current = {item['envVar']['key']:item['envVar']['value'] for item in r.json()}
         for key in ('GLOBAL_DAILY_LLM_LIMIT','GLOBAL_DAILY_EMBEDDING_LIMIT','GLOBAL_DAILY_EMBEDDING_ITEM_LIMIT'):
             current.pop(key, None)
+        if settings.llm_provider != 'nvidia':
+            current.pop('NVIDIA_API_KEY', None)
         current.update(desired)
         r = client.put(f'/services/{service_id}/env-vars',json=[{'key':k,'value':v} for k,v in current.items()])
         if r.status_code not in (200,201):

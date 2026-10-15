@@ -21,16 +21,20 @@ services:
       - key: GEMINI_MODEL
         value: gemini-3.5-flash-lite
       - key: LLM_PROVIDER
-        value: cloudflare
+        value: groq
       - key: CLOUDFLARE_LLM_MODEL
         value: '@cf/qwen/qwen3-30b-a3b-fp8'
       - key: EMBEDDING_MODEL
-        value: '@cf/baai/bge-m3'
+        value: multilingual-e5-small-onnx-q8-window-v1
       - key: EMBEDDING_PROVIDER
-        value: cloudflare
+        value: local_onnx
       - key: EMBEDDING_DIMENSIONS
-        value: 1024
+        value: 384
       - key: CLOUDFLARE_ACCOUNT_ID
         sync: false
       - key: CLOUDFLARE_AI_API_TOKEN
         sync: false
+      - key: GROQ_API_KEY
+        sync: false
+      - key: GROQ_MODEL
+        value: openai/gpt-oss-20b

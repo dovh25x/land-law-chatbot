@@ -130,3 +130,11 @@ Tích hợp theo [API Nemotron 3 Super chính thức](https://docs.api.nvidia.co
 Sau khi điền khóa: chạy `land-law preflight --live`, kiểm tra ca pháp luật thật ở cả hai chế độ trên fingerprint NVIDIA mới, rồi `python scripts/configure_render.py` và `python scripts/configure_github.py` trước deploy. Hai script từ chối đổi provider live nếu thiếu NVIDIA_API_KEY. Workflow evaluation nhận secret NVIDIA_API_KEY và variable NVIDIA_MODEL; runner phát hiện thay khóa khi đang chờ quota. Báo cáo Groq cũ không chứng nhận model NVIDIA. Chưa có khóa thì chỉ hoàn tất tích hợp local; website hiện có tiếp tục provider đang chạy.
 
 NVIDIA đã xác thực bằng API thật ngày 14/10/2026 và triển khai trên Render. Sáu core executions ở hai chế độ đã source-review, fingerprint `2d7103d1`; toàn bộ 185 tests và CI đạt. Corpus release E5 không đổi. Snapshot công bố Groq trước đó cùng runtime evidence được giữ bất biến trong `reports/publications/`; activation evidence NVIDIA lưu riêng. Full benchmark/certification cũ không được quy thành chất lượng NVIDIA.
+
+## Groq cho bản MVP học thuật
+
+Bản chốt từ 15/10/2026: `LLM_PROVIDER=groq`, `GROQ_MODEL=openai/gpt-oss-20b`; `GROQ_API_KEY` chỉ đặt trong `.env`, Render và GitHub Secrets. Không chọn NVIDIA và không triển khai khóa NVIDIA lên backend. `scripts/configure_render.py` từ chối đổi sang Groq khi thiếu khóa; luôn giữ Free Docker service được chỉ định. Không có cơ chế tự đổi model hoặc nâng gói.
+
+Kiểm tra khóa bằng `.venv/bin/land-law preflight --live`, cấu hình bằng `.venv/bin/python scripts/configure_render.py`, đồng bộ Actions bằng `scripts/configure_github.py`, rồi deploy và chạy `scripts/verify_live_demo.py`. Model hỗ trợ Structured Outputs theo [Groq Docs](https://console.groq.com/docs/structured-outputs); quota thực tế trả qua response headers, tham khảo [Rate Limits](https://console.groq.com/docs/rate-limits). HTTP429 trả giới hạn rõ ràng và checkpoint, không thay API key để vượt quota.
+
+Embedding vẫn là E5 ONNX Q8 384 chiều và release `corpus-de584c31fc95f9a2`. Đánh giá mới phải gắn với fingerprint Groq; mọi phần NVIDIA ở trên là lịch sử triển khai. Bộ đánh giá CLI gọi model thật và dùng corpus Supabase; kiểm chứng HTTPS/browser được lưu riêng. CLI không chịu giới hạn chống lạm dụng của khách truy cập nhưng vẫn tuân thủ quota provider. Không coi kiểm thử đơn vị hay đối chiếu ID nguồn là thẩm định pháp lý.

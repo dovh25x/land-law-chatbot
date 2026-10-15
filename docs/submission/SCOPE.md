@@ -8,7 +8,7 @@ Mục tiêu: minh họa xử lý dữ liệu văn bản, hybrid RAG, điều ph�
 
 - Giữ website https://hanoi-land-law.pages.dev và API https://land-law-chatbot.onrender.com.
 - Corpus hiện có: `corpus-de584c31fc95f9a2`, 69 tài liệu, 7.610 vector E5 ONNX Q8 384 chiều. Không embedding lại.
-- Model: NVIDIA `nvidia/nemotron-3-super-120b-a12b`; không chuyển model tự động.
+- Model: Groq `openai/gpt-oss-20b`; không chuyển model tự động.
 - Tập trung bồi thường, hỗ trợ, tái định cư; Vành đai 4 là ví dụ dự án chính. Các tính năng khác được giữ nhưng không mở rộng cam kết.
 - Bản cloud và mã nguồn có thể khác commit: xem receipt trong `reports/submission/` và `reports/deployment-current.json`. Không suy số liệu của bản local thành chất lượng bản cloud.
 - Dữ liệu là snapshot có ngày kiểm tra trong `/readyz`, không cam kết cập nhật hằng ngày.
