@@ -1,0 +1,25 @@
+{
+  "checked_at": "2026-10-15T04:47:17.361913+00:00",
+  "figma_file": "E8ntRTL3j3J29fhMM62mDk",
+  "reference_nodes": [
+    "5:2",
+    "5:137",
+    "5:274",
+    "6:77",
+    "7:152",
+    "7:310",
+    "7:430",
+    "7:592"
+  ],
+  "changes": "frontend only; existing backend/model/corpus not deployed or modified by this change",
+  "checks": {
+    "frontend_unit_tests": 2,
+    "desktop_mobile_e2e_tests": 18,
+    "typescript_build": "passed",
+    "secret_scan": "passed",
+    "diff_whitespace": "passed"
+  },
+  "screenshots_scope": "isolated Playwright fixtures; not legal benchmark",
+  "legal_acceptance": false,
+  "live_receipt": "reports/ui-redesign-live.json"
+}
