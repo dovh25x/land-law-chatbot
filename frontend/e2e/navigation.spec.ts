@@ -30,7 +30,7 @@ test('technical demo clearly discloses pending legal acceptance and coverage gap
     corpus_release:'reviewed-test-corpus',publication_profile:'technical_demo',quality_status:'acceptance_pending',
     checked_at:'2026-10-13T00:00:00Z',coverage_gaps:[{document_id:'missing',title:'Nguồn còn thiếu',reason:'Chưa có toàn văn đạt kiểm tra.'}]}}))
   await page.goto('/')
-  await expect(page.getByRole('note')).toContainText('Demo kỹ thuật — chưa nghiệm thu pháp lý.')
+  await expect(page.getByRole('note')).toContainText('Nguyên mẫu học thuật — chưa được thẩm định pháp lý độc lập.')
   await page.getByText('Các nguồn chưa đủ dữ liệu (1)').click()
   await expect(page.getByRole('note')).toContainText('Nguồn còn thiếu: Chưa có toàn văn đạt kiểm tra.')
 })

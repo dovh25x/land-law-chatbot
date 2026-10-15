@@ -1,3 +1,5 @@
+> **Phạm vi hiện hành:** đồ án học thuật theo [SCOPE](submission/SCOPE.md). Các mốc production và tiêu chí bên dưới được giữ như lịch sử, không còn là điều kiện nộp học phần. Không đổi nghĩa trạng thái nghiệm thu cũ.
+
 # Bằng chứng triển khai
 
 Cập nhật NVIDIA 14/10/2026: provider ưu tiên `nvidia`, model `nvidia/nemotron-3-super-120b-a12b`, fingerprint `2d7103d1`. Khóa thật đã xác thực, sáu kết quả core S01/S07/S09 được đối chiếu nguồn, 185 tests và CI `38503262312` đạt; peak Docker 353,75 MiB dưới giới hạn 512 MiB. Render đã triển khai commit `3d24a5a`; cả baseline và agentic trả lời qua HTTPS bằng NVIDIA, trích dẫn Điều104 khớp nguồn, cách ly phiên/trace/lịch sử đạt. Corpus/E5 giữ nguyên. Bằng chứng công bố Groq được giữ bất biến; báo cáo của cấu hình cũ không chứng nhận NVIDIA. Benchmark đầy đủ còn pending. Xem `reports/nvidia-integration.json` và `reports/live-demo.json` để xác nhận tình trạng kiểm tra HTTPS mới nhất.

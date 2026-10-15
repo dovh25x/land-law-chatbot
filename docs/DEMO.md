@@ -1,3 +1,5 @@
+> **Kịch bản hiện hành:** xem [demo đồ án](submission/DEMO.md). Nội dung bên dưới là kịch bản production/demo lịch sử, không phải yêu cầu nộp học phần.
+
 # Demo kỹ thuật khoảng 10 phút
 
 Mở https://hanoi-land-law.pages.dev. Corpus `corpus-de584c31fc95f9a2` đã công bố: 69 tài liệu/7.610 vector, NVIDIA `nvidia/nemotron-3-super-120b-a12b` và E5 ONNX 384 chiều. Nhãn “Demo kỹ thuật — chưa nghiệm thu pháp lý” và ngày kiểm tra nguồn luôn hiển thị. Benchmark đầy đủ còn pending; không trình bày tập core sáu lượt như tỷ lệ chất lượng toàn hệ thống.

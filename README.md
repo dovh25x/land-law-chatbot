@@ -1,6 +1,12 @@
-# Hà Nội · Pháp luật đất đai
+# Hanoi Land Law Assistant — đồ án liên ngành
 
 Web chatbot tiếng Việt dùng FastAPI, LangGraph, Gemini/Groq/Workers AI, E5 ONNX, PostgreSQL/pgvector và React. Hai chế độ baseline/agentic dùng cùng nguồn dữ liệu và model. Agent chỉ có công cụ đọc với tham số định kiểu, giới hạn 6 lần gọi LLM, 12 công cụ, hai vòng retrieval và 90 giây. Chỉ phát câu trả lời qua SSE sau kiểm tra căn cứ; trace là sự kiện thực thi.
+
+## Phạm vi bài nộp
+
+**Nguyên mẫu học thuật — chưa được thẩm định pháp lý độc lập.** Tập trung tra cứu bồi thường, hỗ trợ và tái định cư tại Hà Nội; Vành đai 4 là ví dụ chính. Giữ hệ thống hiện có, không yêu cầu đạt nghiệm thu production M0–M6 hay benchmark 120 câu để nộp học phần.
+
+Gói bài nộp: [phạm vi](docs/submission/SCOPE.md), [báo cáo](docs/submission/REPORT.md), [10 slide](docs/submission/SLIDES.md), [kịch bản và video](docs/submission/DEMO.md). Kết quả kiểm tra mới nằm riêng trong `reports/submission/`; báo cáo lịch sử bên dưới không thay thế kết quả của bản chốt.
 
 ## Trạng thái
 

@@ -25,3 +25,8 @@ reports/ui-*.png
 reports/ingest-progress.json
 .wrangler/
 models/
+
+# Submission recordings are local handoff artifacts, not source code.
+reports/submission/*.webm
+reports/submission/video/
+reports/submission/.evaluation.lock

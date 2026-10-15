@@ -13,7 +13,7 @@ try {
     const page = await context.newPage()
     page.on('pageerror', error => errors.push({viewport:name,message:error.message}))
     await page.goto(url,{waitUntil:'networkidle',timeout:180000})
-    await page.getByRole('note').filter({hasText:'Demo kỹ thuật — chưa nghiệm thu pháp lý.'}).waitFor({timeout:180000})
+    await page.getByRole('note').filter({hasText:'Nguyên mẫu học thuật — chưa được thẩm định pháp lý độc lập.'}).waitFor({timeout:180000})
     checks[`${name}_explicit_technical_label`] = true
     checks[`${name}_no_horizontal_overflow`] = await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)
     await page.screenshot({path:`reports/ui-live-${name}.png`,fullPage:true})
