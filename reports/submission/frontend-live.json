@@ -1,7 +1,15 @@
 {
   "passed": true,
-  "checked_at": "2026-10-15T08:44:13.652Z",
+  "checked_at": "2026-10-15T08:54:53.820Z",
   "checks": [
+    {
+      "reviewed_evaluation_rows": 20
+    },
+    {
+      "real_chat": true,
+      "citation_and_trace_opened": true,
+      "composer_height": 62
+    },
     {
       "width": 1440,
       "passed": true
@@ -15,5 +23,5 @@
       "passed": true
     }
   ],
-  "scope": "Public website UI without mocks; LLM chat checked separately."
+  "scope": "Public UI plus actual sourced LLM answer, source and trace."
 }

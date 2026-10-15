@@ -11,5 +11,11 @@
     "passed": 22,
     "seconds": 35.6
   },
-  "scope": "Local final runtime tests; deployment and live checks reported separately."
+  "scope": "Local final runtime tests; deployment and live checks reported separately.",
+  "ci": {
+    "commit": "c27c5aa084964e94815b0677f255ff36df47b2d6",
+    "run_id": 38708611111,
+    "conclusion": "success",
+    "checks": "Python 3.12 backend, frontend unit/build/E2E, Docker 512MiB runtime memory check"
+  }
 }

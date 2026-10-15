@@ -1,7 +1,7 @@
 {
   "passed": true,
-  "deploy_id": "dep-db894jhsrm7s73drkceg",
-  "backend_commit": "80f9797",
+  "deploy_id": "dep-db8982ivcj2c738mbqa0",
+  "backend_commit": "c27c5aa084964e94815b0677f255ff36df47b2d6",
   "model": "openai/gpt-oss-120b",
   "llm_provider": "groq",
   "legacy_keys_absent": true,
@@ -54,5 +54,9 @@
       }
     ]
   },
-  "scope": "Runtime deployment; twenty-case review pending publication."
+  "scope": "Final runtime and reviewed twenty-case evaluation published together.",
+  "evaluation_matches_active_release": true,
+  "evaluation_matches_active_configuration": true,
+  "ci_run": 38708611111,
+  "ci_conclusion": "success"
 }

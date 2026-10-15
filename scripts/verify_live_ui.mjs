@@ -21,6 +21,11 @@ try {
   if(!await page.locator('.content-page').innerText().then(t=>t.includes('hiện chỉ hỗ trợ Vành đai 4')))throw Error('Scope disclosure missing')
   if(await page.getByRole('tab').count())throw Error('Unexpected project tabs')
   if(width===1440 && process.argv.includes('--chat')) {
+    await page.getByRole('button',{name:'Đánh giá đồ án',exact:true}).click()
+    await page.locator('.evaluation-table tbody tr').last().waitFor()
+    if(await page.locator('.evaluation-table tbody tr').count()!==20)throw Error('Twenty-case table missing')
+    if(await page.locator('.evaluation-details pre').count())throw Error('Raw JSON exposed as evaluation UI')
+    checks.push({reviewed_evaluation_rows:20})
     await page.getByRole('button',{name:'Hỏi đáp pháp luật',exact:true}).click()
     await page.getByLabel('Câu hỏi pháp luật').fill('Điều 104 Luật Đất đai 2024 quy định chi phí di chuyển tài sản gồm những khoản nào?')
     await page.getByRole('button',{name:'Gửi câu hỏi'}).click()

@@ -25,3 +25,18 @@ Tài liệu học phần: https://drive.google.com/file/d/1jHi1UL_6FNm-6X_Hi30el
 
 ## Hoàn thành
 URL và local hoạt động; chat/hỏi tiếp/nguồn/trace đạt kiểm tra; build/tests/secret scan đạt; 20 câu được khóa trước chạy và rà soát trên đúng model/corpus/runtime; công khai lỗi; docs thống nhất; mã cần thiết commit/push; không tuyên bố nghiệm thu pháp lý.
+
+## Luồng và tiêu chí chức năng
+
+| Mã | Nhu cầu người dùng | Kết quả kiểm tra |
+|---|---|---|
+| F01 | Hỏi quy định chung | Có đáp án kèm nguồn hoặc nêu thiếu chứng cứ; không đưa bản nháp trước verify |
+| F02 | Hỏi tiếp văn bản vừa nêu | Sử dụng lịch sử cùng phiên, không lấy lịch sử phiên khác |
+| F03 | Đối chiếu nguồn | Mở đoạn/điều/trang và liên kết nguồn chính thức |
+| F04 | Hiểu agent đã làm gì | Trace có công cụ, tài liệu, trạng thái; không có suy nghĩ nội bộ |
+| F05 | Xem Vành đai 4 | Chỉ dự án này có điều khiển; câu hỏi dự án khác được thông báo ngoài phạm vi |
+| F06 | Đọc khi đã có trả lời | Composer một dòng không phủ câu trả lời trên 320/390 px và desktop |
+| F07 | Xem mức độ kiểm chứng | Bảng 20 câu có lỗi/giới hạn, model/corpus/fingerprint khớp hoặc cảnh báo không khớp |
+| F08 | Chạy lại bài nộp | README và backup corpus công khai khôi phục local; không yêu cầu secret của chủ repo |
+
+Thứ tự ưu tiên: luồng chat/nguồn/trace và bảo mật → phạm vi/UX → đánh giá/tài liệu. Bản bàn giao đã chọn Groq `openai/gpt-oss-120b` sau probe structured output và chạy thực tế. Không có mục tiêu chứng minh agentic vượt baseline. Không đặt SLA cho hosting miễn phí.
