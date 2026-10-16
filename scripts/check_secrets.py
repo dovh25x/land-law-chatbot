@@ -1,12 +1,44 @@
-"""Fail when any locally configured secret accidentally appears in tracked candidate outputs."""
+"""Scan source and public artifacts without requiring locally configured secrets."""
+import re
+import subprocess
 from pathlib import Path
+
 from dotenv import dotenv_values
 
-values = dotenv_values(".env")
-secrets = [v for k, v in values.items() if v and len(v) > 12 and any(x in k for x in ("KEY", "TOKEN", "SECRET", "DATABASE_URL"))]
-paths = [p for folder in ("backend", "frontend/dist", "docs", "reports") for p in Path(folder).rglob("*")
-         if p.is_file() and p.suffix in {".py", ".js", ".html", ".json", ".md", ".css"}]
-leaked = [str(p) for p in paths if any(s in p.read_text(errors="ignore") for s in secrets)]
-if leaked:
-    raise SystemExit("Secret present in outputs: " + ", ".join(leaked))
-print("No configured secret found in source, frontend bundle or reports.")
+PATTERNS = (
+    re.compile(r'\bgsk_[A-Za-z0-9]{20,}\b'),
+    re.compile(r'\bgh[pousr]_[A-Za-z0-9]{30,}\b'),
+    re.compile(r'\bgithub_pat_[A-Za-z0-9_]{40,}\b'),
+    re.compile(r'\bAKIA[A-Z0-9]{16}\b'),
+    re.compile(r'-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----'),
+    re.compile(r'postgres(?:ql)?://[^\s:/]+:[^\s@]{4,}@'),
+)
+SUFFIXES = {'.py', '.ts', '.tsx', '.js', '.mjs', '.html', '.json', '.jsonl', '.md', '.css', '.yml', '.yaml', '.toml'}
+
+
+def find_leaks(paths, secrets=()):
+    leaked = []
+    for path in paths:
+        if not path.is_file() or path.suffix not in SUFFIXES:
+            continue
+        content = path.read_text(errors='ignore')
+        if any(secret in content for secret in secrets) or any(pattern.search(content) for pattern in PATTERNS):
+            leaked.append(str(path))
+    return sorted(set(leaked))
+
+
+def main():
+    values = dotenv_values('.env')
+    secrets = [v for k, v in values.items() if v and len(v) > 12
+               and any(x in k for x in ('KEY', 'TOKEN', 'SECRET', 'DATABASE_URL'))]
+    tracked = subprocess.check_output(['git', 'ls-files', '-co', '--exclude-standard', '-z']).decode().split('\0')
+    paths = {Path(p) for p in tracked if p}
+    paths.update(Path('frontend/dist').rglob('*'))
+    leaked = find_leaks(paths, secrets)
+    if leaked:
+        raise SystemExit('Potential secret in files: ' + ', '.join(leaked))
+    print('No configured secret or recognized credential pattern found in source and public artifacts.')
+
+
+if __name__ == '__main__':
+    main()

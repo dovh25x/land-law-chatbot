@@ -89,7 +89,7 @@ export function TracePanel({ trace, onClose }: { trace: Trace[]; onClose: () => 
 export function DataPanel({ readiness, connecting, onRefresh, onClose }: {
   readiness: import('./api').Readiness | null; connecting: boolean; onRefresh: () => void; onClose: () => void,
 }) {
-  const publicationLabel = 'Nguyên mẫu học thuật — chưa được thẩm định pháp lý độc lập.'
+  const publicationLabel = 'Bản thử nghiệm — chưa được thẩm định pháp lý độc lập.'
   return <SidePanel title="Dữ liệu và phạm vi sử dụng" icon={<FileText size={20}/>} onClose={onClose} footer={
     <button className="button button-secondary" onClick={onRefresh} disabled={connecting}>{connecting ? <><LoaderCircle size={16} className="spin"/>Đang kết nối…</> : 'Kiểm tra lại kết nối'}</button>
   }>

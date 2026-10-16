@@ -7,7 +7,7 @@ import typer
 from pydantic import BaseModel, SecretStr
 
 from .config import Settings
-from .evaluation import evaluate, configuration_fingerprint
+from .evaluation import evaluate, evaluate_retrieval, configuration_fingerprint
 from .publication import validate_corpus
 from .ingest import build_corpus, json_write
 from .provider import Budget, GroqProvider
@@ -109,9 +109,9 @@ def ingest(offline: bool = False, embed: bool = False, ocr: bool = False, cached
 @app.command()
 def benchmark(split: str = "smoke", release_id: str | None = None, limit: int | None = None,
               concurrency: int = typer.Option(1,min=1,max=2), case_ids: str | None = None, mode: str = "agentic"):
-    """Run/resume the academic twenty-case agentic suite."""
-    if split != "smoke":
-        raise typer.BadParameter("Only the academic smoke split is supported")
+    """Run/resume a frozen agentic regression suite."""
+    if split not in {"smoke", "supplemental"}:
+        raise typer.BadParameter("Supported splits: smoke, supplemental")
     if mode != 'agentic':
         raise typer.BadParameter('Only agentic evaluation is supported')
     modes = ('agentic',)
@@ -126,6 +126,21 @@ def benchmark(split: str = "smoke", release_id: str | None = None, limit: int | 
         finally:
             if provider:
                 await provider.close()
+            store.close()
+    typer.echo(json.dumps(asyncio.run(run()), ensure_ascii=False, indent=2))
+
+
+@app.command('retrieval-benchmark')
+def retrieval_benchmark(split: str = 'smoke'):
+    """Measure frozen gold-chunk retrieval without LLM generation."""
+    async def run():
+        settings = Settings()
+        store = Store(settings)
+        provider = GroqProvider(settings, store)
+        try:
+            return await evaluate_retrieval(settings, store, provider, split)
+        finally:
+            await provider.close()
             store.close()
     typer.echo(json.dumps(asyncio.run(run()), ensure_ascii=False, indent=2))
 

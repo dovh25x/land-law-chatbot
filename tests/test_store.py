@@ -176,3 +176,23 @@ def test_encrypted_restore_preserves_session_isolation_and_rejects_plaintext_ses
     assert not restored.authenticate(sid, 'another-token')
     assert restored.state('active_release') == 'r1'
     restored.close()
+
+
+def test_open_article_keeps_opening_scope_alongside_relevant_continuation(store):
+    from conftest import document, release
+    from landlaw.models import Chunk
+    from landlaw.security import digest
+    doc = document()
+    passages = [
+        'Điều 12. Điều kiện hỗ trợ. 1. Các đối tượng gồm hộ gia đình theo quy định.',
+        'Đối tượng khác được quy định theo phạm vi của khoản này.',
+        '2. Các trường hợp khoản 1 được hỗ trợ khi có giấy chứng nhận hoặc giấy xác nhận.',
+        'Có quyết định giao đất thay giấy chứng nhận theo các điều kiện đã quy định.',
+    ]
+    doc.chunks = [Chunk(id=f'law-{i}', document_id='law', text=text, locator='Điều 12', page=i+1,
+                        checksum=digest(text)) for i, text in enumerate(passages)]
+    release(store, [doc])
+    opened = store.open_document('law', locator='Điều 12', query='giấy chứng nhận hoặc quyết định giao đất')
+    assert len(opened.chunks) == 3
+    assert opened.chunks[0].id == 'law-0'
+    assert {c.id for c in opened.chunks} == {'law-0', 'law-2', 'law-3'}

@@ -21,9 +21,9 @@ try {
   if(!await page.locator('.content-page').innerText().then(t=>t.includes('hiện chỉ hỗ trợ Vành đai 4')))throw Error('Scope disclosure missing')
   if(await page.getByRole('tab').count())throw Error('Unexpected project tabs')
   if(width===1440 && process.argv.includes('--chat')) {
-    await page.getByRole('button',{name:'Đánh giá đồ án',exact:true}).click()
-    await page.locator('.evaluation-table tbody tr').last().waitFor()
-    if(await page.locator('.evaluation-table tbody tr').count()!==20)throw Error('Twenty-case table missing')
+    await page.getByRole('button',{name:'Đánh giá hệ thống',exact:true}).click()
+    await page.locator('.evaluation-table').last().locator('tbody tr').last().waitFor()
+    if(await page.locator('.evaluation-table').last().locator('tbody tr').count()!==20)throw Error('Twenty-case table missing')
     if(await page.locator('.evaluation-details pre').count())throw Error('Raw JSON exposed as evaluation UI')
     checks.push({reviewed_evaluation_rows:20})
     await page.getByRole('button',{name:'Hỏi đáp pháp luật',exact:true}).click()
@@ -43,7 +43,7 @@ try {
   await page.screenshot({path:`reports/ui-mvp-${width}.png`,fullPage:true})
   checks.push({width,passed:true});await page.close()
  }
- await mkdir('reports/submission',{recursive:true})
- await writeFile('reports/submission/frontend-live.json',JSON.stringify({passed:true,checked_at:new Date().toISOString(),checks,scope:process.argv.includes('--chat')?'Public UI plus actual sourced LLM answer, source and trace.':'Public website UI without mocks; LLM chat checked separately.'},null,2)+'\n')
+ await mkdir('reports',{recursive:true})
+ await writeFile('reports/frontend-live.json',JSON.stringify({passed:true,checked_at:new Date().toISOString(),checks,scope:process.argv.includes('--chat')?'Public UI plus actual sourced LLM answer, source and trace.':'Public website UI without mocks; LLM chat checked separately.'},null,2)+'\n')
  console.log(JSON.stringify(checks))
 }finally{await browser.close()}

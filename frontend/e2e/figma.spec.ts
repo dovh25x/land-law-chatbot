@@ -82,7 +82,7 @@ test('project selection prepares the actual chat filters and preserves project/d
 
 test('evaluation makes a mismatched report explicit instead of presenting invented metrics', async ({ page }) => {
   await page.goto('/')
-  await navigate(page, 'Đánh giá đồ án')
+  await navigate(page, 'Đánh giá hệ thống')
   await expect(page.getByRole('status')).toContainText('Chưa hoàn tất đánh giá trên cấu hình đang hoạt động')
   await expect(page.locator('.evaluation-summary')).toContainText('Chưa có báo cáo khớp')
   await expect(page.locator('.evaluation-details pre')).toHaveCount(0)

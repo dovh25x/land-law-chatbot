@@ -795,11 +795,14 @@ async def test_alternative_conditions_preserve_eligibility_prerequisite(store,se
         'Giấy chứng nhận không phải là điều kiện duy nhất để được bồi thường về đất.',citation_ids=['law-1'])])
     result=await Agent(store,FakeProvider(settings,draft=draft)).run(ChatRequest(session_id=sid,
         message='Giấy chứng nhận có phải điều kiện duy nhất không?',mode='agentic'),noop)
-    assert result.status=='answered'
-    assert 'khoản 1' in result.verified_claims[0].text
-    if not qualification:
-        assert 'Các trường hợp quy định tại khoản 1 Điều này được bồi thường về đất khi có một trong các điều kiện sau đây:' in result.verified_claims[0].text
-        assert any('giữ nguyên văn điều kiện' in e.summary for e in result.trace)
+    assert result.status == ('answered' if qualification else 'insufficient_evidence')
+    if qualification:
+        assert 'khoản 1' in result.verified_claims[0].text
+    else:
+        assert not result.verified_claims
+        assert 'Lưu ý điều kiện áp dụng' not in result.content
+        assert draft.claims[0].text.endswith('được bồi thường về đất.')
+        assert any('cần nêu điều kiện về đối tượng' in e.summary for e in result.trace)
 
 
 @pytest.mark.parametrize('letter', ['e','đ'])
@@ -1008,3 +1011,52 @@ async def test_other_projects_are_explicitly_outside_mvp_without_model_calls(sto
     assert result.status=='insufficient_evidence'
     assert 'chỉ hỗ trợ Vành đai 4' in result.content
     assert result.llm_calls==0 and not result.citations
+
+
+async def test_clause_examples_cannot_be_moved_to_a_different_clause_even_if_model_approves(store, settings):
+    source = ('Điều 12. Điều kiện hỗ trợ. '
+              '1. Đối tượng gồm: a) Cộng đồng dân cư có công trình tín ngưỡng; b) Tổ chức tôn giáo hợp pháp. '
+              '2. Các trường hợp quy định tại khoản 1 Điều này được hỗ trợ khi có một trong các điều kiện sau đây: '
+              'a) Có giấy xác nhận; b) Có quyết định của cơ quan có thẩm quyền.')
+    doc = document(text=source)
+    doc.chunks[0].locator = 'Điều 12'
+    release(store, [doc]); sid, _ = session(store)
+    text = ('Các trường hợp phải thuộc đối tượng khoản 1 Điều này. '
+            'Điều kiện tại khoản 2 Điều 12, ví dụ cộng đồng dân cư có công trình tín ngưỡng.')
+    draft = Draft(status='answered', claims=[Claim(text=text, citation_ids=['law-1'])])
+    result = await Agent(store, FakeProvider(settings, draft=draft)).run(
+        ChatRequest(session_id=sid, message='Quy định về các điều kiện hỗ trợ theo Điều 12?'), noop)
+    assert result.status == 'insufficient_evidence'
+    assert not result.verified_claims
+    assert draft.claims[0].text == text
+
+
+async def test_semantic_issue_blocks_a_contradictorily_approved_claim(store, settings):
+    release(store); sid, _ = session(store)
+    verification = Verification(supported_claim_indexes=[0], issues=['Claim 0: chủ thể không được nguồn chứng minh'])
+    result = await Agent(store, FakeProvider(settings, verification=verification)).run(
+        ChatRequest(session_id=sid, message='Điều kiện bồi thường được quy định thế nào?'), noop)
+    assert result.status == 'insufficient_evidence'
+    assert not result.verified_claims and not result.citations
+
+
+async def test_private_guarantee_requests_clarification_without_consuming_tools(store, settings):
+    release(store); sid, _ = session(store)
+    result = await Agent(store, FakeProvider(settings)).run(
+        ChatRequest(session_id=sid, message='Nhà tôi bị thu hồi thì chắc chắn được tái định cư đúng không?'), noop)
+    assert result.status == 'clarification_needed'
+    assert result.llm_calls == result.tool_calls == 0
+
+
+async def test_alternative_documents_cannot_become_cumulative_requirements(store, settings):
+    source = ('Điều 12. Điều kiện. 2. Các trường hợp quy định tại khoản 1 Điều này được hỗ trợ '
+              'khi có một trong các điều kiện sau đây: a) Có giấy chứng nhận; b) Có quyết định giao đất.')
+    doc = document(text=source); doc.chunks[0].locator = 'Điều 12'
+    release(store, [doc]); sid, _ = session(store)
+    text = ('Đối tượng phải thuộc khoản 1 Điều này. Ngoài giấy chứng nhận, người được hỗ trợ '
+            'còn phải có quyết định giao đất theo khoản 2 Điều 12.')
+    draft = Draft(status='answered', claims=[Claim(text=text, citation_ids=['law-1'])])
+    result = await Agent(store, FakeProvider(settings, draft=draft)).run(
+        ChatRequest(session_id=sid, message='Giấy chứng nhận có phải điều kiện duy nhất để được hỗ trợ?'), noop)
+    assert result.status == 'insufficient_evidence'
+    assert not result.verified_claims

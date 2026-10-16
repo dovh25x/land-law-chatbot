@@ -367,7 +367,16 @@ class Store:
             for number in articles:
                 candidates = self.rows(base + ' AND (locator=? OR locator=?) ORDER BY page,id LIMIT 20',
                                        (release_id, doc_id, f'Điều {number}', f'Điều {number} · ngữ cảnh'))
-                groups.append(sorted(candidates, key=relevance, reverse=True))
+                ranked = sorted(candidates, key=relevance, reverse=True)
+                if not clause:
+                    # Opening an article must retain its opening scope/actors.
+                    # Ranking only by query overlap can select continuation
+                    # lists and lose the clause to which they belong.
+                    opening = next((row for row in candidates if re.search(
+                        rf'\bĐiều\s+{number}\s*[.:]', row['text'], re.I)), None)
+                    if opening:
+                        ranked = [opening] + [row for row in ranked if row['id'] != opening['id']]
+                groups.append(ranked)
             rows = [group[0] for group in groups if group]
             extras = sorted([row for group in groups for row in group[1:]], key=relevance, reverse=True)
             rows += extras[:3-len(rows)]

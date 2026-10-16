@@ -3,9 +3,11 @@ import contextvars
 import hashlib
 import json
 import re
+import math
+import statistics
 import time
 import uuid
-from datetime import timedelta
+from datetime import date, timedelta
 from pathlib import Path
 
 from .agent import Agent
@@ -62,22 +64,17 @@ def configuration_fingerprint(settings):
     configuration = {"model": settings.generation_model, "llm_provider": settings.llm_provider, "embedding_model": settings.embedding_model,
                      "dimensions": settings.embedding_dimensions, 'embedding_provider':settings.embedding_provider,
                      "timeout_seconds": settings.turn_timeout_seconds,
+                     "storage_backend": "postgresql" if settings.database_url.get_secret_value() else "sqlite",
                      "llm_budget": 6, "tool_budget": 12, "retrieval_rounds": 2}
     return hashlib.sha256(json.dumps(configuration, sort_keys=True).encode()+b"".join(p.read_bytes() for p in files)).hexdigest()
 
 
 async def evaluate(settings, store, provider, split="smoke", release_id=None, limit=None, concurrency=1, case_ids=None, modes=("agentic",)):
-    if split != 'smoke' or tuple(modes) != ('agentic',):
-        raise ValueError('Only the twenty-case academic agentic suite is supported')
-    if concurrency not in {1,2}:
+    if tuple(modes) != ('agentic',):
+        raise ValueError('Only agentic evaluation is supported')
+    if concurrency not in {1, 2}:
         raise ValueError('Evaluation concurrency must be one or two')
-    path = settings.data_dir / ('evaluation/smoke.jsonl' if split=='smoke' else 'evaluation/questions.jsonl')
-    fingerprint = hashlib.sha256(path.read_bytes()).hexdigest()
-    freeze=json.loads(path.with_name('freeze.json').read_text())
-    if freeze.get('suite_sha256') != fingerprint or freeze.get('cases') != 20:
-        raise ValueError('Academic suite freeze mismatch')
-    cases = [c for c in dataset(path) if c["split"] == split]
-    if len(cases) != 20:raise ValueError('Exactly twenty cases are required')
+    cases, fingerprint = frozen_dataset(settings.data_dir, split)
     if not provider.configured:
         raise ValueError("Cannot evaluate without the selected provider API key")
     release = store.release(release_id, metadata_only=True)
@@ -88,7 +85,7 @@ async def evaluate(settings, store, provider, split="smoke", release_id=None, li
     run_id += '-agentic'
     records_path = settings.reports_dir / "runs" / run_id / "records.json"
     metadata_path = records_path.with_name("metadata.json")
-    metadata = json.loads(metadata_path.read_text()) if metadata_path.exists() else {"as_of": str(local_date()), "configuration_sha256": configuration}
+    metadata = json.loads(metadata_path.read_text()) if metadata_path.exists() else {"as_of": str(local_date()), "configuration_sha256": configuration, "suite_sha256": fingerprint, "split": split, "storage_backend": "postgresql" if store.postgres else "sqlite"}
     json_write(metadata_path, metadata)
     records = json.loads(records_path.read_text()) if records_path.exists() else []
     attempts_path=records_path.parent/'attempts'
@@ -97,9 +94,12 @@ async def evaluate(settings, store, provider, split="smoke", release_id=None, li
     agent = Agent(store, provider)
     case_label=contextvars.ContextVar('evaluation_case',default=None)
     generate=provider.generate
+    generated_cases = set()
     async def capture_structured_output(schema,instruction,payload,budget):
         result=await generate(schema,instruction,payload,budget)
         label=case_label.get()
+        if label and schema.__name__ == 'Draft':
+            generated_cases.add(label)
         if label and re.fullmatch(r'[A-Za-z0-9_-]{1,80}',label):
             output=result.model_dump(mode='json')
             checksum=hashlib.sha256(json.dumps(output,sort_keys=True,ensure_ascii=False).encode()).hexdigest()
@@ -165,7 +165,9 @@ async def evaluate(settings, store, provider, split="smoke", release_id=None, li
             result = await agent.run(ChatRequest(session_id=session_id,message=case['question'],
                 project=case.get('project'),as_of=case.get('as_of') or metadata['as_of'],mode=mode),emit,release['id'])
         finally:case_label.reset(label_token)
-        return {'case_id':case['id'],'mode':mode,'result':result.model_dump(mode='json')}
+        return {'case_id':case['id'],'mode':mode,
+                'answer_origin': 'llm' if f"{case['id']}-{mode}" in generated_cases else 'deterministic',
+                'result':result.model_dump(mode='json')}
     for start in range(0,len(pending),concurrency):
         cooldown=provider_ready_at-time.monotonic()
         if cooldown>0:
@@ -182,13 +184,13 @@ async def evaluate(settings, store, provider, split="smoke", release_id=None, li
                 'llm_calls':result['result']['llm_calls'],'checkpoint_records':len(records)}},ensure_ascii=False),flush=True)
         if any(r['result']['status'] in {'limited','error'} for r in results):
             break
-    review_path = settings.data_dir / ('evaluation/smoke-reviews.json' if split=='smoke' else 'evaluation/reviews.json')
+    review_path = settings.data_dir / f'evaluation/{split}-reviews.json'
     report = summarise(records, cases, fingerprint, json.loads(review_path.read_text()) if review_path.exists() else {})
     report.update({"run_id": run_id, "release": release["id"], "model": provider.settings.generation_model,
                    "llm_provider": provider.settings.llm_provider,
                    "embedding_model": provider.settings.embedding_model, "split": split,
                    "corpus_embedded": release.get("embedded", False), "publication_candidate": False,
-                   "notes": ["Academic evaluation only; not independent legal certification."], **metadata})
+                   "notes": ["Technical regression evaluation; not independent legal certification."], **metadata})
     report['execution_modes'] = list(modes)
     report['execution_concurrency'] = concurrency
     attempts=[json.loads(p.read_text()) for p in attempts_path.glob('*.json')]
@@ -214,3 +216,81 @@ def summarise(records, cases, fingerprint, reviews=None):
 
 def public_report(report):
     return {**report,'acceptance_passed':False,'quality_metrics_status':'awaiting_review'}
+
+
+def frozen_dataset(data_dir, split):
+    if split not in {'smoke', 'supplemental'}:
+        raise ValueError('Supported splits: smoke, supplemental')
+    path = data_dir / 'evaluation' / f'{split}.jsonl'
+    freeze_path = path.with_name('freeze.json') if split == 'smoke' else path.with_suffix('.freeze.json')
+    fingerprint = hashlib.sha256(path.read_bytes()).hexdigest()
+    freeze = json.loads(freeze_path.read_text())
+    cases = dataset(path)
+    expected = 20 if split == 'smoke' else 4
+    if (freeze.get('suite_sha256') != fingerprint or freeze.get('cases') != expected
+            or len(cases) != expected or any(c.get('split') != split for c in cases)):
+        raise ValueError('Evaluation suite freeze mismatch')
+    return cases, fingerprint
+
+
+def report_metrics(rows):
+    """Descriptive statistics, with explicit denominators and missing telemetry."""
+    groups = {}
+    for name, statuses in {
+        'answered': {'answered'}, 'clarification': {'clarification_needed'},
+        'insufficient': {'insufficient_evidence'}, 'execution_failure': {'limited', 'error'},
+    }.items():
+        selected = [row for row in rows if row['status'] in statuses]
+        groups[name] = {'cases': len(selected), **{
+            verdict: sum(r.get('review') == verdict for r in selected)
+            for verdict in ('pass', 'partial', 'fail', 'awaiting_review')}}
+    usage = {}
+    for key in ('elapsed_ms', 'token_usage', 'llm_calls', 'tool_calls'):
+        values = [row['answer'][key] for row in rows if key in row.get('answer', {})]
+        ordered = sorted(values)
+        usage[key] = {'samples': len(values), 'total': sum(values),
+                      'median': statistics.median(values) if values else None,
+                      'p95': ordered[math.ceil(.95 * len(ordered)) - 1] if ordered else None}
+    origins = {name: sum(row.get('answer_origin', 'unknown') == name for row in rows)
+               for name in ('llm', 'deterministic', 'unknown')}
+    gold_rows = [row for row in rows if row.get('gold_chunk_ids')]
+    observed = [row for row in gold_rows if 'retrieved_chunk_ids' in row.get('answer', {})]
+    hits = sum(bool(set(row['gold_chunk_ids']) & set(row['answer']['retrieved_chunk_ids'][:8]))
+               for row in observed)
+    return {'groups': groups, 'usage': usage, 'answer_origin': origins,
+            'llm_used_cases': sum(row.get('answer', {}).get('llm_calls', 0) > 0 for row in rows),
+            'evidence_hit_at_8': {'eligible_cases': len(gold_rows), 'measured_cases': len(observed),
+                                 'hits': hits, 'rate': hits / len(observed) if observed else None,
+                                 'scope': 'First eight agent evidence candidates; not a standalone retrieval benchmark.'},
+            'scope': 'Descriptive single-run statistics; no SLA or overall legal accuracy claim.'}
+
+
+async def evaluate_retrieval(settings, store, provider, split='smoke'):
+    """Read-only hybrid retrieval evaluation; no generation or session writes."""
+    cases, fingerprint = frozen_dataset(settings.data_dir, split)
+    release = await asyncio.to_thread(store.release, None, True)
+    if not release:
+        raise ValueError('No corpus release to evaluate')
+    rows = []
+    for case in cases:
+        if not case.get('gold_chunk_ids'):
+            continue
+        started = time.monotonic()
+        vectors = await asyncio.to_thread(provider.local_embeddings.embed_many, [case['question']], None, True)
+        vector = provider.normalize_vector(vectors[0], settings.embedding_dimensions)
+        hits = await asyncio.to_thread(store.search, case['question'], vector, case.get('project'),
+                                      release['id'], settings.embedding_model,
+                                      date.fromisoformat(case['as_of']) if case.get('as_of') else local_date())
+        ids = [item.chunk.id for item in hits[:8]]
+        rows.append({'id': case['id'], 'has_history': bool(case.get('history')), 'gold_chunk_ids': case['gold_chunk_ids'], 'retrieved_chunk_ids': ids,
+                     'hit': bool(set(ids) & set(case['gold_chunk_ids'])),
+                     'elapsed_ms': round((time.monotonic() - started) * 1000)})
+    report = {'checked_at': utcnow().isoformat(), 'split': split, 'suite_sha256': fingerprint,
+              'release': release['id'], 'configuration_sha256': configuration_fingerprint(settings),
+              'backend': 'postgresql' if store.postgres else 'sqlite', 'k': 8,
+              'eligible_cases': len(rows), 'hits': sum(r['hit'] for r in rows),
+              'hit_rate': sum(r['hit'] for r in rows) / len(rows) if rows else None,
+              'generation_calls': 0, 'results': rows,
+              'scope': 'Raw-question hybrid search without history rewriting, article routing or legal-relation expansion; any gold chunk in top 8 counts as a hit. Not legal answer accuracy.'}
+    json_write(settings.reports_dir / 'retrieval' / f'{split}.json', report)
+    return report

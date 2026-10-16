@@ -74,6 +74,7 @@ class State(TypedDict, total=False):
     freshness_question: bool
     place_clarification: bool
     general_rule_question: bool
+    opened_relations: set
 
 
 def applicability(doc: Document, as_of: date, chunk=None):
@@ -184,6 +185,45 @@ def quote_matches(quote, text):
             return False
         start=position+len(span)
     return True
+
+
+def clause_attribution_issues(claim, evidence):
+    """Reject literal list examples attributed to a different numbered clause.
+
+    This is a narrow structural check, not a legal entailment classifier. Only
+    explicit clause/article attributions and unambiguous source list prefixes
+    are compared; the semantic verifier still checks the whole proposition.
+    """
+    issues = []
+    for sentence in re.split(r'[.;\n]', normalize(claim.text)):
+        references = set(re.findall(r'\bkhoan\s+(\d+)\s+dieu\s+(\d+[a-z]?)\b', sentence))
+        if len(references) != 1:
+            continue
+        clause, article = next(iter(references))
+        blocks = {}
+        cited_documents = {e.document.id for e in evidence if e.chunk.id in claim.citation_ids}
+        for item in evidence:
+            if item.document.id not in cited_documents:
+                continue
+            if not re.match(rf'^dieu {article}(?:\s|$)', normalize(item.chunk.locator)):
+                continue
+            text = normalize(item.chunk.text)
+            matches = list(re.finditer(r'(?<![\d/])\b(\d+)\.\s+', text))
+            for index, match in enumerate(matches):
+                end = matches[index + 1].start() if index + 1 < len(matches) else len(text)
+                blocks.setdefault(match[1], []).append(text[match.end():end])
+        target = ' '.join(blocks.get(clause, []))
+        if not target:
+            continue
+        for number, texts in blocks.items():
+            if number == clause:
+                continue
+            for body in texts:
+                for point in re.split(r'\b[a-zđ]\)\s+', body)[1:]:
+                    prefix = ' '.join(re.findall(r'\w+', point)[:4])
+                    if len(prefix.split()) == 4 and prefix in sentence and prefix not in target:
+                        issues.append(f'Nội dung ví dụ thuộc khoản {number}, không chứng minh điều kiện tại khoản {clause} Điều {article}')
+    return list(dict.fromkeys(issues))
 
 
 def claim_source_dates(text, as_of):
@@ -462,6 +502,9 @@ class Agent:
     async def tools(self, state):
         if state["plan"].out_of_scope or state.get('freshness_question') or not state["release"]:
             return state
+        if state.get('private_entitlement_check'):
+            await self.event(state, 'tool', 'Thiếu hồ sơ cá nhân; hỏi bổ sung trước khi truy xuất quy định áp dụng.')
+            return state
         if state["rounds"]:
             calls = [ToolCall(name="search_law", query=state["verification"].followup_query or state["request"].message)]
         else:
@@ -507,7 +550,8 @@ class Agent:
                              sorted({e.document.id for e in results}))
         # Follow legal relationships; deterministic scope checks are never delegated entirely to the LLM.
         catalogue = {d['id']: d for d in state['release']['documents']}
-        opened = set()
+        opened = state.setdefault('opened_relations', set())
+        opened.update((e.document.id, e.chunk.locator) for e in found.values())
         operative_ids=set()
         question=normalize(state['request'].message)
         requested_numbers=set(re.findall(r'(?<![\d/])\d{1,6}/(?:19|20)\d{2}(?!/\d)',question))
@@ -752,6 +796,14 @@ class Agent:
             state["draft"] = await self.provider.generate(Draft,
                 "Answer the exact question directly, in Vietnamese. Put ALL legal content in at most three concise claims "
                 "with citation_ids from allowed_citation_ids (C1, C2...), never document IDs. summary is not displayed. "
+                "Keep each claim atomic: separate eligible actors from alternative qualifying documents/conditions. "
+                "Answer only the requested proposition. Do not enumerate actor categories when asked whether a "
+                "document is the only qualifying condition; instead retain the prerequisite clause and explain "
+                "the documentary alternatives with OR, never as cumulative AND requirements. "
+                "Never list types of people or organizations as examples of documentary conditions in a different clause. "
+                "For lists of assistance, retain material eligibility limits and explicitly say that categories are not "
+                "automatic entitlements for every household. A cross-reference alone does not explain its conditions: "
+                "explain them only when its actual text is supplied, otherwise disclose that limit. "
                 "answered requires at least one sourced claim. Each cited passage must prove the exact rule, actor, scope "
                 "and applicable date: a preamble or act name is insufficient. Do not substitute a similar clause for the one asked. "
                 "Preserve numbered clauses and legal point letters exactly; use bullets if you are renumbering a summary. "
@@ -1015,23 +1067,15 @@ class Agent:
             cited_text=' '.join(evidence[i].chunk.text for i in claim.citation_ids if i in evidence)
             normalized_source=normalize(cited_text)
             prerequisites=re.findall(r'cac truong hop quy dinh tai khoan (\d+) dieu nay duoc .{0,120}?khi co',normalized_source)
-            if prerequisites and 'dieu kien' in normalized_claim and 'duoc' in normalized_claim:
+            if prerequisites and 'duoc' in normalized_claim:
                 all_claims=normalize(' '.join(c.text for c in draft.claims))
                 for clause in prerequisites:
                     if not re.search(rf'(?:thuoc|truong hop|doi tuong).{{0,80}}khoan {clause}\b|\bkhoan {clause}.{{0,80}}(?:truong hop|doi tuong|thuoc)',all_claims):
-                        # Preserve an explicit source qualification verbatim;
-                        # never infer eligibility or replace the model's rule.
-                        # The resulting complete claim still goes through the
-                        # same semantic verifier and applicability checks.
-                        opener=re.search(rf'Các trường hợp quy định tại khoản\s+{clause}\s+Điều này được[^.;:]{{1,200}}?khi có[^.;:]{{1,80}}:',cited_text,re.IGNORECASE)
-                        if opener:
-                            claim=claim.model_copy(update={'text':claim.text+' Lưu ý điều kiện áp dụng: “'+opener[0]+'”.'})
-                            draft.claims[index]=claim
-                            normalized_claim=normalize(claim.text)
-                            await self.event(state,'verification','Đã giữ nguyên văn điều kiện về đối tượng trong đoạn dẫn trước khi kiểm tra kết luận.',
-                                docs=sorted({evidence[i].document.id for i in claim.citation_ids if i in evidence}))
-                        else:
-                            structural_issues.append(f'Claim {index}: các điều kiện thay thế chỉ áp dụng cho trường hợp thuộc khoản {clause}; cần nêu điều kiện về đối tượng trước khi kết luận')
+                        structural_issues.append(f'Claim {index}: các điều kiện thay thế chỉ áp dụng cho trường hợp thuộc khoản {clause}; cần nêu điều kiện về đối tượng trước khi kết luận')
+            if ('mot trong cac dieu kien' in normalized_source
+                    and any(term in normalized_claim for term in ('con phai co', 'dong thoi phai co', 'tat ca cac dieu kien'))):
+                structural_issues.append(f'Claim {index}: nguồn quy định điều kiện thay thế, không chứng minh yêu cầu đồng thời các điều kiện')
+            structural_issues.extend(f'Claim {index}: {issue}' for issue in clause_attribution_issues(claim, list(evidence.values())))
             for clause,article in re.findall(r'\bkhoan\s+(\d+)\s+dieu\s+(\d+[a-z]?)\b',normalized_claim):
                 reference=f'khoan {clause} dieu {article}'
                 # A cross-reference in the cited operative text can prove its
@@ -1157,7 +1201,13 @@ class Agent:
         checked = await self.provider.generate(Verification,
             "Verify only stated claims against the actual question and as_of, not hypothetical cases. summary is "
             "intentionally absent and never an issue. Support a claim only if every cited passage proves its precise "
-            "rule, actor, scope and applicability. Act names/preambles do not prove provisions. Do not replace the "
+            "rule, actor, scope and applicability. A matching source span only proves provenance, not entailment. "
+            "All claim indexes are ZERO-BASED. issues contains defects only, each starting Claim <index>:; "
+            "never put a positive approval in issues. Check subject, prerequisite, alternative condition, "
+            "exception and consequence separately. Reject a claim "
+            "that assigns an example to a clause containing different types of facts, even if both examples appear "
+            "somewhere in the article. Lists of assistance must not imply automatic entitlement for every household. "
+            "Act names/preambles do not prove provisions. Do not replace the "
             "requested clause with another similar one. Record issues for unsupported statements in next_steps or "
             "failure to answer the direct question. Preserve Chủ tịch UBND versus UBND exactly. "
             "Check every stated clause number and point letter against its operative text: an article heading, "
@@ -1199,13 +1249,13 @@ class Agent:
             if set(claim.citation_ids)-proven:
                 checked.issues.append(f'Claim {index}: thiếu trích đoạn nguyên văn chứng minh tại đúng citation_id')
                 structural_issues.append(f'Claim {index}: thiếu chứng cứ trích dẫn trực tiếp')
-        blocked = {int(match.group(1)) for issue in structural_issues if (match := re.match(r"Claim (\d+):", issue))}
+        blocked = {int(match.group(1)) for issue in checked.issues if (match := re.match(r"Claim (\d+):", issue))}
         allowed = {i for i in range(len(draft.claims)) if all(c in evidence for c in draft.claims[i].citation_ids)
                    and i not in blocked and not all(evidence[c].applicability=='unverified' or
                    (evidence[c].applicability=='future' and draft.claims[i].kind!='applicability') for c in draft.claims[i].citation_ids)}
         checked.supported_claim_indexes = sorted(set(checked.supported_claim_indexes) & allowed)
         state["verification"] = checked
-        summary=f"{len(checked.supported_claim_indexes)}/{len(draft.claims)} kết luận được hỗ trợ; {len(checked.issues)} vấn đề."
+        summary=f"{len(checked.supported_claim_indexes)}/{len(draft.claims)} kết luận qua kiểm tra với chứng cứ trong corpus; {len(checked.issues)} vấn đề."
         if checked.issues:
             summary+=' '+redact('; '.join(checked.issues[:3]))[:500]
         await self.event(state, "verification", summary)

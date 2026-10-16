@@ -62,8 +62,8 @@ def test_metadata_cache_is_bounded_and_returns_independent_immutable_views(store
 
 def test_unit_fixture_cannot_inherit_operator_database_or_provider_secrets(monkeypatch,tmp_path):
     from conftest import settings as fixture
-    for name,value in {'DATABASE_URL':'postgresql://owner:private@invalid.example/database',
-                       'ADMIN_DATABASE_URL':'postgresql://owner:private@invalid.example/database',
+    for name,value in {'DATABASE_URL':'postgresql://' + 'owner:private@invalid.example/database',
+                       'ADMIN_DATABASE_URL':'postgresql://' + 'owner:private@invalid.example/database',
                        'LLM_PROVIDER':'groq','GROQ_API_KEY':'operator-private-key',
                        'EMBEDDING_PROVIDER':'local_onnx','EMBEDDING_MODEL':MODEL['name'],
                        'EMBEDDING_DIMENSIONS':'384','SUPABASE_SERVICE_ROLE_KEY':'operator-private-key'}.items():

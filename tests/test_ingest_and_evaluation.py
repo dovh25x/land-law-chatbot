@@ -246,3 +246,26 @@ async def test_reviewed_html_never_selects_unrelated_sidebar_pdf(settings,monkey
        'effective_from':'2024-08-01','raw_paths':['data/raw/html-doc.html'],'raw_checksums':{'html-doc.html':digest(raw)}}
     doc=await ingestion.collect_source(source,settings,None)
     assert calls==[url] and doc.checksum==digest(raw)
+
+
+async def test_retrieval_benchmark_skips_no_gold_cases_and_never_generates_or_writes_sessions(store, settings, monkeypatch):
+    from types import SimpleNamespace
+    from conftest import release
+    from landlaw.evaluation import evaluate_retrieval
+    from landlaw.provider import GroqProvider
+    import landlaw.evaluation as evaluation
+    release(store)
+    cases = [{'id': 'gold', 'question': 'điều kiện bồi thường', 'gold_chunk_ids': ['law-1']},
+             {'id': 'scope', 'question': 'ngoài phạm vi', 'gold_chunk_ids': []}]
+    monkeypatch.setattr(evaluation, 'frozen_dataset', lambda *_: (cases, 'frozen'))
+    class LocalEncoder:
+        def embed_many(self, texts, title, query):
+            assert texts == ['điều kiện bồi thường'] and query is True
+            return [[1.] + [0.] * 383]
+    provider = SimpleNamespace(local_embeddings=LocalEncoder(), normalize_vector=GroqProvider.normalize_vector)
+    report = await evaluate_retrieval(settings, store, provider)
+    assert report['backend'] == 'sqlite'
+    assert report['eligible_cases'] == report['hits'] == 1
+    assert report['hit_rate'] == 1 and report['generation_calls'] == 0
+    assert not store.rows('SELECT * FROM sessions')
+    assert not store.rows('SELECT * FROM counters')

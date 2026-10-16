@@ -1,18 +1,21 @@
 """Authenticated HTTPS smoke; only observed results, never provider output in logs."""
 import asyncio
+import argparse
 import json
 from pathlib import Path
 import httpx
 from landlaw.config import Settings
 from landlaw.evaluation import configuration_fingerprint
+from landlaw.security import utcnow
 
 
-async def main():
-    base='https://land-law-chatbot.onrender.com'
+async def main(base, output):
+    base=base.rstrip('/')
     async with httpx.AsyncClient(timeout=180) as client:
         ready=await client.get(base+'/readyz');ready.raise_for_status()
         evaluation=(await client.get(base+'/api/v1/evaluations/latest')).json()
-        if evaluation.get('active_configuration_sha256')!=configuration_fingerprint(Settings()):
+        if (evaluation.get('active_configuration_sha256')!=configuration_fingerprint(Settings())
+                or not evaluation.get('matches_active_configuration') or not evaluation.get('matches_active_release')):
             raise ValueError('Deployed configuration differs from local code/model')
         s=(await client.post(base+'/api/v1/sessions')).json()
         headers={'Authorization':'Bearer '+s['token']}
@@ -39,10 +42,15 @@ async def main():
             raise ValueError('Project scope guard failed')
         history=await client.get(base+f"/api/v1/sessions/{s['session_id']}/messages",headers=headers)
         if len(history.json()['messages'])!=6:raise ValueError('History persistence failed')
-        path=Path('reports/submission/live-demo.json');path.parent.mkdir(parents=True,exist_ok=True)
-        path.write_text(json.dumps({'passed':True,'configuration_sha256':configuration_fingerprint(Settings()),
+        path=output;path.parent.mkdir(parents=True,exist_ok=True)
+        path.write_text(json.dumps({'passed':True,'checked_at':utcnow().isoformat(),'base_url':base,'configuration_sha256':configuration_fingerprint(Settings()),
             'matches_evaluation':evaluation.get('matches_active_configuration'),'checks':checks},ensure_ascii=False,indent=2)+'\n')
         print(json.dumps({'passed':True,'turns':len(checks)}))
 
 
-if __name__=='__main__':asyncio.run(main())
+if __name__=='__main__':
+    parser=argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--base-url',default='https://land-law-chatbot.onrender.com')
+    parser.add_argument('--output',type=Path,default=Path('reports/live-demo.json'))
+    args=parser.parse_args()
+    asyncio.run(main(args.base_url,args.output))

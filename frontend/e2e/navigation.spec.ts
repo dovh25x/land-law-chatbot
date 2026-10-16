@@ -24,7 +24,7 @@ test('responsive navigation honestly shows unpublished corpus and benchmark', as
   await page.getByRole('button', { name: 'Thư viện văn bản', exact: true }).click()
   await expect(page.getByRole('heading', { name: 'Corpus chưa được công bố' })).toBeVisible()
   if (await page.getByRole('button', { name: 'Mở menu điều hướng' }).isVisible()) await page.getByRole('button', { name: 'Mở menu điều hướng' }).click()
-  await page.getByRole('button', { name: 'Đánh giá đồ án', exact: true }).click()
+  await page.getByRole('button', { name: 'Đánh giá hệ thống', exact: true }).click()
   await expect(page.getByRole('heading', { name: 'Chưa có kết quả kiểm tra trên bản này' })).toBeVisible()
   expect(errors).toEqual([])
 })
@@ -35,7 +35,7 @@ test('technical demo clearly discloses pending legal acceptance and coverage gap
     checked_at:'2026-10-13T00:00:00Z',coverage_gaps:[{document_id:'missing',title:'Nguồn còn thiếu',reason:'Chưa có toàn văn đạt kiểm tra.'}]}}))
   await page.goto('/')
   await page.getByRole('button', { name: 'Thông tin dữ liệu và kết nối' }).click()
-  await expect(page.getByRole('note')).toContainText('Nguyên mẫu học thuật — chưa được thẩm định pháp lý độc lập.')
+  await expect(page.getByRole('note')).toContainText('Bản thử nghiệm — chưa được thẩm định pháp lý độc lập.')
   await page.getByText('Các nguồn chưa đủ dữ liệu (1)').click()
   await expect(page.getByRole('dialog')).toContainText('Nguồn còn thiếu: Chưa có toàn văn đạt kiểm tra.')
 })
@@ -93,4 +93,24 @@ test('answered composer is compact and does not cover the end of the answer', as
     expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBeTruthy()
     await page.evaluate(()=>sessionStorage.clear())
   }
+})
+
+test('evaluation separates answer quality from refusals and labels absent citations', async ({ page }) => {
+  await page.route('**/api/v1/evaluations/latest', r => r.fulfill({ json: {
+    status: 'reviewed', matches_active_release: true, matches_active_configuration: true, model: 'fixture-model',
+    results: [{ pass: 1, partial: 0, fail: 1 }],
+    metrics: { groups: {
+      answered: { cases: 1, pass: 0, partial: 0, fail: 1 },
+      insufficient: { cases: 1, pass: 1, partial: 0, fail: 0 },
+    }, answer_origin: { llm: 1, deterministic: 1, unknown: 0 } },
+    case_results: [{ id: 'fixture-refusal', status: 'insufficient_evidence', review: 'pass', seconds: 0.1,
+      citations_valid: null, note: 'Thông báo ngoài phạm vi trong fixture.' }],
+  } }))
+  await page.goto('/')
+  if (await page.getByRole('button', { name: 'Mở menu điều hướng' }).isVisible()) await page.getByRole('button', { name: 'Mở menu điều hướng' }).click()
+  await page.getByRole('button', { name: 'Đánh giá hệ thống', exact: true }).click()
+  await expect(page.getByText('Trả lời nội dung', { exact: true })).toBeVisible()
+  await expect(page.getByText('Thiếu chứng cứ / ngoài phạm vi', { exact: true })).toBeVisible()
+  await expect(page.getByText('Không áp dụng', { exact: true })).toBeVisible()
+  await expect(page.getByText(/không phải độ chính xác trả lời pháp luật/)).toBeVisible()
 })
