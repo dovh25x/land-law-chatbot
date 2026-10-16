@@ -1060,3 +1060,27 @@ async def test_alternative_documents_cannot_become_cumulative_requirements(store
         ChatRequest(session_id=sid, message='Giấy chứng nhận có phải điều kiện duy nhất để được hỗ trợ?'), noop)
     assert result.status == 'insufficient_evidence'
     assert not result.verified_claims
+
+
+async def test_planner_keeps_relevant_sources_beyond_catalogue_prefix_with_bounded_context(store, settings, monkeypatch):
+    import json
+    docs = [document(f'doc-{i}') for i in range(60)]
+    for doc in docs:
+        doc.title = 'Văn bản về các điều kiện theo nguồn chính thức. ' * 15
+    payload = release(store, docs)
+    monkeypatch.setattr(store, 'article_candidates', lambda *_: [
+        {'document_id': 'doc-59', 'locator': f'Điều {i}', 'heading': 'Quy định hỗ trợ từ nguồn.'}
+        for i in range(1, 41)])
+    class InspectPlanner(FakeProvider):
+        async def generate(self, schema, instruction, context, budget):
+            assert schema is Plan
+            assert len(json.dumps(context, ensure_ascii=False)) < 6000
+            assert any(row[0] == 'doc-59' for row in context['catalogue'])
+            assert all(row[0] != 'doc-0' for row in context['catalogue'])
+            return Plan(tools=[ToolCall(name='search_law', query='các loại hỗ trợ')])
+    sid, _ = session(store)
+    state = {'request': ChatRequest(session_id=sid, message='Khi thu hồi đất có những loại hỗ trợ nào?'),
+             'release': payload, 'as_of': date(2024, 8, 2), 'history': [], 'evidence': [],
+             'budget': Budget(), 'trace': [], 'emit': noop}
+    result = await Agent(store, InspectPlanner(settings)).plan(state)
+    assert result['plan'].tools[0].name == 'search_law'

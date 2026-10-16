@@ -408,6 +408,12 @@ class Agent:
             catalogue=self.catalogue(state['release'])
             suggested=await asyncio.to_thread(self.store.article_candidates,request.message,
                                               state['release']['id'],state['as_of'],request.project)
+            # Keep the planner below the free provider's per-minute budget.
+            # These are source-derived candidates, not benchmark answers; a
+            # search_law call can still search the whole eligible corpus.
+            suggested = suggested[:12]
+            candidate_ids = {item['document_id'] for item in suggested}
+            catalogue = [item for item in catalogue if item['id'] in candidate_ids] if candidate_ids else catalogue[:12]
             catalogue_fields=None
             if self.provider.settings.llm_provider == 'groq':
                 catalogue_fields=['id','document_number','title','project','effective_from','effective_to']
@@ -419,6 +425,9 @@ class Agent:
                     "open_article for a known document_id and locator; check_effectivity for a known document; "
                     "candidate_articles contain actual source headings, not conclusions. Prefer opening the relevant "
                     "article(s) for a substantive legal question; search_law can supplement unknown provisions. "
+                    "For a question asking the categories/types of a rule, open its overview/list provision first, "
+                    "not just a specialized provision about one category. The catalogue is a bounded suggestion "
+                    "list, not the full corpus; use search_law if it does not cover the question. "
                     "normalize_place for place aliases. Use IDs from catalogue, never invent IDs. "
                     "Prefer one call for a simple question; use search_law when the document or provision is unknown. "
                     "Out_of_scope only for questions unrelated to Hanoi land law/planning. General rules need no invented private case. "

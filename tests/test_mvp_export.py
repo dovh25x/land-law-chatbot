@@ -23,13 +23,14 @@ def test_export_rejects_a_different_configuration_before_writing_report(tmp_path
     assert not output.exists()
 
 
-def test_export_does_not_transfer_an_old_review_to_a_new_answer(tmp_path, monkeypatch):
+@pytest.mark.parametrize('status', ['clarification_needed', 'limited'])
+def test_export_does_not_transfer_an_old_review_to_a_new_answer(tmp_path, monkeypatch, status):
     monkeypatch.chdir(tmp_path)
     run = tmp_path / 'run';run.mkdir()
     output = tmp_path / 'output';output.mkdir()
     source = tmp_path / 'data/evaluation';source.mkdir(parents=True)
     (source / 'smoke.jsonl').write_text(json.dumps({'id':'S1','question':'Demo','rubric':['Check'],'gold_chunk_ids':[]})+'\n')
-    answer = {'status':'clarification_needed','corpus_release':'r1','model':'demo-model',
+    answer = {'status':status,'corpus_release':'r1','model':'demo-model',
               'elapsed_ms':10,'content':'Need facts','citations':[]}
     (run / 'records.json').write_text(json.dumps([{'case_id':'S1','mode':'agentic','result':answer}]))
     (run / 'metadata.json').write_text('{"configuration_sha256":"config"}')
@@ -45,6 +46,13 @@ def test_export_does_not_transfer_an_old_review_to_a_new_answer(tmp_path, monkey
     assert report['legal_acceptance'] is False
     checksum = hashlib.sha256(json.dumps(answer, ensure_ascii=False, sort_keys=True).encode()).hexdigest()
     assert report['results'][0]['answer_sha256']==checksum
+    if status == 'limited':
+        (output / 'reviews.json').write_text(json.dumps({'S1': {'answer_sha256':checksum,'verdict':'fail','note':'Provider quota prevented completion.'}}))
+        module.export(run, output, release)
+        reviewed = json.loads((output / 'evaluation.json').read_text())
+        assert reviewed['status'] == 'reviewed'
+        assert reviewed['execution_successful'] is False
+        assert reviewed['metrics']['groups']['execution_failure']['fail'] == 1
 
 
 def test_metrics_separate_behaviors_generation_and_missing_citation_telemetry():

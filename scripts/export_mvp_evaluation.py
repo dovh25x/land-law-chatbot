@@ -54,9 +54,11 @@ def export(run_dir, output, release_path, suite_path=Path("data/evaluation/smoke
             'review_note': review.get('note', '') if reviewed else '',
             'review_method': review.get('review_method', 'unspecified') if reviewed else 'awaiting_review',
             'answer_sha256': checksum})
-    complete = len(rows) == len(cases) and all(r['status'] not in {'error', 'limited'} for r in rows)
+    complete = len(rows) == len(cases)
+    execution_successful = complete and all(r['status'] not in {'error', 'limited'} for r in rows)
     all_reviewed = complete and all(r['review'] in {'pass', 'partial', 'fail'} for r in rows)
     report = {'checked_at': utcnow().isoformat(), 'status': 'reviewed' if all_reviewed else 'awaiting_review' if complete else 'partial',
+        'execution_successful': execution_successful,
         'transport': 'operator_cli', 'storage_backend': metadata.get('storage_backend', 'unknown'), 'mode': 'agentic', 'model': Settings().generation_model,
         'identity': {'release': release['id'], 'configuration_sha256': metadata['configuration_sha256']},
         'suite_sha256': hashlib.sha256(suite_path.read_bytes()).hexdigest(),
@@ -86,7 +88,7 @@ def export(run_dir, output, release_path, suite_path=Path("data/evaluation/smoke
     lines += ['', '## Kết quả theo hành vi', '', '| Nhóm | Số ca | Đạt | Một phần | Lỗi | Chưa rà soát |', '|---|---:|---:|---:|---:|---:|']
     lines += [f"| {name} | {g['cases']} | {g['pass']} | {g['partial']} | {g['fail']} | {g['awaiting_review']} |" for name, g in report['metrics']['groups'].items()]
     lines += ['', 'Số đạt của toàn bộ suite gồm cả hỏi lại và từ chối; không phải độ chính xác trả lời pháp luật.',
-              'Nguồn đáp án: ' + json.dumps(report['metrics']['answer_origin'], ensure_ascii=False) + '. unknown: artifact cũ không ghi nhận nguồn sinh.',
+              'Luồng xử lý (có bước sinh Draft bằng LLM, kể cả khi bị chặn sau kiểm chứng): ' + json.dumps(report['metrics']['answer_origin'], ensure_ascii=False) + '. unknown: artifact cũ không ghi nhận nguồn sinh.',
               '', '## Thống kê lượt chạy', '', '| Chỉ số | Số mẫu | Tổng | Median | p95 |', '|---|---:|---:|---:|---:|']
     lines += [f"| {name} | {v['samples']} | {v['total']} | {v['median']} | {v['p95']} |" for name, v in report['metrics']['usage'].items()]
     lines += ['', 'Thống kê mô tả một lượt chạy CLI, không phải SLA. Khớp citation chỉ xác nhận nguồn gốc, không chứng minh diễn giải đúng.']
@@ -111,7 +113,7 @@ if __name__ == '__main__':
         rows = report['results']
         if any(r['citations_valid'] is False for r in rows):
             raise SystemExit('Refusing public summary: citation integrity check failed')
-        summary = {k: report[k] for k in ('status', 'checked_at', 'model', 'mode', 'scope', 'suite_sha256', 'storage_backend', 'review_methods')}
+        summary = {k: report[k] for k in ('status', 'checked_at', 'model', 'mode', 'scope', 'suite_sha256', 'storage_backend', 'review_methods', 'execution_successful')}
         summary.update({'split': args.suite.stem, 'cases': len(rows), 'release': report['identity']['release'],
             'configuration_sha256': report['identity']['configuration_sha256'], 'acceptance_passed': False,
             'independent_legal_certification': False, 'transport': 'operator_cli',

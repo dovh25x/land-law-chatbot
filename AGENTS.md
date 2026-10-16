@@ -19,6 +19,8 @@ README dành cho người chạy và sử dụng sản phẩm; file này là đ�
 
 Nguồn chính thức → parse HTML/PDF hoặc OCR ngoại tuyến → chia đoạn theo điều/khoản/trang → checksum, metadata và quan hệ → E5 → snapshot → SQLite local hoặc PostgreSQL/pgvector cloud. Frontend gọi FastAPI; graph chạy plan → tools → synthesize → verify → finish, có truy xuất bổ sung/sửa đáp án trong ngân sách.
 
+Planner chỉ nhận tối đa 12 tiêu đề nguồn liên quan và danh mục tương ứng; đây là gợi ý, không giới hạn corpus mà search_law có thể tìm. Câu hỏi về các nhóm/loại cần mở điều khoản tổng quan trước điều khoản riêng một nhóm.
+
 Hybrid retrieval kết hợp từ khóa, vector, tiêu đề và số hiệu/điều bằng RRF: từ khóa giữ độ chính xác của viện dẫn, vector hỗ trợ cách diễn đạt tự nhiên. E5 ONNX Q8 giảm RAM khi chạy hosting nhỏ. SQLite phục vụ tái lập local; lexical search khác PostgreSQL, nên kết quả retrieval phải ghi rõ backend.
 
 Groq GPT-OSS 120B là model hiện tại. Không tự đổi provider/model hoặc tăng gói hosting. Chỉ có một pipeline agentic; không tuyên bố vượt baseline khi chưa có so sánh cùng điều kiện. Không thêm reranker, fine-tuning, multi-agent, GIS hoặc cập nhật nguồn tự động ngoài yêu cầu.
@@ -56,6 +58,7 @@ Backend dùng provider giả và database tạm; E2E dùng API intercept. Các k
 - `land-law retrieval-benchmark --split smoke` đo hybrid retrieval trên ca có gold, không gọi generation. Không tính câu ngoài phạm vi hoặc không có gold vào mẫu số. Ghi rõ backend SQLite/PostgreSQL.
 - Export bằng `scripts/export_mvp_evaluation.py --run-dir <run> --output <report-dir>`; suite bổ sung dùng `--suite data/evaluation/supplemental.jsonl`. Không trộn corpus/model/fingerprint.
 - Review trong `<report-dir>/reviews.json` phải gắn `answer_sha256` của đúng đáp án, verdict pass/partial/fail và lý do đối chiếu nguồn. Không chuyển review cũ sang đáp án mới; ghi rõ người/công cụ hỗ trợ rà soát và giới hạn thẩm định.
+- `status=reviewed` chỉ có nghĩa mọi ca đã được thực hiện và rà soát, kể cả ca lỗi được chấm fail. `execution_successful` và nhóm lỗi thực thi được ghi riêng; không loại ca quota khỏi mẫu số.
 - Chỉ dùng `--public-summary reports/latest.json` khi tất cả ca của suite chính đã chạy và review. Tách mẫu số trả lời nội dung, hỏi lại, thiếu chứng cứ/ngoài phạm vi và lỗi thực thi; số đạt toàn suite không phải độ chính xác pháp luật.
 - Ghi nhận bước sinh Draft bằng LLM riêng với lần gọi planner/verifier. Artifact cũ không có telemetry phải ghi unknown, không suy ra có sinh đáp án chỉ từ llm_calls.
 - Median/p95, token và số lần gọi là thống kê mô tả của lượt chạy, không phải SLA. Citation không có thì kiểm tra nguồn là không áp dụng.

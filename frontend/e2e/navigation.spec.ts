@@ -99,6 +99,8 @@ test('evaluation separates answer quality from refusals and labels absent citati
   await page.route('**/api/v1/evaluations/latest', r => r.fulfill({ json: {
     status: 'reviewed', matches_active_release: true, matches_active_configuration: true, model: 'fixture-model',
     results: [{ pass: 1, partial: 0, fail: 1 }],
+    supplemental: {cases:4,completed:4,pass:0,partial:1,fail:3,execution_failures:2,note:'Câu hỏi tự nhiên được kiểm tra riêng; không gộp vào suite chính.'},
+    limitations: ['Verifier có thể bỏ sót diễn giải sai.'],
     metrics: { groups: {
       answered: { cases: 1, pass: 0, partial: 0, fail: 1 },
       insufficient: { cases: 1, pass: 1, partial: 0, fail: 0 },
@@ -112,5 +114,7 @@ test('evaluation separates answer quality from refusals and labels absent citati
   await expect(page.getByText('Trả lời nội dung', { exact: true })).toBeVisible()
   await expect(page.getByText('Thiếu chứng cứ / ngoài phạm vi', { exact: true })).toBeVisible()
   await expect(page.getByText('Không áp dụng', { exact: true })).toBeVisible()
+  await expect(page.getByText('Kiểm tra bổ sung', { exact: true })).toBeVisible()
+  await expect(page.getByText('Verifier có thể bỏ sót diễn giải sai.', { exact: true })).toBeVisible()
   await expect(page.getByText(/không phải độ chính xác trả lời pháp luật/)).toBeVisible()
 })

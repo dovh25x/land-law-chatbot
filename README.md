@@ -59,9 +59,9 @@ Mở http://127.0.0.1:5173. Nếu dùng Docker Compose, vẫn phải chuẩn b�
 
 ## Đánh giá và hạn chế
 
-[Báo cáo công bố](reports/latest.json) luôn gắn với corpus, model và fingerprint. Giao diện cảnh báo nếu báo cáo khác cấu hình đang chạy. Các kết quả chi tiết nằm trong `reports/`; báo cáo cũ không đại diện bản sửa mới.
+[Báo cáo công bố](reports/latest.json) luôn gắn với corpus, model và fingerprint. Giao diện cảnh báo nếu báo cáo khác cấu hình đang chạy. Xem [bộ chính](reports/evaluation/smoke/results.md), [bộ bổ sung](reports/evaluation/supplemental/results.md) và [đo retrieval](reports/retrieval/smoke.json). Báo cáo cũ không đại diện bản sửa mới.
 
-Bộ hồi quy chính có 20 câu, cộng 4 câu kiểm tra bổ sung khóa riêng trước khi sửa prompt. Kết quả tách nhóm trả lời nội dung, hỏi làm rõ và thiếu chứng cứ/ngoài phạm vi. Tổng số đạt của suite không phải độ chính xác trả lời pháp luật. Citation khớp corpus chỉ xác nhận xuất xứ; chất lượng diễn giải cần rà soát theo nguồn. Bộ câu hỏi nhỏ chưa chứng minh khả năng tổng quát; không có so sánh để kết luận agentic vượt RAG thường.
+Bộ hồi quy chính có 20 câu, cộng 4 câu kiểm tra bổ sung khóa riêng trước khi sửa prompt. Kết quả tách nhóm trả lời nội dung, hỏi làm rõ và thiếu chứng cứ/ngoài phạm vi. Tổng số đạt của suite không phải độ chính xác trả lời pháp luật. Citation khớp corpus chỉ xác nhận xuất xứ; chất lượng diễn giải cần rà soát theo nguồn. Câu hỏi tự nhiên không chỉ rõ văn bản có thể chọn sai phạm vi điều khoản; verifier vẫn có thể bỏ sót lỗi diễn giải. Lượt gọi thật còn có thể không hoàn tất vì quota hoặc định dạng đầu ra. Bộ bổ sung công khai riêng các lỗi này. Bộ câu hỏi nhỏ chưa chứng minh khả năng tổng quát; không có so sánh để kết luận agentic vượt RAG thường.
 
 SQLite và PostgreSQL dùng lexical search khác nhau; đánh giá retrieval ghi backend cụ thể. Độ trễ/token/số lần gọi là thống kê một lượt chạy, không phải SLA. Mốc kiểm tra corpus phải được giữ nguyên cho tới khi nguồn được kiểm tra lại thực sự.
 
