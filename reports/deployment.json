@@ -1,13 +1,16 @@
 {
-  "checked_at": "2026-10-16T11:03:11.012975+00:00",
+  "checked_at": "2026-10-16T11:17:56.036192+00:00",
   "passed": true,
-  "source_commit": "3c38d8b1b536e984c79d2710c9204d869068ec97",
-  "render_deploy_id": "dep-db90brjrjlhs73dp7g8g",
+  "source_commit": "8651dfb9430e7ead0baa000e1f50387048f73c16",
+  "render_deploy_id": "dep-db90f7brjlhs73dpiegg",
   "configuration_sha256": "095725ee7c62d6f6100a8f224e57546750fd97a6d797ad842d518892d99fe52f",
   "corpus_release": "corpus-de584c31fc95f9a2",
   "model": "openai/gpt-oss-120b",
   "readiness": "ready",
   "supplemental_visible_in_api": true,
-  "scope": "Live deployment identity/readiness verification; generation and UI checks are separate.",
-  "secret_rotation_applied": true
+  "scope": "Current live deployment identity/readiness/report verification; live LLM/API and browser probes were completed on the preceding deployment with the same runtime fingerprint. This deployment only publishes reports and verification-script updates.",
+  "secret_rotation_applied": true,
+  "main_review_pass": 18,
+  "main_review_partial": 2,
+  "supplemental_review_fail": 2
 }
