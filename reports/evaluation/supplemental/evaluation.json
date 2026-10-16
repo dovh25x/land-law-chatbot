@@ -1,5 +1,5 @@
 {
-  "checked_at": "2026-10-16T10:59:15.024306+00:00",
+  "checked_at": "2026-10-16T11:12:20.364113+00:00",
   "status": "reviewed",
   "execution_successful": false,
   "transport": "operator_cli",
@@ -223,7 +223,7 @@
       ],
       "answer_origin": "llm",
       "status": "limited",
-      "seconds": 67.586,
+      "seconds": 75.297,
       "citations_valid": null,
       "answer": {
         "status": "limited",
@@ -272,41 +272,33 @@
         "verified_claims": [],
         "as_of": "2024-08-02",
         "corpus_release": "corpus-de584c31fc95f9a2",
-        "trace_id": "080a81e3-9105-4c84-a357-6931db22a915",
+        "trace_id": "a3f59799-22ab-47d3-b18c-ccba0c61164f",
         "trace": [
+          {
+            "step": "routing",
+            "tool": "search_law",
+            "summary": "Planner chưa trả đúng schema sau retry; dùng tra cứu chỉ đọc và vẫn kiểm chứng câu trả lời.",
+            "document_ids": [],
+            "elapsed_ms": 13772
+          },
           {
             "step": "plan",
             "tool": null,
-            "summary": "Đã chọn 3 công cụ; chế độ agentic.",
+            "summary": "Đã chọn 1 công cụ; chế độ agentic.",
             "document_ids": [],
-            "elapsed_ms": 5029
+            "elapsed_ms": 13773
           },
           {
             "step": "tool",
-            "tool": "open_article",
-            "summary": "Thu được 1 đoạn chứng cứ.",
+            "tool": "search_law",
+            "summary": "Thu được 8 đoạn chứng cứ.",
             "document_ids": [
-              "luat-dat-dai-2024"
-            ],
-            "elapsed_ms": 5334
-          },
-          {
-            "step": "tool",
-            "tool": "open_article",
-            "summary": "Thu được 3 đoạn chứng cứ.",
-            "document_ids": [
-              "luat-dat-dai-2024"
-            ],
-            "elapsed_ms": 5654
-          },
-          {
-            "step": "tool",
-            "tool": "open_article",
-            "summary": "Thu được 2 đoạn chứng cứ.",
-            "document_ids": [
+              "luat-dat-dai-2024",
+              "nd-102-2024",
+              "nd-103-2024",
               "nd-88-2024"
             ],
-            "elapsed_ms": 5900
+            "elapsed_ms": 20359
           },
           {
             "step": "tool",
@@ -315,7 +307,7 @@
             "document_ids": [
               "luat-dat-dai-2024"
             ],
-            "elapsed_ms": 6155
+            "elapsed_ms": 20619
           },
           {
             "step": "tool",
@@ -324,7 +316,7 @@
             "document_ids": [
               "luat-dat-dai-2013"
             ],
-            "elapsed_ms": 6382
+            "elapsed_ms": 20824
           },
           {
             "step": "tool",
@@ -333,7 +325,7 @@
             "document_ids": [
               "luat-dat-dai-2024"
             ],
-            "elapsed_ms": 7085
+            "elapsed_ms": 21687
           },
           {
             "step": "applicability",
@@ -342,7 +334,7 @@
             "document_ids": [
               "luat-dat-dai-2024"
             ],
-            "elapsed_ms": 7085
+            "elapsed_ms": 21687
           },
           {
             "step": "tool",
@@ -351,7 +343,7 @@
             "document_ids": [
               "nd-88-2024"
             ],
-            "elapsed_ms": 7331
+            "elapsed_ms": 21908
           },
           {
             "step": "tool",
@@ -360,7 +352,7 @@
             "document_ids": [
               "nd-47-2014"
             ],
-            "elapsed_ms": 7579
+            "elapsed_ms": 22150
           },
           {
             "step": "tool",
@@ -369,7 +361,7 @@
             "document_ids": [
               "nd-88-2024"
             ],
-            "elapsed_ms": 7833
+            "elapsed_ms": 22403
           },
           {
             "step": "tool",
@@ -378,44 +370,41 @@
             "document_ids": [
               "nd-06-2020"
             ],
-            "elapsed_ms": 8098
+            "elapsed_ms": 22624
           },
           {
             "step": "applicability",
             "tool": "check_effectivity",
-            "summary": "Đã kiểm tra 5 quan hệ pháp lý theo thời điểm.",
+            "summary": "Đã kiểm tra 6 quan hệ pháp lý theo thời điểm.",
             "document_ids": [
               "nd-88-2024"
             ],
-            "elapsed_ms": 8098
+            "elapsed_ms": 22624
+          },
+          {
+            "step": "applicability",
+            "tool": "check_effectivity",
+            "summary": "Đã kiểm tra 2 quan hệ pháp lý theo thời điểm.",
+            "document_ids": [
+              "nd-102-2024"
+            ],
+            "elapsed_ms": 22631
+          },
+          {
+            "step": "applicability",
+            "tool": "check_effectivity",
+            "summary": "Đã kiểm tra 0 quan hệ pháp lý theo thời điểm.",
+            "document_ids": [
+              "nd-103-2024"
+            ],
+            "elapsed_ms": 22636
           },
           {
             "step": "synthesis",
             "tool": null,
             "summary": "Đã tạo bản trả lời; đang kiểm tra trước khi hiển thị.",
             "document_ids": [],
-            "elapsed_ms": 12598
-          },
-          {
-            "step": "verification",
-            "tool": null,
-            "summary": "1/2 kết luận qua kiểm tra với chứng cứ trong corpus; 2 vấn đề. Claim 0: không có bằng chứng trong các trích dẫn được cung cấp chứng minh rằng tiền bồi thường không quá 05 lần giá đất nông nghiệp; C2 chỉ đề cập đến mức hỗ trợ đào tạo, chuyển đổi nghề, không đề cập đến tiền bồi thường.; Claim 0: thiếu trích đoạn nguyên văn chứng minh tại đúng citation_id",
-            "document_ids": [],
-            "elapsed_ms": 16113
-          },
-          {
-            "step": "repair",
-            "tool": null,
-            "summary": "Đang sửa một lần theo các lỗi kiểm chứng trên cùng chứng cứ.",
-            "document_ids": [],
-            "elapsed_ms": 16127
-          },
-          {
-            "step": "synthesis",
-            "tool": null,
-            "summary": "Đã tạo bản trả lời; đang kiểm tra trước khi hiển thị.",
-            "document_ids": [],
-            "elapsed_ms": 43216
+            "elapsed_ms": 74206
           },
           {
             "step": "verification",
@@ -424,15 +413,15 @@
             "document_ids": [
               "luat-dat-dai-2024"
             ],
-            "elapsed_ms": 43242
+            "elapsed_ms": 74214
           }
         ],
         "missing_facts": [],
         "llm_calls": 6,
-        "embedding_calls": 0,
+        "embedding_calls": 1,
         "tool_calls": 12,
-        "token_usage": 13125,
-        "elapsed_ms": 67586,
+        "token_usage": 4001,
+        "elapsed_ms": 75297,
         "model": "openai/gpt-oss-120b",
         "embedding_model": "multilingual-e5-small-onnx-q8-window-v1",
         "mode": "agentic",
@@ -442,9 +431,9 @@
         "evidence_chunk_ids": []
       },
       "review": "fail",
-      "review_note": "Đạt trần 6 request trong khi retry/repair và xử lý quota; chưa có đáp án hoàn chỉnh. Không tính thông báo giới hạn là trả lời đạt. Chưa đủ bằng chứng rằng đã giải quyết sai phạm vi xuất hiện ở lượt cấu hình trước.",
+      "review_note": "Chạy lại ca lỗi sau thay khóa Groq vẫn không có đáp án: lỗi json_validate_failed và token/phút dẫn tới giới hạn 6 request. Giữ cả hai attempt, không tăng ngân sách hoặc chọn lần chạy đẹp.",
       "review_method": "Rà soát kỹ thuật có hỗ trợ AI theo đoạn nguồn và tiêu chí đã khóa; không phải thẩm định pháp lý độc lập",
-      "answer_sha256": "5b80471fa52ae1bf1e302bb68fad48acdb1f00a20c33900cefd6f4edb6c0c483"
+      "answer_sha256": "d9238552782ec4a262228d797a1404624f54bf8f89b67a7edeaaf1ad44a4616f"
     },
     {
       "id": "X03",
@@ -984,14 +973,14 @@
     "usage": {
       "elapsed_ms": {
         "samples": 4,
-        "total": 185185,
+        "total": 192896,
         "median": 46055.0,
-        "p95": 67586
+        "p95": 75297
       },
       "token_usage": {
         "samples": 4,
-        "total": 47642,
-        "median": 13104.0,
+        "total": 38518,
+        "median": 10209.5,
         "p95": 14098
       },
       "llm_calls": {
@@ -1023,8 +1012,8 @@
     "scope": "Descriptive single-run statistics; no SLA or overall legal accuracy claim."
   },
   "attempt_history": {
-    "available_attempts": 4,
-    "limited_or_error_attempts": 1,
+    "available_attempts": 5,
+    "limited_or_error_attempts": 2,
     "scope": "All retained execution attempts; retries inside a turn are counted in llm_calls."
   }
 }

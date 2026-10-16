@@ -6,9 +6,9 @@
     "review_method": "Rà soát kỹ thuật có hỗ trợ AI theo đoạn nguồn và tiêu chí đã khóa; không phải thẩm định pháp lý độc lập"
   },
   "X02": {
-    "answer_sha256": "5b80471fa52ae1bf1e302bb68fad48acdb1f00a20c33900cefd6f4edb6c0c483",
+    "answer_sha256": "d9238552782ec4a262228d797a1404624f54bf8f89b67a7edeaaf1ad44a4616f",
     "verdict": "fail",
-    "note": "Đạt trần 6 request trong khi retry/repair và xử lý quota; chưa có đáp án hoàn chỉnh. Không tính thông báo giới hạn là trả lời đạt. Chưa đủ bằng chứng rằng đã giải quyết sai phạm vi xuất hiện ở lượt cấu hình trước.",
+    "note": "Chạy lại ca lỗi sau thay khóa Groq vẫn không có đáp án: lỗi json_validate_failed và token/phút dẫn tới giới hạn 6 request. Giữ cả hai attempt, không tăng ngân sách hoặc chọn lần chạy đẹp.",
     "review_method": "Rà soát kỹ thuật có hỗ trợ AI theo đoạn nguồn và tiêu chí đã khóa; không phải thẩm định pháp lý độc lập"
   },
   "X03": {

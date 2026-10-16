@@ -1,0 +1,37 @@
+{
+  "passed": true,
+  "checked_at": "2026-10-16T11:16:11.048Z",
+  "checks": [
+    {
+      "reviewed_evaluation_rows": 20,
+      "supplemental_visible": true,
+      "configuration_sha256": "095725ee7c62d6f6100a8f224e57546750fd97a6d797ad842d518892d99fe52f"
+    },
+    {
+      "real_chat": true,
+      "source_only": false,
+      "llm_calls": [
+        2,
+        5
+      ],
+      "same_session_followup": true,
+      "trace_access_isolated": true,
+      "restored_messages": 4,
+      "composer_height": 62
+    },
+    {
+      "width": 1440,
+      "passed": true
+    },
+    {
+      "width": 390,
+      "passed": true
+    },
+    {
+      "width": 320,
+      "passed": true
+    }
+  ],
+  "llm_generation_checked": true,
+  "scope": "Actual public UI and sourced LLM chat with follow-up, trace authorization and restoration."
+}

@@ -78,9 +78,9 @@
     "review_method": "Rà soát kỹ thuật có hỗ trợ AI theo đoạn nguồn và tiêu chí đã khóa; không phải thẩm định pháp lý độc lập"
   },
   "S14": {
-    "answer_sha256": "338ea036fce939ba34806dcf6e96ffcd296b6987a08d403790b9b9a48ed78835",
-    "verdict": "fail",
-    "note": "Request bị chặn bởi quota TPD 200.000 token/ngày; chưa có đáp án. Không dùng kết quả pass của cấu hình trước thay cho ca lỗi hiện tại.",
+    "answer_sha256": "6325c581d4a9f01501a5e12f80c30804593312c589b7f9649a3eacaa7f81d402",
+    "verdict": "pass",
+    "note": "Sau khi thay khóa Groq, chạy lại ca từng bị quota chặn: giải đúng văn bản đó từ lịch sử thành QĐ40; danh sách 47/2016, 56/2024, 38/2025 và 10/2026 khớp Điều 2 được trích. Attempt quota cũ vẫn được giữ.",
     "review_method": "Rà soát kỹ thuật có hỗ trợ AI theo đoạn nguồn và tiêu chí đã khóa; không phải thẩm định pháp lý độc lập"
   },
   "S15": {

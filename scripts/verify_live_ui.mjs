@@ -8,6 +8,7 @@ const api='https://land-law-chatbot.onrender.com'
 const browser=await chromium.launch({headless:true})
 const checks=[]
 let phase='navigation'
+let observedChat=null
 const scope=!chat?'Public website UI only; chat and generation are not checked.':sourceOnly?'Actual public UI, sourced deterministic chat, same-session follow-up, trace authorization and restoration. LLM generation is NOT verified.':'Actual public UI and sourced LLM chat with follow-up, trace authorization and restoration.'
 try {
  for(const width of [1440,390,320]) {
@@ -37,13 +38,22 @@ try {
     checks.push({reviewed_evaluation_rows:20,supplemental_visible:true,configuration_sha256:live.active_configuration_sha256})
     await page.getByRole('button',{name:'Hỏi đáp pháp luật',exact:true}).click()
     async function submit(question) {
+      const previousAnswers=await page.locator('.message.assistant').count()
       const pending=page.waitForResponse(r=>r.request().method()==='POST' && r.url().endsWith('/api/v1/chat'),{timeout:180000})
       await page.getByLabel('Câu hỏi pháp luật').fill(question)
       await page.getByRole('button',{name:'Gửi câu hỏi'}).click()
       const response=await pending
       if(!response.ok())throw Error('Chat HTTP failed')
-      const frames=(await response.text()).split('\n').filter(line=>line.startsWith('data: ')).map(line=>JSON.parse(line.slice(6)))
-      const result=frames.find(frame=>frame.trace_id)
+      // Chromium may discard streamed response bodies. Observe the rendered
+      // answer, then compare with authenticated persisted history instead.
+      await page.locator('.message.assistant').nth(previousAnswers).waitFor({timeout:180000})
+      await page.getByRole('button',{name:'Gửi câu hỏi'}).waitFor({timeout:180000})
+      const credentials=await page.evaluate(()=>JSON.parse(sessionStorage.getItem('landlaw-session')))
+      const historyResponse=await page.request.get(api+`/api/v1/sessions/${credentials.session_id}/messages`,{headers:{Authorization:'Bearer '+credentials.token}})
+      if(!historyResponse.ok())throw Error('Authenticated history unavailable')
+      const history=await historyResponse.json()
+      const result=history.messages.filter(message=>message.role==='assistant').at(-1)?.payload
+      observedChat=result?{status:result.status,llm_calls:result.llm_calls,citations:result.citations?.length,content:result.content}:null
       if(!result || result.status!=='answered' || !result.citations?.length)throw Error('No sourced answer')
       if(sourceOnly && result.llm_calls!==0)throw Error('Source-only probe unexpectedly used LLM')
       return {result,sessionId:response.request().postDataJSON().session_id}
@@ -52,13 +62,17 @@ try {
     const first=await submit(sourceOnly?'Quyết định 56/2024/QĐ-UBND Hà Nội còn hiệu lực không? Văn bản nào thay thế?':'Điều 104 Luật Đất đai 2024 quy định chi phí di chuyển tài sản gồm những khoản nào?')
     if(!sourceOnly && !first.result.llm_calls)throw Error('No actual LLM generation')
     await page.locator('.message.assistant .citations button').first().click()
-    await page.getByRole('dialog',{name:'Chi tiết nguồn'}).waitFor()
-    await page.keyboard.press('Escape')
+    const sourcePanel=page.getByRole('dialog',{name:'Chi tiết nguồn'})
+    await sourcePanel.waitFor()
+    await sourcePanel.getByRole('button',{name:'Đóng',exact:true}).click()
+    await sourcePanel.waitFor({state:'hidden'})
     await page.locator('.message.assistant .trace-link').first().click()
-    await page.getByRole('dialog',{name:'Quá trình kiểm chứng'}).waitFor()
-    await page.keyboard.press('Escape')
+    const tracePanel=page.getByRole('dialog',{name:'Quá trình kiểm chứng'})
+    await tracePanel.waitFor()
+    await tracePanel.getByRole('button',{name:'Đóng',exact:true}).click()
+    await tracePanel.waitFor({state:'hidden'})
     phase='followup'
-    const second=await submit(sourceOnly?'Văn bản đó thay thế Quyết định 56/2024/QĐ-UBND từ ngày nào?':'Văn bản đó quy định cơ quan nào quyết định mức bồi thường tại Điều 104?')
+    const second=await submit(sourceOnly?'Quyết định 56/2024/QĐ-UBND Hà Nội còn hiệu lực vào ngày hôm nay không?':'Văn bản đó quy định cơ quan nào quyết định mức bồi thường tại Điều 104?')
     if(second.sessionId!==first.sessionId)throw Error('Follow-up switched sessions')
     phase='trace_authorization'
     // Credentials stay in process memory; only boolean checks are written.
@@ -84,6 +98,6 @@ try {
  console.log(JSON.stringify({passed:true,llm_generation_checked:chat&&!sourceOnly,checks}))
 }catch(error){
  await mkdir('reports',{recursive:true})
- await writeFile(output,JSON.stringify({passed:false,checked_at:new Date().toISOString(),phase,error_type:error.constructor.name,checks,llm_generation_checked:false,scope},null,2)+'\n')
+ await writeFile(output,JSON.stringify({passed:false,checked_at:new Date().toISOString(),phase,error_type:error.constructor.name,reason:error.message.split('\n')[0].replace(/https?:\/\/\S+/g,'[url]').slice(0,180),observed_chat:observedChat,checks,llm_generation_checked:false,scope},null,2)+'\n')
  throw Error(`Live UI verification failed at ${phase}; see ${output}`)
 }finally{await browser.close()}

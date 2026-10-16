@@ -1,7 +1,7 @@
 {
-  "checked_at": "2026-10-16T10:59:10.907281+00:00",
+  "checked_at": "2026-10-16T11:11:06.552798+00:00",
   "status": "reviewed",
-  "execution_successful": false,
+  "execution_successful": true,
   "transport": "operator_cli",
   "storage_backend": "postgresql",
   "mode": "agentic",
@@ -2463,12 +2463,12 @@
       "gold_chunk_ids": [
         "qd-40-2026-hanoi-0-2-0"
       ],
-      "answer_origin": "deterministic",
-      "status": "limited",
-      "seconds": 6.838,
-      "citations_valid": null,
+      "answer_origin": "llm",
+      "status": "answered",
+      "seconds": 21.619,
+      "citations_valid": true,
       "answer": {
-        "status": "limited",
+        "status": "answered",
         "publication_profile": "academic",
         "quality_status": "academic_prototype",
         "retrieval_mode": "hybrid",
@@ -2509,26 +2509,49 @@
             "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
           }
         ],
-        "content": "Nhà cung cấp AI đang giới hạn request. Vui lòng thử lại sau 418 giây.",
-        "citations": [],
-        "verified_claims": [],
+        "content": "Đã đối chiếu các căn cứ dưới đây.\n\nQuyết định 40/2026/QĐ-UBND thay thế các Quyết định của UBND Thành phố: số 47/2016/QĐ-UBND (ngày 08/11/2016), số 56/2024/QĐ-UBND (ngày 06/9/2024), số 38/2025/QĐ-UBND (ngày 30/6/2025) và số 10/2026/QĐ-UBND (ngày 18/01/2026). [1]\n\nThời điểm xem xét: 12/10/2026. Dữ liệu được kiểm tra: 2026-10-11.",
+        "citations": [
+          {
+            "id": "qd-40-2026-hanoi-0-2-0",
+            "document_id": "qd-40-2026-hanoi",
+            "title": "Quy định một số nội dung bồi thường, hỗ trợ, tái định cư Hà Nội",
+            "document_number": "40/2026/QĐ-UBND",
+            "url": "https://congbao.hanoi.gov.vn/Default.aspx?p_attribute=5335&pageid=45002",
+            "locator": "Điều 2",
+            "excerpt": "Điều 2. Quyết định này có hiệu lực thi hành kể từ ngày 02 tháng 4 năm 2026 và thay thế các Quyết định của Ủy ban nhân dân Thành phố: số 47/2016/QĐ - UBND ngày 08/11/2016 về việc phê duyệt mức hỗ trợ tự lo tái định cư bằng tiền đối với trường hợp được bố trí nhà tái định cư, số 56/2024/QĐ -UBND ngày 06/9/2024 ban hành quy định một số nội dung về bồi thường, hỗ trợ, tái định cư khi Nhà nước thu hồi đất trên địa bàn thành phố Hà Nội, số 38/2025/QĐ - UBND ngày 30/6/2025 và số 10/2026/QĐ -UBND ngày 18/01/2026 về việc sửa đổi, bổ sung một số điều của Quyết định số 56/2024/QĐ -UBND ngày 06/9/2024 của Ủy ban nhân dân Thành phố .",
+            "checked_at": "2026-10-11T17:32:27Z",
+            "applicability": "current",
+            "source_review_notes": "",
+            "page": 1,
+            "source_url": "https://datafiles.hanoi.gov.vn/gov-hni/6249/VanBanCongBao/2026/5/29/QDPQ-40-2026_signed.pdf#page=1"
+          }
+        ],
+        "verified_claims": [
+          {
+            "kind": "legal_rule",
+            "text": "Quyết định 40/2026/QĐ-UBND thay thế các Quyết định của UBND Thành phố: số 47/2016/QĐ-UBND (ngày 08/11/2016), số 56/2024/QĐ-UBND (ngày 06/9/2024), số 38/2025/QĐ-UBND (ngày 30/6/2025) và số 10/2026/QĐ-UBND (ngày 18/01/2026).",
+            "citation_ids": [
+              "qd-40-2026-hanoi-0-2-0"
+            ]
+          }
+        ],
         "as_of": "2026-10-12",
         "corpus_release": "corpus-de584c31fc95f9a2",
-        "trace_id": "83d77ee2-f064-4b75-a6ef-949a70f87f0f",
+        "trace_id": "39529b13-14d3-4894-aeea-767de54e4ccd",
         "trace": [
           {
             "step": "routing",
             "tool": "search_law",
             "summary": "Đã đối chiếu tham chiếu với nguồn trong lượt trả lời trước; tiếp tục tra văn bản đó.",
             "document_ids": [],
-            "elapsed_ms": 224
+            "elapsed_ms": 316
           },
           {
             "step": "plan",
             "tool": null,
             "summary": "Đã chọn 1 công cụ; chế độ agentic.",
             "document_ids": [],
-            "elapsed_ms": 224
+            "elapsed_ms": 316
           },
           {
             "step": "tool",
@@ -2537,7 +2560,7 @@
             "document_ids": [
               "qd-40-2026-hanoi"
             ],
-            "elapsed_ms": 3959
+            "elapsed_ms": 14463
           },
           {
             "step": "tool",
@@ -2546,7 +2569,7 @@
             "document_ids": [
               "qd-56-2024-hanoi"
             ],
-            "elapsed_ms": 4190
+            "elapsed_ms": 14707
           },
           {
             "step": "tool",
@@ -2555,7 +2578,7 @@
             "document_ids": [
               "qd-38-2025-hanoi"
             ],
-            "elapsed_ms": 4400
+            "elapsed_ms": 14932
           },
           {
             "step": "tool",
@@ -2564,7 +2587,7 @@
             "document_ids": [
               "qd-10-2026-hanoi"
             ],
-            "elapsed_ms": 4657
+            "elapsed_ms": 15258
           },
           {
             "step": "applicability",
@@ -2573,27 +2596,67 @@
             "document_ids": [
               "qd-40-2026-hanoi"
             ],
-            "elapsed_ms": 4657
+            "elapsed_ms": 15259
+          },
+          {
+            "step": "synthesis",
+            "tool": null,
+            "summary": "Đã tạo bản trả lời; đang kiểm tra trước khi hiển thị.",
+            "document_ids": [],
+            "elapsed_ms": 19058
+          },
+          {
+            "step": "verification",
+            "tool": null,
+            "summary": "1/1 kết luận qua kiểm tra với chứng cứ trong corpus; 0 vấn đề.",
+            "document_ids": [],
+            "elapsed_ms": 21616
           }
         ],
         "missing_facts": [],
-        "llm_calls": 1,
+        "llm_calls": 2,
         "embedding_calls": 1,
         "tool_calls": 5,
-        "token_usage": 0,
-        "elapsed_ms": 6838,
+        "token_usage": 5935,
+        "elapsed_ms": 21619,
         "model": "openai/gpt-oss-120b",
         "embedding_model": "multilingual-e5-small-onnx-q8-window-v1",
         "mode": "agentic",
-        "support_level": "insufficient",
-        "retry_after": 418,
-        "retrieved_chunk_ids": [],
-        "evidence_chunk_ids": []
+        "support_level": "full",
+        "retry_after": null,
+        "retrieved_chunk_ids": [
+          "qd-40-2026-hanoi-0-2-0",
+          "qd-40-2026-hanoi-2-2-0",
+          "qd-40-2026-hanoi-9-1-0",
+          "qd-40-2026-hanoi-10-0-0",
+          "qd-40-2026-hanoi-2-0-0",
+          "qd-40-2026-hanoi-1-1-0",
+          "qd-40-2026-hanoi-2-1-0",
+          "qd-40-2026-hanoi-0-1-0"
+        ],
+        "evidence_chunk_ids": [
+          "qd-40-2026-hanoi-0-2-0",
+          "qd-40-2026-hanoi-2-2-0",
+          "qd-40-2026-hanoi-9-1-0",
+          "qd-40-2026-hanoi-10-0-0",
+          "qd-40-2026-hanoi-2-0-0",
+          "qd-40-2026-hanoi-1-1-0",
+          "qd-40-2026-hanoi-2-1-0",
+          "qd-40-2026-hanoi-0-1-0",
+          "qd-56-2024-hanoi-0-0-0",
+          "qd-56-2024-hanoi-0-1-0",
+          "qd-56-2024-hanoi-0-10-0",
+          "qd-38-2025-hanoi-0-0-0",
+          "qd-38-2025-hanoi-0-0-1",
+          "qd-38-2025-hanoi-0-1-0",
+          "qd-10-2026-hanoi-0-0-0",
+          "qd-10-2026-hanoi-0-1-0"
+        ]
       },
-      "review": "fail",
-      "review_note": "Request bị chặn bởi quota TPD 200.000 token/ngày; chưa có đáp án. Không dùng kết quả pass của cấu hình trước thay cho ca lỗi hiện tại.",
+      "review": "pass",
+      "review_note": "Sau khi thay khóa Groq, chạy lại ca từng bị quota chặn: giải đúng văn bản đó từ lịch sử thành QĐ40; danh sách 47/2016, 56/2024, 38/2025 và 10/2026 khớp Điều 2 được trích. Attempt quota cũ vẫn được giữ.",
       "review_method": "Rà soát kỹ thuật có hỗ trợ AI theo đoạn nguồn và tiêu chí đã khóa; không phải thẩm định pháp lý độc lập",
-      "answer_sha256": "338ea036fce939ba34806dcf6e96ffcd296b6987a08d403790b9b9a48ed78835"
+      "answer_sha256": "6325c581d4a9f01501a5e12f80c30804593312c589b7f9649a3eacaa7f81d402"
     },
     {
       "id": "S15",
@@ -3418,8 +3481,8 @@
   "metrics": {
     "groups": {
       "answered": {
-        "cases": 9,
-        "pass": 7,
+        "cases": 10,
+        "pass": 8,
         "partial": 2,
         "fail": 0,
         "awaiting_review": 0
@@ -3439,29 +3502,29 @@
         "awaiting_review": 0
       },
       "execution_failure": {
-        "cases": 1,
+        "cases": 0,
         "pass": 0,
         "partial": 0,
-        "fail": 1,
+        "fail": 0,
         "awaiting_review": 0
       }
     },
     "usage": {
       "elapsed_ms": {
         "samples": 20,
-        "total": 130157,
+        "total": 144938,
         "median": 5443.0,
-        "p95": 16315
+        "p95": 21619
       },
       "token_usage": {
         "samples": 20,
-        "total": 39441,
+        "total": 45376,
         "median": 0.0,
         "p95": 6585
       },
       "llm_calls": {
         "samples": 20,
-        "total": 15,
+        "total": 16,
         "median": 0.0,
         "p95": 2
       },
@@ -3473,22 +3536,22 @@
       }
     },
     "answer_origin": {
-      "llm": 5,
-      "deterministic": 15,
+      "llm": 6,
+      "deterministic": 14,
       "unknown": 0
     },
     "llm_used_cases": 7,
     "evidence_hit_at_8": {
       "eligible_cases": 11,
       "measured_cases": 11,
-      "hits": 10,
-      "rate": 0.9090909090909091,
+      "hits": 11,
+      "rate": 1.0,
       "scope": "First eight agent evidence candidates; not a standalone retrieval benchmark."
     },
     "scope": "Descriptive single-run statistics; no SLA or overall legal accuracy claim."
   },
   "attempt_history": {
-    "available_attempts": 20,
+    "available_attempts": 21,
     "limited_or_error_attempts": 1,
     "scope": "All retained execution attempts; retries inside a turn are counted in llm_calls."
   }

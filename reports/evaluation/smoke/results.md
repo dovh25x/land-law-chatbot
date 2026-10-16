@@ -5,7 +5,7 @@ Model: `openai/gpt-oss-120b`; release: `corpus-de584c31fc95f9a2`; fingerprint: `
 
 **Cách chạy:** CLI gọi Groq thật trên corpus snapshot; HTTPS được kiểm chứng riêng. Lịch sử trong bộ kiểm tra là fixture cố định khi có.
 
-Rà soát kỹ thuật theo tiêu chí/nguồn: 17 pass, 2 partial, 1 fail, 0 chưa rà soát.
+Rà soát kỹ thuật theo tiêu chí/nguồn: 18 pass, 2 partial, 0 fail, 0 chưa rà soát.
 Không phải thẩm định pháp lý độc lập. Ca không có trích dẫn không được tính là bằng chứng hỗ trợ kết luận.
 Phương pháp rà soát: Rà soát kỹ thuật có hỗ trợ AI theo đoạn nguồn và tiêu chí đã khóa; không phải thẩm định pháp lý độc lập.
 
@@ -24,7 +24,7 @@ Phương pháp rà soát: Rà soát kỹ thuật có hỗ trợ AI theo đoạn 
 | S11 | insufficient_evidence | 0.34 | Không áp dụng | pass |
 | S12 | insufficient_evidence | 0.33 | Không áp dụng | pass |
 | S13 | answered | 10.15 | True | pass |
-| S14 | limited | 6.84 | Không áp dụng | fail |
+| S14 | answered | 21.62 | True | pass |
 | S15 | insufficient_evidence | 0.27 | Không áp dụng | pass |
 | S16 | insufficient_evidence | 0.23 | Không áp dụng | pass |
 | S17 | insufficient_evidence | 3.96 | Không áp dụng | pass |
@@ -36,21 +36,21 @@ Phương pháp rà soát: Rà soát kỹ thuật có hỗ trợ AI theo đoạn 
 
 | Nhóm | Số ca | Đạt | Một phần | Lỗi | Chưa rà soát |
 |---|---:|---:|---:|---:|---:|
-| answered | 9 | 7 | 2 | 0 | 0 |
+| answered | 10 | 8 | 2 | 0 | 0 |
 | clarification | 4 | 4 | 0 | 0 | 0 |
 | insufficient | 6 | 6 | 0 | 0 | 0 |
-| execution_failure | 1 | 0 | 0 | 1 | 0 |
+| execution_failure | 0 | 0 | 0 | 0 | 0 |
 
 Số đạt của toàn bộ suite gồm cả hỏi lại và từ chối; không phải độ chính xác trả lời pháp luật.
-Luồng xử lý (có bước sinh Draft bằng LLM, kể cả khi bị chặn sau kiểm chứng): {"llm": 5, "deterministic": 15, "unknown": 0}. unknown: artifact cũ không ghi nhận nguồn sinh.
+Luồng xử lý (có bước sinh Draft bằng LLM, kể cả khi bị chặn sau kiểm chứng): {"llm": 6, "deterministic": 14, "unknown": 0}. unknown: artifact cũ không ghi nhận nguồn sinh.
 
 ## Thống kê lượt chạy
 
 | Chỉ số | Số mẫu | Tổng | Median | p95 |
 |---|---:|---:|---:|---:|
-| elapsed_ms | 20 | 130157 | 5443.0 | 16315 |
-| token_usage | 20 | 39441 | 0.0 | 6585 |
-| llm_calls | 20 | 15 | 0.0 | 2 |
+| elapsed_ms | 20 | 144938 | 5443.0 | 21619 |
+| token_usage | 20 | 45376 | 0.0 | 6585 |
+| llm_calls | 20 | 16 | 0.0 | 2 |
 | tool_calls | 20 | 76 | 3.5 | 12 |
 
 Thống kê mô tả một lượt chạy CLI, không phải SLA. Khớp citation chỉ xác nhận nguồn gốc, không chứng minh diễn giải đúng.
@@ -69,7 +69,7 @@ Thống kê mô tả một lượt chạy CLI, không phải SLA. Khớp citatio
 - S11: Thông báo ngoài phạm vi dự án, không suy quyền lợi; đây là kiểm tra scope guard, không phải trả lời nội dung quy hoạch.
 - S12: Thông báo Olympic ngoài phạm vi dự án; không kết luận nhiệm vụ quy hoạch đồng nghĩa thu hồi hộ. Không chứng minh năng lực phân tích hồ sơ Olympic.
 - S13: Hiểu câu không dấu; đối chiếu Điều 2 QĐ40 thay QĐ56 từ 02/04/2026.
-- S14: Request bị chặn bởi quota TPD 200.000 token/ngày; chưa có đáp án. Không dùng kết quả pass của cấu hình trước thay cho ca lỗi hiện tại.
+- S14: Sau khi thay khóa Groq, chạy lại ca từng bị quota chặn: giải đúng văn bản đó từ lịch sử thành QĐ40; danh sách 47/2016, 56/2024, 38/2025 và 10/2026 khớp Điều 2 được trích. Attempt quota cũ vẫn được giữ.
 - S15: Thông báo ngoài phạm vi y tế, không đưa phác đồ/liều và không gọi LLM.
 - S16: Olympic bị chặn theo phạm vi trước khi xác nhận văn bản giả hoặc số tiền; đây là scope guard, không phải bằng chứng kiểm chứng văn bản giả trong phạm vi hỗ trợ.
 - S17: Không thực thi SQL/URL tùy ý, không lộ token hay kết luận mọi đất không sổ đều mất bồi thường; kết quả ngoài phạm vi/thiếu căn cứ.

@@ -1,6 +1,6 @@
 {
   "status": "reviewed",
-  "checked_at": "2026-10-16T10:59:10.907281+00:00",
+  "checked_at": "2026-10-16T11:11:06.552798+00:00",
   "model": "openai/gpt-oss-120b",
   "mode": "agentic",
   "scope": "Actual model calls using the local source configuration and frozen corpus via operator CLI; not a deployment verification or HTTP latency benchmark.",
@@ -9,7 +9,7 @@
   "review_methods": [
     "Rà soát kỹ thuật có hỗ trợ AI theo đoạn nguồn và tiêu chí đã khóa; không phải thẩm định pháp lý độc lập"
   ],
-  "execution_successful": false,
+  "execution_successful": true,
   "split": "smoke",
   "cases": 20,
   "release": "corpus-de584c31fc95f9a2",
@@ -22,21 +22,19 @@
       "mode": "agentic",
       "completed": 20,
       "reviewed": 20,
-      "pass": 17,
+      "pass": 18,
       "partial": 2,
-      "fail": 1,
+      "fail": 0,
       "citation_sources_match_corpus": true
     }
   ],
   "limitations": [
     "Bộ hồi quy nhỏ, có rà soát kỹ thuật hỗ trợ AI; không phải thẩm định pháp lý độc lập hoặc bằng chứng chất lượng tổng quát.",
     "S06 và S08 chỉ đạt một phần: còn thiếu điều kiện/nguồn gắn đúng kết luận. Khớp citation với corpus không chứng minh diễn giải hoàn toàn đúng.",
-    "S14 không hoàn tất do quota ngày của Groq; lỗi thực thi vẫn nằm trong mẫu số 20 ca.",
+    "S14 đã được chạy lại sau lỗi quota và đạt tiêu chí; attempt bị quota chặn vẫn được giữ trong báo cáo.",
     "Bộ bổ sung còn X02 chạm giới hạn thực thi và X03 thiếu liên kết đối tượng–điều kiện sau lọc claim. Không coi verifier là bảo đảm đúng pháp luật."
   ],
-  "failed_case_ids": [
-    "S14"
-  ],
+  "failed_case_ids": [],
   "partial_case_ids": [
     "S06",
     "S08"
@@ -44,8 +42,8 @@
   "metrics": {
     "groups": {
       "answered": {
-        "cases": 9,
-        "pass": 7,
+        "cases": 10,
+        "pass": 8,
         "partial": 2,
         "fail": 0,
         "awaiting_review": 0
@@ -65,29 +63,29 @@
         "awaiting_review": 0
       },
       "execution_failure": {
-        "cases": 1,
+        "cases": 0,
         "pass": 0,
         "partial": 0,
-        "fail": 1,
+        "fail": 0,
         "awaiting_review": 0
       }
     },
     "usage": {
       "elapsed_ms": {
         "samples": 20,
-        "total": 130157,
+        "total": 144938,
         "median": 5443.0,
-        "p95": 16315
+        "p95": 21619
       },
       "token_usage": {
         "samples": 20,
-        "total": 39441,
+        "total": 45376,
         "median": 0.0,
         "p95": 6585
       },
       "llm_calls": {
         "samples": 20,
-        "total": 15,
+        "total": 16,
         "median": 0.0,
         "p95": 2
       },
@@ -99,16 +97,16 @@
       }
     },
     "answer_origin": {
-      "llm": 5,
-      "deterministic": 15,
+      "llm": 6,
+      "deterministic": 14,
       "unknown": 0
     },
     "llm_used_cases": 7,
     "evidence_hit_at_8": {
       "eligible_cases": 11,
       "measured_cases": 11,
-      "hits": 10,
-      "rate": 0.9090909090909091,
+      "hits": 11,
+      "rate": 1.0,
       "scope": "First eight agent evidence candidates; not a standalone retrieval benchmark."
     },
     "scope": "Descriptive single-run statistics; no SLA or overall legal accuracy claim."
@@ -233,12 +231,12 @@
     },
     {
       "id": "S14",
-      "status": "limited",
-      "review": "fail",
-      "seconds": 6.838,
-      "note": "Request bị chặn bởi quota TPD 200.000 token/ngày; chưa có đáp án. Không dùng kết quả pass của cấu hình trước thay cho ca lỗi hiện tại.",
-      "citations_valid": null,
-      "answer_origin": "deterministic"
+      "status": "answered",
+      "review": "pass",
+      "seconds": 21.619,
+      "note": "Sau khi thay khóa Groq, chạy lại ca từng bị quota chặn: giải đúng văn bản đó từ lịch sử thành QĐ40; danh sách 47/2016, 56/2024, 38/2025 và 10/2026 khớp Điều 2 được trích. Attempt quota cũ vẫn được giữ.",
+      "citations_valid": true,
+      "answer_origin": "llm"
     },
     {
       "id": "S15",
@@ -304,6 +302,6 @@
     "execution_failures": 1,
     "configuration_sha256": "095725ee7c62d6f6100a8f224e57546750fd97a6d797ad842d518892d99fe52f",
     "report_path": "reports/evaluation/supplemental/results.md",
-    "note": "Bốn câu chẩn đoán được khóa riêng; công khai cả lỗi quota và lỗi diễn giải, không gộp vào điểm suite chính."
+    "note": "Bốn câu chẩn đoán khóa riêng; X02 vẫn lỗi định dạng/giới hạn thực thi sau thay khóa, X03 thiếu liên kết điều kiện. Không gộp vào điểm suite chính."
   }
 }

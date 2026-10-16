@@ -1,0 +1,22 @@
+{
+  "passed": false,
+  "checked_at": "2026-10-16T11:12:46.112Z",
+  "phase": "followup",
+  "error_type": "Error",
+  "reason": "Source-only probe unexpectedly used LLM",
+  "observed_chat": {
+    "status": "answered",
+    "llm_calls": 1,
+    "citations": 1,
+    "content": "Đã đối chiếu các căn cứ dưới đây.\n\n56/2024/QĐ-UBND không còn hiệu lực tại ngày 16/10/2026; 40/2026/QĐ-UBND thay thế văn bản này từ ngày 02/04/2026. [1]\n\nThời điểm xem xét: 16/10/2026. Dữ liệu được kiểm tra: 2026-10-11."
+  },
+  "checks": [
+    {
+      "reviewed_evaluation_rows": 20,
+      "supplemental_visible": true,
+      "configuration_sha256": "095725ee7c62d6f6100a8f224e57546750fd97a6d797ad842d518892d99fe52f"
+    }
+  ],
+  "llm_generation_checked": false,
+  "scope": "Actual public UI, sourced deterministic chat, same-session follow-up, trace authorization and restoration. LLM generation is NOT verified."
+}
