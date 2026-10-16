@@ -1,0 +1,49 @@
+{
+  "format": 1,
+  "prepared_at": "2026-10-16T10:11:36.866645+00:00",
+  "corpus_id": "corpus-de584c31fc95f9a2",
+  "documents": 69,
+  "chunks": 7610,
+  "source_commit": "c60b60af060c340f0fad888fe0c685fd92d9f52f",
+  "working_tree_dirty": true,
+  "source_tree_sha256": "8cf26fa3d9c15128549a5a41ccba59dab452b4b228c061be7ba91339f7d5d7fb",
+  "scope": "Corpus-only asset. source_commit is the packaging base commit; dirty work is identified separately.",
+  "asset": "corpus-backup.json",
+  "sha256": "476e36e968ea8680174b97a5d8f9c6fd5b6e766b81abff628269cbbf6313d9c6",
+  "bytes": 40442458,
+  "contains_sessions": false,
+  "output": "dist/corpus-release",
+  "published": true,
+  "release_url": "https://github.com/dovh25x/land-law-chatbot/releases/tag/corpus-de584c31fc95f9a2",
+  "status": "published",
+  "restore_verified": true,
+  "restore": {
+    "passed": true,
+    "release": "corpus-de584c31fc95f9a2",
+    "documents": 69,
+    "chunks": 7610,
+    "sessions": 0,
+    "checksum_verified": true,
+    "backend": "sqlite",
+    "scope": "Fresh temporary database restored from the exact prepared Release asset."
+  },
+  "draft_release_url": "https://github.com/dovh25x/land-law-chatbot/releases/tag/untagged-e27e29f223b15299ca64",
+  "release_id": 414814590,
+  "github_assets_verified": [
+    {
+      "name": "corpus-backup.json",
+      "bytes_match": true,
+      "digest_match": true
+    },
+    {
+      "name": "manifest.json",
+      "bytes_match": true,
+      "digest_match": true
+    },
+    {
+      "name": "SHA256SUMS",
+      "bytes_match": true,
+      "digest_match": true
+    }
+  ]
+}
