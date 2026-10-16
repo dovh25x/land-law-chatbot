@@ -1,0 +1,26 @@
+{
+  "X01": {
+    "answer_sha256": "c71b924cf8c868f00caaeae86794d4a3a2d5acc8302361a8a1cae75df3c3b419",
+    "verdict": "fail",
+    "note": "Lỗi thực thi do quota TPM và structured output; không hoàn tất câu trả lời. Không tính thông báo quota là trả lời đạt.",
+    "review_method": "AI-assisted technical review against corpus excerpts and frozen criteria; not independent legal certification."
+  },
+  "X02": {
+    "answer_sha256": "fcf3b1b6fd199ad8302ab5760094c4a0f3e59c72de3cb0037037f8a9358354b8",
+    "verdict": "fail",
+    "note": "Trả lời riêng hỗ trợ chuyển đổi nghề tại Điều 109 thay vì các nhóm hỗ trợ Điều 108, nêu mức tiền ngoài yêu cầu và suy rộng người không thuộc nhóm này không nhận hỗ trợ. Verifier chưa chặn được sai phạm vi này.",
+    "review_method": "AI-assisted technical review against corpus excerpts and frozen criteria; not independent legal certification."
+  },
+  "X03": {
+    "answer_sha256": "c212b52527b82cd48dfe1ea2eb0a49c60b27e8b116bda3e090cbc526730a1e64",
+    "verdict": "partial",
+    "note": "Có điều kiện thay thế giấy chứng nhận và giới hạn nhóm khoản 1, nhưng vẫn gọi các giấy tờ/điều kiện khoản 2 là đối tượng; chưa phân biệt thuật ngữ rõ như câu hỏi yêu cầu.",
+    "review_method": "AI-assisted technical review against corpus excerpts and frozen criteria; not independent legal certification."
+  },
+  "X04": {
+    "answer_sha256": "6c4650c2dcbfc0b65e2ba324ce3383eb730fe97a44da9bf5c28b778cffdf7539",
+    "verdict": "fail",
+    "note": "Lỗi thực thi do quota TPM trước khi có đáp án hoàn chỉnh; không phát kết luận về văn bản giả/số tiền nhưng chưa đạt yêu cầu chức năng.",
+    "review_method": "AI-assisted technical review against corpus excerpts and frozen criteria; not independent legal certification."
+  }
+}

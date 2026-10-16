@@ -27,7 +27,16 @@ async def main(base, output):
             r.raise_for_status()
             frames=[json.loads(line[6:]) for line in r.text.splitlines() if line.startswith('data: ')]
             result=next((v for v in frames if 'trace_id' in v),None)
-            if not result or result['status'] in {'limited','error'}:raise ValueError('No completed public answer')
+            if not result or result['status'] in {'limited','error'}:
+                output.parent.mkdir(parents=True,exist_ok=True)
+                output.write_text(json.dumps({'passed':False,'checked_at':utcnow().isoformat(),
+                    'base_url':base,'configuration_sha256':configuration_fingerprint(Settings()),
+                    'phase':'generation','status':(result or {}).get('status','missing_result'),
+                    'content':(result or {}).get('content'),'retry_after':(result or {}).get('retry_after'),
+                    'llm_calls':(result or {}).get('llm_calls'),
+                    'scope':'Actual deployed generation probe did not complete; not a passed verification.'},
+                    ensure_ascii=False,indent=2)+'\n')
+                raise ValueError('No completed public answer; failure recorded')
             for citation in result['citations']:
                 doc=await client.get(base+'/api/v1/documents/'+citation['document_id']);doc.raise_for_status()
             trace=await client.get(base+f"/api/v1/sessions/{s['session_id']}/traces/{result['trace_id']}",headers=headers)

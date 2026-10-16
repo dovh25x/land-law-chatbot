@@ -1,0 +1,26 @@
+{
+  "X01": {
+    "answer_sha256": "58e1bc560e452e5707b87f48c95b8fe560b400937f0964a216fc301053b8a224",
+    "verdict": "pass",
+    "note": "Câu tự nhiên không nêu điều luật: dẫn đúng Điều 104, đủ tháo dỡ/di chuyển/lắp đặt và thiệt hại máy móc/dây chuyền; không thêm đơn giá.",
+    "review_method": "Rà soát kỹ thuật có hỗ trợ AI theo đoạn nguồn và tiêu chí đã khóa; không phải thẩm định pháp lý độc lập"
+  },
+  "X02": {
+    "answer_sha256": "5b80471fa52ae1bf1e302bb68fad48acdb1f00a20c33900cefd6f4edb6c0c483",
+    "verdict": "fail",
+    "note": "Đạt trần 6 request trong khi retry/repair và xử lý quota; chưa có đáp án hoàn chỉnh. Không tính thông báo giới hạn là trả lời đạt. Chưa đủ bằng chứng rằng đã giải quyết sai phạm vi xuất hiện ở lượt cấu hình trước.",
+    "review_method": "Rà soát kỹ thuật có hỗ trợ AI theo đoạn nguồn và tiêu chí đã khóa; không phải thẩm định pháp lý độc lập"
+  },
+  "X03": {
+    "answer_sha256": "1f5c9555fb06d295e0b97f1ec73dc94b0354c1a37995fb0c6fffdb9cfa9783ad",
+    "verdict": "fail",
+    "note": "Chặn một phần claim nhưng phần còn lại tham chiếu đối tượng ở trên đã bị loại, chưa phân biệt rõ đối tượng khoản 1 với điều kiện khoản 2; chưa đáp ứng câu hỏi.",
+    "review_method": "Rà soát kỹ thuật có hỗ trợ AI theo đoạn nguồn và tiêu chí đã khóa; không phải thẩm định pháp lý độc lập"
+  },
+  "X04": {
+    "answer_sha256": "5940b7a9dfd8aad38fb553b22ae67a1370f3cca73e76b0ffb624ba30b7a93631",
+    "verdict": "pass",
+    "note": "Không xác nhận số hiệu không có chứng cứ hoặc mức 50 tỷ, trả thiếu chứng cứ và không tạo điều khoản/quyền lợi. Hỏi thêm số hộ và nội dung quyết định là dữ kiện thừa; không dùng để tính tiền hay làm bằng chứng văn bản tồn tại.",
+    "review_method": "Rà soát kỹ thuật có hỗ trợ AI theo đoạn nguồn và tiêu chí đã khóa; không phải thẩm định pháp lý độc lập"
+  }
+}

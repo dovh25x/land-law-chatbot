@@ -79,3 +79,5 @@ Dùng service Free hiện có: Cloudflare Pages, Render và Supabase. Một work
 Chỉ triển khai source đúng phiên bản đã kiểm thử. Script backend deploy lấy source từ Git remote: không deploy khi nó vẫn trỏ tới code cũ. Giữ báo cáo khớp fingerprint trước khi coi triển khai là bản mới. Không tự nâng gói hoặc thay đổi phạm vi tài khoản.
 
 Xác minh readiness, model/corpus/fingerprint và một luồng hỏi thật → hỏi tiếp → nguồn → trace → kiểm tra token sai. Kiểm tra mobile, lỗi quota và cold start. Dùng timeout hữu hạn; báo rõ phần chưa xác minh thay vì tạo artifact passed. Không cập nhật kết quả live cũ khi chưa chạy lại trên deployment mới.
+
+Khi quota chặn sinh đáp án, `python scripts/verify_live_demo.py` ghi lỗi thực tế thay vì tạo passed. `node scripts/verify_live_ui.mjs --chat --source-only` kiểm tra nguồn, trace, phiên, khôi phục và mobile bằng luồng xác định không gọi LLM; artifact phải giữ `llm_generation_checked=false`. Lệnh mặc định với `--chat` kiểm tra sinh bằng LLM và hỏi tiếp khi quota cho phép. Không dùng kết quả luồng không gọi LLM thay cho xác minh sinh đáp án thật.

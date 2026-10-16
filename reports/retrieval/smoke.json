@@ -1,9 +1,9 @@
 {
-  "checked_at": "2026-10-16T10:33:21.762017+00:00",
+  "checked_at": "2026-10-16T10:54:52.845749+00:00",
   "split": "smoke",
   "suite_sha256": "38aa8da29bf41a94b4cf8fd8a5ca6769232b87884aeed573c10f5586a09d7254",
   "release": "corpus-de584c31fc95f9a2",
-  "configuration_sha256": "476cb6033b4eff9f842129a608b2d5025ca8830fe61ddfddaee2d7a7de934b6e",
+  "configuration_sha256": "095725ee7c62d6f6100a8f224e57546750fd97a6d797ad842d518892d99fe52f",
   "backend": "postgresql",
   "k": 8,
   "eligible_cases": 11,
@@ -28,7 +28,7 @@
         "qd-10-2026-hanoi-0-1-0"
       ],
       "hit": true,
-      "elapsed_ms": 4705
+      "elapsed_ms": 7788
     },
     {
       "id": "S02",
@@ -47,7 +47,7 @@
         "qd-40-2026-hanoi-0-1-0"
       ],
       "hit": true,
-      "elapsed_ms": 2297
+      "elapsed_ms": 2915
     },
     {
       "id": "S03",
@@ -66,7 +66,7 @@
         "qd-38-2025-hanoi-4-3-0"
       ],
       "hit": true,
-      "elapsed_ms": 1596
+      "elapsed_ms": 1527
     },
     {
       "id": "S04",
@@ -85,7 +85,7 @@
         "nd-88-2024-0-29-0"
       ],
       "hit": true,
-      "elapsed_ms": 3174
+      "elapsed_ms": 4330
     },
     {
       "id": "S05",
@@ -104,7 +104,7 @@
         "nd-151-2025-26-0-1"
       ],
       "hit": true,
-      "elapsed_ms": 3476
+      "elapsed_ms": 4698
     },
     {
       "id": "S06",
@@ -124,7 +124,7 @@
         "luat-dat-dai-2024-167-0-0"
       ],
       "hit": true,
-      "elapsed_ms": 2359
+      "elapsed_ms": 2657
     },
     {
       "id": "S07",
@@ -143,7 +143,7 @@
         "luat-dat-dai-2024-102-1-0"
       ],
       "hit": true,
-      "elapsed_ms": 2870
+      "elapsed_ms": 2797
     },
     {
       "id": "S08",
@@ -162,7 +162,7 @@
         "luat-dat-dai-2024-83-0-0"
       ],
       "hit": true,
-      "elapsed_ms": 2080
+      "elapsed_ms": 4338
     },
     {
       "id": "S13",
@@ -181,7 +181,7 @@
         "luat-thu-do-2024-66-0-0"
       ],
       "hit": false,
-      "elapsed_ms": 1337
+      "elapsed_ms": 1319
     },
     {
       "id": "S14",
@@ -200,7 +200,7 @@
         "nd-124-2020-20-0-0"
       ],
       "hit": false,
-      "elapsed_ms": 1396
+      "elapsed_ms": 1508
     },
     {
       "id": "S18",
@@ -219,7 +219,7 @@
         "qd-40-2026-hanoi-13-1-0"
       ],
       "hit": true,
-      "elapsed_ms": 2263
+      "elapsed_ms": 2090
     }
   ],
   "scope": "Raw-question hybrid search without history rewriting, article routing or legal-relation expansion; any gold chunk in top 8 counts as a hit. Not legal answer accuracy."

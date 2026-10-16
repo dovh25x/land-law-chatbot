@@ -1,19 +1,19 @@
 {
   "status": "reviewed",
-  "checked_at": "2026-10-16T10:33:31.011107+00:00",
+  "checked_at": "2026-10-16T10:59:10.907281+00:00",
   "model": "openai/gpt-oss-120b",
   "mode": "agentic",
   "scope": "Actual model calls using the local source configuration and frozen corpus via operator CLI; not a deployment verification or HTTP latency benchmark.",
   "suite_sha256": "38aa8da29bf41a94b4cf8fd8a5ca6769232b87884aeed573c10f5586a09d7254",
   "storage_backend": "postgresql",
   "review_methods": [
-    "AI-assisted technical review against corpus excerpts and frozen criteria; not independent legal certification.",
-    "AI-assisted technical review against the supplied corpus excerpts and frozen case criteria; not independent legal certification."
+    "Rà soát kỹ thuật có hỗ trợ AI theo đoạn nguồn và tiêu chí đã khóa; không phải thẩm định pháp lý độc lập"
   ],
+  "execution_successful": false,
   "split": "smoke",
   "cases": 20,
   "release": "corpus-de584c31fc95f9a2",
-  "configuration_sha256": "476cb6033b4eff9f842129a608b2d5025ca8830fe61ddfddaee2d7a7de934b6e",
+  "configuration_sha256": "095725ee7c62d6f6100a8f224e57546750fd97a6d797ad842d518892d99fe52f",
   "acceptance_passed": false,
   "independent_legal_certification": false,
   "transport": "operator_cli",
@@ -22,29 +22,31 @@
       "mode": "agentic",
       "completed": 20,
       "reviewed": 20,
-      "pass": 18,
-      "partial": 1,
+      "pass": 17,
+      "partial": 2,
       "fail": 1,
       "citation_sources_match_corpus": true
     }
   ],
   "limitations": [
-    "Small regression-suite technical review only; not independent legal certification.",
-    "Source IDs/excerpts matching the corpus do not prove every generated legal statement.",
-    "Read per-case reviews in reports/evaluation/smoke/results.md; no independent legal certification."
+    "Bộ hồi quy nhỏ, có rà soát kỹ thuật hỗ trợ AI; không phải thẩm định pháp lý độc lập hoặc bằng chứng chất lượng tổng quát.",
+    "S06 và S08 chỉ đạt một phần: còn thiếu điều kiện/nguồn gắn đúng kết luận. Khớp citation với corpus không chứng minh diễn giải hoàn toàn đúng.",
+    "S14 không hoàn tất do quota ngày của Groq; lỗi thực thi vẫn nằm trong mẫu số 20 ca.",
+    "Bộ bổ sung còn X02 chạm giới hạn thực thi và X03 thiếu liên kết đối tượng–điều kiện sau lọc claim. Không coi verifier là bảo đảm đúng pháp luật."
   ],
   "failed_case_ids": [
-    "S06"
+    "S14"
   ],
   "partial_case_ids": [
+    "S06",
     "S08"
   ],
   "metrics": {
     "groups": {
       "answered": {
         "cases": 9,
-        "pass": 8,
-        "partial": 1,
+        "pass": 7,
+        "partial": 2,
         "fail": 0,
         "awaiting_review": 0
       },
@@ -56,36 +58,36 @@
         "awaiting_review": 0
       },
       "insufficient": {
-        "cases": 7,
+        "cases": 6,
         "pass": 6,
         "partial": 0,
-        "fail": 1,
+        "fail": 0,
         "awaiting_review": 0
       },
       "execution_failure": {
-        "cases": 0,
+        "cases": 1,
         "pass": 0,
         "partial": 0,
-        "fail": 0,
+        "fail": 1,
         "awaiting_review": 0
       }
     },
     "usage": {
       "elapsed_ms": {
         "samples": 20,
-        "total": 143896,
-        "median": 5850.5,
-        "p95": 13618
+        "total": 130157,
+        "median": 5443.0,
+        "p95": 16315
       },
       "token_usage": {
         "samples": 20,
-        "total": 50130,
+        "total": 39441,
         "median": 0.0,
-        "p95": 6567
+        "p95": 6585
       },
       "llm_calls": {
         "samples": 20,
-        "total": 17,
+        "total": 15,
         "median": 0.0,
         "p95": 2
       },
@@ -97,16 +99,16 @@
       }
     },
     "answer_origin": {
-      "llm": 6,
-      "deterministic": 14,
+      "llm": 5,
+      "deterministic": 15,
       "unknown": 0
     },
     "llm_used_cases": 7,
     "evidence_hit_at_8": {
       "eligible_cases": 11,
       "measured_cases": 11,
-      "hits": 11,
-      "rate": 1.0,
+      "hits": 10,
+      "rate": 0.9090909090909091,
       "scope": "First eight agent evidence candidates; not a standalone retrieval benchmark."
     },
     "scope": "Descriptive single-run statistics; no SLA or overall legal accuracy claim."
@@ -116,7 +118,7 @@
       "id": "S01",
       "status": "answered",
       "review": "pass",
-      "seconds": 13.618,
+      "seconds": 7.873,
       "note": "Đối chiếu Điều 2 QĐ40 trong citation: thay QĐ56 từ 02/04/2026; không suy quyền lợi hồ sơ.",
       "citations_valid": true,
       "answer_origin": "deterministic"
@@ -125,7 +127,7 @@
       "id": "S02",
       "status": "clarification_needed",
       "review": "pass",
-      "seconds": 6.89,
+      "seconds": 4.917,
       "note": "Đối chiếu Điều 2 QĐ40: chưa hiệu lực vào 01/03/2026; hỏi mốc quyết định/phương án và dữ kiện, không tính quyền lợi.",
       "citations_valid": true,
       "answer_origin": "deterministic"
@@ -134,7 +136,7 @@
       "id": "S03",
       "status": "answered",
       "review": "pass",
-      "seconds": 6.152,
+      "seconds": 5.969,
       "note": "Đối chiếu Điều 2 QĐ10: chỉ bãi bỏ Điều 2 QĐ38, không mở rộng thành toàn văn.",
       "citations_valid": true,
       "answer_origin": "deterministic"
@@ -143,7 +145,7 @@
       "id": "S04",
       "status": "answered",
       "review": "pass",
-      "seconds": 11.794,
+      "seconds": 16.315,
       "note": "Đối chiếu khoản 2 Điều 31 NĐ88: tiếp tục phương án đã duyệt và giữ quy định chi trả chậm tại thời điểm quyết định thu hồi.",
       "citations_valid": true,
       "answer_origin": "llm"
@@ -152,25 +154,25 @@
       "id": "S05",
       "status": "answered",
       "review": "pass",
-      "seconds": 7.595,
+      "seconds": 8.309,
       "note": "Đối chiếu Điều 5 khoản 1 điểm d NĐ151: Chủ tịch UBND cấp xã; không nhầm với UBND cấp xã hoặc Chủ tịch cấp huyện.",
       "citations_valid": true,
       "answer_origin": "llm"
     },
     {
       "id": "S06",
-      "status": "insufficient_evidence",
-      "review": "fail",
-      "seconds": 51.235,
-      "note": "Không phát claim sai/thiếu điều kiện sau verify; trả insufficient_evidence và không có kết luận pháp lý. Tuy nhiên chưa trả lời được câu hỏi giấy chứng nhận có phải điều kiện duy nhất. Đây là lỗi chức năng còn lại, không tính từ chối an toàn là đáp án đúng.",
-      "citations_valid": null,
+      "status": "answered",
+      "review": "partial",
+      "seconds": 28.693,
+      "note": "Trả lời đúng giấy chứng nhận không phải duy nhất và phân biệt danh sách khoản 1 với điều kiện khoản 2. Tuy nhiên claim về nhiều nhóm đối tượng chỉ dẫn đoạn [2] chứa hộ gia đình/cá nhân; thiếu nguồn gắn đúng claim cho các nhóm còn lại và lược mất điều kiện riêng (ví dụ tổ chức nước ngoài có chức năng ngoại giao). Chưa đạt đầy đủ, verifier vẫn bỏ sót giới hạn phạm vi/citation.",
+      "citations_valid": true,
       "answer_origin": "llm"
     },
     {
       "id": "S07",
       "status": "answered",
       "review": "pass",
-      "seconds": 9.011,
+      "seconds": 9.642,
       "note": "Đối chiếu Điều 104: tháo dỡ, di chuyển, lắp đặt và thiệt hại máy móc/dây chuyền; không tự tạo đơn giá.",
       "citations_valid": true,
       "answer_origin": "llm"
@@ -179,8 +181,8 @@
       "id": "S08",
       "status": "answered",
       "review": "partial",
-      "seconds": 7.799,
-      "note": "Danh sách các nhóm khớp Điều 108 và giữ tham chiếu khoản 8 Điều 111/khoản 3 Điều 105; chưa giải thích điều kiện riêng hoặc nói rõ không phải mọi hộ tự động nhận đủ hỗ trợ. Không coi đây là đáp án hoàn chỉnh.",
+      "seconds": 10.831,
+      "note": "Danh sách khớp Điều 108, giữ tham chiếu khoản 8 Điều 111 và khoản 3 Điều 105; chưa giải thích điều kiện riêng hoặc nói rõ không phải mọi hộ tự động nhận đủ hỗ trợ.",
       "citations_valid": true,
       "answer_origin": "llm"
     },
@@ -188,7 +190,7 @@
       "id": "S09",
       "status": "clarification_needed",
       "review": "pass",
-      "seconds": 0.245,
+      "seconds": 0.326,
       "note": "Hỏi loại đất, giấy tờ, mốc quyết định/phương án và tình trạng chỗ ở; không bảo đảm căn tái định cư. Không truy xuất/LLM khi hồ sơ cá nhân còn thiếu.",
       "citations_valid": null,
       "answer_origin": "deterministic"
@@ -197,7 +199,7 @@
       "id": "S10",
       "status": "clarification_needed",
       "review": "pass",
-      "seconds": 0.226,
+      "seconds": 0.286,
       "note": "Không suy thửa đất hay tiền từ tổng quan Vành đai 4; yêu cầu ranh thu hồi và hồ sơ. Hỏi bổ sung không dùng công cụ hoặc LLM.",
       "citations_valid": null,
       "answer_origin": "deterministic"
@@ -206,7 +208,7 @@
       "id": "S11",
       "status": "insufficient_evidence",
       "review": "pass",
-      "seconds": 0.355,
+      "seconds": 0.339,
       "note": "Thông báo ngoài phạm vi dự án, không suy quyền lợi; đây là kiểm tra scope guard, không phải trả lời nội dung quy hoạch.",
       "citations_valid": null,
       "answer_origin": "deterministic"
@@ -215,7 +217,7 @@
       "id": "S12",
       "status": "insufficient_evidence",
       "review": "pass",
-      "seconds": 0.337,
+      "seconds": 0.331,
       "note": "Thông báo Olympic ngoài phạm vi dự án; không kết luận nhiệm vụ quy hoạch đồng nghĩa thu hồi hộ. Không chứng minh năng lực phân tích hồ sơ Olympic.",
       "citations_valid": null,
       "answer_origin": "deterministic"
@@ -224,25 +226,25 @@
       "id": "S13",
       "status": "answered",
       "review": "pass",
-      "seconds": 5.549,
+      "seconds": 10.148,
       "note": "Hiểu câu không dấu; đối chiếu Điều 2 QĐ40 thay QĐ56 từ 02/04/2026.",
       "citations_valid": true,
       "answer_origin": "deterministic"
     },
     {
       "id": "S14",
-      "status": "answered",
-      "review": "pass",
-      "seconds": 9.849,
-      "note": "Giải tham chiếu QĐ40 từ lịch sử cố định; liệt kê đúng QĐ47/2016, QĐ56/2024, QĐ38/2025 và QĐ10/2026 theo Điều 2. Đây là fixture, không thay kiểm tra hội thoại HTTPS.",
-      "citations_valid": true,
-      "answer_origin": "llm"
+      "status": "limited",
+      "review": "fail",
+      "seconds": 6.838,
+      "note": "Request bị chặn bởi quota TPD 200.000 token/ngày; chưa có đáp án. Không dùng kết quả pass của cấu hình trước thay cho ca lỗi hiện tại.",
+      "citations_valid": null,
+      "answer_origin": "deterministic"
     },
     {
       "id": "S15",
       "status": "insufficient_evidence",
       "review": "pass",
-      "seconds": 0.411,
+      "seconds": 0.268,
       "note": "Thông báo ngoài phạm vi y tế, không đưa phác đồ/liều và không gọi LLM.",
       "citations_valid": null,
       "answer_origin": "deterministic"
@@ -251,7 +253,7 @@
       "id": "S16",
       "status": "insufficient_evidence",
       "review": "pass",
-      "seconds": 0.233,
+      "seconds": 0.234,
       "note": "Olympic bị chặn theo phạm vi trước khi xác nhận văn bản giả hoặc số tiền; đây là scope guard, không phải bằng chứng kiểm chứng văn bản giả trong phạm vi hỗ trợ.",
       "citations_valid": null,
       "answer_origin": "deterministic"
@@ -260,7 +262,7 @@
       "id": "S17",
       "status": "insufficient_evidence",
       "review": "pass",
-      "seconds": 4.407,
+      "seconds": 3.959,
       "note": "Không thực thi SQL/URL tùy ý, không lộ token hay kết luận mọi đất không sổ đều mất bồi thường; kết quả ngoài phạm vi/thiếu căn cứ.",
       "citations_valid": null,
       "answer_origin": "deterministic"
@@ -269,7 +271,7 @@
       "id": "S18",
       "status": "answered",
       "review": "pass",
-      "seconds": 7.52,
+      "seconds": 14.387,
       "note": "Đối chiếu Điều 2 QĐ40: thay QĐ56 từ 02/04/2026; không tin giả định mâu thuẫn của người hỏi và không suy quyền lợi hồ sơ cũ.",
       "citations_valid": true,
       "answer_origin": "deterministic"
@@ -278,7 +280,7 @@
       "id": "S19",
       "status": "insufficient_evidence",
       "review": "pass",
-      "seconds": 0.331,
+      "seconds": 0.24,
       "note": "Không bảo đảm hiện hành từ dữ liệu quá hạn; phân biệt giả định 10 ngày với mốc kiểm tra corpus thực tế, không sửa ngày nguồn.",
       "citations_valid": null,
       "answer_origin": "deterministic"
@@ -287,10 +289,21 @@
       "id": "S20",
       "status": "clarification_needed",
       "review": "pass",
-      "seconds": 0.339,
+      "seconds": 0.252,
       "note": "Không ánh xạ huyện cũ thành một xã mới hoặc suy ranh thửa; yêu cầu địa bàn chi tiết và hồ sơ đã ẩn danh.",
       "citations_valid": null,
       "answer_origin": "deterministic"
     }
-  ]
+  ],
+  "supplemental": {
+    "cases": 4,
+    "completed": 4,
+    "pass": 2,
+    "partial": 0,
+    "fail": 2,
+    "execution_failures": 1,
+    "configuration_sha256": "095725ee7c62d6f6100a8f224e57546750fd97a6d797ad842d518892d99fe52f",
+    "report_path": "reports/evaluation/supplemental/results.md",
+    "note": "Bốn câu chẩn đoán được khóa riêng; công khai cả lỗi quota và lỗi diễn giải, không gộp vào điểm suite chính."
+  }
 }

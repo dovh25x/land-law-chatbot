@@ -1,9 +1,9 @@
 {
-  "checked_at": "2026-10-16T10:35:05.397780+00:00",
-  "configuration_sha256": "476cb6033b4eff9f842129a608b2d5025ca8830fe61ddfddaee2d7a7de934b6e",
+  "checked_at": "2026-10-16T10:59:15.431730+00:00",
+  "configuration_sha256": "095725ee7c62d6f6100a8f224e57546750fd97a6d797ad842d518892d99fe52f",
   "backend": {
-    "passed": 169,
-    "seconds": 12.75
+    "passed": 171,
+    "seconds": 27.56
   },
   "frontend_unit": {
     "passed": 2
@@ -13,11 +13,11 @@
   },
   "frontend_e2e": {
     "passed": 24,
-    "seconds": 51.8
+    "seconds": 72
   },
   "secret_scan": {
     "passed": true
   },
   "scope": "Local regression tests with temporary databases and fake providers; browser tests intercept API responses. Real model, retrieval and deployment verification are separate.",
-  "source_commit": "311dc0322cf961ca91241aebbad72021e82e9215"
+  "source_commit": "d3c84eaba93669f271ba99e0ba09336dc1b9343b"
 }
