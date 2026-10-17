@@ -22,7 +22,7 @@ try{
   await page.locator('.document-row').first().waitFor({timeout:90000})
   const docs=await (await page.request.get(base+'/api/v1/documents')).json()
   if(docs.documents.length!==59||docs.documents.some(d=>d.project&&d.project!=='ring4'))throw Error('Corpus scope/count differs')
-  await page.locator('.document-row').first().click();await page.getByRole('dialog',{name:'Chi tiết nguồn'}).waitFor();await page.keyboard.press('Escape')
+  await page.locator('.document-row').first().click();await page.getByRole('dialog',{name:'Nguồn căn cứ'}).waitFor();await page.keyboard.press('Escape')
   await menu(page);await page.getByRole('button',{name:'Hỏi đáp pháp luật',exact:true}).click()
   if(width===1440&&chat){
    phase='configuration'
@@ -46,7 +46,7 @@ try{
    phase='generation'
    const first=await submit(sourceOnly?'Quyết định 56/2024/QĐ-UBND Hà Nội còn hiệu lực không? Văn bản nào thay thế?':'Chi phí di chuyển tài sản khi bị thu hồi đất được quy định như thế nào?')
    if(sourceOnly?first.result.llm_calls!==0:first.result.llm_calls<1)throw Error('Unexpected generation origin')
-   await page.locator('.message.assistant .citations button').first().click();await page.getByRole('dialog',{name:'Chi tiết nguồn'}).waitFor();await page.keyboard.press('Escape')
+   await page.locator('.message.assistant .citations button').first().click();await page.getByRole('dialog',{name:'Nguồn căn cứ'}).waitFor();await page.keyboard.press('Escape')
    await page.locator('.message.assistant .trace-link').first().click();await page.getByRole('dialog',{name:'Quá trình kiểm chứng'}).waitFor();await page.keyboard.press('Escape')
    phase='follow_up'
    const second=await submit('Văn bản đó quy định cơ quan nào quyết định mức bồi thường chi phí di chuyển tài sản?')

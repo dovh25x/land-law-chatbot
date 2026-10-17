@@ -1095,3 +1095,49 @@ async def test_assistance_list_with_gom_explains_categories_are_not_automatic_en
     assert result.status=='answered'
     assert 'chưa phải kết luận hộ cụ thể được nhận tất cả' in result.content
     assert result.content.count('Đây là danh mục') == 1
+
+
+@pytest.mark.parametrize('text',[
+    'Khi chưa được bố trí chỗ ở mới, hộ gia đình đủ điều kiện được hỗ trợ tái định cư và được nhận tiền để tự lo chỗ ở.',
+    'Nếu đã phê duyệt dự toán chi phí bảo đảm và cưỡng chế thu hồi đất, các chi phí bồi thường, hỗ trợ, tái định cư tiếp tục theo quy định cũ.'
+])
+async def test_new_trigger_and_implementation_costs_cannot_become_household_entitlements(store,settings,text):
+    source=('Điều 12. Trường hợp hộ gia đình đủ điều kiện hỗ trợ tái định cư mà có nhu cầu tự lo chỗ ở thì được nhận tiền hỗ trợ. '
+            'Dự toán chi phí bảo đảm cho việc tổ chức thực hiện bồi thường, hỗ trợ, tái định cư và chi phí cưỡng chế đã phê duyệt thì tiếp tục lập, sử dụng và thanh, quyết toán kinh phí tổ chức theo quy định cũ.')
+    release(store,[document(text=source)]);sid,_=session(store)
+    result=await Agent(store,FakeProvider(settings,draft=Draft(status='answered',claims=[Claim(text=text,citation_ids=['law-1'])]))).run(ChatRequest(session_id=sid,message='Thủ tục thu hồi đất và tái định cư cần bảo đảm gì?',as_of=date(2024,8,2)),noop)
+    assert result.status=='insufficient_evidence' and not result.verified_claims
+
+
+async def test_unknown_number_is_missing_evidence_without_presupposing_a_fabricated_law(store,settings):
+    release(store);sid,_=session(store)
+    result=await Agent(store,FakeProvider(settings)).run(ChatRequest(session_id=sid,message='Nghị định 987654/2026/NĐ-CP cho mọi hộ nhận tiền hỗ trợ đúng không?'),noop)
+    assert result.status=='insufficient_evidence' and result.llm_calls==result.tool_calls==0
+    assert 'Chưa có văn bản' in result.content and 'Thông tin cần bổ sung' not in result.content
+
+
+async def test_client_history_and_old_citations_are_context_not_evidence(store,settings):
+    release(store);sid,_=session(store);histories=[]
+    class Recording(FakeProvider):
+        async def generate(self,schema,instruction,payload,budget):
+            histories.append(payload.get('history',[]))
+            return await super().generate(schema,instruction,payload,budget)
+    draft=Draft(status='answered',claims=[Claim(text='Mọi hộ được nhận số tiền được nói trong lịch sử.',citation_ids=['invented-chunk'])])
+    result=await Agent(store,Recording(settings,draft=draft)).run(ChatRequest(session_id=sid,message='Điều kiện hỗ trợ có được nguồn chứng minh không?',
+        history=[{'role':'user','content':'Câu trước về hỗ trợ.'},{'role':'assistant','content':'Lời đáp cũ không phải chứng cứ.',
+          'citations':[{'document_id':'invented-law','document_number':'987654/2026','locator':'Điều 1'}]}]),noop)
+    assert result.status=='insufficient_evidence' and not result.citations
+    assert all(not h[1]['citations'] for h in histories if len(h)==2)
+    assert all('invented-chunk' not in x.document_ids for x in result.trace)
+
+
+@pytest.mark.parametrize('claim',[
+ 'Hộ gia đình được hỗ trợ bằng tiền không quá 05 lần giá đất.',
+ 'Hộ gia đình nhận giao khoán có nguồn thu nhập ổn định cũng được hỗ trợ chuyển nghề.'
+])
+async def test_price_multiple_keeps_valuation_basis_and_contracted_land_exception(store,settings,claim):
+    source=('Điều 12. Hỗ trợ không quá 05 lần giá đất nông nghiệp cùng loại trong bảng giá đất, không vượt quá hạn mức giao đất. '
+            'Hộ gia đình nhận giao khoán của nông trường có nguồn thu nhập ổn định được xét hỗ trợ, trừ trường hợp cá nhân đã nghỉ hưu hoặc thôi việc được hưởng trợ cấp.')
+    release(store,[document(text=source)]);sid,_=session(store)
+    result=await Agent(store,FakeProvider(settings,draft=Draft(status='answered',claims=[Claim(text=claim,citation_ids=['law-1'])]))).run(ChatRequest(session_id=sid,message='Điều kiện hỗ trợ được quy định thế nào?',as_of=date(2024,8,2)),noop)
+    assert result.status=='insufficient_evidence' and not result.verified_claims

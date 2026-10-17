@@ -52,6 +52,7 @@ class Verification(BaseModel):
 
 class State(TypedDict, total=False):
     unsupported_project: bool
+    unsupported_references: list[str]
     request: ChatRequest
     budget: Budget
     emit: Any
@@ -377,7 +378,7 @@ class Agent:
         if unsupported_project:
             state['unsupported_project'] = True
             state['plan'] = Plan(out_of_scope=True)
-            await self.event(state,'routing','Bản MVP chỉ hỗ trợ thao tác dự án Vành đai 4; các dự án khác chỉ có nguồn tham khảo trong thư viện.')
+            await self.event(state,'routing','Chỉ hỗ trợ Vành đai 4; không có dữ liệu dự án khác trong corpus đang phục vụ.')
         elif freshness:
             state['freshness_question']=True
             state['plan']=Plan()
@@ -385,6 +386,10 @@ class Agent:
         elif unrelated and not legal_topic:
             state['plan']=Plan(out_of_scope=True)
             await self.event(state,'routing','Câu hỏi thuộc lĩnh vực ngoài phạm vi pháp luật đất đai và quy hoạch Hà Nội.')
+        elif literal_numbers-known_numbers:
+            state['unsupported_references']=sorted(literal_numbers-known_numbers)
+            state['plan']=Plan()
+            await self.event(state,'routing','Không có văn bản được viện dẫn đã kiểm chứng trong corpus; không xác nhận nội dung hoặc yêu cầu người dùng bổ sung luật giả định.')
         elif private_entitlement_check(request.message):
             tool='search_project' if request.project else 'search_law'
             state['plan']=Plan(tools=[ToolCall(name=tool,query=request.message[:1000])])
@@ -425,6 +430,8 @@ class Agent:
                     "open_article for a known document_id and locator; check_effectivity for a known document; "
                     "candidate_articles contain actual source headings, not conclusions. Prefer opening the relevant "
                     "article(s) for a substantive legal question; search_law can supplement unknown provisions. "
+                    "For procedural timing or safeguards, seek the governing principle before benefit categories. "
+                    "Match the provision object: household compensation differs from administrative implementation expenses. "
                     "For a question asking the categories/types of a rule, open its overview/list provision first, "
                     "not just a specialized provision about one category. Every final claim must be standalone: repeat its actor and material prerequisites rather than referring to other claims. The catalogue is a bounded suggestion "
                     "list, not the full corpus; use search_law if it does not cover the question. "
@@ -509,7 +516,7 @@ class Agent:
         return list(priority.values())[:8]
 
     async def tools(self, state):
-        if state["plan"].out_of_scope or state.get('freshness_question') or not state["release"]:
+        if state["plan"].out_of_scope or state.get('freshness_question') or state.get('unsupported_references') or not state["release"]:
             return state
         if state.get('private_entitlement_check'):
             await self.event(state, 'tool', 'Thiếu hồ sơ cá nhân; hỏi bổ sung trước khi truy xuất quy định áp dụng.')
@@ -756,7 +763,7 @@ class Agent:
         state['source_fact_type']=None
         if state["plan"].out_of_scope:
             state["draft"] = Draft(status="insufficient_evidence", summary="Câu hỏi nằm ngoài phạm vi đất đai và quy hoạch Hà Nội.",out_of_scope=True)
-        elif state.get('freshness_question'):
+        elif state.get('freshness_question') or state.get('unsupported_references'):
             state['draft']=Draft(status='insufficient_evidence')
         elif state.get('place_clarification'):
             state['draft']=Draft(status='clarification_needed',missing_facts=state['plan'].missing_facts)
@@ -813,6 +820,8 @@ class Agent:
                 "document is the only qualifying condition; instead retain the prerequisite clause and explain "
                 "the documentary alternatives with OR, never as cumulative AND requirements. "
                 "Never list types of people or organizations as examples of documentary conditions in a different clause. "
+                "Do not substitute implementation/coercion budgets for household compensation or add a new triggering "
+                "condition from the question to a different rule. Omit unrelated transition and cost-administration details. "
                 "For lists of assistance, retain material eligibility limits and explicitly say that categories are not "
                 "automatic entitlements for every household. A cross-reference alone does not explain its conditions: "
                 "explain them only when its actual text is supplied, otherwise disclose that limit. "
@@ -1057,6 +1066,20 @@ class Agent:
             normalized_claim=normalize(claim.text)
             groups=('cong dong dan cu','to chuc ton giao','to chuc nuoc ngoai','to chuc kinh te','nguoi goc viet nam')
             source_body=normalize(' '.join(evidence[c].chunk.text for c in claim.citation_ids if c in evidence))
+            prefix=re.match(r'^(?:khi|neu|truong hop)\b([^,;.]{0,200})',normalized_claim)
+            if prefix and re.search(r'\bchua\b',prefix[1]) and not re.search(r'\bchua\b',source_body):
+                structural_issues.append(f'Claim {index}: điều kiện chưa xảy ra trong câu hỏi không được đoạn nguồn xác lập làm căn cứ áp dụng')
+            expense=re.search(r'(?:,|\bthi)\s*(?:cac\s+)?chi phi (?:boi thuong|ho tro|tai dinh cu)',normalized_claim)
+            if expense and any(t in source_body for t in ('chi phi bao dam','kinh phi to chuc')) and not any(t in normalized_claim[expense.start():] for t in ('to chuc','cuong che','thanh, quyet toan')):
+                structural_issues.append(f'Claim {index}: không mở rộng kinh phí tổ chức/cưỡng chế thành các khoản bồi thường, hỗ trợ của hộ')
+            if re.search(r'\b\d+\s+lan\s+gia dat',normalized_claim):
+                for qualification in ('bang gia dat','han muc'):
+                    if qualification in source_body and qualification not in normalized_claim:
+                        structural_issues.append(f'Claim {index}: mức hỗ trợ theo lần giá đất thiếu cơ sở bảng giá hoặc hạn mức trong nguồn')
+            if ('nhan giao khoan' in normalized_claim and 'tru truong hop' in source_body
+                    and any(t in source_body for t in ('nghi huu','nghi mat suc','thoi viec duoc huong tro cap'))
+                    and not any(t in normalized_claim for t in ('tru ','khong thuoc','tap doan','hop tac xa'))):
+                structural_issues.append(f'Claim {index}: nhóm nhận giao khoán thiếu ngoại lệ của chủ thể trong nguồn')
             for group in groups:
                 if group in normalized_claim and group not in source_body:
                     structural_issues.append(f'Claim {index}: nhóm chủ thể nêu trong kết luận không có trong đúng đoạn dẫn')
@@ -1202,6 +1225,10 @@ class Agent:
                     affected = not relation.get('target_locators_complete') or any(re.search(rf"^Điều {n}(?:\s|$)", item.chunk.locator, re.IGNORECASE) for n in affected_articles)
                     if affected and amendment_affects_claim(relation,item,claim) and relation["source_id"] not in cited_documents:
                         structural_issues.append(f"Claim {index}: {item.chunk.locator} có sửa đổi/bãi bỏ một phần bởi {relation['source_id']} ({relation.get('source_locator')}); cần đối chiếu và dẫn phần tác động phù hợp")
+        if structural_issues and all(citation in evidence for claim in draft.claims for citation in claim.citation_ids):
+            state['verification']=Verification(issues=structural_issues)
+            await self.event(state,'verification',f'0/{len(draft.claims)} kết luận được phát hành; lỗi phạm vi/điều kiện đã xác định, không gọi model để phê duyệt lại. '+redact('; '.join(structural_issues[:3]))[:500])
+            return state
         cited_ids={citation_id for claim in draft.claims for citation_id in claim.citation_ids}
         selected=[item for item in state['evidence'] if item.chunk.id in cited_ids]
         spans=source_spans(selected)
@@ -1348,6 +1375,8 @@ class Agent:
         if stale and state["as_of"] >= local_date():
             intro = "Bộ dữ liệu đã quá bảy ngày chưa được kiểm tra nguồn; chưa thể xác nhận quy định hiện hành."
         content = intro
+        if state.get('unsupported_references'):
+            content='Chưa có văn bản mang số '+', '.join(state['unsupported_references'])+' đã được kiểm chứng trong corpus. Chưa thể xác nhận nội dung, mức tiền hoặc quyền lợi được viện dẫn; cần đối chiếu nguồn văn bản chính thức. Không suy ra văn bản có hay không tồn tại chỉ từ việc thiếu trong corpus.'
         if state.get('freshness_question'):
             content='Không thể bảo đảm tính hiện hành chỉ từ dữ liệu chưa được kiểm tra lại. '
             content+='Nếu quá bảy ngày chưa kiểm tra nguồn thành công, cần nêu giới hạn cập nhật và đối chiếu văn bản chính thức, mốc hiệu lực, sửa đổi và chuyển tiếp trước khi kết luận. '

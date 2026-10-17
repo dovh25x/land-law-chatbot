@@ -1,0 +1,50 @@
+{
+  "N01": {
+    "answer_sha256": "48a7a721117739f2da95c96ea6f38a2e6f9f98eb276a9819dd2cfa044cc3e0c2",
+    "verdict": "fail",
+    "note": "Provider TPM chặn ngay planner; chưa trả được quy định.",
+    "review_method": "Codex technical review against frozen criteria and corpus excerpts; AI-assisted, not independent legal certification."
+  },
+  "N02": {
+    "answer_sha256": "ca90eb582cf3b273c1dd92be4f5efb00c31a1add757882d0c1ab6013a3fa6d88",
+    "verdict": "partial",
+    "note": "Nêu tỷ lệ/thời gian theo Điều 19 NĐ88 nhưng chưa bao quát nhánh dưới 30%; không xác nhận quyền lợi cá nhân.",
+    "review_method": "Codex technical review against frozen criteria and corpus excerpts; AI-assisted, not independent legal certification."
+  },
+  "N03": {
+    "answer_sha256": "96299e6727f99e52c1895a8dfd799706a2934871192bc3c9baf5f37f08636938",
+    "verdict": "fail",
+    "note": "Bỏ điều kiện quan trọng của Điều 109: bảng giá đất, giới hạn diện tích/hạn mức và ngoại lệ với một số đối tượng nhận giao khoán. Citation khớp không chứng minh diễn giải đầy đủ.",
+    "review_method": "Codex technical review against frozen criteria and corpus excerpts; AI-assisted, not independent legal certification."
+  },
+  "N04": {
+    "answer_sha256": "8feca730a99d4ff9b6504837a29f72f04d49ec2136edf1e6a0850c2c2d8e2c94",
+    "verdict": "fail",
+    "note": "Sai trọng tâm và phạm vi: dùng hỗ trợ tự lo chỗ ở/kinh phí tổ chức thay nguyên tắc bố trí tái định cư trước thu hồi; runtime verifier đã bỏ lọt. Bản sửa sau run thêm lớp chặn, chưa tái đánh giá LLM do TPD.",
+    "review_method": "Codex technical review against frozen criteria and corpus excerpts; AI-assisted, not independent legal certification."
+  },
+  "N05": {
+    "answer_sha256": "b8200a6bce9058222986ce105f1e51e15a603a06fda87a7eafdadf028d9525c6",
+    "verdict": "pass",
+    "note": "Đúng UBND cấp tỉnh theo khoản 2 Điều 104.",
+    "review_method": "Codex technical review against frozen criteria and corpus excerpts; AI-assisted, not independent legal certification."
+  },
+  "N06": {
+    "answer_sha256": "ba24a5b8920e60e0c448f2a16572164a0639817ee2ae08dc353ab2e79a271807",
+    "verdict": "fail",
+    "note": "Hết ngân sách thực thi; chưa cung cấp được văn bản thay thế.",
+    "review_method": "Codex technical review against frozen criteria and corpus excerpts; AI-assisted, not independent legal certification."
+  },
+  "N07": {
+    "answer_sha256": "2321c5b4acbd5436d5f1410d45abf5fa45ec791c7e7fbfd7bbe78c1697c426ee",
+    "verdict": "pass",
+    "note": "Yêu cầu hồ sơ và không xác nhận chắc chắn suất tái định cư.",
+    "review_method": "Codex technical review against frozen criteria and corpus excerpts; AI-assisted, not independent legal certification."
+  },
+  "N08": {
+    "answer_sha256": "39e68f9bf01f6a8a3b2abcbde2b28e11c8ec0fd463f21d7366faca505d609036",
+    "verdict": "fail",
+    "note": "Hết ngân sách, chưa nêu thiếu căn cứ một cách phù hợp. Bản sửa sau run xử lý viện dẫn chưa biết theo quy tắc, không gọi LLM.",
+    "review_method": "Codex technical review against frozen criteria and corpus excerpts; AI-assisted, not independent legal certification."
+  }
+}

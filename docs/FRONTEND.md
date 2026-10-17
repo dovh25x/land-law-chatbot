@@ -6,7 +6,7 @@
 
 Trải nghiệm hội thoại tham khảo ChatGPT: ưu tiên đọc đáp án dài, lịch sử tại máy, thao tác mobile rõ. Tiếng Việt, danh tính Vành đai 4; không chọn model/retrieval/project. Palette trung tính; Be Vietnam Pro; cột đọc 760 px, sidebar 264 px, composer bo 24 px; light/dark. Thư viện nguồn và đánh giá là điều hướng phụ. Nguồn mở drawer 420 px desktop, toàn màn hình mobile. Trace là chi tiết tự chọn.
 
-Frames: desktop light `4:186`, dark `4:216`, mobile `4:246`, khởi đầu `5:8`, source drawer `5:14`, trạng thái `5:20`, thư viện `7:8`, đánh giá `7:15`. Đã dùng Simple Design System button làm tham chiếu. Repo không có package component SDS tương ứng; triển khai bằng button hiện có và CSS tokens. Không có ảnh/SVG tĩnh cần tải từ Figma.
+Frames: desktop light `4:186`, dark `4:216`, mobile `4:246`, khởi đầu `5:8`, source drawer `5:14`, trạng thái `5:20`, thư viện `7:8`, đánh giá `7:15`. Đã dùng Simple Design System button làm tham chiếu. Repo không có package component SDS tương ứng; triển khai bằng button hiện có và CSS tokens. Bản sửa của chủ dự án được đọc lại và áp dụng ngày 2026-10-17: sidebar sáng `#f9f9f9`, user message có viền trên desktop, header hai dòng, thẻ gợi ý đánh số, action nguồn/thực thi/sao chép và các thẻ nguồn/metric. Icon gửi mobile lấy từ Figma tại `frontend/public/figma/arrow-up.svg`; không dùng URL asset tạm khi chạy. Các thao tác lưu trữ, xác minh trình duyệt và kết nối được giữ hoạt động trong bố cục mới.
 
 `App.tsx`: hội thoại, điều hướng, nguồn, trace. `history.ts`: lưu/xóa/TTL và context request. `Turnstile.tsx`: challenge tạo phiên. `ui.tsx`: nguồn, trace và dữ liệu. CSS sáng/tối lấy giá trị từ frames; không giữ selector dự án trong luồng chat.
 

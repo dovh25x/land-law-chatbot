@@ -1,5 +1,5 @@
 import { useEffect, useState, type ReactNode } from 'react'
-import { ArrowUpRight, Check, FileText, GitBranch, LoaderCircle, X } from 'lucide-react'
+import { ArrowUpRight, Check, FileText, GitBranch, LoaderCircle } from 'lucide-react'
 import { getJSON, type Citation, type LegalDocument, type Trace } from './api'
 
 export const sourceKinds: Record<string, string> = {
@@ -11,7 +11,7 @@ export const formatDate = (value?: string) => value && !Number.isNaN(Date.parse(
 export function DocumentRow({ document, onOpen }: { document: LegalDocument; onOpen: (doc: LegalDocument) => void }) {
   return <button className="document-row" onClick={() => onOpen(document)}>
     <FileText size={24} className="document-symbol"/>
-    <span className="document-copy"><small>{document.document_number || sourceKinds[document.source_kind]}</small>
+    <span className="document-copy"><span className="document-card-meta"><small className={document.source_kind==='legal'?'':'project-badge'}>{document.source_kind==='legal'?'Nguồn pháp luật':'Nguồn dự án'}</small><span>Snapshot có phiên bản</span></span>
       <strong>{document.title}</strong><span>{sourceKinds[document.source_kind]} · Kiểm tra {formatDate(document.checked_at)}</span>
     </span>
     {document.effective_to && <span className="document-history">Văn bản lịch sử</span>}
@@ -24,7 +24,7 @@ export function SidePanel({ title, icon, children, footer, onClose }: {
 }) {
   return <div className="panel-backdrop" onClick={onClose}>
     <section className="side-panel" role="dialog" aria-modal="true" aria-label={title} onClick={e => e.stopPropagation()}>
-      <header className="panel-header"><div>{icon}<h2>{title}</h2></div><button className="icon-button" onClick={onClose} aria-label="Đóng"><X size={20}/></button></header>
+      <header className="panel-header"><div>{icon}<h2>{title}</h2></div><button className="icon-button" onClick={onClose} aria-label="Đóng">Đóng</button></header>
       <div className="panel-body">{children}</div>
       {footer && <footer className="panel-footer">{footer}</footer>}
     </section>
@@ -50,11 +50,12 @@ export function SourcePanel({ source, onClose }: { source: Citation | LegalDocum
       .finally(() => { if (!c.signal.aborted) setLoading(false) })
     return () => c.abort()
   }, [source])
-  return <SidePanel title="Chi tiết nguồn" icon={<FileText size={20}/>} onClose={onClose} footer={<>
+  return <SidePanel title="Nguồn căn cứ" icon={<FileText size={20}/>} onClose={onClose} footer={<>
     <ExternalSource url={source.url} primary>Mở nguồn chính thức</ExternalSource>
     {citation?.source_url && <ExternalSource url={citation.source_url}>Mở trang PDF gốc</ExternalSource>}
+    <p className="source-receipt">Ngày kiểm tra: {formatDate(source.checked_at)}<br/>Checksum: {source.checksum || 'Chưa có metadata trong lượt hỏi'}</p>
   </>}>
-    <span className="badge">{citation ? 'CĂN CỨ TRONG LƯỢT HỎI' : sourceKinds[(source as LegalDocument).source_kind]}</span>
+    <div className="source-card">
     <h3 className="source-title">{source.title}</h3>
     <p className="source-meta">{source.document_number}<br/>Snapshot nguồn: {formatDate(source.checked_at)}</p>
     {citation ? <>
@@ -68,6 +69,7 @@ export function SourcePanel({ source, onClose }: { source: Citation | LegalDocum
       {document?.chunks?.slice(0, 3).map(chunk => <div className="source-excerpt" key={chunk.id}><h4>{chunk.locator}</h4><blockquote>{chunk.text}</blockquote></div>)}
       {!!document?.chunks?.length && <p className="secondary-copy">Hiển thị tối đa ba đoạn đầu. Mở nguồn chính thức để đọc đầy đủ.</p>}
     </>}
+    </div>
     {source.source_review_notes && <p className="secondary-copy">{source.source_review_notes}</p>}
     <p className="secondary-copy">Nguồn dẫn hỗ trợ đối chiếu. Việc áp dụng còn phụ thuộc thời điểm, dữ kiện và hồ sơ cụ thể.</p>
   </SidePanel>

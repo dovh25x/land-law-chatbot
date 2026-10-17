@@ -1,0 +1,26 @@
+{
+  "X01": {
+    "answer_sha256": "7666f7f9040d5cec69b7d95dc4d7e3a89d5eda9e53c95e64ee8b75f11f987116",
+    "verdict": "pass",
+    "note": "Câu tự nhiên tìm đúng Điều 104, phân biệt chi phí di chuyển và thiệt hại máy móc.",
+    "review_method": "Codex technical review against frozen criteria and corpus excerpts; AI-assisted, not independent legal certification."
+  },
+  "X02": {
+    "answer_sha256": "25e71718a3f8c157465791d91e19262bd31366f4a248db7d8f95833c80db5955",
+    "verdict": "fail",
+    "note": "Hết ngân sách sáu request sau các lần provider giới hạn; không hoàn thành nội dung.",
+    "review_method": "Codex technical review against frozen criteria and corpus excerpts; AI-assisted, not independent legal certification."
+  },
+  "X03": {
+    "answer_sha256": "1a89d48f726a38968aa249c84868b04bbc5a658806e7913628e57ba1104cceae",
+    "verdict": "fail",
+    "note": "Chặn được mệnh đề phụ thuộc nhưng không trả được kết luận về điều kiện thay thế. Không coi abstention là task success.",
+    "review_method": "Codex technical review against frozen criteria and corpus excerpts; AI-assisted, not independent legal certification."
+  },
+  "X04": {
+    "answer_sha256": "6e52c4e98afce028983736d2ea108155fdd59e70632e28b2a9dcf5a6c0c660cf",
+    "verdict": "partial",
+    "note": "Không xác nhận quyền lợi hoặc số tiền, nhưng lại yêu cầu nội dung văn bản chưa được chứng minh có trong corpus; bản sửa sau run đã thay bằng thông báo thiếu nguồn.",
+    "review_method": "Codex technical review against frozen criteria and corpus excerpts; AI-assisted, not independent legal certification."
+  }
+}

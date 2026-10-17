@@ -1,0 +1,108 @@
+{
+  "checked_at": "2026-10-17T10:56:03.499244+00:00",
+  "configuration_sha256": "800c96bad3ff018276b23b2ca1f49a0364c6e6b4d8eca3d4ff9f137bdafe4499",
+  "judge_implementation_sha256": "105f56625b02bc340db9ed5d4f1fd19120250a3eab42a12be9a1478a9d90fec4",
+  "judge_model": "openai/gpt-oss-120b",
+  "sample_case_ids": [
+    "S04",
+    "S05",
+    "S06",
+    "S07",
+    "S08",
+    "S14",
+    "X01",
+    "X03"
+  ],
+  "scored_cases": 0,
+  "expected_cases": 8,
+  "sampled_faithfulness": null,
+  "total_judged_claims": 0,
+  "results": [
+    {
+      "id": "S04",
+      "answer_sha256": "fb9dec905d3476d9d86bd9188ae908c63c1b0346691a7f48a8ed2d747dfa2c51",
+      "answer_origin": "llm",
+      "score": null,
+      "context_scope": "generation_context",
+      "status": "judge_error",
+      "error_type": "RuntimeError",
+      "llm_calls": 0,
+      "token_usage": 0
+    },
+    {
+      "id": "S05",
+      "answer_sha256": "653b09b25fd30e1d37ca7fb1b0d68f1897ed9e2f100b2112120b6d538187eacf",
+      "answer_origin": "llm",
+      "score": null,
+      "context_scope": "generation_context",
+      "status": "judge_error",
+      "error_type": "RuntimeError",
+      "llm_calls": 0,
+      "token_usage": 0
+    },
+    {
+      "id": "S06",
+      "answer_sha256": "a036686f71aa44ede21ec3e51899344e2442a20d7bc76c24043d765e2fdc79ba",
+      "answer_origin": "llm",
+      "score": null,
+      "status": "not_applicable",
+      "reason": "No factual legal answer was published; execution failures are scored separately in task success."
+    },
+    {
+      "id": "S07",
+      "answer_sha256": "4168d96dac45d1a19ed63b1156bef1d8a7d48aec935b7c1bee8d15c7be4feb68",
+      "answer_origin": "llm",
+      "score": null,
+      "context_scope": "generation_context",
+      "status": "judge_error",
+      "error_type": "RuntimeError",
+      "llm_calls": 0,
+      "token_usage": 0
+    },
+    {
+      "id": "S08",
+      "answer_sha256": "0fa3f6533ff215888021c64641b02b46c0e36e01e46448194385edd65dce38a0",
+      "answer_origin": "llm",
+      "score": null,
+      "context_scope": "generation_context",
+      "status": "judge_error",
+      "error_type": "RuntimeError",
+      "llm_calls": 0,
+      "token_usage": 0
+    },
+    {
+      "id": "S14",
+      "answer_sha256": "8865747c2e69d7c0a108bd59e856fddac346e20d1a25f07e47047fad4fd0fb63",
+      "answer_origin": "llm",
+      "score": null,
+      "context_scope": "generation_context",
+      "status": "judge_error",
+      "error_type": "RuntimeError",
+      "llm_calls": 0,
+      "token_usage": 0
+    },
+    {
+      "id": "X01",
+      "answer_sha256": "7666f7f9040d5cec69b7d95dc4d7e3a89d5eda9e53c95e64ee8b75f11f987116",
+      "answer_origin": "llm",
+      "score": null,
+      "context_scope": "generation_context",
+      "status": "judge_error",
+      "error_type": "RuntimeError",
+      "llm_calls": 0,
+      "token_usage": 0
+    },
+    {
+      "id": "X03",
+      "answer_sha256": "1a89d48f726a38968aa249c84868b04bbc5a658806e7913628e57ba1104cceae",
+      "answer_origin": "llm",
+      "score": null,
+      "context_scope": "generation_context",
+      "status": "judge_error",
+      "error_type": "RuntimeError",
+      "llm_calls": 0,
+      "token_usage": 0
+    }
+  ],
+  "scope": "Custom sampled claim support metric inspired by Ragas faithfulness; same-model offline judge, not independent legal certification. No overall quality score. Missing/failed judgments and abstentions are visible, never replaced."
+}

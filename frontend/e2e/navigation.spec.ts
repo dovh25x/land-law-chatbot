@@ -32,7 +32,8 @@ test('technical demo clearly discloses pending legal acceptance and coverage gap
     corpus_release:'reviewed-test-corpus',publication_profile:'technical_demo',quality_status:'acceptance_pending',
     checked_at:'2026-10-13T00:00:00Z',coverage_gaps:[{document_id:'missing',title:'Nguồn còn thiếu',reason:'Chưa có toàn văn đạt kiểm tra.'}]}}))
   await page.goto('/')
-  await page.getByRole('button', { name: 'Thông tin dữ liệu và kết nối' }).click()
+  if(await page.getByRole('button',{name:'Mở menu điều hướng'}).isVisible()) await page.getByRole('button',{name:'Mở menu điều hướng'}).click()
+  await page.getByRole('button', { name: 'Thông tin dữ liệu và kết nối' }).filter({visible:true}).click()
   await expect(page.getByRole('note')).toContainText('Bản thử nghiệm — chưa được thẩm định pháp lý độc lập.')
   await page.getByText('Các nguồn chưa đủ dữ liệu (1)').click()
   await expect(page.getByRole('dialog')).toContainText('Nguồn còn thiếu: Chưa có toàn văn đạt kiểm tra.')
@@ -59,7 +60,7 @@ test('verified SSE answer opens source and trace with keyboard dismissal', async
   await page.getByRole('button', { name: 'Gửi câu hỏi' }).click()
   await expect(page.locator('.message.assistant')).toContainText(result.content)
   await page.getByRole('button', { name: /40\/2026/ }).click()
-  await expect(page.getByRole('dialog', { name: 'Chi tiết nguồn' })).toContainText(citation.excerpt)
+  await expect(page.getByRole('dialog', { name: 'Nguồn căn cứ' })).toContainText(citation.excerpt)
   await expect(page.getByRole('link', { name: 'Mở nguồn chính thức' })).toHaveAttribute('href', citation.url)
   await expect(page.getByRole('link', { name: 'Mở trang PDF gốc' })).toHaveAttribute('href', citation.source_url)
   await expect(page.getByRole('dialog')).toContainText('Trang nguồn: 6')

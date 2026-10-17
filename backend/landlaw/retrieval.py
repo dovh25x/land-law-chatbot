@@ -11,7 +11,8 @@ STOP = set('toi cua co la va hay thi ma khi duoc theo nhung nao the nhu voi tron
 def terms(text):
     text = normalize(text)
     for citizen, statutory in [('so do', 'giay chung nhan'), ('so hong', 'giay chung nhan'),
-                               ('den bu', 'boi thuong')]:
+                               ('den bu', 'boi thuong'), ('can bao dam', 'nguyen tac'),
+                               ('bo tri cho o moi', 'bo tri tai dinh cu')]:
         text = text.replace(citizen, statutory)
     return [w for w in re.findall(r'[a-z0-9]+', text) if len(w) > 1 and w not in STOP]
 

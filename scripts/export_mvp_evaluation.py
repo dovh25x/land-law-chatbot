@@ -13,10 +13,11 @@ from landlaw.evaluation import configuration_fingerprint, dataset, report_metric
 from landlaw.security import utcnow
 
 
-def export(run_dir, output, release_path, suite_path=Path("data/evaluation/smoke.jsonl")):
+def export(run_dir, output, release_path, suite_path=Path("data/evaluation/smoke.jsonl"), allow_historical=False):
     records = json.loads((run_dir / 'records.json').read_text())
     metadata = json.loads((run_dir / 'metadata.json').read_text())
-    if metadata['configuration_sha256'] != configuration_fingerprint(Settings()):
+    matches_source=metadata['configuration_sha256']==configuration_fingerprint(Settings())
+    if not matches_source and not allow_historical:
         raise ValueError('Configuration mismatch; never mix runs or providers')
     suite_checksum = hashlib.sha256(suite_path.read_bytes()).hexdigest()
     if metadata.get('suite_sha256', suite_checksum) != suite_checksum:
@@ -58,7 +59,7 @@ def export(run_dir, output, release_path, suite_path=Path("data/evaluation/smoke
     execution_successful = complete and all(r['status'] not in {'error', 'limited'} for r in rows)
     all_reviewed = complete and all(r['review'] in {'pass', 'partial', 'fail'} for r in rows)
     report = {'checked_at': utcnow().isoformat(), 'status': 'reviewed' if all_reviewed else 'awaiting_review' if complete else 'partial',
-        'execution_successful': execution_successful,
+        'execution_successful': execution_successful, 'matches_checked_out_source':matches_source,
         'transport': 'operator_cli', 'storage_backend': metadata.get('storage_backend', 'unknown'), 'mode': 'agentic', 'model': Settings().generation_model,
         'identity': {'release': release['id'], 'configuration_sha256': metadata['configuration_sha256']},
         'suite_sha256': hashlib.sha256(suite_path.read_bytes()).hexdigest(),
@@ -99,13 +100,14 @@ def export(run_dir, output, release_path, suite_path=Path("data/evaluation/smoke
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--allow-historical',action='store_true',help='Export an identified historical run; preserve its fingerprint and do not claim current source coverage')
     parser.add_argument('--suite', type=Path, default=Path('data/evaluation/smoke.jsonl'))
     parser.add_argument('--run-dir', type=Path, required=True)
     parser.add_argument('--release', type=Path, default=Path('data/releases/corpus-de584c31fc95f9a2.json'))
     parser.add_argument('--public-summary', type=Path, help='Publish a reviewed technical summary, never legal acceptance')
     parser.add_argument('--output', type=Path, default=Path('reports/evaluation/smoke'))
     args = parser.parse_args()
-    export(args.run_dir, args.output, args.release, args.suite)
+    export(args.run_dir, args.output, args.release, args.suite, args.allow_historical)
     if args.public_summary:
         report = json.loads((args.output / 'evaluation.json').read_text())
         if report['status'] != 'reviewed':

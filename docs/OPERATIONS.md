@@ -18,7 +18,7 @@ Nguồn quá 7 ngày hoặc receipt changed/unavailable chặn generation. Recei
 
 ![Vòng đời corpus](diagrams/corpus-lifecycle.svg)
 
-`scope_corpus.py` giữ Vành đai 4 và luật chung, tái sử dụng embedding, sửa quan hệ/gaps theo document ID. Corpus mới 59 tài liệu/7.555 chunk đã được tạo local. Không publish URL hoặc tuyên bố active trước khi các bước cloud thực hiện.
+`scope_corpus.py` giữ Vành đai 4 và luật chung, tái sử dụng embedding, sửa quan hệ/gaps theo document ID. Corpus mới 59 tài liệu/7.555 chunk đã có Release; trạng thái chuyển active và thu hồi asset cũ được ghi tại `reports/corpus-release.json`. Không suy trạng thái cloud từ việc đóng gói local.
 
 ```bash
 land-law backup --output data/backups/public-corpus.json
@@ -29,7 +29,7 @@ DATABASE_URL='<database riêng>' ADMIN_DATABASE_URL='' land-law restore corpus-b
 
 Release gồm corpus-only JSON, SHA256SUMS và manifest corpus ID/source commit/hash nguồn/trạng thái working tree. Không có session/secret/model cache. Restore vào database riêng, kiểm tra document/chunk counts, checksum, scope, embedding contract, quyền runtime và truy xuất. `scripts/verify_postgres_restore.py` diễn tập trên schema tạm riêng bằng owner/runtime roles và xóa schema tạm trong finally; artifact ghi rõ phạm vi này. `scripts/verify_postgres_database.py` kiểm tra thêm trên database mới, rồi xóa duy nhất database tạm của lần chạy; không đụng database phục vụ.
 
-Chỉ chuyển active sau restore đạt. Sau đó xóa corpus nhiều dự án khỏi dữ liệu/cache vận hành và gỡ asset Release cũ. Giữ báo cáo lịch sử và bản ghi thu hồi, không viết lại Git. Rollback chỉ tới corpus một dự án và code không lưu hội thoại; nếu chưa có bản phù hợp, tắt generation.
+Chỉ chuyển active sau restore đạt. Sau đó xóa corpus nhiều dự án khỏi dữ liệu/cache vận hành và gỡ asset Release cũ. Asset của corpus đa dự án `corpus-de584c31fc95f9a2` đã được thu hồi; bản ghi `reports/corpus-retirement.json` giữ digest và phạm vi xóa. Báo cáo cũ vẫn giữ checksum nhưng không còn tái lập đầy đủ từ asset nguồn đã thu hồi. Không viết lại Git. Rollback chỉ tới corpus một dự án và code không lưu hội thoại; nếu chưa có bản phù hợp, tắt generation.
 
 ## Triển khai và xác minh
 

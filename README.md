@@ -14,15 +14,14 @@ python3 -m venv .venv
 .venv/bin/pip install --no-deps -e .
 cp .env.example .env
 .venv/bin/python backend/landlaw/local_embedding.py download models/e5
-cd frontend
-npm ci
+npm --prefix frontend ci
 ```
 
 Điền `GROQ_API_KEY` trong `.env`. Local dùng SQLite: để trống `DATABASE_URL` và `ADMIN_DATABASE_URL`, đặt `SQLITE_PATH=data/ring4.db`. Không dùng credentials production cho quickstart.
 
-Corpus một dự án đang được chuẩn bị phát hành: `corpus-581da76c79b0b362`. Chỉ sử dụng URL Release sau khi asset đã phát hành và khôi phục kiểm chứng; hiện chưa có liên kết tải được xác nhận cho phiên bản này. Có thể kiểm tra manifest trong `data/sources.json`; ingest lại không cần thiết nếu đã có snapshot phù hợp.
+Corpus hiện tại: [`corpus-581da76c79b0b362`](https://github.com/dovh25x/land-law-chatbot/releases/tag/corpus-581da76c79b0b362), gồm 59 tài liệu và 7.555 chunk, giữ embedding E5 có sẵn. Tải ba asset `corpus-backup.json`, `manifest.json`, `SHA256SUMS` từ Release; không cần ingest lại.
 
-Khi có bộ asset `corpus-backup.json`, `manifest.json`, `SHA256SUMS`, đặt cùng thư mục và chạy:
+Đặt ba asset ở thư mục gốc repo và chạy:
 
 ```bash
 sha256sum -c SHA256SUMS

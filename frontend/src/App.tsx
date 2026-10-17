@@ -1,7 +1,7 @@
 import { listConversations, saveConversation, deleteConversation, clearConversations, type Conversation, newConversation as makeConversation } from './history'
 import { useEffect, useRef, useState } from 'react'
 import ReactMarkdown from 'react-markdown'
-import { ArrowUp, ArrowUpRight, BookOpen, ChevronRight, CircleHelp, FileText, GitBranch, Landmark, LoaderCircle, MapPin, Menu, Plus, Search, ShieldCheck, Square, X } from 'lucide-react'
+import { ArrowUpRight, BookOpen, ChevronRight, CircleHelp, FileText, LoaderCircle, Menu, Plus, Search, ShieldCheck, Square, X } from 'lucide-react'
 import { ask, BASE, BACKEND_CONFIGURED, getJSON, getSession, type Citation, type LegalDocument, type Readiness, type Result, type Session, type Trace } from './api'
 import { DataPanel, DocumentRow, formatDate, SourcePanel, TracePanel } from './ui'
 import { Turnstile } from './Turnstile'
@@ -9,10 +9,11 @@ import { Turnstile } from './Turnstile'
 type Page = 'chat' | 'sources' | 'evaluation'
 type Message = { id: string; role: 'user' | 'assistant'; content: string; result?: Result }
 const suggestions = [
-  { title: 'Bồi thường tài sản', description: 'Chi phí di chuyển được tính ra sao?', icon: FileText, question: 'Khi bị thu hồi đất, chi phí di chuyển tài sản được quy định như thế nào?' },
-  { title: 'Điều kiện tái định cư', description: 'Cần đối chiếu những hồ sơ nào?', icon: Landmark, question: 'Những thông tin nào cần có để xác định một hộ gia đình đủ điều kiện tái định cư?' },
-  { title: 'Dự án Vành đai 4', description: 'Thông tin nào đã được công bố?', icon: MapPin, question: 'Từ thông tin tổng quan dự án Vành đai 4 có thể kết luận thửa đất bị thu hồi không?' },
+  'Chi phí di chuyển tài sản được quy định thế nào?',
+  'Khi nào được hỗ trợ ổn định đời sống?',
+  'Cần hồ sơ gì để đối chiếu điều kiện tái định cư?',
 ]
+
 const pageLabels: Record<Page, string> = { chat: 'Hỏi đáp pháp luật', sources: 'Thư viện văn bản', evaluation: 'Đánh giá hệ thống' }
 
 const labels: Record<string, string> = { answered: 'Có căn cứ', clarification_needed: 'Cần bổ sung thông tin', insufficient_evidence: 'Chưa đủ căn cứ', limited: 'Giới hạn lượt dùng', error: 'Chưa xử lý được' }
@@ -20,6 +21,11 @@ const labels: Record<string, string> = { answered: 'Có căn cứ', clarificatio
 function App() {
   const [page, setPage] = useState<Page>('chat')
   const [navOpen, setNavOpen] = useState(false)
+  const [copiedId, setCopiedId] = useState<string>()
+  async function copyAnswer(id: string, content: string) {
+    try { await navigator.clipboard.writeText(content); setCopiedId(id) }
+    catch { setError('Không sao chép được. Bạn có thể chọn nội dung để sao chép thủ công.') }
+  }
   const conversationRef=useRef(makeConversation())
   const [conversations,setConversations]=useState<Conversation[]>([])
   const [theme,setTheme]=useState(()=>localStorage.getItem('landlaw-theme') || (matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'))
@@ -134,7 +140,7 @@ function App() {
   const evaluationWarning = evaluation && evaluation.status !== 'not_run' &&
     (!evaluation.matches_active_release || !evaluation.matches_active_configuration || evaluation.status !== 'reviewed')
     ? 'Chưa hoàn tất đánh giá trên cấu hình đang hoạt động. Không diễn giải kết quả của phiên bản khác thành chất lượng bản hiện tại.' : ''
-  const openSource = (source: Citation | LegalDocument) => { setDataOpen(false); setTraceOpen(false); setSelectedSource(source) }
+  const openSource = (source: Citation | LegalDocument) => { setDataOpen(false); setTraceOpen(false); setSelectedSource({...source,checksum:source.checksum || docs.find(d=>d.id===('document_id' in source?source.document_id:source.id))?.checksum}) }
   const navigate = (target: Page) => { setDataOpen(false); setPage(target); setNavOpen(false); setTraceOpen(false); setSelectedSource(null) }
 
 
@@ -144,7 +150,7 @@ function App() {
     <aside className="sidebar" id="main-navigation" role={navOpen ? 'dialog' : undefined} aria-modal={navOpen || undefined} aria-label={navOpen ? 'Menu điều hướng' : undefined}>
       <button className="icon-button mobile-nav-close" onClick={() => setNavOpen(false)} aria-label="Đóng menu"><X size={20}/></button>
       <a className="brand" href="#" onClick={e => { e.preventDefault(); navigate('chat') }}><span>Vành đai 4</span></a>
-      <button className="button button-primary new-chat" onClick={newConversation} disabled={busy}><Plus size={18}/>Cuộc trò chuyện mới</button>
+      <button className="button button-primary new-chat" onClick={newConversation} disabled={busy}>Cuộc trò chuyện mới</button>
       <div className="nav-label">LỊCH SỬ TRÊN THIẾT BỊ</div>
       <div className="history-list">{conversations.map(c=><div className={`history-row ${conversationRef.current.id===c.id?'active':''}`} key={c.id}>
         <button disabled={busy} onClick={()=>{conversationRef.current=c;setMessages(c.messages);setPage('chat');setNavOpen(false);setError('')}}>{c.title}</button>
@@ -152,26 +158,32 @@ function App() {
       </div>)}{!conversations.length&&<p className="secondary-copy">Chưa có cuộc trò chuyện.</p>}</div>
       <nav aria-label="Điều hướng chính">{(Object.entries(pageLabels) as [Page, string][]).map(([id, label]) => <button key={id} aria-current={page === id ? 'page' : undefined} className={page === id ? 'active' : ''} onClick={() => navigate(id)}>{label}</button>)}</nav>
       <div className="sidebar-note"><p>Lưu tại máy trong 7 ngày.<br/>Không đồng bộ giữa thiết bị.</p>
+      <button className="mobile-data-link" onClick={()=>{setNavOpen(false);setDataOpen(true)}} aria-label="Thông tin dữ liệu và kết nối">Dữ liệu và kết nối</button>
       <button onClick={()=>setTheme(theme==='dark'?'light':'dark')} aria-label="Đổi giao diện sáng tối">{theme==='dark'?'Giao diện sáng':'Giao diện tối'}</button>
       <button disabled={busy} onClick={()=>{if(!confirm('Xóa toàn bộ lịch sử trên thiết bị này?'))return;void clearConversations().then(()=>{setConversations([]);newConversation()}).catch(()=>setError('Không xóa được lịch sử tại máy.'))}}>Xóa toàn bộ lịch sử</button></div>
     </aside>
     <main className="main" id="main-content" inert={navOpen}>
-      <header className="topbar"><div className="topbar-title"><button className="icon-button mobile-menu" ref={navTriggerRef} onClick={() => setNavOpen(true)} aria-label="Mở menu điều hướng" aria-expanded={navOpen} aria-controls="main-navigation"><Menu size={20}/></button><span>{page === 'chat' ? 'Vành đai 4 / Trợ lý pháp lý' : pageLabels[page]}</span></div><div className="topbar-actions"><button className="icon-button data-trigger" onClick={() => { setSelectedSource(null); setTraceOpen(false); setDataOpen(true) }} aria-label="Thông tin dữ liệu và kết nối" title="Thông tin dữ liệu và kết nối"><CircleHelp size={20}/><span className={ready ? 'status-dot ready' : 'status-dot'}/></button><button className="icon-button mobile-new-chat" onClick={newConversation} disabled={busy} aria-label="Cuộc trò chuyện mới"><Plus size={20}/></button></div></header>
+      <header className="topbar"><div className="topbar-title"><button className="icon-button mobile-menu" ref={navTriggerRef} onClick={() => setNavOpen(true)} aria-label="Mở menu điều hướng" aria-expanded={navOpen} aria-controls="main-navigation"><Menu size={20}/></button><div><span className="desktop-chat-title">{page === 'chat' ? 'Vành đai 4 / Trợ lý pháp lý' : pageLabels[page]}</span><span className="mobile-chat-title">{page === 'chat' ? 'Vành đai 4' : pageLabels[page]}</span>{page === 'chat' && <p className="topbar-subtitle">Bản thử nghiệm · Nguồn pháp luật có dẫn chứng</p>}</div></div><div className="topbar-actions"><button className="icon-button data-trigger" onClick={() => { setSelectedSource(null); setTraceOpen(false); setDataOpen(true) }} aria-label="Thông tin dữ liệu và kết nối" title="Thông tin dữ liệu và kết nối"><CircleHelp size={20}/><span className={ready ? 'status-dot ready' : 'status-dot'}/></button><button className="icon-button mobile-new-chat" onClick={newConversation} disabled={busy} aria-label="Cuộc trò chuyện mới"><Plus size={20}/></button></div></header>
       {page === 'chat' && <>
         <div className={`chat-workspace ${panelOpen ? 'has-panel' : ''} ${messages.length ? 'has-messages' : 'is-empty'}`}>
           <div className="chat-scroll">
-            {!messages.length ? <div className="welcome"><h1>Bạn muốn tìm hiểu điều gì?</h1><p className="intro">Tra cứu bồi thường, hỗ trợ và tái định cư cho Vành đai 4 tại Hà Nội.</p></div>
+            {!messages.length ? <div className="welcome"><h1>Bạn muốn tìm hiểu điều gì?</h1><p className="intro">Tra cứu bồi thường, hỗ trợ và tái định cư cho Vành đai 4 tại Hà Nội.</p><div className="topic-grid"><h2>Gợi ý cho bạn</h2>{suggestions.map((question,index) => <button key={question} onClick={() => void send(question)} disabled={busy}><span className="suggestion-number">{index+1}</span><span>{question}</span></button>)}</div></div>
             : <div className="messages">{messages.map(message => <article key={message.id} className={`message ${message.role}`}>
               <div className="message-label">{message.role === 'user' ? 'Bạn' : <>Vành đai 4</>}</div>
-              {message.result && <span className={`answer-status ${message.result.status}`}>{labels[message.result.status] || message.result.status}</span>}
+              {message.result && message.result.status !== 'answered' && <span className={`answer-status ${message.result.status}`}>{labels[message.result.status] || message.result.status}</span>}
               <div className="message-body"><ReactMarkdown components={{ a: ({ children }) => <span>{children}</span> }}>{message.content}</ReactMarkdown></div>
               {!!message.result?.citations?.length && <div className="citations">{message.result.citations.map((c, index) => <button key={c.id} onClick={() => openSource(c)}><span className="citation-heading"><FileText size={18}/><strong>[{index + 1}] {c.document_number || c.title}</strong></span><span className="citation-location">{c.locator}</span><span className="citation-action">Mở đoạn căn cứ<ArrowUpRight size={14}/></span></button>)}</div>}
-              {message.result && <button className="trace-link" onClick={() => { setSelectedSource(null); setTrace(message.result!.trace || []); setTraceOpen(true) }}><GitBranch size={16}/>Xem quá trình kiểm chứng<ChevronRight size={14}/><span>{message.result.tool_calls} công cụ · {(message.result.elapsed_ms / 1000).toFixed(1)} giây</span></button>}
-            </article>)}{busy && <div className="working" role="status"><LoaderCircle size={18} className="spin"/><span>{trace.at(-1)?.summary || 'Đang kết nối và chuẩn bị tra cứu…'}</span><button onClick={() => { setSelectedSource(null); setTraceOpen(true) }}>Xem quá trình</button></div>}<div ref={bottom}/></div>}
+              {message.result && <div className="answer-actions">
+                {!!message.result.citations?.length && <button onClick={() => openSource(message.result!.citations[0])}>Xem nguồn</button>}
+                <button className="trace-link" aria-label="Xem quá trình kiểm chứng" onClick={() => { setSelectedSource(null); setTrace(message.result!.trace || []); setTraceOpen(true) }}>Chi tiết thực thi</button>
+                <button onClick={() => void copyAnswer(message.id,message.content)}>{copiedId===message.id?'Đã sao chép':'Sao chép'}</button>
+              </div>}
+
+            </article>)}{busy && <div className="working" role="status"><span className="notice-icon"><img src="/figma/search.svg" alt=""/></span><span>{trace.at(-1)?.summary || 'Đang kết nối và chuẩn bị tra cứu…'}</span><button onClick={() => { setSelectedSource(null); setTraceOpen(true) }}>Xem quá trình</button></div>}<div ref={bottom}/></div>}
           </div>
-          <div className="composer-area">{error && <div className="error-banner" role="alert"><div><strong>Chưa thể hoàn tất lượt hỏi</strong><p>{error}</p></div><button className="icon-button" onClick={() => setError('')} aria-label="Đóng thông báo"><X size={18}/></button></div>}
-            {!ready && <div className="connection-note" role="status">{connecting ? 'Đang kết nối backend. Lần khởi động đầu có thể mất khoảng một phút…' : readiness?.status === 'not_deployed' ? 'Bản xem trước giao diện. Backend chưa được triển khai.' : readiness?.database && !readiness.llm_configured ? 'Chưa cấu hình API AI; hệ thống sẽ báo rõ giới hạn khi gửi câu hỏi.' : readiness?.database && !readiness.corpus_release ? 'Bộ dữ liệu đang chờ công bố.' : 'Backend có thể đang khởi động. Bạn có thể thử kết nối lại.'}</div>}
-            <Turnstile onToken={setChallenge}/><div className="composer"><form id="chat-form" className="composer-input" onSubmit={e => { e.preventDefault(); void send() }}><textarea ref={inputRef} value={input} onChange={e => setInput(e.target.value)} placeholder={messages.length ? "Hỏi tiếp…" : "Nhập câu hỏi của bạn…"} maxLength={4000} rows={1} aria-label="Câu hỏi pháp luật" onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey && !e.nativeEvent.isComposing) { e.preventDefault(); void send() } }}/></form><div className="composer-bottom"><span className="composer-hint">Enter để gửi · Shift + Enter xuống dòng</span>{busy ? <button type="button" className="send-button" onClick={() => abortRef.current?.abort()} aria-label="Dừng lượt hỏi"><Square size={18}/></button> : <button className="send-button" type="submit" form="chat-form" disabled={!input.trim()} aria-label="Gửi câu hỏi"><ArrowUp size={20}/></button>}</div></div>{!messages.length && <div className="topic-grid">{suggestions.map(({title, description, question, icon: Icon}) => <button key={title} onClick={() => void send(question)} disabled={busy}><Icon size={20} className="topic-icon"/><strong>{title}</strong><p>{description}</p><ArrowUpRight size={16}/></button>)}</div>}<p className="disclaimer">Bản thử nghiệm · Có thể có sai sót. Kiểm tra nguồn trước khi áp dụng.</p>
+          <div className="composer-area">{error && <div className="error-banner" role="alert"><span className="notice-icon"><img src="/figma/alert-circle.svg" alt=""/></span><div><strong>Chưa thể hoàn tất lượt hỏi</strong><p>{error}</p></div><button className="icon-button" onClick={() => setError('')} aria-label="Đóng thông báo"><X size={18}/></button></div>}
+            {!ready && <div className="connection-note" role="status"><span className="notice-icon"><img src="/figma/clock.svg" alt=""/></span><p>{connecting ? 'Đang kết nối backend. Lần khởi động đầu có thể mất khoảng một phút…' : readiness?.status === 'not_deployed' ? 'Bản xem trước giao diện. Backend chưa được triển khai.' : readiness?.database && !readiness.llm_configured ? 'Chưa cấu hình API AI; hệ thống sẽ báo rõ giới hạn khi gửi câu hỏi.' : readiness?.database && !readiness.corpus_release ? 'Bộ dữ liệu đang chờ công bố.' : 'Backend có thể đang khởi động. Bạn có thể thử kết nối lại.'}</p></div>}
+            <Turnstile onToken={setChallenge}/><div className="composer"><form id="chat-form" className="composer-input" onSubmit={e => { e.preventDefault(); void send() }}><textarea ref={inputRef} value={input} onChange={e => setInput(e.target.value)} placeholder="Hỏi về bồi thường, hỗ trợ, tái định cư…" maxLength={4000} rows={1} aria-label="Câu hỏi pháp luật" onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey && !e.nativeEvent.isComposing) { e.preventDefault(); void send() } }}/></form><div className="composer-bottom"><span className="composer-hint">Enter để gửi · Shift + Enter xuống dòng</span>{busy ? <button type="button" className="send-button" onClick={() => abortRef.current?.abort()} aria-label="Dừng lượt hỏi"><Square size={18}/></button> : <button className="send-button" type="submit" form="chat-form" disabled={!input.trim()} aria-label="Gửi câu hỏi"><span className="desktop-send-arrow" aria-hidden="true">↑</span><img className="mobile-send-arrow" src="/figma/arrow-up.svg" alt=""/></button>}</div></div><p className="disclaimer">{messages.length ? 'Có thể có sai sót. Hãy kiểm tra nguồn trước khi áp dụng.' : 'Bản thử nghiệm · Chỉ nhập tình huống đã ẩn danh.'}</p>
           </div>
         </div>
       </>}
@@ -196,8 +208,8 @@ function EvaluationTable({ evaluation }: { evaluation: Record<string, unknown> }
   const groupLabels: Record<string,string> = {answered:'Trả lời nội dung',clarification:'Hỏi làm rõ',insufficient:'Thiếu chứng cứ / ngoài phạm vi',execution_failure:'Lỗi thực thi'}
   return <><p>Model: <strong>{String(evaluation.model || 'Chưa xác định')}</strong> · {String(evaluation.status)}</p>
     <p>{counts[0]?.pass ?? 0} đạt · {counts[0]?.partial ?? 0} một phần · {counts[0]?.fail ?? 0} chưa đạt. Đây là đánh giá kỹ thuật, chưa được thẩm định pháp lý độc lập. Tổng số đạt gồm cả hỏi lại và từ chối, không phải độ chính xác trả lời pháp luật.</p>
-    {retrieval&&<p>Gold Recall@8: {retrieval.gold_recall_at_8==null?'Chưa đo':(retrieval.gold_recall_at_8*100).toFixed(1)+'%'} · Backend: {retrieval.storage_backend||retrieval.backend||'Xem artifact'}. Truy vấn gốc, không phải evidence sau agent routing.</p>}
-    {faithfulness&&<p>Faithfulness mẫu: {faithfulness.sampled_faithfulness==null?'Chưa chấm':(faithfulness.sampled_faithfulness*100).toFixed(1)+'%'} · {faithfulness.scored_cases}/{faithfulness.expected_cases} ca có điểm · {faithfulness.total_judged_claims} mệnh đề · Judge: {faithfulness.judge_model}. Cùng model, không phải thẩm định độc lập.</p>}
+    {retrieval&&<section className="metric-card"><h2>Gold Recall@8</h2><p> {retrieval.gold_recall_at_8==null?'Chưa đo':(retrieval.gold_recall_at_8*100).toFixed(1)+'%'} · Backend: {retrieval.storage_backend||retrieval.backend||'Xem artifact'}. Truy vấn gốc, không phải evidence sau agent routing.</p></section>}
+    {faithfulness&&<section className="metric-card"><h2>Faithfulness mẫu</h2><p> {faithfulness.sampled_faithfulness==null?'Chưa chấm':(faithfulness.sampled_faithfulness*100).toFixed(1)+'%'} · {faithfulness.scored_cases}/{faithfulness.expected_cases} ca có điểm · {faithfulness.total_judged_claims} mệnh đề · Judge: {faithfulness.judge_model}. Cùng model, không phải thẩm định độc lập.</p></section>}
     {metrics?.groups && <div className="evaluation-table"><table><thead><tr><th>Nhóm hành vi</th><th>Số ca</th><th>Đạt</th><th>Một phần</th><th>Chưa đạt</th></tr></thead><tbody>{Object.entries(metrics.groups).map(([name,g])=><tr key={name}><td>{groupLabels[name] || name}</td><td>{g.cases}</td><td>{g.pass}</td><td>{g.partial}</td><td>{g.fail}</td></tr>)}</tbody></table></div>}
     {metrics?.answer_origin && <p>Luồng xử lý: {metrics.answer_origin.llm ?? 0} có bước sinh bằng LLM · {metrics.answer_origin.deterministic ?? 0} theo quy tắc · {metrics.answer_origin.unknown ?? 0} chưa xác định từ artifact.</p>}
     {metrics?.usage && <div className="evaluation-table"><table><thead><tr><th>Chỉ số</th><th>Số mẫu</th><th>Median</th><th>p95</th></tr></thead><tbody>{Object.entries(metrics.usage).map(([name,v])=><tr key={name}><td>{({elapsed_ms:'Thời gian (ms)',token_usage:'Token',llm_calls:'Lần gọi LLM',tool_calls:'Lần gọi công cụ'} as Record<string,string>)[name] || name}</td><td>{v.samples}</td><td>{v.median ?? '—'}</td><td>{v.p95 ?? '—'}</td></tr>)}</tbody></table><p>Thống kê một lượt chạy CLI; không phải cam kết tốc độ của dịch vụ.</p></div>}
