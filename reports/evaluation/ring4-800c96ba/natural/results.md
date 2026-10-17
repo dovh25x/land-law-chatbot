@@ -54,5 +54,3 @@ Thống kê mô tả một lượt chạy CLI, không phải SLA. Khớp citatio
 - N08: Hết ngân sách, chưa nêu thiếu căn cứ một cách phù hợp. Bản sửa sau run xử lý viện dẫn chưa biết theo quy tắc, không gọi LLM.
 
 Corpus đa dự án cũ đã bị thu hồi asset nguồn. Báo cáo này dùng corpus Vành đai 4 mới; các báo cáo lịch sử của corpus cũ giữ nguyên checksum nhưng khả năng tái lập bị giới hạn. Xem `reports/corpus-retirement.json`.
-
-Corpus đa dự án cũ đã bị thu hồi asset nguồn. Báo cáo này dùng corpus Vành đai 4 mới; các báo cáo lịch sử của corpus cũ giữ nguyên checksum nhưng khả năng tái lập bị giới hạn. Xem `reports/corpus-retirement.json`.

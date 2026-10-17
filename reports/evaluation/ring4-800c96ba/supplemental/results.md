@@ -46,5 +46,3 @@ Thống kê mô tả một lượt chạy CLI, không phải SLA. Khớp citatio
 - X04: Không xác nhận quyền lợi hoặc số tiền, nhưng lại yêu cầu nội dung văn bản chưa được chứng minh có trong corpus; bản sửa sau run đã thay bằng thông báo thiếu nguồn.
 
 Corpus đa dự án cũ đã bị thu hồi asset nguồn. Báo cáo này dùng corpus Vành đai 4 mới; các báo cáo lịch sử của corpus cũ giữ nguyên checksum nhưng khả năng tái lập bị giới hạn. Xem `reports/corpus-retirement.json`.
-
-Corpus đa dự án cũ đã bị thu hồi asset nguồn. Báo cáo này dùng corpus Vành đai 4 mới; các báo cáo lịch sử của corpus cũ giữ nguyên checksum nhưng khả năng tái lập bị giới hạn. Xem `reports/corpus-retirement.json`.

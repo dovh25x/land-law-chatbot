@@ -1,37 +1,23 @@
 {
-  "passed": true,
-  "checked_at": "2026-10-16T11:16:11.048Z",
+  "passed": false,
+  "checked_at": "2026-10-17T15:54:17.136Z",
+  "base_url": "https://hanoi-land-law.pages.dev",
+  "phase": "turnstile",
+  "error": "page.waitForFunction: Timeout 45000ms exceeded.",
+  "llm_generation_checked": false,
+  "turnstile_browser_checked": false,
   "checks": [
     {
-      "reviewed_evaluation_rows": 20,
-      "supplemental_visible": true,
-      "configuration_sha256": "095725ee7c62d6f6100a8f224e57546750fd97a6d797ad842d518892d99fe52f"
-    },
-    {
-      "real_chat": true,
-      "source_only": false,
-      "llm_calls": [
-        2,
-        5
-      ],
-      "same_session_followup": true,
-      "trace_access_isolated": true,
-      "restored_messages": 4,
-      "composer_height": 62
-    },
-    {
-      "width": 1440,
-      "passed": true
-    },
-    {
-      "width": 390,
-      "passed": true
-    },
-    {
-      "width": 320,
-      "passed": true
+      "runtime_configuration_sha256": "d767061305cb1a20082843252b1d6eba01a69f72fdabc95c62494c19242d175c",
+      "report_matches_configuration": false,
+      "report_matches_corpus": true
     }
   ],
-  "llm_generation_checked": true,
-  "scope": "Actual public UI and sourced LLM chat with follow-up, trace authorization and restoration."
+  "diagnostic": {
+    "headless_browser": true,
+    "widget_displayed": "Verify you are human checkbox",
+    "token_issued": false,
+    "scope": "Managed Turnstile requested interaction in this browser. No test key, challenge bypass, forged token or server-side bypass used. Full public chat flow remains unverified.",
+    "screenshot": "reports/live-turnstile-required.png"
+  }
 }

@@ -1,0 +1,30 @@
+{
+  "checked_at": "2026-10-17T15:56:29.602455+00:00",
+  "source_commit": "3c161c6764a620ce52abb414cc935a863d6c46a7",
+  "backend_deploy_id": "dep-db9pjarrjlhs73fmvia0",
+  "backend_status": "live",
+  "backend_plan": "free",
+  "frontend": "https://hanoi-land-law.pages.dev",
+  "frontend_deployment": "https://8d29c54b.hanoi-land-law.pages.dev",
+  "generation_available": true,
+  "corpus_id": "corpus-581da76c79b0b362",
+  "runtime_configuration_sha256": "d767061305cb1a20082843252b1d6eba01a69f72fdabc95c62494c19242d175c",
+  "evaluation_configuration_sha256": "c4f0c661af82ab60cc9f918a89e7b417981b070268d2bddfee12116a003c7b25",
+  "evaluation_backend": "sqlite",
+  "runtime_backend": "postgresql",
+  "report_matches_corpus": true,
+  "report_matches_runtime_configuration": false,
+  "ci": "https://github.com/dovh25x/land-law-chatbot/actions/runs/39046918710",
+  "ci_status": "success",
+  "operator_real_llm_verified": true,
+  "public_browser_llm_verified": false,
+  "public_browser_blocker": "Managed Turnstile displayed a human-interaction checkbox; automated browser obtained no token.",
+  "acceptance_passed": false,
+  "remaining_quality_cases": [
+    "S06",
+    "X02",
+    "X03",
+    "N02",
+    "N04"
+  ]
+}
