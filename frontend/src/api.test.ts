@@ -15,3 +15,16 @@ describe('SSE protocol', () => {
     expect(events).toEqual([['failure', { status: 'error' }]])
   })
 })
+
+describe('structured HTTP errors', () => {
+  it('preserves provider retry hints without inventing a wait time', async () => {
+    const { responseError } = await import('./api')
+    const busy = await responseError(new Response(JSON.stringify({ detail: { code: 'system_busy' } }), { status: 429, headers: { 'Retry-After': '5' } }))
+    expect(busy.code).toBe('system_busy')
+    expect(busy.message).toContain('Hệ thống đang bận')
+    expect(busy.retryAfter).toBe(5)
+    const quota = await responseError(new Response('{}', { status: 429 }))
+    expect(quota.retryAfter).toBeUndefined()
+    expect(quota.message).not.toContain('giây')
+  })
+})

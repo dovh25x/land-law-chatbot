@@ -4,11 +4,42 @@ export const BACKEND_CONFIGURED = !!BASE || import.meta.env.DEV || import.meta.e
 export type ProjectID = 'ring4'
 export interface Trace { step: string; tool?: string; summary: string; document_ids: string[]; elapsed_ms: number }
 export interface Citation { checksum?: string; id: string; document_id: string; title: string; document_number?: string; url: string; locator: string; excerpt: string; checked_at: string; applicability: string; source_review_notes?: string; page?: number; source_url?: string }
-export interface Result { status: string; content: string; citations: Citation[]; trace: Trace[]; trace_id: string; corpus_release?: string; model: string; embedding_model: string; mode: string; llm_calls: number; tool_calls: number; token_usage: number; elapsed_ms: number; as_of: string; support_level: string }
+export interface Result { status: string; content: string; citations: Citation[]; trace: Trace[]; trace_id: string; corpus_release?: string; model: string; embedding_model: string; mode: string; llm_calls: number; tool_calls: number; token_usage: number; elapsed_ms: number; as_of: string; support_level: string; retry_after?: number | null; missing_facts?: string[] }
 export interface Session { session_id: string; token: string }
 export interface LegalDocument { checksum?: string; id: string; title: string; url: string; document_number?: string; source_kind: string; project?: ProjectID; checked_at: string; applicability_verified: boolean; effective_from?: string; effective_to?: string; source_review_notes?: string; chunks?: { id: string; locator: string; text: string }[] }
 export interface Project { id: ProjectID; name: string; description: string; source_ids: string[]; questions: string[] }
 export interface Readiness { status: string; database?: boolean; llm_configured?: boolean; corpus_release?: string; checked_at?: string; publication_profile?: string; quality_status?: string; retrieval_mode?: string; coverage_gaps?: {document_id: string; title: string; reason: string}[] }
+
+export interface GenerationStatus {
+  generation_available: boolean
+  reason: 'disabled' | 'source_stale' | 'provider_limited' | null
+  retry_after?: number | null
+  corpus_release?: string | null
+}
+
+export class APIError extends Error {
+  constructor(message: string, public code: string, public retryAfter?: number) { super(message) }
+}
+
+export async function responseError(response: Response): Promise<APIError> {
+  const body = await response.json().catch(() => null)
+  const code = typeof body?.detail?.code === 'string' ? body.detail.code : `http_${response.status}`
+  const raw = response.headers.get('Retry-After')
+  const seconds = raw && /^\d+$/.test(raw) ? Number(raw) : undefined
+  const wait = seconds === undefined ? '' : ` Thử lại sau ${seconds} giây.`
+  const messages: Record<string, string> = {
+    generation_disabled: 'Trả lời bằng AI đang tạm dừng. Bạn vẫn có thể tra cứu thư viện nguồn.',
+    system_busy: 'Hệ thống đang bận.',
+    challenge_required: 'Vui lòng hoàn tất xác minh trình duyệt trước khi gửi.',
+    challenge_failed: 'Xác minh trình duyệt chưa hợp lệ. Hãy tải lại trang để xác minh.',
+    challenge_unavailable: 'Dịch vụ xác minh trình duyệt đang gián đoạn.',
+    client_upgrade_required: 'Hãy tải lại ứng dụng để dùng phiên bản mới.',
+  }
+  const message = messages[code] || (response.status === 429 ? 'Đã đạt giới hạn lượt hỏi.'
+    : response.status === 409 ? 'Lượt hỏi đã được gửi hoặc phiên đang xử lý. Server không lưu đáp án để phát lại.'
+    : 'Dịch vụ chưa sẵn sàng. Vui lòng thử lại sau.')
+  return new APIError(message + wait, code, seconds)
+}
 
 export async function getJSON<T>(path: string, signal?: AbortSignal): Promise<T> {
   const res = await fetch(BASE + path, { signal })
@@ -31,7 +62,7 @@ export async function getSession(turnstileToken?:string): Promise<Session> {
     sessionStorage.removeItem('landlaw-session')
   }
   const response = await fetch(BASE + '/api/v1/sessions', { method: 'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({turnstile_token:turnstileToken}) })
-  if (!response.ok) throw new Error('Chưa tạo được phiên. Backend có thể đang khởi động hoặc đã đạt giới hạn lượt dùng.')
+  if (!response.ok) throw await responseError(response)
   const session: Session = await response.json()
   sessionStorage.setItem('landlaw-session', JSON.stringify(session))
   return session
@@ -63,14 +94,7 @@ export async function ask(session: Session, message: string, project: string, as
     method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${session.token}` }, signal,
     body: JSON.stringify({ session_id: session.session_id, message, project: project || null, as_of: asOf || null, request_id:requestId, history:requestHistory(history) }),
   })
-  if (!response.ok) {
-    const failure=await response.json().catch(()=>null)
-    if(failure?.detail?.code==='generation_disabled')throw new Error('Trả lời bằng AI đang tạm dừng. Bạn vẫn có thể tra cứu thư viện nguồn.')
-    if (response.status === 429) throw new Error(`Đã đạt giới hạn lượt hỏi. Thử lại sau ${response.headers.get('Retry-After') || '60'} giây.`)
-    if(response.status===409)throw new Error('Lượt hỏi đã được gửi hoặc phiên đang xử lý. Server không lưu đáp án để phát lại.')
-    if(response.status===426)throw new Error('Hãy tải lại ứng dụng để dùng phiên bản mới.')
-    throw new Error('Dịch vụ chưa sẵn sàng. Vui lòng thử lại sau.')
-  }
+  if (!response.ok) throw await responseError(response)
   if (!response.body) throw new Error('Trình duyệt không hỗ trợ luồng trả lời.')
   const parser = new SSEParser(onEvent)
   const reader = response.body.getReader(), decoder = new TextDecoder()

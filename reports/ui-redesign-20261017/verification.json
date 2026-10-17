@@ -1,0 +1,249 @@
+{
+  "checked_at": "2026-10-17T17:10:44.035830+00:00",
+  "base_commit": "2c75577f6a5027fced894a8f504b4b7e5d32f2c4",
+  "working_tree": "Uncommitted implementation plus pre-existing user documentation changes; no deployment.",
+  "checks": {
+    "backend": {
+      "command": ".venv/bin/python -m pytest -q",
+      "passed": 187,
+      "exit_code": 0,
+      "evidence": "Tool console: 187 passed in 14.08s; sandbox async/API attempts did not complete, unrestricted test run passed."
+    },
+    "frontend_unit": {
+      "command": "npm --prefix frontend test",
+      "passed": 5,
+      "exit_code": 0,
+      "log": "unit.log"
+    },
+    "frontend_build": {
+      "command": "npm --prefix frontend run build",
+      "exit_code": 0,
+      "log": "build.log"
+    },
+    "frontend_e2e": {
+      "command": "npm --prefix frontend run test:e2e -- --workers=1",
+      "passed": 68,
+      "exit_code": 0,
+      "log": "e2e-final.log",
+      "prior_attempts": [
+        "e2e-attempt-1.log",
+        "e2e-attempt-2.log",
+        "e2e-attempt-3.log"
+      ],
+      "regression_debug_log": "e2e-scroll.log"
+    },
+    "secrets": {
+      "command": ".venv/bin/python scripts/check_secrets.py",
+      "exit_code": 0,
+      "log": "secrets.log"
+    },
+    "diff_whitespace": {
+      "command": "git diff --check",
+      "exit_code": 0
+    }
+  },
+  "figma": {
+    "file": "https://www.figma.com/design/0Zlzf91hFOPeWp41veuD7l?node-id=14-2",
+    "screen_frames": 50,
+    "component_sets": 4,
+    "theme_modes": [
+      "Light",
+      "Dark"
+    ],
+    "editable_ui": true,
+    "image_filled_ui_nodes": 0,
+    "ledger": "figma.json"
+  },
+  "visual_review": {
+    "viewports": [
+      320,
+      390,
+      768,
+      1024,
+      1280,
+      1440
+    ],
+    "themes": [
+      "light",
+      "dark"
+    ],
+    "short_screen_heights": [
+      480,
+      667
+    ],
+    "source_mode": {
+      "desktop_from": 1280,
+      "width": 420,
+      "modal_below": 1280,
+      "full_screen_below": 768
+    },
+    "contrast": "contrast.json",
+    "basis": "Figma screenshots and Playwright fixture screenshots; dynamic source content is wrapped and scrollable."
+  },
+  "not_verified": [
+    "Public deployment",
+    "Real Groq or Turnstile requests",
+    "Physical mobile keyboard behavior",
+    "Manual screen reader use",
+    "Safari and Firefox",
+    "Model evaluation (not run; no prompt/pipeline changes)"
+  ],
+  "source_checksums": {
+    "frontend/src/App.tsx": "90cfe9f5c53dac6acee80118cf0f95aa395560bc21a782c29fe318171721fbe1",
+    "frontend/src/api.ts": "7ed7fd8d909444215a291997c7b538bafc16fae93019d6b3cbd25731f26134c0",
+    "frontend/src/api.test.ts": "dee4147fde247a371a8f9ca5b0088f5bca904c5079489e2b7cfe102ad36f019e",
+    "frontend/src/ui.tsx": "cf19c511dedf0e19733d6f310d1259cbb018e3345f411472c773f327e5298291",
+    "frontend/src/styles.css": "74533f118ea2de347ff0bafdd657395addb2431eefba7cfb979922cb4c106d08",
+    "frontend/e2e/figma.spec.ts": "479b50e1980a24cdc4cc5d24d6a0a8aff57a873fced56cfc30c9ef5eaec2bf86",
+    "frontend/e2e/history.spec.ts": "a07d147f7a6d7b8a064590195df7ac76c609c890ed5c206ef24c7d3facfb195e",
+    "frontend/e2e/navigation.spec.ts": "7302a19e0a42537d9d37d4aa5a43ae0b95b83736feb70be22ef6c9ef48f6f4c3",
+    "frontend/e2e/redesign.spec.ts": "bbbedb1c7ca3aecf4f47aae7e0dabf7033ed16ce03d343750f89de522a3cca9a",
+    "docs/FRONTEND.md": "0d1ad21be2660634f1968a885a6be19ac5ae6371ae3568d3c186ac047d793e0a"
+  },
+  "screenshots": [
+    {
+      "path": "reports/ui-redesign-20261017/matrix-desktop-1024-dark.png",
+      "sha256": "799f7d2aab67282605dfd6e2cb80db7b1ab5b0264f5146cdc2d8f10cda469bdf"
+    },
+    {
+      "path": "reports/ui-redesign-20261017/matrix-desktop-1024-light.png",
+      "sha256": "0f2cafca94b35a531d36c2e0c97faae6badf28e30a6c4e7962e2fcdd7ae97054"
+    },
+    {
+      "path": "reports/ui-redesign-20261017/matrix-desktop-1280-dark.png",
+      "sha256": "ef3e910cc34278e8a0673c7f5c5d2dd7c682d8948664091feb19f44facdc1f27"
+    },
+    {
+      "path": "reports/ui-redesign-20261017/matrix-desktop-1280-light.png",
+      "sha256": "301d499f827b79fdde7403c93d45e29b5ea33dba2f9868ef558c360ad82337c0"
+    },
+    {
+      "path": "reports/ui-redesign-20261017/matrix-desktop-1440-dark.png",
+      "sha256": "f0fcda42aa1d39889c91ac2a960c08f1e8567b007662f8c66807135e36bde22f"
+    },
+    {
+      "path": "reports/ui-redesign-20261017/matrix-desktop-1440-light.png",
+      "sha256": "9c25026c3861f705339574f388a67f2f266ce4f8e0a54917c72f7c0c5281ab1c"
+    },
+    {
+      "path": "reports/ui-redesign-20261017/matrix-desktop-320-dark.png",
+      "sha256": "25bc50e1b78bd17155fdc8754c0754a4da564300dc89383d4dafec91838b695b"
+    },
+    {
+      "path": "reports/ui-redesign-20261017/matrix-desktop-320-light.png",
+      "sha256": "7f687fd5e3c9adda93fd899ecbf643e3e5be8795a3c379ed2fe5312e03d55078"
+    },
+    {
+      "path": "reports/ui-redesign-20261017/matrix-desktop-390-dark.png",
+      "sha256": "da54e0b72cbb0b7d226d16cac1c47e53f970d519b583947b5b1f3030acef7bae"
+    },
+    {
+      "path": "reports/ui-redesign-20261017/matrix-desktop-390-light.png",
+      "sha256": "b6d710c44b8a289020538f15d21db205adb3b98b9c131560a42a7a3d13c5561e"
+    },
+    {
+      "path": "reports/ui-redesign-20261017/matrix-desktop-768-dark.png",
+      "sha256": "237f391afa0b5519bb29d55429b639cc8578218de45cfe060e47c17c20c69f5b"
+    },
+    {
+      "path": "reports/ui-redesign-20261017/matrix-desktop-768-light.png",
+      "sha256": "95477ba5ed2e1b8f2b67d91248192a7ee8fc20b13f36cb8b0855d05acae18415"
+    },
+    {
+      "path": "reports/ui-redesign-20261017/matrix-mobile-1024-dark.png",
+      "sha256": "6a68bdb575a93cd058bd32afea253ec54e587395dcaa11bf6110753b2fdbefd5"
+    },
+    {
+      "path": "reports/ui-redesign-20261017/matrix-mobile-1024-light.png",
+      "sha256": "bfab884ef59c9bdff8b08edd88d69fbb0e37bc6123c05f420608ba83e8f0d00b"
+    },
+    {
+      "path": "reports/ui-redesign-20261017/matrix-mobile-1280-dark.png",
+      "sha256": "237c6b8e0e3737cba72d78c4299497619adc47fdb691ef73777ce65e4feed1f9"
+    },
+    {
+      "path": "reports/ui-redesign-20261017/matrix-mobile-1280-light.png",
+      "sha256": "084d469934cd0138d5c959e3fcddc3dd09beb9c7025ed71e2a0450df155d67ab"
+    },
+    {
+      "path": "reports/ui-redesign-20261017/matrix-mobile-1440-dark.png",
+      "sha256": "cb4f3f9787f02480cf2850f6692558edd41ef6ae1dba7e6cf6906e2e7a41e95d"
+    },
+    {
+      "path": "reports/ui-redesign-20261017/matrix-mobile-1440-light.png",
+      "sha256": "6686cdaf0370e7de6267da3915388ace6aef7e69399c5e0d18ed0995051fbcae"
+    },
+    {
+      "path": "reports/ui-redesign-20261017/matrix-mobile-320-dark.png",
+      "sha256": "890341a71463b52a426c7a7250af6e88b650810d568041fda86bde313dbe5ad8"
+    },
+    {
+      "path": "reports/ui-redesign-20261017/matrix-mobile-320-light.png",
+      "sha256": "547c85da60ac22df45818d8ede93bfffe72c20c96f4e0a5577dff862d2a34c82"
+    },
+    {
+      "path": "reports/ui-redesign-20261017/matrix-mobile-390-dark.png",
+      "sha256": "e2113c7883cfd05924d01c0c95efadd39fa012426ae9dbec0f5eba46601dde13"
+    },
+    {
+      "path": "reports/ui-redesign-20261017/matrix-mobile-390-light.png",
+      "sha256": "d0c7589c7548184e9283eb6ea13dcd99dead21509da62b22bf674b11dfe3fb3a"
+    },
+    {
+      "path": "reports/ui-redesign-20261017/matrix-mobile-768-dark.png",
+      "sha256": "292f91980f94f5483708e4f6db47f587e08722c1b679d838cee8c6c37f7b51c8"
+    },
+    {
+      "path": "reports/ui-redesign-20261017/matrix-mobile-768-light.png",
+      "sha256": "55b58f4e8b6e8ba9991ce5bb0e7379c36990850bd76b0a3a13ea9d1ade74ff0b"
+    },
+    {
+      "path": "reports/ui-redesign-20261017/ui-compact-desktop.png",
+      "sha256": "b355c24aceed9527b3f679f365df8333842cf79c6385f474520430f31c2d55be"
+    },
+    {
+      "path": "reports/ui-redesign-20261017/ui-compact-mobile.png",
+      "sha256": "555275147a0049abde884ef2930cbf5e8aa7dc2abdaf98bd9b7bcccfdde70158"
+    },
+    {
+      "path": "reports/ui-redesign-20261017/ui-desktop.png",
+      "sha256": "92634ec9886f828f7463b9aa398a20c5b198707d557c725e1961064e061e2717"
+    },
+    {
+      "path": "reports/ui-redesign-20261017/ui-figma-desktop.png",
+      "sha256": "5c805da8f248c854de32e398a36f3a56f906b71c8d822db0b43a99f57ab9a09f"
+    },
+    {
+      "path": "reports/ui-redesign-20261017/ui-figma-mobile.png",
+      "sha256": "034166eb5e54ff7faea4bc056dbd42b883ca690f3404f968d8c4c8104268ba80"
+    },
+    {
+      "path": "reports/ui-redesign-20261017/ui-mobile.png",
+      "sha256": "b116df44e443782e6084ad5a6b716f9fb80e1b7bfa643a8e00bd1d97136f75de"
+    },
+    {
+      "path": "reports/ui-redesign-20261017/ui-revision-chat-desktop-dark.png",
+      "sha256": "d41473ba852b5c0a326771101bf4116f65273ff81f6b2dee7e20380c49210756"
+    },
+    {
+      "path": "reports/ui-redesign-20261017/ui-revision-chat-desktop-light.png",
+      "sha256": "65c01ee64ce6610affce9e90b8e8eb87f2a39d7e8d9bed61c809ab2ec9063588"
+    },
+    {
+      "path": "reports/ui-redesign-20261017/ui-revision-chat-mobile-dark.png",
+      "sha256": "a958114a4e2167f7aa32ef403d42217bf81c656e4b78078a2dc9a421b407a29f"
+    },
+    {
+      "path": "reports/ui-redesign-20261017/ui-revision-chat-mobile-light.png",
+      "sha256": "bc56dd4f2a5b3254916f84ac2de9a5d676918d7ba67ee76228afb8bc17b31be0"
+    },
+    {
+      "path": "reports/ui-redesign-20261017/ui-revision-source-desktop.png",
+      "sha256": "662ae9914fc17f400b0ae2e2308d3f13f21c8c2fabb922083148908689cc04f7"
+    },
+    {
+      "path": "reports/ui-redesign-20261017/ui-revision-source-mobile.png",
+      "sha256": "63fbfd679fc2d1175adb11a04ee8434370a837317a4cb8268ad6b67901bc8973"
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+
+> hanoi-land-law-web@0.1.0 test:e2e
+> playwright test --workers=2 --grep source list selects
+
+[WebServer] (node:31373) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 2 tests using 2 workers
+
+(node:31398) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:31399) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 [desktop] › e2e/redesign.spec.ts:38:1 › source list selects the exact citation and desktop allows parallel input (3.0s)
+  ✓  2 [mobile] › e2e/redesign.spec.ts:38:1 › source list selects the exact citation and desktop allows parallel input (3.0s)
+
+  2 passed (6.2s)

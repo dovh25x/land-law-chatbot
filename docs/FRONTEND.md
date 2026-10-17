@@ -1,17 +1,103 @@
-# Thiết kế và handoff frontend
+# Frontend và nguồn thiết kế
 
-[Figma · Vành đai 4](https://www.figma.com/design/0Zlzf91hFOPeWp41veuD7l?node-id=4-186) trong team `codex` là nguồn thiết kế. Connector tạo file được nhưng `send_prompt` và `get_chat_threads` không khả dụng. Sau khi thử lại, người dùng cho phép thiết kế trực tiếp trong Figma; bản này được dựng bằng Figma Plugin API, không phải output của Code agent.
+## Nguồn tham chiếu
 
-## Brief và quyết định
+[Figma · Vành đai 4](https://www.figma.com/design/0Zlzf91hFOPeWp41veuD7l?node-id=4-186), trong team `codex`, chứa các frame tham chiếu ban đầu. Trang [UI UX Redesign](https://www.figma.com/design/0Zlzf91hFOPeWp41veuD7l?node-id=14-2) là handoff cho giao diện mới về bố cục, màu sắc, typography và các trạng thái giao diện. Không dùng screenshot Figma làm asset thay cho implementation.
 
-Trải nghiệm hội thoại tham khảo ChatGPT: ưu tiên đọc đáp án dài, lịch sử tại máy, thao tác mobile rõ. Tiếng Việt, danh tính Vành đai 4; không chọn model/retrieval/project. Palette trung tính; Be Vietnam Pro; cột đọc 760 px, sidebar 264 px, composer bo 24 px; light/dark. Thư viện nguồn và đánh giá là điều hướng phụ. Nguồn mở drawer 420 px desktop, toàn màn hình mobile. Trace là chi tiết tự chọn.
+Các frame ban đầu được giữ nguyên để đối chiếu:
 
-Frames: desktop light `4:186`, dark `4:216`, mobile `4:246`, khởi đầu `5:8`, source drawer `5:14`, trạng thái `5:20`, thư viện `7:8`, đánh giá `7:15`. Đã dùng Simple Design System button làm tham chiếu. Repo không có package component SDS tương ứng; triển khai bằng button hiện có và CSS tokens. Bản sửa của chủ dự án được đọc lại và áp dụng ngày 2026-10-17: sidebar sáng `#f9f9f9`, user message có viền trên desktop, header hai dòng, thẻ gợi ý đánh số, action nguồn/thực thi/sao chép và các thẻ nguồn/metric. Icon gửi mobile lấy từ Figma tại `frontend/public/figma/arrow-up.svg`; không dùng URL asset tạm khi chạy. Các thao tác lưu trữ, xác minh trình duyệt và kết nối được giữ hoạt động trong bố cục mới.
+| Màn hình | Frame |
+|---|---|
+| Desktop sáng | `4:186` |
+| Desktop tối | `4:216` |
+| Mobile | `4:246` |
+| Khởi đầu | `5:8` |
+| Nguồn căn cứ | `5:14` |
+| Trạng thái vận hành | `5:20` |
+| Thư viện văn bản | `7:8` |
+| Đánh giá hệ thống | `7:15` |
 
-`App.tsx`: hội thoại, điều hướng, nguồn, trace. `history.ts`: lưu/xóa/TTL và context request. `Turnstile.tsx`: challenge tạo phiên. `ui.tsx`: nguồn, trace và dữ liệu. CSS sáng/tối lấy giá trị từ frames; không giữ selector dự án trong luồng chat.
+## Nguyên tắc trải nghiệm
 
-## Kiểm tra handoff
+Hội thoại là luồng chính, tham khảo cách sử dụng của ChatGPT nhưng giữ tên sản phẩm và tiếng Việt. Thư viện nguồn và đánh giá là điều hướng phụ. Không có lựa chọn model, retrieval mode, dự án, tài khoản, thanh toán hoặc upload hồ sơ.
 
-Đối chiếu desktop/mobile với frame, gồm cột đọc, màu, composer và sidebar. Chạy E2E fixture cho gửi/hỏi tiếp, history qua reload, xóa, expiry và lỗi storage. Kiểm tra keyboard Tab/Escape, focus về nút mở, không tràn ngang ở 320 px, dark mode, đáp án dài cuộn tới cuối và composer không che nội dung. Không dùng screenshot Figma làm asset giao diện.
+Typography dùng Be Vietnam Pro, palette trung tính, hỗ trợ light/dark. Cột đọc tham chiếu 760 px, sidebar 264 px và source drawer 420 px trên desktop; source panel chuyển toàn màn hình dưới 768 px. Từ 1280 px, nguồn là vùng `complementary` rộng 420 px và không chặn hội thoại; ở 768–1279 px dùng modal drawer. Header cao 64 px; sidebar có thể thu gọn. Nội dung động phải wrap và cuộn được, không cố định chiều cao theo văn bản mẫu trong Figma.
 
-Cold start và lỗi hiển thị lời giải thích thật. Mất SSE không tự gửi lại; nguồn/trace của đáp án đã nhận mở từ dữ liệu tại máy. Không tạo chức năng minh họa không có backend.
+Citation hiển thị nguồn và locator, mở đoạn căn cứ cùng liên kết nguồn chính thức. Thao tác chi tiết thực thi và sao chép đặt cạnh đáp án. “Xem nguồn” mở danh sách citation của đúng đáp án; chọn citation mở đúng đoạn trích. Metadata phiên bản nguồn nằm trong mục mở rộng. Trace chỉ hiển thị sự kiện quan sát được.
+
+## Cấu trúc implementation
+
+| File/thư mục | Trách nhiệm |
+|---|---|
+| `frontend/src/App.tsx` | Hội thoại, điều hướng, gửi/hủy và các panel |
+| `frontend/src/api.ts` | Phiên, HTTP và parser SSE |
+| `frontend/src/history.ts` | IndexedDB, TTL, giới hạn dung lượng và history request |
+| `frontend/src/Turnstile.tsx` | Widget xác minh trước khi tạo phiên |
+| `frontend/src/ui.tsx` | Component thư viện, nguồn, trace và thông tin dữ liệu |
+| `frontend/src/styles.css` | Tokens sáng/tối và responsive layout |
+| `frontend/public/figma/` | Asset tĩnh lấy từ thiết kế |
+| `frontend/functions/` | Proxy ingress cùng origin |
+
+Simple Design System được dùng làm tham chiếu thiết kế; repo không có package SDS tương ứng, nên implementation dùng component và CSS hiện có. Asset Figma được lưu local; không để URL asset tạm trong runtime.
+
+## Hội thoại và lịch sử
+
+Nội dung, citation và trace được lưu tại trình duyệt theo giới hạn trong [kiến trúc](ARCHITECTURE.md#lưu-trữ-và-quyền-riêng-tư). UI phải nói rõ lịch sử không đồng bộ thiết bị; xóa lịch sử không đặt lại quota phiên API.
+
+Client chỉ gửi các cặp hội thoại hoàn chỉnh trong giới hạn API. Không gửi trace hoặc xem citation cũ là chứng cứ. Sau mất SSE, không tự gửi lại POST chat; giải thích server không lưu kết quả để khôi phục.
+
+Không lưu được IndexedDB phải có thông báo. Không chuyển sang server persistence để che lỗi lưu trữ tại máy.
+
+## Trạng thái bắt buộc
+
+| Trạng thái | Hành vi giao diện |
+|---|---|
+| Khởi đầu | Giới thiệu phạm vi, gợi ý câu hỏi và composer |
+| Đang xử lý | Hiển thị bước thực thi và nút dừng |
+| Hỏi làm rõ/thiếu chứng cứ | Hiển thị giới hạn và thông tin cần bổ sung |
+| Cold start | Thông báo đang kết nối, không giả định backend đã sẵn sàng |
+| Quota/provider giới hạn | Giải thích giới hạn thực tế và thời gian chờ khi có |
+| Nguồn quá hạn/generation tắt | Giữ thư viện nguồn truy cập được |
+| Mất kết nối/hủy | Không ngụ ý có thể lấy lại đáp án từ server |
+| Lỗi lịch sử | Nêu rõ dữ liệu chỉ còn trong tab |
+| Báo cáo khác phiên bản | Hiển thị cảnh báo corpus/fingerprint |
+| Turnstile yêu cầu tương tác | Cho phép người dùng hoàn tất challenge, không bypass |
+
+## Kiểm tra thay đổi
+
+```bash
+npm --prefix frontend test
+npm --prefix frontend run build
+npm --prefix frontend run test:e2e
+```
+
+Đối chiếu Figma trên desktop/mobile và cả hai theme, gồm chiều rộng cột đọc, hierarchy, source panel, citation và composer. Kiểm tra Tab/Escape, focus sau đóng panel, thông báo qua role phù hợp, văn bản dài và không tràn ngang ở 320 px.
+
+E2E fixture kiểm tra gửi/hỏi tiếp, session không đổi khi tạo cuộc mới, reload, xóa, hết hạn, lỗi storage, nguồn và trace. Kiểm tra public deployment được thực hiện riêng theo [runbook](OPERATIONS.md#triển-khai-và-xác-minh); fixture pass không chứng minh Turnstile hoặc LLM thật đã được xác minh.
+
+## Handoff UI UX Redesign
+
+| Luồng | Desktop sáng | Mobile sáng |
+|---|---|---|
+| Khởi đầu | `14:105` | `14:115` |
+| Soạn câu hỏi từ gợi ý | `19:283` | `19:333` |
+| Hội thoại | `14:106` | `14:116` |
+| Đối chiếu nguồn | `14:107` | `14:117` |
+| Thư viện | `14:108` | `14:118` |
+| Đánh giá | `14:109` | `14:119` |
+| Quá trình kiểm chứng | `14:110` | `14:120` |
+| Dữ liệu và kết nối | `14:111` | `14:121` |
+| Xóa lịch sử | `14:112` | `14:122` |
+| Đang xử lý | `14:113` | `14:124` |
+| Trạng thái gián đoạn | `14:114` | `14:125` |
+
+Các frame tối nằm cùng trang, tên bắt đầu bằng `Dark`. Frame `14:147`–`14:150` thể hiện kiểm tra bố cục tại 320 và 1024 px. Foundations và component nằm ở `14:51`, với collection Theme có hai mode Light/Dark; màu, khoảng cách và bán kính được gắn biến. Nội dung trong mockup là minh họa bố cục, không phải kết quả pháp lý hay số liệu vận hành.
+
+- Palette dùng các token `--surface`, `--sidebar`, `--tint`, `--ink`, `--muted`, `--border` và màu cảnh báo/lỗi. Body/composer 16 px, metadata 13 px, vùng chạm tối thiểu 44 px. UI dùng Be Vietnam Pro và icon Lucide.
+- Gợi ý chỉ điền câu hỏi và focus ô nhập. Desktop dùng Enter gửi, Shift+Enter xuống dòng, giữ bảo vệ IME; thiết bị có con trỏ thô dùng Enter xuống dòng và nút gửi. Ô nhập tăng tới 160 px rồi cuộn nội bộ.
+- Frontend đọc `/api/v1/status` để trình bày khả năng sinh đáp án riêng với `/readyz`. Không tự tạo thời gian chờ khi API thiếu metadata; không tự gửi lại POST chat.
+- Thư viện phân biệt loading, fetch error, corpus rỗng và không có kết quả tìm kiếm; lọc loại nguồn diễn ra tại client. Lỗi storage hiện trên mọi trang; lỗi sao chép có thông báo riêng.
+- Modal có focus trap, Escape và trả focus; vùng nguồn desktop không có focus trap. Trả focus dùng `preventScroll` để giữ vị trí đọc. Autoscroll chỉ hoạt động khi người dùng ở gần cuối.
+- Xác nhận xóa lịch sử dùng dialog trong ứng dụng; không đổi session API hoặc quota. Theme vẫn hoạt động trong tab nếu localStorage không dùng được.
+
+E2E cho redesign dùng fixture và xuất ảnh vào thư mục báo cáo mới, không ghi đè ảnh lịch sử. Cần phân biệt kiểm tra ARIA/bàn phím tự động với kiểm tra screen reader và bàn phím ảo trên thiết bị thật; kiểm tra public deployment, Groq và Turnstile thật thực hiện riêng.

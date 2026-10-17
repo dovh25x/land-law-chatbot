@@ -1,6 +1,7 @@
 import { test, expect } from '@playwright/test'
 
 test.beforeEach(async ({ page }) => {
+  await page.route('**/api/v1/status', r => r.fulfill({ json: { generation_available: true, reason: null } }))
   // Only test fixtures use intercepted APIs. Production never registers these responses.
   await page.route('**/readyz', r => r.fulfill({ status: 503, json: { status: 'not_ready', database: true, llm_configured: true } }))
   await page.route('**/api/v1/documents', r => r.fulfill({ json: { documents: [] } }))
@@ -16,7 +17,7 @@ test('responsive navigation honestly shows unpublished corpus and benchmark', as
   await expect(page.getByLabel('Câu hỏi pháp luật')).toBeVisible()
   await expect(page.getByLabel('Dự án', { exact: true })).toHaveCount(0)
   await expect(page.getByRole('button', { name: 'Gửi câu hỏi' })).toBeDisabled()
-  await page.screenshot({ path: `../reports/ui-${info.project.name}.png`, fullPage: true })
+  await page.screenshot({ path: `../reports/ui-redesign-20261017/ui-${info.project.name}.png`, fullPage: true })
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBeTruthy()
   if (await page.getByRole('button', { name: 'Mở menu điều hướng' }).isVisible()) await page.getByRole('button', { name: 'Mở menu điều hướng' }).click()
   await page.getByRole('button', { name: 'Thư viện văn bản', exact: true }).click()
@@ -60,10 +61,10 @@ test('verified SSE answer opens source and trace with keyboard dismissal', async
   await page.getByRole('button', { name: 'Gửi câu hỏi' }).click()
   await expect(page.locator('.message.assistant')).toContainText(result.content)
   await page.getByRole('button', { name: /40\/2026/ }).click()
-  await expect(page.getByRole('dialog', { name: 'Nguồn căn cứ' })).toContainText(citation.excerpt)
+  await expect(page.locator('[aria-label="Nguồn căn cứ"]')).toContainText(citation.excerpt)
   await expect(page.getByRole('link', { name: 'Mở nguồn chính thức' })).toHaveAttribute('href', citation.url)
   await expect(page.getByRole('link', { name: 'Mở trang PDF gốc' })).toHaveAttribute('href', citation.source_url)
-  await expect(page.getByRole('dialog')).toContainText('Trang nguồn: 6')
+  await expect(page.locator('[aria-label="Nguồn căn cứ"]')).toContainText('Trang nguồn: 6')
   await page.keyboard.press('Escape')
   await expect(page.getByRole('dialog')).toHaveCount(0)
   await page.getByRole('button', { name: /Xem quá trình kiểm chứng/ }).click()
