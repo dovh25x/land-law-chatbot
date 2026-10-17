@@ -96,8 +96,11 @@ def strict_generation_schema(schema):
 
 
 class GroqProvider:
-    def __init__(self, settings: Settings, store: Store, client: httpx.AsyncClient | None = None):
+    def __init__(self, settings: Settings, store: Store, client: httpx.AsyncClient | None = None, *, usage_scope='operator'):
         self.settings, self.store = settings, store
+        if usage_scope not in {'public', 'operator'}:
+            raise ValueError('Invalid trusted usage scope')
+        self.usage_scope = usage_scope
         self.client = client or httpx.AsyncClient(timeout=25, limits=httpx.Limits(max_connections=8))
         contract(settings)
         from .local_embedding import LocalE5
@@ -111,12 +114,14 @@ class GroqProvider:
         await self.client.aclose()
 
     async def record_usage(self, kind, units=1):
-        await asyncio.to_thread(self.store.record_usage, kind, units)
+        await asyncio.to_thread(self.store.record_usage, self.usage_scope+':'+kind, units)
 
 
 
 
-    async def generate(self, schema: type[BaseModel], instruction: str, payload: dict, budget: Budget):
+    async def generate(self, schema: type[BaseModel], instruction: str, payload: dict, budget: Budget, *, max_attempts=3):
+        if not 1 <= max_attempts <= 3:
+            raise ValueError('Retries must remain inside the workflow budget')
         body = {
             "systemInstruction": {"parts": [{"text": SYSTEM_BOUNDARY + instruction}]},
             "contents": [{"role": "user", "parts": [{"text": json.dumps(payload, ensure_ascii=False,separators=(',',':'))}]}],
@@ -124,19 +129,23 @@ class GroqProvider:
                                  "responseMimeType": "application/json", "responseJsonSchema": generation_schema(schema)},
         }
         schema_failures = 0
-        for attempt in range(3):
+        attempts = 1 if schema.__name__ == 'Plan' else max_attempts
+        for attempt in range(attempts):
+            if self.usage_scope == 'public':
+                await asyncio.to_thread(self.store.reserve_public_llm)
             budget.llm()
             await self.record_usage("llm")
             try:
                 result = await self._groq_generate(schema, body)
             except RateLimited as exc:
+                await asyncio.to_thread(self.store.set_cooldown, exc.retry_after)
                 remaining = self.settings.turn_timeout_seconds - (time.monotonic()-budget.started)
-                if exc.retry_after > min(60,remaining-15) or attempt == 2:
+                if exc.retry_after > min(60,remaining-15) or attempt == attempts-1:
                     raise
                 await asyncio.sleep(exc.retry_after)
                 continue
             except ProviderUnavailable as exc:
-                if not exc.retryable or attempt == 2:
+                if not exc.retryable or attempt == attempts-1:
                     raise
                 await asyncio.sleep(exc.retry_after or 2 ** attempt)
                 continue
@@ -155,7 +164,7 @@ class GroqProvider:
                     for category in categories:
                         await self.record_usage('schema-validation:'+category)
                     body['systemInstruction']['parts'][0]['text']+='\nCorrect these validation categories without adding fields: '+', '.join(categories)
-                if schema_failures >= 2 or attempt == 2:
+                if schema_failures >= 2 or attempt == attempts-1:
                     raise ProviderUnavailable("Provider không trả kết quả đúng schema",format_failure=True) from None
                 # Retries count as actual calls inside the same per-turn budget.
                 body['systemInstruction']['parts'][0]['text'] += '\nLượt trước không khớp schema. Trả duy nhất JSON đúng responseJsonSchema; dùng đúng kiểu trường và giá trị enum, không có markdown.'

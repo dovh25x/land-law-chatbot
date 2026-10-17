@@ -24,7 +24,7 @@ def prepare(source, output):
            for r in payload['state']):
         raise ValueError('Unexpected application state in public backup')
     values = dotenv_values('.env')
-    secrets = [v for k, v in values.items() if v and len(v) > 12
+    secrets = [v for k, v in values.items() if v and k != 'VITE_TURNSTILE_SITE_KEY' and len(v) > 12
                and any(x in k for x in ('KEY', 'TOKEN', 'SECRET', 'DATABASE_URL'))]
     decoded = []
     for row in payload['releases']:

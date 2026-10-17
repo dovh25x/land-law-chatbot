@@ -97,6 +97,6 @@ export function DataPanel({ readiness, connecting, onRefresh, onClose }: {
     <div className="data-note" role="note"><strong>{publicationLabel}</strong><p>Chỉ trả lời trong phạm vi nguồn đã kiểm tra. Quyền lợi cụ thể cần đối chiếu hồ sơ và cơ quan có thẩm quyền.</p></div>
     <div className="source-dates"><p>Dữ liệu kiểm tra<br/><strong>{formatDate(readiness?.checked_at)}</strong></p><p>Corpus đang hoạt động<br/><strong>{readiness?.corpus_release || 'Chưa công bố'}</strong></p></div>
     {!!readiness?.coverage_gaps?.length && <details className="data-gaps"><summary>Các nguồn chưa đủ dữ liệu ({readiness.coverage_gaps.length})</summary><ul>{readiness.coverage_gaps.map(g => <li key={g.document_id}><strong>{g.title}:</strong> {g.reason}</li>)}</ul></details>}
-    <p className="secondary-copy">Phạm vi dự án hiện chỉ hỗ trợ Vành đai 4. Nguồn dự án khác trong thư viện chỉ để tham khảo. Chỉ nhập tình huống đã ẩn danh.</p>
+    <p className="secondary-copy">Phạm vi dự án hiện chỉ hỗ trợ Vành đai 4. Chỉ nhập tình huống đã ẩn danh.</p>
   </SidePanel>
 }

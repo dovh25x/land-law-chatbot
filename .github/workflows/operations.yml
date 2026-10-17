@@ -1,0 +1,23 @@
+name: Runtime metadata checks
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '17 * * * *'
+permissions:
+  contents: read
+concurrency:
+  group: runtime-metadata
+  cancel-in-progress: false
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install -r requirements.lock && pip install --no-deps -e .
+      - run: land-law cleanup && land-law ops-status --check
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}

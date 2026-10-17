@@ -7,25 +7,20 @@ from conftest import release
 from test_agent import FakeProvider
 
 
-def test_auth_sse_session_history_and_trace_isolation(settings, store):
+def test_auth_sse_and_browser_history_contract(settings,store):
     release(store)
-    with TestClient(create_app(settings, store, FakeProvider(settings))) as client:
-        first = client.post("/api/v1/sessions").json()
-        second = client.post("/api/v1/sessions").json()
-        headers = {"Authorization": f"Bearer {first['token']}"}
-        assert client.get(f"/api/v1/sessions/{first['session_id']}/messages").status_code == 404
-        response = client.post("/api/v1/chat", headers=headers, json={"session_id": first["session_id"], "message": "bồi thường thu hồi đất"})
-        assert response.status_code == 200
-        assert "text/event-stream" in response.headers["content-type"]
-        frames = [json.loads(line[6:]) for line in response.text.splitlines() if line.startswith("data: ")]
-        result = next(f for f in frames if "trace_id" in f)
-        assert result["status"] == "answered"
-        assert response.text.index('"step": "verification"') < response.text.index('"status": "answered"')
-        history = client.get(f"/api/v1/sessions/{first['session_id']}/messages", headers=headers).json()
-        assert len(history["messages"]) == 2
-        other_headers = {"Authorization": f"Bearer {second['token']}"}
-        assert client.get(f"/api/v1/sessions/{first['session_id']}/messages", headers=other_headers).status_code == 404
-        assert client.get(f"/api/v1/sessions/{second['session_id']}/traces/{result['trace_id']}", headers=other_headers).status_code == 404
+    with TestClient(create_app(settings,store,FakeProvider(settings))) as client:
+        first=client.post('/api/v1/sessions').json()
+        second=client.post('/api/v1/sessions').json()
+        headers={'Authorization':'Bearer '+first['token']}
+        assert client.get(f"/api/v1/sessions/{first['session_id']}",headers={'Authorization':'Bearer '+second['token']}).status_code==404
+        response=client.post('/api/v1/chat',headers=headers,json={'session_id':first['session_id'],'message':'bồi thường thu hồi đất'})
+        assert response.status_code==200 and 'event: result' in response.text
+        assert response.text.index('"step": "verification"')<response.text.index('"status": "answered"')
+        assert client.get(f"/api/v1/sessions/{first['session_id']}/messages",headers=headers).status_code==410
+        assert client.get(f"/api/v1/sessions/{first['session_id']}/traces/unused",headers=headers).status_code==410
+        assert len(store.rows('SELECT * FROM turns'))==1
+        assert not store.rows("SELECT name FROM sqlite_master WHERE name IN ('messages','traces','answer_cache')")
 
 
 def test_rate_limit_and_retry_after(settings, store):
@@ -73,7 +68,7 @@ def test_database_outage_readiness_is_sanitized(settings,store,monkeypatch):
 def test_failed_durable_save_never_streams_success(settings,store,monkeypatch):
     release(store)
     def fail(*args):raise RuntimeError('private database credentials must not be returned')
-    monkeypatch.setattr(store,'save_turn',fail)
+    monkeypatch.setattr(store,'finish_turn',fail)
     with TestClient(create_app(settings,store,FakeProvider(settings))) as client:
         sid=client.post('/api/v1/sessions').json()
         response=client.post('/api/v1/chat',headers={'Authorization':'Bearer '+sid['token']},
@@ -87,13 +82,14 @@ def test_chat_pins_release_when_publication_changes_during_request(settings,stor
     old=release(store,release_id='old')
     staged={**old,'id':'new','documents':[document('new-law').model_dump(mode='json')]}
     store.stage(staged)
-    original=store.messages
+    original=store.release
     switched=[]
-    def switch(*args):
-        if not switched:
+    def switch(*args,**kwargs):
+        result=original(*args,**kwargs)
+        if args and args[0]=='old' and not switched:
             store.publish('new');switched.append(True)
-        return original(*args)
-    monkeypatch.setattr(store,'messages',switch)
+        return result
+    monkeypatch.setattr(store,'release',switch)
     with TestClient(create_app(settings,store,FakeProvider(settings))) as client:
         sid=client.post('/api/v1/sessions').json()
         response=client.post('/api/v1/chat',headers={'Authorization':'Bearer '+sid['token']},

@@ -1,6 +1,9 @@
 name: Deploy verified build
 on:
   workflow_dispatch:
+concurrency:
+  group: production-deploy
+  cancel-in-progress: false
 permissions:
   contents: read
 jobs:
@@ -22,17 +25,21 @@ jobs:
         working-directory: frontend
         env:
           VITE_API_BASE_URL: ${{ vars.API_BASE_URL }}
+          VITE_TURNSTILE_SITE_KEY: ${{ vars.VITE_TURNSTILE_SITE_KEY }}
       - run: pytest -q
       - name: Deploy frontend
         uses: cloudflare/wrangler-action@v4
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: pages deploy frontend/dist --project-name=${{ vars.CLOUDFLARE_PAGES_PROJECT }} --branch=main
+          workingDirectory: frontend
+          command: pages deploy dist --project-name=${{ vars.CLOUDFLARE_PAGES_PROJECT }} --branch=main
       - name: Deploy existing free backend
         env:
           RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
           RENDER_SERVICE_ID: ${{ vars.RENDER_SERVICE_ID }}
         run: python scripts/deploy.py backend
       - name: Live smoke
-        run: land-law smoke '${{ vars.API_BASE_URL }}'
+        run: npx --prefix frontend playwright install --with-deps chromium && node scripts/verify_live_ui.mjs --chat
+        env:
+          LIVE_BASE_URL: ${{ vars.API_BASE_URL }}

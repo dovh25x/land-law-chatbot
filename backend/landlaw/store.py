@@ -31,14 +31,12 @@ CREATE TABLE IF NOT EXISTS chunks(
  embedding_model TEXT, embedding TEXT, PRIMARY KEY(release_id,id),
  FOREIGN KEY(release_id,document_id) REFERENCES documents(release_id,id));
 CREATE TABLE IF NOT EXISTS sessions(id TEXT PRIMARY KEY, token_hash TEXT NOT NULL, created_at TEXT NOT NULL);
-CREATE TABLE IF NOT EXISTS messages(id TEXT PRIMARY KEY, session_id TEXT NOT NULL REFERENCES sessions(id)
- ON DELETE CASCADE, role TEXT NOT NULL, payload TEXT NOT NULL, created_at TEXT NOT NULL);
-CREATE TABLE IF NOT EXISTS traces(id TEXT PRIMARY KEY, session_id TEXT NOT NULL REFERENCES sessions(id)
- ON DELETE CASCADE, payload TEXT NOT NULL, created_at TEXT NOT NULL);
 CREATE TABLE IF NOT EXISTS counters(key TEXT PRIMARY KEY, value INTEGER NOT NULL, expires_at TEXT NOT NULL);
-CREATE TABLE IF NOT EXISTS answer_cache(key TEXT PRIMARY KEY,session_id TEXT NOT NULL REFERENCES sessions(id)
- ON DELETE CASCADE,payload TEXT NOT NULL,expires_at TEXT NOT NULL);
-CREATE INDEX IF NOT EXISTS message_session_idx ON messages(session_id,created_at);
+CREATE TABLE IF NOT EXISTS turns(id TEXT PRIMARY KEY, session_id TEXT NOT NULL REFERENCES sessions(id) ON DELETE CASCADE,
+ fingerprint TEXT NOT NULL, status TEXT NOT NULL, lease_until TEXT NOT NULL, created_at TEXT NOT NULL);
+CREATE UNIQUE INDEX IF NOT EXISTS running_turn_session ON turns(session_id) WHERE status='running';
+CREATE TABLE IF NOT EXISTS source_reviews(id TEXT PRIMARY KEY,release_id TEXT NOT NULL REFERENCES releases(id),
+ document_id TEXT NOT NULL,checksum TEXT NOT NULL,checked_at TEXT NOT NULL,status TEXT NOT NULL,receipt text NOT NULL);
 """
 
 
@@ -65,7 +63,7 @@ class Store:
             self.pool = ConnectionPool(
                 settings.database_url.get_secret_value(), min_size=0, max_size=4,
                 timeout=8, reconnect_timeout=15, kwargs={"row_factory": dict_row, "prepare_threshold": None,
-                    "connect_timeout": 8, "autocommit": True, "keepalives": 1, "keepalives_idle": 30,
+                    "connect_timeout": 8, "options": f"-c statement_timeout={settings.db_statement_timeout_ms}", "autocommit": True, "keepalives": 1, "keepalives_idle": 30,
                     "keepalives_interval": 10, "keepalives_count": 3, "tcp_user_timeout": 60000},
             )
         else:
@@ -133,19 +131,7 @@ class Store:
             self.execute(conn, "DELETE FROM sessions WHERE created_at<?", (
                 (utcnow() - timedelta(days=self.settings.session_retention_days)).isoformat(),))
             self.execute(conn, "DELETE FROM counters WHERE expires_at<?", (utcnow().isoformat(),))
-            self.execute(conn, "DELETE FROM answer_cache WHERE expires_at<?", (utcnow().isoformat(),))
-
-    def cached_answer(self, key, session_id):
-        rows = self.rows("SELECT payload FROM answer_cache WHERE key=? AND session_id=? AND expires_at>?",
-                         (key, session_id, utcnow().isoformat()))
-        return json.loads(rows[0]["payload"]) if rows else None
-
-    def cache_answer(self, key, session_id, result):
-        if result.status not in {"answered", "clarification_needed"}:
-            return
-        with self.transaction() as conn:
-            self.execute(conn, "INSERT INTO answer_cache VALUES(?,?,?,?) ON CONFLICT(key) DO NOTHING",
-                         (key, session_id, result.model_dump_json(), (utcnow()+timedelta(hours=24)).isoformat()))
+            self.execute(conn, "DELETE FROM turns WHERE created_at<?", ((utcnow()-timedelta(days=7)).isoformat(),))
 
     def prune_releases(self):
         """Retain active and previous corpus plus staged candidates from the last seven days."""
@@ -158,26 +144,66 @@ class Store:
                 for table in ("chunks", "documents", "releases"):
                     self.execute(conn, f"DELETE FROM {table} WHERE {'id' if table == 'releases' else 'release_id'}=?", (row["id"],))
 
-    def messages(self, session_id, limit=20):
-        rows = self.rows("SELECT role,payload,created_at FROM messages WHERE session_id=? ORDER BY created_at DESC LIMIT ?",
-                         (session_id, limit))
-        return [{"role": r["role"], "payload": json.loads(r["payload"]), "created_at": r["created_at"]} for r in reversed(rows)]
-
-    def save_turn(self, session_id, message, result):
-        import uuid
-
+    def start_turn(self, turn_id, session_id, fingerprint):
         now = utcnow()
         with self.transaction() as conn:
-            for index, (role, payload) in enumerate([("user", {"content": message}), ("assistant", result.model_dump(mode="json"))]):
-                self.execute(conn, "INSERT INTO messages VALUES(?,?,?,?,?)",
-                             (str(uuid.uuid4()), session_id, role, json.dumps(payload, ensure_ascii=False),
-                              (now + timedelta(microseconds=index)).isoformat()))
-            self.execute(conn, "INSERT INTO traces VALUES(?,?,?,?)", (
-                result.trace_id, session_id, json.dumps([e.model_dump() for e in result.trace], ensure_ascii=False), now.isoformat()))
+            # Lock session first: parallel requests serialize even with different IDs.
+            suffix = ' FOR UPDATE' if self.postgres else ''
+            self.execute(conn, 'SELECT id FROM sessions WHERE id=?'+suffix, (session_id,)).fetchone()
+            self.execute(conn, "UPDATE turns SET status='expired' WHERE session_id=? AND status='running' AND lease_until<?", (session_id, now.isoformat()))
+            existing = self.execute(conn, 'SELECT fingerprint,status FROM turns WHERE id=?', (turn_id,)).fetchone()
+            if existing:
+                return 'request_payload_conflict' if existing['fingerprint'] != fingerprint else 'request_'+existing['status']
+            if self.execute(conn, "SELECT id FROM turns WHERE session_id=? AND status='running'", (session_id,)).fetchone():
+                return 'session_busy'
+            self.execute(conn, 'INSERT INTO turns VALUES(?,?,?,?,?,?)', (turn_id, session_id, fingerprint, 'running', (now+timedelta(seconds=120)).isoformat(), now.isoformat()))
+        return None
 
-    def trace(self, trace_id, session_id):
-        rows = self.rows("SELECT payload FROM traces WHERE id=? AND session_id=?", (trace_id, session_id))
-        return json.loads(rows[0]["payload"]) if rows else None
+    def finish_turn(self, turn_id, status):
+        with self.transaction() as conn:
+            self.execute(conn, 'UPDATE turns SET status=? WHERE id=?', (status, turn_id))
+
+    def cooldown(self):
+        value = self.state('provider_cooldown_until')
+        if not value:
+            return 0
+        from datetime import datetime
+        return max(0, math.ceil((datetime.fromisoformat(value)-utcnow()).total_seconds()))
+
+    def set_cooldown(self, seconds):
+        until = (utcnow()+timedelta(seconds=seconds)).isoformat()
+        with self.transaction() as conn:
+            self.execute(conn, "INSERT INTO app_state VALUES('provider_cooldown_until',?) ON CONFLICT(key) DO UPDATE SET value=CASE WHEN app_state.value<excluded.value THEN excluded.value ELSE app_state.value END", (until,))
+
+    def reserve_public_llm(self):
+        delay = self.cooldown()
+        if delay:
+            raise RateLimited(delay, source='provider')
+        now=utcnow()
+        key=f'usage:public:tokens:{now.date()}'
+        rows=self.rows('SELECT value FROM counters WHERE key=?', (key,))
+        if rows and rows[0]['value'] >= self.settings.public_daily_token_limit:
+            raise RateLimited(86400, source='public_token_threshold')
+        self.consume([(f'public:llm:{now.date()}', self.settings.public_daily_llm_limit, 86400)])
+
+    def source_fresh(self, release, document_ids=None):
+        from datetime import datetime
+        cutoff=utcnow()-timedelta(days=7)
+        docs=release.get('documents', [])
+        if document_ids is not None:
+            docs=[d for d in docs if d['id'] in document_ids]
+        if not docs:
+            return False
+        for doc in docs:
+            stamp=min(filter(None,[doc.get('checked_at'),release.get('checked_at')]),default=None)
+            reviews=self.rows("SELECT checked_at,status FROM source_reviews WHERE release_id=? AND document_id=? AND checksum=? ORDER BY checked_at DESC LIMIT 1", (release['id'],doc['id'],doc['checksum']))
+            if reviews:
+                if reviews[0]['status']!='unchanged':
+                    return False
+                stamp=reviews[0]['checked_at']
+            if not stamp or datetime.fromisoformat(stamp.replace('Z','+00:00')) < cutoff:
+                return False
+        return True
 
     def consume(self, limits: list[tuple[str, int, int]]):
         return self.consume_weighted([(key,limit,window,1) for key,limit,window in limits])
@@ -297,7 +323,7 @@ class Store:
         for release_id in release_ids:
             if release_id in protected or self.publication(release_id) or not self.release(release_id, metadata_only=True):
                 raise ValueError('Only existing unpublished staging releases can be retired')
-        self.backup(backup_path, include_sessions=True)
+        self.backup(backup_path)
         with self.transaction() as conn:
             for release_id in release_ids:
                 # Recheck pointers inside the deletion transaction.
@@ -318,6 +344,8 @@ class Store:
         release = self.release(release_id)
         if not release:
             raise ValueError("Unknown release")
+        if any(d.get('project') not in (None,'ring4') for d in release['documents']):
+            raise ValueError('Only Ring4 and shared legal sources may be published')
         old = self.state("active_release")
         with self.transaction() as conn:
             if publication:
@@ -533,16 +561,8 @@ class Store:
         payload = {"format": 1, "releases": self.rows("SELECT * FROM releases"),
                    "state": self.rows("SELECT * FROM app_state WHERE key IN ('active_release','previous_release') OR key LIKE 'publication:%'")}
         if include_sessions:
-            from cryptography.fernet import Fernet
-            key = self.settings.backup_encryption_key.get_secret_value()
-            if not key:
-                raise ValueError("Session backup requires BACKUP_ENCRYPTION_KEY; never archive plaintext sessions")
-            self.cleanup()
-            for table in ("sessions", "messages", "traces"):
-                payload[table] = self.rows(f"SELECT * FROM {table}")
-            content = Fernet(key.encode()).encrypt(json.dumps(payload, ensure_ascii=False).encode())
-        else:
-            content = json.dumps(payload, ensure_ascii=False).encode()
+            raise ValueError('Conversation backups are disabled; browser-owned history only')
+        content = json.dumps(payload, ensure_ascii=False).encode()
         target.parent.mkdir(parents=True, exist_ok=True)
         target.write_bytes(content)
         target.chmod(0o600)
@@ -552,28 +572,12 @@ class Store:
             self._metadata_cache.clear()
         content = source.read_bytes()
         if not content.startswith(b"{"):
-            from cryptography.fernet import Fernet
-            key = self.settings.backup_encryption_key.get_secret_value()
-            if not key:
-                raise ValueError("Encrypted restore requires BACKUP_ENCRYPTION_KEY")
-            content = Fernet(key.encode()).decrypt(content)
+            raise ValueError('Only corpus-only JSON backups are accepted')
         payload = json.loads(content)
-        if payload.get("format") != 1:
-            raise ValueError("Unsupported backup format")
+        if payload.get("format") != 1 or set(payload) != {'format','releases','state'}:
+            raise ValueError('Only corpus/config backups without conversation data are accepted')
         for item in payload["releases"]:
             if not self.release(item["id"]):
                 self.stage(self.decode_release(item["payload"]))
         for item in payload["state"]:
             self.set_state(item["key"], item["value"])
-        if payload.get("sessions"):
-            cutoff = (utcnow()-timedelta(days=self.settings.session_retention_days)).isoformat()
-            session_ids = {row["id"] for row in payload["sessions"] if row["created_at"] >= cutoff}
-            with self.transaction() as conn:
-                for table, columns in [("sessions", ("id", "token_hash", "created_at")),
-                                       ("messages", ("id", "session_id", "role", "payload", "created_at")),
-                                       ("traces", ("id", "session_id", "payload", "created_at"))]:
-                    for row in payload.get(table, []):
-                        if (row["id"] if table == "sessions" else row["session_id"]) not in session_ids:
-                            continue
-                        self.execute(conn, f"INSERT INTO {table}({','.join(columns)}) VALUES({','.join('?' for _ in columns)}) ON CONFLICT(id) DO NOTHING",
-                                     tuple(row[c] for c in columns))

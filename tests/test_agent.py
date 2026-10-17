@@ -1007,7 +1007,7 @@ def test_partial_amendment_never_invalidates_proven_different_clause(basis,scope
 @pytest.mark.parametrize('project,question', [('songhong','Thông tin dự án sông Hồng?'),('olympic','Đất Olympic được bồi thường không?'),(None,'Quy hoạch sông Hồng đã phê duyệt chưa?')])
 async def test_other_projects_are_explicitly_outside_mvp_without_model_calls(store,settings,project,question):
     release(store);sid,_=session(store)
-    result=await Agent(store,FakeProvider(settings)).run(ChatRequest(session_id=sid,message=question,project=project),noop)
+    result=await Agent(store,FakeProvider(settings)).run(ChatRequest(session_id=sid,message=question,project=None),noop)
     assert result.status=='insufficient_evidence'
     assert 'chỉ hỗ trợ Vành đai 4' in result.content
     assert result.llm_calls==0 and not result.citations
@@ -1084,3 +1084,14 @@ async def test_planner_keeps_relevant_sources_beyond_catalogue_prefix_with_bound
              'budget': Budget(), 'trace': [], 'emit': noop}
     result = await Agent(store, InspectPlanner(settings)).plan(state)
     assert result['plan'].tools[0].name == 'search_law'
+
+
+async def test_assistance_list_with_gom_explains_categories_are_not_automatic_entitlements(store, settings):
+    source = ('Điều 108. Hỗ trợ khi Nhà nước thu hồi đất. '
+              '1. Hỗ trợ gồm: a) Hỗ trợ ổn định đời sống; b) Hỗ trợ ổn định sản xuất, kinh doanh.')
+    release(store,[document(text=source)]);sid,_=session(store)
+    draft=Draft(status='answered',claims=[Claim(text='Theo Điều 108, Nhà nước hỗ trợ gồm hỗ trợ ổn định đời sống và hỗ trợ ổn định sản xuất, kinh doanh.',citation_ids=['law-1'])])
+    result=await Agent(store,FakeProvider(settings,draft=draft)).run(ChatRequest(session_id=sid,message='Các nhóm hỗ trợ là gì?',as_of=date(2024,8,2)),noop)
+    assert result.status=='answered'
+    assert 'chưa phải kết luận hộ cụ thể được nhận tất cả' in result.content
+    assert result.content.count('Đây là danh mục') == 1

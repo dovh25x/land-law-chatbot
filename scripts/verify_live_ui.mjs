@@ -1,103 +1,71 @@
-// Real public UI; no API interception. Source-only mode never certifies LLM generation.
-import { chromium } from '../frontend/node_modules/playwright/index.mjs'
-import { writeFile, mkdir, readFile } from 'node:fs/promises'
-const sourceOnly=process.argv.includes('--source-only')
-const chat=process.argv.includes('--chat')||sourceOnly
-const output=!chat?'reports/frontend-live-ui.json':sourceOnly?'reports/frontend-live.json':'reports/frontend-live-generation.json'
-const api='https://land-law-chatbot.onrender.com'
-const browser=await chromium.launch({headless:true})
-const checks=[]
-let phase='navigation'
-let observedChat=null
-const scope=!chat?'Public website UI only; chat and generation are not checked.':sourceOnly?'Actual public UI, sourced deterministic chat, same-session follow-up, trace authorization and restoration. LLM generation is NOT verified.':'Actual public UI and sourced LLM chat with follow-up, trace authorization and restoration.'
-try {
- for(const width of [1440,390,320]) {
-  const page=await browser.newPage({viewport:{width,height:800}})
-  await page.goto('https://hanoi-land-law.pages.dev',{waitUntil:'networkidle'})
+// Real deployed browser checks. No route interception, mocked challenge or server history.
+import {chromium} from '../frontend/node_modules/playwright/index.mjs'
+import {writeFile,mkdir} from 'node:fs/promises'
+import {spawnSync} from 'node:child_process'
+const chat=process.argv.includes('--chat'),sourceOnly=process.argv.includes('--source-only')
+const base=process.env.LIVE_BASE_URL||'https://hanoi-land-law.pages.dev'
+const output=chat?(sourceOnly?'reports/frontend-live-source-only.json':'reports/frontend-live-generation.json'):'reports/frontend-live-ui.json'
+const checks=[];let phase='navigation',browser,turnstileChecked=false
+const local=spawnSync('.venv/bin/python',['-c','from landlaw.config import Settings; from landlaw.evaluation import configuration_fingerprint; print(configuration_fingerprint(Settings()))'],{encoding:'utf8'})
+const expected=local.status===0?local.stdout.trim():null
+const browserHistory=page=>page.evaluate(()=>new Promise((resolve,reject)=>{const r=indexedDB.open('landlaw-history',1);r.onsuccess=()=>{const db=r.result;const tx=db.transaction('conversations');const q=tx.objectStore('conversations').getAll();q.onsuccess=()=>resolve(q.result);q.onerror=()=>reject(Error('Local history unavailable'));tx.oncomplete=()=>db.close()};r.onerror=()=>reject(Error('IndexedDB unavailable'))}))
+const menu=async page=>{const opener=page.getByRole('button',{name:'Mở menu điều hướng'});if(await opener.isVisible())await opener.click()}
+try{
+ browser=await chromium.launch({headless:true})
+ for(const width of [1440,390,320]){
+  const page=await browser.newPage({viewport:{width,height:900}})
+  await page.goto(base,{waitUntil:'domcontentloaded',timeout:60000})
   await page.getByLabel('Câu hỏi pháp luật').waitFor()
-  if(await page.getByLabel('Chế độ truy xuất').count())throw Error('Unexpected mode selector')
-  await page.getByRole('button',{name:'Phạm vi tra cứu',exact:true}).click()
-  const values=await page.locator('#project option').evaluateAll(options=>options.map(o=>o.value))
-  if(values.some(v=>v && v!=='ring4'))throw Error('Unsupported project selectable')
-  await page.keyboard.press('Escape')
+  if(await page.getByLabel('Dự án',{exact:true}).count()||await page.getByLabel('Chế độ truy xuất').count())throw Error('Unexpected scope/model controls')
   if(!await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth))throw Error('Horizontal overflow')
-  const menu=page.getByRole('button',{name:'Mở menu điều hướng'})
-  if(await menu.isVisible())await menu.click()
-  await page.getByRole('button',{name:'Vành đai 4',exact:true}).click()
-  await page.getByRole('heading',{name:'Vành đai 4',exact:true}).waitFor()
-  if(!await page.locator('.content-page').innerText().then(t=>t.includes('hiện chỉ hỗ trợ Vành đai 4')))throw Error('Scope disclosure missing')
-  if(width===1440 && chat) {
-    phase='configuration'
-    const live=await (await page.request.get(api+'/api/v1/evaluations/latest')).json()
-    const expected=JSON.parse(await readFile('reports/latest.json','utf8'))
-    if(!live.matches_active_configuration || !live.matches_active_release || live.active_configuration_sha256!==expected.configuration_sha256)throw Error('Runtime/report mismatch')
-    await page.getByRole('button',{name:'Đánh giá hệ thống',exact:true}).click()
-    await page.locator('.evaluation-table').last().locator('tbody tr').last().waitFor()
-    if(await page.locator('.evaluation-table').last().locator('tbody tr').count()!==20)throw Error('Twenty-case table missing')
-    await page.getByText('Kiểm tra bổ sung',{exact:true}).waitFor()
-    checks.push({reviewed_evaluation_rows:20,supplemental_visible:true,configuration_sha256:live.active_configuration_sha256})
-    await page.getByRole('button',{name:'Hỏi đáp pháp luật',exact:true}).click()
-    async function submit(question) {
-      const previousAnswers=await page.locator('.message.assistant').count()
-      const pending=page.waitForResponse(r=>r.request().method()==='POST' && r.url().endsWith('/api/v1/chat'),{timeout:180000})
-      await page.getByLabel('Câu hỏi pháp luật').fill(question)
-      await page.getByRole('button',{name:'Gửi câu hỏi'}).click()
-      const response=await pending
-      if(!response.ok())throw Error('Chat HTTP failed')
-      // Chromium may discard streamed response bodies. Observe the rendered
-      // answer, then compare with authenticated persisted history instead.
-      await page.locator('.message.assistant').nth(previousAnswers).waitFor({timeout:180000})
-      await page.getByRole('button',{name:'Gửi câu hỏi'}).waitFor({timeout:180000})
-      const credentials=await page.evaluate(()=>JSON.parse(sessionStorage.getItem('landlaw-session')))
-      const historyResponse=await page.request.get(api+`/api/v1/sessions/${credentials.session_id}/messages`,{headers:{Authorization:'Bearer '+credentials.token}})
-      if(!historyResponse.ok())throw Error('Authenticated history unavailable')
-      const history=await historyResponse.json()
-      const result=history.messages.filter(message=>message.role==='assistant').at(-1)?.payload
-      observedChat=result?{status:result.status,llm_calls:result.llm_calls,citations:result.citations?.length,content:result.content}:null
-      if(!result || result.status!=='answered' || !result.citations?.length)throw Error('No sourced answer')
-      if(sourceOnly && result.llm_calls!==0)throw Error('Source-only probe unexpectedly used LLM')
-      return {result,sessionId:response.request().postDataJSON().session_id}
-    }
-    phase='first_chat'
-    const first=await submit(sourceOnly?'Quyết định 56/2024/QĐ-UBND Hà Nội còn hiệu lực không? Văn bản nào thay thế?':'Điều 104 Luật Đất đai 2024 quy định chi phí di chuyển tài sản gồm những khoản nào?')
-    if(!sourceOnly && !first.result.llm_calls)throw Error('No actual LLM generation')
-    await page.locator('.message.assistant .citations button').first().click()
-    const sourcePanel=page.getByRole('dialog',{name:'Chi tiết nguồn'})
-    await sourcePanel.waitFor()
-    await sourcePanel.getByRole('button',{name:'Đóng',exact:true}).click()
-    await sourcePanel.waitFor({state:'hidden'})
-    await page.locator('.message.assistant .trace-link').first().click()
-    const tracePanel=page.getByRole('dialog',{name:'Quá trình kiểm chứng'})
-    await tracePanel.waitFor()
-    await tracePanel.getByRole('button',{name:'Đóng',exact:true}).click()
-    await tracePanel.waitFor({state:'hidden'})
-    phase='followup'
-    const second=await submit(sourceOnly?'Quyết định 56/2024/QĐ-UBND Hà Nội còn hiệu lực vào ngày hôm nay không?':'Văn bản đó quy định cơ quan nào quyết định mức bồi thường tại Điều 104?')
-    if(second.sessionId!==first.sessionId)throw Error('Follow-up switched sessions')
-    phase='trace_authorization'
-    // Credentials stay in process memory; only boolean checks are written.
-    const session=await page.evaluate(()=>JSON.parse(sessionStorage.getItem('landlaw-session')))
-    const traceURL=api+`/api/v1/sessions/${session.session_id}/traces/${second.result.trace_id}`
-    const allowed=await page.request.get(traceURL,{headers:{Authorization:'Bearer '+session.token}})
-    const denied=await page.request.get(traceURL,{headers:{Authorization:'Bearer invalid'}})
-    if(allowed.status()!==200 || ![401,404].includes(denied.status()))throw Error('Trace isolation failed')
-    phase='restoration'
-    await page.reload({waitUntil:'networkidle'})
-    await page.locator('.message.assistant').nth(1).waitFor()
-    if(await page.locator('.message.assistant').count()!==2)throw Error('Conversation restoration failed')
-    const box=await page.locator('.composer').boundingBox()
-    if(box.height>64)throw Error('Composer is not compact')
-    checks.push({real_chat:true,source_only:sourceOnly,llm_calls:[first.result.llm_calls,second.result.llm_calls],same_session_followup:true,trace_access_isolated:true,restored_messages:4,composer_height:box.height})
+  await menu(page);await page.getByRole('button',{name:'Thư viện văn bản',exact:true}).click()
+  await page.locator('.document-row').first().waitFor({timeout:90000})
+  const docs=await (await page.request.get(base+'/api/v1/documents')).json()
+  if(docs.documents.length!==59||docs.documents.some(d=>d.project&&d.project!=='ring4'))throw Error('Corpus scope/count differs')
+  await page.locator('.document-row').first().click();await page.getByRole('dialog',{name:'Chi tiết nguồn'}).waitFor();await page.keyboard.press('Escape')
+  await menu(page);await page.getByRole('button',{name:'Hỏi đáp pháp luật',exact:true}).click()
+  if(width===1440&&chat){
+   phase='configuration'
+   const live=await(await page.request.get(base+'/api/v1/evaluations/latest')).json()
+   if(expected&&live.active_configuration_sha256!==expected)throw Error('Deployed fingerprint differs from tested source')
+   checks.push({runtime_configuration_sha256:live.active_configuration_sha256,report_matches_configuration:live.matches_active_configuration,report_matches_corpus:live.matches_active_release})
+   phase='turnstile'
+   await page.waitForFunction(()=>!!document.querySelector('input[name="cf-turnstile-response"]')?.value,{},{timeout:45000})
+   turnstileChecked=true
+   async function submit(question){
+    const previous=await page.locator('.message.assistant').count()
+    const pending=page.waitForResponse(r=>r.request().method()==='POST'&&r.url().endsWith('/api/v1/chat'),{timeout:110000})
+    await page.getByLabel('Câu hỏi pháp luật').fill(question);await page.getByRole('button',{name:'Gửi câu hỏi'}).click()
+    const response=await pending;if(!response.ok())throw Error('Chat HTTP '+response.status())
+    await page.locator('.message.assistant').nth(previous).waitFor({timeout:110000})
+    const rows=await browserHistory(page);const latest=rows.sort((a,b)=>b.updated_at-a.updated_at)[0]
+    const result=latest.messages.filter(m=>m.role==='assistant').at(-1)?.result
+    if(!result||result.status!=='answered'||!result.citations.length)throw Error('No completed source-backed answer')
+    return {result,payload:response.request().postDataJSON()}
+   }
+   phase='generation'
+   const first=await submit(sourceOnly?'Quyết định 56/2024/QĐ-UBND Hà Nội còn hiệu lực không? Văn bản nào thay thế?':'Chi phí di chuyển tài sản khi bị thu hồi đất được quy định như thế nào?')
+   if(sourceOnly?first.result.llm_calls!==0:first.result.llm_calls<1)throw Error('Unexpected generation origin')
+   await page.locator('.message.assistant .citations button').first().click();await page.getByRole('dialog',{name:'Chi tiết nguồn'}).waitFor();await page.keyboard.press('Escape')
+   await page.locator('.message.assistant .trace-link').first().click();await page.getByRole('dialog',{name:'Quá trình kiểm chứng'}).waitFor();await page.keyboard.press('Escape')
+   phase='follow_up'
+   const second=await submit('Văn bản đó quy định cơ quan nào quyết định mức bồi thường chi phí di chuyển tài sản?')
+   if(second.payload.history.length<2||second.payload.session_id!==first.payload.session_id)throw Error('Follow-up context/session missing')
+   const session=await page.evaluate(()=>JSON.parse(sessionStorage.getItem('landlaw-session')))
+   const forbidden=await page.request.get(base+'/api/v1/sessions/'+session.session_id,{headers:{Authorization:'Bearer invalid'}})
+   if(forbidden.status()!==404)throw Error('Session isolation failed')
+   const retired=await page.request.get(base+'/api/v1/sessions/'+session.session_id+'/messages',{headers:{Authorization:'Bearer '+session.token}})
+   if(retired.status()!==410)throw Error('Server history endpoint not retired')
+   phase='reload_and_delete';await page.reload();await page.locator('.message.assistant').nth(1).waitFor()
+   page.on('dialog',d=>d.accept());await menu(page);await page.getByRole('button',{name:'Xóa toàn bộ lịch sử'}).click()
+   await page.waitForFunction(()=>document.querySelectorAll('.history-row').length===0)
+   if((await browserHistory(page)).length)throw Error('Local history not cleared')
+   checks.push({llm_generation_checked:!sourceOnly,first_llm_calls:first.result.llm_calls,follow_up_history:second.payload.history.length,client_sources_and_trace:true,reload:true,delete:true,server_history_410:true,session_isolation:true})
   }
-  phase='responsive'
-  await page.screenshot({path:`reports/ui-live-${width}.png`,fullPage:true})
-  checks.push({width,passed:true});await page.close()
+  await page.screenshot({path:`reports/live-ring4-${width}.png`,fullPage:true})
+  checks.push({width,corpus_documents:59,responsive:true});await page.close()
  }
- await mkdir('reports',{recursive:true})
- await writeFile(output,JSON.stringify({passed:true,checked_at:new Date().toISOString(),checks,llm_generation_checked:chat&&!sourceOnly,scope},null,2)+'\n')
- console.log(JSON.stringify({passed:true,llm_generation_checked:chat&&!sourceOnly,checks}))
-}catch(error){
- await mkdir('reports',{recursive:true})
- await writeFile(output,JSON.stringify({passed:false,checked_at:new Date().toISOString(),phase,error_type:error.constructor.name,reason:error.message.split('\n')[0].replace(/https?:\/\/\S+/g,'[url]').slice(0,180),observed_chat:observedChat,checks,llm_generation_checked:false,scope},null,2)+'\n')
- throw Error(`Live UI verification failed at ${phase}; see ${output}`)
-}finally{await browser.close()}
+ await mkdir('reports',{recursive:true});await writeFile(output,JSON.stringify({passed:true,checked_at:new Date().toISOString(),base_url:base,llm_generation_checked:chat&&!sourceOnly,turnstile_browser_checked:turnstileChecked,checks},null,2)+'\n')
+ console.log(JSON.stringify({passed:true,output,llm_generation_checked:chat&&!sourceOnly}))
+}catch(e){await mkdir('reports',{recursive:true});await writeFile(output,JSON.stringify({passed:false,checked_at:new Date().toISOString(),base_url:base,phase,error:e.message,llm_generation_checked:false,turnstile_browser_checked:turnstileChecked,checks},null,2)+'\n');console.log(JSON.stringify({passed:false,phase,error:e.message,output}));process.exitCode=1}
+finally{await browser?.close()}

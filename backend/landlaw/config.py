@@ -27,6 +27,13 @@ class Settings(BaseSettings):
     max_concurrent_requests: int = Field(default=2, ge=1, le=2)
     turn_timeout_seconds: int = Field(default=90, ge=1, le=90)
     session_retention_days: int = Field(default=7, ge=1, le=7)
+    ingress_secret: SecretStr = SecretStr('')
+    turnstile_secret_key: SecretStr = SecretStr('')
+    public_hostname: str = 'hanoi-land-law.pages.dev'
+    public_daily_llm_limit: int = Field(default=100, ge=1)
+    public_daily_token_limit: int = Field(default=100000, ge=1)
+    generation_enabled: bool = True
+    db_statement_timeout_ms: int = Field(default=8000, ge=100, le=15000)
     data_dir: Path = Path("data")
     reports_dir: Path = Path("reports")
 

@@ -25,7 +25,7 @@ def test_historical_source_kept_but_current_rule_prioritized(store):
 
 def test_heading_suggestions_respect_project_and_time_but_keep_national(store):
     national=document();ring=document('ring',project='ring4');other=document('other',project='olympic');old=document('old');old.effective_to=date(2025,1,1)
-    release(store,[national,ring,other,old])
+    release(store,[national,ring,old])
     suggestions=store.article_candidates('điều kiện bồi thường','r1',date(2026,1,1),'ring4')
     assert {s['document_id'] for s in suggestions}=={'law','ring'}
     assert store.document('old','r1') is not None

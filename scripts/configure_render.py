@@ -18,6 +18,11 @@ def main():
     origin = 'https://' + (env.get('CLOUDFLARE_PAGES_PROJECT') or 'hanoi-land-law') + '.pages.dev'
     desired = {'APP_ENV':'production','DATABASE_URL':settings.database_url.get_secret_value(),
         'IP_HASH_SECRET':settings.ip_hash_secret.get_secret_value(),
+        'INGRESS_SECRET':settings.ingress_secret.get_secret_value(),
+        'TURNSTILE_SECRET_KEY':settings.turnstile_secret_key.get_secret_value(),
+        'PUBLIC_HOSTNAME':settings.public_hostname,
+        'PUBLIC_DAILY_LLM_LIMIT':str(settings.public_daily_llm_limit),
+        'PUBLIC_DAILY_TOKEN_LIMIT':str(settings.public_daily_token_limit),
         'CORS_ORIGINS':origin,'LLM_PROVIDER':'groq','EMBEDDING_MODEL':settings.embedding_model,
         'GROQ_API_KEY':settings.groq_api_key.get_secret_value(),'GROQ_MODEL':settings.groq_model,
         'EMBEDDING_PROVIDER':settings.embedding_provider,'EMBEDDING_DIMENSIONS':str(settings.embedding_dimensions),
@@ -46,7 +51,7 @@ def main():
         r = client.patch('/services/'+service_id,json={'autoDeployTrigger':'off','serviceDetails':{'healthCheckPath':'/healthz'}})
         if r.status_code != 200:
             raise SystemExit(f'Health-check update failed: HTTP {r.status_code}')
-        set_key('.env','VITE_API_BASE_URL',details['url'])
+        set_key('.env','VITE_API_BASE_URL',origin)
         set_key('.env','CORS_ORIGINS',origin)
         report = {'frontend':origin,'backend':details['url'],'render_service_id':service_id,'render_plan':'free',
             'runtime':'docker','health_check':'/healthz','configured_environment_keys':sorted(desired),

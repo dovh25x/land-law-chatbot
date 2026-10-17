@@ -69,7 +69,9 @@ def test_search_keeps_national_law_but_filters_other_projects(store):
     national = document()
     ring = document("ring", project="ring4")
     olympic = document("oly", project="olympic")
-    release(store, [national, ring, olympic])
+    with pytest.raises(ValueError,match='Only Ring4'):
+        release(store,[national,ring,olympic],release_id='unsupported')
+    release(store,[national,ring])
     results = store.search("boi thuong", project="ring4")
     assert {r.document.id for r in results} == {"law", "ring"}
 
@@ -157,24 +159,20 @@ def test_open_article_preserves_late_clause_and_other_requested_article(store):
     assert len(opened.chunks) <= 3
 
 
-def test_encrypted_restore_preserves_session_isolation_and_rejects_plaintext_sessions(store, settings, tmp_path):
-    from cryptography.fernet import Fernet
+def test_backups_reject_all_conversation_archives(store,settings,tmp_path):
     from landlaw.store import Store
-    from pydantic import SecretStr
-    from conftest import session, release
+    import json
+    from conftest import session,release
     release(store)
-    sid, token = session(store)
-    output = tmp_path / 'sessions.enc'
-    with pytest.raises(ValueError):
-        store.backup(output, include_sessions=True)
-    store.settings = settings.model_copy(update={'backup_encryption_key': SecretStr(Fernet.generate_key().decode())})
-    store.backup(output, include_sessions=True)
-    assert not output.read_bytes().startswith(b'{') and token.encode() not in output.read_bytes()
-    restored = Store(store.settings.model_copy(update={'sqlite_path': str(tmp_path / 'restored.db')}))
-    restored.restore(output)
-    assert restored.authenticate(sid, token)
-    assert not restored.authenticate(sid, 'another-token')
-    assert restored.state('active_release') == 'r1'
+    session(store)
+    with pytest.raises(ValueError):store.backup(tmp_path/'history.enc',include_sessions=True)
+    output=tmp_path/'corpus.json';store.backup(output)
+    value=json.loads(output.read_text());assert set(value)=={'format','releases','state'}
+    value['sessions']=[];output.write_text(json.dumps(value))
+    restored=Store(settings.model_copy(update={'sqlite_path':str(tmp_path/'restored.db')}))
+    with pytest.raises(ValueError):restored.restore(output)
+    output.write_bytes(b'not-a-JSON-archive')
+    with pytest.raises(ValueError):restored.restore(output)
     restored.close()
 
 

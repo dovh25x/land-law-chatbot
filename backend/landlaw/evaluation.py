@@ -37,18 +37,6 @@ def validate_history(history):
         raise ValueError('Benchmark history must end with a fixed assistant turn')
 
 
-def seed_history(store, session_id, history):
-    """Write explicitly labelled fixtures only into the evaluator's private session."""
-    validate_history(history)
-    now = utcnow()
-    with store.transaction() as conn:
-        for index, turn in enumerate(history):
-            payload = {**turn, 'benchmark_fixture': True}
-            payload.pop('role')
-            store.execute(conn, 'INSERT INTO messages VALUES(?,?,?,?,?)',
-                (str(uuid.uuid4()), session_id, turn['role'], json.dumps(payload, ensure_ascii=False),
-                 (now + timedelta(microseconds=index)).isoformat()))
-
 
 def preserve_attempt(folder,record,origin='executed'):
     """Keep immutable results before replacing a failed resumable checkpoint."""
@@ -95,11 +83,13 @@ async def evaluate(settings, store, provider, split="smoke", release_id=None, li
     case_label=contextvars.ContextVar('evaluation_case',default=None)
     generate=provider.generate
     generated_cases = set()
+    generation_contexts = {}
     async def capture_structured_output(schema,instruction,payload,budget):
         result=await generate(schema,instruction,payload,budget)
         label=case_label.get()
         if label and schema.__name__ == 'Draft':
             generated_cases.add(label)
+            generation_contexts[label]=[item for item in payload.get('evidence',[]) if isinstance(item,dict)]
         if label and re.fullmatch(r'[A-Za-z0-9_-]{1,80}',label):
             output=result.model_dump(mode='json')
             checksum=hashlib.sha256(json.dumps(output,sort_keys=True,ensure_ascii=False).encode()).hexdigest()
@@ -108,7 +98,7 @@ async def evaluate(settings, store, provider, split="smoke", release_id=None, li
                  'schema':schema.__name__,'case_mode':label,'llm_calls':budget.llm_calls,'output':output})
         return result
     provider.generate=capture_structured_output
-    provider_ready_at=0.0
+    provider_ready_at=time.monotonic()+await asyncio.to_thread(store.cooldown)
     async def observe_provider_capacity(response):
         nonlocal provider_ready_at
         if response.request.url.host!='api.groq.com':return
@@ -119,6 +109,8 @@ async def evaluate(settings, store, provider, split="smoke", release_id=None, li
             print(json.dumps({'evaluation_provider_format_error':code if code in
                 {'tool_use_failed','json_validate_failed'} else 'other'}),flush=True)
         if response.status_code==429:
+            try:provider_ready_at=max(provider_ready_at,time.monotonic()+float(response.headers.get('retry-after','0')))
+            except ValueError:pass
             await response.aread()
             try:
                 message=response.json().get('error',{}).get('message','')
@@ -141,7 +133,7 @@ async def evaluate(settings, store, provider, split="smoke", release_id=None, li
         # Use only provider-reported free capacity, never an application quota.
         # Start the next benchmark turn after its token bucket recovers so
         # retry requests do not consume that turn's six-call workflow budget.
-        provider_ready_at=time.monotonic()+seconds if remaining<min(7000,capacity*.85) else 0
+        if remaining<min(7000,capacity*.85):provider_ready_at=max(provider_ready_at,time.monotonic()+seconds)
     if settings.llm_provider=='groq':
         provider.client.event_hooks.setdefault('response',[]).append(observe_provider_capacity)
     async def emit(_):
@@ -159,17 +151,20 @@ async def evaluate(settings, store, provider, split="smoke", release_id=None, li
     async def execute(case,mode):
         session_id = str(uuid.uuid4())
         await asyncio.to_thread(store.create_session,session_id,new_token())
-        await asyncio.to_thread(seed_history, store, session_id, case.get('history', []))
         label_token=case_label.set(f"{case['id']}-{mode}")
         try:
             result = await agent.run(ChatRequest(session_id=session_id,message=case['question'],
-                project=case.get('project'),as_of=case.get('as_of') or metadata['as_of'],mode=mode),emit,release['id'])
+                project='ring4' if case.get('project')=='ring4' else None,history=case.get('history',[]),as_of=case.get('as_of') or metadata['as_of'],mode=mode),emit,release['id'])
         finally:case_label.reset(label_token)
         return {'case_id':case['id'],'mode':mode,
                 'answer_origin': 'llm' if f"{case['id']}-{mode}" in generated_cases else 'deterministic',
+                'evaluation_context':generation_contexts.get(f'{case["id"]}-{mode}',[]),
                 'result':result.model_dump(mode='json')}
     for start in range(0,len(pending),concurrency):
         cooldown=provider_ready_at-time.monotonic()
+        if cooldown>60:
+            print(json.dumps({'evaluation_deferred_provider_retry_after':round(cooldown,2)}),flush=True)
+            break
         if cooldown>0:
             print(json.dumps({'evaluation_provider_cooldown_seconds':round(cooldown,2)}),flush=True)
             await asyncio.sleep(cooldown)
@@ -182,8 +177,9 @@ async def evaluate(settings, store, provider, split="smoke", release_id=None, li
             print(json.dumps({'evaluation_progress':{'case_id':result['case_id'],'mode':result['mode'],
                 'status':result['result']['status'],'elapsed_ms':result['result']['elapsed_ms'],
                 'llm_calls':result['result']['llm_calls'],'checkpoint_records':len(records)}},ensure_ascii=False),flush=True)
-        if any(r['result']['status'] in {'limited','error'} for r in results):
-            break
+        # Keep transient/budget failures in the denominator and continue the
+        # remaining locked cases; never rerun the failed case in this pass.
+        # Long provider cooldown is handled before starting the next case.
     review_path = settings.data_dir / f'evaluation/{split}-reviews.json'
     report = summarise(records, cases, fingerprint, json.loads(review_path.read_text()) if review_path.exists() else {})
     report.update({"run_id": run_id, "release": release["id"], "model": provider.settings.generation_model,
@@ -219,14 +215,14 @@ def public_report(report):
 
 
 def frozen_dataset(data_dir, split):
-    if split not in {'smoke', 'supplemental'}:
-        raise ValueError('Supported splits: smoke, supplemental')
+    if split not in {'smoke', 'supplemental', 'natural'}:
+        raise ValueError('Supported splits: smoke, supplemental, natural')
     path = data_dir / 'evaluation' / f'{split}.jsonl'
     freeze_path = path.with_name('freeze.json') if split == 'smoke' else path.with_suffix('.freeze.json')
     fingerprint = hashlib.sha256(path.read_bytes()).hexdigest()
     freeze = json.loads(freeze_path.read_text())
     cases = dataset(path)
-    expected = 20 if split == 'smoke' else 4
+    expected = {'smoke':20,'supplemental':4,'natural':8}[split]
     if (freeze.get('suite_sha256') != fingerprint or freeze.get('cases') != expected
             or len(cases) != expected or any(c.get('split') != split for c in cases)):
         raise ValueError('Evaluation suite freeze mismatch')
@@ -282,14 +278,17 @@ async def evaluate_retrieval(settings, store, provider, split='smoke'):
                                       release['id'], settings.embedding_model,
                                       date.fromisoformat(case['as_of']) if case.get('as_of') else local_date())
         ids = [item.chunk.id for item in hits[:8]]
+        recall=len(set(ids)&set(case['gold_chunk_ids']))/len(set(case['gold_chunk_ids']))
         rows.append({'id': case['id'], 'has_history': bool(case.get('history')), 'gold_chunk_ids': case['gold_chunk_ids'], 'retrieved_chunk_ids': ids,
-                     'hit': bool(set(ids) & set(case['gold_chunk_ids'])),
+                     'hit': bool(set(ids) & set(case['gold_chunk_ids'])), 'gold_recall_at_8':recall,
                      'elapsed_ms': round((time.monotonic() - started) * 1000)})
     report = {'checked_at': utcnow().isoformat(), 'split': split, 'suite_sha256': fingerprint,
               'release': release['id'], 'configuration_sha256': configuration_fingerprint(settings),
               'backend': 'postgresql' if store.postgres else 'sqlite', 'k': 8,
               'eligible_cases': len(rows), 'hits': sum(r['hit'] for r in rows),
               'hit_rate': sum(r['hit'] for r in rows) / len(rows) if rows else None,
+              'gold_recall_at_8':statistics.mean(r['gold_recall_at_8'] for r in rows) if rows else None,
+              'history_groups':{str(h):{'cases':len(g:=[r for r in rows if r['has_history']==h]),'gold_recall_at_8':statistics.mean(r['gold_recall_at_8'] for r in g) if g else None} for h in [False,True]},
               'generation_calls': 0, 'results': rows,
               'scope': 'Raw-question hybrid search without history rewriting, article routing or legal-relation expansion; any gold chunk in top 8 counts as a hit. Not legal answer accuracy.'}
     json_write(settings.reports_dir / 'retrieval' / f'{split}.json', report)

@@ -426,7 +426,7 @@ class Agent:
                     "candidate_articles contain actual source headings, not conclusions. Prefer opening the relevant "
                     "article(s) for a substantive legal question; search_law can supplement unknown provisions. "
                     "For a question asking the categories/types of a rule, open its overview/list provision first, "
-                    "not just a specialized provision about one category. The catalogue is a bounded suggestion "
+                    "not just a specialized provision about one category. Every final claim must be standalone: repeat its actor and material prerequisites rather than referring to other claims. The catalogue is a bounded suggestion "
                     "list, not the full corpus; use search_law if it does not cover the question. "
                     "normalize_place for place aliases. Use IDs from catalogue, never invent IDs. "
                     "Prefer one call for a simple question; use search_law when the document or provision is unknown. "
@@ -444,7 +444,7 @@ class Agent:
                 query=(prior[:500]+' '+request.message) if prior else request.message
                 tool='search_project' if request.project else 'search_law'
                 state['plan']=Plan(tools=[ToolCall(name=tool,query=query[:1000])])
-                await self.event(state,'routing','Planner chưa trả đúng schema sau retry; dùng tra cứu chỉ đọc và vẫn kiểm chứng câu trả lời.',tool)
+                await self.event(state,'routing','Planner chưa trả đúng schema; dùng tra cứu chỉ đọc và vẫn kiểm chứng câu trả lời.',tool)
             # Internal identifiers and dates already available in the source
             # catalogue are tool inputs, not facts a citizen must supply.
             state['plan'].missing_facts=public_missing_facts(state['plan'].missing_facts,state['release'])
@@ -806,6 +806,9 @@ class Agent:
                 "Answer the exact question directly, in Vietnamese. Put ALL legal content in at most three concise claims "
                 "with citation_ids from allowed_citation_ids (C1, C2...), never document IDs. summary is not displayed. "
                 "Keep each claim atomic: separate eligible actors from alternative qualifying documents/conditions. "
+                "For an exclusivity question, start with the direct answer and retain source-defined eligibility by clause "
+                "reference; do not spend a separate claim enumerating unasked actor categories. A conclusion spanning "
+                "multiple passages must cite all of them, including a continuation of the same numbered clause. "
                 "Answer only the requested proposition. Do not enumerate actor categories when asked whether a "
                 "document is the only qualifying condition; instead retain the prerequisite clause and explain "
                 "the documentary alternatives with OR, never as cumulative AND requirements. "
@@ -1052,6 +1055,16 @@ class Agent:
                    (evidence[i].applicability=='future' and claim.kind!='applicability')) for i in claim.citation_ids):
                 structural_issues.append(f"Claim {index}: căn cứ chưa xác minh tính áp dụng")
             normalized_claim=normalize(claim.text)
+            groups=('cong dong dan cu','to chuc ton giao','to chuc nuoc ngoai','to chuc kinh te','nguoi goc viet nam')
+            source_body=normalize(' '.join(evidence[c].chunk.text for c in claim.citation_ids if c in evidence))
+            for group in groups:
+                if group in normalized_claim and group not in source_body:
+                    structural_issues.append(f'Claim {index}: nhóm chủ thể nêu trong kết luận không có trong đúng đoạn dẫn')
+            if 'to chuc nuoc ngoai' in normalized_claim and 'chuc nang ngoai giao' in source_body and 'chuc nang ngoai giao' not in normalized_claim:
+                structural_issues.append(f'Claim {index}: thiếu giới hạn chức năng ngoại giao của chủ thể')
+            if re.search(r'\b(cac doi tuong tren|cac truong hop tren|nhu da neu o tren)\b',normalized_claim):
+                structural_issues.append(f'Claim {index}: kết luận phải nêu chủ thể/điều kiện độc lập, không phụ thuộc mệnh đề khác')
+
             historical=[evidence[i] for i in claim.citation_ids if i in evidence and evidence[i].applicability=='historical']
             if historical and claim.kind=='legal_rule':
                 # An expired act remains searchable. Applying it after expiry
@@ -1291,6 +1304,12 @@ class Agent:
         draft, check = state["draft"], state["verification"]
         supported = set(check.supported_claim_indexes)
         claims = [c for i, c in enumerate(draft.claims) if i in supported]
+        if len(claims) != len(draft.claims):
+            # Partial paragraphs can lose the subject or condition they depend on.
+            # Prefer source-only limitation to releasing a misleading fragment.
+            claims=[]
+        for claim in claims:
+            claim.text=re.sub(r'\s*\(C\d+\)', '', claim.text)
         evidence = {e.chunk.id: e for e in state["evidence"]}
         for index,claim in enumerate(claims):
             if claim.kind=='applicability' and all(evidence[i].applicability=='future' for i in claim.citation_ids):
@@ -1313,7 +1332,7 @@ class Agent:
         stale = False
         if release:
             checked_at = datetime.fromisoformat(release["checked_at"].replace("Z", "+00:00"))
-            stale = utcnow() - checked_at > timedelta(days=7)
+            stale = not await asyncio.to_thread(self.store.source_fresh, release, {evidence[i].document.id for c in claims for i in c.citation_ids} if claims else None)
         if stale and state["as_of"] >= local_date():
             status = "insufficient_evidence"
             claims, citations = [], []
@@ -1337,7 +1356,7 @@ class Agent:
         if state.get('place_clarification'):
             content='Tên huyện cũ chưa đủ để ánh xạ tới một xã/phường mới hoặc xác định một thửa đất thuộc dự án. Cần đối chiếu địa bàn chi tiết và ranh giới/hồ sơ thu hồi.'
         if outside:
-            content=('Phạm vi dự án của bản MVP hiện chỉ hỗ trợ Vành đai 4. Thư viện vẫn lưu tài liệu của các dự án khác để tham khảo.' if state.get('unsupported_project') else 'Câu hỏi nằm ngoài phạm vi pháp luật đất đai và quy hoạch Hà Nội.')
+            content=('Hệ thống chỉ hỗ trợ Vành đai 4 tại Hà Nội; không có dữ liệu dự án khác.' if state.get('unsupported_project') else 'Câu hỏi nằm ngoài phạm vi pháp luật đất đai và quy hoạch Hà Nội.')
         if claims:
             content += "\n\n" + "\n\n".join(c.text + " " + " ".join(f"[{cited_ids.index(i)+1}]" for i in c.citation_ids) for c in claims)
         missing = public_missing_facts(state["plan"].missing_facts + draft.missing_facts,release)
@@ -1346,6 +1365,8 @@ class Agent:
         if missing and status == "answered":
             status = "clarification_needed"
             content = content.replace("Đã đối chiếu các căn cứ dưới đây.", "Cần bổ sung dữ kiện để xác định quy định áp dụng cho hồ sơ cụ thể.", 1)
+        if claims and any('ho tro' in normalize(c.text) and ('gom' in normalize(c.text) or 'cac nhom' in normalize(c.text) or normalize(c.text).count('ho tro') >= 3) for c in claims):
+            content+='\n\nĐây là danh mục loại hỗ trợ trong nguồn, chưa phải kết luận hộ cụ thể được nhận tất cả. Chưa giải thích điều kiện riêng nếu điều khoản dẫn chiếu chưa được mở.'
         if missing:
             content += "\n\nThông tin cần bổ sung:\n" + "\n".join(f"- {x}" for x in missing)
         historical_question = state['as_of'] < date(2026,4,2) and any(number in normalize(state['request'].message)
@@ -1382,11 +1403,21 @@ class Agent:
                 raise ProviderUnavailable("API key của provider được chọn chưa được cấu hình; không sinh câu trả lời giả")
             async with asyncio.timeout(self.provider.settings.turn_timeout_seconds):
                 state["release"] = await asyncio.to_thread(self.store.release, release_id, True)
-                history = await asyncio.to_thread(self.store.messages, request.session_id, 8)
-                # Only displayed text, never traces/model-internal state, enters subsequent prompts.
-                state["history"] = [{"role": m["role"], "content": redact(m["payload"].get("content", "")[:3000]),
-                    "as_of": m['payload'].get('as_of'), 'citations': [{k:c.get(k) for k in ('document_id','document_number','locator')}
-                        for c in m['payload'].get('citations',[])[:8]]} for m in history]
+                # Client history is untrusted context, never legal evidence.
+                known={d['id']:d for d in (state['release'] or {}).get('documents',[])}
+                state['history']=[{'role':item.role,'content':redact(item.content),
+                    'as_of':str(item.as_of) if item.as_of else None,
+                    'citations':[{'document_id':c.document_id,
+                        'document_number':known[c.document_id].get('document_number'), 'locator':c.locator}
+                        for c in item.citations if c.document_id in known]}
+                    for item in request.history]
+                if state['as_of'] >= local_date() and not await asyncio.to_thread(self.store.source_fresh, state['release'] or {}):
+                    state['result']=ChatResult(**public_status(state['release']),status='insufficient_evidence',
+                        content='Nguồn đã quá bảy ngày chưa được kiểm tra lại; chưa thể xác nhận quy định hiện hành. Có thể xem snapshot trong thư viện nguồn.',
+                        as_of=state['as_of'],corpus_release=(state['release'] or {}).get('id'),trace_id=str(uuid.uuid4()),
+                        model=self.provider.settings.generation_model,embedding_model=self.provider.settings.embedding_model,
+                        mode=request.mode)
+                    return state['result']
                 output = await self.graph.ainvoke(state, config={"recursion_limit": 16})
                 return output["result"]
         except (ProviderUnavailable, RateLimited, BudgetExceeded, TimeoutError) as exc:

@@ -110,8 +110,8 @@ def ingest(offline: bool = False, embed: bool = False, ocr: bool = False, cached
 def benchmark(split: str = "smoke", release_id: str | None = None, limit: int | None = None,
               concurrency: int = typer.Option(1,min=1,max=2), case_ids: str | None = None, mode: str = "agentic"):
     """Run/resume a frozen agentic regression suite."""
-    if split not in {"smoke", "supplemental"}:
-        raise typer.BadParameter("Supported splits: smoke, supplemental")
+    if split not in {"smoke", "supplemental", "natural"}:
+        raise typer.BadParameter("Supported splits: smoke, supplemental, natural")
     if mode != 'agentic':
         raise typer.BadParameter('Only agentic evaluation is supported')
     modes = ('agentic',)
@@ -170,36 +170,20 @@ def cleanup():
     store = Store(Settings().for_operator())
     try:
         store.cleanup()
-        store.prune_releases()
-        typer.echo("Expired sessions, messages, traces and counters removed.")
+        typer.echo("Expired session, turn and quota metadata removed.")
     finally:
         store.close()
 
 
 @app.command()
 def smoke(base_url: str):
-    """Verify deployed readiness and a real authenticated answer, never print session tokens."""
-    async def run():
-        async with httpx.AsyncClient(timeout=180) as client:
-            ready = await client.get(base_url.rstrip("/") + "/readyz")
-            if ready.status_code != 200:
-                raise ValueError("Deployed backend not ready")
-            session = await client.post(base_url.rstrip("/") + "/api/v1/sessions")
-            session.raise_for_status()
-            data = session.json()
-            response = await client.post(base_url.rstrip("/") + "/api/v1/chat", headers={"Authorization": f"Bearer {data['token']}"},
-                json={"session_id": data["session_id"], "message": "Cần kiểm tra căn cứ nào để xác định điều kiện bồi thường khi thu hồi đất ở Hà Nội?"})
-            response.raise_for_status()
-            events = [json.loads(line[6:]) for line in response.text.splitlines() if line.startswith("data: ")]
-            answer = next((e for e in events if "trace_id" in e), None)
-            passed = bool(answer and answer["status"] in {"answered", "clarification_needed"} and answer["citations"] and answer["llm_calls"])
-            report = {"checked_at": utcnow().isoformat(), "base_url": base_url, "passed": passed,
-                      "status": (answer or {}).get("status"), "trace_id": (answer or {}).get("trace_id")}
-            json_write(Path("reports/deployment-smoke.json"), report)
-            if not passed:
-                raise ValueError("No successful live answer with citations")
-            return report
-    typer.echo(json.dumps(asyncio.run(run()), indent=2))
+    """Run the real browser flow through Pages, including challenge and local history."""
+    import os
+    import subprocess
+    result=subprocess.run(['node','scripts/verify_live_ui.mjs','--chat'],
+        env={**os.environ,'LIVE_BASE_URL':base_url.rstrip('/')})
+    if result.returncode:raise typer.Exit(result.returncode)
+
 
 
 @app.command()
@@ -216,6 +200,24 @@ def publish(release_id: str):
         store.publish(release_id,{'profile':'academic','published_at':utcnow().isoformat(),
                                  'configuration_sha256':configuration_fingerprint(settings)})
         typer.echo(f'Published academic snapshot {release_id}; backup {path}')
+    finally:store.close()
+
+
+@app.command('ops-status')
+def ops_status(check: bool=False):
+    from .ops import status
+    store=Store(Settings().for_operator())
+    try:
+        report=status(store)
+        typer.echo(json.dumps(report,ensure_ascii=False,indent=2))
+        if check and report['needs_attention']:raise typer.Exit(1)
+    finally:store.close()
+
+@app.command('review-source')
+def review_source(receipt: Path):
+    from .ops import record_source_review
+    store=Store(Settings().for_operator())
+    try:typer.echo(json.dumps(record_source_review(store,receipt),ensure_ascii=False))
     finally:store.close()
 
 

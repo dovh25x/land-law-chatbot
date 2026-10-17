@@ -4,10 +4,15 @@ import logging
 import secrets
 import time
 import uuid
+import hashlib
+import hmac
+import sys
+import httpx
 from datetime import datetime, timedelta
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, HTTPException, Query, Request
+from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, StreamingResponse
 
@@ -21,6 +26,10 @@ from .store import RateLimited, Store
 from .publication import public_status
 
 logger = logging.getLogger("landlaw")
+if not logger.handlers:
+    logger.addHandler(logging.StreamHandler(sys.stdout))
+logger.setLevel(logging.INFO)
+logger.propagate=False
 
 
 def create_app(settings: Settings | None = None, store: Store | None = None, provider=None):
@@ -30,7 +39,7 @@ def create_app(settings: Settings | None = None, store: Store | None = None, pro
     @asynccontextmanager
     async def lifespan(app):
         state["store"] = store or Store(settings)
-        state["provider"] = provider or GroqProvider(settings, state["store"])
+        state["provider"] = provider or GroqProvider(settings, state["store"], usage_scope="public")
         state["agent"] = Agent(state["store"], state["provider"])
         state["semaphore"] = asyncio.Semaphore(settings.max_concurrent_requests)
         state["ip_secret"] = settings.ip_hash_secret.get_secret_value() or secrets.token_hex(32)
@@ -51,8 +60,33 @@ def create_app(settings: Settings | None = None, store: Store | None = None, pro
         request_id = str(uuid.uuid4())
         request.state.request_id=request_id
         started = time.monotonic()
+        request.state.started=started
+        request.state.client_ip=request.client.host if request.client else 'unknown'
+        if request.url.path.startswith('/api/'):
+            body=bytearray()
+            try:
+                async with asyncio.timeout(10):
+                    async for part in request.stream():
+                        body.extend(part)
+                        if len(body)>65536:
+                            return JSONResponse({'detail':{'code':'body_too_large'}},status_code=413)
+            except TimeoutError:
+                return JSONResponse({'detail':{'code':'body_timeout'}},status_code=408)
+            request._body=bytes(body)
+            if settings.app_env=='production':
+                stamp=request.headers.get('x-landlaw-time','')
+                ip=request.headers.get('x-landlaw-ip','')
+                signature=request.headers.get('x-landlaw-signature','')
+                canonical='\n'.join((request.method,request.url.path,request.url.query,stamp,ip,hashlib.sha256(body).hexdigest()))
+                expected=hmac.new(settings.ingress_secret.get_secret_value().encode(),canonical.encode(),hashlib.sha256).hexdigest()
+                try:valid=abs(time.time()-int(stamp))<=60
+                except ValueError:valid=False
+                if not settings.ingress_secret.get_secret_value() or not valid or not ip or not hmac.compare_digest(expected,signature):
+                    return JSONResponse({'detail':{'code':'untrusted_ingress'}},status_code=403)
+                request.state.client_ip=ip
         try:
-            response = await call_next(request)
+            async with asyncio.timeout(max(0.1,settings.turn_timeout_seconds-(time.monotonic()-started))):
+                response = await call_next(request)
         except Exception:
             logger.error(json.dumps({"request_id": request_id, "event": "request_failed"}))
             response = JSONResponse({"detail": "Dịch vụ dữ liệu chưa sẵn sàng. Vui lòng thử lại.", "request_id": request_id}, status_code=503)
@@ -63,12 +97,7 @@ def create_app(settings: Settings | None = None, store: Store | None = None, pro
         return response
 
     def identity(request):
-        ip = request.client.host if request.client else "unknown"
-        # Enable only when the ingress guarantees it overwrites X-Forwarded-For.
-        if settings.trust_proxy_headers:
-            forwarded = request.headers.get("x-forwarded-for")
-            if forwarded:
-                ip = forwarded.split(",")[-1].strip()
+        ip = request.state.client_ip
         return hash_ip(ip, state["ip_secret"])
 
     async def authenticated(request, session_id):
@@ -106,22 +135,50 @@ def create_app(settings: Settings | None = None, store: Store | None = None, pro
         now, ip = utcnow(), identity(request)
         await reserve([(f"session-create:{ip}:{now.strftime('%Y-%m-%dT%H:%M')}", 10, 60),
                        (f"session-create:{ip}:{now.date()}", 100, 86400)])
+        if settings.app_env=='production':
+            payload=await request.json() if await request.body() else {}
+            token=payload.get('turnstile_token')
+            if not token or not settings.turnstile_secret_key.get_secret_value():
+                raise HTTPException(400, {'code':'challenge_required'})
+            try:
+                async with httpx.AsyncClient(timeout=8) as client:
+                    response=await client.post('https://challenges.cloudflare.com/turnstile/v0/siteverify',
+                        data={'secret':settings.turnstile_secret_key.get_secret_value(),'response':token,
+                              'remoteip':request.state.client_ip})
+                    response.raise_for_status()
+                    checked=response.json()
+            except (httpx.HTTPError,ValueError):
+                raise HTTPException(503, {'code':'challenge_unavailable'}) from None
+            if not checked.get('success') or checked.get('hostname')!=settings.public_hostname or checked.get('action')!='create_session':
+                raise HTTPException(400, {'code':'challenge_failed'})
         session_id, token = str(uuid.uuid4()), new_token()
         await asyncio.to_thread(state["store"].create_session, session_id, token)
         return {"session_id": session_id, "token": token, "retention_days": settings.session_retention_days}
 
-    @app.get("/api/v1/sessions/{session_id}/messages")
-    async def messages(session_id: str, request: Request):
-        await authenticated(request, session_id)
-        return {"messages": await asyncio.to_thread(state["store"].messages, session_id, 50)}
+    @app.exception_handler(RequestValidationError)
+    async def validation_error(request, exc):
+        return JSONResponse({'detail':{'code':'invalid_request','errors':[
+            {'loc':list(e['loc']),'type':e['type']} for e in exc.errors()]}},status_code=422)
 
-    @app.get("/api/v1/sessions/{session_id}/traces/{trace_id}")
-    async def trace(session_id: str, trace_id: str, request: Request):
+    @app.get('/api/v1/sessions/{session_id}')
+    async def session_status(session_id: str, request: Request):
         await authenticated(request, session_id)
-        result = await asyncio.to_thread(state["store"].trace, trace_id, session_id)
-        if result is None:
-            raise HTTPException(404, "Không tìm thấy trace")
-        return {"trace": result}
+        return {'valid':True}
+
+    @app.get('/api/v1/sessions/{session_id}/messages')
+    @app.get('/api/v1/sessions/{session_id}/traces/{trace_id}')
+    async def retired_history(session_id: str, trace_id: str | None=None):
+        raise HTTPException(410, {'code':'browser_history_only'})
+
+    @app.get('/api/v1/status')
+    async def status():
+        release=await asyncio.to_thread(state['store'].release,None,True)
+        fresh=bool(release) and await asyncio.to_thread(state['store'].source_fresh,release)
+        delay=await asyncio.to_thread(state['store'].cooldown)
+        enabled=settings.generation_enabled and fresh and not delay
+        return {'generation_available':enabled,'reason':'disabled' if not settings.generation_enabled else
+            'source_stale' if not fresh else 'provider_limited' if delay else None,
+            'retry_after':delay or None,'corpus_release':(release or {}).get('id'), 'api_version':2}
 
     @app.get("/api/v1/documents")
     async def documents():
@@ -153,85 +210,81 @@ def create_app(settings: Settings | None = None, store: Store | None = None, pro
                 'matches_active_configuration':report.get('configuration_sha256')==state['configuration'],
                 'matches_active_release':bool(active and active==report.get('release'))}
 
-    @app.post("/api/v1/chat")
+    @app.post('/api/v1/chat')
     async def chat(body: ChatRequest, request: Request):
         await authenticated(request, body.session_id)
+        if settings.app_env=='production' and 'request_id' not in body.model_fields_set:
+            raise HTTPException(426, {'code':'client_upgrade_required'})
+        if not settings.generation_enabled:
+            raise HTTPException(503, {'code':'generation_disabled'})
         now, ip = utcnow(), identity(request)
         await reserve([(f"minute:{kind}:{who}:{now.strftime('%Y-%m-%dT%H:%M')}", 3, 60)
-                       for kind, who in [("session", body.session_id), ("ip", ip)]] +
-                      # Render's shared ingress IP is not a distinct visitor.
-                      # Keep burst protection by IP and daily protection by session;
-                      # a shared proxy must not lock out the whole demo for a day.
-                      [(f"daily:session:{body.session_id}:{now.date()}", 20, 86400)])
-        semaphore = state["semaphore"]
+                       for kind, who in [('session', body.session_id), ('ip', ip)]]+
+                      [(f'daily:session:{body.session_id}:{now.date()}',20,86400)])
+        semaphore=state['semaphore']
         if semaphore.locked():
-            raise HTTPException(429, "Hai lượt hỏi đang được xử lý", headers={"Retry-After": "5"})
+            raise HTTPException(429, {'code':'system_busy'},headers={'Retry-After':'5'})
         await semaphore.acquire()
+        turn_id=str(body.request_id)
+        canonical=body.model_dump_json()
+        fingerprint=hmac.new(state['ip_secret'].encode(),canonical.encode(),hashlib.sha256).hexdigest()
+        try:
+            conflict=await asyncio.to_thread(state['store'].start_turn,turn_id,body.session_id,fingerprint)
+            if conflict:
+                raise HTTPException(409, {'code':conflict,'replay_available':False})
+        except BaseException:
+            semaphore.release()
+            raise
 
         async def stream():
-            queue = asyncio.Queue(maxsize=50)
-
+            queue=asyncio.Queue()
             async def emit(event):
-                await queue.put(("progress", event.model_dump(mode="json")))
-
+                queue.put_nowait(('progress',event.model_dump(mode='json')))
             async def work():
+                outcome='error'
                 try:
-                    release_id = await asyncio.to_thread(state["store"].state, "active_release")
-                    history = await asyncio.to_thread(state["store"].messages, body.session_id, 8)
-                    cache_key = digest(json.dumps({"session": body.session_id, "question": body.message,
-                        "history": history, "release": release_id, "model": settings.generation_model,
-                        "configuration": state["configuration"],
-                        "embedding": settings.embedding_model, "as_of": str(body.as_of or local_date()),
-                        "project": body.project, "mode": body.mode}, sort_keys=True, ensure_ascii=False))
-                    cached = await asyncio.to_thread(state["store"].cached_answer, cache_key, body.session_id)
-                    if cached and (body.as_of is None or body.as_of >= local_date()):
-                        release = await asyncio.to_thread(state["store"].release, release_id, True)
-                        checked = datetime.fromisoformat(release["checked_at"].replace("Z", "+00:00")) if release else None
-                        if not checked or utcnow() - checked > timedelta(days=7):
-                            cached = None
-                    if cached:
-                        release = await asyncio.to_thread(state['store'].release, release_id, True)
-                        publication = await asyncio.to_thread(state['store'].publication, release_id)
-                        result = ChatResult.model_validate(cached).model_copy(update={"trace_id": str(uuid.uuid4()),
-                            **public_status(release, publication),
-                            "llm_calls": 0, "embedding_calls": 0, "tool_calls": 0, "token_usage": 0, "elapsed_ms": 0,
-                            "trace": [TraceEvent(step="cache", summary="Đã dùng kết quả đã kiểm tra của cùng phiên và phạm vi câu hỏi.")]})
-                    else:
-                        result = await state["agent"].run(body, emit,release_id)
-                        await asyncio.to_thread(state["store"].cache_answer, cache_key, body.session_id, result)
-                    publication = await asyncio.to_thread(state['store'].publication,result.corpus_release)
-                    # A successful result is not delivered until durable storage succeeds.
-                    await asyncio.to_thread(state["store"].save_turn, body.session_id, redact(body.message), result)
-                    await queue.put(("result", result.model_dump(mode="json")))
-                    logger.info(json.dumps({"event": "turn_finished", "trace_id": result.trace_id,
-                        'request_id':request.state.request_id,
-                        "status": result.status, "model": result.model, "llm_calls": result.llm_calls,
-                        "tool_calls": result.tool_calls, "tokens": result.token_usage, "elapsed_ms": result.elapsed_ms}))
+                    remaining=max(.01,settings.turn_timeout_seconds-(time.monotonic()-request.state.started))
+                    async with asyncio.timeout(remaining):
+                        release_id=await asyncio.to_thread(state['store'].state,'active_release')
+                        result=await state['agent'].run(body,emit,release_id)
+                        # Only metadata is durable. No replayable answer is stored.
+                        await asyncio.to_thread(state['store'].finish_turn,turn_id,'completed')
+                        outcome='completed'
+                        queue.put_nowait(('result',result.model_dump(mode='json')))
+                        logger.info(json.dumps({'event':'turn_finished','request_id':request.state.request_id,
+                            'trace_id':result.trace_id,'status':result.status,'model':result.model,
+                            'llm_calls':result.llm_calls,'tool_calls':result.tool_calls,'tokens':result.token_usage,
+                            'elapsed_ms':int((time.monotonic()-request.state.started)*1000)}))
+                except asyncio.CancelledError:
+                    outcome='cancelled'
+                    raise
                 except Exception as exc:
-                    logger.error(json.dumps({'event':'turn_failed','request_id':request.state.request_id,
-                                             'model':settings.generation_model,'error_type':type(exc).__name__}))
-                    await queue.put(("failure", {"status": "error", "content": "Dịch vụ dữ liệu chưa sẵn sàng; kết quả chưa được lưu."}))
+                    logger.error(json.dumps({'event':'turn_failed','request_id':request.state.request_id,'error_type':type(exc).__name__}))
+                    queue.put_nowait(('failure',{'status':'error','code':'turn_failed',
+                        'content':'Lượt hỏi không hoàn tất. Server không lưu đáp án để khôi phục; chỉ gửi lại nếu bạn muốn tạo lượt mới.'}))
                 finally:
-                    await queue.put(("done", {}))
-
-            task = asyncio.create_task(work())
+                    if outcome!='completed':
+                        try:
+                            await asyncio.wait_for(asyncio.to_thread(state['store'].finish_turn,turn_id,outcome),timeout=2)
+                        except Exception:
+                            logger.error(json.dumps({'event':'turn_metadata_update_failed','request_id':request.state.request_id}))
+                    queue.put_nowait(('done',{}))
+            task=asyncio.create_task(work())
             try:
-                yield ": connected\n\n"
+                yield ': connected\n\n'
                 while True:
-                    try:
-                        event, payload = await asyncio.wait_for(queue.get(), timeout=10)
+                    try:event,payload=await asyncio.wait_for(queue.get(),timeout=10)
                     except TimeoutError:
-                        yield ": heartbeat\n\n"
+                        yield ': heartbeat\n\n'
                         continue
-                    if event == "done":
-                        break
-                    yield f"event: {event}\ndata: {json.dumps(payload, ensure_ascii=False)}\n\n"
+                    if event=='done':break
+                    yield f'event: {event}\ndata: {json.dumps(payload,ensure_ascii=False)}\n\n'
             finally:
                 task.cancel()
-                await asyncio.gather(task, return_exceptions=True)
+                try:await asyncio.wait_for(asyncio.gather(task,return_exceptions=True),timeout=3)
+                except TimeoutError:pass
                 semaphore.release()
-
-        return StreamingResponse(stream(), media_type="text/event-stream", headers={"X-Accel-Buffering": "no"})
+        return StreamingResponse(stream(),media_type='text/event-stream',headers={'X-Accel-Buffering':'no'})
 
     return app
 

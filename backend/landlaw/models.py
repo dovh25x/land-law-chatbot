@@ -1,5 +1,6 @@
 from datetime import date, datetime
 from typing import Literal
+from uuid import UUID, uuid4
 
 from pydantic import BaseModel, Field, HttpUrl, model_validator
 
@@ -97,12 +98,38 @@ class TraceEvent(BaseModel):
     elapsed_ms: int = 0
 
 
+class HistoryCitation(BaseModel):
+    document_id: str = Field(max_length=160)
+    document_number: str | None = Field(default=None, max_length=160)
+    locator: str | None = Field(default=None, max_length=200)
+
+
+class HistoryMessage(BaseModel):
+    role: Literal['user', 'assistant']
+    content: str = Field(min_length=1, max_length=3000)
+    as_of: date | None = None
+    citations: list[HistoryCitation] = Field(default_factory=list, max_length=8)
+
+
 class ChatRequest(BaseModel):
     session_id: str = Field(min_length=32, max_length=40)
     message: str = Field(min_length=1, max_length=4000)
-    project: ProjectID | None = None
+    project: Literal['ring4'] | None = None
     as_of: date | None = None
     mode: Literal["agentic"] = "agentic"
+    request_id: UUID = Field(default_factory=uuid4)
+    history: list[HistoryMessage] = Field(default_factory=list, max_length=8)
+
+    @model_validator(mode='after')
+    def bounded_history(self):
+        if sum(len(item.content) for item in self.history) > 12000:
+            raise ValueError('History exceeds 12000 characters')
+        for index, item in enumerate(self.history):
+            if item.role != ('user' if index % 2 == 0 else 'assistant'):
+                raise ValueError('History must alternate user and assistant messages')
+        if len(self.history) % 2:
+            raise ValueError('History must end with an assistant message')
+        return self
 
 
 class Claim(BaseModel):

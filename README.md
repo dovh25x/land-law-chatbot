@@ -1,73 +1,46 @@
-# Hanoi Land Law Assistant
+# Vành đai 4 · Trợ lý pháp lý
 
-Trợ lý tiếng Việt tra cứu pháp luật đất đai Hà Nội bằng Agentic RAG, kèm đoạn nguồn, thời điểm xem xét và trace thực thi để đối chiếu.
+Hỏi đáp tiếng Việt về bồi thường, hỗ trợ và tái định cư cho dự án Vành đai 4 tại Hà Nội. Mỗi kết luận cần có chứng cứ trong corpus và được kiểm tra trước khi trả lời. Tin dự án chỉ cung cấp bối cảnh; hệ thống không xác định thửa đất, tính tiền hoặc bảo đảm quyền lợi cá nhân.
 
-Website: https://hanoi-land-law.pages.dev · API: https://land-law-chatbot.onrender.com
-
-## Phạm vi và hành vi
-
-Tra cứu bồi thường, hỗ trợ, tái định cư và thông tin dự án Vành đai 4. Thư viện gồm snapshot 69 tài liệu và 7.610 vector; tài liệu dự án khác chỉ để tham khảo. Hệ thống hỗ trợ hỏi tiếp trong cùng phiên, mở nguồn theo điều/trang, nêu thiếu chứng cứ và hỏi bổ sung khi tình huống chưa đủ dữ kiện.
-
-Bản thử nghiệm, chưa được thẩm định pháp lý độc lập. Không tiếp nhận hồ sơ cá nhân, tính tiền bồi thường hoặc xác định thửa đất bằng GIS. Nguồn không cập nhật tự động; kết luận còn phụ thuộc thời điểm và hồ sơ thực tế. Chỉ nhập thông tin đã ẩn danh. Hosting miễn phí có thể cần thời gian khởi động hoặc hết quota.
-
-## Kiến trúc
-
-Nguồn chính thức → parse/OCR ngoại tuyến → chia đoạn và metadata → E5 → corpus snapshot → hybrid retrieval → LangGraph → kiểm chứng → FastAPI/SSE → React.
-
-React/TypeScript/Vite; FastAPI/LangGraph; Groq GPT-OSS 120B; E5 ONNX Q8 384 chiều; PostgreSQL/pgvector cloud và SQLite local. Hybrid search kết hợp từ khóa, vector, tiêu đề và viện dẫn bằng RRF. Agent chọn công cụ chỉ đọc, tổng hợp và kiểm tra trước khi phát đáp án. Kiểm tra kỹ thuật không bảo đảm mọi diễn giải pháp luật đều đúng.
+Giao diện hội thoại, thư viện nguồn và chi tiết thực thi là ba cách kiểm tra kết quả. Hội thoại lưu tại trình duyệt trong 7 ngày, không đồng bộ thiết bị. Nội dung câu hỏi và ngữ cảnh được gửi tới Groq để xử lý; không nhập thông tin định danh hoặc hồ sơ riêng tư.
 
 ## Chạy local
 
-Python 3.12+ và Node 24. Cần internet tải E5, corpus và gọi Groq; SQLite không yêu cầu tài khoản database cloud.
+Cần Python 3.12, Node.js 24 và khoảng 1 GiB dung lượng trống cho môi trường/model/corpus.
 
 ```bash
 python3 -m venv .venv
 .venv/bin/pip install -r requirements.lock
 .venv/bin/pip install --no-deps -e .
 cp .env.example .env
-```
-
-Điền `GROQ_API_KEY`; giữ `DATABASE_URL` và `ADMIN_DATABASE_URL` trống, `APP_ENV=development`, `SQLITE_PATH=data/local.db`. Không đưa secret vào biến `VITE_*`.
-
-Tải ba asset từ [corpus Release](https://github.com/dovh25x/land-law-chatbot/releases/tag/corpus-de584c31fc95f9a2) và kiểm tra checksum trước khi restore:
-
-```bash
-mkdir -p data/demo
-curl -fL https://github.com/dovh25x/land-law-chatbot/releases/download/corpus-de584c31fc95f9a2/corpus-backup.json -o data/demo/corpus-backup.json
-curl -fL https://github.com/dovh25x/land-law-chatbot/releases/download/corpus-de584c31fc95f9a2/manifest.json -o data/demo/manifest.json
-curl -fL https://github.com/dovh25x/land-law-chatbot/releases/download/corpus-de584c31fc95f9a2/SHA256SUMS -o data/demo/SHA256SUMS
-(cd data/demo && sha256sum -c SHA256SUMS)
-```
-
-Snapshot có 69 tài liệu/7.610 đoạn; manifest ghi corpus ID, commit gốc và fingerprint nguồn lúc đóng gói. Đây là bản phát hành dữ liệu; trạng thái ứng dụng được ghi riêng trong báo cáo.
-
-```bash
 .venv/bin/python backend/landlaw/local_embedding.py download models/e5
-.venv/bin/land-law restore data/demo/corpus-backup.json
-.venv/bin/uvicorn landlaw.api:app --host 127.0.0.1 --port 8000 --no-proxy-headers
-```
-
-Restore vào SQLite mới, không dùng cấu hình database cloud đang phục vụ. Terminal khác:
-
-```bash
 cd frontend
 npm ci
-npm run dev -- --host 127.0.0.1
 ```
 
-Mở http://127.0.0.1:5173. Nếu dùng Docker Compose, vẫn phải chuẩn bị `.env` và restore corpus vào `data/local.db` trước khi chạy `docker compose up --build`.
+Điền `GROQ_API_KEY` trong `.env`. Local dùng SQLite: để trống `DATABASE_URL` và `ADMIN_DATABASE_URL`, đặt `SQLITE_PATH=data/ring4.db`. Không dùng credentials production cho quickstart.
 
-## Đánh giá và hạn chế
+Corpus một dự án đang được chuẩn bị phát hành: `corpus-581da76c79b0b362`. Chỉ sử dụng URL Release sau khi asset đã phát hành và khôi phục kiểm chứng; hiện chưa có liên kết tải được xác nhận cho phiên bản này. Có thể kiểm tra manifest trong `data/sources.json`; ingest lại không cần thiết nếu đã có snapshot phù hợp.
 
-[Báo cáo công bố](reports/latest.json) luôn gắn với corpus, model và fingerprint. Giao diện cảnh báo nếu báo cáo khác cấu hình đang chạy. Xem [bộ chính](reports/evaluation/smoke/results.md), [bộ bổ sung](reports/evaluation/supplemental/results.md) và [đo retrieval](reports/retrieval/smoke.json). Báo cáo cũ không đại diện bản sửa mới.
+Khi có bộ asset `corpus-backup.json`, `manifest.json`, `SHA256SUMS`, đặt cùng thư mục và chạy:
 
-Kiểm tra triển khai riêng gồm [API gọi LLM thật](reports/live-demo.json) và [giao diện desktop/mobile](reports/frontend-live-generation.json): hỏi tiếp cùng phiên, nguồn, trace và khôi phục hội thoại. Các lỗi gặp trước đó được giữ trong `reports/live-attempts/`.
+```bash
+sha256sum -c SHA256SUMS
+DATABASE_URL='' ADMIN_DATABASE_URL='' SQLITE_PATH=data/ring4.db .venv/bin/land-law restore corpus-backup.json
+.venv/bin/uvicorn landlaw.api:app --host 127.0.0.1 --port 8000
+```
 
-Bộ hồi quy chính có 20 câu, cộng 4 câu kiểm tra bổ sung khóa riêng trước khi sửa prompt. Kết quả tách nhóm trả lời nội dung, hỏi làm rõ và thiếu chứng cứ/ngoài phạm vi. Tổng số đạt của suite không phải độ chính xác trả lời pháp luật. Citation khớp corpus chỉ xác nhận xuất xứ; chất lượng diễn giải cần rà soát theo nguồn. Câu hỏi tự nhiên không chỉ rõ văn bản có thể chọn sai phạm vi điều khoản; verifier vẫn có thể bỏ sót lỗi diễn giải. Lượt gọi thật còn có thể không hoàn tất vì quota hoặc định dạng đầu ra. Bộ bổ sung công khai riêng các lỗi này. Bộ câu hỏi nhỏ chưa chứng minh khả năng tổng quát; không có so sánh để kết luận agentic vượt RAG thường.
+Trong terminal khác: `cd frontend && npm run dev`. Vite proxy phục vụ API local. Production dùng API cùng origin qua Cloudflare; không trỏ giao diện trực tiếp tới Render.
 
-SQLite và PostgreSQL dùng lexical search khác nhau; đánh giá retrieval ghi backend cụ thể. Độ trễ/token/số lần gọi là thống kê một lượt chạy, không phải SLA. Mốc kiểm tra corpus phải được giữ nguyên cho tới khi nguồn được kiểm tra lại thực sự.
+## Kiến trúc và đọc source
 
-## Phát triển
+![Kiến trúc](docs/diagrams/architecture.svg)
+
+FastAPI/LangGraph điều phối một pipeline plan → công cụ chỉ đọc → synthesis → verify. Groq GPT-OSS 120B sinh JSON; E5 ONNX Q8 384 chiều và hybrid retrieval tìm chứng cứ. SQLite phục vụ local; PostgreSQL/pgvector phục vụ cloud. Embedding của snapshot được giữ khi thu gọn corpus.
+
+Bắt đầu từ [PRD](docs/PRD.md), [kiến trúc](docs/ARCHITECTURE.md), rồi [API](docs/API.md). [Mục lục tài liệu](docs/README.md) dẫn tới vận hành, thiết kế Figma, đánh giá và các ADR. `AGENTS.md` chỉ giữ ngữ cảnh phát triển ngắn.
+
+## Kiểm tra và kết quả
 
 ```bash
 .venv/bin/python -m pytest -q
@@ -78,4 +51,6 @@ npm run build
 npm run test:e2e
 ```
 
-Quy tắc sửa mã, kiểm thử, đánh giá, quản lý dữ liệu và triển khai được tập trung trong [AGENTS.md](AGENTS.md).
+Unit/E2E dùng fixture; không chứng minh chất lượng model thật. Kết quả có phiên bản nằm tại [reports](reports/), API chỉ công bố `reports/latest.json` kèm kiểm tra fingerprint. Báo cáo cũ dùng corpus/cấu hình khác là bằng chứng lịch sử; không suy ra chất lượng phiên bản hiện hành. Không diễn giải tỷ lệ đạt gồm cả hỏi lại/từ chối thành độ chính xác pháp luật.
+
+Giới hạn: corpus có coverage gaps, kiểm tra hiệu lực và verifier có thể bỏ sót; chưa có thẩm định pháp lý độc lập. Free hosting có cold start và hạn mức provider. Khi nguồn quá hạn, thiếu chứng cứ hoặc hết ngân sách, hệ thống phải công khai giới hạn thay vì suy đoán.

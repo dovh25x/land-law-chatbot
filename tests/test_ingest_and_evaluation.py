@@ -181,27 +181,14 @@ def test_resuming_preserves_failed_attempt_without_overwriting_it(tmp_path):
     assert json.loads(path.read_text())['record']['result']['status']=='error'
 
 
-def test_paired_benchmark_history_is_fixed_labelled_and_isolated(store):
-    from landlaw.evaluation import seed_history
-    from conftest import session
-    first, _ = session(store)
-    second, _ = session(store)
-    untouched, _ = session(store)
-    fixture = [{'role':'user','content':'Văn bản nào?'},
-               {'role':'assistant','content':'Tình huống tham chiếu QĐ40.',
-                'citations':[{'document_id':'qd-40-2026-hanoi','locator':'Điều 2'}]}]
-    for sid in (first, second):
-        seed_history(store, sid, fixture)
-    displayed = lambda sid: [(m['role'], m['payload']) for m in store.messages(sid)]
-    assert displayed(first) == displayed(second)
-    assert [role for role, _ in displayed(first)] == ['user', 'assistant']
-    assert all(payload['benchmark_fixture'] for _, payload in displayed(first))
-    assert not store.messages(untouched)
-    assert not store.rows('SELECT * FROM traces')
-    assert not store.rows('SELECT * FROM counters')
-    with pytest.raises(ValueError, match='alternating'):
-        seed_history(store, first, ['A previous turn requiring an unmeasured LLM call'])
-    assert len(store.messages(first)) == 2
+def test_benchmark_history_is_validated_without_database_writes(store):
+    from landlaw.evaluation import validate_history
+    from landlaw.models import ChatRequest
+    history=[{'role':'user','content':'Văn bản nào?'},{'role':'assistant','content':'QĐ40.','citations':[{'document_id':'qd-40-2026-hanoi'}]}]
+    validate_history(history)
+    request=ChatRequest(session_id='a'*32,message='Văn bản đó thay thế văn bản nào?',history=history)
+    assert request.history[1].citations[0].document_id=='qd-40-2026-hanoi'
+    assert not store.rows("SELECT name FROM sqlite_master WHERE name='messages'")
 
 
 def test_source_backup_includes_reviewed_ocr_and_original_provenance():

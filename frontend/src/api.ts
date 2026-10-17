@@ -1,6 +1,7 @@
+import { requestHistory, type LocalMessage } from './history'
 export const BASE = (import.meta.env.VITE_API_BASE_URL || '').replace(/\/$/, '')
-export const BACKEND_CONFIGURED = !!BASE || import.meta.env.DEV
-export type ProjectID = 'ring4' | 'songhong' | 'olympic'
+export const BACKEND_CONFIGURED = !!BASE || import.meta.env.DEV || import.meta.env.VITE_SAME_ORIGIN_API === 'true'
+export type ProjectID = 'ring4'
 export interface Trace { step: string; tool?: string; summary: string; document_ids: string[]; elapsed_ms: number }
 export interface Citation { id: string; document_id: string; title: string; document_number?: string; url: string; locator: string; excerpt: string; checked_at: string; applicability: string; source_review_notes?: string; page?: number; source_url?: string }
 export interface Result { status: string; content: string; citations: Citation[]; trace: Trace[]; trace_id: string; corpus_release?: string; model: string; embedding_model: string; mode: string; llm_calls: number; tool_calls: number; token_usage: number; elapsed_ms: number; as_of: string; support_level: string }
@@ -15,13 +16,13 @@ export async function getJSON<T>(path: string, signal?: AbortSignal): Promise<T>
   return res.json()
 }
 
-export async function getSession(): Promise<Session> {
+export async function getSession(turnstileToken?:string): Promise<Session> {
   if (!BACKEND_CONFIGURED) throw new Error('Backend chưa được triển khai. Bản xem trước hiện chỉ có giao diện.')
   const cached = sessionStorage.getItem('landlaw-session')
   if (cached) {
     try {
       const session = JSON.parse(cached) as Session
-      const response = await fetch(BASE + `/api/v1/sessions/${session.session_id}/messages`, { headers: { Authorization: `Bearer ${session.token}` } })
+      const response = await fetch(BASE + `/api/v1/sessions/${session.session_id}`, { headers: { Authorization: `Bearer ${session.token}` } })
       if (response.ok) return session
       if (response.status !== 404 && response.status !== 410) throw new Error('Chưa tải được phiên đã lưu. Vui lòng thử lại sau khi backend khởi động.')
     } catch (error) {
@@ -29,21 +30,11 @@ export async function getSession(): Promise<Session> {
     }
     sessionStorage.removeItem('landlaw-session')
   }
-  const response = await fetch(BASE + '/api/v1/sessions', { method: 'POST' })
+  const response = await fetch(BASE + '/api/v1/sessions', { method: 'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({turnstile_token:turnstileToken}) })
   if (!response.ok) throw new Error('Chưa tạo được phiên. Backend có thể đang khởi động hoặc đã đạt giới hạn lượt dùng.')
   const session: Session = await response.json()
   sessionStorage.setItem('landlaw-session', JSON.stringify(session))
   return session
-}
-
-export async function restoreSession(signal: AbortSignal) {
-  const cached = sessionStorage.getItem('landlaw-session')
-  if (!cached) return null
-  const session = JSON.parse(cached) as Session
-  const response = await fetch(BASE + `/api/v1/sessions/${session.session_id}/messages`, { signal, headers: { Authorization: `Bearer ${session.token}` } })
-  if (!response.ok) return null
-  const data = await response.json() as { messages: { role: 'user' | 'assistant'; payload: { content: string } & Partial<Result> }[] }
-  return { session, messages: data.messages }
 }
 
 export class SSEParser {
@@ -67,13 +58,15 @@ export class SSEParser {
   }
 }
 
-export async function ask(session: Session, message: string, project: string, asOf: string, signal: AbortSignal, onEvent: (event: string, data: unknown) => void) {
+export async function ask(session: Session, message: string, project: string, asOf: string, signal: AbortSignal, onEvent: (event: string, data: unknown) => void, history:LocalMessage[]=[], requestId=crypto.randomUUID()) {
   const response = await fetch(BASE + '/api/v1/chat', {
     method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${session.token}` }, signal,
-    body: JSON.stringify({ session_id: session.session_id, message, project: project || null, as_of: asOf || null }),
+    body: JSON.stringify({ session_id: session.session_id, message, project: project || null, as_of: asOf || null, request_id:requestId, history:requestHistory(history) }),
   })
   if (!response.ok) {
     if (response.status === 429) throw new Error(`Đã đạt giới hạn lượt hỏi. Thử lại sau ${response.headers.get('Retry-After') || '60'} giây.`)
+    if(response.status===409)throw new Error('Lượt hỏi đã được gửi hoặc phiên đang xử lý. Server không lưu đáp án để phát lại.')
+    if(response.status===426)throw new Error('Hãy tải lại ứng dụng để dùng phiên bản mới.')
     throw new Error('Dịch vụ chưa sẵn sàng. Vui lòng thử lại sau.')
   }
   if (!response.body) throw new Error('Trình duyệt không hỗ trợ luồng trả lời.')

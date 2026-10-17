@@ -1,0 +1,11 @@
+{
+  "passed": true,
+  "checked_at": "2026-10-17T10:13:21.281358+00:00",
+  "corpus_id": "corpus-581da76c79b0b362",
+  "documents": 59,
+  "postgres_restore": true,
+  "runtime_role_tested": true,
+  "parallel_session_lease": true,
+  "history_writes_revoked": true,
+  "scope": "Isolated disposable schema using the existing owner/runtime roles; public service schema is never migrated or changed."
+}

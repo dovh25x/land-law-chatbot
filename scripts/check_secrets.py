@@ -29,7 +29,7 @@ def find_leaks(paths, secrets=()):
 
 def main():
     values = dotenv_values('.env')
-    secrets = [v for k, v in values.items() if v and len(v) > 12
+    secrets = [v for k, v in values.items() if v and k != 'VITE_TURNSTILE_SITE_KEY' and len(v) > 12
                and any(x in k for x in ('KEY', 'TOKEN', 'SECRET', 'DATABASE_URL'))]
     tracked = subprocess.check_output(['git', 'ls-files', '-co', '--exclude-standard', '-z']).decode().split('\0')
     paths = {Path(p) for p in tracked if p}
