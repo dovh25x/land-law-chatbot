@@ -128,3 +128,5 @@
 .connection-note,.error-banner,.working{display:flex;align-items:center;gap:12px;border:1px solid var(--border);border-radius:12px;background:var(--sidebar);padding:10px 16px;color:var(--muted);font-size:13px;line-height:1.5}.notice-icon{display:grid;place-items:center;flex-shrink:0;width:32px;height:32px;border-radius:16px;background:var(--tint)}.notice-icon img{width:16px;height:16px}:root[data-theme="dark"] .notice-icon img{filter:invert(1)}.error-banner>div{flex:1;min-width:0}.error-banner strong{color:var(--ink);font-size:15px;font-weight:600}
 
 .source-receipt{font-size:12px;line-height:1.55;color:var(--muted);overflow-wrap:anywhere}.source-card .source-meta{font-size:13px}.source-card .source-title{margin-bottom:16px}
+
+.citations>button{width:500px;min-height:40px;justify-content:center;padding:10px;max-width:100%}:root[data-theme="dark"] .message-body{color:#e5e7eb}:root[data-theme="dark"] .message-body :is(h1,h2,h3){color:var(--ink)}

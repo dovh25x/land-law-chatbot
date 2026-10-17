@@ -5,8 +5,8 @@ import {spawnSync} from 'node:child_process'
 const chat=process.argv.includes('--chat'),sourceOnly=process.argv.includes('--source-only')
 const base=process.env.LIVE_BASE_URL||'https://hanoi-land-law.pages.dev'
 const output=chat?(sourceOnly?'reports/frontend-live-source-only.json':'reports/frontend-live-generation.json'):'reports/frontend-live-ui.json'
-const checks=[];let phase='navigation',browser,turnstileChecked=false
-const local=spawnSync('.venv/bin/python',['-c','from landlaw.config import Settings; from landlaw.evaluation import configuration_fingerprint; print(configuration_fingerprint(Settings()))'],{encoding:'utf8'})
+const checks=[];let phase='navigation',browser,turnstileChecked=false,generationChecked=false
+const local=spawnSync('.venv/bin/python',['-c','import os; from landlaw.config import Settings; from landlaw.evaluation import configuration_fingerprint; s=Settings(); s=s.model_copy(update={"database_url":__import__("pydantic").SecretStr("postgresql://fingerprint-only/metadata" if os.getenv("LIVE_STORAGE_BACKEND","postgresql")=="postgresql" else "")}); print(configuration_fingerprint(s))'],{encoding:'utf8'})
 const expected=local.status===0?local.stdout.trim():null
 const browserHistory=page=>page.evaluate(()=>new Promise((resolve,reject)=>{const r=indexedDB.open('landlaw-history',1);r.onsuccess=()=>{const db=r.result;const tx=db.transaction('conversations');const q=tx.objectStore('conversations').getAll();q.onsuccess=()=>resolve(q.result);q.onerror=()=>reject(Error('Local history unavailable'));tx.oncomplete=()=>db.close()};r.onerror=()=>reject(Error('IndexedDB unavailable'))}))
 const menu=async page=>{const opener=page.getByRole('button',{name:'Mở menu điều hướng'});if(await opener.isVisible())await opener.click()}
@@ -38,14 +38,20 @@ try{
     await page.getByLabel('Câu hỏi pháp luật').fill(question);await page.getByRole('button',{name:'Gửi câu hỏi'}).click()
     const response=await pending;if(!response.ok())throw Error('Chat HTTP '+response.status())
     await page.locator('.message.assistant').nth(previous).waitFor({timeout:110000})
-    const rows=await browserHistory(page);const latest=rows.sort((a,b)=>b.updated_at-a.updated_at)[0]
-    const result=latest.messages.filter(m=>m.role==='assistant').at(-1)?.result
+    let result
+    for(let attempt=0;attempt<60;attempt++){
+     const rows=await browserHistory(page);const latest=rows.sort((a,b)=>b.updated_at-a.updated_at)[0]
+     const answers=latest?.messages.filter(m=>m.role==='assistant')||[]
+     if(answers.length>previous){result=answers.at(-1)?.result;break}
+     await page.waitForTimeout(50)
+    }
     if(!result||result.status!=='answered'||!result.citations.length)throw Error('No completed source-backed answer')
     return {result,payload:response.request().postDataJSON()}
    }
    phase='generation'
    const first=await submit(sourceOnly?'Quyết định 56/2024/QĐ-UBND Hà Nội còn hiệu lực không? Văn bản nào thay thế?':'Chi phí di chuyển tài sản khi bị thu hồi đất được quy định như thế nào?')
    if(sourceOnly?first.result.llm_calls!==0:first.result.llm_calls<1)throw Error('Unexpected generation origin')
+   generationChecked=!sourceOnly
    await page.locator('.message.assistant .citations button').first().click();await page.getByRole('dialog',{name:'Nguồn căn cứ'}).waitFor();await page.keyboard.press('Escape')
    await page.locator('.message.assistant .trace-link').first().click();await page.getByRole('dialog',{name:'Quá trình kiểm chứng'}).waitFor();await page.keyboard.press('Escape')
    phase='follow_up'
@@ -67,5 +73,5 @@ try{
  }
  await mkdir('reports',{recursive:true});await writeFile(output,JSON.stringify({passed:true,checked_at:new Date().toISOString(),base_url:base,llm_generation_checked:chat&&!sourceOnly,turnstile_browser_checked:turnstileChecked,checks},null,2)+'\n')
  console.log(JSON.stringify({passed:true,output,llm_generation_checked:chat&&!sourceOnly}))
-}catch(e){await mkdir('reports',{recursive:true});await writeFile(output,JSON.stringify({passed:false,checked_at:new Date().toISOString(),base_url:base,phase,error:e.message,llm_generation_checked:false,turnstile_browser_checked:turnstileChecked,checks},null,2)+'\n');console.log(JSON.stringify({passed:false,phase,error:e.message,output}));process.exitCode=1}
+}catch(e){await mkdir('reports',{recursive:true});await writeFile(output,JSON.stringify({passed:false,checked_at:new Date().toISOString(),base_url:base,phase,error:e.message,llm_generation_checked:generationChecked,turnstile_browser_checked:turnstileChecked,checks},null,2)+'\n');console.log(JSON.stringify({passed:false,phase,error:e.message,output}));process.exitCode=1}
 finally{await browser?.close()}

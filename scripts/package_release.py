@@ -74,7 +74,7 @@ def prepare(source, output):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--source', type=Path, default=Path('data/backups/mvp-public-corpus.json'))
+    parser.add_argument('--source', type=Path, default=Path('data/backups/ring4-public-corpus.json'))
     parser.add_argument('--output', type=Path, default=Path('dist/corpus-release'))
     args = parser.parse_args()
     prepare(args.source, args.output)

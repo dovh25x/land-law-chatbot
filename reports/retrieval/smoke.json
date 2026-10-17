@@ -1,9 +1,9 @@
 {
-  "checked_at": "2026-10-17T10:27:57.995440+00:00",
+  "checked_at": "2026-10-17T11:17:46.853491+00:00",
   "split": "smoke",
   "suite_sha256": "38aa8da29bf41a94b4cf8fd8a5ca6769232b87884aeed573c10f5586a09d7254",
   "release": "corpus-581da76c79b0b362",
-  "configuration_sha256": "e069fe3871546156fb078011b58bff065764ab40690edafcafd1c90cc9e9c5c8",
+  "configuration_sha256": "c4f0c661af82ab60cc9f918a89e7b417981b070268d2bddfee12116a003c7b25",
   "backend": "sqlite",
   "k": 8,
   "eligible_cases": 11,
@@ -40,7 +40,7 @@
       ],
       "hit": true,
       "gold_recall_at_8": 1.0,
-      "elapsed_ms": 9699
+      "elapsed_ms": 8688
     },
     {
       "id": "S02",
@@ -60,7 +60,7 @@
       ],
       "hit": true,
       "gold_recall_at_8": 1.0,
-      "elapsed_ms": 6411
+      "elapsed_ms": 5597
     },
     {
       "id": "S03",
@@ -80,7 +80,7 @@
       ],
       "hit": true,
       "gold_recall_at_8": 1.0,
-      "elapsed_ms": 5589
+      "elapsed_ms": 5683
     },
     {
       "id": "S04",
@@ -100,7 +100,7 @@
       ],
       "hit": true,
       "gold_recall_at_8": 1.0,
-      "elapsed_ms": 6186
+      "elapsed_ms": 5899
     },
     {
       "id": "S05",
@@ -120,7 +120,7 @@
       ],
       "hit": true,
       "gold_recall_at_8": 1.0,
-      "elapsed_ms": 5736
+      "elapsed_ms": 5640
     },
     {
       "id": "S06",
@@ -141,7 +141,7 @@
       ],
       "hit": true,
       "gold_recall_at_8": 1.0,
-      "elapsed_ms": 5618
+      "elapsed_ms": 6748
     },
     {
       "id": "S07",
@@ -161,7 +161,7 @@
       ],
       "hit": true,
       "gold_recall_at_8": 1.0,
-      "elapsed_ms": 6303
+      "elapsed_ms": 6596
     },
     {
       "id": "S08",
@@ -181,7 +181,7 @@
       ],
       "hit": true,
       "gold_recall_at_8": 1.0,
-      "elapsed_ms": 5810
+      "elapsed_ms": 6007
     },
     {
       "id": "S13",
@@ -201,7 +201,7 @@
       ],
       "hit": false,
       "gold_recall_at_8": 0.0,
-      "elapsed_ms": 5283
+      "elapsed_ms": 5287
     },
     {
       "id": "S14",
@@ -221,7 +221,7 @@
       ],
       "hit": false,
       "gold_recall_at_8": 0.0,
-      "elapsed_ms": 6855
+      "elapsed_ms": 6017
     },
     {
       "id": "S18",
@@ -241,7 +241,7 @@
       ],
       "hit": true,
       "gold_recall_at_8": 1.0,
-      "elapsed_ms": 5728
+      "elapsed_ms": 5628
     }
   ],
   "scope": "Raw-question hybrid search without history rewriting, article routing or legal-relation expansion; any gold chunk in top 8 counts as a hit. Not legal answer accuracy."

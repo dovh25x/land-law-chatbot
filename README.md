@@ -50,6 +50,6 @@ npm run build
 npm run test:e2e
 ```
 
-Unit/E2E dùng fixture; không chứng minh chất lượng model thật. Kết quả có phiên bản nằm tại [reports](reports/), API chỉ công bố `reports/latest.json` kèm kiểm tra fingerprint. Báo cáo cũ dùng corpus/cấu hình khác là bằng chứng lịch sử; không suy ra chất lượng phiên bản hiện hành. Không diễn giải tỷ lệ đạt gồm cả hỏi lại/từ chối thành độ chính xác pháp luật.
+Unit/E2E dùng fixture; không chứng minh chất lượng model thật. Kết quả có phiên bản nằm tại [reports](reports/), gồm [bộ câu hỏi tự nhiên trên cấu hình hiện tại](reports/evaluation/ring4-c4f0c661/natural/results.md), API chỉ công bố `reports/latest.json` kèm kiểm tra fingerprint. Báo cáo cũ dùng corpus/cấu hình khác là bằng chứng lịch sử; không suy ra chất lượng phiên bản hiện hành. Không diễn giải tỷ lệ đạt gồm cả hỏi lại/từ chối thành độ chính xác pháp luật.
 
 Giới hạn: corpus có coverage gaps, kiểm tra hiệu lực và verifier có thể bỏ sót; chưa có thẩm định pháp lý độc lập. Free hosting có cold start và hạn mức provider. Khi nguồn quá hạn, thiếu chứng cứ hoặc hết ngân sách, hệ thống phải công khai giới hạn thay vì suy đoán.

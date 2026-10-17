@@ -15,7 +15,7 @@ Hanoi Land Law Assistant phục vụ duy nhất Vành đai 4 tại Hà Nội: tr
 
 ## Navigation
 
-`backend/landlaw/` API/agent/provider/store; `frontend/` giao diện; `data/` manifest/evaluation; `migrations/` PostgreSQL; `scripts/` vận hành; `reports/` bằng chứng có phiên bản; `docs/` PRD, architecture, API, operations, evaluation, ADR và frontend handoff. README dành cho quickstart và đọc source. Tài liệu chỉ mô tả sản phẩm/kỹ thuật, không ghi mục đích học tập hoặc ứng tuyển.
+`backend/landlaw/` API/agent/provider/store; `frontend/` giao diện; `data/` manifest/evaluation; `migrations/` PostgreSQL; `scripts/` vận hành; `reports/` bằng chứng có phiên bản; `docs/` PRD, architecture, API, operations, evaluation, ADR và frontend handoff. README dành cho quickstart và đọc source. Tài liệu chỉ mô tả sản phẩm và quy trình kỹ thuật.
 
 ## Work safely
 

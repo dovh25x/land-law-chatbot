@@ -1,7 +1,7 @@
 import { listConversations, saveConversation, deleteConversation, clearConversations, type Conversation, newConversation as makeConversation } from './history'
 import { useEffect, useRef, useState } from 'react'
 import ReactMarkdown from 'react-markdown'
-import { ArrowUpRight, BookOpen, ChevronRight, CircleHelp, FileText, LoaderCircle, Menu, Plus, Search, ShieldCheck, Square, X } from 'lucide-react'
+import { BookOpen, ChevronRight, CircleHelp, LoaderCircle, Menu, Plus, Search, ShieldCheck, Square, X } from 'lucide-react'
 import { ask, BASE, BACKEND_CONFIGURED, getJSON, getSession, type Citation, type LegalDocument, type Readiness, type Result, type Session, type Trace } from './api'
 import { DataPanel, DocumentRow, formatDate, SourcePanel, TracePanel } from './ui'
 import { Turnstile } from './Turnstile'
@@ -172,7 +172,7 @@ function App() {
               <div className="message-label">{message.role === 'user' ? 'Bạn' : <>Vành đai 4</>}</div>
               {message.result && message.result.status !== 'answered' && <span className={`answer-status ${message.result.status}`}>{labels[message.result.status] || message.result.status}</span>}
               <div className="message-body"><ReactMarkdown components={{ a: ({ children }) => <span>{children}</span> }}>{message.content}</ReactMarkdown></div>
-              {!!message.result?.citations?.length && <div className="citations">{message.result.citations.map((c, index) => <button key={c.id} onClick={() => openSource(c)}><span className="citation-heading"><FileText size={18}/><strong>[{index + 1}] {c.document_number || c.title}</strong></span><span className="citation-location">{c.locator}</span><span className="citation-action">Mở đoạn căn cứ<ArrowUpRight size={14}/></span></button>)}</div>}
+              {!!message.result?.citations?.length && <div className="citations">{message.result.citations.map((c, index) => <button key={c.id} onClick={() => openSource(c)} aria-label={`[${index+1}] ${c.title} ${c.document_number || ''} · ${c.locator}`}><span className="citation-heading"><strong>[{index + 1}] {c.title} · {c.locator}</strong></span></button>)}</div>}
               {message.result && <div className="answer-actions">
                 {!!message.result.citations?.length && <button onClick={() => openSource(message.result!.citations[0])}>Xem nguồn</button>}
                 <button className="trace-link" aria-label="Xem quá trình kiểm chứng" onClick={() => { setSelectedSource(null); setTrace(message.result!.trace || []); setTraceOpen(true) }}>Chi tiết thực thi</button>

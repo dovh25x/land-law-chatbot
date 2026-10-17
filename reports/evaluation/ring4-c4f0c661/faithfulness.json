@@ -1,0 +1,236 @@
+{
+  "checked_at": "2026-10-17T15:50:39.360191+00:00",
+  "configuration_sha256": "c4f0c661af82ab60cc9f918a89e7b417981b070268d2bddfee12116a003c7b25",
+  "judge_implementation_sha256": "105f56625b02bc340db9ed5d4f1fd19120250a3eab42a12be9a1478a9d90fec4",
+  "judge_model": "openai/gpt-oss-120b",
+  "sample_case_ids": [
+    "S04",
+    "S05",
+    "S06",
+    "S07",
+    "S08",
+    "S14",
+    "X01",
+    "X03"
+  ],
+  "scored_cases": 6,
+  "expected_cases": 8,
+  "sampled_faithfulness": 0.9230769230769231,
+  "total_judged_claims": 13,
+  "results": [
+    {
+      "id": "S04",
+      "answer_sha256": "d0e834da436fbae3241c29268c86fd76a15d651e9f55a2391efb1876f3daafca",
+      "answer_origin": "llm",
+      "score": 1.0,
+      "context_scope": "generation_context",
+      "status": "scored",
+      "claims": [
+        {
+          "statement": "Nếu đã có quyết định thu hồi đất và quyết định phê duyệt phương án bồi thường, hỗ trợ, tái định cư trước ngày Nghị định 88/2024/NĐ‑CP có hiệu lực nhưng chưa thực hiện, thì tiếp tục thực hiện phương án đã được phê duyệt; không cần lập lại toàn bộ phương án mới.",
+          "supported": true,
+          "evidence_ids": [
+            "C2",
+            "C3"
+          ],
+          "reason": "Điều 31 của Nghị định 88/2024/NĐ‑CP quy định rằng trong trường hợp đã có quyết định thu hồi đất và quyết định phê duyệt phương án bồi thường, hỗ trợ, tái định cư trước ngày Nghị định có hiệu lực nhưng chưa thực hiện, thì phải tiếp tục thực hiện phương án đã được phê duyệt và không cần lập lại toàn bộ phương án mới."
+        }
+      ],
+      "supported_claims": 1,
+      "total_claims": 1,
+      "llm_calls": 1,
+      "token_usage": 2432
+    },
+    {
+      "id": "S05",
+      "answer_sha256": "a549b0b5e4b9ec83c582140d3c8aac0ae3c8d39b4e481f1fc4ead06e49d996e2",
+      "answer_origin": "llm",
+      "score": 1.0,
+      "context_scope": "generation_context",
+      "status": "scored",
+      "claims": [
+        {
+          "statement": "Theo Điều 5 Nghị định 151/2025/NĐ-CP, thẩm quyền phê duyệt phương án bồi thường, hỗ trợ, tái định cư (điểm c khoản 3 Điều 87 Luật Đất đai) được chuyển giao cho Chủ tịch Ủy ban nhân dân cấp xã.",
+          "supported": true,
+          "evidence_ids": [
+            "C1"
+          ],
+          "reason": "Văn bản Điều 5 Nghị định 151/2025/NĐ-CP nêu rõ thẩm quyền của UBND cấp huyện được chuyển giao cho Chủ tịch UBND cấp xã, trong đó bao gồm quyết định phê duyệt phương án bồi thường, hỗ trợ, tái định cư (điểm c khoản 3 Điều 87 Luật Đất đai)."
+        }
+      ],
+      "supported_claims": 1,
+      "total_claims": 1,
+      "llm_calls": 1,
+      "token_usage": 1558
+    },
+    {
+      "id": "S06",
+      "answer_sha256": "6574b5ed1ad33fdbd90371f8868ab36e8f61ee61f8a00fca6f7005b0ecb8a023",
+      "answer_origin": "llm",
+      "score": null,
+      "context_scope": "generation_context",
+      "status": "not_applicable",
+      "claims": [],
+      "supported_claims": 0,
+      "total_claims": 0,
+      "llm_calls": 1,
+      "token_usage": 1867
+    },
+    {
+      "id": "S07",
+      "answer_sha256": "c6bac257d1409d08bdf4df1224541ab1bd32c928ca959349f6f159488ac7993f",
+      "answer_origin": "llm",
+      "score": 1.0,
+      "context_scope": "generation_context",
+      "status": "scored",
+      "claims": [
+        {
+          "statement": "Điều 104 Luật Đất đai 2024 quy định rằng khi Nhà nước thu hồi đất và phải di chuyển tài sản, Nhà nước bồi thường chi phí gồm: (1) chi phí tháo dỡ, (2) chi phí vận chuyển, (3) chi phí lắp đặt lại tài sản; trong trường hợp tài sản là hệ thống máy móc, dây chuyền sản xuất, còn được bồi thường thêm chi phí thiệt hại phát sinh khi tháo dỡ, vận chuyển và lắp đặt.",
+          "supported": true,
+          "evidence_ids": [
+            "C1"
+          ],
+          "reason": "Văn bản C1 (Điều 104 Luật Đất đai 2024) nêu rõ rằng khi Nhà nước thu hồi đất và phải di chuyển tài sản, Nhà nước bồi thường chi phí tháo dỡ, di chuyển, lắp đặt; và đối với hệ thống máy móc, dây chuyền sản xuất còn bồi thường thiệt hại khi tháo dỡ, vận chuyển, lắp đặt, phù hợp hoàn toàn với tuyên bố."
+        }
+      ],
+      "supported_claims": 1,
+      "total_claims": 1,
+      "llm_calls": 1,
+      "token_usage": 2198
+    },
+    {
+      "id": "S08",
+      "answer_sha256": "af704c9757ee6910c75e1dd6627e127a31a36987c1901961ecf3246dc6982c76",
+      "answer_origin": "llm",
+      "score": 0.6666666666666666,
+      "context_scope": "generation_context",
+      "status": "scored",
+      "claims": [
+        {
+          "statement": "Điều 108 Luật Đất đai 2024 quy định hỗ trợ khi Nhà nước thu hồi đất bao gồm: hỗ trợ ổn định đời sống; hỗ trợ ổn định sản xuất, kinh doanh; hỗ trợ di dời vật nuôi; hỗ trợ đào tạo, chuyển đổi nghề và tìm kiếm việc làm; hỗ trợ tái định cư (theo khoản 8 Điều 111); hỗ trợ tháo dỡ, phá dỡ, di dời (theo khoản 3 Điều 105).",
+          "supported": true,
+          "evidence_ids": [
+            "C1"
+          ],
+          "reason": "Văn bản C1 trích nguyên văn Điều 108 liệt kê đầy đủ các loại hỗ trợ như trong câu khẳng định."
+        },
+        {
+          "statement": "Ủy ban nhân dân cấp tỉnh có thể quyết định các biện pháp, mức hỗ trợ khác dựa trên tình hình thực tế tại địa phương để bảo đảm chỗ ở, ổn định đời sống và sản xuất cho người có đất thu hồi, chủ sở hữu tài sản cho từng dự án cụ thể.",
+          "supported": true,
+          "evidence_ids": [
+            "C1"
+          ],
+          "reason": "Câu 2 của Điều 108 trong C1 nêu rõ Ủy ban nhân dân cấp tỉnh được quyền quyết định biện pháp, mức hỗ trợ khác dựa trên tình hình thực tế tại địa phương."
+        },
+        {
+          "statement": "Danh mục loại hỗ trợ trong nguồn là danh sách chưa phải kết luận hộ cụ thể được nhận tất cả và chưa giải thích điều kiện riêng nếu điều khoản dẫn chiếu chưa được mở.",
+          "supported": false,
+          "evidence_ids": [],
+          "reason": "Câu khẳng định này là nhận định giải thích, không có bằng chứng trực tiếp trong các trích dẫn cung cấp; do đó không thể xác nhận dựa trên chứng cứ."
+        }
+      ],
+      "supported_claims": 2,
+      "total_claims": 3,
+      "llm_calls": 1,
+      "token_usage": 2638
+    },
+    {
+      "id": "S14",
+      "answer_sha256": "2f77f32e956cc643b29de7d9f3f60ad9d4bd57ec7b24317c58261cecdbc4395c",
+      "answer_origin": "llm",
+      "score": 1.0,
+      "context_scope": "generation_context",
+      "status": "scored",
+      "claims": [
+        {
+          "statement": "Quyết định 40/2026/QĐ-UBND thay thế các Quyết định của UBND Thành phố: số 47/2016/QĐ-UBND, số 56/2024/QĐ-UBND, số 38/2025/QĐ-UBND và số 10/2026/QĐ-UBND.",
+          "supported": true,
+          "evidence_ids": [
+            "C1"
+          ],
+          "reason": "C1 nêu rõ Điều 2 của Quyết định 40/2026 quy định rằng quyết định này thay thế các quyết định đã liệt kê."
+        },
+        {
+          "statement": "Quyết định 40/2026/QĐ-UBND có hiệu lực thi hành kể từ ngày 02 tháng 4 năm 2026.",
+          "supported": true,
+          "evidence_ids": [
+            "C1"
+          ],
+          "reason": "Trong C1, Điều 2 ghi rằng quyết định có hiệu lực thi hành từ ngày 02/04/2026."
+        },
+        {
+          "statement": "Đối tượng áp dụng của Quyết định 40/2026/QĐ-UBND bao gồm: (1) Cơ quan nhà nước thực hiện quyền hạn và trách nhiệm đại diện chủ sở hữu toàn dân về đất đai; (2) Người có đất thu hồi và chủ sở hữu tài sản gắn liền với đất thu hồi; (3) Các đối tượng khác có liên quan đến việc bồi thường, hỗ trợ, tái định cư khi Nhà nước thu hồi đất.",
+          "supported": true,
+          "evidence_ids": [
+            "C2"
+          ],
+          "reason": "C2, Điều 2 liệt kê các đối tượng áp dụng như trên."
+        },
+        {
+          "statement": "Hộ gia đình, cá nhân đang sử dụng đất nông nghiệp nếu đủ điều kiện được bồi thường về đất sẽ được hỗ trợ ổn định đời sống theo các thời gian: thu hồi 30‑70% diện tích đất nông nghiệp được hỗ trợ 6 tháng (không di chuyển) hoặc 12 tháng (phải di chuyển); nếu di chuyển tới vùng khó khăn thời gian hỗ trợ tối đa 24 tháng; thu hồi trên 70% được hỗ trợ 12 tháng (không di chuyển) hoặc 24 tháng (phải di chuyển), tối đa 36 tháng nếu di chuyển tới vùng khó khăn.",
+          "supported": true,
+          "evidence_ids": [
+            "C3"
+          ],
+          "reason": "C3, Điều 17, khoản 1 a, nêu chi tiết các mức thời gian hỗ trợ dựa trên tỷ lệ thu hồi và việc di chuyển."
+        },
+        {
+          "statement": "Mức hỗ trợ tính bằng tiền tương đương 30 kg gạo/tháng cho một nhân khẩu, thời gian hỗ trợ tối đa là 03 tháng, chi trả 01 lần khi thực hiện chi trả tiền bồi thường, hỗ trợ.",
+          "supported": true,
+          "evidence_ids": [
+            "C4"
+          ],
+          "reason": "C4, trong cùng Điều 17, quy định mức hỗ trợ bằng tiền tương đương 30 kg gạo/tháng, thời gian tối đa 3 tháng, chi trả một lần."
+        },
+        {
+          "statement": "Quyết định 40/2026/QĐ-UBND ban hành kèm theo “Quy định một số nội dung về bồi thường, hỗ trợ, tái định cư khi Nhà nước thu hồi đất trên địa bàn thành phố Hà Nội”.",
+          "supported": true,
+          "evidence_ids": [
+            "C8"
+          ],
+          "reason": "C8, Điều 1 xác nhận việc ban hành kèm theo quy định này."
+        }
+      ],
+      "supported_claims": 6,
+      "total_claims": 6,
+      "llm_calls": 1,
+      "token_usage": 3711
+    },
+    {
+      "id": "X01",
+      "answer_sha256": "743e5a3561ffa432308716e0e284d323bc3d8299c3c77b3e0deeb42b02104d78",
+      "answer_origin": "llm",
+      "score": 1.0,
+      "context_scope": "generation_context",
+      "status": "scored",
+      "claims": [
+        {
+          "statement": "Khi Nhà nước thu hồi đất và phải di chuyển tài sản, Nhà nước bồi thường chi phí tháo dỡ, di chuyển và lắp đặt tài sản; nếu tài sản là hệ thống máy móc, dây chuyền sản xuất thì còn bồi thường thiệt hại phát sinh khi tháo dỡ, vận chuyển và lắp đặt.",
+          "supported": true,
+          "evidence_ids": [
+            "C1"
+          ],
+          "reason": "Điều 104 trong Luật Đất đai 2024 (C1) quy định rõ rằng khi Nhà nước thu hồi đất và phải di chuyển tài sản, Nhà nước bồi thường chi phí tháo dỡ, di chuyển, lắp đặt; và đối với hệ thống máy móc, dây chuyền sản xuất còn bồi thường thiệt hại khi tháo dỡ, vận chuyển, lắp đặt."
+        }
+      ],
+      "supported_claims": 1,
+      "total_claims": 1,
+      "llm_calls": 1,
+      "token_usage": 2263
+    },
+    {
+      "id": "X03",
+      "answer_sha256": "91dbca402b4570274ef752fc44ac3b54deb4baf0ffb801064995ef254421087b",
+      "answer_origin": "llm",
+      "score": null,
+      "context_scope": "generation_context",
+      "status": "not_applicable",
+      "claims": [],
+      "supported_claims": 0,
+      "total_claims": 0,
+      "llm_calls": 1,
+      "token_usage": 1867
+    }
+  ],
+  "scope": "Custom sampled claim support metric inspired by Ragas faithfulness; same-model offline judge, not independent legal certification. No overall quality score. Missing/failed judgments and abstentions are visible, never replaced."
+}

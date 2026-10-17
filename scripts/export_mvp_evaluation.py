@@ -103,7 +103,7 @@ if __name__ == '__main__':
     parser.add_argument('--allow-historical',action='store_true',help='Export an identified historical run; preserve its fingerprint and do not claim current source coverage')
     parser.add_argument('--suite', type=Path, default=Path('data/evaluation/smoke.jsonl'))
     parser.add_argument('--run-dir', type=Path, required=True)
-    parser.add_argument('--release', type=Path, default=Path('data/releases/corpus-de584c31fc95f9a2.json'))
+    parser.add_argument('--release', type=Path, default=Path('data/releases/corpus-581da76c79b0b362.json'))
     parser.add_argument('--public-summary', type=Path, help='Publish a reviewed technical summary, never legal acceptance')
     parser.add_argument('--output', type=Path, default=Path('reports/evaluation/smoke'))
     args = parser.parse_args()

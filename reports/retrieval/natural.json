@@ -1,19 +1,19 @@
 {
-  "checked_at": "2026-10-17T10:29:02.570452+00:00",
+  "checked_at": "2026-10-17T11:15:43.178459+00:00",
   "split": "natural",
   "suite_sha256": "b068bb4e717439938c96e459a63c9a1832b1990d88005cf6a768d9e9c0871e74",
   "release": "corpus-581da76c79b0b362",
-  "configuration_sha256": "800c96bad3ff018276b23b2ca1f49a0364c6e6b4d8eca3d4ff9f137bdafe4499",
+  "configuration_sha256": "c4f0c661af82ab60cc9f918a89e7b417981b070268d2bddfee12116a003c7b25",
   "backend": "sqlite",
   "k": 8,
   "eligible_cases": 6,
-  "hits": 4,
-  "hit_rate": 0.6666666666666666,
-  "gold_recall_at_8": 0.5833333333333334,
+  "hits": 5,
+  "hit_rate": 0.8333333333333334,
+  "gold_recall_at_8": 0.75,
   "history_groups": {
     "False": {
       "cases": 6,
-      "gold_recall_at_8": 0.5833333333333334
+      "gold_recall_at_8": 0.75
     },
     "True": {
       "cases": 0,
@@ -40,7 +40,7 @@
       ],
       "hit": true,
       "gold_recall_at_8": 1.0,
-      "elapsed_ms": 9979
+      "elapsed_ms": 9674
     },
     {
       "id": "N02",
@@ -60,7 +60,7 @@
       ],
       "hit": true,
       "gold_recall_at_8": 1.0,
-      "elapsed_ms": 5656
+      "elapsed_ms": 6185
     },
     {
       "id": "N03",
@@ -81,7 +81,7 @@
       ],
       "hit": true,
       "gold_recall_at_8": 0.5,
-      "elapsed_ms": 5992
+      "elapsed_ms": 5220
     },
     {
       "id": "N04",
@@ -90,18 +90,18 @@
         "luat-dat-dai-2024-94-0-0"
       ],
       "retrieved_chunk_ids": [
+        "luat-dat-dai-2024-93-1-0",
         "luat-dat-dai-2024-109-1-0",
         "nd-88-2024-0-24-1",
         "nd-88-2024-0-24-0",
+        "luat-nha-o-2023-40-1-0",
         "luat-dat-dai-2024-110-0-0",
         "luat-dat-dai-2024-244-1-1",
-        "nd-88-2024-0-27-1",
-        "nd-88-2024-0-27-2",
-        "luat-dat-dai-2024-109-0-0"
+        "luat-dat-dai-2024-94-0-0"
       ],
-      "hit": false,
-      "gold_recall_at_8": 0.0,
-      "elapsed_ms": 5613
+      "hit": true,
+      "gold_recall_at_8": 1.0,
+      "elapsed_ms": 5814
     },
     {
       "id": "N05",
@@ -121,7 +121,7 @@
       ],
       "hit": true,
       "gold_recall_at_8": 1.0,
-      "elapsed_ms": 5336
+      "elapsed_ms": 5138
     },
     {
       "id": "N06",
@@ -141,7 +141,7 @@
       ],
       "hit": false,
       "gold_recall_at_8": 0.0,
-      "elapsed_ms": 6871
+      "elapsed_ms": 5294
     }
   ],
   "scope": "Raw-question hybrid search without history rewriting, article routing or legal-relation expansion; any gold chunk in top 8 counts as a hit. Not legal answer accuracy."
