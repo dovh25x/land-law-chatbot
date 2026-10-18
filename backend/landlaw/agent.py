@@ -878,6 +878,11 @@ class Agent:
             aliases={item['citation_id']:f'C{index+1}' for index,item in enumerate(contexts)}
             contexts=[{**item,'citation_id':aliases[item['citation_id']],
                        'text':model_passage_text(item['text'])} for item in contexts]
+            previous_draft=None
+            if state.get('repairs') and state.get('draft'):
+                previous_draft=state['draft'].model_dump()
+                for claim in previous_draft['claims']:
+                    claim['citation_ids']=[aliases.get(key,key) for key in claim['citation_ids']]
             state["draft"] = await self.provider.generate(Draft,
                 "Answer the actual question in Vietnamese. Use ONE concise, independently qualified claim by default; "
                 "at most three for genuinely separate requested propositions. Put ALL legal content in claims; summary "
@@ -913,8 +918,14 @@ class Agent:
                 "guarantee parcel/household rights or money from general project facts. official_news is context "
                 "only; planning-task approval does not establish approved plans or household recovery. "
                 "If the main proposition lacks proof, use insufficient_evidence rather than substituting a nearby "
-                "rule. next_steps are generic checks, never unchecked legal conditions. Repair previous_issues "
-                "from supplied evidence without broadening the answer. Out-of-scope topics get no legal/medical advice.",
+                "rule. next_steps are generic checks, never unchecked legal conditions. When identifying a "
+                "replacement regulation, include a generic next_step to check recovery/approved-plan dates and "
+                "transitions for an old file; do not infer its outcome. For questions about what support depends "
+                "on, summarize the eligible branches and determinants rather than volunteering amounts. "
+                "During repair, previous_issues indexes refer to previous_draft. Correct or remove each defective "
+                "claim and any dependent claim; retain the source-proven direct answer, with all qualifications. "
+                "Do not invent a different rule to replace a removed claim. The entire new draft is verified again. "
+                "Out-of-scope topics get no legal/medical advice.",
                 {"question": redact(state["request"].message), "as_of": str(state["as_of"]), "history": state["history"],
                  "missing_facts": state["plan"].missing_facts, "tool_results": state["tool_notes"], "evidence": contexts,
                  "documents":documents,
@@ -924,7 +935,8 @@ class Agent:
                  "unresolved_relations": self.relevant_unresolved(state),
                  'context_selection':{'complete_passages':len(contexts),'retrieved_candidates':len(state['evidence']),
                                       'omitted_candidates_are_not_citable':True},
-                 "previous_issues": state.get("verification", Verification()).issues}, state["budget"])
+                 "previous_issues": state.get("verification", Verification()).issues,
+                 "previous_draft":previous_draft}, state["budget"])
             actual={value:key for key,value in aliases.items()}
             state['draft'].claims=[claim.model_copy(update={'citation_ids':[actual.get(key,key) for key in claim.citation_ids]})
                                    for claim in state['draft'].claims]

@@ -1380,3 +1380,40 @@ def test_model_list_formatting_changes_only_whitespace_not_dates_or_decimals():
     assert ' '.join(formatted.split())==' '.join(text.split())
     assert '\n1. ' in formatted and '\na) ' in formatted and '\n2. ' in formatted
     assert '02/04/2026' in formatted and '1.5' in formatted
+
+
+async def test_repair_receives_the_rejected_draft_with_matching_claim_indexes_and_aliases(store, settings):
+    source = ('Điều 91. Việc phê duyệt phương án bồi thường, hỗ trợ, tái định cư và '
+              'việc bố trí tái định cư phải được hoàn thành trước khi có quyết định thu hồi đất.')
+    release(store, [document(text=source)])
+    sid, _ = session(store)
+    valid = Claim(text=source.split('. ', 1)[1], citation_ids=['law-1'])
+    invalid = Claim(text='Nếu chưa có nhà mới, mọi hộ được nhận đất ở.', citation_ids=['law-1'])
+
+    class RepairProvider(FakeProvider):
+        def __init__(self, settings):
+            super().__init__(settings)
+            self.drafts = 0
+
+        async def generate(self, schema, instruction, payload, budget):
+            if schema is Draft:
+                budget.llm()
+                self.drafts += 1
+                if self.drafts == 1:
+                    assert payload.get('previous_draft') is None
+                    return Draft(status='answered', claims=[valid, invalid])
+                previous = payload['previous_draft']
+                assert [c['text'] for c in previous['claims']] == [valid.text, invalid.text]
+                assert all(c['citation_ids'] == ['C1'] for c in previous['claims'])
+                assert any(issue.startswith('Claim 1:') for issue in payload['previous_issues'])
+                assert 'verified again' in instruction
+                return Draft(status='answered', claims=[valid])
+            return await super().generate(schema, instruction, payload, budget)
+
+    provider = RepairProvider(settings)
+    result = await Agent(store, provider).run(ChatRequest(session_id=sid,
+        message='Việc thu hồi đất và bố trí tái định cư cần bảo đảm gì?'), noop)
+    assert provider.drafts == 2 and result.llm_calls == 3
+    assert result.status == 'answered' and result.verified_claims == [valid]
+    assert invalid.text not in result.content
+    assert any(event.step == 'verification' for event in result.trace)

@@ -21,6 +21,8 @@ Giữ cơ chế bỏ cả nhóm claim nếu một phần không đạt: cách n�
 
 Sơ đồ dưới đây phản ánh các cạnh trong `Agent.__init__`; START được gộp vào `plan`, END được gộp vào `ChatResult`. `retry` là truy xuất bổ sung theo verifier, không chạy lại planner; `repair` ghi nhận một lần sửa rồi quay về synthesis trên chứng cứ hiện có.
 
+Khi sửa, synthesis nhận cả draft bị từ chối và danh sách lỗi với cùng chỉ số claim, dùng alias của chứng cứ hiện tại. Model phải sửa hoặc bỏ claim lỗi cùng phần phụ thuộc, giữ điều kiện của kết luận có nguồn và trả một draft mới để kiểm chứng lại toàn bộ. Không chỉ truyền lỗi theo chỉ số khi thiếu draft tương ứng, không tự nối điều kiện vào kết quả sau verify và không mở thêm lượt sửa.
+
 ![Graph thực thi agent](diagrams/agent-flow.svg)
 
 Không phải node nào cũng gọi model. Ngoài phạm vi, thiếu hồ sơ cá nhân, câu hỏi về độ mới dữ liệu hoặc thiếu chứng cứ có thể chỉ tạo thông báo/hỏi lại bằng quy tắc. Node `tools` có thể không truy xuất. Các sự kiện pháp lý hẹp như mốc hiệu lực, thay thế hoặc bãi bỏ một phần chỉ được xử lý bằng quy tắc khi đạt đúng điều kiện nguồn; verifier đối chiếu lại trước khi duyệt.
