@@ -9,7 +9,7 @@ from pydantic import BaseModel, SecretStr
 from .config import Settings
 from .evaluation import evaluate, evaluate_retrieval, configuration_fingerprint
 from .publication import validate_corpus
-from .ingest import build_corpus, json_write
+from .ingest import build_corpus, coverage, json_write
 from .provider import Budget, GroqProvider
 from .security import utcnow
 from .store import Store
@@ -24,6 +24,7 @@ def reviewed_source_files(source):
     files.extend((item['ocr_path'], item['ocr_sha256']) for item in source.get('ocr_sidecars', [])
                  if item.get('review_status') == 'verified')
     files.extend((item['path'], item['sha256']) for item in source.get('source_artifacts', []))
+    files.extend((item['path'], item['checksum']) for item in source.get('source_pages', []))
     return files
 
 
@@ -195,6 +196,10 @@ def publish(release_id: str):
         release=store.release(release_id)
         if not release:raise typer.BadParameter('Unknown release')
         validate_corpus(release)
+        if not coverage(release)['publication_ready']:
+            raise typer.BadParameter('Corpus coverage or legal dependencies are incomplete; publication blocked')
+        if not store.source_fresh(release):
+            raise typer.BadParameter('Source freshness review required; publication blocked')
         path=settings.data_dir/'backups'/f"prepublish-{utcnow().strftime('%Y%m%dT%H%M%S')}.json"
         store.backup(path)
         store.publish(release_id,{'profile':'academic','published_at':utcnow().isoformat(),

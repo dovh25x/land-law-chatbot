@@ -13,7 +13,11 @@ from landlaw.security import utcnow
 from check_secrets import PATTERNS
 
 
-def prepare(source, output):
+def prepare(source, output, receipt_path=Path('reports/release-preparation.json')):
+    if receipt_path.exists():
+        raise ValueError('Receipt exists; select a new --receipt path to preserve publication history')
+    if output.exists() and any(output.iterdir()):
+        raise ValueError('Package output exists; select a new directory to preserve release artifacts')
     payload = json.loads(source.read_bytes())
     if payload.get('format') != 1 or set(payload) != {'format', 'releases', 'state'}:
         raise ValueError('Only corpus/config backup schema is allowed; no sessions/messages/traces')
@@ -68,7 +72,8 @@ def prepare(source, output):
     receipt = {k: v for k, v in manifest.items() if k != 'source_files_sha256'}
     receipt.update({'output': str(output), 'published': False,
                     'release_url': None, 'status': 'prepared', 'restore_verified': False})
-    Path('reports/release-preparation.json').write_text(json.dumps(receipt, ensure_ascii=False, indent=2) + '\n')
+    receipt_path.parent.mkdir(parents=True, exist_ok=True)
+    receipt_path.write_text(json.dumps(receipt, ensure_ascii=False, indent=2) + '\n')
     print(json.dumps(receipt, ensure_ascii=False))
 
 
@@ -76,5 +81,6 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--source', type=Path, default=Path('data/backups/ring4-public-corpus.json'))
     parser.add_argument('--output', type=Path, default=Path('dist/corpus-release'))
+    parser.add_argument('--receipt', type=Path, default=Path('reports/release-preparation.json'))
     args = parser.parse_args()
-    prepare(args.source, args.output)
+    prepare(args.source, args.output, args.receipt)

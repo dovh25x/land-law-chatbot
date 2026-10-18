@@ -256,3 +256,85 @@ async def test_retrieval_benchmark_skips_no_gold_cases_and_never_generates_or_wr
     assert report['hit_rate'] == 1 and report['generation_calls'] == 0
     assert not store.rows('SELECT * FROM sessions')
     assert not store.rows('SELECT * FROM counters')
+
+
+def test_ring4_coverage_uses_required_sources_and_project_evidence_not_other_projects():
+    from conftest import document
+    from landlaw.local_embedding import MODEL
+    required = ['luat-dat-dai-2024','nd-88-2024','nd-226-2025','qd-56-2024-hanoi',
+                'qd-40-2026-hanoi','nq-52-2025-hanoi']
+    docs = [document(ident).model_dump(mode='json') for ident in required]
+    docs.append(document('project',project='ring4').model_copy(update={'source_kind':'project_decision'}).model_dump(mode='json'))
+    for doc in docs:
+        doc['chunks'][0]['embedding'] = [1.0] + [0.0]*383
+    payload = {'id':'reviewed','documents':docs,'checked_at':'2026-10-18','embedding_dimensions':MODEL['dimensions']}
+    assert coverage(payload)['publication_ready']
+    docs[-1]['project'] = 'olympic'
+    assert not coverage(payload)['publication_ready']
+    assert not coverage(payload)['scope_valid']
+    docs[-1]['project'] = 'ring4'
+    docs.pop(0)
+    assert coverage(payload)['missing_mandatory_sources'] == ['luat-dat-dai-2024']
+    assert not coverage(payload)['publication_ready']
+
+
+def test_official_image_cdn_requires_verified_publication_context():
+    assert official_url('https://xdcs.cdnchinhphu.vn/a.jpg','https://xaydungchinhsach.chinhphu.vn/a.htm')
+    assert not official_url('https://xdcs.cdnchinhphu.vn/a.jpg')
+    assert not official_url('https://xdcs.cdnchinhphu.vn.evil.example/a.jpg','https://hanoi.gov.vn/a')
+
+
+@pytest.mark.parametrize('field', ['coverage_gaps', 'unresolved_relations'])
+def test_coverage_blocks_publication_with_missing_dependencies(field):
+    from conftest import document
+    ids = ['luat-dat-dai-2024','nd-88-2024','nd-226-2025','qd-56-2024-hanoi',
+           'qd-40-2026-hanoi','nq-52-2025-hanoi']
+    docs = [document(ident).model_dump(mode='json') for ident in ids]
+    project = document('ring4-evidence', project='ring4').model_copy(
+        update={'source_kind':'project_decision'}).model_dump(mode='json')
+    docs.append(project)
+    for doc in docs:
+        for chunk in doc['chunks']:
+            chunk['embedding'] = [1.0] + [0.0]*383
+    payload = {'id':'candidate','documents':docs,'embedding_dimensions':384,
+               'checked_at':'2026-10-18T00:00:00Z',field:[{'pending':True}]}
+    report = coverage(payload)
+    assert report['coverage_passed'] and not report['publication_ready']
+    assert not report['dependencies_complete']
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize('numbers,scope,accepted', [
+    ([2], 'Reviewed relevant policy page; full original retained.', True),
+    ([2], '', False), ([0], 'reviewed', False), ([True], 'reviewed', False),
+    ([4], 'reviewed', False), ([2, 2], 'reviewed', False),
+    ([3, 2], 'reviewed', False),
+])
+async def test_reviewed_partial_pdf_preserves_physical_page_and_rejects_ambiguous_mapping(
+        settings, numbers, scope, accepted):
+    from pypdf import PdfWriter
+    from landlaw.ingest import collect_source
+    from landlaw.security import digest
+    raw = settings.data_dir / 'raw'
+    raw.mkdir(parents=True, exist_ok=True)
+    pdf = raw / 'partial.pdf'
+    writer = PdfWriter()
+    for _ in range(3):
+        writer.add_blank_page(width=600, height=800)
+    with pdf.open('wb') as stream:
+        writer.write(stream)
+    text = raw / 'partial.txt'
+    text.write_text('Điều 2. ' + 'Nội dung quy định có đối chiếu bản gốc. '*25)
+    source = {'id':'partial', 'title':'Technical fixture', 'url':'https://hanoi.gov.vn/fixture',
+        'source_kind':'legal', 'review_status':'verified', 'effective_from':'2024-08-01',
+        'checked_at':'2026-10-18T00:00:00+00:00', 'raw_paths':[str(pdf)],
+        'raw_checksums':{str(pdf):digest(pdf.read_bytes())},
+        'ocr_sidecars':[{'ocr_path':str(text), 'ocr_sha256':digest(text.read_bytes()),
+            'pdf_sha256':digest(pdf.read_bytes()), 'review_status':'verified',
+            'page_numbers':numbers, 'scope_review':scope}]}
+    if accepted:
+        doc = await collect_source(source, settings, None, offline=True)
+        assert all(chunk.page == 2 for chunk in doc.chunks)
+    else:
+        with pytest.raises(Quarantine, match='page count mismatch'):
+            await collect_source(source, settings, None, offline=True)

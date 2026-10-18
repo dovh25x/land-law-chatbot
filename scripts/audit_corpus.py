@@ -114,7 +114,8 @@ async def audit(snapshot, output, replay):
                 part = cid[len(prefix):].split('-',1)[0] if cid.startswith(prefix) else ''
                 mapped = [a for a in doc.get('source_files', []) if part.isdigit()
                           and a['first_page_index'] <= int(part) <= a['last_page_index']]
-                if len(mapped) != 1:
+                mapped_pages = [a for a in doc.get('source_pages', []) if part.isdigit() and a['page_index'] == int(part)]
+                if len(mapped) != 1 and len(mapped_pages) != 1:
                     warnings.append({'kind': 'physical_page_without_exact_attachment', 'chunk_id': cid})
         findings.update({'short_chunks': short, 'encoding_candidates': encoding})
         documents.append(findings)

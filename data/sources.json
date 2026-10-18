@@ -666,7 +666,18 @@
         "source_url": "https://congbao.hanoi.gov.vn/Default.aspx?p_attribute=4654&pageid=45002",
         "note": "Bảng giá áp dụng đến hết 31/12/2025. Không suy ra toàn văn Quyết định hết hiệu lực."
       }
-    ]
+    ],
+    "ocr_sidecars": [
+      {
+        "ocr_path": "data/raw/qd-71-2024-hanoi-part1-congbao-attachment-1.act-numbers-reviewed.txt",
+        "ocr_sha256": "824cc71eb2179df020b6122143639d44bbb5d13dd78d6246676e31df57b00811",
+        "pdf_sha256": "92dcf2aa9e6bfe9514b638a95ae97ef812bd64f7bdfe706ca2cab4cf4d1efc9e",
+        "review_status": "verified",
+        "processing_method": "native layout; source act-number whitespace corrected only for 71/2024, 30/2019, 20/2023",
+        "corrections": 6
+      }
+    ],
+    "source_review_notes": " Số hiệu 71/2024, 30/2019 và 20/2023 bị tách khoảng trắng được đối chiếu bản chụp tiêu đề và chuẩn hóa trong text; không nối hoặc sửa giá trị bảng."
   },
   {
     "id": "qd-40-2025-hanoi",
@@ -1009,20 +1020,32 @@
       "bồi thường",
       "chuyển tiếp"
     ],
-    "publication_url": null,
+    "publication_url": "https://vanban.chinhphu.vn/?pageid=27160&docid=189167",
     "review_status": "pending",
     "notes": "Đã xác định nguồn chính thức nhưng toàn văn chưa đủ điều kiện công bố: PDF ảnh cần kiểm tra OCR hoặc URL chỉ còn trang tải/thuộc tính. Giữ ở staging, không dùng làm căn cứ hiện hành cho đến khi kiểm tra nội dung, số liệu và metadata.",
-    "attachment_urls": [],
+    "attachment_urls": [
+      "https://datafiles.chinhphu.vn/cpp/files/vbpq/2017/04/10-17.pdf"
+    ],
     "raw_paths": [
-      "data/raw/qd-10-2017-hanoi.html"
+      "data/raw/qd-10-2017-hanoi-new-official-1.pdf"
     ],
     "metadata_url": "https://vbpl.vn/TW/Pages/vbpq-toanvan.aspx?ItemID=121164",
     "checked_at": "2026-10-11T17:32:27Z",
     "issuer": "UBND thành phố Hà Nội",
     "raw_checksums": {
-      "data/raw/qd-10-2017-hanoi.html": "b49ca2f19041ef05f87a007944fe2d70f7c9a6d7a17c5f6f11f912f7ab9198c7"
+      "data/raw/qd-10-2017-hanoi-new-official-1.pdf": "c83909ebab6958ce58ca4c94b6143717acf1a6edfcaf157efd4473d7a175b0ea"
     },
-    "quarantine_reason": "Historical fulltext unavailable or incomplete draft attachment; metadata can be checked separately."
+    "quarantine_reason": "Historical fulltext unavailable or incomplete draft attachment; metadata can be checked separately.",
+    "ocr_sidecars": [
+      {
+        "ocr_path": "data/raw/qd-10-2017-hanoi-remediation-ocr.txt",
+        "ocr_sha256": "d0c44877b35c7fcdf6ec705ee4598aff17f129362ec297530c3ff8c265c6da0d",
+        "pdf_sha256": "c83909ebab6958ce58ca4c94b6143717acf1a6edfcaf157efd4473d7a175b0ea",
+        "review_status": "pending",
+        "processing_method": "Tesseract 5.5.0 vie psm3 @216dpi"
+      }
+    ],
+    "source_review_notes": " Remediation: PDF có hash và OCR ứng viên; trạng thái pending giữ nguyên, chưa đủ điều kiện làm chứng cứ."
   },
   {
     "id": "qd-27-2024-hanoi",
@@ -1084,7 +1107,30 @@
     "issuer": "UBND thành phố Hà Nội",
     "raw_checksums": {
       "data/raw/qd-30-2019-hanoi-attachment-1.pdf": "80430edefcb74231bc6cc0b1c89fca13d5601aa0521241868da6e12638505cd9"
-    }
+    },
+    "ocr_sidecars": [
+      {
+        "ocr_path": "data/raw/qd-30-2019-hanoi-remediation-ocr.txt",
+        "ocr_sha256": "20876a2dcba21ee5550897122650d77b013ca3cc3f2849e08c883e80bc9d5e46",
+        "pdf_sha256": "80430edefcb74231bc6cc0b1c89fca13d5601aa0521241868da6e12638505cd9",
+        "review_status": "pending",
+        "processing_method": "Tesseract 5.5.0 vie psm3 @216dpi",
+        "page_numbers": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10
+        ],
+        "scope_review": "Ứng viên chỉ mục 10 trang quy định; cần duyệt đầy đủ phạm vi và dẫn chiếu trước khi phục vụ."
+      }
+    ],
+    "source_review_notes": " Remediation: PDF có hash và OCR ứng viên; trạng thái pending giữ nguyên, chưa đủ điều kiện làm chứng cứ."
   },
   {
     "id": "qd-20-2023-hanoi",
@@ -1104,17 +1150,29 @@
     "publication_url": null,
     "review_status": "pending",
     "notes": "Đã xác định nguồn chính thức nhưng toàn văn chưa đủ điều kiện công bố: PDF ảnh cần kiểm tra OCR hoặc URL chỉ còn trang tải/thuộc tính. Giữ ở staging, không dùng làm căn cứ hiện hành cho đến khi kiểm tra nội dung, số liệu và metadata.",
-    "attachment_urls": [],
+    "attachment_urls": [
+      "https://storage-vnportal.vnpt.vn/gov-hni/CrawlDownloads/vanban-hanoi-gov-vn/documents/10182/2518750/QDPQ-20-2023.pdf"
+    ],
     "raw_paths": [
-      "data/raw/qd-20-2023-hanoi.html"
+      "data/raw/qd20-direct-candidate-2.pdf"
     ],
     "metadata_url": "https://vbpl.vn/hanoi/Pages/vbpq-toanvan.aspx?ItemID=164473",
     "checked_at": "2026-10-11T17:32:27Z",
     "issuer": "UBND thành phố Hà Nội",
     "raw_checksums": {
-      "data/raw/qd-20-2023-hanoi.html": "1a5dd6ed6cc88f7396e990f6436c32f2dc3acf10839b6711f6d50c9c1ba7f1e2"
+      "data/raw/qd20-direct-candidate-2.pdf": "a4b48290f866ac0b4d13f64de6a6a7d276f992373bb8f0e4a542bc8a52d7784a"
     },
-    "quarantine_reason": "Historical fulltext unavailable or incomplete draft attachment; metadata can be checked separately."
+    "quarantine_reason": "Historical fulltext unavailable or incomplete draft attachment; metadata can be checked separately.",
+    "source_review_notes": "Đã phục hồi scan 58 trang từ kho CrawlDownloads của cổng Hà Nội, đối chiếu trang đầu đúng số 20/2023/QĐ-UBND ngày 07/09/2023 và sửa QĐ30/2019. Trang metadata cũ không tải được toàn văn; chưa xác minh liên kết publication hiện tại, OCR và chuỗi pháp lý. Giữ pending, không phục vụ. URL p_steering=188741 do người dùng cung cấp hiện là NQ20/2023/NQ-HĐND ngân sách, không được dùng thay cho quyết định này.",
+    "ocr_sidecars": [
+      {
+        "ocr_path": "data/raw/qd-20-2023-remediation-ocr.txt",
+        "ocr_sha256": "c3c12e1e6f74236356e5d98bf3a233768eee5e60f1b514a3eaca96287effb6a0",
+        "pdf_sha256": "a4b48290f866ac0b4d13f64de6a6a7d276f992373bb8f0e4a542bc8a52d7784a",
+        "review_status": "pending",
+        "processing_method": "Tesseract 5.5.0 vie; full 58 physical pages; blank page and numeric tables require review"
+      }
+    ]
   },
   {
     "id": "luat-khieu-nai-2011",
@@ -1295,14 +1353,15 @@
     },
     "ocr_sidecars": [
       {
-        "raw_path": "data/raw/nd-123-2024-attachment-1.pdf",
-        "ocr_path": "data/raw/nd-123-2024-attachment-1.ocr.txt",
+        "ocr_path": "data/raw/nd-123-2024-remediation-ocr.txt",
+        "ocr_sha256": "47e26fcde82d92bd924a56f8ef964d27a1a3a0008a27584c84dbfa4bbd648b2b",
         "pdf_sha256": "9ea21ac96c37fa31c1f0be3dd7b893f82adf8e63236c87e432c2c1f6e18e48d0",
-        "ocr_sha256": "3cf26aff8d0e97b77b84fa4fc57aa701327ba3621a81ee9784f630d3262a8b1f",
-        "review_status": "pending"
+        "review_status": "pending",
+        "processing_method": "Tesseract 5.5.0 vie psm3 @216dpi"
       }
     ],
-    "ocr_reviewed": false
+    "ocr_reviewed": false,
+    "source_review_notes": " Remediation: PDF có hash và OCR ứng viên; trạng thái pending giữ nguyên, chưa đủ điều kiện làm chứng cứ."
   },
   {
     "id": "ring4-nq56-2022",
@@ -1386,14 +1445,15 @@
     },
     "ocr_sidecars": [
       {
-        "raw_path": "data/raw/ring4-nq106-2022-attachment-1.pdf",
-        "ocr_path": "data/raw/ring4-nq106-2022-attachment-1.ocr.txt",
+        "ocr_path": "data/raw/ring4-nq106-2022-remediation-ocr.txt",
+        "ocr_sha256": "f4bece5971e92a7dc949bfa572127d0c85abbc78b7b4b571859246c1a63a504d",
         "pdf_sha256": "ea7b92ba9e6097f9fc5f97d55b22317b2a0ca4147ae4df47b17213f790c5f7b9",
-        "ocr_sha256": "0bb6b11aac5928988bb2e6680c2df07a3365078e3d3ec71ec9d9301e3ec7f056",
-        "review_status": "pending"
+        "review_status": "pending",
+        "processing_method": "Tesseract 5.5.0 vie psm3 @216dpi"
       }
     ],
-    "ocr_reviewed": false
+    "ocr_reviewed": false,
+    "source_review_notes": " Remediation: PDF có hash và OCR ứng viên; trạng thái pending giữ nguyên, chưa đủ điều kiện làm chứng cứ."
   },
   {
     "id": "ring4-hadong-2025",
@@ -1889,7 +1949,99 @@
         "note": "Điều 13 khoản 2 chỉ cho điểm b khoản 3 Điều 12 có hiệu lực sớm, không coi toàn bộ nghị quyết có hiệu lực 11/12/2025."
       }
     ],
-    "source_review_notes": "Nguồn gốc là 15 trang ảnh tại trang Chính phủ. PDF lưu trữ là bản ghép ảnh để xử lý, không phải PDF ký số gốc; OCR đã đối chiếu toàn bộ trang. Chưa thẩm định pháp lý độc lập."
+    "source_review_notes": "Nguồn gốc là 15 trang ảnh tại trang Chính phủ. PDF lưu trữ là bản ghép ảnh để xử lý, không phải PDF ký số gốc; OCR đã đối chiếu toàn bộ trang. Chưa thẩm định pháp lý độc lập.",
+    "source_pages": [
+      {
+        "page_index": 0,
+        "url": "https://xdcs.cdnchinhphu.vn/446259493575335936/2025/12/25/1-1766656703987948865540.jpg",
+        "checksum": "c9c759623bd1a85980a5a5531b80829500351e97f60148b8439138ef9c9c1fd9",
+        "path": "data/raw/nq254-page-01.jpg"
+      },
+      {
+        "page_index": 1,
+        "url": "https://xdcs.cdnchinhphu.vn/446259493575335936/2025/12/25/2-176665670400059719527.jpg",
+        "checksum": "4d41af74834d4bb15179c92734030f2250c35f40cde79309bea4f351e85c9fd0",
+        "path": "data/raw/nq254-page-02.jpg"
+      },
+      {
+        "page_index": 2,
+        "url": "https://xdcs.cdnchinhphu.vn/446259493575335936/2025/12/25/3-17666567040121302312172.jpg",
+        "checksum": "d1097bbf855d0a342b0707f3e992c9a92462c5e715f74fd31b449a521ffb0f12",
+        "path": "data/raw/nq254-page-03.jpg"
+      },
+      {
+        "page_index": 3,
+        "url": "https://xdcs.cdnchinhphu.vn/446259493575335936/2025/12/25/4-17666567040152080352776.jpg",
+        "checksum": "f5f585dc58b51f65d7640692c1ecb21f17bc222b75b8af703780e93f581e3fb3",
+        "path": "data/raw/nq254-page-04.jpg"
+      },
+      {
+        "page_index": 4,
+        "url": "https://xdcs.cdnchinhphu.vn/446259493575335936/2025/12/25/5-17666567040181069653236.jpg",
+        "checksum": "b09fdcb06281c6b2338f130a2d9985bf39426e764fd4199fd15914a546165026",
+        "path": "data/raw/nq254-page-05.jpg"
+      },
+      {
+        "page_index": 5,
+        "url": "https://xdcs.cdnchinhphu.vn/446259493575335936/2025/12/25/6-17666567040201209747842.jpg",
+        "checksum": "9197d6a1c23f007cc46221e750209bab6b1f272e70e9e1ab5a7f1309e39b096e",
+        "path": "data/raw/nq254-page-06.jpg"
+      },
+      {
+        "page_index": 6,
+        "url": "https://xdcs.cdnchinhphu.vn/446259493575335936/2025/12/25/7-1766656704100595900.jpg",
+        "checksum": "a5d7a74914c100d63e1e7ecf3914dc52a686eb753bedf2f0c781a0946b7fc21b",
+        "path": "data/raw/nq254-page-07.jpg"
+      },
+      {
+        "page_index": 7,
+        "url": "https://xdcs.cdnchinhphu.vn/446259493575335936/2025/12/25/8-1766656704548343000252.jpg",
+        "checksum": "5a0d90826ee433cca0430b0acd0c5e7376abb6119793ab0370121eeab78ad1f3",
+        "path": "data/raw/nq254-page-08.jpg"
+      },
+      {
+        "page_index": 8,
+        "url": "https://xdcs.cdnchinhphu.vn/446259493575335936/2025/12/25/9-17666567045512110162284.jpg",
+        "checksum": "668ac1a10320a953fbd8b70e41e747a06e703e96bd9d54e267c5182be94a685a",
+        "path": "data/raw/nq254-page-09.jpg"
+      },
+      {
+        "page_index": 9,
+        "url": "https://xdcs.cdnchinhphu.vn/446259493575335936/2025/12/25/10-17666567045531548619738.jpg",
+        "checksum": "2039f0a1943cca1810f4ce74f2cded62d334715798d1d73854e2a2947bd25119",
+        "path": "data/raw/nq254-page-10.jpg"
+      },
+      {
+        "page_index": 10,
+        "url": "https://xdcs.cdnchinhphu.vn/446259493575335936/2025/12/25/11-17666567045551904880828.jpg",
+        "checksum": "43f32bc2ef7806e5453a6a5450151bd82c54856c42ec156b47b4026641de9bcf",
+        "path": "data/raw/nq254-page-11.jpg"
+      },
+      {
+        "page_index": 11,
+        "url": "https://xdcs.cdnchinhphu.vn/446259493575335936/2025/12/25/12-1766656704557971299984.jpg",
+        "checksum": "5a873929e7421f3be33c6437c60bde5c81c5e0a2c15583b5d75d31527463d3c0",
+        "path": "data/raw/nq254-page-12.jpg"
+      },
+      {
+        "page_index": 12,
+        "url": "https://xdcs.cdnchinhphu.vn/446259493575335936/2025/12/25/13-17666567045601176069070.jpg",
+        "checksum": "c039e552ec8f8eb9d0983f84c514b3c8a6b75f97cab80924e478f6607973fecc",
+        "path": "data/raw/nq254-page-13.jpg"
+      },
+      {
+        "page_index": 13,
+        "url": "https://xdcs.cdnchinhphu.vn/446259493575335936/2025/12/25/14-17666567045631325426528.jpg",
+        "checksum": "2f2b895acc55fa9af0711c8cf65480dab54dd48a87dbfdd6b35a88b4896ea4c4",
+        "path": "data/raw/nq254-page-14.jpg"
+      },
+      {
+        "page_index": 14,
+        "url": "https://xdcs.cdnchinhphu.vn/446259493575335936/2025/12/25/15-17666567045652009596133.jpg",
+        "checksum": "2bba9eee96869a585d44de8701f43d99c7c3f468d20f7f00b09d4766f00b9ca3",
+        "path": "data/raw/nq254-page-15.jpg"
+      }
+    ]
   },
   {
     "id": "nq-258-2025",
@@ -2009,7 +2161,26 @@
     },
     "attachment_urls": [
       "https://congbaocdn.chinhphu.vn/CongBaoCP/VanBan/2025/6/45555/57751-1-2025965-96671-2025-qh15.pdf"
-    ]
+    ],
+    "index_articles": [
+      1,
+      2,
+      3,
+      49,
+      50
+    ],
+    "index_scope_review": {
+      "status": "reviewed",
+      "basis": "Rà toàn bộ locator và tìm các đoạn Đất đai/bồi thường/tái định cư/thu hồi đất; giữ nguyên cả điều sửa đổi, phạm vi, định nghĩa, hiệu lực và chuyển tiếp (nếu có). Chỉ phục vụ quan hệ sửa thuật ngữ trong luật đất đai/quy hoạch, không phục vụ chính sách ngành. Fulltext raw giữ nguyên.",
+      "retained_articles": [
+        1,
+        2,
+        3,
+        49,
+        50
+      ]
+    },
+    "source_review_notes": " Chỉ mục giới hạn theo index_scope_review; toàn văn raw giữ nguyên. Không dùng để tư vấn chuyên ngành."
   },
   {
     "source_kind": "legal",
@@ -2351,8 +2522,28 @@
     ],
     "ocr_reviewed": false,
     "notes": "PDF Công báo đầy đủ có text; đối chiếu số/ngày, toàn bộ phần sửa Luật Đất đai, điều khoản hiệu lực và chuyển tiếp. Chỉ thay thuật ngữ “an toàn thông tin mạng” bằng “an ninh mạng”.",
-    "source_review_notes": "Rà soát tập trung vào sửa đổi Luật Đất đai và mốc hiệu lực. Các quy định chuyên ngành khác trong bản gốc cần đối chiếu văn bản sửa đổi riêng; chưa thẩm định pháp lý độc lập. Chỉ thay thuật ngữ “an toàn thông tin mạng” bằng “an ninh mạng”.",
-    "provision_validity": []
+    "source_review_notes": "Rà soát tập trung vào sửa đổi Luật Đất đai và mốc hiệu lực. Các quy định chuyên ngành khác trong bản gốc cần đối chiếu văn bản sửa đổi riêng; chưa thẩm định pháp lý độc lập. Chỉ thay thuật ngữ “an toàn thông tin mạng” bằng “an ninh mạng”. Chỉ mục giới hạn theo index_scope_review; toàn văn raw giữ nguyên. Không dùng để tư vấn chuyên ngành.",
+    "provision_validity": [],
+    "index_articles": [
+      1,
+      2,
+      3,
+      43,
+      44,
+      45
+    ],
+    "index_scope_review": {
+      "status": "reviewed",
+      "basis": "Rà toàn bộ locator và tìm các đoạn Đất đai/bồi thường/tái định cư/thu hồi đất; giữ nguyên cả điều sửa đổi, phạm vi, định nghĩa, hiệu lực và chuyển tiếp (nếu có). Chỉ phục vụ quan hệ sửa thuật ngữ trong luật đất đai/quy hoạch, không phục vụ chính sách ngành. Fulltext raw giữ nguyên.",
+      "retained_articles": [
+        1,
+        2,
+        3,
+        43,
+        44,
+        45
+      ]
+    }
   },
   {
     "id": "luat-130-2025",
@@ -2741,5 +2932,87 @@
     ],
     "notes": "Đã đối chiếu cả ba ảnh PDF chính thức; sửa lỗi OCR về ngày, chữ và ký hiệu điểm. Giữ phân trang và tất cả điều khoản; bỏ hộp dấu đến và danh sách nơi nhận trong parser input; PDF gốc không sửa.",
     "source_review_notes": "Lịch sử 20/02/2020–trước 01/08/2024. Điều 1 sửa toàn Điều 17 NĐ47/2014; Điều 2 phân biệt đã/chưa phê duyệt phương án cho toàn bộ dự án trước ngày hiệu lực. Không tự kết luận đại dự án nào cũng có cùng khung quyền lợi. Hết hiệu lực theo điểm b khoản 2 Điều 30 NĐ88/2024; kiểm tra Điều 31 NĐ88 khi xử lý hồ sơ cũ."
+  },
+  {
+    "id": "nd-01-2017",
+    "title": "Nghị định 01/2017/NĐ-CP sửa đổi, bổ sung một số nghị định quy định chi tiết thi hành Luật đất đai",
+    "document_number": "01/2017/NĐ-CP",
+    "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=187962",
+    "issued_on": "2017-01-06",
+    "effective_from": "2017-03-03",
+    "attachment_urls": [
+      "https://datafiles.chinhphu.vn/cpp/files/vbpq/2017/01/01.signed_02.pdf"
+    ],
+    "publication_url": "https://vanban.chinhphu.vn/?pageid=27160&docid=187962",
+    "source_kind": "legal",
+    "issuer": "Chính phủ",
+    "jurisdiction": "Vietnam",
+    "project": null,
+    "topics": [
+      "bồi thường",
+      "hỗ trợ",
+      "tái định cư",
+      "lịch sử",
+      "chuyển tiếp"
+    ],
+    "review_status": "pending",
+    "checked_at": "2026-10-18T16:43:24.085521+00:00",
+    "source_review_notes": "Đã tải PDF nguồn Chính phủ; OCR máy chưa được đối chiếu đầy đủ. Không phục vụ trước khi duyệt OCR, phạm vi sửa đổi và hiệu lực/chuyển tiếp. Remediation: PDF có hash và OCR ứng viên; trạng thái pending giữ nguyên, chưa đủ điều kiện làm chứng cứ.",
+    "raw_paths": [
+      "data/raw/nd-01-2017-new-official-1.pdf"
+    ],
+    "raw_checksums": {
+      "data/raw/nd-01-2017-new-official-1.pdf": "ffc2daa105ffee450fe684f3603992d4b52bc4041db4e7b78c0bd225fc10b357"
+    },
+    "ocr_sidecars": [
+      {
+        "ocr_path": "data/raw/nd-01-2017-remediation-ocr.txt",
+        "ocr_sha256": "ea23dd50d3cbc6bf74675023d1280e94214a29350192c4fd11a157b89f351cd5",
+        "pdf_sha256": "ffc2daa105ffee450fe684f3603992d4b52bc4041db4e7b78c0bd225fc10b357",
+        "review_status": "pending",
+        "processing_method": "Tesseract 5.5.0 vie psm3 @216dpi"
+      }
+    ]
+  },
+  {
+    "id": "nd-148-2020",
+    "title": "Nghị định 148/2020/NĐ-CP sửa đổi, bổ sung một số nghị định quy định chi tiết thi hành Luật Đất đai",
+    "document_number": "148/2020/NĐ-CP",
+    "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=202022",
+    "issued_on": "2020-12-18",
+    "effective_from": "2021-02-08",
+    "attachment_urls": [
+      "https://datafiles.chinhphu.vn/cpp/files/vbpq/2020/12/148.signed.pdf"
+    ],
+    "publication_url": "https://vanban.chinhphu.vn/?pageid=27160&docid=202022",
+    "source_kind": "legal",
+    "issuer": "Chính phủ",
+    "jurisdiction": "Vietnam",
+    "project": null,
+    "topics": [
+      "bồi thường",
+      "hỗ trợ",
+      "tái định cư",
+      "lịch sử",
+      "chuyển tiếp"
+    ],
+    "review_status": "pending",
+    "checked_at": "2026-10-18T16:46:22.957226+00:00",
+    "source_review_notes": "Đã tải PDF nguồn Chính phủ; OCR máy chưa được đối chiếu đầy đủ. Không phục vụ trước khi duyệt OCR, phạm vi sửa đổi và hiệu lực/chuyển tiếp. Remediation: PDF có hash và OCR ứng viên; trạng thái pending giữ nguyên, chưa đủ điều kiện làm chứng cứ.",
+    "raw_paths": [
+      "data/raw/nd-148-2020-alternate.pdf"
+    ],
+    "raw_checksums": {
+      "data/raw/nd-148-2020-alternate.pdf": "d9b2afb4bc5f3ba07de979a14b931dad2e1efba3bf22d6036af0bbfb76ab061e"
+    },
+    "ocr_sidecars": [
+      {
+        "ocr_path": "data/raw/nd-148-2020-remediation-ocr.txt",
+        "ocr_sha256": "6998d2c94a645a16c9c39c1a28c547de4b842e34b05f20cb8b77ecc1cff23374",
+        "pdf_sha256": "d9b2afb4bc5f3ba07de979a14b931dad2e1efba3bf22d6036af0bbfb76ab061e",
+        "review_status": "pending",
+        "processing_method": "Tesseract 5.5.0 vie psm3 @216dpi"
+      }
+    ]
   }
 ]

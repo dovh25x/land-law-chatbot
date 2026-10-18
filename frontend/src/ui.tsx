@@ -114,7 +114,7 @@ export function SourcePanel({ source, citations, onSelect, onClose }: {
   }, [source])
   return <SidePanel title="Nguồn căn cứ" comparison icon={<FileText size={20}/>} onClose={onClose} footer={source && <>
     <ExternalSource url={source.url} primary>Mở nguồn chính thức</ExternalSource>
-    {citation?.source_url && <ExternalSource url={citation.source_url}>Mở trang PDF gốc</ExternalSource>}
+    {citation?.source_url && <ExternalSource url={citation.source_url}>Mở trang nguồn gốc</ExternalSource>}
   </>}>
     {!!citations.length && <nav className="source-picker" aria-label="Nguồn của đáp án"><h3>{citations.length} nguồn trong đáp án</h3>{citations.map((item, index) => <button key={item.id} aria-current={source?.id === item.id ? 'true' : undefined} onClick={() => onSelect(item)}><span className="citation-index">{index + 1}</span><span>{item.document_number || item.title}<small>{item.locator}</small></span></button>)}</nav>}
     {source ? <div ref={scrollRef} className="source-card">

@@ -63,7 +63,7 @@ test('verified SSE answer opens source and trace with keyboard dismissal', async
   await page.getByRole('button', { name: /40\/2026/ }).click()
   await expect(page.locator('[aria-label="Nguồn căn cứ"]')).toContainText(citation.excerpt)
   await expect(page.getByRole('link', { name: 'Mở nguồn chính thức' })).toHaveAttribute('href', citation.url)
-  await expect(page.getByRole('link', { name: 'Mở trang PDF gốc' })).toHaveAttribute('href', citation.source_url)
+  await expect(page.getByRole('link', { name: 'Mở trang nguồn gốc' })).toHaveAttribute('href', citation.source_url)
   await expect(page.locator('[aria-label="Nguồn căn cứ"]')).toContainText('Trang nguồn: 6')
   await page.keyboard.press('Escape')
   await expect(page.getByRole('dialog')).toHaveCount(0)

@@ -70,6 +70,18 @@ Quy trình rà soát:
 
 Sau restore phải đánh giá lại freshness. Backup không tự chứng minh nguồn còn hiện hành và không thay thế receipt rà soát.
 
+Để chuẩn bị bản sửa corpus, dùng `scripts/prepare_corpus_candidate.py --source <snapshot.json> --output <thư-mục-mới>`. Lệnh chỉ đọc raw đã duyệt ở chế độ offline, tái sử dụng chính xác vector theo title/checksum và chỉ embed đoạn mới hoặc đổi nội dung. Output gồm snapshot, backup và báo cáo; database dùng để đóng gói là SQLite tạm. Lệnh không ghi receipt freshness hoặc thay active corpus đang phục vụ.
+
+Kiểm tra bằng `scripts/audit_corpus.py --snapshot <candidate.json> --output <báo-cáo-mới.json> --replay-parser`, sau đó `scripts/evaluate_corpus_candidate.py --snapshot <candidate.json> --backup <candidate-backup.json> --output <thư-mục-mới> --postgres`. Lệnh thứ hai restore và đo retrieval riêng trên SQLite và một PostgreSQL database mới, rồi chỉ xóa database mà chính lần chạy đó tạo. Cần owner connection có quyền tạo database; không coi kết quả SQLite là kết quả PostgreSQL. Báo cáo retrieval không thay cho kiểm thử runtime role, generation hoặc review pháp lý.
+
+`coverage_passed` kiểm tra phạm vi Vành đai 4, nguồn bắt buộc và chứng cứ dự án đã duyệt. `publication_ready` còn yêu cầu embedding đầy đủ, metadata đã duyệt, không có gap, relation chưa giải quyết hoặc ingest issue. Đây là cổng kỹ thuật; vẫn cần freshness, suite khóa và các bước phát hành bên dưới.
+
+Lệnh `land-law publish` từ chối candidate không đạt coverage/dependency hoặc chưa đạt freshness, trước khi backup và đổi active state. Database staging dùng cho đánh giá không thay thế lệnh phát hành này.
+
+Khi chỉ thu gọn chỉ mục, khai báo `index_articles` cùng biên bản `index_scope_review`; giữ toàn văn raw, điều sửa đổi, định nghĩa, chuyển tiếp và các điều kiện được dẫn chiếu. Nếu chưa chứng minh đủ ngữ cảnh thì giữ nguyên toàn văn. OCR chỉ một phần PDF phải có `page_numbers` tăng dần, không trùng và `scope_review`; citation vẫn dùng số trang vật lý của PDF gốc. OCR chưa đối chiếu giữ `review_status=pending`.
+
+Với tài liệu được công bố dưới dạng ảnh, `source_pages` ánh xạ chỉ số trang toàn cục sang URL ảnh và SHA-256; manifest còn giữ path raw để kiểm tra và backup. URL CDN phải có ngữ cảnh publication chính thức. Không khai báo PDF ghép từ ảnh là PDF ký số gốc.
+
 ## Backup và khôi phục
 
 Backup công khai chỉ chứa corpus và state công khai cần khôi phục, không chứa phiên, message, trace, credential hoặc model cache.
@@ -80,6 +92,8 @@ Backup công khai chỉ chứa corpus và state công khai cần khôi phục, k
 ```
 
 Trước khi phát hành, chạy packager trên backup đã kiểm tra. Output gồm `corpus-backup.json`, `manifest.json`, `SHA256SUMS`; manifest ghi corpus ID, source commit, trạng thái working tree và hash nguồn. Working tree chưa sạch không được mô tả là release source đã commit đầy đủ.
+
+Chọn `--output` và `--receipt` mới cho mỗi lần chạy `scripts/package_release.py`; lệnh từ chối ghi đè package hoặc receipt cũ. Đóng gói local chưa phải phát hành: vẫn phải tải lại asset Release, xác minh hash và restore trước chuyển active.
 
 Khôi phục local theo [README](../README.md#2-tải-và-khôi-phục-corpus). Với PostgreSQL:
 

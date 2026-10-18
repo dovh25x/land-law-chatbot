@@ -1150,15 +1150,16 @@ async def test_planner_keeps_relevant_sources_beyond_catalogue_prefix_with_bound
     assert result['plan'].tools[0].name == 'search_law'
 
 
-async def test_assistance_list_with_gom_explains_categories_are_not_automatic_entitlements(store, settings):
+async def test_assistance_catalogue_is_published_as_verified_without_extra_conditions(store, settings):
     source = ('Điều 108. Hỗ trợ khi Nhà nước thu hồi đất. '
               '1. Hỗ trợ gồm: a) Hỗ trợ ổn định đời sống; b) Hỗ trợ ổn định sản xuất, kinh doanh.')
     release(store,[document(text=source)]);sid,_=session(store)
     draft=Draft(status='answered',claims=[Claim(text='Theo Điều 108, Nhà nước hỗ trợ gồm hỗ trợ ổn định đời sống và hỗ trợ ổn định sản xuất, kinh doanh.',citation_ids=['law-1'])])
     result=await Agent(store,FakeProvider(settings,draft=draft)).run(ChatRequest(session_id=sid,message='Các nhóm hỗ trợ là gì?',as_of=date(2024,8,2)),noop)
     assert result.status=='answered'
-    assert 'chưa phải kết luận hộ cụ thể được nhận tất cả' in result.content
-    assert result.content.count('Đây là danh mục') == 1
+    assert draft.claims[0].text in result.content
+    assert 'chưa phải kết luận hộ cụ thể được nhận tất cả' not in result.content
+    assert 'Đây là danh mục' not in result.content
 
 
 @pytest.mark.parametrize('text',[
@@ -1205,3 +1206,42 @@ async def test_price_multiple_keeps_valuation_basis_and_contracted_land_exceptio
     release(store,[document(text=source)]);sid,_=session(store)
     result=await Agent(store,FakeProvider(settings,draft=Draft(status='answered',claims=[Claim(text=claim,citation_ids=['law-1'])]))).run(ChatRequest(session_id=sid,message='Điều kiện hỗ trợ được quy định thế nào?',as_of=date(2024,8,2)),noop)
     assert result.status=='insufficient_evidence' and not result.verified_claims
+
+
+def test_image_page_citation_uses_exact_original_image_not_a_composite_pdf():
+    from landlaw.agent import citation_source_url
+    from landlaw.models import Evidence, SourcePage
+    doc = document(source_pages=[SourcePage(page_index=2,
+        url='https://xdcs.cdnchinhphu.vn/original-page-3.jpg', checksum='a'*64)])
+    chunk = doc.chunks[0].model_copy(update={'id':'law-2-0-0','page':3})
+    assert citation_source_url(Evidence(document=doc,chunk=chunk)) == 'https://xdcs.cdnchinhphu.vn/original-page-3.jpg'
+    assert citation_source_url(Evidence(document=doc,chunk=chunk.model_copy(update={'id':'law-1-0-0','page':2}))) is None
+
+
+@pytest.mark.parametrize('text,approved', [
+    ('Khi Nhà nước thu hồi đất, Nhà nước phải thực hiện hỗ trợ ổn định đời sống, hỗ trợ sản xuất, hỗ trợ tái định cư.', False),
+    ('Pháp luật quy định ba loại hỗ trợ chính: hỗ trợ ổn định đời sống, hỗ trợ sản xuất, hỗ trợ tái định cư.', False),
+    ('Để nhận hỗ trợ, hộ phải có hợp đồng giao khoán theo quy định.', False),
+    ('Ví dụ ba loại hỗ trợ trong danh mục: hỗ trợ ổn định đời sống, hỗ trợ ổn định sản xuất, hỗ trợ tái định cư.', True),
+    ('Danh mục gồm sáu loại hỗ trợ: hỗ trợ ổn định đời sống, hỗ trợ ổn định sản xuất, hỗ trợ di dời vật nuôi, hỗ trợ chuyển nghề, hỗ trợ tái định cư, hỗ trợ tháo dỡ.', True),
+])
+async def test_assistance_catalogue_cannot_be_repaired_by_a_post_verification_disclaimer(store, settings, text, approved):
+    from landlaw.models import Evidence
+    source = ('Điều 1. Các khoản hỗ trợ khi Nhà nước thu hồi đất bao gồm: '
+              'a) Hỗ trợ ổn định đời sống; b) Hỗ trợ ổn định sản xuất; c) Hỗ trợ di dời vật nuôi; '
+              'd) Hỗ trợ chuyển nghề; đ) Hỗ trợ tái định cư; e) Hỗ trợ tháo dỡ. '
+              'Người nhận giao khoán đất nông nghiệp phải có hợp đồng giao khoán nếu thuộc nhóm được quy định riêng.')
+    doc = document(text=source)
+    payload = release(store, [doc])
+    draft = Draft(status='answered', claims=[Claim(text=text, citation_ids=['law-1'])])
+    state = {'request':ChatRequest(session_id='00000000-0000-4000-8000-000000000000', message='Có những nhóm hỗ trợ nào?'),
+             'budget':Budget(), 'release':payload, 'as_of':date(2024,8,2), 'plan':Plan(),
+             'evidence':[Evidence(chunk=doc.chunks[0], document=doc, applicability='current')],
+             'draft':draft, 'trace':[], 'emit':noop}
+    agent = Agent(store, FakeProvider(settings, draft=draft))
+    await agent.verify(state)
+    assert bool(state['verification'].supported_claim_indexes) == approved
+    await agent.finish(state)
+    assert bool(state['result'].verified_claims) == approved
+    assert 'Đây là danh mục loại hỗ trợ trong nguồn' not in state['result'].content
+    assert 'Chưa giải thích điều kiện riêng' not in state['result'].content

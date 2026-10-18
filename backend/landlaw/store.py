@@ -482,6 +482,34 @@ class Store:
             title=re.sub(r'\s+\d{4}$','',title)
             return bool(re.search(r'\b'+re.escape(title)+r'(?:\s+nam)?\s+'+year[1]+r'\b',normalized_query))
         exact_docs = [d.id for d in docs.values() if exact_document(d)]
+        # Effectivity questions need the operative replacement, not only hits
+        # mentioning the old act. These are source relations, not inferred law.
+        replacement_rows = []
+        if any(term in normalized_query for term in ('hieu luc', 'thay the', 'bai bo')):
+            metadata = self.release(release_id, metadata_only=True) or {}
+            years = set(re.findall(r'\b(?:19|20)\d{2}\b', normalized_query))
+            topics = [term for term in ('boi thuong', 'tai dinh cu', 'gia dat', 'quy hoach') if term in normalized_query]
+            targets = set(exact_docs)
+            if not targets and years and topics and 'ha noi' in normalized_query:
+                targets = {d.id for d in docs.values() if d.jurisdiction.lower() == 'hanoi'
+                    and any('/'+year+'/' in (d.document_number or '') for year in years)
+                    and any(term in normalize(d.title) for term in topics)}
+            for relation in metadata.get('relations', []):
+                if len(replacement_rows) >= 6:
+                    break
+                source = docs.get(relation['source_id'])
+                if (relation['type'] != 'replaces' or relation['target_id'] not in targets or not source
+                        or source.source_kind != 'legal' or not source.applicability_verified
+                        or (project and source.project not in {None, project})
+                        or (as_of and (not source.effective_from or source.effective_from > as_of
+                            or (source.effective_to and as_of >= source.effective_to)))):
+                    continue
+                locator = relation.get('source_locator') or relation.get('locator')
+                if not locator:
+                    continue
+                opened = self.open_document(source.id, release_id, locator, query)
+                if opened:
+                    replacement_rows.extend(c.model_dump() for c in opened.chunks)
         headings = self.heading_index(release_id)
         eligible={d.id for d in docs.values() if not project or d.project in {None,project}}
         heading_scores=headings.rank(query,eligible,exact_docs)
@@ -491,7 +519,7 @@ class Store:
         heading_rows=[heading_lookup[i] for i in heading_ids]
         article = re.search(r"\bdieu\s+(\d+[a-z]?)\b", normalize(query))
         exact = []
-        if exact_docs and article:
+        if exact_docs:
             exact_sql = " AND d.id IN (" + ",".join("?" for _ in exact_docs) + ")"
             exact_params = [*params, *exact_docs]
             if article:
@@ -538,7 +566,7 @@ class Store:
                 semantic = sorted((r for r in candidates if r["embedding"] and r["embedding_model"] == embedding_model
                     and len(json.loads(r['embedding']))==len(vector)), key=cosine, reverse=True)[:20]
         scores, rows_by_id = {}, {}
-        for branch in (lexical, semantic, heading_rows, exact):
+        for branch in (lexical, semantic, heading_rows, exact, replacement_rows):
             for position, row in enumerate(branch, 1):
                 scores[row["id"]] = scores.get(row["id"], 0) + 1 / (60 + position)
                 rows_by_id[row["id"]] = row
@@ -548,6 +576,8 @@ class Store:
                 scores[chunk_id] += 0.1
             if article and row['id'] in {r['id'] for r in exact}:
                 scores[chunk_id] += 0.2
+            if row['id'] in {r['id'] for r in replacement_rows}:
+                scores[chunk_id] += 0.15
             doc=docs[row['document_id']]
             temporal=any(t in normalized_query for t in ('lich su','chuyen tiep','hieu luc','thay the','bai bo','nam 2023','nam 2013'))
             if as_of and doc.id not in exact_docs and not temporal:

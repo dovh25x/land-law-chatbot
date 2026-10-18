@@ -33,6 +33,12 @@ class SourceFile(BaseModel):
         return self
 
 
+class SourcePage(BaseModel):
+    page_index: int = Field(ge=0)
+    url: HttpUrl
+    checksum: str = Field(pattern=r'^[0-9a-f]{64}$')
+
+
 class Document(BaseModel):
     id: str
     title: str
@@ -53,6 +59,7 @@ class Document(BaseModel):
     checksum: str
     source_review_notes: str = ''
     source_files: list[SourceFile] = Field(default_factory=list)
+    source_pages: list[SourcePage] = Field(default_factory=list)
     chunks: list[Chunk] = Field(default_factory=list)
 
 

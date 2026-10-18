@@ -331,11 +331,16 @@ async def collect_source(source, settings, client, offline=False, allow_ocr=Fals
                 ocr_pages = ocr_bytes.decode("utf-8").split("\f")
                 if ocr_pages and not ocr_pages[-1].strip():
                     ocr_pages.pop()
-                if len(ocr_pages) != len(PdfReader(io.BytesIO(content)).pages):
+                total_pages = len(PdfReader(io.BytesIO(content)).pages)
+                page_numbers = sidecar.get('page_numbers', list(range(1, total_pages+1)))
+                if (len(ocr_pages) != len(page_numbers)
+                        or any(type(n) is not int or not 1 <= n <= total_pages for n in page_numbers)
+                        or page_numbers != sorted(set(page_numbers))
+                        or (len(page_numbers) != total_pages and not sidecar.get('scope_review'))):
                     raise Quarantine("OCR sidecar page count mismatch")
                 if any(len(text.strip()) < 60 or text.count("�") > 2 for text in ocr_pages):
                     raise Quarantine("OCR sidecar contains low quality pages")
-                pages.extend((index+1, text) for index, text in enumerate(ocr_pages))
+                pages.extend(zip(page_numbers, ocr_pages, strict=True))
             else:
                 parse_cache = settings.data_dir / "checkpoints" / f"parse-layout-v4-{digest(content)}.json"
                 if parse_cache.exists():
@@ -357,6 +362,17 @@ async def collect_source(source, settings, client, offline=False, allow_ocr=Fals
     if source.get("contains_personal_data") and source.get("anonymisation_reviewed") is not True:
         raise Quarantine("Individual records require anonymisation review")
     checksum = hashlib.sha256(b"".join(contents)).hexdigest()
+    source_pages = source.get('source_pages', [])
+    page_indexes = set()
+    for page_source in source_pages:
+        path = Path(page_source['path'])
+        index = page_source['page_index']
+        if (not path.resolve().is_relative_to(raw_dir.resolve())
+                or type(index) is not int or index in page_indexes or not 0 <= index < len(pages)
+                or digest(path.read_bytes()) != page_source['checksum']
+                or not official_url(page_source['url'], source.get('publication_url') or source['url'])):
+            raise Quarantine('Source page provenance is not verified')
+        page_indexes.add(index)
     legal_verified = source.get("review_status") == "verified" and bool(source.get("effective_from"))
     doc = Document(id=source_id, title=source["title"], url=source["url"], publication_url=source.get("publication_url"),
         source_kind=source["source_kind"], document_number=source.get("document_number"), issuer=source.get("issuer"),
@@ -366,6 +382,7 @@ async def collect_source(source, settings, client, offline=False, allow_ocr=Fals
         provision_validity=source.get("provision_validity", []),
         source_review_notes=source.get('source_review_notes', ''),
         source_files=source_files,
+        source_pages=source_pages,
         checked_at=datetime.fromisoformat(source["checked_at"].replace("Z", "+00:00")) if offline else utcnow(), checksum=checksum,
         chunks=chunks_for(source_id, pages, source.get('expected_article_count')))
     indexed_articles = source.get('index_articles')
@@ -490,7 +507,7 @@ async def build_corpus(settings: Settings, provider: GroqProvider | None, offlin
     embedding_contract = contract(settings)
     content_hash = digest(json.dumps({"documents": documents, "relations": valid_relations,
         "unresolved_relations":unresolved,'coverage_gaps':gaps,'embedding_contract':embedding_contract,
-        "place_aliases": aliases, "embedding_model": settings.embedding_model, "parser_version": 14}, sort_keys=True, ensure_ascii=False))[:16]
+        "place_aliases": aliases, "embedding_model": settings.embedding_model, "parser_version": 15}, sort_keys=True, ensure_ascii=False))[:16]
     payload = {"id": f"corpus-{content_hash}", "checked_at": min((d["checked_at"] for d in documents), default=utcnow().isoformat()), "documents": documents,
                "relations": valid_relations, "place_aliases": aliases, "embedding_model": settings.embedding_model,
                "embedding_dimensions":settings.embedding_dimensions,'embedding_contract':embedding_contract,
@@ -505,15 +522,21 @@ async def build_corpus(settings: Settings, provider: GroqProvider | None, offlin
 def coverage(payload, issues=None):
     docs = payload["documents"]
     legal = sum(d["source_kind"] == "legal" for d in docs)
-    projects = {p: sum(d.get("project") == p for d in docs) for p in ("ring4", "songhong", "olympic")}
+    projects = {'ring4': sum(d.get('project') == 'ring4' for d in docs)}
+    scope_valid = all(d.get('project') in {None, 'ring4'} for d in docs)
     verified = sum(d.get("applicability_verified", False) for d in docs if d["source_kind"] == "legal")
     dimensions = payload.get('embedding_dimensions',768)
     embedded = all(c.get("embedding") and len(c["embedding"]) == dimensions for d in docs for c in d["chunks"])
     mandatory = {"luat-dat-dai-2024", "nd-88-2024", "nd-226-2025", "qd-56-2024-hanoi", "qd-40-2026-hanoi", "nq-52-2025-hanoi"}
     missing = sorted(mandatory - {d["id"] for d in docs})
+    project_evidence = any(d.get('project') == 'ring4' and d['source_kind'] == 'project_decision'
+                           and d.get('applicability_verified') for d in docs)
+    covered = not missing and project_evidence and scope_valid
+    dependencies_complete = not payload.get('coverage_gaps') and not payload.get('unresolved_relations')
     return {"release": payload["id"], "documents": len(docs), "legal": legal, "verified_legal": verified,
             "projects": projects, "chunks": sum(len(d["chunks"]) for d in docs), "embedded": bool(docs and embedded),
-            "coverage_passed": legal >= 30 and all(n >= 5 for n in projects.values()),
+            "coverage_passed": covered, "scope_valid": scope_valid,
             "missing_mandatory_sources": missing,
-            "publication_ready": not missing and legal >= 30 and verified == legal and all(n >= 5 for n in projects.values()) and bool(docs and embedded),
+            "publication_ready": covered and dependencies_complete and not issues and verified == legal and bool(docs and embedded),
+            "dependencies_complete": dependencies_complete,
             "issues": issues or [], "checked_at": payload["checked_at"]}

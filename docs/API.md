@@ -84,6 +84,8 @@ Khi request được chấp nhận, response có `Content-Type: text/event-strea
 
 Kết quả gồm `content`, `citations`, `trace`, `trace_id`, corpus/model identity và các chỉ số `llm_calls`, `tool_calls`, `token_usage`, `elapsed_ms`. Citation chứa nguồn, locator, excerpt, ngày kiểm tra và trang/URL nguồn bổ sung khi có. Schema chi tiết nằm trong `backend/landlaw/models.py`.
 
+`citation.source_url` trỏ tới đúng trang PDF gốc (`#page=...`) khi có attachment được kiểm tra, hoặc tới ảnh trang gốc nếu nguồn công bố bằng ảnh. Client hiển thị liên kết “Mở trang nguồn gốc”; không suy định mọi URL này đều là PDF ký số. Không có ánh xạ xuất xứ chính xác thì trường này để trống.
+
 ## Gửi trùng, hủy và mất kết nối
 
 Một phiên chỉ có một lượt đang chạy. Lease tự hết hạn khi worker không hoàn tất. Trong thời gian metadata còn được lưu, cùng `request_id` không được gọi LLM lần nữa, kể cả lượt trước đã lỗi. Request trùng hoặc phiên bận trả `409` và không cung cấp replay. Đây không phải cam kết chống trùng vĩnh viễn sau khi metadata đã được cleanup; client phải tạo UUID mới cho mỗi lượt mới.

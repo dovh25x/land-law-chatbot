@@ -290,6 +290,6 @@ async def evaluate_retrieval(settings, store, provider, split='smoke'):
               'gold_recall_at_8':statistics.mean(r['gold_recall_at_8'] for r in rows) if rows else None,
               'history_groups':{str(h):{'cases':len(g:=[r for r in rows if r['has_history']==h]),'gold_recall_at_8':statistics.mean(r['gold_recall_at_8'] for r in g) if g else None} for h in [False,True]},
               'generation_calls': 0, 'results': rows,
-              'scope': 'Raw-question hybrid search without history rewriting, article routing or legal-relation expansion; any gold chunk in top 8 counts as a hit. Not legal answer accuracy.'}
+              'scope': 'Raw-question hybrid search including bounded source-replacement candidates; no history rewriting or agent tool calls. Any gold chunk in top 8 counts as a hit. Not legal answer accuracy.'}
     json_write(settings.reports_dir / 'retrieval' / f'{split}.json', report)
     return report

@@ -1,5 +1,6 @@
 """Academic publication status; never a legal certification."""
 import math
+import re
 
 
 def public_status(release, publication=None):
@@ -21,6 +22,14 @@ def validate_corpus(release, corpus=None):
             raise ValueError('Missing source provenance')
         if not official_url(doc['url'],doc.get('publication_url')):
             raise ValueError('Official source required')
+        indexes = set()
+        for page in doc.get('source_pages', []):
+            index = page.get('page_index')
+            if (type(index) is not int or index < 0 or index in indexes
+                    or not re.fullmatch(r'[0-9a-f]{64}', page.get('checksum', ''))
+                    or not official_url(page['url'], doc.get('publication_url') or doc['url'])):
+                raise ValueError('Invalid source page provenance')
+            indexes.add(index)
         for chunk in doc['chunks']:
             vector=chunk.get('embedding') or []
             if len(vector)!=MODEL['dimensions'] or not all(type(x) in (int,float) and math.isfinite(x) for x in vector) or not any(vector):

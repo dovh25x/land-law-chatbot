@@ -194,3 +194,24 @@ def test_open_article_keeps_opening_scope_alongside_relevant_continuation(store)
     assert len(opened.chunks) == 3
     assert opened.chunks[0].id == 'law-0'
     assert {c.id for c in opened.chunks} == {'law-0', 'law-2', 'law-3'}
+
+
+@pytest.mark.parametrize('query',[
+    'QD 17/2021/QD-UBND Ha Noi con hieu luc khong?',
+    'Quy định bồi thường Hà Nội năm 2021 đã bị thay thế thì tra văn bản nào?',
+])
+def test_effectivity_search_retains_source_verified_replacement_clause(store, query):
+    from datetime import date
+    from landlaw.models import Relation
+    old=document('old-rule',text='Điều 1. Quy định bồi thường theo hồ sơ.',
+        document_number='17/2021/QĐ-UBND')
+    old.jurisdiction='Hanoi';old.title='Quy định bồi thường Hà Nội';old.effective_from=date(2021,1,1)
+    old.effective_to=date(2025,1,1)
+    new=document('replacement',text='Điều 2. Quyết định này có hiệu lực từ ngày 01/01/2025 và thay thế Quyết định 17/2021/QĐ-UBND.',
+        document_number='24/2025/QĐ-UBND')
+    new.chunks[0].locator='Điều 2';new.effective_from=date(2025,1,1)
+    relation=Relation(source_id=new.id,target_id=old.id,type='replaces',source_locator='Điều 2',
+        source_url=new.url,explanation='Literal replacement clause reviewed in the source.')
+    release(store,[old,new],relations=[relation.model_dump(mode='json')])
+    assert store.search(query,as_of=date(2025,2,1))[0].chunk.id=='replacement-1'
+    assert store.search(query,as_of=date(2022,2,1))[0].chunk.id!='replacement-1'

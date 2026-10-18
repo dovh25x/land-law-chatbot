@@ -115,6 +115,9 @@ def citation_source_url(item):
     index = item.chunk.id[len(prefix):].split('-', 1)[0]
     if not index.isdigit():
         return None
+    for source in item.document.source_pages:
+        if source.page_index == int(index):
+            return str(source.url)
     for source in item.document.source_files:
         if source.first_page_index <= int(index) <= source.last_page_index:
             return str(source.url).split('#')[0] + f'#page={item.chunk.page}'
@@ -1064,6 +1067,21 @@ class Agent:
                    (evidence[i].applicability=='future' and claim.kind!='applicability')) for i in claim.citation_ids):
                 structural_issues.append(f"Claim {index}: căn cứ chưa xác minh tính áp dụng")
             normalized_claim=normalize(claim.text)
+            assistance_list = ('ho tro' in normalized_claim and normalized_claim.count('ho tro') >= 3)
+            if assistance_list and re.search(r'\b(?:nha nuoc|moi ho|cac ho).*\bphai (?:thuc hien|duoc|nhan)\b', normalized_claim):
+                structural_issues.append(f'Claim {index}: danh mục hỗ trợ không chứng minh nghĩa vụ áp dụng mọi khoản cho mọi trường hợp; cần viết đúng phạm vi ngay trong claim')
+            category_count = re.search(r'\b(hai|ba|bon|nam|sau|bay|tam|chin|muoi|\d+)\s+(?:loai|nhom)\s+ho tro(?:\s+chinh)?\b', normalized_claim)
+            example_list = category_count and re.search(r'\b(?:vi du|mot so|it nhat|chang han|trong do)\b', normalized_claim[:category_count.start()][-60:])
+            if assistance_list and category_count and not example_list:
+                cited_passages = [normalize(evidence[c].chunk.text) for c in claim.citation_ids if c in evidence]
+                counts = {'hai':2, 'ba':3, 'bon':4, 'nam':5, 'sau':6, 'bay':7, 'tam':8, 'chin':9, 'muoi':10}
+                expected = int(category_count[1]) if category_count[1].isdigit() else counts[category_count[1]]
+                if not any('bao gom' in text and len(re.findall(r'\b[a-zđ]\)\s+ho tro\b', text)) == expected
+                           for text in cited_passages):
+                    structural_issues.append(f'Claim {index}: không suy số nhóm hỗ trợ chung từ nhiều điều quy định từng khoản riêng; cần nguồn danh mục và không tự giới hạn số nhóm')
+            if ('phai co hop dong giao khoan' in normalized_claim
+                    and not any(term in normalized_claim for term in ('nhan giao khoan', 'dat nong nghiep', 'nong truong', 'lam truong'))):
+                structural_issues.append(f'Claim {index}: không biến điều kiện hợp đồng giao khoán của nhóm sử dụng đất cụ thể thành điều kiện chung nhận hỗ trợ')
             groups=('cong dong dan cu','to chuc ton giao','to chuc nuoc ngoai','to chuc kinh te','nguoi goc viet nam')
             source_body=normalize(' '.join(evidence[c].chunk.text for c in claim.citation_ids if c in evidence))
             prefix=re.match(r'^(?:khi|neu|truong hop)\b([^,;.]{0,200})',normalized_claim)
@@ -1392,8 +1410,6 @@ class Agent:
         if missing and status == "answered":
             status = "clarification_needed"
             content = content.replace("Đã đối chiếu các căn cứ dưới đây.", "Cần bổ sung dữ kiện để xác định quy định áp dụng cho hồ sơ cụ thể.", 1)
-        if claims and any('ho tro' in normalize(c.text) and ('gom' in normalize(c.text) or 'cac nhom' in normalize(c.text) or normalize(c.text).count('ho tro') >= 3) for c in claims):
-            content+='\n\nĐây là danh mục loại hỗ trợ trong nguồn, chưa phải kết luận hộ cụ thể được nhận tất cả. Chưa giải thích điều kiện riêng nếu điều khoản dẫn chiếu chưa được mở.'
         if missing:
             content += "\n\nThông tin cần bổ sung:\n" + "\n".join(f"- {x}" for x in missing)
         historical_question = state['as_of'] < date(2026,4,2) and any(number in normalize(state['request'].message)
