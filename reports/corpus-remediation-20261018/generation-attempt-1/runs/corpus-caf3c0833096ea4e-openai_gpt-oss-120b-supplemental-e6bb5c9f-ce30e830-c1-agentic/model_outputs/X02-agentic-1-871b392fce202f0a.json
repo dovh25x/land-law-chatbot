@@ -1,0 +1,30 @@
+{
+  "scope": "Unverified structured model output for developer diagnosis; never delivered as a chatbot answer. No hidden reasoning.",
+  "schema": "Plan",
+  "case_mode": "X02-agentic",
+  "llm_calls": 1,
+  "output": {
+    "tools": [
+      {
+        "name": "open_article",
+        "query": "Điều 22",
+        "document_id": "nd-88-2024",
+        "locator": "Điều 22"
+      },
+      {
+        "name": "open_article",
+        "query": "Điều 23",
+        "document_id": "nd-88-2024",
+        "locator": "Điều 23"
+      },
+      {
+        "name": "open_article",
+        "query": "Điều 19",
+        "document_id": "nd-88-2024",
+        "locator": "Điều 19"
+      }
+    ],
+    "missing_facts": [],
+    "out_of_scope": false
+  }
+}

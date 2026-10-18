@@ -1,0 +1,26 @@
+{
+  "X01": {
+    "answer_sha256": "690a07226315c06db8b36528437e13a5cdec64a4c4cc71bef8574d0c75cb6435",
+    "verdict": "pass",
+    "note": "Đủ chi phí tháo dỡ/di chuyển/lắp đặt và thiệt hại máy móc, không định giá.",
+    "review_method": "AI engineering review against frozen rubric and cited source excerpts; not independent legal certification"
+  },
+  "X02": {
+    "answer_sha256": "20b780be41b427e74440353142f89bc274073a540d56d7a37546d9bf105dff79",
+    "verdict": "fail",
+    "note": "Guard chặn khái quát sai danh mục/điều kiện; kết quả abstain an toàn nhưng chưa đáp ứng nội dung, không tính pass.",
+    "review_method": "AI engineering review against frozen rubric and cited source excerpts; not independent legal certification"
+  },
+  "X03": {
+    "answer_sha256": "248fd195da107e69319dc17073424d6bfb732fa8a159afc8cef1252b6ea6497d",
+    "verdict": "fail",
+    "note": "Chưa trả lời phân biệt đối tượng và điều kiện, quota/retry được giữ trong telemetry.",
+    "review_method": "AI engineering review against frozen rubric and cited source excerpts; not independent legal certification"
+  },
+  "X04": {
+    "answer_sha256": "912b2924a9cdf14317b0d4751271329f60f56fba16e07f8a52002afa1d0b794b",
+    "verdict": "pass",
+    "note": "Không xác nhận số hiệu hoặc tiền; nêu giới hạn corpus và cần nguồn chính thức.",
+    "review_method": "AI engineering review against frozen rubric and cited source excerpts; not independent legal certification"
+  }
+}

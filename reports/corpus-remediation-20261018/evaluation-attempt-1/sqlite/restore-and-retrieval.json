@@ -1,0 +1,49 @@
+{
+  "checked_at": "2026-10-18T17:11:45.479726+00:00",
+  "restored_exactly": true,
+  "corpus_id": "corpus-caf3c0833096ea4e",
+  "snapshot_sha256": "760fa11c826f4d6bc45843aa7e70dc267f76fafd60f233e985737f4a896dc705",
+  "backup_sha256": "c8a5d13dfa5b0ae3d6ddef29acc50580ddca4ea8dcaabe9f7f736db50fe60736",
+  "generation_calls": 0,
+  "coverage": {
+    "release": "corpus-caf3c0833096ea4e",
+    "documents": 59,
+    "legal": 54,
+    "verified_legal": 54,
+    "projects": {
+      "ring4": 5
+    },
+    "chunks": 7388,
+    "embedded": true,
+    "coverage_passed": true,
+    "scope_valid": true,
+    "missing_mandatory_sources": [],
+    "publication_ready": false,
+    "dependencies_complete": false,
+    "issues": [],
+    "checked_at": "2026-10-11T17:32:27Z"
+  },
+  "retrieval": [
+    {
+      "split": "smoke",
+      "backend": "sqlite",
+      "gold_recall_at_8": 0.9090909090909091,
+      "hits": 10,
+      "eligible_cases": 11
+    },
+    {
+      "split": "supplemental",
+      "backend": "sqlite",
+      "gold_recall_at_8": 1.0,
+      "hits": 3,
+      "eligible_cases": 3
+    },
+    {
+      "split": "natural",
+      "backend": "sqlite",
+      "gold_recall_at_8": 0.9166666666666666,
+      "hits": 6,
+      "eligible_cases": 6
+    }
+  ]
+}

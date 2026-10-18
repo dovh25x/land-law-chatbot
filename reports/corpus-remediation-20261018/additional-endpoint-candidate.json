@@ -1,0 +1,47 @@
+{
+  "url": "https://storage-vnportal.vnpt.vn/gov-hni/CrawlDownloads/vanban-hanoi-gov-vn/documents/10182/2518750/QDPQ-20-2022.pdf",
+  "status": 200,
+  "pdf": true,
+  "path": "data/raw/qd-20-2022-archive-candidate.pdf",
+  "sha256": "457ac95ed3619bf837d54a6c6c40ba12948659251646de15570302dbc09ccc0e",
+  "pages": 3,
+  "chars": 0,
+  "document_id": "qd-20-2022-hanoi",
+  "review_status": "pending",
+  "notes": "Kho archive Hà Nội có scan 3 trang, OCR ứng viên. Chưa xác minh publication hiện tại, sửa OCR ngày và chuỗi điều kiện/chuyển tiếp. Không thêm vào serving manifest để giải quyết endpoint một cách hình thức.",
+  "ocr_candidate": {
+    "review_status": "pending",
+    "engine": "tesseract 5.5.0",
+    "language": "vie",
+    "source_pdf_sha256": "457ac95ed3619bf837d54a6c6c40ba12948659251646de15570302dbc09ccc0e",
+    "ocr_sha256": "25e9809249af0e4466c8f2208f0fd06e694fb30c8a56ee42c7617fdccbb732ea",
+    "generated_at": "2026-10-18T17:22:01.802204+00:00",
+    "pages": [
+      {
+        "page": 1,
+        "characters": 1882,
+        "words": 381,
+        "mean_word_confidence": 91.76,
+        "needs_attention": false,
+        "review_status": "pending"
+      },
+      {
+        "page": 2,
+        "characters": 1741,
+        "words": 389,
+        "mean_word_confidence": 93.85,
+        "needs_attention": false,
+        "review_status": "pending"
+      },
+      {
+        "page": 3,
+        "characters": 14,
+        "words": 2,
+        "mean_word_confidence": 8.94,
+        "needs_attention": true,
+        "review_status": "pending"
+      }
+    ],
+    "scope": "OCR diagnostics only; confidence does not certify legal text, dates, numbers or applicability."
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "scope": "Unverified structured model output for developer diagnosis; never delivered as a chatbot answer. No hidden reasoning.",
+  "schema": "Draft",
+  "case_mode": "X03-agentic",
+  "llm_calls": 1,
+  "output": {
+    "status": "answered",
+    "summary": "",
+    "claims": [
+      {
+        "kind": "legal_rule",
+        "text": "Theo Điều 95 Luật Đất đai 2024, người chưa có Giấy chứng nhận quyền sử dụng đất (sổ đỏ) có thể được bồi thường về đất khi đáp ứng một trong các điều kiện sau: a) có quyết định giao đất, quyết định cho thuê đất hoặc quyết định cho phép chuyển mục đích sử dụng đất của cơ quan nhà nước có thẩm quyền; b) thuộc các đối tượng được quy định tại khoản 1 Điều 95 (ví dụ: hộ gia đình, cá nhân đang sử dụng đất không phải là đất thuê trả tiền thuê đất hằng năm).",
+        "citation_ids": [
+          "C2",
+          "C3"
+        ]
+      },
+      {
+        "kind": "legal_rule",
+        "text": "Đối tượng được bồi thường bao gồm: • Hộ gia đình, cá nhân đang sử dụng đất không phải là đất thuê trả tiền thuê đất hằng năm (theo khoản a Điều 95); • Cộng đồng dân cư có công trình tín ngưỡng; • Người gốc Việt Nam định cư ở nước ngoài; • Tổ chức tôn giáo, tổ chức kinh tế, tổ chức nước ngoài có chức năng ngoại giao, và các tổ chức khác được Nhà nước giao hoặc cho thuê đất theo các quy định cụ thể (theo khoản b‑h Điều 95).",
+        "citation_ids": [
+          "C3"
+        ]
+      }
+    ],
+    "missing_facts": [],
+    "next_steps": [],
+    "out_of_scope": false
+  }
+}

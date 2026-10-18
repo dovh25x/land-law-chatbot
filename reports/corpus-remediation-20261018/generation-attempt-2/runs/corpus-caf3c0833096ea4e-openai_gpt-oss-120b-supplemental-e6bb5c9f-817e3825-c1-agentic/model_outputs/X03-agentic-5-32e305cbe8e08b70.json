@@ -1,0 +1,36 @@
+{
+  "scope": "Unverified structured model output for developer diagnosis; never delivered as a chatbot answer. No hidden reasoning.",
+  "schema": "Draft",
+  "case_mode": "X03-agentic",
+  "llm_calls": 5,
+  "output": {
+    "status": "answered",
+    "summary": "",
+    "claims": [
+      {
+        "kind": "legal_rule",
+        "text": "Nếu người chưa có sổ đỏ (không có Giấy chứng nhận quyền sử dụng đất), nhưng thuộc hộ gia đình, cá nhân đang sử dụng đất không phải là đất thuê trả tiền thuê đất hằng năm, thì vẫn được bồi thường khi Nhà nước thu hồi đất vì mục đích quốc phòng, an ninh hoặc phát triển kinh tế - xã hội vì lợi ích quốc gia, công cộng (Điều 95 khoản 1 a) – C2).",
+        "citation_ids": [
+          "C2"
+        ]
+      },
+      {
+        "kind": "legal_rule",
+        "text": "Người chưa có sổ đỏ có thể được bồi thường nếu đáp ứng một trong các điều kiện sau: (a) có Giấy chứng nhận quyền sử dụng đất hoặc Giấy chứng nhận quyền sở hữu nhà ở và quyền sử dụng đất (hoặc các giấy chứng nhận tương đương) – C3; hoặc (b) có quyết định giao đất, quyết định cho thuê đất, hoặc quyết định cho phép chuyển mục đích sử dụng đất của cơ quan nhà nước có thẩm quyền – C3.",
+        "citation_ids": [
+          "C3"
+        ]
+      },
+      {
+        "kind": "legal_rule",
+        "text": "Ngoài các trường hợp trên, các đối tượng đặc biệt như cộng đồng dân cư có công trình tín ngưỡng, người gốc Việt Nam định cư ở nước ngoài, tổ chức tôn giáo, tổ chức nước ngoài có chức năng ngoại giao, và tổ chức kinh tế (có hoặc không có sổ đỏ) cũng được bồi thường khi đáp ứng điều kiện có giấy chứng nhận hoặc quyết định giao/cho thuê đất như quy định tại khoản 2 Điều 95 (C4).",
+        "citation_ids": [
+          "C4"
+        ]
+      }
+    ],
+    "missing_facts": [],
+    "next_steps": [],
+    "out_of_scope": false
+  }
+}

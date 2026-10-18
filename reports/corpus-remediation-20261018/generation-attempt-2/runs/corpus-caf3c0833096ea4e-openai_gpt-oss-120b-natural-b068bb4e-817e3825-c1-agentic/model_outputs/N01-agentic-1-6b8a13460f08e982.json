@@ -1,0 +1,24 @@
+{
+  "scope": "Unverified structured model output for developer diagnosis; never delivered as a chatbot answer. No hidden reasoning.",
+  "schema": "Plan",
+  "case_mode": "N01-agentic",
+  "llm_calls": 1,
+  "output": {
+    "tools": [
+      {
+        "name": "open_article",
+        "query": "Bồi thường chi phí di chuyển tài sản khi Nhà nước thu hồi đất",
+        "document_id": "luat-dat-dai-2024",
+        "locator": "Điều 104"
+      },
+      {
+        "name": "open_article",
+        "query": "Bồi thường, hỗ trợ, tái định cư khi Nhà nước thu hồi đất đối với các trường hợp đặc biệt",
+        "document_id": "nd-88-2024",
+        "locator": "Điều 15"
+      }
+    ],
+    "missing_facts": [],
+    "out_of_scope": false
+  }
+}

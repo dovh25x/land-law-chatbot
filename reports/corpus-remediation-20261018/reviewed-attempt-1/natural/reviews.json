@@ -1,0 +1,50 @@
+{
+  "N01": {
+    "answer_sha256": "1ed65b06cf84242fab4121486a58843ae0d494f8ca9ac914a784a434074e81fd",
+    "verdict": "pass",
+    "note": "Phân biệt chi phí di chuyển và thiệt hại máy móc, không cam kết mức tiền.",
+    "review_method": "AI engineering review against frozen rubric and cited source excerpts; not independent legal certification"
+  },
+  "N02": {
+    "answer_sha256": "69157c3ea796e4e9e09d56ff01a496e66a7b04b3bd10d97bbe4e64aa705b97f3",
+    "verdict": "fail",
+    "note": "Không trả lời được điều kiện hỗ trợ ổn định đời sống; abstain không tính là đúng nội dung.",
+    "review_method": "AI engineering review against frozen rubric and cited source excerpts; not independent legal certification"
+  },
+  "N03": {
+    "answer_sha256": "e9b69d8eacd43c3638440a50168c012f5520cc715b80166648da420b057b38d1",
+    "verdict": "fail",
+    "note": "Không trả lời được quy định chuyển nghề/tìm việc; không tính abstain là pass.",
+    "review_method": "AI engineering review against frozen rubric and cited source excerpts; not independent legal certification"
+  },
+  "N04": {
+    "answer_sha256": "e2d659c15ec309cc769369f1546e3e87b5843b91481e59a3aaafe62e34a93494",
+    "verdict": "fail",
+    "note": "Giới hạn sáu request bị tiêu bởi quota/retry; giữ failure trong mẫu.",
+    "review_method": "AI engineering review against frozen rubric and cited source excerpts; not independent legal certification"
+  },
+  "N05": {
+    "answer_sha256": "de84b65f66c3c5d052645802278f7c9c48297ee9cfa25bd68a7126958f37e2d7",
+    "verdict": "pass",
+    "note": "Đúng UBND cấp tỉnh theo khoản 2 Điều 104.",
+    "review_method": "AI engineering review against frozen rubric and cited source excerpts; not independent legal certification"
+  },
+  "N06": {
+    "answer_sha256": "d2e9af615c5e415b2cd53ac7ff8c2f5c30931548341203780566a88fe9f69696",
+    "verdict": "fail",
+    "note": "Raw retrieval đã thấy nguồn thay thế, nhưng agent chưa phát được kết luận đủ phạm vi. Không coi raw recall là chất lượng answer.",
+    "review_method": "AI engineering review against frozen rubric and cited source excerpts; not independent legal certification"
+  },
+  "N07": {
+    "answer_sha256": "8b0d79742d51e4b56242667e95b8ac847a0c84ecb40f8a5f4dcc5a8515c03422",
+    "verdict": "pass",
+    "note": "Không bảo đảm suất tái định cư, yêu cầu điều kiện/hồ sơ/thời điểm.",
+    "review_method": "AI engineering review against frozen rubric and cited source excerpts; not independent legal certification"
+  },
+  "N08": {
+    "answer_sha256": "d49f04fee26781178b4ab3a88e25bc31e9b9e12c5c2503ec7714136e18c374bd",
+    "verdict": "pass",
+    "note": "Không xác nhận văn bản giả hoặc khoản tiền, không suy sự tồn tại từ corpus.",
+    "review_method": "AI engineering review against frozen rubric and cited source excerpts; not independent legal certification"
+  }
+}

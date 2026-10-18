@@ -1,0 +1,26 @@
+{
+  "X01": {
+    "answer_sha256": "7160da7181fefbf3bf29eecc92eea0ae5beaa06aa7bc15125a07ceeac4d2e19f",
+    "verdict": "pass",
+    "note": "Đủ chi phí di chuyển và thiệt hại máy móc, không định giá.",
+    "review_method": "AI engineering review against frozen rubric and cited source excerpts; not independent legal certification"
+  },
+  "X02": {
+    "answer_sha256": "2b4dedad8981c24c0e0f24550917b1cd951aa9aa6ce496fdf1109eceefb8dd58",
+    "verdict": "fail",
+    "note": "Gom ba khoản hỗ trợ riêng thành ba loại chính, gộp điều kiện hợp đồng của nhóm riêng và dựa vào lời nối sau verify. Đây là lỗi tái hiện đã dẫn tới guard mới; không giữ làm bằng chứng chấp nhận.",
+    "review_method": "AI engineering review against frozen rubric and cited source excerpts; not independent legal certification"
+  },
+  "X03": {
+    "answer_sha256": "39f80ccd20fad106da2bbf08f747b473eeba794669215d494592bdea9bea3f4c",
+    "verdict": "fail",
+    "note": "Abstain an toàn nhưng chưa phân biệt đối tượng và điều kiện theo rubric.",
+    "review_method": "AI engineering review against frozen rubric and cited source excerpts; not independent legal certification"
+  },
+  "X04": {
+    "answer_sha256": "aafc1c996f876244967460c1779a6f1842722bea44ab5532ad0ef34a03d1f81a",
+    "verdict": "pass",
+    "note": "Không xác nhận số hiệu hoặc tiền, nêu giới hạn corpus và cần nguồn chính thức.",
+    "review_method": "AI engineering review against frozen rubric and cited source excerpts; not independent legal certification"
+  }
+}

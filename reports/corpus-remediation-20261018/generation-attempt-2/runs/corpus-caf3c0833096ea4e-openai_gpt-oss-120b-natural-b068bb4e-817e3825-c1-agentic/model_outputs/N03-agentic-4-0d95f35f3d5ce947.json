@@ -1,0 +1,29 @@
+{
+  "scope": "Unverified structured model output for developer diagnosis; never delivered as a chatbot answer. No hidden reasoning.",
+  "schema": "Draft",
+  "case_mode": "N03-agentic",
+  "llm_calls": 4,
+  "output": {
+    "status": "answered",
+    "summary": "",
+    "claims": [
+      {
+        "kind": "legal_rule",
+        "text": "Hộ gia đình, cá nhân trực tiếp sản xuất nông nghiệp và mất đất do Nhà nước thu hồi được hưởng hỗ trợ đào tạo, chuyển đổi nghề và tìm kiếm việc làm theo khoản 2 Điều 109 của Luật Đất đai.",
+        "citation_ids": [
+          "C1"
+        ]
+      },
+      {
+        "kind": "legal_rule",
+        "text": "Đối tượng này được quy định trong khoản a) của khoản 1 Điều 109, trong đó nêu rõ hộ gia đình, cá nhân trực tiếp sản xuất nông nghiệp đang sử dụng đất nông nghiệp do Nhà nước giao và khi không có đất để bồi thường mà đã được bồi thường bằng tiền.",
+        "citation_ids": [
+          "C2"
+        ]
+      }
+    ],
+    "missing_facts": [],
+    "next_steps": [],
+    "out_of_scope": false
+  }
+}

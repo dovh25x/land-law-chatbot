@@ -1,0 +1,20 @@
+{
+  "N01": {
+    "answer_sha256": "b7d774fa28225f6a16d2d023c6ca10a075ea3eeb14f06da872e645b7860dd90c",
+    "verdict": "fail",
+    "note": "Lượt bị limited khi chạm TPD Groq; failure thực thi, không có đủ kết quả để chấm đúng nội dung.",
+    "review_method": "AI engineering review against frozen rubric and cited source excerpts; not independent legal certification"
+  },
+  "N07": {
+    "answer_sha256": "5696c537a788f04ecef4bcb9563d48a3bea1d90efc8449b26f47ad63b1ebee36",
+    "verdict": "pass",
+    "note": "Nhánh tất định: không bảo đảm suất, hỏi điều kiện/hồ sơ/thời điểm. Provider bị khóa và xác minh 0 request.",
+    "review_method": "AI engineering review against frozen rubric and cited source excerpts; not independent legal certification"
+  },
+  "N08": {
+    "answer_sha256": "51ea408f3a258ffcb3087e339822511672f1e0ef351dcaaf4f46c4eb732c51b1",
+    "verdict": "pass",
+    "note": "Nhánh tất định: không xác nhận số hiệu giả hoặc tiền. Provider bị khóa và xác minh 0 request.",
+    "review_method": "AI engineering review against frozen rubric and cited source excerpts; not independent legal certification"
+  }
+}

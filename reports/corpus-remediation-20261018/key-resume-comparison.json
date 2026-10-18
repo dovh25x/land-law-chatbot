@@ -1,0 +1,26 @@
+{
+  "scope": "Observed execution comparison, same frozen cases/corpus/runtime; not proof of a higher quota or legal correctness",
+  "model": "openai/gpt-oss-120b",
+  "tokens_per_minute": 8000,
+  "small_probe_http_status": 200,
+  "before_latest_config": {
+    "N01": "limited",
+    "N03": "limited",
+    "N06": "limited"
+  },
+  "after_latest_config": {
+    "N01": "answered",
+    "N03": "limited",
+    "N06": "answered"
+  },
+  "latest_natural_review": {
+    "pass": 4,
+    "partial": 1,
+    "fail": 3,
+    "content_pass": 2,
+    "content_total": 6
+  },
+  "all_model_attempts_retained": true,
+  "turn_budgets_unchanged": true,
+  "published": false
+}

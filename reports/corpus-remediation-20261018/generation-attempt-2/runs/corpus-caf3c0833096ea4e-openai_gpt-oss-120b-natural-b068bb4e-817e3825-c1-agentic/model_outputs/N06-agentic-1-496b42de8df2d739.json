@@ -1,0 +1,18 @@
+{
+  "scope": "Unverified structured model output for developer diagnosis; never delivered as a chatbot answer. No hidden reasoning.",
+  "schema": "Plan",
+  "case_mode": "N06-agentic",
+  "llm_calls": 1,
+  "output": {
+    "tools": [
+      {
+        "name": "open_article",
+        "query": "Mở Điều 2 của Nghị định 226/2025/NĐ-CP để xem nội dung sửa đổi, bổ sung các nghị định quy định chi tiết thi hành Luật Đất đai, đặc biệt là việc thay thế quy định bồi thường năm 2024.",
+        "document_id": "nd-226-2025",
+        "locator": "Điều 2"
+      }
+    ],
+    "missing_facts": [],
+    "out_of_scope": false
+  }
+}

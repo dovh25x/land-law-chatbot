@@ -1,0 +1,17 @@
+{
+  "scope": "Unverified structured model output for developer diagnosis; never delivered as a chatbot answer. No hidden reasoning.",
+  "schema": "Verification",
+  "case_mode": "N06-agentic",
+  "llm_calls": 4,
+  "output": {
+    "supported_claim_indexes": [],
+    "supporting_quotes": [],
+    "supporting_spans": [],
+    "issues": [
+      "Claim 0: không có bằng chứng trong các đoạn trích dẫn cho thấy Nghị định 151/2025/NĐ‑CP (điều khoản bồi thường năm 2024) đã bị thay thế hoàn toàn bởi Nghị định 49/2026/NĐ‑CP; đoạn S1 chỉ nêu hiệu lực thời gian và việc tiếp tục áp dụng các quy định về giá đất, không đề cập đến bồi thường.",
+      "Claim 1: đoạn S2 chỉ liệt kê việc thay thế một số cụm từ liên quan đến thủ tục đăng ký đất đai, không chứng minh việc thay thế các quy định bồi thường, hỗ trợ, tái định cư trong Nghị định 151/2025/NĐ‑CP."
+    ],
+    "needs_more_evidence": true,
+    "followup_query": "Vui lòng cung cấp đoạn trích dẫn hoặc văn bản pháp luật cụ thể trong Nghị định 49/2026/NĐ‑CP (điều 16 hoặc các điều liên quan) nêu rõ việc thay thế hoặc bãi bỏ các quy định về bồi thường, hỗ trợ, tái định cư của Nghị định 151/2025/NĐ‑CP."
+  }
+}

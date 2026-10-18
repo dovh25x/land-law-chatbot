@@ -1,0 +1,36 @@
+{
+  "scope": "Unverified structured model output for developer diagnosis; never delivered as a chatbot answer. No hidden reasoning.",
+  "schema": "Draft",
+  "case_mode": "N02-agentic",
+  "llm_calls": 2,
+  "output": {
+    "status": "answered",
+    "summary": "",
+    "claims": [
+      {
+        "kind": "legal_rule",
+        "text": "Hỗ trợ ổn định đời sống phụ thuộc vào tỷ lệ phần trăm diện tích đất nông nghiệp bị thu hồi: nếu thu hồi từ 30%‑70% thì thời gian hỗ trợ là 6 tháng (không di chuyển) hoặc 12 tháng (phải di chuyển), tối đa 24 tháng khi di chuyển tới vùng khó khăn; nếu thu hồi trên 70% thì thời gian hỗ trợ là 12 tháng (không di chuyển) hoặc 24 tháng (phải di chuyển), tối đa 36 tháng khi di chuyển tới vùng khó khăn.",
+        "citation_ids": [
+          "C2"
+        ]
+      },
+      {
+        "kind": "legal_rule",
+        "text": "Diện tích tính hỗ trợ được xác định riêng cho từng dự án thu hồi trong phạm vi xã, phường, thị trấn nơi có đất thu hồi và không cộng dồn với diện tích thu hồi của các dự án trước đó.",
+        "citation_ids": [
+          "C2"
+        ]
+      },
+      {
+        "kind": "legal_rule",
+        "text": "Mức hỗ trợ cho mỗi nhân khẩu được tính bằng tiền tương đương 30 kg gạo trong một tháng theo giá trung bình tại thời điểm hỗ trợ của địa phương.",
+        "citation_ids": [
+          "C2"
+        ]
+      }
+    ],
+    "missing_facts": [],
+    "next_steps": [],
+    "out_of_scope": false
+  }
+}

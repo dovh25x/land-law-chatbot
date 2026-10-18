@@ -1,0 +1,18 @@
+{
+  "scope": "Unverified structured model output for developer diagnosis; never delivered as a chatbot answer. No hidden reasoning.",
+  "schema": "Plan",
+  "case_mode": "N01-agentic",
+  "llm_calls": 1,
+  "output": {
+    "tools": [
+      {
+        "name": "open_article",
+        "query": "Compensation for damage to machinery when relocating due to land expropriation",
+        "document_id": "nd-88-2024",
+        "locator": "Điều 15"
+      }
+    ],
+    "missing_facts": [],
+    "out_of_scope": false
+  }
+}

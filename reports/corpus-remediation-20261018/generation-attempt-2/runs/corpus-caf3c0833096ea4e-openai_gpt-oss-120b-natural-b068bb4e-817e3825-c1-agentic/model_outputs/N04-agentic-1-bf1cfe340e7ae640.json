@@ -1,0 +1,30 @@
+{
+  "scope": "Unverified structured model output for developer diagnosis; never delivered as a chatbot answer. No hidden reasoning.",
+  "schema": "Plan",
+  "case_mode": "N04-agentic",
+  "llm_calls": 1,
+  "output": {
+    "tools": [
+      {
+        "name": "open_article",
+        "query": "Nội dung Điều 91 Luật Đất đai 2024",
+        "document_id": "luat-dat-dai-2024",
+        "locator": "Điều 91"
+      },
+      {
+        "name": "open_article",
+        "query": "Nội dung Điều 111 Luật Đất đai 2024",
+        "document_id": "luat-dat-dai-2024",
+        "locator": "Điều 111"
+      },
+      {
+        "name": "open_article",
+        "query": "Nội dung Điều 24 Nghị định 88/2024/NĐ-CP",
+        "document_id": "nd-88-2024",
+        "locator": "Điều 24"
+      }
+    ],
+    "missing_facts": [],
+    "out_of_scope": false
+  }
+}

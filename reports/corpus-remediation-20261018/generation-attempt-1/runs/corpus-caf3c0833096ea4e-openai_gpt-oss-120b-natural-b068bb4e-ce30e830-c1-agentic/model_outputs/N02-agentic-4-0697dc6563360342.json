@@ -1,0 +1,30 @@
+{
+  "scope": "Unverified structured model output for developer diagnosis; never delivered as a chatbot answer. No hidden reasoning.",
+  "schema": "Verification",
+  "case_mode": "N02-agentic",
+  "llm_calls": 4,
+  "output": {
+    "supported_claim_indexes": [
+      0,
+      1
+    ],
+    "supporting_quotes": [],
+    "supporting_spans": [
+      {
+        "claim_index": 0,
+        "citation_id": "C1",
+        "span_id": "S1"
+      },
+      {
+        "claim_index": 1,
+        "citation_id": "C1",
+        "span_id": "S1"
+      }
+    ],
+    "issues": [
+      "Claim 2: không có bằng chứng trong các đoạn trích cung cấp về mức hỗ trợ tiền tương đương 30 kg gạo cho mỗi nhân khẩu."
+    ],
+    "needs_more_evidence": true,
+    "followup_query": "Vui lòng cung cấp đoạn trích trong Nghị định 88/2024/NĐ-CP quy định mức hỗ trợ tiền cho mỗi nhân khẩu (ví dụ: tương đương 30 kg gạo một tháng) để xác nhận nội dung này."
+  }
+}

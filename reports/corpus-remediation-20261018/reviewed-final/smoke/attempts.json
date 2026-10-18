@@ -1,0 +1,3736 @@
+{
+  "scope": "Actual model calls using the local source configuration and frozen corpus via operator CLI; not a deployment verification or HTTP latency benchmark.",
+  "configuration_sha256": "817e38259d90a2ac6b31650fb3092cc18fccd25d7ebbbdd504ecbd98cb0737f5",
+  "attempts": [
+    {
+      "recorded_at": "2026-10-18T17:34:46.710702+00:00",
+      "origin": "executed",
+      "record": {
+        "case_id": "S03",
+        "mode": "agentic",
+        "answer_origin": "deterministic",
+        "evaluation_context": [],
+        "result": {
+          "status": "answered",
+          "publication_profile": "academic",
+          "quality_status": "academic_prototype",
+          "retrieval_mode": "hybrid",
+          "coverage_gaps": [
+            {
+              "document_id": "qd-10-2017-hanoi",
+              "document_number": "10/2017/QĐ-UBND",
+              "title": "Quy định bồi thường, hỗ trợ và tái định cư Hà Nội (lịch sử)",
+              "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=189167",
+              "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+            },
+            {
+              "document_id": "qd-30-2019-hanoi",
+              "document_number": "30/2019/QĐ-UBND",
+              "title": "Quy định và bảng giá các loại đất Hà Nội 2020–2024 (lịch sử)",
+              "url": "https://vanban.hanoi.gov.vn/chi-tiet-van-ban/quyet-dinh-so-30-2019-qd-ubnd-cua-ubnd-tp-ha-noi-ve-viec-ban-hanh-quy-dinh-va-bang-gia-cac-loai-dat-189067",
+              "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+            },
+            {
+              "document_id": "qd-20-2023-hanoi",
+              "document_number": "20/2023/QĐ-UBND",
+              "title": "Sửa đổi bảng giá đất Quyết định 30/2019",
+              "url": "https://vbpl.vn/hanoi/Pages/vbpq-toanvan.aspx?ItemID=164473",
+              "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+            },
+            {
+              "document_id": "nd-123-2024",
+              "document_number": "123/2024/NĐ-CP",
+              "title": "Xử phạt vi phạm hành chính lĩnh vực đất đai",
+              "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=211356",
+              "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+            },
+            {
+              "document_id": "ring4-nq106-2022",
+              "document_number": "106/NQ-CP",
+              "title": "Triển khai Nghị quyết 56/2022/QH15 Vành đai 4",
+              "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=206398",
+              "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+            },
+            {
+              "document_id": "nd-01-2017",
+              "document_number": "01/2017/NĐ-CP",
+              "title": "Nghị định 01/2017/NĐ-CP sửa đổi, bổ sung một số nghị định quy định chi tiết thi hành Luật đất đai",
+              "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=187962",
+              "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+            },
+            {
+              "document_id": "nd-148-2020",
+              "document_number": "148/2020/NĐ-CP",
+              "title": "Nghị định 148/2020/NĐ-CP sửa đổi, bổ sung một số nghị định quy định chi tiết thi hành Luật Đất đai",
+              "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=202022",
+              "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+            }
+          ],
+          "content": "Đã đối chiếu các căn cứ dưới đây.\n\n10/2026/QĐ-UBND bãi bỏ Điều 2 của 38/2025/QĐ-UBND. Phạm vi bãi bỏ này là một phần; không phải toàn bộ 38/2025/QĐ-UBND. [1]\n\nThời điểm xem xét: 20/01/2026. Dữ liệu được kiểm tra: 2026-10-11.",
+          "citations": [
+            {
+              "id": "qd-10-2026-hanoi-4-1-0",
+              "document_id": "qd-10-2026-hanoi",
+              "title": "Sửa đổi Quyết định 56/2024/QĐ-UBND",
+              "document_number": "10/2026/QĐ-UBND",
+              "url": "https://congbao.hanoi.gov.vn/Default.aspx?p_attribute=5204&pageid=45002",
+              "locator": "Điều 2",
+              "excerpt": "Điều 2. Bãi bỏ Điều 2 Quyết định số 38/2025/QĐ -UBND ngày 30/6/2025 của Ủy ban nhân dân Thành phố và Quyết định số 47/2016/QĐ -UBND ngày 08/11/2016 của Ủy ban nhân dân Thành phố về việc phê duyệt mức hỗ trợ tự lo tái định cư bằng tiền đối với trường hợp được bố trí nhà tái định cư.",
+              "checked_at": "2026-10-11T17:32:27Z",
+              "applicability": "current",
+              "source_review_notes": "",
+              "page": 5,
+              "source_url": "https://datafiles.hanoi.gov.vn/gov-hni/6249/VanBanCongBao/2026/4/17/QDPQ-10-2026_signed.pdf#page=5"
+            }
+          ],
+          "verified_claims": [
+            {
+              "kind": "applicability",
+              "text": "10/2026/QĐ-UBND bãi bỏ Điều 2 của 38/2025/QĐ-UBND. Phạm vi bãi bỏ này là một phần; không phải toàn bộ 38/2025/QĐ-UBND.",
+              "citation_ids": [
+                "qd-10-2026-hanoi-4-1-0"
+              ]
+            }
+          ],
+          "as_of": "2026-01-20",
+          "corpus_release": "corpus-caf3c0833096ea4e",
+          "trace_id": "3989241d-fea1-44ab-9df3-0e56a01904fb",
+          "trace": [
+            {
+              "step": "routing",
+              "tool": "search_law",
+              "summary": "Đã nhận diện số văn bản và yêu cầu kiểm tra hiệu lực; dùng tra cứu trực tiếp.",
+              "document_ids": [],
+              "elapsed_ms": 10
+            },
+            {
+              "step": "plan",
+              "tool": null,
+              "summary": "Đã chọn 1 công cụ; chế độ agentic.",
+              "document_ids": [],
+              "elapsed_ms": 10
+            },
+            {
+              "step": "tool",
+              "tool": "search_law",
+              "summary": "Thu được 8 đoạn chứng cứ.",
+              "document_ids": [
+                "qd-10-2026-hanoi",
+                "qd-38-2025-hanoi"
+              ],
+              "elapsed_ms": 11535
+            },
+            {
+              "step": "tool",
+              "tool": "open_article",
+              "summary": "Đã mở văn bản có quan hệ pháp lý để đối chiếu phạm vi.",
+              "document_ids": [
+                "qd-38-2025-hanoi"
+              ],
+              "elapsed_ms": 11577
+            },
+            {
+              "step": "tool",
+              "tool": "open_article",
+              "summary": "Đã mở văn bản có quan hệ pháp lý để đối chiếu phạm vi.",
+              "document_ids": [
+                "qd-56-2024-hanoi"
+              ],
+              "elapsed_ms": 11690
+            },
+            {
+              "step": "applicability",
+              "tool": "check_effectivity",
+              "summary": "Đã kiểm tra 4 quan hệ pháp lý theo thời điểm.",
+              "document_ids": [
+                "qd-10-2026-hanoi"
+              ],
+              "elapsed_ms": 11690
+            },
+            {
+              "step": "tool",
+              "tool": "open_article",
+              "summary": "Đã mở điều khoản nguồn của quan hệ sửa đổi/thay thế.",
+              "document_ids": [
+                "qd-38-2025-hanoi"
+              ],
+              "elapsed_ms": 11729
+            },
+            {
+              "step": "tool",
+              "tool": "open_article",
+              "summary": "Đã mở văn bản có quan hệ pháp lý để đối chiếu phạm vi.",
+              "document_ids": [
+                "qd-56-2024-hanoi"
+              ],
+              "elapsed_ms": 11780
+            },
+            {
+              "step": "tool",
+              "tool": "open_article",
+              "summary": "Đã mở văn bản có quan hệ pháp lý để đối chiếu phạm vi.",
+              "document_ids": [
+                "qd-56-2024-hanoi"
+              ],
+              "elapsed_ms": 11853
+            },
+            {
+              "step": "applicability",
+              "tool": "check_effectivity",
+              "summary": "Đã kiểm tra 4 quan hệ pháp lý theo thời điểm.",
+              "document_ids": [
+                "qd-38-2025-hanoi"
+              ],
+              "elapsed_ms": 11853
+            },
+            {
+              "step": "synthesis",
+              "tool": null,
+              "summary": "Đã tạo bản trả lời; đang kiểm tra trước khi hiển thị.",
+              "document_ids": [],
+              "elapsed_ms": 11858
+            },
+            {
+              "step": "verification",
+              "tool": "check_effectivity",
+              "summary": "Đã đối chiếu phạm vi bãi bỏ một phần đã rà soát với đúng số văn bản và điều khoản nguồn.",
+              "document_ids": [
+                "qd-10-2026-hanoi",
+                "qd-38-2025-hanoi"
+              ],
+              "elapsed_ms": 11860
+            }
+          ],
+          "missing_facts": [],
+          "llm_calls": 0,
+          "embedding_calls": 1,
+          "tool_calls": 8,
+          "token_usage": 0,
+          "elapsed_ms": 11864,
+          "model": "openai/gpt-oss-120b",
+          "embedding_model": "multilingual-e5-small-onnx-q8-window-v1",
+          "mode": "agentic",
+          "support_level": "full",
+          "retry_after": null,
+          "retrieved_chunk_ids": [
+            "qd-10-2026-hanoi-0-0-0",
+            "qd-10-2026-hanoi-1-0-0",
+            "qd-10-2026-hanoi-0-1-0",
+            "qd-10-2026-hanoi-4-1-0",
+            "qd-38-2025-hanoi-0-0-0",
+            "qd-10-2026-hanoi-4-2-0",
+            "qd-38-2025-hanoi-0-1-0",
+            "qd-38-2025-hanoi-2-0-0"
+          ],
+          "evidence_chunk_ids": [
+            "qd-10-2026-hanoi-0-0-0",
+            "qd-10-2026-hanoi-1-0-0",
+            "qd-10-2026-hanoi-0-1-0",
+            "qd-10-2026-hanoi-4-1-0",
+            "qd-38-2025-hanoi-0-0-0",
+            "qd-10-2026-hanoi-4-2-0",
+            "qd-38-2025-hanoi-0-1-0",
+            "qd-38-2025-hanoi-2-0-0",
+            "qd-38-2025-hanoi-4-2-0",
+            "qd-38-2025-hanoi-4-1-0",
+            "qd-56-2024-hanoi-0-4-0",
+            "qd-56-2024-hanoi-0-9-0",
+            "qd-56-2024-hanoi-0-12-0",
+            "qd-56-2024-hanoi-0-6-0",
+            "qd-56-2024-hanoi-0-26-0",
+            "qd-56-2024-hanoi-0-3-0"
+          ]
+        }
+      }
+    },
+    {
+      "recorded_at": "2026-10-18T17:39:44.999672+00:00",
+      "origin": "executed",
+      "record": {
+        "case_id": "S19",
+        "mode": "agentic",
+        "answer_origin": "deterministic",
+        "evaluation_context": [],
+        "result": {
+          "status": "insufficient_evidence",
+          "publication_profile": "academic",
+          "quality_status": "academic_prototype",
+          "retrieval_mode": "hybrid",
+          "coverage_gaps": [
+            {
+              "document_id": "qd-10-2017-hanoi",
+              "document_number": "10/2017/QĐ-UBND",
+              "title": "Quy định bồi thường, hỗ trợ và tái định cư Hà Nội (lịch sử)",
+              "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=189167",
+              "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+            },
+            {
+              "document_id": "qd-30-2019-hanoi",
+              "document_number": "30/2019/QĐ-UBND",
+              "title": "Quy định và bảng giá các loại đất Hà Nội 2020–2024 (lịch sử)",
+              "url": "https://vanban.hanoi.gov.vn/chi-tiet-van-ban/quyet-dinh-so-30-2019-qd-ubnd-cua-ubnd-tp-ha-noi-ve-viec-ban-hanh-quy-dinh-va-bang-gia-cac-loai-dat-189067",
+              "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+            },
+            {
+              "document_id": "qd-20-2023-hanoi",
+              "document_number": "20/2023/QĐ-UBND",
+              "title": "Sửa đổi bảng giá đất Quyết định 30/2019",
+              "url": "https://vbpl.vn/hanoi/Pages/vbpq-toanvan.aspx?ItemID=164473",
+              "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+            },
+            {
+              "document_id": "nd-123-2024",
+              "document_number": "123/2024/NĐ-CP",
+              "title": "Xử phạt vi phạm hành chính lĩnh vực đất đai",
+              "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=211356",
+              "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+            },
+            {
+              "document_id": "ring4-nq106-2022",
+              "document_number": "106/NQ-CP",
+              "title": "Triển khai Nghị quyết 56/2022/QH15 Vành đai 4",
+              "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=206398",
+              "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+            },
+            {
+              "document_id": "nd-01-2017",
+              "document_number": "01/2017/NĐ-CP",
+              "title": "Nghị định 01/2017/NĐ-CP sửa đổi, bổ sung một số nghị định quy định chi tiết thi hành Luật đất đai",
+              "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=187962",
+              "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+            },
+            {
+              "document_id": "nd-148-2020",
+              "document_number": "148/2020/NĐ-CP",
+              "title": "Nghị định 148/2020/NĐ-CP sửa đổi, bổ sung một số nghị định quy định chi tiết thi hành Luật Đất đai",
+              "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=202022",
+              "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+            }
+          ],
+          "content": "Không thể bảo đảm tính hiện hành chỉ từ dữ liệu chưa được kiểm tra lại. Nếu quá bảy ngày chưa kiểm tra nguồn thành công, cần nêu giới hạn cập nhật và đối chiếu văn bản chính thức, mốc hiệu lực, sửa đổi và chuyển tiếp trước khi kết luận. Corpus thực tế đã quá bảy ngày chưa kiểm tra nguồn.\n\nThời điểm xem xét: 12/10/2026. Dữ liệu được kiểm tra: 2026-10-11.",
+          "citations": [],
+          "verified_claims": [],
+          "as_of": "2026-10-12",
+          "corpus_release": "corpus-caf3c0833096ea4e",
+          "trace_id": "6e001606-fddd-459c-bbd3-ce589f51df9e",
+          "trace": [
+            {
+              "step": "routing",
+              "tool": null,
+              "summary": "Câu hỏi về mức cập nhật dữ liệu; đối chiếu metadata, không suy hiệu lực văn bản.",
+              "document_ids": [],
+              "elapsed_ms": 4
+            },
+            {
+              "step": "plan",
+              "tool": null,
+              "summary": "Đã chọn 0 công cụ; chế độ agentic.",
+              "document_ids": [],
+              "elapsed_ms": 4
+            },
+            {
+              "step": "synthesis",
+              "tool": null,
+              "summary": "Đã tạo bản trả lời; đang kiểm tra trước khi hiển thị.",
+              "document_ids": [],
+              "elapsed_ms": 5
+            },
+            {
+              "step": "verification",
+              "tool": null,
+              "summary": "Chỉ giải thích giới hạn dữ liệu hoặc hỏi địa bàn còn thiếu; không kết luận quyền lợi hay phạm vi từng thửa.",
+              "document_ids": [],
+              "elapsed_ms": 5
+            }
+          ],
+          "missing_facts": [],
+          "llm_calls": 0,
+          "embedding_calls": 0,
+          "tool_calls": 0,
+          "token_usage": 0,
+          "elapsed_ms": 8,
+          "model": "openai/gpt-oss-120b",
+          "embedding_model": "multilingual-e5-small-onnx-q8-window-v1",
+          "mode": "agentic",
+          "support_level": "insufficient",
+          "retry_after": null,
+          "retrieved_chunk_ids": [],
+          "evidence_chunk_ids": []
+        }
+      }
+    },
+    {
+      "recorded_at": "2026-10-18T17:34:34.838973+00:00",
+      "origin": "executed",
+      "record": {
+        "case_id": "S02",
+        "mode": "agentic",
+        "answer_origin": "deterministic",
+        "evaluation_context": [],
+        "result": {
+          "status": "clarification_needed",
+          "publication_profile": "academic",
+          "quality_status": "academic_prototype",
+          "retrieval_mode": "hybrid",
+          "coverage_gaps": [
+            {
+              "document_id": "qd-10-2017-hanoi",
+              "document_number": "10/2017/QĐ-UBND",
+              "title": "Quy định bồi thường, hỗ trợ và tái định cư Hà Nội (lịch sử)",
+              "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=189167",
+              "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+            },
+            {
+              "document_id": "qd-30-2019-hanoi",
+              "document_number": "30/2019/QĐ-UBND",
+              "title": "Quy định và bảng giá các loại đất Hà Nội 2020–2024 (lịch sử)",
+              "url": "https://vanban.hanoi.gov.vn/chi-tiet-van-ban/quyet-dinh-so-30-2019-qd-ubnd-cua-ubnd-tp-ha-noi-ve-viec-ban-hanh-quy-dinh-va-bang-gia-cac-loai-dat-189067",
+              "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+            },
+            {
+              "document_id": "qd-20-2023-hanoi",
+              "document_number": "20/2023/QĐ-UBND",
+              "title": "Sửa đổi bảng giá đất Quyết định 30/2019",
+              "url": "https://vbpl.vn/hanoi/Pages/vbpq-toanvan.aspx?ItemID=164473",
+              "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+            },
+            {
+              "document_id": "nd-123-2024",
+              "document_number": "123/2024/NĐ-CP",
+              "title": "Xử phạt vi phạm hành chính lĩnh vực đất đai",
+              "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=211356",
+              "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+            },
+            {
+              "document_id": "ring4-nq106-2022",
+              "document_number": "106/NQ-CP",
+              "title": "Triển khai Nghị quyết 56/2022/QH15 Vành đai 4",
+              "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=206398",
+              "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+            },
+            {
+              "document_id": "nd-01-2017",
+              "document_number": "01/2017/NĐ-CP",
+              "title": "Nghị định 01/2017/NĐ-CP sửa đổi, bổ sung một số nghị định quy định chi tiết thi hành Luật đất đai",
+              "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=187962",
+              "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+            },
+            {
+              "document_id": "nd-148-2020",
+              "document_number": "148/2020/NĐ-CP",
+              "title": "Nghị định 148/2020/NĐ-CP sửa đổi, bổ sung một số nghị định quy định chi tiết thi hành Luật Đất đai",
+              "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=202022",
+              "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+            }
+          ],
+          "content": "Cần bổ sung dữ kiện để xác định quy định áp dụng cho hồ sơ cụ thể.\n\n40/2026/QĐ-UBND có hiệu lực thi hành từ ngày 02/04/2026. Văn bản này chưa có hiệu lực tại ngày 01/03/2026. [1]\n\nThông tin cần bổ sung:\n- Ngày ra quyết định thu hồi đất và ngày phê duyệt phương án bồi thường.\n- Loại đất và tình trạng giấy tờ của hồ sơ, chỉ cung cấp thông tin đã ẩn danh.\n\nBước tiếp theo:\n- Đối chiếu căn cứ và điều khoản chuyển tiếp trong quyết định, phương án xử lý hồ sơ.\n\nThời điểm xem xét: 01/03/2026. Dữ liệu được kiểm tra: 2026-10-11.",
+          "citations": [
+            {
+              "id": "qd-40-2026-hanoi-0-2-0",
+              "document_id": "qd-40-2026-hanoi",
+              "title": "Quy định một số nội dung bồi thường, hỗ trợ, tái định cư Hà Nội",
+              "document_number": "40/2026/QĐ-UBND",
+              "url": "https://congbao.hanoi.gov.vn/Default.aspx?p_attribute=5335&pageid=45002",
+              "locator": "Điều 2",
+              "excerpt": "Điều 2. Quyết định này có hiệu lực thi hành kể từ ngày 02 tháng 4 năm 2026 và thay thế các Quyết định của Ủy ban nhân dân Thành phố: số 47/2016/QĐ - UBND ngày 08/11/2016 về việc phê duyệt mức hỗ trợ tự lo tái định cư bằng tiền đối với trường hợp được bố trí nhà tái định cư, số 56/2024/QĐ -UBND ngày 06/9/2024 ban hành quy định một số nội dung về bồi thường, hỗ trợ, tái định cư khi Nhà nước thu hồi đất trên địa bàn thành phố Hà Nội, số 38/2025/QĐ - UBND ngày 30/6/2025 và số 10/2026/QĐ -UBND ngày 18/01/2026 về việc sửa đổi, bổ sung một số điều của Quyết định số 56/2024/QĐ -UBND ngày 06/9/2024 của Ủy ban nhân dân Thành phố .",
+              "checked_at": "2026-10-11T17:32:27Z",
+              "applicability": "future",
+              "source_review_notes": "",
+              "page": 1,
+              "source_url": "https://datafiles.hanoi.gov.vn/gov-hni/6249/VanBanCongBao/2026/5/29/QDPQ-40-2026_signed.pdf#page=1"
+            }
+          ],
+          "verified_claims": [
+            {
+              "kind": "applicability",
+              "text": "40/2026/QĐ-UBND có hiệu lực thi hành từ ngày 02/04/2026. Văn bản này chưa có hiệu lực tại ngày 01/03/2026.",
+              "citation_ids": [
+                "qd-40-2026-hanoi-0-2-0"
+              ]
+            }
+          ],
+          "as_of": "2026-03-01",
+          "corpus_release": "corpus-caf3c0833096ea4e",
+          "trace_id": "b0bdd1c0-656e-4279-b75e-a12a5cba3888",
+          "trace": [
+            {
+              "step": "routing",
+              "tool": "search_law",
+              "summary": "Đã nhận diện số văn bản và yêu cầu kiểm tra hiệu lực; dùng tra cứu trực tiếp.",
+              "document_ids": [],
+              "elapsed_ms": 8
+            },
+            {
+              "step": "plan",
+              "tool": null,
+              "summary": "Đã chọn 1 công cụ; chế độ agentic.",
+              "document_ids": [],
+              "elapsed_ms": 8
+            },
+            {
+              "step": "tool",
+              "tool": "search_law",
+              "summary": "Thu được 8 đoạn chứng cứ.",
+              "document_ids": [
+                "qd-40-2026-hanoi"
+              ],
+              "elapsed_ms": 16070
+            },
+            {
+              "step": "tool",
+              "tool": "open_article",
+              "summary": "Đã mở văn bản có quan hệ pháp lý để đối chiếu phạm vi.",
+              "document_ids": [
+                "qd-56-2024-hanoi"
+              ],
+              "elapsed_ms": 16109
+            },
+            {
+              "step": "tool",
+              "tool": "open_article",
+              "summary": "Đã mở văn bản có quan hệ pháp lý để đối chiếu phạm vi.",
+              "document_ids": [
+                "qd-38-2025-hanoi"
+              ],
+              "elapsed_ms": 16151
+            },
+            {
+              "step": "tool",
+              "tool": "open_article",
+              "summary": "Đã mở văn bản có quan hệ pháp lý để đối chiếu phạm vi.",
+              "document_ids": [
+                "qd-10-2026-hanoi"
+              ],
+              "elapsed_ms": 16174
+            },
+            {
+              "step": "applicability",
+              "tool": "check_effectivity",
+              "summary": "Đã kiểm tra 4 quan hệ pháp lý theo thời điểm.",
+              "document_ids": [
+                "qd-40-2026-hanoi"
+              ],
+              "elapsed_ms": 16174
+            },
+            {
+              "step": "synthesis",
+              "tool": null,
+              "summary": "Đã tạo bản trả lời; đang kiểm tra trước khi hiển thị.",
+              "document_ids": [],
+              "elapsed_ms": 16177
+            },
+            {
+              "step": "verification",
+              "tool": "check_effectivity",
+              "summary": "Đã đối chiếu mốc hiệu lực trực tiếp trong nguồn với ngày hỏi; chưa kết luận quyền lợi hoặc chuyển tiếp hồ sơ.",
+              "document_ids": [
+                "qd-40-2026-hanoi"
+              ],
+              "elapsed_ms": 16178
+            }
+          ],
+          "missing_facts": [
+            "Ngày ra quyết định thu hồi đất và ngày phê duyệt phương án bồi thường.",
+            "Loại đất và tình trạng giấy tờ của hồ sơ, chỉ cung cấp thông tin đã ẩn danh."
+          ],
+          "llm_calls": 0,
+          "embedding_calls": 1,
+          "tool_calls": 5,
+          "token_usage": 0,
+          "elapsed_ms": 16184,
+          "model": "openai/gpt-oss-120b",
+          "embedding_model": "multilingual-e5-small-onnx-q8-window-v1",
+          "mode": "agentic",
+          "support_level": "partial",
+          "retry_after": null,
+          "retrieved_chunk_ids": [
+            "qd-40-2026-hanoi-0-2-0",
+            "qd-40-2026-hanoi-10-0-0",
+            "qd-40-2026-hanoi-0-0-0",
+            "qd-40-2026-hanoi-0-1-0",
+            "qd-40-2026-hanoi-9-1-1",
+            "qd-40-2026-hanoi-1-1-0",
+            "qd-40-2026-hanoi-2-2-0",
+            "qd-40-2026-hanoi-10-1-0"
+          ],
+          "evidence_chunk_ids": [
+            "qd-40-2026-hanoi-0-2-0",
+            "qd-40-2026-hanoi-10-0-0",
+            "qd-40-2026-hanoi-0-0-0",
+            "qd-40-2026-hanoi-0-1-0",
+            "qd-40-2026-hanoi-9-1-1",
+            "qd-40-2026-hanoi-1-1-0",
+            "qd-40-2026-hanoi-2-2-0",
+            "qd-40-2026-hanoi-10-1-0",
+            "qd-56-2024-hanoi-0-0-0",
+            "qd-56-2024-hanoi-0-1-0",
+            "qd-56-2024-hanoi-0-10-0",
+            "qd-38-2025-hanoi-0-0-0",
+            "qd-38-2025-hanoi-0-0-1",
+            "qd-38-2025-hanoi-0-1-0",
+            "qd-10-2026-hanoi-0-0-0",
+            "qd-10-2026-hanoi-0-1-0"
+          ]
+        }
+      }
+    },
+    {
+      "recorded_at": "2026-10-18T17:38:34.308507+00:00",
+      "origin": "executed",
+      "record": {
+        "case_id": "S10",
+        "mode": "agentic",
+        "answer_origin": "deterministic",
+        "evaluation_context": [],
+        "result": {
+          "status": "clarification_needed",
+          "publication_profile": "academic",
+          "quality_status": "academic_prototype",
+          "retrieval_mode": "hybrid",
+          "coverage_gaps": [
+            {
+              "document_id": "qd-10-2017-hanoi",
+              "document_number": "10/2017/QĐ-UBND",
+              "title": "Quy định bồi thường, hỗ trợ và tái định cư Hà Nội (lịch sử)",
+              "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=189167",
+              "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+            },
+            {
+              "document_id": "qd-30-2019-hanoi",
+              "document_number": "30/2019/QĐ-UBND",
+              "title": "Quy định và bảng giá các loại đất Hà Nội 2020–2024 (lịch sử)",
+              "url": "https://vanban.hanoi.gov.vn/chi-tiet-van-ban/quyet-dinh-so-30-2019-qd-ubnd-cua-ubnd-tp-ha-noi-ve-viec-ban-hanh-quy-dinh-va-bang-gia-cac-loai-dat-189067",
+              "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+            },
+            {
+              "document_id": "qd-20-2023-hanoi",
+              "document_number": "20/2023/QĐ-UBND",
+              "title": "Sửa đổi bảng giá đất Quyết định 30/2019",
+              "url": "https://vbpl.vn/hanoi/Pages/vbpq-toanvan.aspx?ItemID=164473",
+              "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+            },
+            {
+              "document_id": "nd-123-2024",
+              "document_number": "123/2024/NĐ-CP",
+              "title": "Xử phạt vi phạm hành chính lĩnh vực đất đai",
+              "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=211356",
+              "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+            },
+            {
+              "document_id": "ring4-nq106-2022",
+              "document_number": "106/NQ-CP",
+              "title": "Triển khai Nghị quyết 56/2022/QH15 Vành đai 4",
+              "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=206398",
+              "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+            },
+            {
+              "document_id": "nd-01-2017",
+              "document_number": "01/2017/NĐ-CP",
+              "title": "Nghị định 01/2017/NĐ-CP sửa đổi, bổ sung một số nghị định quy định chi tiết thi hành Luật đất đai",
+              "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=187962",
+              "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+            },
+            {
+              "document_id": "nd-148-2020",
+              "document_number": "148/2020/NĐ-CP",
+              "title": "Nghị định 148/2020/NĐ-CP sửa đổi, bổ sung một số nghị định quy định chi tiết thi hành Luật Đất đai",
+              "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=202022",
+              "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+            }
+          ],
+          "content": "Cần bổ sung dữ kiện để xác định quy định áp dụng cho hồ sơ cụ thể.\n\nThông tin cần bổ sung:\n- Loại đất, tình trạng giấy tờ quyền sử dụng đất và nhà ở, chỉ cung cấp thông tin đã ẩn danh.\n- Ngày, căn cứ trong thông báo/quyết định thu hồi đất và phương án bồi thường, hỗ trợ, tái định cư.\n- Có phải di chuyển chỗ ở, còn nhà hoặc đất ở khác tại địa bàn hay không; hồ sơ xác định điều kiện bồi thường đất ở.\n- Vị trí xã/thôn và ranh thu hồi trong hồ sơ; thông tin tổng quan dự án chưa xác định quyền lợi của từng hộ.\n\nBước tiếp theo:\n- Đối chiếu hồ sơ đã ẩn danh với văn bản áp dụng và điều khoản chuyển tiếp; chưa thể khẳng định suất tái định cư hoặc tiền bồi thường cho hộ cụ thể.\n\nThời điểm xem xét: 12/10/2026. Dữ liệu được kiểm tra: 2026-10-11.",
+          "citations": [],
+          "verified_claims": [],
+          "as_of": "2026-10-12",
+          "corpus_release": "corpus-caf3c0833096ea4e",
+          "trace_id": "b50f28ab-f41a-4628-9a18-b1cee86f86da",
+          "trace": [
+            {
+              "step": "routing",
+              "tool": "search_project",
+              "summary": "Yêu cầu xác nhận quyền lợi hộ cụ thể cần hồ sơ; tra cứu nguồn và hỏi dữ kiện trước khi kết luận.",
+              "document_ids": [],
+              "elapsed_ms": 4
+            },
+            {
+              "step": "plan",
+              "tool": null,
+              "summary": "Đã chọn 1 công cụ; chế độ agentic.",
+              "document_ids": [],
+              "elapsed_ms": 4
+            },
+            {
+              "step": "tool",
+              "tool": null,
+              "summary": "Thiếu hồ sơ cá nhân; hỏi bổ sung trước khi truy xuất quy định áp dụng.",
+              "document_ids": [],
+              "elapsed_ms": 5
+            },
+            {
+              "step": "synthesis",
+              "tool": null,
+              "summary": "Đã tạo bản trả lời; đang kiểm tra trước khi hiển thị.",
+              "document_ids": [],
+              "elapsed_ms": 6
+            }
+          ],
+          "missing_facts": [
+            "Loại đất, tình trạng giấy tờ quyền sử dụng đất và nhà ở, chỉ cung cấp thông tin đã ẩn danh.",
+            "Ngày, căn cứ trong thông báo/quyết định thu hồi đất và phương án bồi thường, hỗ trợ, tái định cư.",
+            "Có phải di chuyển chỗ ở, còn nhà hoặc đất ở khác tại địa bàn hay không; hồ sơ xác định điều kiện bồi thường đất ở.",
+            "Vị trí xã/thôn và ranh thu hồi trong hồ sơ; thông tin tổng quan dự án chưa xác định quyền lợi của từng hộ."
+          ],
+          "llm_calls": 0,
+          "embedding_calls": 0,
+          "tool_calls": 0,
+          "token_usage": 0,
+          "elapsed_ms": 8,
+          "model": "openai/gpt-oss-120b",
+          "embedding_model": "multilingual-e5-small-onnx-q8-window-v1",
+          "mode": "agentic",
+          "support_level": "insufficient",
+          "retry_after": null,
+          "retrieved_chunk_ids": [],
+          "evidence_chunk_ids": []
+        }
+      }
+    },
+    {
+      "recorded_at": "2026-10-18T17:36:31.060914+00:00",
+      "origin": "executed",
+      "record": {
+        "case_id": "S06",
+        "mode": "agentic",
+        "answer_origin": "llm",
+        "evaluation_context": [
+          {
+            "citation_id": "C1",
+            "document_id": "luat-dat-dai-2024",
+            "page": 7,
+            "locator": "Điều 95",
+            "text": "8 CÔNG BÁO/Số 365 + 366/Ngày 01-3-2024 c) Có một trong các giấy tờ về quyền sử dụng đất làm căn cứ để cấp Giấy chứng nhận quyền sử dụng đất, quyền sở hữu tài sản gắn liền với đất theo quy định tại Điều 137 của Luật này; d) Nhận chuyển quyền sử dụng đất theo quy định của pháp luật từ người có quyền sử dụng đất hợp pháp nhưng chưa hoàn thành thủ tục đăng ký đất đai; đ) Được sử dụng đất theo thỏa thuận trong hợp đồng thế chấp để xử lý nợ; văn bản công nhận kết quả đấu giá quyền sử dụng đất mà người trúng đấu giá đã hoàn thành nghĩa vụ tài chính theo quy định của pháp luật. 3. Chính phủ quy định trường hợp khác được bồi thường về đất và điều kiện được bồi thường về đất.",
+            "applicability": "current"
+          },
+          {
+            "citation_id": "C2",
+            "document_id": "luat-dat-dai-2024",
+            "page": 5,
+            "locator": "Điều 95",
+            "text": "Điều 95. Điều kiện được bồi thường về đất khi Nhà nước thu hồi đất vì mục đích quốc phòng, an ninh; phát triển kinh tế - xã hội vì lợi ích quốc gia, công cộng 1. Các trường hợp được bồi thường về đất khi Nhà nước thu hồi đất vì mục đích quốc phòng, an ninh; phát triển kinh tế - xã hội vì lợi ích quốc gia, công cộng bao gồm: a) Hộ gia đình, cá nhân đang sử dụng đất không phải là đất thuê trả tiền thuê đất hằng năm;",
+            "applicability": "current"
+          },
+          {
+            "citation_id": "C3",
+            "document_id": "luat-dat-dai-2024",
+            "page": 6,
+            "locator": "Điều 95 · ngữ cảnh",
+            "text": "CÔNG BÁO/Số 365 + 366/Ngày 01-3-2024 7 b) Cộng đồng dân cư đang sử dụng đất có công trình là chùa, đình, đền, miếu, am, nhà thờ họ, công trình tín ngưỡng khác; đất nông nghiệp quy định tại khoản 4 Điều 178 của Luật này và đất đó không có tranh chấp, được Ủy ban nhân dân cấp xã nơi có đất xác nhận là đất sử dụng chung cho cộng đồng; c) Người gốc Việt Nam định cư ở nước ngoài quy định tại khoản 1 Điều 44 của Luật này; d) Tổ chức tôn giáo, tổ chức tôn giáo trực thuộc được Nhà nước cho phép hoạt động đang sử dụng đất mà không phải là đất do Nhà nước giao, cho thuê; không phải là đất nhận chuyển nhượng, nhận tặng cho từ ngày 01 tháng 7 năm 2004 trở về sau; đ) Người gốc Việt Nam định cư ở nước ngoài được Nhà nước giao đất có thu tiền sử dụng đất, cho thuê đất trả tiền thuê đất một lần cho cả thời gian thuê; nhận chuyển nhượng quyền sử dụng đất trong khu công nghiệp, cụm công nghiệp, khu công nghệ cao, khu kinh tế; e) Tổ chức được Nhà nước giao đất có thu tiền sử dụng đất, cho thuê đất trả tiền thuê đất một lần cho cả thời gian thuê; nhận thừa kế quyền sử dụng đất, nhận chuyển nhượng quyền sử dụng đất, nhận góp vốn bằng quyền sử dụng đất; g) Tổ chức nước ngoài có chức năng ngoại giao được Nhà nước cho thuê đất trả tiền thuê đất một lần cho cả thời gian thuê; h) Tổ chức kinh tế, người gốc Việt Nam định cư ở nước ngoài, tổ chức kinh tế có vốn đầu tư nước ngoài được Nhà nước giao đất có thu tiền sử dụng đất để thực hiện dự án đầu tư xây dựng nhà ở để bán hoặc để bán kết hợp cho thuê; cho thuê đất trả tiền thuê đất một lần cho cả thời gian thuê. 2. Các trường hợp quy định tại khoản 1 Điều này được bồi thường về đất khi có một trong các điều kiện sau đây: a) Có Giấy chứng nhận quyền sử dụng đất hoặc Giấy chứng nhận quyền sở hữu nhà ở và quyền sử dụng đất ở hoặc Giấy chứng nhận quyền sử dụng đất, quyền sở hữu nhà ở và tài sản khác gắn liền với đất hoặc Giấy chứng nhận quyền sử dụng đất, quyền sở hữu tài sản gắn liền với đất; b) Có quyết định giao đất hoặc quyết định cho thuê đất hoặc quyết định cho phép chuyển mục đích sử dụng đất của cơ quan nhà nước có thẩm quyền;",
+            "applicability": "current"
+          },
+          {
+            "citation_id": "C4",
+            "document_id": "luat-dat-dai-2024",
+            "page": 63,
+            "locator": "Điều 260",
+            "text": "Điều 260. Quy định chuyển tiếp một số trường hợp khác khi Luật này có hiệu lực thi hành 1. Tổ chức kinh tế, hộ gia đình, cá nhân được Nhà nước cho thuê đất trước ngày 01 tháng 7 năm 2004 đã trả tiền thuê đất cho cả thời gian thuê hoặc trả trước tiền thuê đất cho nhiều năm mà thời hạn thuê đất đã trả tiền còn lại ít nhất là 05 năm thì tổ chức kinh tế có quyền và nghĩa vụ quy định tại Điều 33 của Luật này; hộ gia đình, cá nhân có quyền và nghĩa vụ quy định tại khoản 1 Điều 37 của Luật này.",
+            "applicability": "current"
+          }
+        ],
+        "result": {
+          "status": "insufficient_evidence",
+          "publication_profile": "academic",
+          "quality_status": "academic_prototype",
+          "retrieval_mode": "hybrid",
+          "coverage_gaps": [
+            {
+              "document_id": "qd-10-2017-hanoi",
+              "document_number": "10/2017/QĐ-UBND",
+              "title": "Quy định bồi thường, hỗ trợ và tái định cư Hà Nội (lịch sử)",
+              "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=189167",
+              "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+            },
+            {
+              "document_id": "qd-30-2019-hanoi",
+              "document_number": "30/2019/QĐ-UBND",
+              "title": "Quy định và bảng giá các loại đất Hà Nội 2020–2024 (lịch sử)",
+              "url": "https://vanban.hanoi.gov.vn/chi-tiet-van-ban/quyet-dinh-so-30-2019-qd-ubnd-cua-ubnd-tp-ha-noi-ve-viec-ban-hanh-quy-dinh-va-bang-gia-cac-loai-dat-189067",
+              "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+            },
+            {
+              "document_id": "qd-20-2023-hanoi",
+              "document_number": "20/2023/QĐ-UBND",
+              "title": "Sửa đổi bảng giá đất Quyết định 30/2019",
+              "url": "https://vbpl.vn/hanoi/Pages/vbpq-toanvan.aspx?ItemID=164473",
+              "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+            },
+            {
+              "document_id": "nd-123-2024",
+              "document_number": "123/2024/NĐ-CP",
+              "title": "Xử phạt vi phạm hành chính lĩnh vực đất đai",
+              "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=211356",
+              "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+            },
+            {
+              "document_id": "ring4-nq106-2022",
+              "document_number": "106/NQ-CP",
+              "title": "Triển khai Nghị quyết 56/2022/QH15 Vành đai 4",
+              "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=206398",
+              "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+            },
+            {
+              "document_id": "nd-01-2017",
+              "document_number": "01/2017/NĐ-CP",
+              "title": "Nghị định 01/2017/NĐ-CP sửa đổi, bổ sung một số nghị định quy định chi tiết thi hành Luật đất đai",
+              "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=187962",
+              "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+            },
+            {
+              "document_id": "nd-148-2020",
+              "document_number": "148/2020/NĐ-CP",
+              "title": "Nghị định 148/2020/NĐ-CP sửa đổi, bổ sung một số nghị định quy định chi tiết thi hành Luật Đất đai",
+              "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=202022",
+              "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+            }
+          ],
+          "content": "Chưa có đủ chứng cứ đã xác minh để kết luận đầy đủ.\n\nThời điểm xem xét: 02/08/2024. Dữ liệu được kiểm tra: 2026-10-11.",
+          "citations": [],
+          "verified_claims": [],
+          "as_of": "2024-08-02",
+          "corpus_release": "corpus-caf3c0833096ea4e",
+          "trace_id": "349fec0e-b0b7-4f12-a73d-7f4ac39f48a3",
+          "trace": [
+            {
+              "step": "routing",
+              "tool": "open_article",
+              "summary": "Đã nhận diện văn bản và điều được người dùng chỉ rõ; mở nguồn tương ứng.",
+              "document_ids": [
+                "luat-dat-dai-2024"
+              ],
+              "elapsed_ms": 5
+            },
+            {
+              "step": "plan",
+              "tool": null,
+              "summary": "Đã chọn 1 công cụ; chế độ agentic.",
+              "document_ids": [],
+              "elapsed_ms": 5
+            },
+            {
+              "step": "tool",
+              "tool": "open_article",
+              "summary": "Thu được 3 đoạn chứng cứ.",
+              "document_ids": [
+                "luat-dat-dai-2024"
+              ],
+              "elapsed_ms": 27
+            },
+            {
+              "step": "tool",
+              "tool": "open_article",
+              "summary": "Đã mở điều khoản nguồn của quan hệ sửa đổi/thay thế.",
+              "document_ids": [
+                "luat-dat-dai-2024"
+              ],
+              "elapsed_ms": 51
+            },
+            {
+              "step": "tool",
+              "tool": "open_article",
+              "summary": "Đã mở văn bản có quan hệ pháp lý để đối chiếu phạm vi.",
+              "document_ids": [
+                "luat-dat-dai-2013"
+              ],
+              "elapsed_ms": 57
+            },
+            {
+              "step": "tool",
+              "tool": "open_article",
+              "summary": "Đã mở điều khoản nguồn của quan hệ sửa đổi/thay thế.",
+              "document_ids": [
+                "luat-dat-dai-2024"
+              ],
+              "elapsed_ms": 121
+            },
+            {
+              "step": "applicability",
+              "tool": "check_effectivity",
+              "summary": "Đã kiểm tra 5 quan hệ pháp lý theo thời điểm.",
+              "document_ids": [
+                "luat-dat-dai-2024"
+              ],
+              "elapsed_ms": 121
+            },
+            {
+              "step": "synthesis",
+              "tool": null,
+              "summary": "Đã tạo bản trả lời; đang kiểm tra trước khi hiển thị.",
+              "document_ids": [],
+              "elapsed_ms": 1180
+            },
+            {
+              "step": "verification",
+              "tool": null,
+              "summary": "0/1 kết luận được phát hành; lỗi phạm vi/điều kiện đã xác định, không gọi model để phê duyệt lại. Claim 0: các điều kiện thay thế chỉ áp dụng cho trường hợp thuộc khoản 1; cần nêu điều kiện về đối tượng trước khi kết luận",
+              "document_ids": [],
+              "elapsed_ms": 1198
+            },
+            {
+              "step": "repair",
+              "tool": null,
+              "summary": "Đang sửa một lần theo các lỗi kiểm chứng trên cùng chứng cứ.",
+              "document_ids": [],
+              "elapsed_ms": 1199
+            },
+            {
+              "step": "synthesis",
+              "tool": null,
+              "summary": "Đã tạo bản trả lời; đang kiểm tra trước khi hiển thị.",
+              "document_ids": [],
+              "elapsed_ms": 2263
+            },
+            {
+              "step": "verification",
+              "tool": null,
+              "summary": "0/2 kết luận được phát hành; lỗi phạm vi/điều kiện đã xác định, không gọi model để phê duyệt lại. Claim 0: các điều kiện thay thế chỉ áp dụng cho trường hợp thuộc khoản 1; cần nêu điều kiện về đối tượng trước khi kết luận; Claim 1: nhóm chủ thể nêu trong kết luận không có trong đúng đoạn dẫn; Claim 1: nhóm chủ thể nêu trong kết luận không có trong đúng đoạn dẫn",
+              "document_ids": [],
+              "elapsed_ms": 2274
+            }
+          ],
+          "missing_facts": [],
+          "llm_calls": 2,
+          "embedding_calls": 0,
+          "tool_calls": 5,
+          "token_usage": 7232,
+          "elapsed_ms": 2282,
+          "model": "openai/gpt-oss-120b",
+          "embedding_model": "multilingual-e5-small-onnx-q8-window-v1",
+          "mode": "agentic",
+          "support_level": "insufficient",
+          "retry_after": null,
+          "retrieved_chunk_ids": [
+            "luat-dat-dai-2024-97-1-0",
+            "luat-dat-dai-2024-99-0-0",
+            "luat-dat-dai-2024-98-0-0",
+            "luat-dat-dai-2024-243-2-0",
+            "luat-dat-dai-2013-0-0-0",
+            "luat-dat-dai-2013-0-1-0",
+            "luat-dat-dai-2013-0-2-0",
+            "luat-dat-dai-2024-244-1-0"
+          ],
+          "evidence_chunk_ids": [
+            "luat-dat-dai-2024-97-1-0",
+            "luat-dat-dai-2024-99-0-0",
+            "luat-dat-dai-2024-98-0-0",
+            "luat-dat-dai-2024-243-2-0",
+            "luat-dat-dai-2013-0-0-0",
+            "luat-dat-dai-2013-0-1-0",
+            "luat-dat-dai-2013-0-2-0",
+            "luat-dat-dai-2024-244-1-0",
+            "luat-dat-dai-2024-245-1-0",
+            "luat-dat-dai-2024-249-3-0",
+            "luat-dat-dai-2024-98-0-parent",
+            "luat-dat-dai-2024-244-1-parent"
+          ]
+        }
+      }
+    },
+    {
+      "recorded_at": "2026-10-18T17:38:46.517642+00:00",
+      "origin": "executed",
+      "record": {
+        "case_id": "S14",
+        "mode": "agentic",
+        "answer_origin": "llm",
+        "evaluation_context": [
+          {
+            "citation_id": "C1",
+            "document_id": "qd-40-2026-hanoi",
+            "page": 1,
+            "locator": "Điều 2",
+            "text": "Điều 2. Quyết định này có hiệu lực thi hành kể từ ngày 02 tháng 4 năm 2026 và thay thế các Quyết định của Ủy ban nhân dân Thành phố: số 47/2016/QĐ - UBND ngày 08/11/2016 về việc phê duyệt mức hỗ trợ tự lo tái định cư bằng tiền đối với trường hợp được bố trí nhà tái định cư, số 56/2024/QĐ -UBND ngày 06/9/2024 ban hành quy định một số nội dung về bồi thường, hỗ trợ, tái định cư khi Nhà nước thu hồi đất trên địa bàn thành phố Hà Nội, số 38/2025/QĐ - UBND ngày 30/6/2025 và số 10/2026/QĐ -UBND ngày 18/01/2026 về việc sửa đổi, bổ sung một số điều của Quyết định số 56/2024/QĐ -UBND ngày 06/9/2024 của Ủy ban nhân dân Thành phố .",
+            "applicability": "current"
+          },
+          {
+            "citation_id": "C2",
+            "document_id": "qd-40-2026-hanoi",
+            "page": 11,
+            "locator": "Điều 18",
+            "text": "Điều 18. Hỗ trợ tạm cư (thực hiện khoản 7 Điều 111 Luật Đất đai và khoản 4 Điều 3 Nghị quyết 254/2025/QH15 ) Người có đất ở bị thu hồi trong thời gian chờ bố trí tái định cư được bố trí tạm cư vào quỹ nhà thuộc sở hữu Nhà nước. Trường hợp tự lo tạm cư thì được hỗ trợ tiền thuê nhà tạm cư trong thời gian chờ bố trí tái định cư với mức 2.500.000 đồng (hai triệu năm trăm nghìn đồng)/nhân khẩu thực tế ăn ở tại nơi thu hồi đất/tháng hoặc 5.000.000 đồng (năm triệu đồng)/hộ độc thân/tháng, nhưng mức hỗ trợ không quá 15.000.000 đồng (mười lăm triệu đồng)/thửa đất ở thu hồi/tháng . Thời gian hỗ trợ tạm cư được tính từ khi bàn giao đất đến khi nhận nhà (đất) tái định cư.",
+            "applicability": "current"
+          },
+          {
+            "citation_id": "C3",
+            "document_id": "qd-40-2026-hanoi",
+            "page": 11,
+            "locator": "Điều 17",
+            "text": "CÔNG BÁO HÀ NỘI/Số 132/Ngày 09 -4-2026 16 chuyển đổi từ các nông, lâm trường quốc doanh, tập đoàn sản xuất nông nghiệp, hợp tác xã nông nghiệp và có hợp đồng giao khoán sử dụng đất: Mức hỗ trợ tính bằng tiền tương đương 30 kg gạo/tháng đối với một nhân khẩu theo giá do Sở Nông nghiệp và Môi trường công bố hằng năm; thời gian hỗ trợ tối đa là 03 tháng, chi trả 01 (một) lần khi thực hiện chi trả tiền bồi thường, hỗ trợ .",
+            "applicability": "current"
+          },
+          {
+            "citation_id": "C4",
+            "document_id": "qd-40-2026-hanoi",
+            "page": 2,
+            "locator": "Điều 3",
+            "text": "Điều 3. Chánh Văn phòng Ủy ban nhân dân Thành phố; Giám đốc các Sở, ban, ngành; Chủ tịch Ủy ban nhân dân các xã, phường (sau đây gọi chung là Ủy ban nhân dân cấp xã ); các tổ chức, hộ gia đình, cá nhân có liên quan chịu trách nhiệm thi hành Quyết định này./. TM. ỦY BAN NHÂN DÂN CHỦ TỊCH Vũ Đại Thắng",
+            "applicability": "current"
+          },
+          {
+            "citation_id": "C5",
+            "document_id": "qd-40-2026-hanoi",
+            "page": 1,
+            "locator": "Điều 1",
+            "text": "Điều 1. Ban hành kèm theo Quyết định này “Quy định một số nội dung về bồi thường, hỗ trợ, tái định cư khi Nhà nước thu hồi đất trên địa bàn thành phố Hà Nội”.",
+            "applicability": "current"
+          },
+          {
+            "citation_id": "C6",
+            "document_id": "qd-40-2026-hanoi",
+            "page": 1,
+            "locator": "Trang 1",
+            "text": "CÔNG BÁO HÀ NỘI/Số 132/Ngày 09 -4-2026 6 ỦY BAN NHÂN DÂN CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM THÀNH PHỐ HÀ NỘI Độc lập - Tự do - Hạnh phúc Số: 40/2026/QĐ -UBND Hà Nội, ngày 02 tháng 4 năm 2026 QUYẾT ĐỊNH Ban hành Quy định một số nội dung về bồi thường, hỗ trợ, tái định cư khi Nhà nước thu hồi đất trên địa bàn thành phố Hà Nội ỦY BAN NHÂN DÂN THÀNH PHỐ HÀ NỘI Căn cứ Luật Tổ chức chính quyền địa phương số 72/2025/QH15; Căn cứ Luật Đất đai số 31/2024/QH15, được sửa đổi, bổ sung một số điều bởi các Luật số 43/2024/QH15, số 47/2024/QH15, số 58/2024/QH15, số 71/2025/QH15, số 84/2025/QH15, số 93/2025/QH15 và số 95/2025/QH15; Căn cứ Nghị quyết số 190/2025/QH15 của Quốc hội quy định về xử lý một số vấn đề liên quan đến sắp xếp tổ chức bộ máy Nhà nước ; Căn cứ Nghị quyết số 254/2025/QH15 của Quốc hội quy định một số cơ chế, chính sách tháo gỡ khó khăn, vướng mắc trong tổ chức thi hành Luật Đất đai ; Căn cứ Nghị định số 49/2026 /NĐ-CP của Chính phủ quy định chi tiết và hướng dẫn một số điều của Nghị quyết số 254/2025/QH15 của Quốc hội quy định một số cơ chế, chính sách tháo gỡ khó khăn, vướng mắc trong tổ chức thi hành Luật Đất đai ; Theo đề nghị của Giám đốc Sở Nông nghiệp và Môi trường tại Tờ trình số 186 /TTr-SNNMT ngày 19/3/2026 và Tờ trình bổ sung số 232/TTrBS-SNNMT ngày 31 tháng 3 năm 2026. Ủy ban nhân dân ban hành Quyết định quy định một số nội dung về bồi thường, hỗ trợ, tái định cư khi Nhà nước thu hồi đất trên địa bàn thành phố Hà Nội.",
+            "applicability": "current"
+          },
+          {
+            "citation_id": "C7",
+            "document_id": "qd-40-2026-hanoi",
+            "page": 3,
+            "locator": "Điều 2",
+            "text": "Điều 2. Đối tượng áp dụng 1. Cơ quan nhà nước thực hiện quyền hạn và trách nhiệm đại diện chủ sở hữu toàn dân về đất đai, thực hiện nhiệm vụ thống nhất quản lý nhà nước về đất đai; đơn vị, tổ chức thực hiện nhiệm vụ bồi thường, hỗ trợ, tái định cư. 2. Người có đất thu hồi và chủ sở hữu tài sản gắn liền với đất thu hồi. 3. Các đối tượng khác có liên quan đến việc bồi thường, hỗ trợ, tái định cư khi Nhà nước thu hồi đất.",
+            "applicability": "current"
+          }
+        ],
+        "result": {
+          "status": "answered",
+          "publication_profile": "academic",
+          "quality_status": "academic_prototype",
+          "retrieval_mode": "hybrid",
+          "coverage_gaps": [
+            {
+              "document_id": "qd-10-2017-hanoi",
+              "document_number": "10/2017/QĐ-UBND",
+              "title": "Quy định bồi thường, hỗ trợ và tái định cư Hà Nội (lịch sử)",
+              "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=189167",
+              "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+            },
+            {
+              "document_id": "qd-30-2019-hanoi",
+              "document_number": "30/2019/QĐ-UBND",
+              "title": "Quy định và bảng giá các loại đất Hà Nội 2020–2024 (lịch sử)",
+              "url": "https://vanban.hanoi.gov.vn/chi-tiet-van-ban/quyet-dinh-so-30-2019-qd-ubnd-cua-ubnd-tp-ha-noi-ve-viec-ban-hanh-quy-dinh-va-bang-gia-cac-loai-dat-189067",
+              "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+            },
+            {
+              "document_id": "qd-20-2023-hanoi",
+              "document_number": "20/2023/QĐ-UBND",
+              "title": "Sửa đổi bảng giá đất Quyết định 30/2019",
+              "url": "https://vbpl.vn/hanoi/Pages/vbpq-toanvan.aspx?ItemID=164473",
+              "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+            },
+            {
+              "document_id": "nd-123-2024",
+              "document_number": "123/2024/NĐ-CP",
+              "title": "Xử phạt vi phạm hành chính lĩnh vực đất đai",
+              "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=211356",
+              "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+            },
+            {
+              "document_id": "ring4-nq106-2022",
+              "document_number": "106/NQ-CP",
+              "title": "Triển khai Nghị quyết 56/2022/QH15 Vành đai 4",
+              "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=206398",
+              "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+            },
+            {
+              "document_id": "nd-01-2017",
+              "document_number": "01/2017/NĐ-CP",
+              "title": "Nghị định 01/2017/NĐ-CP sửa đổi, bổ sung một số nghị định quy định chi tiết thi hành Luật đất đai",
+              "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=187962",
+              "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+            },
+            {
+              "document_id": "nd-148-2020",
+              "document_number": "148/2020/NĐ-CP",
+              "title": "Nghị định 148/2020/NĐ-CP sửa đổi, bổ sung một số nghị định quy định chi tiết thi hành Luật Đất đai",
+              "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=202022",
+              "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+            }
+          ],
+          "content": "Đã đối chiếu các căn cứ dưới đây.\n\nQuyết định 40/2026/QĐ-UBND thay thế các Quyết định của UBND Thành phố: số 47/2016/QĐ-UBND (08/11/2016), số 56/2024/QĐ-UBND (06/09/2024), số 38/2025/QĐ-UBND (30/06/2025) và số 10/2026/QĐ-UBND (18/01/2026). [1]\n\nThời điểm xem xét: 12/10/2026. Dữ liệu được kiểm tra: 2026-10-11.",
+          "citations": [
+            {
+              "id": "qd-40-2026-hanoi-0-2-0",
+              "document_id": "qd-40-2026-hanoi",
+              "title": "Quy định một số nội dung bồi thường, hỗ trợ, tái định cư Hà Nội",
+              "document_number": "40/2026/QĐ-UBND",
+              "url": "https://congbao.hanoi.gov.vn/Default.aspx?p_attribute=5335&pageid=45002",
+              "locator": "Điều 2",
+              "excerpt": "Điều 2. Quyết định này có hiệu lực thi hành kể từ ngày 02 tháng 4 năm 2026 và thay thế các Quyết định của Ủy ban nhân dân Thành phố: số 47/2016/QĐ - UBND ngày 08/11/2016 về việc phê duyệt mức hỗ trợ tự lo tái định cư bằng tiền đối với trường hợp được bố trí nhà tái định cư, số 56/2024/QĐ -UBND ngày 06/9/2024 ban hành quy định một số nội dung về bồi thường, hỗ trợ, tái định cư khi Nhà nước thu hồi đất trên địa bàn thành phố Hà Nội, số 38/2025/QĐ - UBND ngày 30/6/2025 và số 10/2026/QĐ -UBND ngày 18/01/2026 về việc sửa đổi, bổ sung một số điều của Quyết định số 56/2024/QĐ -UBND ngày 06/9/2024 của Ủy ban nhân dân Thành phố .",
+              "checked_at": "2026-10-11T17:32:27Z",
+              "applicability": "current",
+              "source_review_notes": "",
+              "page": 1,
+              "source_url": "https://datafiles.hanoi.gov.vn/gov-hni/6249/VanBanCongBao/2026/5/29/QDPQ-40-2026_signed.pdf#page=1"
+            }
+          ],
+          "verified_claims": [
+            {
+              "kind": "legal_rule",
+              "text": "Quyết định 40/2026/QĐ-UBND thay thế các Quyết định của UBND Thành phố: số 47/2016/QĐ-UBND (08/11/2016), số 56/2024/QĐ-UBND (06/09/2024), số 38/2025/QĐ-UBND (30/06/2025) và số 10/2026/QĐ-UBND (18/01/2026).",
+              "citation_ids": [
+                "qd-40-2026-hanoi-0-2-0"
+              ]
+            }
+          ],
+          "as_of": "2026-10-12",
+          "corpus_release": "corpus-caf3c0833096ea4e",
+          "trace_id": "ab720cf9-2705-49a3-b0f1-93097f2d35ca",
+          "trace": [
+            {
+              "step": "routing",
+              "tool": "search_law",
+              "summary": "Đã đối chiếu tham chiếu với nguồn trong lượt trả lời trước; tiếp tục tra văn bản đó.",
+              "document_ids": [],
+              "elapsed_ms": 4
+            },
+            {
+              "step": "plan",
+              "tool": null,
+              "summary": "Đã chọn 1 công cụ; chế độ agentic.",
+              "document_ids": [],
+              "elapsed_ms": 4
+            },
+            {
+              "step": "tool",
+              "tool": "search_law",
+              "summary": "Thu được 8 đoạn chứng cứ.",
+              "document_ids": [
+                "qd-40-2026-hanoi"
+              ],
+              "elapsed_ms": 4669
+            },
+            {
+              "step": "tool",
+              "tool": "open_article",
+              "summary": "Đã mở văn bản có quan hệ pháp lý để đối chiếu phạm vi.",
+              "document_ids": [
+                "qd-56-2024-hanoi"
+              ],
+              "elapsed_ms": 4684
+            },
+            {
+              "step": "tool",
+              "tool": "open_article",
+              "summary": "Đã mở văn bản có quan hệ pháp lý để đối chiếu phạm vi.",
+              "document_ids": [
+                "qd-38-2025-hanoi"
+              ],
+              "elapsed_ms": 4697
+            },
+            {
+              "step": "tool",
+              "tool": "open_article",
+              "summary": "Đã mở văn bản có quan hệ pháp lý để đối chiếu phạm vi.",
+              "document_ids": [
+                "qd-10-2026-hanoi"
+              ],
+              "elapsed_ms": 4710
+            },
+            {
+              "step": "applicability",
+              "tool": "check_effectivity",
+              "summary": "Đã kiểm tra 4 quan hệ pháp lý theo thời điểm.",
+              "document_ids": [
+                "qd-40-2026-hanoi"
+              ],
+              "elapsed_ms": 4710
+            },
+            {
+              "step": "synthesis",
+              "tool": null,
+              "summary": "Đã tạo bản trả lời; đang kiểm tra trước khi hiển thị.",
+              "document_ids": [],
+              "elapsed_ms": 5871
+            },
+            {
+              "step": "verification",
+              "tool": null,
+              "summary": "1/1 kết luận qua kiểm tra với chứng cứ trong corpus; 0 vấn đề.",
+              "document_ids": [],
+              "elapsed_ms": 7163
+            }
+          ],
+          "missing_facts": [],
+          "llm_calls": 2,
+          "embedding_calls": 1,
+          "tool_calls": 5,
+          "token_usage": 5860,
+          "elapsed_ms": 7167,
+          "model": "openai/gpt-oss-120b",
+          "embedding_model": "multilingual-e5-small-onnx-q8-window-v1",
+          "mode": "agentic",
+          "support_level": "full",
+          "retry_after": null,
+          "retrieved_chunk_ids": [
+            "qd-40-2026-hanoi-0-2-0",
+            "qd-40-2026-hanoi-10-0-0",
+            "qd-40-2026-hanoi-1-1-0",
+            "qd-40-2026-hanoi-0-1-0",
+            "qd-40-2026-hanoi-0-0-0",
+            "qd-40-2026-hanoi-2-2-0",
+            "qd-40-2026-hanoi-9-1-0",
+            "qd-40-2026-hanoi-10-1-0"
+          ],
+          "evidence_chunk_ids": [
+            "qd-40-2026-hanoi-0-2-0",
+            "qd-40-2026-hanoi-10-0-0",
+            "qd-40-2026-hanoi-1-1-0",
+            "qd-40-2026-hanoi-0-1-0",
+            "qd-40-2026-hanoi-0-0-0",
+            "qd-40-2026-hanoi-2-2-0",
+            "qd-40-2026-hanoi-9-1-0",
+            "qd-40-2026-hanoi-10-1-0",
+            "qd-56-2024-hanoi-0-0-0",
+            "qd-56-2024-hanoi-0-1-0",
+            "qd-56-2024-hanoi-0-10-0",
+            "qd-38-2025-hanoi-0-0-0",
+            "qd-38-2025-hanoi-0-0-1",
+            "qd-38-2025-hanoi-0-1-0",
+            "qd-10-2026-hanoi-0-0-0",
+            "qd-10-2026-hanoi-0-1-0"
+          ]
+        }
+      }
+    },
+    {
+      "recorded_at": "2026-10-18T17:38:00.870439+00:00",
+      "origin": "executed",
+      "record": {
+        "case_id": "S08",
+        "mode": "agentic",
+        "answer_origin": "llm",
+        "evaluation_context": [
+          {
+            "citation_id": "C1",
+            "document_id": "luat-dat-dai-2024",
+            "page": 14,
+            "locator": "Điều 108",
+            "text": "Điều 108. Hỗ trợ khi Nhà nước thu hồi đất 1. Hỗ trợ khi Nhà nước thu hồi đất bao gồm: a) Hỗ trợ ổn định đời sống; b) Hỗ trợ ổn định sản xuất, kinh doanh; c) Hỗ trợ di dời vật nuôi; d) Hỗ trợ đào tạo, chuyển đổi nghề và tìm kiếm việc làm; đ) Hỗ trợ tái định cư đối với trường hợp quy định tại khoản 8 Điều 111 của Luật này; e) Hỗ trợ để tháo dỡ, phá dỡ, di dời theo quy định tại khoản 3 Điều 105 của Luật này. 2. Ngoài việc hỗ trợ quy định tại khoản 1 Điều này, căn cứ vào tình hình thực tế tại địa phương, Ủy ban nhân dân cấp tỉnh quyết định biện pháp, mức hỗ trợ khác để bảo đảm có chỗ ở, ổn định đời sống, sản xuất đối với người có đất thu hồi, chủ sở hữu tài sản cho từng dự án cụ thể. 3. Chính phủ quy định chi tiết Điều này.",
+            "applicability": "current"
+          },
+          {
+            "citation_id": "C2",
+            "document_id": "luat-dat-dai-2013",
+            "page": 1,
+            "locator": "Điều 1",
+            "text": "Điều 1. Phạm vi điều chỉnh Luật này quy định về chế độ sở hữu đất đai, quyền hạn và trách nhiệm của Nhà nước đại diện chủ sở hữu toàn dân về đất đai và thống nhất quản lý về đất đai, chế độ quản lý và sử dụng đất đai, quyền và nghĩa vụ của người sử dụng đất đối với đất đai thuộc lãnh thổ của nước Cộng hòa xã hội chủ nghĩa Việt Nam.",
+            "applicability": "historical"
+          },
+          {
+            "citation_id": "C3",
+            "document_id": "luat-dat-dai-2013",
+            "page": 1,
+            "locator": "Trang 1",
+            "text": "CÔNG BÁO/Số 1011 + 1012/Ngày 31-12-2013 3 QUỐC HỘI CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM Độc lập - Tự do - Hạnh phúc Luật số: 45/2013/QH13 LUẬT Đất đai Căn cứ Hiến pháp nước Cộng hòa xã hội chủ nghĩa Việt Nam; Quốc hội ban hành Luật đất đai. Chương I QUY ĐỊNH CHUNG",
+            "applicability": "historical"
+          },
+          {
+            "citation_id": "C4",
+            "document_id": "luat-dat-dai-2013",
+            "page": 1,
+            "locator": "Điều 2",
+            "text": "Điều 2. Đối tượng áp dụng 1. Cơ quan nhà nước thực hiện quyền hạn và trách nhiệm đại diện chủ sở hữu toàn dân về đất đai, thực hiện nhiệm vụ thống nhất quản lý nhà nước về đất đai. 2. Người sử dụng đất. 3. Các đối tượng khác có liên quan đến việc quản lý, sử dụng đất.",
+            "applicability": "historical"
+          },
+          {
+            "citation_id": "C5",
+            "document_id": "luat-dat-dai-2024",
+            "page": 63,
+            "locator": "Điều 260",
+            "text": "Điều 260. Quy định chuyển tiếp một số trường hợp khác khi Luật này có hiệu lực thi hành 1. Tổ chức kinh tế, hộ gia đình, cá nhân được Nhà nước cho thuê đất trước ngày 01 tháng 7 năm 2004 đã trả tiền thuê đất cho cả thời gian thuê hoặc trả trước tiền thuê đất cho nhiều năm mà thời hạn thuê đất đã trả tiền còn lại ít nhất là 05 năm thì tổ chức kinh tế có quyền và nghĩa vụ quy định tại Điều 33 của Luật này; hộ gia đình, cá nhân có quyền và nghĩa vụ quy định tại khoản 1 Điều 37 của Luật này.",
+            "applicability": "current"
+          },
+          {
+            "citation_id": "C6",
+            "document_id": "luat-dat-dai-2024",
+            "page": 57,
+            "locator": "Điều 252",
+            "text": "Điều 252. Hiệu lực thi hành 1. Luật này có hiệu lực thi hành từ ngày 01 tháng 01 năm 2025, trừ trường hợp quy định tại khoản 2 và khoản 3 Điều này. 2. Điều 190 và Điều 248 của Luật này có hiệu lực thi hành từ ngày 01 tháng 4 năm 2024. 3. Việc lập, phê duyệt quy hoạch sử dụng đất được tiếp tục thực hiện theo quy định của Nghị quyết số 61/2022/QH15 ngày 16 tháng 6 năm 2022 của Quốc hội về tiếp tục tăng cường hiệu lực, hiệu quả thực hiện chính sách, pháp luật về quy hoạch và một số giải pháp tháo gỡ khó khăn, vướng mắc, đẩy nhanh tiến độ lập và nâng cao chất lượng quy hoạch thời kỳ 2021 - 2030. Khoản 9 Điều 60 của Luật này có hiệu lực thi hành từ ngày Nghị quyết số 61/2022/QH15 hết hiệu lực. 4. Luật Đất đai số 45/2013/QH13 đã được sửa đổi, bổ sung một số điều theo Luật số 35/2018/QH14 (sau đây gọi là Luật Đất đai số 45/2013/QH13) hết hiệu lực kể từ ngày Luật này có hiệu lực thi hành.",
+            "applicability": "current"
+          }
+        ],
+        "result": {
+          "status": "answered",
+          "publication_profile": "academic",
+          "quality_status": "academic_prototype",
+          "retrieval_mode": "hybrid",
+          "coverage_gaps": [
+            {
+              "document_id": "qd-10-2017-hanoi",
+              "document_number": "10/2017/QĐ-UBND",
+              "title": "Quy định bồi thường, hỗ trợ và tái định cư Hà Nội (lịch sử)",
+              "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=189167",
+              "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+            },
+            {
+              "document_id": "qd-30-2019-hanoi",
+              "document_number": "30/2019/QĐ-UBND",
+              "title": "Quy định và bảng giá các loại đất Hà Nội 2020–2024 (lịch sử)",
+              "url": "https://vanban.hanoi.gov.vn/chi-tiet-van-ban/quyet-dinh-so-30-2019-qd-ubnd-cua-ubnd-tp-ha-noi-ve-viec-ban-hanh-quy-dinh-va-bang-gia-cac-loai-dat-189067",
+              "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+            },
+            {
+              "document_id": "qd-20-2023-hanoi",
+              "document_number": "20/2023/QĐ-UBND",
+              "title": "Sửa đổi bảng giá đất Quyết định 30/2019",
+              "url": "https://vbpl.vn/hanoi/Pages/vbpq-toanvan.aspx?ItemID=164473",
+              "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+            },
+            {
+              "document_id": "nd-123-2024",
+              "document_number": "123/2024/NĐ-CP",
+              "title": "Xử phạt vi phạm hành chính lĩnh vực đất đai",
+              "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=211356",
+              "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+            },
+            {
+              "document_id": "ring4-nq106-2022",
+              "document_number": "106/NQ-CP",
+              "title": "Triển khai Nghị quyết 56/2022/QH15 Vành đai 4",
+              "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=206398",
+              "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+            },
+            {
+              "document_id": "nd-01-2017",
+              "document_number": "01/2017/NĐ-CP",
+              "title": "Nghị định 01/2017/NĐ-CP sửa đổi, bổ sung một số nghị định quy định chi tiết thi hành Luật đất đai",
+              "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=187962",
+              "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+            },
+            {
+              "document_id": "nd-148-2020",
+              "document_number": "148/2020/NĐ-CP",
+              "title": "Nghị định 148/2020/NĐ-CP sửa đổi, bổ sung một số nghị định quy định chi tiết thi hành Luật Đất đai",
+              "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=202022",
+              "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+            }
+          ],
+          "content": "Đã đối chiếu các căn cứ dưới đây.\n\nTheo Điều 108 Luật Đất đai 2024, khi Nhà nước thu hồi đất, các nhóm hỗ trợ bao gồm: hỗ trợ ổn định đời sống; hỗ trợ ổn định sản xuất, kinh doanh; hỗ trợ di dời vật nuôi; hỗ trợ đào tạo, chuyển đổi nghề và tìm kiếm việc làm; hỗ trợ tái định cư (theo khoản 8 Điều 111); hỗ trợ tháo dỡ, phá dỡ, di dời (theo khoản 3 Điều 105). [1]\n\nThời điểm xem xét: 02/08/2024. Dữ liệu được kiểm tra: 2026-10-11.",
+          "citations": [
+            {
+              "id": "luat-dat-dai-2024-106-1-0",
+              "document_id": "luat-dat-dai-2024",
+              "title": "Luật Đất đai",
+              "document_number": "31/2024/QH15",
+              "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=211189",
+              "locator": "Điều 108",
+              "excerpt": "Điều 108. Hỗ trợ khi Nhà nước thu hồi đất 1. Hỗ trợ khi Nhà nước thu hồi đất bao gồm: a) Hỗ trợ ổn định đời sống; b) Hỗ trợ ổn định sản xuất, kinh doanh; c) Hỗ trợ di dời vật nuôi; d) Hỗ trợ đào tạo, chuyển đổi nghề và tìm kiếm việc làm; đ) Hỗ trợ tái định cư đối với trường hợp quy định tại khoản 8 Điều 111 của Luật này; e) Hỗ trợ để tháo dỡ, phá dỡ, di dời theo quy định tại khoản 3 Điều 105 của Luật này. 2. Ngoài việc hỗ trợ quy định tại khoản 1 Điều này, căn cứ vào tình hình thực tế tại địa phương, Ủy ban nhân dân cấp tỉnh quyết định biện pháp, mức hỗ trợ khác để bảo đảm có chỗ ở, ổn định đời sống, sản xuất đối với người có đất thu hồi, chủ sở hữu tài sản cho từng dự án cụ thể. 3. Chính phủ quy định chi tiết Điều này.",
+              "checked_at": "2026-10-11T17:32:27Z",
+              "applicability": "current",
+              "source_review_notes": "",
+              "page": 14,
+              "source_url": "https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/9/31-2024-qh15_2.pdf#page=14"
+            }
+          ],
+          "verified_claims": [
+            {
+              "kind": "legal_rule",
+              "text": "Theo Điều 108 Luật Đất đai 2024, khi Nhà nước thu hồi đất, các nhóm hỗ trợ bao gồm: hỗ trợ ổn định đời sống; hỗ trợ ổn định sản xuất, kinh doanh; hỗ trợ di dời vật nuôi; hỗ trợ đào tạo, chuyển đổi nghề và tìm kiếm việc làm; hỗ trợ tái định cư (theo khoản 8 Điều 111); hỗ trợ tháo dỡ, phá dỡ, di dời (theo khoản 3 Điều 105).",
+              "citation_ids": [
+                "luat-dat-dai-2024-106-1-0"
+              ]
+            }
+          ],
+          "as_of": "2024-08-02",
+          "corpus_release": "corpus-caf3c0833096ea4e",
+          "trace_id": "2fe69201-925f-4a39-89bf-2b54a63c418b",
+          "trace": [
+            {
+              "step": "routing",
+              "tool": "open_article",
+              "summary": "Đã nhận diện văn bản và điều được người dùng chỉ rõ; mở nguồn tương ứng.",
+              "document_ids": [
+                "luat-dat-dai-2024"
+              ],
+              "elapsed_ms": 4
+            },
+            {
+              "step": "plan",
+              "tool": null,
+              "summary": "Đã chọn 1 công cụ; chế độ agentic.",
+              "document_ids": [],
+              "elapsed_ms": 4
+            },
+            {
+              "step": "tool",
+              "tool": "open_article",
+              "summary": "Thu được 1 đoạn chứng cứ.",
+              "document_ids": [
+                "luat-dat-dai-2024"
+              ],
+              "elapsed_ms": 20
+            },
+            {
+              "step": "tool",
+              "tool": "open_article",
+              "summary": "Đã mở điều khoản nguồn của quan hệ sửa đổi/thay thế.",
+              "document_ids": [
+                "luat-dat-dai-2024"
+              ],
+              "elapsed_ms": 37
+            },
+            {
+              "step": "tool",
+              "tool": "open_article",
+              "summary": "Đã mở văn bản có quan hệ pháp lý để đối chiếu phạm vi.",
+              "document_ids": [
+                "luat-dat-dai-2013"
+              ],
+              "elapsed_ms": 42
+            },
+            {
+              "step": "tool",
+              "tool": "open_article",
+              "summary": "Đã mở điều khoản nguồn của quan hệ sửa đổi/thay thế.",
+              "document_ids": [
+                "luat-dat-dai-2024"
+              ],
+              "elapsed_ms": 85
+            },
+            {
+              "step": "applicability",
+              "tool": "check_effectivity",
+              "summary": "Đã kiểm tra 5 quan hệ pháp lý theo thời điểm.",
+              "document_ids": [
+                "luat-dat-dai-2024"
+              ],
+              "elapsed_ms": 85
+            },
+            {
+              "step": "synthesis",
+              "tool": null,
+              "summary": "Đã tạo bản trả lời; đang kiểm tra trước khi hiển thị.",
+              "document_ids": [],
+              "elapsed_ms": 1193
+            },
+            {
+              "step": "verification",
+              "tool": null,
+              "summary": "Đã bỏ ký hiệu liệt kê không khớp điểm của văn bản; giữ nguyên nội dung để kiểm chứng.",
+              "document_ids": [
+                "luat-dat-dai-2024"
+              ],
+              "elapsed_ms": 1196
+            },
+            {
+              "step": "verification",
+              "tool": null,
+              "summary": "1/1 kết luận qua kiểm tra với chứng cứ trong corpus; 0 vấn đề.",
+              "document_ids": [],
+              "elapsed_ms": 2647
+            }
+          ],
+          "missing_facts": [],
+          "llm_calls": 2,
+          "embedding_calls": 0,
+          "tool_calls": 5,
+          "token_usage": 6328,
+          "elapsed_ms": 2650,
+          "model": "openai/gpt-oss-120b",
+          "embedding_model": "multilingual-e5-small-onnx-q8-window-v1",
+          "mode": "agentic",
+          "support_level": "full",
+          "retry_after": null,
+          "retrieved_chunk_ids": [
+            "luat-dat-dai-2024-106-1-0",
+            "luat-dat-dai-2024-243-2-0",
+            "luat-dat-dai-2013-0-0-0",
+            "luat-dat-dai-2013-0-1-0",
+            "luat-dat-dai-2013-0-2-0",
+            "luat-dat-dai-2024-244-1-0",
+            "luat-dat-dai-2024-245-1-0",
+            "luat-dat-dai-2024-249-3-0"
+          ],
+          "evidence_chunk_ids": [
+            "luat-dat-dai-2024-106-1-0",
+            "luat-dat-dai-2024-243-2-0",
+            "luat-dat-dai-2013-0-0-0",
+            "luat-dat-dai-2013-0-1-0",
+            "luat-dat-dai-2013-0-2-0",
+            "luat-dat-dai-2024-244-1-0",
+            "luat-dat-dai-2024-245-1-0",
+            "luat-dat-dai-2024-249-3-0",
+            "luat-dat-dai-2024-244-1-parent",
+            "luat-dat-dai-2024-245-1-parent"
+          ]
+        }
+      }
+    },
+    {
+      "recorded_at": "2026-10-18T17:39:44.985006+00:00",
+      "origin": "executed",
+      "record": {
+        "case_id": "S18",
+        "mode": "agentic",
+        "answer_origin": "deterministic",
+        "evaluation_context": [],
+        "result": {
+          "status": "answered",
+          "publication_profile": "academic",
+          "quality_status": "academic_prototype",
+          "retrieval_mode": "hybrid",
+          "coverage_gaps": [
+            {
+              "document_id": "qd-10-2017-hanoi",
+              "document_number": "10/2017/QĐ-UBND",
+              "title": "Quy định bồi thường, hỗ trợ và tái định cư Hà Nội (lịch sử)",
+              "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=189167",
+              "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+            },
+            {
+              "document_id": "qd-30-2019-hanoi",
+              "document_number": "30/2019/QĐ-UBND",
+              "title": "Quy định và bảng giá các loại đất Hà Nội 2020–2024 (lịch sử)",
+              "url": "https://vanban.hanoi.gov.vn/chi-tiet-van-ban/quyet-dinh-so-30-2019-qd-ubnd-cua-ubnd-tp-ha-noi-ve-viec-ban-hanh-quy-dinh-va-bang-gia-cac-loai-dat-189067",
+              "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+            },
+            {
+              "document_id": "qd-20-2023-hanoi",
+              "document_number": "20/2023/QĐ-UBND",
+              "title": "Sửa đổi bảng giá đất Quyết định 30/2019",
+              "url": "https://vbpl.vn/hanoi/Pages/vbpq-toanvan.aspx?ItemID=164473",
+              "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+            },
+            {
+              "document_id": "nd-123-2024",
+              "document_number": "123/2024/NĐ-CP",
+              "title": "Xử phạt vi phạm hành chính lĩnh vực đất đai",
+              "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=211356",
+              "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+            },
+            {
+              "document_id": "ring4-nq106-2022",
+              "document_number": "106/NQ-CP",
+              "title": "Triển khai Nghị quyết 56/2022/QH15 Vành đai 4",
+              "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=206398",
+              "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+            },
+            {
+              "document_id": "nd-01-2017",
+              "document_number": "01/2017/NĐ-CP",
+              "title": "Nghị định 01/2017/NĐ-CP sửa đổi, bổ sung một số nghị định quy định chi tiết thi hành Luật đất đai",
+              "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=187962",
+              "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+            },
+            {
+              "document_id": "nd-148-2020",
+              "document_number": "148/2020/NĐ-CP",
+              "title": "Nghị định 148/2020/NĐ-CP sửa đổi, bổ sung một số nghị định quy định chi tiết thi hành Luật Đất đai",
+              "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=202022",
+              "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+            }
+          ],
+          "content": "Đã đối chiếu các căn cứ dưới đây.\n\n56/2024/QĐ-UBND không còn hiệu lực tại ngày 12/10/2026; 40/2026/QĐ-UBND thay thế văn bản này từ ngày 02/04/2026. [1]\n\nThời điểm xem xét: 12/10/2026. Dữ liệu được kiểm tra: 2026-10-11.",
+          "citations": [
+            {
+              "id": "qd-40-2026-hanoi-0-2-0",
+              "document_id": "qd-40-2026-hanoi",
+              "title": "Quy định một số nội dung bồi thường, hỗ trợ, tái định cư Hà Nội",
+              "document_number": "40/2026/QĐ-UBND",
+              "url": "https://congbao.hanoi.gov.vn/Default.aspx?p_attribute=5335&pageid=45002",
+              "locator": "Điều 2",
+              "excerpt": "Điều 2. Quyết định này có hiệu lực thi hành kể từ ngày 02 tháng 4 năm 2026 và thay thế các Quyết định của Ủy ban nhân dân Thành phố: số 47/2016/QĐ - UBND ngày 08/11/2016 về việc phê duyệt mức hỗ trợ tự lo tái định cư bằng tiền đối với trường hợp được bố trí nhà tái định cư, số 56/2024/QĐ -UBND ngày 06/9/2024 ban hành quy định một số nội dung về bồi thường, hỗ trợ, tái định cư khi Nhà nước thu hồi đất trên địa bàn thành phố Hà Nội, số 38/2025/QĐ - UBND ngày 30/6/2025 và số 10/2026/QĐ -UBND ngày 18/01/2026 về việc sửa đổi, bổ sung một số điều của Quyết định số 56/2024/QĐ -UBND ngày 06/9/2024 của Ủy ban nhân dân Thành phố .",
+              "checked_at": "2026-10-11T17:32:27Z",
+              "applicability": "current",
+              "source_review_notes": "",
+              "page": 1,
+              "source_url": "https://datafiles.hanoi.gov.vn/gov-hni/6249/VanBanCongBao/2026/5/29/QDPQ-40-2026_signed.pdf#page=1"
+            }
+          ],
+          "verified_claims": [
+            {
+              "kind": "applicability",
+              "text": "56/2024/QĐ-UBND không còn hiệu lực tại ngày 12/10/2026; 40/2026/QĐ-UBND thay thế văn bản này từ ngày 02/04/2026.",
+              "citation_ids": [
+                "qd-40-2026-hanoi-0-2-0"
+              ]
+            }
+          ],
+          "as_of": "2026-10-12",
+          "corpus_release": "corpus-caf3c0833096ea4e",
+          "trace_id": "7be23003-a6fb-4c14-8f7d-5d10a7aecf08",
+          "trace": [
+            {
+              "step": "routing",
+              "tool": "search_law",
+              "summary": "Đã nhận diện số văn bản và yêu cầu kiểm tra hiệu lực; dùng tra cứu trực tiếp.",
+              "document_ids": [],
+              "elapsed_ms": 4
+            },
+            {
+              "step": "plan",
+              "tool": null,
+              "summary": "Đã chọn 1 công cụ; chế độ agentic.",
+              "document_ids": [],
+              "elapsed_ms": 4
+            },
+            {
+              "step": "tool",
+              "tool": "search_law",
+              "summary": "Thu được 8 đoạn chứng cứ.",
+              "document_ids": [
+                "qd-40-2026-hanoi",
+                "qd-56-2024-hanoi"
+              ],
+              "elapsed_ms": 5913
+            },
+            {
+              "step": "tool",
+              "tool": "open_article",
+              "summary": "Đã mở văn bản có quan hệ pháp lý để đối chiếu phạm vi.",
+              "document_ids": [
+                "qd-56-2024-hanoi"
+              ],
+              "elapsed_ms": 5929
+            },
+            {
+              "step": "tool",
+              "tool": "open_article",
+              "summary": "Đã mở văn bản có quan hệ pháp lý để đối chiếu phạm vi.",
+              "document_ids": [
+                "qd-38-2025-hanoi"
+              ],
+              "elapsed_ms": 5942
+            },
+            {
+              "step": "tool",
+              "tool": "open_article",
+              "summary": "Đã mở văn bản có quan hệ pháp lý để đối chiếu phạm vi.",
+              "document_ids": [
+                "qd-10-2026-hanoi"
+              ],
+              "elapsed_ms": 5955
+            },
+            {
+              "step": "applicability",
+              "tool": "check_effectivity",
+              "summary": "Đã kiểm tra 4 quan hệ pháp lý theo thời điểm.",
+              "document_ids": [
+                "qd-40-2026-hanoi"
+              ],
+              "elapsed_ms": 5955
+            },
+            {
+              "step": "tool",
+              "tool": "open_article",
+              "summary": "Đã mở văn bản có quan hệ pháp lý để đối chiếu phạm vi.",
+              "document_ids": [
+                "qd-40-2026-hanoi"
+              ],
+              "elapsed_ms": 5972
+            },
+            {
+              "step": "tool",
+              "tool": "open_article",
+              "summary": "Đã mở văn bản có quan hệ pháp lý để đối chiếu phạm vi.",
+              "document_ids": [
+                "qd-40-2026-hanoi"
+              ],
+              "elapsed_ms": 5988
+            },
+            {
+              "step": "tool",
+              "tool": "open_article",
+              "summary": "Đã mở văn bản có quan hệ pháp lý để đối chiếu phạm vi.",
+              "document_ids": [
+                "qd-10-2026-hanoi"
+              ],
+              "elapsed_ms": 6005
+            },
+            {
+              "step": "tool",
+              "tool": "open_article",
+              "summary": "Đã mở văn bản có quan hệ pháp lý để đối chiếu phạm vi.",
+              "document_ids": [
+                "qd-38-2025-hanoi"
+              ],
+              "elapsed_ms": 6033
+            },
+            {
+              "step": "applicability",
+              "tool": "check_effectivity",
+              "summary": "Đã kiểm tra 4 quan hệ pháp lý theo thời điểm.",
+              "document_ids": [
+                "qd-56-2024-hanoi"
+              ],
+              "elapsed_ms": 6033
+            },
+            {
+              "step": "synthesis",
+              "tool": null,
+              "summary": "Đã tạo bản trả lời; đang kiểm tra trước khi hiển thị.",
+              "document_ids": [],
+              "elapsed_ms": 6035
+            },
+            {
+              "step": "verification",
+              "tool": "check_effectivity",
+              "summary": "Đã đối chiếu số văn bản trong điều khoản thay thế, mốc hiệu lực nguồn và ngày hết hiệu lực đã xác minh của văn bản cũ.",
+              "document_ids": [
+                "qd-40-2026-hanoi",
+                "qd-56-2024-hanoi"
+              ],
+              "elapsed_ms": 6036
+            }
+          ],
+          "missing_facts": [],
+          "llm_calls": 0,
+          "embedding_calls": 1,
+          "tool_calls": 12,
+          "token_usage": 0,
+          "elapsed_ms": 6039,
+          "model": "openai/gpt-oss-120b",
+          "embedding_model": "multilingual-e5-small-onnx-q8-window-v1",
+          "mode": "agentic",
+          "support_level": "full",
+          "retry_after": null,
+          "retrieved_chunk_ids": [
+            "qd-40-2026-hanoi-0-2-0",
+            "qd-40-2026-hanoi-2-2-0",
+            "qd-40-2026-hanoi-10-0-0",
+            "qd-40-2026-hanoi-13-1-0",
+            "qd-40-2026-hanoi-0-0-0",
+            "qd-56-2024-hanoi-0-2-0",
+            "qd-40-2026-hanoi-0-1-0",
+            "qd-56-2024-hanoi-0-5-0"
+          ],
+          "evidence_chunk_ids": [
+            "qd-40-2026-hanoi-0-2-0",
+            "qd-40-2026-hanoi-2-2-0",
+            "qd-40-2026-hanoi-10-0-0",
+            "qd-40-2026-hanoi-13-1-0",
+            "qd-40-2026-hanoi-0-0-0",
+            "qd-56-2024-hanoi-0-2-0",
+            "qd-40-2026-hanoi-0-1-0",
+            "qd-56-2024-hanoi-0-5-0",
+            "qd-38-2025-hanoi-0-1-0",
+            "qd-10-2026-hanoi-1-0-0",
+            "qd-40-2026-hanoi-17-2-0",
+            "qd-10-2026-hanoi-3-0-0",
+            "qd-10-2026-hanoi-2-0-0",
+            "qd-38-2025-hanoi-1-0-0",
+            "qd-38-2025-hanoi-4-1-0",
+            "qd-56-2024-hanoi-0-0-0"
+          ]
+        }
+      }
+    },
+    {
+      "recorded_at": "2026-10-18T17:39:22.351180+00:00",
+      "origin": "executed",
+      "record": {
+        "case_id": "S17",
+        "mode": "agentic",
+        "answer_origin": "deterministic",
+        "evaluation_context": [],
+        "result": {
+          "status": "insufficient_evidence",
+          "publication_profile": "academic",
+          "quality_status": "academic_prototype",
+          "retrieval_mode": "hybrid",
+          "coverage_gaps": [
+            {
+              "document_id": "qd-10-2017-hanoi",
+              "document_number": "10/2017/QĐ-UBND",
+              "title": "Quy định bồi thường, hỗ trợ và tái định cư Hà Nội (lịch sử)",
+              "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=189167",
+              "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+            },
+            {
+              "document_id": "qd-30-2019-hanoi",
+              "document_number": "30/2019/QĐ-UBND",
+              "title": "Quy định và bảng giá các loại đất Hà Nội 2020–2024 (lịch sử)",
+              "url": "https://vanban.hanoi.gov.vn/chi-tiet-van-ban/quyet-dinh-so-30-2019-qd-ubnd-cua-ubnd-tp-ha-noi-ve-viec-ban-hanh-quy-dinh-va-bang-gia-cac-loai-dat-189067",
+              "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+            },
+            {
+              "document_id": "qd-20-2023-hanoi",
+              "document_number": "20/2023/QĐ-UBND",
+              "title": "Sửa đổi bảng giá đất Quyết định 30/2019",
+              "url": "https://vbpl.vn/hanoi/Pages/vbpq-toanvan.aspx?ItemID=164473",
+              "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+            },
+            {
+              "document_id": "nd-123-2024",
+              "document_number": "123/2024/NĐ-CP",
+              "title": "Xử phạt vi phạm hành chính lĩnh vực đất đai",
+              "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=211356",
+              "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+            },
+            {
+              "document_id": "ring4-nq106-2022",
+              "document_number": "106/NQ-CP",
+              "title": "Triển khai Nghị quyết 56/2022/QH15 Vành đai 4",
+              "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=206398",
+              "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+            },
+            {
+              "document_id": "nd-01-2017",
+              "document_number": "01/2017/NĐ-CP",
+              "title": "Nghị định 01/2017/NĐ-CP sửa đổi, bổ sung một số nghị định quy định chi tiết thi hành Luật đất đai",
+              "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=187962",
+              "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+            },
+            {
+              "document_id": "nd-148-2020",
+              "document_number": "148/2020/NĐ-CP",
+              "title": "Nghị định 148/2020/NĐ-CP sửa đổi, bổ sung một số nghị định quy định chi tiết thi hành Luật Đất đai",
+              "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=202022",
+              "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+            }
+          ],
+          "content": "Câu hỏi nằm ngoài phạm vi pháp luật đất đai và quy hoạch Hà Nội.\n\nThời điểm xem xét: 12/10/2026. Dữ liệu được kiểm tra: 2026-10-11.",
+          "citations": [],
+          "verified_claims": [],
+          "as_of": "2026-10-12",
+          "corpus_release": "corpus-caf3c0833096ea4e",
+          "trace_id": "9e881268-7dc3-43f8-8bfb-3e51be41e434",
+          "trace": [
+            {
+              "step": "plan",
+              "tool": null,
+              "summary": "Đã chọn 0 công cụ; chế độ agentic.",
+              "document_ids": [],
+              "elapsed_ms": 1252
+            },
+            {
+              "step": "synthesis",
+              "tool": null,
+              "summary": "Đã tạo bản trả lời; đang kiểm tra trước khi hiển thị.",
+              "document_ids": [],
+              "elapsed_ms": 1254
+            },
+            {
+              "step": "verification",
+              "tool": null,
+              "summary": "Chỉ trả thông báo ngoài phạm vi; không có kết luận pháp lý hoặc hướng dẫn chuyên ngành khác.",
+              "document_ids": [],
+              "elapsed_ms": 1254
+            }
+          ],
+          "missing_facts": [],
+          "llm_calls": 1,
+          "embedding_calls": 0,
+          "tool_calls": 0,
+          "token_usage": 1902,
+          "elapsed_ms": 1257,
+          "model": "openai/gpt-oss-120b",
+          "embedding_model": "multilingual-e5-small-onnx-q8-window-v1",
+          "mode": "agentic",
+          "support_level": "insufficient",
+          "retry_after": null,
+          "retrieved_chunk_ids": [],
+          "evidence_chunk_ids": []
+        }
+      }
+    },
+    {
+      "recorded_at": "2026-10-18T17:39:21.073400+00:00",
+      "origin": "executed",
+      "record": {
+        "case_id": "S15",
+        "mode": "agentic",
+        "answer_origin": "deterministic",
+        "evaluation_context": [],
+        "result": {
+          "status": "insufficient_evidence",
+          "publication_profile": "academic",
+          "quality_status": "academic_prototype",
+          "retrieval_mode": "hybrid",
+          "coverage_gaps": [
+            {
+              "document_id": "qd-10-2017-hanoi",
+              "document_number": "10/2017/QĐ-UBND",
+              "title": "Quy định bồi thường, hỗ trợ và tái định cư Hà Nội (lịch sử)",
+              "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=189167",
+              "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+            },
+            {
+              "document_id": "qd-30-2019-hanoi",
+              "document_number": "30/2019/QĐ-UBND",
+              "title": "Quy định và bảng giá các loại đất Hà Nội 2020–2024 (lịch sử)",
+              "url": "https://vanban.hanoi.gov.vn/chi-tiet-van-ban/quyet-dinh-so-30-2019-qd-ubnd-cua-ubnd-tp-ha-noi-ve-viec-ban-hanh-quy-dinh-va-bang-gia-cac-loai-dat-189067",
+              "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+            },
+            {
+              "document_id": "qd-20-2023-hanoi",
+              "document_number": "20/2023/QĐ-UBND",
+              "title": "Sửa đổi bảng giá đất Quyết định 30/2019",
+              "url": "https://vbpl.vn/hanoi/Pages/vbpq-toanvan.aspx?ItemID=164473",
+              "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+            },
+            {
+              "document_id": "nd-123-2024",
+              "document_number": "123/2024/NĐ-CP",
+              "title": "Xử phạt vi phạm hành chính lĩnh vực đất đai",
+              "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=211356",
+              "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+            },
+            {
+              "document_id": "ring4-nq106-2022",
+              "document_number": "106/NQ-CP",
+              "title": "Triển khai Nghị quyết 56/2022/QH15 Vành đai 4",
+              "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=206398",
+              "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+            },
+            {
+              "document_id": "nd-01-2017",
+              "document_number": "01/2017/NĐ-CP",
+              "title": "Nghị định 01/2017/NĐ-CP sửa đổi, bổ sung một số nghị định quy định chi tiết thi hành Luật đất đai",
+              "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=187962",
+              "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+            },
+            {
+              "document_id": "nd-148-2020",
+              "document_number": "148/2020/NĐ-CP",
+              "title": "Nghị định 148/2020/NĐ-CP sửa đổi, bổ sung một số nghị định quy định chi tiết thi hành Luật Đất đai",
+              "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=202022",
+              "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+            }
+          ],
+          "content": "Câu hỏi nằm ngoài phạm vi pháp luật đất đai và quy hoạch Hà Nội.\n\nThời điểm xem xét: 12/10/2026. Dữ liệu được kiểm tra: 2026-10-11.",
+          "citations": [],
+          "verified_claims": [],
+          "as_of": "2026-10-12",
+          "corpus_release": "corpus-caf3c0833096ea4e",
+          "trace_id": "c9a027d4-89ce-408f-8b8a-4733f5ce7673",
+          "trace": [
+            {
+              "step": "routing",
+              "tool": null,
+              "summary": "Câu hỏi thuộc lĩnh vực ngoài phạm vi pháp luật đất đai và quy hoạch Hà Nội.",
+              "document_ids": [],
+              "elapsed_ms": 5
+            },
+            {
+              "step": "plan",
+              "tool": null,
+              "summary": "Đã chọn 0 công cụ; chế độ agentic.",
+              "document_ids": [],
+              "elapsed_ms": 5
+            },
+            {
+              "step": "synthesis",
+              "tool": null,
+              "summary": "Đã tạo bản trả lời; đang kiểm tra trước khi hiển thị.",
+              "document_ids": [],
+              "elapsed_ms": 6
+            },
+            {
+              "step": "verification",
+              "tool": null,
+              "summary": "Chỉ trả thông báo ngoài phạm vi; không có kết luận pháp lý hoặc hướng dẫn chuyên ngành khác.",
+              "document_ids": [],
+              "elapsed_ms": 7
+            }
+          ],
+          "missing_facts": [],
+          "llm_calls": 0,
+          "embedding_calls": 0,
+          "tool_calls": 0,
+          "token_usage": 0,
+          "elapsed_ms": 9,
+          "model": "openai/gpt-oss-120b",
+          "embedding_model": "multilingual-e5-small-onnx-q8-window-v1",
+          "mode": "agentic",
+          "support_level": "insufficient",
+          "retry_after": null,
+          "retrieved_chunk_ids": [],
+          "evidence_chunk_ids": []
+        }
+      }
+    },
+    {
+      "recorded_at": "2026-10-18T17:38:34.323091+00:00",
+      "origin": "executed",
+      "record": {
+        "case_id": "S11",
+        "mode": "agentic",
+        "answer_origin": "deterministic",
+        "evaluation_context": [],
+        "result": {
+          "status": "insufficient_evidence",
+          "publication_profile": "academic",
+          "quality_status": "academic_prototype",
+          "retrieval_mode": "hybrid",
+          "coverage_gaps": [
+            {
+              "document_id": "qd-10-2017-hanoi",
+              "document_number": "10/2017/QĐ-UBND",
+              "title": "Quy định bồi thường, hỗ trợ và tái định cư Hà Nội (lịch sử)",
+              "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=189167",
+              "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+            },
+            {
+              "document_id": "qd-30-2019-hanoi",
+              "document_number": "30/2019/QĐ-UBND",
+              "title": "Quy định và bảng giá các loại đất Hà Nội 2020–2024 (lịch sử)",
+              "url": "https://vanban.hanoi.gov.vn/chi-tiet-van-ban/quyet-dinh-so-30-2019-qd-ubnd-cua-ubnd-tp-ha-noi-ve-viec-ban-hanh-quy-dinh-va-bang-gia-cac-loai-dat-189067",
+              "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+            },
+            {
+              "document_id": "qd-20-2023-hanoi",
+              "document_number": "20/2023/QĐ-UBND",
+              "title": "Sửa đổi bảng giá đất Quyết định 30/2019",
+              "url": "https://vbpl.vn/hanoi/Pages/vbpq-toanvan.aspx?ItemID=164473",
+              "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+            },
+            {
+              "document_id": "nd-123-2024",
+              "document_number": "123/2024/NĐ-CP",
+              "title": "Xử phạt vi phạm hành chính lĩnh vực đất đai",
+              "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=211356",
+              "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+            },
+            {
+              "document_id": "ring4-nq106-2022",
+              "document_number": "106/NQ-CP",
+              "title": "Triển khai Nghị quyết 56/2022/QH15 Vành đai 4",
+              "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=206398",
+              "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+            },
+            {
+              "document_id": "nd-01-2017",
+              "document_number": "01/2017/NĐ-CP",
+              "title": "Nghị định 01/2017/NĐ-CP sửa đổi, bổ sung một số nghị định quy định chi tiết thi hành Luật đất đai",
+              "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=187962",
+              "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+            },
+            {
+              "document_id": "nd-148-2020",
+              "document_number": "148/2020/NĐ-CP",
+              "title": "Nghị định 148/2020/NĐ-CP sửa đổi, bổ sung một số nghị định quy định chi tiết thi hành Luật Đất đai",
+              "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=202022",
+              "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+            }
+          ],
+          "content": "Hệ thống chỉ hỗ trợ Vành đai 4 tại Hà Nội; không có dữ liệu dự án khác.\n\nThời điểm xem xét: 12/10/2026. Dữ liệu được kiểm tra: 2026-10-11.",
+          "citations": [],
+          "verified_claims": [],
+          "as_of": "2026-10-12",
+          "corpus_release": "corpus-caf3c0833096ea4e",
+          "trace_id": "c896f46b-f8b7-453a-9d22-e3f0d8283b84",
+          "trace": [
+            {
+              "step": "routing",
+              "tool": null,
+              "summary": "Chỉ hỗ trợ Vành đai 4; không có dữ liệu dự án khác trong corpus đang phục vụ.",
+              "document_ids": [],
+              "elapsed_ms": 4
+            },
+            {
+              "step": "plan",
+              "tool": null,
+              "summary": "Đã chọn 0 công cụ; chế độ agentic.",
+              "document_ids": [],
+              "elapsed_ms": 4
+            },
+            {
+              "step": "synthesis",
+              "tool": null,
+              "summary": "Đã tạo bản trả lời; đang kiểm tra trước khi hiển thị.",
+              "document_ids": [],
+              "elapsed_ms": 5
+            },
+            {
+              "step": "verification",
+              "tool": null,
+              "summary": "Chỉ trả thông báo ngoài phạm vi; không có kết luận pháp lý hoặc hướng dẫn chuyên ngành khác.",
+              "document_ids": [],
+              "elapsed_ms": 6
+            }
+          ],
+          "missing_facts": [],
+          "llm_calls": 0,
+          "embedding_calls": 0,
+          "tool_calls": 0,
+          "token_usage": 0,
+          "elapsed_ms": 8,
+          "model": "openai/gpt-oss-120b",
+          "embedding_model": "multilingual-e5-small-onnx-q8-window-v1",
+          "mode": "agentic",
+          "support_level": "insufficient",
+          "retry_after": null,
+          "retrieved_chunk_ids": [],
+          "evidence_chunk_ids": []
+        }
+      }
+    },
+    {
+      "recorded_at": "2026-10-18T17:39:21.088205+00:00",
+      "origin": "executed",
+      "record": {
+        "case_id": "S16",
+        "mode": "agentic",
+        "answer_origin": "deterministic",
+        "evaluation_context": [],
+        "result": {
+          "status": "insufficient_evidence",
+          "publication_profile": "academic",
+          "quality_status": "academic_prototype",
+          "retrieval_mode": "hybrid",
+          "coverage_gaps": [
+            {
+              "document_id": "qd-10-2017-hanoi",
+              "document_number": "10/2017/QĐ-UBND",
+              "title": "Quy định bồi thường, hỗ trợ và tái định cư Hà Nội (lịch sử)",
+              "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=189167",
+              "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+            },
+            {
+              "document_id": "qd-30-2019-hanoi",
+              "document_number": "30/2019/QĐ-UBND",
+              "title": "Quy định và bảng giá các loại đất Hà Nội 2020–2024 (lịch sử)",
+              "url": "https://vanban.hanoi.gov.vn/chi-tiet-van-ban/quyet-dinh-so-30-2019-qd-ubnd-cua-ubnd-tp-ha-noi-ve-viec-ban-hanh-quy-dinh-va-bang-gia-cac-loai-dat-189067",
+              "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+            },
+            {
+              "document_id": "qd-20-2023-hanoi",
+              "document_number": "20/2023/QĐ-UBND",
+              "title": "Sửa đổi bảng giá đất Quyết định 30/2019",
+              "url": "https://vbpl.vn/hanoi/Pages/vbpq-toanvan.aspx?ItemID=164473",
+              "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+            },
+            {
+              "document_id": "nd-123-2024",
+              "document_number": "123/2024/NĐ-CP",
+              "title": "Xử phạt vi phạm hành chính lĩnh vực đất đai",
+              "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=211356",
+              "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+            },
+            {
+              "document_id": "ring4-nq106-2022",
+              "document_number": "106/NQ-CP",
+              "title": "Triển khai Nghị quyết 56/2022/QH15 Vành đai 4",
+              "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=206398",
+              "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+            },
+            {
+              "document_id": "nd-01-2017",
+              "document_number": "01/2017/NĐ-CP",
+              "title": "Nghị định 01/2017/NĐ-CP sửa đổi, bổ sung một số nghị định quy định chi tiết thi hành Luật đất đai",
+              "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=187962",
+              "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+            },
+            {
+              "document_id": "nd-148-2020",
+              "document_number": "148/2020/NĐ-CP",
+              "title": "Nghị định 148/2020/NĐ-CP sửa đổi, bổ sung một số nghị định quy định chi tiết thi hành Luật Đất đai",
+              "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=202022",
+              "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+            }
+          ],
+          "content": "Hệ thống chỉ hỗ trợ Vành đai 4 tại Hà Nội; không có dữ liệu dự án khác.\n\nThời điểm xem xét: 12/10/2026. Dữ liệu được kiểm tra: 2026-10-11.",
+          "citations": [],
+          "verified_claims": [],
+          "as_of": "2026-10-12",
+          "corpus_release": "corpus-caf3c0833096ea4e",
+          "trace_id": "d5736898-9900-4e7f-8be0-3a967810a192",
+          "trace": [
+            {
+              "step": "routing",
+              "tool": null,
+              "summary": "Chỉ hỗ trợ Vành đai 4; không có dữ liệu dự án khác trong corpus đang phục vụ.",
+              "document_ids": [],
+              "elapsed_ms": 4
+            },
+            {
+              "step": "plan",
+              "tool": null,
+              "summary": "Đã chọn 0 công cụ; chế độ agentic.",
+              "document_ids": [],
+              "elapsed_ms": 4
+            },
+            {
+              "step": "synthesis",
+              "tool": null,
+              "summary": "Đã tạo bản trả lời; đang kiểm tra trước khi hiển thị.",
+              "document_ids": [],
+              "elapsed_ms": 5
+            },
+            {
+              "step": "verification",
+              "tool": null,
+              "summary": "Chỉ trả thông báo ngoài phạm vi; không có kết luận pháp lý hoặc hướng dẫn chuyên ngành khác.",
+              "document_ids": [],
+              "elapsed_ms": 6
+            }
+          ],
+          "missing_facts": [],
+          "llm_calls": 0,
+          "embedding_calls": 0,
+          "tool_calls": 0,
+          "token_usage": 0,
+          "elapsed_ms": 8,
+          "model": "openai/gpt-oss-120b",
+          "embedding_model": "multilingual-e5-small-onnx-q8-window-v1",
+          "mode": "agentic",
+          "support_level": "insufficient",
+          "retry_after": null,
+          "retrieved_chunk_ids": [],
+          "evidence_chunk_ids": []
+        }
+      }
+    },
+    {
+      "recorded_at": "2026-10-18T17:38:39.344019+00:00",
+      "origin": "executed",
+      "record": {
+        "case_id": "S13",
+        "mode": "agentic",
+        "answer_origin": "deterministic",
+        "evaluation_context": [],
+        "result": {
+          "status": "answered",
+          "publication_profile": "academic",
+          "quality_status": "academic_prototype",
+          "retrieval_mode": "hybrid",
+          "coverage_gaps": [
+            {
+              "document_id": "qd-10-2017-hanoi",
+              "document_number": "10/2017/QĐ-UBND",
+              "title": "Quy định bồi thường, hỗ trợ và tái định cư Hà Nội (lịch sử)",
+              "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=189167",
+              "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+            },
+            {
+              "document_id": "qd-30-2019-hanoi",
+              "document_number": "30/2019/QĐ-UBND",
+              "title": "Quy định và bảng giá các loại đất Hà Nội 2020–2024 (lịch sử)",
+              "url": "https://vanban.hanoi.gov.vn/chi-tiet-van-ban/quyet-dinh-so-30-2019-qd-ubnd-cua-ubnd-tp-ha-noi-ve-viec-ban-hanh-quy-dinh-va-bang-gia-cac-loai-dat-189067",
+              "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+            },
+            {
+              "document_id": "qd-20-2023-hanoi",
+              "document_number": "20/2023/QĐ-UBND",
+              "title": "Sửa đổi bảng giá đất Quyết định 30/2019",
+              "url": "https://vbpl.vn/hanoi/Pages/vbpq-toanvan.aspx?ItemID=164473",
+              "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+            },
+            {
+              "document_id": "nd-123-2024",
+              "document_number": "123/2024/NĐ-CP",
+              "title": "Xử phạt vi phạm hành chính lĩnh vực đất đai",
+              "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=211356",
+              "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+            },
+            {
+              "document_id": "ring4-nq106-2022",
+              "document_number": "106/NQ-CP",
+              "title": "Triển khai Nghị quyết 56/2022/QH15 Vành đai 4",
+              "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=206398",
+              "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+            },
+            {
+              "document_id": "nd-01-2017",
+              "document_number": "01/2017/NĐ-CP",
+              "title": "Nghị định 01/2017/NĐ-CP sửa đổi, bổ sung một số nghị định quy định chi tiết thi hành Luật đất đai",
+              "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=187962",
+              "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+            },
+            {
+              "document_id": "nd-148-2020",
+              "document_number": "148/2020/NĐ-CP",
+              "title": "Nghị định 148/2020/NĐ-CP sửa đổi, bổ sung một số nghị định quy định chi tiết thi hành Luật Đất đai",
+              "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=202022",
+              "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+            }
+          ],
+          "content": "Đã đối chiếu các căn cứ dưới đây.\n\n56/2024/QĐ-UBND không còn hiệu lực tại ngày 12/10/2026; 40/2026/QĐ-UBND thay thế văn bản này từ ngày 02/04/2026. [1]\n\nThời điểm xem xét: 12/10/2026. Dữ liệu được kiểm tra: 2026-10-11.",
+          "citations": [
+            {
+              "id": "qd-40-2026-hanoi-0-2-0",
+              "document_id": "qd-40-2026-hanoi",
+              "title": "Quy định một số nội dung bồi thường, hỗ trợ, tái định cư Hà Nội",
+              "document_number": "40/2026/QĐ-UBND",
+              "url": "https://congbao.hanoi.gov.vn/Default.aspx?p_attribute=5335&pageid=45002",
+              "locator": "Điều 2",
+              "excerpt": "Điều 2. Quyết định này có hiệu lực thi hành kể từ ngày 02 tháng 4 năm 2026 và thay thế các Quyết định của Ủy ban nhân dân Thành phố: số 47/2016/QĐ - UBND ngày 08/11/2016 về việc phê duyệt mức hỗ trợ tự lo tái định cư bằng tiền đối với trường hợp được bố trí nhà tái định cư, số 56/2024/QĐ -UBND ngày 06/9/2024 ban hành quy định một số nội dung về bồi thường, hỗ trợ, tái định cư khi Nhà nước thu hồi đất trên địa bàn thành phố Hà Nội, số 38/2025/QĐ - UBND ngày 30/6/2025 và số 10/2026/QĐ -UBND ngày 18/01/2026 về việc sửa đổi, bổ sung một số điều của Quyết định số 56/2024/QĐ -UBND ngày 06/9/2024 của Ủy ban nhân dân Thành phố .",
+              "checked_at": "2026-10-11T17:32:27Z",
+              "applicability": "current",
+              "source_review_notes": "",
+              "page": 1,
+              "source_url": "https://datafiles.hanoi.gov.vn/gov-hni/6249/VanBanCongBao/2026/5/29/QDPQ-40-2026_signed.pdf#page=1"
+            }
+          ],
+          "verified_claims": [
+            {
+              "kind": "applicability",
+              "text": "56/2024/QĐ-UBND không còn hiệu lực tại ngày 12/10/2026; 40/2026/QĐ-UBND thay thế văn bản này từ ngày 02/04/2026.",
+              "citation_ids": [
+                "qd-40-2026-hanoi-0-2-0"
+              ]
+            }
+          ],
+          "as_of": "2026-10-12",
+          "corpus_release": "corpus-caf3c0833096ea4e",
+          "trace_id": "78b665df-d437-4c0c-ba13-39e2cf3ec039",
+          "trace": [
+            {
+              "step": "routing",
+              "tool": "search_law",
+              "summary": "Đã nhận diện số văn bản và yêu cầu kiểm tra hiệu lực; dùng tra cứu trực tiếp.",
+              "document_ids": [],
+              "elapsed_ms": 4
+            },
+            {
+              "step": "plan",
+              "tool": null,
+              "summary": "Đã chọn 1 công cụ; chế độ agentic.",
+              "document_ids": [],
+              "elapsed_ms": 4
+            },
+            {
+              "step": "tool",
+              "tool": "search_law",
+              "summary": "Thu được 8 đoạn chứng cứ.",
+              "document_ids": [
+                "qd-40-2026-hanoi",
+                "qd-56-2024-hanoi"
+              ],
+              "elapsed_ms": 4880
+            },
+            {
+              "step": "tool",
+              "tool": "open_article",
+              "summary": "Đã mở văn bản có quan hệ pháp lý để đối chiếu phạm vi.",
+              "document_ids": [
+                "qd-40-2026-hanoi"
+              ],
+              "elapsed_ms": 4898
+            },
+            {
+              "step": "tool",
+              "tool": "open_article",
+              "summary": "Đã mở văn bản có quan hệ pháp lý để đối chiếu phạm vi.",
+              "document_ids": [
+                "qd-40-2026-hanoi"
+              ],
+              "elapsed_ms": 4912
+            },
+            {
+              "step": "tool",
+              "tool": "open_article",
+              "summary": "Đã mở văn bản có quan hệ pháp lý để đối chiếu phạm vi.",
+              "document_ids": [
+                "qd-10-2026-hanoi"
+              ],
+              "elapsed_ms": 4929
+            },
+            {
+              "step": "tool",
+              "tool": "open_article",
+              "summary": "Đã mở văn bản có quan hệ pháp lý để đối chiếu phạm vi.",
+              "document_ids": [
+                "qd-38-2025-hanoi"
+              ],
+              "elapsed_ms": 4956
+            },
+            {
+              "step": "applicability",
+              "tool": "check_effectivity",
+              "summary": "Đã kiểm tra 4 quan hệ pháp lý theo thời điểm.",
+              "document_ids": [
+                "qd-56-2024-hanoi"
+              ],
+              "elapsed_ms": 4956
+            },
+            {
+              "step": "tool",
+              "tool": "open_article",
+              "summary": "Đã mở văn bản có quan hệ pháp lý để đối chiếu phạm vi.",
+              "document_ids": [
+                "qd-56-2024-hanoi"
+              ],
+              "elapsed_ms": 4971
+            },
+            {
+              "step": "tool",
+              "tool": "open_article",
+              "summary": "Đã mở văn bản có quan hệ pháp lý để đối chiếu phạm vi.",
+              "document_ids": [
+                "qd-38-2025-hanoi"
+              ],
+              "elapsed_ms": 4984
+            },
+            {
+              "step": "tool",
+              "tool": "open_article",
+              "summary": "Đã mở văn bản có quan hệ pháp lý để đối chiếu phạm vi.",
+              "document_ids": [
+                "qd-10-2026-hanoi"
+              ],
+              "elapsed_ms": 4996
+            },
+            {
+              "step": "applicability",
+              "tool": "check_effectivity",
+              "summary": "Đã kiểm tra 4 quan hệ pháp lý theo thời điểm.",
+              "document_ids": [
+                "qd-40-2026-hanoi"
+              ],
+              "elapsed_ms": 4996
+            },
+            {
+              "step": "synthesis",
+              "tool": null,
+              "summary": "Đã tạo bản trả lời; đang kiểm tra trước khi hiển thị.",
+              "document_ids": [],
+              "elapsed_ms": 4997
+            },
+            {
+              "step": "verification",
+              "tool": "check_effectivity",
+              "summary": "Đã đối chiếu số văn bản trong điều khoản thay thế, mốc hiệu lực nguồn và ngày hết hiệu lực đã xác minh của văn bản cũ.",
+              "document_ids": [
+                "qd-40-2026-hanoi",
+                "qd-56-2024-hanoi"
+              ],
+              "elapsed_ms": 4999
+            }
+          ],
+          "missing_facts": [],
+          "llm_calls": 0,
+          "embedding_calls": 1,
+          "tool_calls": 12,
+          "token_usage": 0,
+          "elapsed_ms": 5001,
+          "model": "openai/gpt-oss-120b",
+          "embedding_model": "multilingual-e5-small-onnx-q8-window-v1",
+          "mode": "agentic",
+          "support_level": "full",
+          "retry_after": null,
+          "retrieved_chunk_ids": [
+            "qd-40-2026-hanoi-0-2-0",
+            "qd-40-2026-hanoi-2-2-0",
+            "qd-56-2024-hanoi-0-0-0",
+            "qd-56-2024-hanoi-0-2-0",
+            "qd-56-2024-hanoi-0-1-0",
+            "qd-56-2024-hanoi-0-5-0",
+            "qd-56-2024-hanoi-0-10-0",
+            "qd-56-2024-hanoi-0-11-0"
+          ],
+          "evidence_chunk_ids": [
+            "qd-40-2026-hanoi-0-2-0",
+            "qd-40-2026-hanoi-2-2-0",
+            "qd-56-2024-hanoi-0-0-0",
+            "qd-56-2024-hanoi-0-2-0",
+            "qd-56-2024-hanoi-0-1-0",
+            "qd-56-2024-hanoi-0-5-0",
+            "qd-56-2024-hanoi-0-10-0",
+            "qd-56-2024-hanoi-0-11-0",
+            "qd-40-2026-hanoi-17-2-0",
+            "qd-10-2026-hanoi-1-0-0",
+            "qd-10-2026-hanoi-3-0-0",
+            "qd-10-2026-hanoi-2-0-0",
+            "qd-38-2025-hanoi-0-1-0",
+            "qd-38-2025-hanoi-4-1-0",
+            "qd-38-2025-hanoi-1-0-0",
+            "qd-38-2025-hanoi-0-0-0"
+          ]
+        }
+      }
+    },
+    {
+      "recorded_at": "2026-10-18T17:35:59.556563+00:00",
+      "origin": "executed",
+      "record": {
+        "case_id": "S05",
+        "mode": "agentic",
+        "answer_origin": "llm",
+        "evaluation_context": [
+          {
+            "citation_id": "C1",
+            "document_id": "nd-151-2025",
+            "page": 3,
+            "locator": "Điều 5",
+            "text": "Điều 5. Thẩm quyền của Ủy ban nhân dân cấp huyện, Chủ tịch Ủy ban nhân dân cấp huyện chuyển giao cho Chủ tịch Ủy ban nhân dân cấp xã 1. Thẩm quyền của Ủy ban nhân dân cấp huyện theo quy định của Luật Đất đai chuyển giao cho Chủ tịch Ủy ban nhân dân cấp xã thực hiện, bao gồm: a) Chấp thuận phương án sử dụng đất nông nghiệp của tổ chức kinh tế quy định tại khoản 6 Điều 45 Luật Đất đai; phê duyệt phương án sử dụng đất lúa của cá nhân quy định tại khoản 7 Điều 45 Luật Đất đai; b) Quyết định thu hồi đất thuộc các trường hợp quy định tại khoản 2 Điều 83 Luật Đất đai; thu hồi đất liên quan đến quy định tại điểm b khoản 3, khoản 5, điểm b khoản 6 Điều 87 và khoản 7 Điều 91 Luật Đất đai; c) Ban hành Thông báo thu hồi đất quy định tại điểm a khoản 2 Điều 87 Luật Đất đai; d) Quyết định phê duyệt phương án bồi thường, hỗ trợ, tái định cư quy định tại điểm c khoản 3 Điều 87 Luật Đất đai; đ) Phê duyệt phương án cưỡng chế quyết định thu hồi đất và kinh phí cho hoạt động cưỡng chế quy định tại điểm b khoản 5 Điều 89 Luật Đất đai; e) Quyết định giá đất cụ thể quy định tại khoản 2 Điều 91 Luật Đất đai; g) Quyết định giá bán nhà ở tái định cư trong địa bàn quy định tại khoản 3 Điều 111 Luật Đất đai; h) Cấp Giấy chứng nhận quyền sử dụng đất, quyền sở hữu tài sản gắn liền với đất quy định tại điểm b khoản 1 Điều 136 và điểm d khoản 2 Điều 142 Luật Đất đai;",
+            "applicability": "current"
+          }
+        ],
+        "result": {
+          "status": "answered",
+          "publication_profile": "academic",
+          "quality_status": "academic_prototype",
+          "retrieval_mode": "hybrid",
+          "coverage_gaps": [
+            {
+              "document_id": "qd-10-2017-hanoi",
+              "document_number": "10/2017/QĐ-UBND",
+              "title": "Quy định bồi thường, hỗ trợ và tái định cư Hà Nội (lịch sử)",
+              "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=189167",
+              "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+            },
+            {
+              "document_id": "qd-30-2019-hanoi",
+              "document_number": "30/2019/QĐ-UBND",
+              "title": "Quy định và bảng giá các loại đất Hà Nội 2020–2024 (lịch sử)",
+              "url": "https://vanban.hanoi.gov.vn/chi-tiet-van-ban/quyet-dinh-so-30-2019-qd-ubnd-cua-ubnd-tp-ha-noi-ve-viec-ban-hanh-quy-dinh-va-bang-gia-cac-loai-dat-189067",
+              "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+            },
+            {
+              "document_id": "qd-20-2023-hanoi",
+              "document_number": "20/2023/QĐ-UBND",
+              "title": "Sửa đổi bảng giá đất Quyết định 30/2019",
+              "url": "https://vbpl.vn/hanoi/Pages/vbpq-toanvan.aspx?ItemID=164473",
+              "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+            },
+            {
+              "document_id": "nd-123-2024",
+              "document_number": "123/2024/NĐ-CP",
+              "title": "Xử phạt vi phạm hành chính lĩnh vực đất đai",
+              "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=211356",
+              "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+            },
+            {
+              "document_id": "ring4-nq106-2022",
+              "document_number": "106/NQ-CP",
+              "title": "Triển khai Nghị quyết 56/2022/QH15 Vành đai 4",
+              "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=206398",
+              "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+            },
+            {
+              "document_id": "nd-01-2017",
+              "document_number": "01/2017/NĐ-CP",
+              "title": "Nghị định 01/2017/NĐ-CP sửa đổi, bổ sung một số nghị định quy định chi tiết thi hành Luật đất đai",
+              "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=187962",
+              "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+            },
+            {
+              "document_id": "nd-148-2020",
+              "document_number": "148/2020/NĐ-CP",
+              "title": "Nghị định 148/2020/NĐ-CP sửa đổi, bổ sung một số nghị định quy định chi tiết thi hành Luật Đất đai",
+              "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=202022",
+              "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+            }
+          ],
+          "content": "Đã đối chiếu các căn cứ dưới đây.\n\nTheo Điều 5 Nghị định 151/2025/NĐ-CP, thẩm quyền của Ủy ban nhân dân cấp huyện về việc quyết định phê duyệt phương án bồi thường, hỗ trợ, tái định cư (điểm c khoản 3 Điều 87 Luật Đất đai) được chuyển giao cho Chủ tịch Ủy ban nhân dân cấp xã. [1]\n\nThời điểm xem xét: 02/07/2025. Dữ liệu được kiểm tra: 2026-10-11.",
+          "citations": [
+            {
+              "id": "nd-151-2025-2-2-0",
+              "document_id": "nd-151-2025",
+              "title": "Phân định thẩm quyền của chính quyền địa phương 02 cấp, phân quyền, phân cấp trong lĩnh vực đất đai",
+              "document_number": "151/2025/NĐ-CP",
+              "url": "https://congbao.chinhphu.vn/van-ban/nghi-dinh-so-151-2025-nd-cp-45191.htm",
+              "locator": "Điều 5",
+              "excerpt": "Điều 5. Thẩm quyền của Ủy ban nhân dân cấp huyện, Chủ tịch Ủy ban nhân dân cấp huyện chuyển giao cho Chủ tịch Ủy ban nhân dân cấp xã 1. Thẩm quyền của Ủy ban nhân dân cấp huyện theo quy định của Luật Đất đai chuyển giao cho Chủ tịch Ủy ban nhân dân cấp xã thực hiện, bao gồm: a) Chấp thuận phương án sử dụng đất nông nghiệp của tổ chức kinh tế quy định tại khoản 6 Điều 45 Luật Đất đai; phê duyệt phương án sử dụng đất lúa của cá nhân quy định tại khoản 7 Điều 45 Luật Đất đai; b) Quyết định thu hồi đất thuộc các trường hợp quy định tại khoản 2 Điều 83 Luật Đất đai; thu hồi đất liên quan đến quy định tại điểm b khoản 3, khoản 5, điểm b khoản 6 Điều 87 và khoản 7 Điều 91 Luật Đất đai; c) Ban hành Thông báo thu hồi đất quy định tại điểm a khoản 2 Điều 87 Luật Đất đai; d) Quyết định phê duyệt phương án bồi thường, hỗ trợ, tái định cư quy định tại điểm c khoản 3 Điều 87 Luật Đất đai; đ) Phê duyệt phương án cưỡng chế quyết định thu hồi đất và kinh phí cho hoạt động cưỡng chế quy định tại điểm b khoản 5 Điều 89 Luật Đất đai; e) Quyết định giá đất cụ thể quy định tại khoản 2 Điều 91 Luật Đất đai; g) Quyết định giá bán nhà ở tái định cư trong địa bàn quy định tại khoản 3 Điều 111 Luật Đất đai; h) Cấp Giấy chứng nhận quyền sử dụng đất, quyền sở hữu tài sản gắn liền với đất quy định tại điểm b khoản 1 Điều 136 và điểm d khoản 2 Điều 142 Luật Đất đai;",
+              "checked_at": "2026-10-11T17:32:27Z",
+              "applicability": "current",
+              "source_review_notes": "",
+              "page": 3,
+              "source_url": "https://congbaocdn.chinhphu.vn/CongBaoCP/VanBan/2025/6/45191/56974-1-2025829-830151-2025-nd-cp.pdf#page=3"
+            }
+          ],
+          "verified_claims": [
+            {
+              "kind": "legal_rule",
+              "text": "Theo Điều 5 Nghị định 151/2025/NĐ-CP, thẩm quyền của Ủy ban nhân dân cấp huyện về việc quyết định phê duyệt phương án bồi thường, hỗ trợ, tái định cư (điểm c khoản 3 Điều 87 Luật Đất đai) được chuyển giao cho Chủ tịch Ủy ban nhân dân cấp xã.",
+              "citation_ids": [
+                "nd-151-2025-2-2-0"
+              ]
+            }
+          ],
+          "as_of": "2025-07-02",
+          "corpus_release": "corpus-caf3c0833096ea4e",
+          "trace_id": "21273fee-dc0f-4d45-960c-d023f6b46f6b",
+          "trace": [
+            {
+              "step": "routing",
+              "tool": "open_article",
+              "summary": "Đã nhận diện văn bản và điều được người dùng chỉ rõ; mở nguồn tương ứng.",
+              "document_ids": [
+                "nd-151-2025"
+              ],
+              "elapsed_ms": 7
+            },
+            {
+              "step": "plan",
+              "tool": null,
+              "summary": "Đã chọn 1 công cụ; chế độ agentic.",
+              "document_ids": [],
+              "elapsed_ms": 7
+            },
+            {
+              "step": "tool",
+              "tool": "open_article",
+              "summary": "Thu được 3 đoạn chứng cứ.",
+              "document_ids": [
+                "nd-151-2025"
+              ],
+              "elapsed_ms": 31
+            },
+            {
+              "step": "applicability",
+              "tool": "check_effectivity",
+              "summary": "Đã kiểm tra 2 quan hệ pháp lý theo thời điểm.",
+              "document_ids": [
+                "nd-151-2025"
+              ],
+              "elapsed_ms": 34
+            },
+            {
+              "step": "synthesis",
+              "tool": null,
+              "summary": "Đã tạo bản trả lời; đang kiểm tra trước khi hiển thị.",
+              "document_ids": [],
+              "elapsed_ms": 1543
+            },
+            {
+              "step": "verification",
+              "tool": null,
+              "summary": "1/1 kết luận qua kiểm tra với chứng cứ trong corpus; 0 vấn đề.",
+              "document_ids": [],
+              "elapsed_ms": 2640
+            }
+          ],
+          "missing_facts": [],
+          "llm_calls": 2,
+          "embedding_calls": 0,
+          "tool_calls": 2,
+          "token_usage": 5117,
+          "elapsed_ms": 2643,
+          "model": "openai/gpt-oss-120b",
+          "embedding_model": "multilingual-e5-small-onnx-q8-window-v1",
+          "mode": "agentic",
+          "support_level": "full",
+          "retry_after": null,
+          "retrieved_chunk_ids": [
+            "nd-151-2025-2-2-0",
+            "nd-151-2025-3-0-0",
+            "nd-151-2025-4-0-0",
+            "nd-151-2025-3-0-parent",
+            "nd-151-2025-4-0-parent"
+          ],
+          "evidence_chunk_ids": [
+            "nd-151-2025-2-2-0",
+            "nd-151-2025-3-0-0",
+            "nd-151-2025-4-0-0",
+            "nd-151-2025-3-0-parent",
+            "nd-151-2025-4-0-parent"
+          ]
+        }
+      }
+    },
+    {
+      "recorded_at": "2026-10-18T17:34:18.644865+00:00",
+      "origin": "executed",
+      "record": {
+        "case_id": "S01",
+        "mode": "agentic",
+        "answer_origin": "deterministic",
+        "evaluation_context": [],
+        "result": {
+          "status": "answered",
+          "publication_profile": "academic",
+          "quality_status": "academic_prototype",
+          "retrieval_mode": "hybrid",
+          "coverage_gaps": [
+            {
+              "document_id": "qd-10-2017-hanoi",
+              "document_number": "10/2017/QĐ-UBND",
+              "title": "Quy định bồi thường, hỗ trợ và tái định cư Hà Nội (lịch sử)",
+              "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=189167",
+              "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+            },
+            {
+              "document_id": "qd-30-2019-hanoi",
+              "document_number": "30/2019/QĐ-UBND",
+              "title": "Quy định và bảng giá các loại đất Hà Nội 2020–2024 (lịch sử)",
+              "url": "https://vanban.hanoi.gov.vn/chi-tiet-van-ban/quyet-dinh-so-30-2019-qd-ubnd-cua-ubnd-tp-ha-noi-ve-viec-ban-hanh-quy-dinh-va-bang-gia-cac-loai-dat-189067",
+              "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+            },
+            {
+              "document_id": "qd-20-2023-hanoi",
+              "document_number": "20/2023/QĐ-UBND",
+              "title": "Sửa đổi bảng giá đất Quyết định 30/2019",
+              "url": "https://vbpl.vn/hanoi/Pages/vbpq-toanvan.aspx?ItemID=164473",
+              "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+            },
+            {
+              "document_id": "nd-123-2024",
+              "document_number": "123/2024/NĐ-CP",
+              "title": "Xử phạt vi phạm hành chính lĩnh vực đất đai",
+              "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=211356",
+              "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+            },
+            {
+              "document_id": "ring4-nq106-2022",
+              "document_number": "106/NQ-CP",
+              "title": "Triển khai Nghị quyết 56/2022/QH15 Vành đai 4",
+              "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=206398",
+              "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+            },
+            {
+              "document_id": "nd-01-2017",
+              "document_number": "01/2017/NĐ-CP",
+              "title": "Nghị định 01/2017/NĐ-CP sửa đổi, bổ sung một số nghị định quy định chi tiết thi hành Luật đất đai",
+              "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=187962",
+              "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+            },
+            {
+              "document_id": "nd-148-2020",
+              "document_number": "148/2020/NĐ-CP",
+              "title": "Nghị định 148/2020/NĐ-CP sửa đổi, bổ sung một số nghị định quy định chi tiết thi hành Luật Đất đai",
+              "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=202022",
+              "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+            }
+          ],
+          "content": "Đã đối chiếu các căn cứ dưới đây.\n\n56/2024/QĐ-UBND không còn hiệu lực tại ngày 12/10/2026; 40/2026/QĐ-UBND thay thế văn bản này từ ngày 02/04/2026. [1]\n\nThời điểm xem xét: 12/10/2026. Dữ liệu được kiểm tra: 2026-10-11.",
+          "citations": [
+            {
+              "id": "qd-40-2026-hanoi-0-2-0",
+              "document_id": "qd-40-2026-hanoi",
+              "title": "Quy định một số nội dung bồi thường, hỗ trợ, tái định cư Hà Nội",
+              "document_number": "40/2026/QĐ-UBND",
+              "url": "https://congbao.hanoi.gov.vn/Default.aspx?p_attribute=5335&pageid=45002",
+              "locator": "Điều 2",
+              "excerpt": "Điều 2. Quyết định này có hiệu lực thi hành kể từ ngày 02 tháng 4 năm 2026 và thay thế các Quyết định của Ủy ban nhân dân Thành phố: số 47/2016/QĐ - UBND ngày 08/11/2016 về việc phê duyệt mức hỗ trợ tự lo tái định cư bằng tiền đối với trường hợp được bố trí nhà tái định cư, số 56/2024/QĐ -UBND ngày 06/9/2024 ban hành quy định một số nội dung về bồi thường, hỗ trợ, tái định cư khi Nhà nước thu hồi đất trên địa bàn thành phố Hà Nội, số 38/2025/QĐ - UBND ngày 30/6/2025 và số 10/2026/QĐ -UBND ngày 18/01/2026 về việc sửa đổi, bổ sung một số điều của Quyết định số 56/2024/QĐ -UBND ngày 06/9/2024 của Ủy ban nhân dân Thành phố .",
+              "checked_at": "2026-10-11T17:32:27Z",
+              "applicability": "current",
+              "source_review_notes": "",
+              "page": 1,
+              "source_url": "https://datafiles.hanoi.gov.vn/gov-hni/6249/VanBanCongBao/2026/5/29/QDPQ-40-2026_signed.pdf#page=1"
+            }
+          ],
+          "verified_claims": [
+            {
+              "kind": "applicability",
+              "text": "56/2024/QĐ-UBND không còn hiệu lực tại ngày 12/10/2026; 40/2026/QĐ-UBND thay thế văn bản này từ ngày 02/04/2026.",
+              "citation_ids": [
+                "qd-40-2026-hanoi-0-2-0"
+              ]
+            }
+          ],
+          "as_of": "2026-10-12",
+          "corpus_release": "corpus-caf3c0833096ea4e",
+          "trace_id": "faafb9a5-1497-4c86-af69-54403f557107",
+          "trace": [
+            {
+              "step": "routing",
+              "tool": "search_law",
+              "summary": "Đã nhận diện số văn bản và yêu cầu kiểm tra hiệu lực; dùng tra cứu trực tiếp.",
+              "document_ids": [],
+              "elapsed_ms": 38
+            },
+            {
+              "step": "plan",
+              "tool": null,
+              "summary": "Đã chọn 1 công cụ; chế độ agentic.",
+              "document_ids": [],
+              "elapsed_ms": 38
+            },
+            {
+              "step": "tool",
+              "tool": "search_law",
+              "summary": "Thu được 8 đoạn chứng cứ.",
+              "document_ids": [
+                "qd-40-2026-hanoi",
+                "qd-56-2024-hanoi"
+              ],
+              "elapsed_ms": 37778
+            },
+            {
+              "step": "tool",
+              "tool": "open_article",
+              "summary": "Đã mở văn bản có quan hệ pháp lý để đối chiếu phạm vi.",
+              "document_ids": [
+                "qd-40-2026-hanoi"
+              ],
+              "elapsed_ms": 37898
+            },
+            {
+              "step": "tool",
+              "tool": "open_article",
+              "summary": "Đã mở văn bản có quan hệ pháp lý để đối chiếu phạm vi.",
+              "document_ids": [
+                "qd-40-2026-hanoi"
+              ],
+              "elapsed_ms": 37973
+            },
+            {
+              "step": "tool",
+              "tool": "open_article",
+              "summary": "Đã mở văn bản có quan hệ pháp lý để đối chiếu phạm vi.",
+              "document_ids": [
+                "qd-10-2026-hanoi"
+              ],
+              "elapsed_ms": 38058
+            },
+            {
+              "step": "tool",
+              "tool": "open_article",
+              "summary": "Đã mở văn bản có quan hệ pháp lý để đối chiếu phạm vi.",
+              "document_ids": [
+                "qd-38-2025-hanoi"
+              ],
+              "elapsed_ms": 38112
+            },
+            {
+              "step": "applicability",
+              "tool": "check_effectivity",
+              "summary": "Đã kiểm tra 4 quan hệ pháp lý theo thời điểm.",
+              "document_ids": [
+                "qd-56-2024-hanoi"
+              ],
+              "elapsed_ms": 38112
+            },
+            {
+              "step": "tool",
+              "tool": "open_article",
+              "summary": "Đã mở văn bản có quan hệ pháp lý để đối chiếu phạm vi.",
+              "document_ids": [
+                "qd-56-2024-hanoi"
+              ],
+              "elapsed_ms": 38148
+            },
+            {
+              "step": "tool",
+              "tool": "open_article",
+              "summary": "Đã mở văn bản có quan hệ pháp lý để đối chiếu phạm vi.",
+              "document_ids": [
+                "qd-38-2025-hanoi"
+              ],
+              "elapsed_ms": 38171
+            },
+            {
+              "step": "tool",
+              "tool": "open_article",
+              "summary": "Đã mở văn bản có quan hệ pháp lý để đối chiếu phạm vi.",
+              "document_ids": [
+                "qd-10-2026-hanoi"
+              ],
+              "elapsed_ms": 38193
+            },
+            {
+              "step": "applicability",
+              "tool": "check_effectivity",
+              "summary": "Đã kiểm tra 4 quan hệ pháp lý theo thời điểm.",
+              "document_ids": [
+                "qd-40-2026-hanoi"
+              ],
+              "elapsed_ms": 38193
+            },
+            {
+              "step": "synthesis",
+              "tool": null,
+              "summary": "Đã tạo bản trả lời; đang kiểm tra trước khi hiển thị.",
+              "document_ids": [],
+              "elapsed_ms": 38201
+            },
+            {
+              "step": "verification",
+              "tool": "check_effectivity",
+              "summary": "Đã đối chiếu số văn bản trong điều khoản thay thế, mốc hiệu lực nguồn và ngày hết hiệu lực đã xác minh của văn bản cũ.",
+              "document_ids": [
+                "qd-40-2026-hanoi",
+                "qd-56-2024-hanoi"
+              ],
+              "elapsed_ms": 38204
+            }
+          ],
+          "missing_facts": [],
+          "llm_calls": 0,
+          "embedding_calls": 1,
+          "tool_calls": 12,
+          "token_usage": 0,
+          "elapsed_ms": 38207,
+          "model": "openai/gpt-oss-120b",
+          "embedding_model": "multilingual-e5-small-onnx-q8-window-v1",
+          "mode": "agentic",
+          "support_level": "full",
+          "retry_after": null,
+          "retrieved_chunk_ids": [
+            "qd-40-2026-hanoi-0-2-0",
+            "qd-40-2026-hanoi-2-2-0",
+            "qd-56-2024-hanoi-0-2-0",
+            "qd-56-2024-hanoi-0-0-0",
+            "qd-56-2024-hanoi-0-1-0",
+            "qd-56-2024-hanoi-0-5-0",
+            "qd-56-2024-hanoi-0-10-0",
+            "qd-56-2024-hanoi-0-11-0"
+          ],
+          "evidence_chunk_ids": [
+            "qd-40-2026-hanoi-0-2-0",
+            "qd-40-2026-hanoi-2-2-0",
+            "qd-56-2024-hanoi-0-2-0",
+            "qd-56-2024-hanoi-0-0-0",
+            "qd-56-2024-hanoi-0-1-0",
+            "qd-56-2024-hanoi-0-5-0",
+            "qd-56-2024-hanoi-0-10-0",
+            "qd-56-2024-hanoi-0-11-0",
+            "qd-40-2026-hanoi-17-2-0",
+            "qd-10-2026-hanoi-1-0-0",
+            "qd-10-2026-hanoi-3-0-0",
+            "qd-10-2026-hanoi-2-0-0",
+            "qd-38-2025-hanoi-0-1-0",
+            "qd-38-2025-hanoi-4-1-0",
+            "qd-38-2025-hanoi-1-0-0",
+            "qd-38-2025-hanoi-0-0-0"
+          ]
+        }
+      }
+    },
+    {
+      "recorded_at": "2026-10-18T17:35:02.949295+00:00",
+      "origin": "executed",
+      "record": {
+        "case_id": "S04",
+        "mode": "agentic",
+        "answer_origin": "llm",
+        "evaluation_context": [
+          {
+            "citation_id": "C1",
+            "document_id": "nd-88-2024",
+            "page": null,
+            "locator": "Điều 31",
+            "text": "lực thi hành nhưng địa phương chưa phê duyệt phương án bồi thường, hỗ trợ, tái định cư thì được áp dụng các chính sách có lợi hơn cho người có đất thu hồi đã được xác định tại quyết định, quy định chính sách đặc thù của Thủ tướng Chính phủ và các quy định có lợi hơn của Nghị định này khi thực hiện công tác bồi thường, hỗ trợ, tái định cư. 5. Đối với trường hợp đã được cơ quan nhà nước có thẩm quyền phê duyệt dự toán chi phí bảo đảm cho việc tổ chức thực hiện bồi thường, hỗ trợ, tái định cư, chi phí cưỡng chế kiểm đếm, cưỡng chế thu hồi đất trước ngày Nghị định này có hiệu lực thi hành thì tiếp tục thực hiện theo quy định của pháp luật hướng dẫn thi hành Luật Đất đai năm 2013 về lập dự toán, sử dụng và thanh, quyết toán kinh phí tổ chức thực hiện bồi thường, hỗ trợ, tái định cư khi Nhà nước thu hồi đất.",
+            "applicability": "current"
+          },
+          {
+            "citation_id": "C2",
+            "document_id": "nd-88-2024",
+            "page": null,
+            "locator": "Điều 31",
+            "text": "Điều 31. Quy định chuyển tiếp 1. Đối với trường hợp đã có quyết định thu hồi đất theo quy định của pháp luật về đất đai trước ngày Nghị định này có hiệu lực thi hành nhưng chưa có quyết định phê duyệt phương án bồi thường, hỗ trợ, tái định cư của cơ quan nhà nước có thẩm quyền thì tiếp tục thực hiện việc bồi thường, hỗ trợ, tái định cư theo quy định của Nghị định này. 2. Đối với trường hợp đã có quyết định thu hồi đất và quyết định phê duyệt phương án bồi thường, hỗ trợ, tái định cư theo quy định của pháp luật về đất đai trước ngày Nghị định này có hiệu lực thi hành nhưng chưa thực hiện thì tiếp tục thực hiện phương án bồi thường, hỗ trợ, tái định cư đã phê duyệt; việc xử lý chi trả bồi thường chậm được thực hiện theo quy định của pháp luật tại thời điểm Nhà nước ban hành quyết định thu hồi đất. 3. Đối với dự án đầu tư đã được Thủ tướng Chính phủ phê duyệt Khung chính sách bồi thường, hỗ trợ, tái định cư trước ngày Nghị định này có hiệu lực thi hành nhưng địa phương chưa phê duyệt phương án bồi thường, hỗ trợ, tái định cư thì được áp dụng các chính sách có lợi hơn cho người có đất thu hồi đã được xác định tại Khung chính sách bồi thường, hỗ trợ, tái định cư và quy định của Nghị định này. 4. Đối với dự án đầu tư đã được Thủ tướng Chính phủ quyết định, quy định chính sách đặc thù về bồi thường, hỗ trợ, tái định cư trước ngày Nghị định này có hiệu lực thi hành nhưng địa phương chưa phê duyệt phương án bồi thường, hỗ trợ, tái định cư thì được áp dụng các chính sách có lợi hơn cho người",
+            "applicability": "current"
+          },
+          {
+            "citation_id": "C3",
+            "document_id": "nd-88-2024",
+            "page": null,
+            "locator": "Điều 31 · ngữ cảnh",
+            "text": "Điều 31. Quy định chuyển tiếp 1. Đối với trường hợp đã có quyết định thu hồi đất theo quy định của pháp luật về đất đai trước ngày Nghị định này có hiệu lực thi hành nhưng chưa có quyết định phê duyệt phương án bồi thường, hỗ trợ, tái định cư của cơ quan nhà nước có thẩm quyền thì tiếp tục thực hiện việc bồi thường, hỗ trợ, tái định cư theo quy định của Nghị định này. 2. Đối với trường hợp đã có quyết định thu hồi đất và quyết định phê duyệt phương án bồi thường, hỗ trợ, tái định cư theo quy định của pháp luật về đất đai trước ngày Nghị định này có hiệu lực thi hành nhưng chưa thực hiện thì tiếp tục thực hiện phương án bồi thường, hỗ trợ, tái định cư đã phê duyệt; việc xử lý chi trả bồi thường chậm được thực hiện theo quy định của pháp luật tại thời điểm Nhà nước ban hành quyết định thu hồi đất. 3. Đối với dự án đầu tư đã được Thủ tướng Chính phủ phê duyệt Khung chính sách bồi thường, hỗ trợ, tái định cư trước ngày Nghị định này có hiệu lực thi hành nhưng địa phương chưa phê duyệt phương án bồi thường, hỗ trợ, tái định cư thì được áp dụng các chính sách có lợi hơn cho người có đất thu hồi đã được xác định tại Khung chính sách bồi thường, hỗ trợ, tái định cư và quy định của Nghị định này. 4. Đối với dự án đầu tư đã được Thủ tướng Chính phủ quyết định, quy định chính sách đặc thù về bồi thường, hỗ trợ, tái định cư trước ngày Nghị định này có hiệu lực thi hành nhưng địa phương chưa phê duyệt phương án bồi thường, hỗ trợ, tái định cư thì được áp dụng các chính sách có lợi hơn cho người có đất thu hồi đã được xác định tại quyết định, quy định chính sách đặc thù của Thủ tướng Chính phủ và các quy định có lợi hơn của Nghị định này khi thực hiện công tác bồi thường, hỗ trợ, tái định cư. 5. Đối với trường hợp đã được cơ quan nhà nước có thẩm quyền phê duyệt dự toán chi phí bảo đảm cho việc tổ chức thực hiện bồi thường, hỗ trợ, tái định cư, chi phí cưỡng chế kiểm đếm, cưỡng chế thu hồi đất trước ngày Nghị định này có hiệu lực thi hành thì tiếp tục thực hiện theo quy định của pháp luật hướng dẫn thi hành Luật Đất đai năm 2013 về lập dự toán, sử dụng và thanh, quyết toán kinh phí tổ chức thực hiện bồi thường, hỗ trợ, tái định cư khi Nhà nước thu hồi đất.",
+            "applicability": "current"
+          }
+        ],
+        "result": {
+          "status": "answered",
+          "publication_profile": "academic",
+          "quality_status": "academic_prototype",
+          "retrieval_mode": "hybrid",
+          "coverage_gaps": [
+            {
+              "document_id": "qd-10-2017-hanoi",
+              "document_number": "10/2017/QĐ-UBND",
+              "title": "Quy định bồi thường, hỗ trợ và tái định cư Hà Nội (lịch sử)",
+              "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=189167",
+              "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+            },
+            {
+              "document_id": "qd-30-2019-hanoi",
+              "document_number": "30/2019/QĐ-UBND",
+              "title": "Quy định và bảng giá các loại đất Hà Nội 2020–2024 (lịch sử)",
+              "url": "https://vanban.hanoi.gov.vn/chi-tiet-van-ban/quyet-dinh-so-30-2019-qd-ubnd-cua-ubnd-tp-ha-noi-ve-viec-ban-hanh-quy-dinh-va-bang-gia-cac-loai-dat-189067",
+              "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+            },
+            {
+              "document_id": "qd-20-2023-hanoi",
+              "document_number": "20/2023/QĐ-UBND",
+              "title": "Sửa đổi bảng giá đất Quyết định 30/2019",
+              "url": "https://vbpl.vn/hanoi/Pages/vbpq-toanvan.aspx?ItemID=164473",
+              "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+            },
+            {
+              "document_id": "nd-123-2024",
+              "document_number": "123/2024/NĐ-CP",
+              "title": "Xử phạt vi phạm hành chính lĩnh vực đất đai",
+              "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=211356",
+              "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+            },
+            {
+              "document_id": "ring4-nq106-2022",
+              "document_number": "106/NQ-CP",
+              "title": "Triển khai Nghị quyết 56/2022/QH15 Vành đai 4",
+              "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=206398",
+              "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+            },
+            {
+              "document_id": "nd-01-2017",
+              "document_number": "01/2017/NĐ-CP",
+              "title": "Nghị định 01/2017/NĐ-CP sửa đổi, bổ sung một số nghị định quy định chi tiết thi hành Luật đất đai",
+              "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=187962",
+              "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+            },
+            {
+              "document_id": "nd-148-2020",
+              "document_number": "148/2020/NĐ-CP",
+              "title": "Nghị định 148/2020/NĐ-CP sửa đổi, bổ sung một số nghị định quy định chi tiết thi hành Luật Đất đai",
+              "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=202022",
+              "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+            }
+          ],
+          "content": "Đã đối chiếu các căn cứ dưới đây.\n\nNếu đã có quyết định thu hồi đất và quyết định phê duyệt phương án bồi thường, hỗ trợ, tái định cư trước ngày Nghị định 88/2024/NĐ-CP có hiệu lực nhưng chưa thực hiện, thì không cần làm lại toàn bộ phương án; tiếp tục thực hiện phương án đã được phê duyệt và chi trả bồi thường chậm theo quy định của pháp luật tại thời điểm quyết định thu hồi đất. [1]\n\nThời điểm xem xét: 02/08/2024. Dữ liệu được kiểm tra: 2026-10-11.",
+          "citations": [
+            {
+              "id": "nd-88-2024-0-31-0",
+              "document_id": "nd-88-2024",
+              "title": "Bồi thường, hỗ trợ, tái định cư khi Nhà nước thu hồi đất",
+              "document_number": "88/2024/NĐ-CP",
+              "url": "https://xaydungchinhsach.chinhphu.vn/toan-van-nghi-dinh-quy-dinh-ve-boi-thuong-ho-tro-tai-dinh-cu-khi-nha-nuoc-thu-hoi-dat-119240906111916662.htm",
+              "locator": "Điều 31",
+              "excerpt": "Điều 31. Quy định chuyển tiếp 1. Đối với trường hợp đã có quyết định thu hồi đất theo quy định của pháp luật về đất đai trước ngày Nghị định này có hiệu lực thi hành nhưng chưa có quyết định phê duyệt phương án bồi thường, hỗ trợ, tái định cư của cơ quan nhà nước có thẩm quyền thì tiếp tục thực hiện việc bồi thường, hỗ trợ, tái định cư theo quy định của Nghị định này. 2. Đối với trường hợp đã có quyết định thu hồi đất và quyết định phê duyệt phương án bồi thường, hỗ trợ, tái định cư theo quy định của pháp luật về đất đai trước ngày Nghị định này có hiệu lực thi hành nhưng chưa thực hiện thì tiếp tục thực hiện phương án bồi thường, hỗ trợ, tái định cư đã phê duyệt; việc xử lý chi trả bồi thường chậm được thực hiện theo quy định của pháp luật tại thời điểm Nhà nước ban hành quyết định thu hồi đất. 3. Đối với dự án đầu tư đã được Thủ tướng Chính phủ phê duyệt Khung chính sách bồi thường, hỗ trợ, tái định cư trước ngày Nghị định này có hiệu lực thi hành nhưng địa phương chưa phê duyệt phương án bồi thường, hỗ trợ, tái định cư thì được áp dụng các chính sách có lợi hơn cho người có đất thu hồi đã được xác định tại Khung chính sách bồi thường, hỗ trợ, tái định cư và quy định của Nghị định này. 4. Đối với dự án đầu tư đã được Thủ tướng Chính phủ quyết định, quy định chính sách đặc thù về bồi thường, hỗ trợ, tái định cư trước ngày Nghị định này có hiệu lực thi hành nhưng địa phương chưa phê duyệt phương án bồi thường, hỗ trợ, tái định cư thì được áp dụng các chính sách có lợi hơn cho người",
+              "checked_at": "2026-10-11T17:32:27Z",
+              "applicability": "current",
+              "source_review_notes": "",
+              "page": null,
+              "source_url": null
+            }
+          ],
+          "verified_claims": [
+            {
+              "kind": "legal_rule",
+              "text": "Nếu đã có quyết định thu hồi đất và quyết định phê duyệt phương án bồi thường, hỗ trợ, tái định cư trước ngày Nghị định 88/2024/NĐ-CP có hiệu lực nhưng chưa thực hiện, thì không cần làm lại toàn bộ phương án; tiếp tục thực hiện phương án đã được phê duyệt và chi trả bồi thường chậm theo quy định của pháp luật tại thời điểm quyết định thu hồi đất.",
+              "citation_ids": [
+                "nd-88-2024-0-31-0"
+              ]
+            }
+          ],
+          "as_of": "2024-08-02",
+          "corpus_release": "corpus-caf3c0833096ea4e",
+          "trace_id": "e7b83457-fdc9-49cf-9d3c-f7c45e1b6b47",
+          "trace": [
+            {
+              "step": "routing",
+              "tool": "search_law",
+              "summary": "Đã nhận diện số văn bản và yêu cầu kiểm tra hiệu lực; dùng tra cứu trực tiếp.",
+              "document_ids": [],
+              "elapsed_ms": 13
+            },
+            {
+              "step": "plan",
+              "tool": null,
+              "summary": "Đã chọn 1 công cụ; chế độ agentic.",
+              "document_ids": [],
+              "elapsed_ms": 13
+            },
+            {
+              "step": "tool",
+              "tool": "search_law",
+              "summary": "Thu được 8 đoạn chứng cứ.",
+              "document_ids": [
+                "nd-88-2024"
+              ],
+              "elapsed_ms": 13761
+            },
+            {
+              "step": "tool",
+              "tool": "open_article",
+              "summary": "Đã mở điều khoản nguồn của quan hệ sửa đổi/thay thế.",
+              "document_ids": [
+                "nd-88-2024"
+              ],
+              "elapsed_ms": 13804
+            },
+            {
+              "step": "tool",
+              "tool": "open_article",
+              "summary": "Đã mở văn bản có quan hệ pháp lý để đối chiếu phạm vi.",
+              "document_ids": [
+                "nd-47-2014"
+              ],
+              "elapsed_ms": 13837
+            },
+            {
+              "step": "tool",
+              "tool": "open_article",
+              "summary": "Đã mở văn bản có quan hệ pháp lý để đối chiếu phạm vi.",
+              "document_ids": [
+                "nd-06-2020"
+              ],
+              "elapsed_ms": 13859
+            },
+            {
+              "step": "applicability",
+              "tool": "check_effectivity",
+              "summary": "Đã kiểm tra 6 quan hệ pháp lý theo thời điểm.",
+              "document_ids": [
+                "nd-88-2024"
+              ],
+              "elapsed_ms": 13859
+            },
+            {
+              "step": "synthesis",
+              "tool": null,
+              "summary": "Đã tạo bản trả lời; đang kiểm tra trước khi hiển thị.",
+              "document_ids": [],
+              "elapsed_ms": 15139
+            },
+            {
+              "step": "verification",
+              "tool": null,
+              "summary": "1/1 kết luận qua kiểm tra với chứng cứ trong corpus; 0 vấn đề.",
+              "document_ids": [],
+              "elapsed_ms": 16222
+            }
+          ],
+          "missing_facts": [],
+          "llm_calls": 2,
+          "embedding_calls": 1,
+          "tool_calls": 5,
+          "token_usage": 7039,
+          "elapsed_ms": 16227,
+          "model": "openai/gpt-oss-120b",
+          "embedding_model": "multilingual-e5-small-onnx-q8-window-v1",
+          "mode": "agentic",
+          "support_level": "full",
+          "retry_after": null,
+          "retrieved_chunk_ids": [
+            "nd-88-2024-0-31-0",
+            "nd-88-2024-0-31-1",
+            "nd-88-2024-0-3-3",
+            "nd-88-2024-0-10-0",
+            "nd-88-2024-0-3-0",
+            "nd-88-2024-0-28-0",
+            "nd-88-2024-0-33-0",
+            "nd-88-2024-0-13-2"
+          ],
+          "evidence_chunk_ids": [
+            "nd-88-2024-0-31-0",
+            "nd-88-2024-0-31-1",
+            "nd-88-2024-0-3-3",
+            "nd-88-2024-0-10-0",
+            "nd-88-2024-0-3-0",
+            "nd-88-2024-0-28-0",
+            "nd-88-2024-0-33-0",
+            "nd-88-2024-0-13-2",
+            "nd-88-2024-0-30-0",
+            "nd-47-2014-0-0-0",
+            "nd-47-2014-0-1-0",
+            "nd-47-2014-0-2-0",
+            "nd-06-2020-0-0-0",
+            "nd-06-2020-0-1-0",
+            "nd-06-2020-1-0-0",
+            "nd-88-2024-0-31-parent"
+          ]
+        }
+      }
+    },
+    {
+      "recorded_at": "2026-10-18T17:38:34.294790+00:00",
+      "origin": "executed",
+      "record": {
+        "case_id": "S09",
+        "mode": "agentic",
+        "answer_origin": "deterministic",
+        "evaluation_context": [],
+        "result": {
+          "status": "clarification_needed",
+          "publication_profile": "academic",
+          "quality_status": "academic_prototype",
+          "retrieval_mode": "hybrid",
+          "coverage_gaps": [
+            {
+              "document_id": "qd-10-2017-hanoi",
+              "document_number": "10/2017/QĐ-UBND",
+              "title": "Quy định bồi thường, hỗ trợ và tái định cư Hà Nội (lịch sử)",
+              "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=189167",
+              "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+            },
+            {
+              "document_id": "qd-30-2019-hanoi",
+              "document_number": "30/2019/QĐ-UBND",
+              "title": "Quy định và bảng giá các loại đất Hà Nội 2020–2024 (lịch sử)",
+              "url": "https://vanban.hanoi.gov.vn/chi-tiet-van-ban/quyet-dinh-so-30-2019-qd-ubnd-cua-ubnd-tp-ha-noi-ve-viec-ban-hanh-quy-dinh-va-bang-gia-cac-loai-dat-189067",
+              "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+            },
+            {
+              "document_id": "qd-20-2023-hanoi",
+              "document_number": "20/2023/QĐ-UBND",
+              "title": "Sửa đổi bảng giá đất Quyết định 30/2019",
+              "url": "https://vbpl.vn/hanoi/Pages/vbpq-toanvan.aspx?ItemID=164473",
+              "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+            },
+            {
+              "document_id": "nd-123-2024",
+              "document_number": "123/2024/NĐ-CP",
+              "title": "Xử phạt vi phạm hành chính lĩnh vực đất đai",
+              "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=211356",
+              "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+            },
+            {
+              "document_id": "ring4-nq106-2022",
+              "document_number": "106/NQ-CP",
+              "title": "Triển khai Nghị quyết 56/2022/QH15 Vành đai 4",
+              "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=206398",
+              "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+            },
+            {
+              "document_id": "nd-01-2017",
+              "document_number": "01/2017/NĐ-CP",
+              "title": "Nghị định 01/2017/NĐ-CP sửa đổi, bổ sung một số nghị định quy định chi tiết thi hành Luật đất đai",
+              "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=187962",
+              "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+            },
+            {
+              "document_id": "nd-148-2020",
+              "document_number": "148/2020/NĐ-CP",
+              "title": "Nghị định 148/2020/NĐ-CP sửa đổi, bổ sung một số nghị định quy định chi tiết thi hành Luật Đất đai",
+              "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=202022",
+              "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+            }
+          ],
+          "content": "Cần bổ sung dữ kiện để xác định quy định áp dụng cho hồ sơ cụ thể.\n\nThông tin cần bổ sung:\n- Loại đất, tình trạng giấy tờ quyền sử dụng đất và nhà ở, chỉ cung cấp thông tin đã ẩn danh.\n- Ngày, căn cứ trong thông báo/quyết định thu hồi đất và phương án bồi thường, hỗ trợ, tái định cư.\n- Có phải di chuyển chỗ ở, còn nhà hoặc đất ở khác tại địa bàn hay không; hồ sơ xác định điều kiện bồi thường đất ở.\n- Vị trí xã/thôn và ranh thu hồi trong hồ sơ; thông tin tổng quan dự án chưa xác định quyền lợi của từng hộ.\n\nBước tiếp theo:\n- Đối chiếu hồ sơ đã ẩn danh với văn bản áp dụng và điều khoản chuyển tiếp; chưa thể khẳng định suất tái định cư hoặc tiền bồi thường cho hộ cụ thể.\n\nThời điểm xem xét: 12/10/2026. Dữ liệu được kiểm tra: 2026-10-11.",
+          "citations": [],
+          "verified_claims": [],
+          "as_of": "2026-10-12",
+          "corpus_release": "corpus-caf3c0833096ea4e",
+          "trace_id": "91fce767-bf57-47dd-a28d-10d287ecb6bb",
+          "trace": [
+            {
+              "step": "routing",
+              "tool": "search_law",
+              "summary": "Yêu cầu xác nhận quyền lợi hộ cụ thể cần hồ sơ; tra cứu nguồn và hỏi dữ kiện trước khi kết luận.",
+              "document_ids": [],
+              "elapsed_ms": 4
+            },
+            {
+              "step": "plan",
+              "tool": null,
+              "summary": "Đã chọn 1 công cụ; chế độ agentic.",
+              "document_ids": [],
+              "elapsed_ms": 4
+            },
+            {
+              "step": "tool",
+              "tool": null,
+              "summary": "Thiếu hồ sơ cá nhân; hỏi bổ sung trước khi truy xuất quy định áp dụng.",
+              "document_ids": [],
+              "elapsed_ms": 5
+            },
+            {
+              "step": "synthesis",
+              "tool": null,
+              "summary": "Đã tạo bản trả lời; đang kiểm tra trước khi hiển thị.",
+              "document_ids": [],
+              "elapsed_ms": 5
+            }
+          ],
+          "missing_facts": [
+            "Loại đất, tình trạng giấy tờ quyền sử dụng đất và nhà ở, chỉ cung cấp thông tin đã ẩn danh.",
+            "Ngày, căn cứ trong thông báo/quyết định thu hồi đất và phương án bồi thường, hỗ trợ, tái định cư.",
+            "Có phải di chuyển chỗ ở, còn nhà hoặc đất ở khác tại địa bàn hay không; hồ sơ xác định điều kiện bồi thường đất ở.",
+            "Vị trí xã/thôn và ranh thu hồi trong hồ sơ; thông tin tổng quan dự án chưa xác định quyền lợi của từng hộ."
+          ],
+          "llm_calls": 0,
+          "embedding_calls": 0,
+          "tool_calls": 0,
+          "token_usage": 0,
+          "elapsed_ms": 8,
+          "model": "openai/gpt-oss-120b",
+          "embedding_model": "multilingual-e5-small-onnx-q8-window-v1",
+          "mode": "agentic",
+          "support_level": "insufficient",
+          "retry_after": null,
+          "retrieved_chunk_ids": [],
+          "evidence_chunk_ids": []
+        }
+      }
+    },
+    {
+      "recorded_at": "2026-10-18T17:38:34.337493+00:00",
+      "origin": "executed",
+      "record": {
+        "case_id": "S12",
+        "mode": "agentic",
+        "answer_origin": "deterministic",
+        "evaluation_context": [],
+        "result": {
+          "status": "insufficient_evidence",
+          "publication_profile": "academic",
+          "quality_status": "academic_prototype",
+          "retrieval_mode": "hybrid",
+          "coverage_gaps": [
+            {
+              "document_id": "qd-10-2017-hanoi",
+              "document_number": "10/2017/QĐ-UBND",
+              "title": "Quy định bồi thường, hỗ trợ và tái định cư Hà Nội (lịch sử)",
+              "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=189167",
+              "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+            },
+            {
+              "document_id": "qd-30-2019-hanoi",
+              "document_number": "30/2019/QĐ-UBND",
+              "title": "Quy định và bảng giá các loại đất Hà Nội 2020–2024 (lịch sử)",
+              "url": "https://vanban.hanoi.gov.vn/chi-tiet-van-ban/quyet-dinh-so-30-2019-qd-ubnd-cua-ubnd-tp-ha-noi-ve-viec-ban-hanh-quy-dinh-va-bang-gia-cac-loai-dat-189067",
+              "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+            },
+            {
+              "document_id": "qd-20-2023-hanoi",
+              "document_number": "20/2023/QĐ-UBND",
+              "title": "Sửa đổi bảng giá đất Quyết định 30/2019",
+              "url": "https://vbpl.vn/hanoi/Pages/vbpq-toanvan.aspx?ItemID=164473",
+              "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+            },
+            {
+              "document_id": "nd-123-2024",
+              "document_number": "123/2024/NĐ-CP",
+              "title": "Xử phạt vi phạm hành chính lĩnh vực đất đai",
+              "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=211356",
+              "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+            },
+            {
+              "document_id": "ring4-nq106-2022",
+              "document_number": "106/NQ-CP",
+              "title": "Triển khai Nghị quyết 56/2022/QH15 Vành đai 4",
+              "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=206398",
+              "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+            },
+            {
+              "document_id": "nd-01-2017",
+              "document_number": "01/2017/NĐ-CP",
+              "title": "Nghị định 01/2017/NĐ-CP sửa đổi, bổ sung một số nghị định quy định chi tiết thi hành Luật đất đai",
+              "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=187962",
+              "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+            },
+            {
+              "document_id": "nd-148-2020",
+              "document_number": "148/2020/NĐ-CP",
+              "title": "Nghị định 148/2020/NĐ-CP sửa đổi, bổ sung một số nghị định quy định chi tiết thi hành Luật Đất đai",
+              "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=202022",
+              "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+            }
+          ],
+          "content": "Hệ thống chỉ hỗ trợ Vành đai 4 tại Hà Nội; không có dữ liệu dự án khác.\n\nThời điểm xem xét: 12/10/2026. Dữ liệu được kiểm tra: 2026-10-11.",
+          "citations": [],
+          "verified_claims": [],
+          "as_of": "2026-10-12",
+          "corpus_release": "corpus-caf3c0833096ea4e",
+          "trace_id": "dbf31658-7110-40a5-b5fc-a068963b5e86",
+          "trace": [
+            {
+              "step": "routing",
+              "tool": null,
+              "summary": "Chỉ hỗ trợ Vành đai 4; không có dữ liệu dự án khác trong corpus đang phục vụ.",
+              "document_ids": [],
+              "elapsed_ms": 4
+            },
+            {
+              "step": "plan",
+              "tool": null,
+              "summary": "Đã chọn 0 công cụ; chế độ agentic.",
+              "document_ids": [],
+              "elapsed_ms": 4
+            },
+            {
+              "step": "synthesis",
+              "tool": null,
+              "summary": "Đã tạo bản trả lời; đang kiểm tra trước khi hiển thị.",
+              "document_ids": [],
+              "elapsed_ms": 6
+            },
+            {
+              "step": "verification",
+              "tool": null,
+              "summary": "Chỉ trả thông báo ngoài phạm vi; không có kết luận pháp lý hoặc hướng dẫn chuyên ngành khác.",
+              "document_ids": [],
+              "elapsed_ms": 6
+            }
+          ],
+          "missing_facts": [],
+          "llm_calls": 0,
+          "embedding_calls": 0,
+          "tool_calls": 0,
+          "token_usage": 0,
+          "elapsed_ms": 8,
+          "model": "openai/gpt-oss-120b",
+          "embedding_model": "multilingual-e5-small-onnx-q8-window-v1",
+          "mode": "agentic",
+          "support_level": "insufficient",
+          "retry_after": null,
+          "retrieved_chunk_ids": [],
+          "evidence_chunk_ids": []
+        }
+      }
+    },
+    {
+      "recorded_at": "2026-10-18T17:39:45.021051+00:00",
+      "origin": "executed",
+      "record": {
+        "case_id": "S20",
+        "mode": "agentic",
+        "answer_origin": "deterministic",
+        "evaluation_context": [],
+        "result": {
+          "status": "clarification_needed",
+          "publication_profile": "academic",
+          "quality_status": "academic_prototype",
+          "retrieval_mode": "hybrid",
+          "coverage_gaps": [
+            {
+              "document_id": "qd-10-2017-hanoi",
+              "document_number": "10/2017/QĐ-UBND",
+              "title": "Quy định bồi thường, hỗ trợ và tái định cư Hà Nội (lịch sử)",
+              "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=189167",
+              "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+            },
+            {
+              "document_id": "qd-30-2019-hanoi",
+              "document_number": "30/2019/QĐ-UBND",
+              "title": "Quy định và bảng giá các loại đất Hà Nội 2020–2024 (lịch sử)",
+              "url": "https://vanban.hanoi.gov.vn/chi-tiet-van-ban/quyet-dinh-so-30-2019-qd-ubnd-cua-ubnd-tp-ha-noi-ve-viec-ban-hanh-quy-dinh-va-bang-gia-cac-loai-dat-189067",
+              "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+            },
+            {
+              "document_id": "qd-20-2023-hanoi",
+              "document_number": "20/2023/QĐ-UBND",
+              "title": "Sửa đổi bảng giá đất Quyết định 30/2019",
+              "url": "https://vbpl.vn/hanoi/Pages/vbpq-toanvan.aspx?ItemID=164473",
+              "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+            },
+            {
+              "document_id": "nd-123-2024",
+              "document_number": "123/2024/NĐ-CP",
+              "title": "Xử phạt vi phạm hành chính lĩnh vực đất đai",
+              "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=211356",
+              "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+            },
+            {
+              "document_id": "ring4-nq106-2022",
+              "document_number": "106/NQ-CP",
+              "title": "Triển khai Nghị quyết 56/2022/QH15 Vành đai 4",
+              "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=206398",
+              "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+            },
+            {
+              "document_id": "nd-01-2017",
+              "document_number": "01/2017/NĐ-CP",
+              "title": "Nghị định 01/2017/NĐ-CP sửa đổi, bổ sung một số nghị định quy định chi tiết thi hành Luật đất đai",
+              "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=187962",
+              "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+            },
+            {
+              "document_id": "nd-148-2020",
+              "document_number": "148/2020/NĐ-CP",
+              "title": "Nghị định 148/2020/NĐ-CP sửa đổi, bổ sung một số nghị định quy định chi tiết thi hành Luật Đất đai",
+              "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=202022",
+              "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+            }
+          ],
+          "content": "Tên huyện cũ chưa đủ để ánh xạ tới một xã/phường mới hoặc xác định một thửa đất thuộc dự án. Cần đối chiếu địa bàn chi tiết và ranh giới/hồ sơ thu hồi.\n\nThông tin cần bổ sung:\n- Tên xã/phường, thôn hoặc tổ dân phố trong hồ sơ cũ; địa chỉ chỉ ở mức đã ẩn danh.\n- Thời điểm lập hồ sơ và nguồn xác nhận địa bàn sau sắp xếp.\n- Ranh giới dự án và thông báo/quyết định thu hồi đối với thửa đất, nếu cần đối chiếu phạm vi.\n\nThời điểm xem xét: 12/10/2026. Dữ liệu được kiểm tra: 2026-10-11.",
+          "citations": [],
+          "verified_claims": [],
+          "as_of": "2026-10-12",
+          "corpus_release": "corpus-caf3c0833096ea4e",
+          "trace_id": "7bf9b860-e899-4968-a1b4-1d22e02f6a2d",
+          "trace": [
+            {
+              "step": "routing",
+              "tool": "normalize_place",
+              "summary": "Đối chiếu tên địa bàn cũ/mới trước khi xác định phạm vi hồ sơ.",
+              "document_ids": [],
+              "elapsed_ms": 6
+            },
+            {
+              "step": "plan",
+              "tool": null,
+              "summary": "Đã chọn 1 công cụ; chế độ agentic.",
+              "document_ids": [],
+              "elapsed_ms": 6
+            },
+            {
+              "step": "tool",
+              "tool": "normalize_place",
+              "summary": "Tìm thấy 2 ánh xạ địa bàn có nguồn; thiếu ánh xạ thì cần hỏi lại.",
+              "document_ids": [],
+              "elapsed_ms": 11
+            },
+            {
+              "step": "tool",
+              "tool": "normalize_place",
+              "summary": "Thu được 0 đoạn chứng cứ.",
+              "document_ids": [],
+              "elapsed_ms": 11
+            },
+            {
+              "step": "synthesis",
+              "tool": null,
+              "summary": "Đã tạo bản trả lời; đang kiểm tra trước khi hiển thị.",
+              "document_ids": [],
+              "elapsed_ms": 12
+            },
+            {
+              "step": "verification",
+              "tool": null,
+              "summary": "Chỉ giải thích giới hạn dữ liệu hoặc hỏi địa bàn còn thiếu; không kết luận quyền lợi hay phạm vi từng thửa.",
+              "document_ids": [],
+              "elapsed_ms": 13
+            }
+          ],
+          "missing_facts": [
+            "Tên xã/phường, thôn hoặc tổ dân phố trong hồ sơ cũ; địa chỉ chỉ ở mức đã ẩn danh.",
+            "Thời điểm lập hồ sơ và nguồn xác nhận địa bàn sau sắp xếp.",
+            "Ranh giới dự án và thông báo/quyết định thu hồi đối với thửa đất, nếu cần đối chiếu phạm vi."
+          ],
+          "llm_calls": 0,
+          "embedding_calls": 0,
+          "tool_calls": 1,
+          "token_usage": 0,
+          "elapsed_ms": 14,
+          "model": "openai/gpt-oss-120b",
+          "embedding_model": "multilingual-e5-small-onnx-q8-window-v1",
+          "mode": "agentic",
+          "support_level": "insufficient",
+          "retry_after": null,
+          "retrieved_chunk_ids": [],
+          "evidence_chunk_ids": []
+        }
+      }
+    },
+    {
+      "recorded_at": "2026-10-18T17:37:12.204037+00:00",
+      "origin": "executed",
+      "record": {
+        "case_id": "S07",
+        "mode": "agentic",
+        "answer_origin": "llm",
+        "evaluation_context": [
+          {
+            "citation_id": "C1",
+            "document_id": "luat-dat-dai-2024",
+            "page": 12,
+            "locator": "Điều 104",
+            "text": "Điều 104. Bồi thường chi phí di chuyển tài sản khi Nhà nước thu hồi đất 1. Khi Nhà nước thu hồi đất mà phải di chuyển tài sản thì được Nhà nước bồi thường chi phí để tháo dỡ, di chuyển, lắp đặt; trường hợp phải di chuyển hệ thống máy móc, dây chuyền sản xuất còn được bồi thường đối với thiệt hại khi tháo dỡ, vận chuyển, lắp đặt. 2. Ủy ban nhân dân cấp tỉnh quy định mức bồi thường tại khoản 1 Điều này.",
+            "applicability": "current"
+          },
+          {
+            "citation_id": "C2",
+            "document_id": "luat-dat-dai-2013",
+            "page": 1,
+            "locator": "Trang 1",
+            "text": "CÔNG BÁO/Số 1011 + 1012/Ngày 31-12-2013 3 QUỐC HỘI CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM Độc lập - Tự do - Hạnh phúc Luật số: 45/2013/QH13 LUẬT Đất đai Căn cứ Hiến pháp nước Cộng hòa xã hội chủ nghĩa Việt Nam; Quốc hội ban hành Luật đất đai. Chương I QUY ĐỊNH CHUNG",
+            "applicability": "historical"
+          },
+          {
+            "citation_id": "C3",
+            "document_id": "luat-dat-dai-2024",
+            "page": 58,
+            "locator": "Điều 254",
+            "text": "Điều 254. Quy định chuyển tiếp về thu hồi đất; bồi thường, hỗ trợ, tái định cư khi Nhà nước thu hồi đất khi Luật này có hiệu lực thi hành 1. Đối với trường hợp đã có quyết định thu hồi đất theo quy định của pháp luật về đất đai trước ngày Luật này có hiệu lực thi hành nhưng chưa có quyết định phê duyệt phương án bồi thường, hỗ trợ, tái định cư của cơ quan nhà nước có thẩm quyền thì tiếp tục thực hiện việc bồi thường, hỗ trợ, tái định cư theo quy định của Luật này. 2. Đối với trường hợp đã có quyết định thu hồi đất và quyết định phê duyệt phương án bồi thường, hỗ trợ, tái định cư theo quy định của pháp luật về đất đai trước ngày Luật này có hiệu lực thi hành nhưng chưa thực hiện thì tiếp tục thực hiện phương án bồi thường, hỗ trợ, tái định cư đã phê duyệt; việc xử lý chi trả bồi thường chậm được thực hiện theo quy định của pháp luật tại thời điểm Nhà nước ban hành quyết định thu hồi đất. 3. Trường hợp trước ngày Luật này có hiệu lực thi hành, cơ quan nhà nước có thẩm quyền đã có văn bản xác định hành vi vi phạm của chủ đầu tư đối với việc không đưa đất vào sử dụng hoặc chậm đưa đất vào sử dụng theo quy định tại điểm i khoản 1 Điều 64 của Luật Đất đai số 45/2013/QH13 thì xử lý như sau: a) Trường hợp chưa có quyết định thu hồi đất thì Ủy ban nhân dân cấp có thẩm quyền xử lý theo quy định tại khoản 8 và khoản 9 Điều 81 của Luật này; b) Trường hợp đã ban hành quyết định thu hồi đất thì thực hiện thu hồi đất theo quyết định thu hồi đất và xử lý tiền",
+            "applicability": "current"
+          },
+          {
+            "citation_id": "C4",
+            "document_id": "luat-dat-dai-2024",
+            "page": 63,
+            "locator": "Điều 260",
+            "text": "Điều 260. Quy định chuyển tiếp một số trường hợp khác khi Luật này có hiệu lực thi hành 1. Tổ chức kinh tế, hộ gia đình, cá nhân được Nhà nước cho thuê đất trước ngày 01 tháng 7 năm 2004 đã trả tiền thuê đất cho cả thời gian thuê hoặc trả trước tiền thuê đất cho nhiều năm mà thời hạn thuê đất đã trả tiền còn lại ít nhất là 05 năm thì tổ chức kinh tế có quyền và nghĩa vụ quy định tại Điều 33 của Luật này; hộ gia đình, cá nhân có quyền và nghĩa vụ quy định tại khoản 1 Điều 37 của Luật này.",
+            "applicability": "current"
+          },
+          {
+            "citation_id": "C5",
+            "document_id": "luat-dat-dai-2013",
+            "page": 1,
+            "locator": "Điều 1",
+            "text": "Điều 1. Phạm vi điều chỉnh Luật này quy định về chế độ sở hữu đất đai, quyền hạn và trách nhiệm của Nhà nước đại diện chủ sở hữu toàn dân về đất đai và thống nhất quản lý về đất đai, chế độ quản lý và sử dụng đất đai, quyền và nghĩa vụ của người sử dụng đất đối với đất đai thuộc lãnh thổ của nước Cộng hòa xã hội chủ nghĩa Việt Nam.",
+            "applicability": "historical"
+          }
+        ],
+        "result": {
+          "status": "answered",
+          "publication_profile": "academic",
+          "quality_status": "academic_prototype",
+          "retrieval_mode": "hybrid",
+          "coverage_gaps": [
+            {
+              "document_id": "qd-10-2017-hanoi",
+              "document_number": "10/2017/QĐ-UBND",
+              "title": "Quy định bồi thường, hỗ trợ và tái định cư Hà Nội (lịch sử)",
+              "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=189167",
+              "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+            },
+            {
+              "document_id": "qd-30-2019-hanoi",
+              "document_number": "30/2019/QĐ-UBND",
+              "title": "Quy định và bảng giá các loại đất Hà Nội 2020–2024 (lịch sử)",
+              "url": "https://vanban.hanoi.gov.vn/chi-tiet-van-ban/quyet-dinh-so-30-2019-qd-ubnd-cua-ubnd-tp-ha-noi-ve-viec-ban-hanh-quy-dinh-va-bang-gia-cac-loai-dat-189067",
+              "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+            },
+            {
+              "document_id": "qd-20-2023-hanoi",
+              "document_number": "20/2023/QĐ-UBND",
+              "title": "Sửa đổi bảng giá đất Quyết định 30/2019",
+              "url": "https://vbpl.vn/hanoi/Pages/vbpq-toanvan.aspx?ItemID=164473",
+              "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+            },
+            {
+              "document_id": "nd-123-2024",
+              "document_number": "123/2024/NĐ-CP",
+              "title": "Xử phạt vi phạm hành chính lĩnh vực đất đai",
+              "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=211356",
+              "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+            },
+            {
+              "document_id": "ring4-nq106-2022",
+              "document_number": "106/NQ-CP",
+              "title": "Triển khai Nghị quyết 56/2022/QH15 Vành đai 4",
+              "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=206398",
+              "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+            },
+            {
+              "document_id": "nd-01-2017",
+              "document_number": "01/2017/NĐ-CP",
+              "title": "Nghị định 01/2017/NĐ-CP sửa đổi, bổ sung một số nghị định quy định chi tiết thi hành Luật đất đai",
+              "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=187962",
+              "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+            },
+            {
+              "document_id": "nd-148-2020",
+              "document_number": "148/2020/NĐ-CP",
+              "title": "Nghị định 148/2020/NĐ-CP sửa đổi, bổ sung một số nghị định quy định chi tiết thi hành Luật Đất đai",
+              "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=202022",
+              "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+            }
+          ],
+          "content": "Đã đối chiếu các căn cứ dưới đây.\n\nĐiều 104 Luật Đất đai 2024 quy định rằng khi Nhà nước thu hồi đất và phải di chuyển tài sản, Nhà nước bồi thường chi phí: (1) chi phí tháo dỡ, (2) chi phí vận chuyển, (3) chi phí lắp đặt lại tài sản; nếu tài sản là hệ thống máy móc, dây chuyền sản xuất thì còn bồi thường thiệt hại phát sinh khi tháo dỡ, vận chuyển và lắp đặt. [1]\n\nThời điểm xem xét: 02/08/2024. Dữ liệu được kiểm tra: 2026-10-11.",
+          "citations": [
+            {
+              "id": "luat-dat-dai-2024-104-1-0",
+              "document_id": "luat-dat-dai-2024",
+              "title": "Luật Đất đai",
+              "document_number": "31/2024/QH15",
+              "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=211189",
+              "locator": "Điều 104",
+              "excerpt": "Điều 104. Bồi thường chi phí di chuyển tài sản khi Nhà nước thu hồi đất 1. Khi Nhà nước thu hồi đất mà phải di chuyển tài sản thì được Nhà nước bồi thường chi phí để tháo dỡ, di chuyển, lắp đặt; trường hợp phải di chuyển hệ thống máy móc, dây chuyền sản xuất còn được bồi thường đối với thiệt hại khi tháo dỡ, vận chuyển, lắp đặt. 2. Ủy ban nhân dân cấp tỉnh quy định mức bồi thường tại khoản 1 Điều này.",
+              "checked_at": "2026-10-11T17:32:27Z",
+              "applicability": "current",
+              "source_review_notes": "",
+              "page": 12,
+              "source_url": "https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/9/31-2024-qh15_2.pdf#page=12"
+            }
+          ],
+          "verified_claims": [
+            {
+              "kind": "legal_rule",
+              "text": "Điều 104 Luật Đất đai 2024 quy định rằng khi Nhà nước thu hồi đất và phải di chuyển tài sản, Nhà nước bồi thường chi phí: (1) chi phí tháo dỡ, (2) chi phí vận chuyển, (3) chi phí lắp đặt lại tài sản; nếu tài sản là hệ thống máy móc, dây chuyền sản xuất thì còn bồi thường thiệt hại phát sinh khi tháo dỡ, vận chuyển và lắp đặt.",
+              "citation_ids": [
+                "luat-dat-dai-2024-104-1-0"
+              ]
+            }
+          ],
+          "as_of": "2024-08-02",
+          "corpus_release": "corpus-caf3c0833096ea4e",
+          "trace_id": "b6bce6c9-aa30-4ea0-a6ba-84e30e09557a",
+          "trace": [
+            {
+              "step": "routing",
+              "tool": "open_article",
+              "summary": "Đã nhận diện văn bản và điều được người dùng chỉ rõ; mở nguồn tương ứng.",
+              "document_ids": [
+                "luat-dat-dai-2024"
+              ],
+              "elapsed_ms": 6
+            },
+            {
+              "step": "plan",
+              "tool": null,
+              "summary": "Đã chọn 1 công cụ; chế độ agentic.",
+              "document_ids": [],
+              "elapsed_ms": 6
+            },
+            {
+              "step": "tool",
+              "tool": "open_article",
+              "summary": "Thu được 1 đoạn chứng cứ.",
+              "document_ids": [
+                "luat-dat-dai-2024"
+              ],
+              "elapsed_ms": 27
+            },
+            {
+              "step": "tool",
+              "tool": "open_article",
+              "summary": "Đã mở điều khoản nguồn của quan hệ sửa đổi/thay thế.",
+              "document_ids": [
+                "luat-dat-dai-2024"
+              ],
+              "elapsed_ms": 49
+            },
+            {
+              "step": "tool",
+              "tool": "open_article",
+              "summary": "Đã mở văn bản có quan hệ pháp lý để đối chiếu phạm vi.",
+              "document_ids": [
+                "luat-dat-dai-2013"
+              ],
+              "elapsed_ms": 57
+            },
+            {
+              "step": "tool",
+              "tool": "open_article",
+              "summary": "Đã mở điều khoản nguồn của quan hệ sửa đổi/thay thế.",
+              "document_ids": [
+                "luat-dat-dai-2024"
+              ],
+              "elapsed_ms": 118
+            },
+            {
+              "step": "applicability",
+              "tool": "check_effectivity",
+              "summary": "Đã kiểm tra 5 quan hệ pháp lý theo thời điểm.",
+              "document_ids": [
+                "luat-dat-dai-2024"
+              ],
+              "elapsed_ms": 118
+            },
+            {
+              "step": "synthesis",
+              "tool": null,
+              "summary": "Đã tạo bản trả lời; đang kiểm tra trước khi hiển thị.",
+              "document_ids": [],
+              "elapsed_ms": 1544
+            },
+            {
+              "step": "verification",
+              "tool": null,
+              "summary": "1/1 kết luận qua kiểm tra với chứng cứ trong corpus; 0 vấn đề.",
+              "document_ids": [],
+              "elapsed_ms": 2845
+            }
+          ],
+          "missing_facts": [],
+          "llm_calls": 2,
+          "embedding_calls": 0,
+          "tool_calls": 5,
+          "token_usage": 6165,
+          "elapsed_ms": 2848,
+          "model": "openai/gpt-oss-120b",
+          "embedding_model": "multilingual-e5-small-onnx-q8-window-v1",
+          "mode": "agentic",
+          "support_level": "full",
+          "retry_after": null,
+          "retrieved_chunk_ids": [
+            "luat-dat-dai-2024-104-1-0",
+            "luat-dat-dai-2024-243-2-0",
+            "luat-dat-dai-2013-0-0-0",
+            "luat-dat-dai-2013-0-1-0",
+            "luat-dat-dai-2013-0-2-0",
+            "luat-dat-dai-2024-244-1-0",
+            "luat-dat-dai-2024-245-1-0",
+            "luat-dat-dai-2024-249-3-0"
+          ],
+          "evidence_chunk_ids": [
+            "luat-dat-dai-2024-104-1-0",
+            "luat-dat-dai-2024-243-2-0",
+            "luat-dat-dai-2013-0-0-0",
+            "luat-dat-dai-2013-0-1-0",
+            "luat-dat-dai-2013-0-2-0",
+            "luat-dat-dai-2024-244-1-0",
+            "luat-dat-dai-2024-245-1-0",
+            "luat-dat-dai-2024-249-3-0",
+            "luat-dat-dai-2024-244-1-parent",
+            "luat-dat-dai-2024-245-1-parent"
+          ]
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,283 @@
+{
+  "checked_at": "2026-10-18T18:03:53.965791+00:00",
+  "candidate_corpus_id": "corpus-caf3c0833096ea4e",
+  "coverage_with_final_checker": {
+    "release": "corpus-caf3c0833096ea4e",
+    "documents": 59,
+    "legal": 54,
+    "verified_legal": 54,
+    "projects": {
+      "ring4": 5
+    },
+    "chunks": 7388,
+    "embedded": true,
+    "coverage_passed": true,
+    "scope_valid": true,
+    "missing_mandatory_sources": [],
+    "publication_ready": false,
+    "dependencies_complete": false,
+    "issues": [
+      {
+        "id": "qd-10-2017-hanoi",
+        "reason": "Source full text / legal metadata awaiting review",
+        "quarantined": true
+      },
+      {
+        "id": "qd-30-2019-hanoi",
+        "reason": "Source full text / legal metadata awaiting review",
+        "quarantined": true
+      },
+      {
+        "id": "qd-20-2023-hanoi",
+        "reason": "Source full text / legal metadata awaiting review",
+        "quarantined": true
+      },
+      {
+        "id": "nd-123-2024",
+        "reason": "Source full text / legal metadata awaiting review",
+        "quarantined": true
+      },
+      {
+        "id": "ring4-nq106-2022",
+        "reason": "Source full text / legal metadata awaiting review",
+        "quarantined": true
+      },
+      {
+        "id": "nd-01-2017",
+        "reason": "Source full text / legal metadata awaiting review",
+        "quarantined": true
+      },
+      {
+        "id": "nd-148-2020",
+        "reason": "Source full text / legal metadata awaiting review",
+        "quarantined": true
+      },
+      {
+        "id": "qd-30-2019-hanoi",
+        "reason": "Relation endpoint missing from corpus",
+        "quarantined": true
+      },
+      {
+        "id": "qd-20-2023-hanoi",
+        "reason": "Relation endpoint missing from corpus",
+        "quarantined": true
+      },
+      {
+        "id": "nd-47-2014",
+        "reason": "Relation endpoint missing from corpus",
+        "quarantined": true
+      },
+      {
+        "id": "nd-47-2014",
+        "reason": "Relation endpoint missing from corpus",
+        "quarantined": true
+      },
+      {
+        "id": "qd-10-2017-hanoi",
+        "reason": "Relation endpoint missing from corpus",
+        "quarantined": true
+      },
+      {
+        "id": "qd-10-2017-hanoi",
+        "reason": "Relation endpoint missing from corpus",
+        "quarantined": true
+      },
+      {
+        "id": "qd-20-2022-hanoi",
+        "reason": "Relation endpoint missing from corpus",
+        "quarantined": true
+      }
+    ],
+    "checked_at": "2026-10-11T17:32:27Z"
+  },
+  "ingest_issues": [
+    {
+      "id": "qd-10-2017-hanoi",
+      "reason": "Source full text / legal metadata awaiting review",
+      "quarantined": true
+    },
+    {
+      "id": "qd-30-2019-hanoi",
+      "reason": "Source full text / legal metadata awaiting review",
+      "quarantined": true
+    },
+    {
+      "id": "qd-20-2023-hanoi",
+      "reason": "Source full text / legal metadata awaiting review",
+      "quarantined": true
+    },
+    {
+      "id": "nd-123-2024",
+      "reason": "Source full text / legal metadata awaiting review",
+      "quarantined": true
+    },
+    {
+      "id": "ring4-nq106-2022",
+      "reason": "Source full text / legal metadata awaiting review",
+      "quarantined": true
+    },
+    {
+      "id": "nd-01-2017",
+      "reason": "Source full text / legal metadata awaiting review",
+      "quarantined": true
+    },
+    {
+      "id": "nd-148-2020",
+      "reason": "Source full text / legal metadata awaiting review",
+      "quarantined": true
+    },
+    {
+      "id": "qd-30-2019-hanoi",
+      "reason": "Relation endpoint missing from corpus",
+      "quarantined": true
+    },
+    {
+      "id": "qd-20-2023-hanoi",
+      "reason": "Relation endpoint missing from corpus",
+      "quarantined": true
+    },
+    {
+      "id": "nd-47-2014",
+      "reason": "Relation endpoint missing from corpus",
+      "quarantined": true
+    },
+    {
+      "id": "nd-47-2014",
+      "reason": "Relation endpoint missing from corpus",
+      "quarantined": true
+    },
+    {
+      "id": "qd-10-2017-hanoi",
+      "reason": "Relation endpoint missing from corpus",
+      "quarantined": true
+    },
+    {
+      "id": "qd-10-2017-hanoi",
+      "reason": "Relation endpoint missing from corpus",
+      "quarantined": true
+    },
+    {
+      "id": "qd-20-2022-hanoi",
+      "reason": "Relation endpoint missing from corpus",
+      "quarantined": true
+    }
+  ],
+  "freshness_receipts_created": 0,
+  "generation_acceptance": "not_accepted: content_failures_and_remaining_provider_TPM_limit",
+  "publish_allowed": false,
+  "serving_database_changed": false,
+  "release_published": false,
+  "deployed": false,
+  "pending_sources": [
+    {
+      "id": "qd-10-2017-hanoi",
+      "raw_paths": [
+        "data/raw/qd-10-2017-hanoi-new-official-1.pdf"
+      ],
+      "ocr_review": [
+        "pending"
+      ]
+    },
+    {
+      "id": "qd-30-2019-hanoi",
+      "raw_paths": [
+        "data/raw/qd-30-2019-hanoi-attachment-1.pdf"
+      ],
+      "ocr_review": [
+        "pending"
+      ]
+    },
+    {
+      "id": "qd-20-2023-hanoi",
+      "raw_paths": [
+        "data/raw/qd20-direct-candidate-2.pdf"
+      ],
+      "ocr_review": [
+        "pending"
+      ]
+    },
+    {
+      "id": "nd-123-2024",
+      "raw_paths": [
+        "data/raw/nd-123-2024-attachment-1.pdf"
+      ],
+      "ocr_review": [
+        "pending"
+      ]
+    },
+    {
+      "id": "ring4-nq106-2022",
+      "raw_paths": [
+        "data/raw/ring4-nq106-2022-attachment-1.pdf"
+      ],
+      "ocr_review": [
+        "pending"
+      ]
+    },
+    {
+      "id": "nd-01-2017",
+      "raw_paths": [
+        "data/raw/nd-01-2017-new-official-1.pdf"
+      ],
+      "ocr_review": [
+        "pending"
+      ]
+    },
+    {
+      "id": "nd-148-2020",
+      "raw_paths": [
+        "data/raw/nd-148-2020-alternate.pdf"
+      ],
+      "ocr_review": [
+        "pending"
+      ]
+    }
+  ],
+  "additional_missing_endpoint": "qd-20-2022-hanoi",
+  "prior_report_correction": "preparation-attempt-1 and evaluation-attempt-1 were started before the final dependency gate; their publication_ready booleans are superseded by coverage_with_final_checker here. Their numerical results remain preserved.",
+  "implementation_commit": "e778240978bcabadc34ab1c8808a48a5f34415a1",
+  "source_fresh": false,
+  "generation_final": {
+    "configuration_sha256": "817e38259d90a2ac6b31650fb3092cc18fccd25d7ebbbdd504ecbd98cb0737f5",
+    "completed": 32,
+    "locked_total": 32,
+    "smoke": {
+      "completed": 20,
+      "pass": 19,
+      "fail": 1
+    },
+    "supplemental": {
+      "completed": 4,
+      "pass": 2,
+      "fail": 2
+    },
+    "natural": {
+      "completed": 8,
+      "locked_total": 8,
+      "pass": 4,
+      "partial": 1,
+      "fail": 3,
+      "content_pass": 2,
+      "content_partial": 1,
+      "content_total": 6,
+      "pass_safety_cases": [
+        "N07",
+        "N08"
+      ],
+      "limited": [
+        "N03"
+      ],
+      "unexecuted": [],
+      "provider_requests_for_deterministic_remainder": 0
+    },
+    "quota": "Latest user-configured key: probe HTTP 200; unchanged TPM 8000. Resumed N01 and N06 answered, N03 still limited. All prior attempts retained; no increase to per-turn budget or hosting plan.",
+    "review_scope": "AI engineering rubric/source review; not independent legal certification"
+  },
+  "pending_publication_requirements": [
+    "Reviewed OCR, numeric content and legal metadata for staged sources",
+    "Resolve legal dependency endpoints including QD20/2022",
+    "Real fulltext/amendment/transition source freshness review and receipts",
+    "Complete final frozen evaluation and meet the predetermined content criteria",
+    "Verify downloaded Release asset and restore; deploy pinned tested SHA and verify fingerprint"
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "scope": "Unverified structured model output for developer diagnosis; never delivered as a chatbot answer. No hidden reasoning.",
+  "schema": "Draft",
+  "case_mode": "S06-agentic",
+  "llm_calls": 2,
+  "output": {
+    "status": "answered",
+    "summary": "",
+    "claims": [
+      {
+        "kind": "legal_rule",
+        "text": "Giấy chứng nhận quyền sử dụng đất (hoặc các giấy tờ tương đương) không phải là điều kiện duy nhất để được bồi thường về đất; người được bồi thường còn có thể đáp ứng một trong các điều kiện thay thế như có quyết định giao đất, quyết định cho thuê đất hoặc quyết định cho phép chuyển mục đích sử dụng đất của cơ quan nhà nước có thẩm quyền.",
+        "citation_ids": [
+          "C3"
+        ]
+      },
+      {
+        "kind": "legal_rule",
+        "text": "Điều 95 quy định rằng để được bồi thường, hộ gia đình, cá nhân phải thuộc đối tượng quy định tại khoản 1 và đồng thời phải có một trong các giấy tờ sau: (a) Giấy chứng nhận quyền sử dụng đất (hoặc các giấy tờ tương đương) hoặc (b) quyết định giao đất, quyết định cho thuê đất, hoặc quyết định cho phép chuyển mục đích sử dụng đất.",
+        "citation_ids": [
+          "C2",
+          "C3"
+        ]
+      }
+    ],
+    "missing_facts": [],
+    "next_steps": [],
+    "out_of_scope": false
+  }
+}

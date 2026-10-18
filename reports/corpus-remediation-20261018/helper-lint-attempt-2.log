@@ -1,0 +1,90 @@
+E902 No such file or directory (os error 2)
+--> backend/tests/test_cli_publication.py:1:1
+
+I001 [*] Import block is un-sorted or un-formatted
+  --> scripts/package_release.py:2:1
+   |
+ 1 |   """Prepare a verified corpus-only GitHub Release asset; never publishes remotely."""
+ 2 | / import argparse
+ 3 | | import hashlib
+ 4 | | import json
+ 5 | | import shutil
+ 6 | | import subprocess
+ 7 | | from pathlib import Path
+ 8 | |
+ 9 | | from dotenv import dotenv_values
+10 | | from landlaw.store import Store
+11 | | from landlaw.publication import validate_corpus
+12 | | from landlaw.security import utcnow
+13 | | from check_secrets import PATTERNS
+   | |__________________________________^
+help: Organize imports
+   |
+8  |
+9  + from check_secrets import PATTERNS
+10 | from dotenv import dotenv_values
+   - from landlaw.store import Store
+11 | from landlaw.publication import validate_corpus
+12 | from landlaw.security import utcnow
+   - from check_secrets import PATTERNS
+13 + from landlaw.store import Store
+14 |
+   |
+
+I001 [*] Import block is un-sorted or un-formatted
+  --> scripts/verify_postgres_database.py:2:1
+   |
+ 1 |   """Restore into a newly created disposable database; never touches the serving database."""
+ 2 | / import json
+ 3 | | import argparse
+ 4 | | import uuid
+ 5 | | from pathlib import Path
+ 6 | | from concurrent.futures import ThreadPoolExecutor
+ 7 | | from dotenv import dotenv_values
+ 8 | | import psycopg
+ 9 | | from psycopg import sql
+10 | | from psycopg.conninfo import make_conninfo
+11 | | from pydantic import SecretStr
+12 | | from landlaw.config import Settings
+13 | | from landlaw.store import Store
+14 | | from landlaw.security import new_token,utcnow
+   | |_____________________________________________^
+help: Organize imports
+   |
+1  | """Restore into a newly created disposable database; never touches the serving database."""
+2  + import argparse
+3  | import json
+   - import argparse
+4  | import uuid
+   - from pathlib import Path
+5  | from concurrent.futures import ThreadPoolExecutor
+   - from dotenv import dotenv_values
+6  + from pathlib import Path
+7  +
+8  | import psycopg
+9  + from dotenv import dotenv_values
+10 + from landlaw.config import Settings
+11 + from landlaw.security import new_token, utcnow
+12 + from landlaw.store import Store
+13 | from psycopg import sql
+14 | from psycopg.conninfo import make_conninfo
+15 | from pydantic import SecretStr
+   - from landlaw.config import Settings
+   - from landlaw.store import Store
+   - from landlaw.security import new_token,utcnow
+16 |
+   |
+
+BLE001 Do not catch blind exception: `Exception`
+  --> scripts/verify_postgres_database.py:69:12
+   |
+67 |     args=parser.parse_args()
+68 |     try:main(args.source,args.output)
+69 |     except Exception as error:
+   |            ^^^^^^^^^
+70 |         print(json.dumps({'passed':False,'error_type':type(error).__name__}))
+71 |         raise SystemExit(1) from None
+   |
+
+Found 4 errors.
+[*] 2 fixable with `--fix`.

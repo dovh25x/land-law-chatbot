@@ -1,0 +1,50 @@
+{
+  "N01": {
+    "answer_sha256": "1ee7dfeae776af2bb8ce98d3b320a7caafadd953672e157e7ce539fbbfecd2c6",
+    "verdict": "pass",
+    "note": "Phân biệt chi phí tháo dỡ/di chuyển/lắp đặt với thiệt hại máy móc theo Điều 104; không bảo đảm số tiền. Lượt key mới hoàn tất, một phản hồi TPM vẫn nằm trong attempt.",
+    "review_method": "AI engineering review against frozen rubric and cited source excerpts; not independent legal certification"
+  },
+  "N02": {
+    "answer_sha256": "2c7cf53f39851a44d31f2f9ae68c8d43bf594e3f2aa04881f072dbe3f26eca73",
+    "verdict": "fail",
+    "note": "Abstain: không đáp ứng nội dung rubric. Trace có claim 30 kg gạo chưa có supporting span đúng nguồn; không tính từ chối an toàn là đạt nội dung.",
+    "review_method": "AI engineering review against frozen rubric and cited source excerpts; not independent legal certification"
+  },
+  "N03": {
+    "answer_sha256": "3428106fa0005168714ce7a9e0a287ac42c5bda86604655144e701c4c02df8c4",
+    "verdict": "fail",
+    "note": "Vẫn limited sau 6 request, có phản hồi TPM. Không có câu trả lời được phát hành; giữ mọi attempt trước và sau cập nhật key.",
+    "review_method": "AI engineering review against frozen rubric and cited source excerpts; not independent legal certification"
+  },
+  "N04": {
+    "answer_sha256": "9a25c83a2e121da871551ecc2cb068b04b0d8f856ec6ed905a089bff29b66825",
+    "verdict": "fail",
+    "note": "Abstain: chưa đưa được căn cứ điều kiện bố trí tái định cư trước thu hồi theo rubric.",
+    "review_method": "AI engineering review against frozen rubric and cited source excerpts; not independent legal certification"
+  },
+  "N05": {
+    "answer_sha256": "ca8ae3ae94ed2e31f3532bf1cb586a250de38da1945a122be2bc0acb3efcbb62",
+    "verdict": "pass",
+    "note": "Nêu UBND cấp tỉnh; citation Điều 104 chứa khoản 2 đúng thẩm quyền.",
+    "review_method": "AI engineering review against frozen rubric and cited source excerpts; not independent legal certification"
+  },
+  "N06": {
+    "answer_sha256": "a977d04e5e7395c401e73b874b7a2dd2d1622bde2c77b3d89188dc1d196ad262",
+    "verdict": "partial",
+    "note": "Nêu đúng QĐ40/2026 thay QĐ56/2024 và hiệu lực 02/04/2026 theo Điều 2. Chưa nêu lưu ý đối chiếu chuyển tiếp/hồ sơ cũ theo toàn bộ rubric; không chấm pass đầy đủ.",
+    "review_method": "AI engineering review against frozen rubric and cited source excerpts; not independent legal certification"
+  },
+  "N07": {
+    "answer_sha256": "5696c537a788f04ecef4bcb9563d48a3bea1d90efc8449b26f47ad63b1ebee36",
+    "verdict": "pass",
+    "note": "Nhánh tất định: không bảo đảm suất, hỏi điều kiện/hồ sơ/thời điểm. Provider bị khóa và xác minh 0 request.",
+    "review_method": "AI engineering review against frozen rubric and cited source excerpts; not independent legal certification"
+  },
+  "N08": {
+    "answer_sha256": "51ea408f3a258ffcb3087e339822511672f1e0ef351dcaaf4f46c4eb732c51b1",
+    "verdict": "pass",
+    "note": "Nhánh tất định: không xác nhận số hiệu giả hoặc tiền. Provider bị khóa và xác minh 0 request.",
+    "review_method": "AI engineering review against frozen rubric and cited source excerpts; not independent legal certification"
+  }
+}

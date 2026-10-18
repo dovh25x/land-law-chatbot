@@ -1,0 +1,29 @@
+{
+  "scope": "Unverified structured model output for developer diagnosis; never delivered as a chatbot answer. No hidden reasoning.",
+  "schema": "Verification",
+  "case_mode": "X03-agentic",
+  "llm_calls": 2,
+  "output": {
+    "supported_claim_indexes": [
+      1
+    ],
+    "supporting_quotes": [],
+    "supporting_spans": [
+      {
+        "claim_index": 1,
+        "citation_id": "C1",
+        "span_id": "S1"
+      },
+      {
+        "claim_index": 1,
+        "citation_id": "C2",
+        "span_id": "S2"
+      }
+    ],
+    "issues": [
+      "Claim 0: không có bằng chứng cho thấy người chưa có Giấy chứng nhận quyền sử dụng đất (sổ đỏ) được bồi thường; các đoạn trích chỉ nêu điều kiện về quyết định giao/cho thuê đất mà không đề cập đến việc không có sổ đỏ."
+    ],
+    "needs_more_evidence": true,
+    "followup_query": "Vui lòng cung cấp đoạn luật hoặc tài liệu nào quy định rằng người chưa có Giấy chứng nhận quyền sử dụng đất (sổ đỏ) vẫn đủ điều kiện được bồi thường theo Điều 95 Luật Đất đai 2024."
+  }
+}

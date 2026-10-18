@@ -1,0 +1,33 @@
+{
+  "scope": "Unverified structured model output for developer diagnosis; never delivered as a chatbot answer. No hidden reasoning.",
+  "schema": "Draft",
+  "case_mode": "X02-agentic",
+  "llm_calls": 2,
+  "output": {
+    "status": "answered",
+    "summary": "",
+    "claims": [
+      {
+        "kind": "legal_rule",
+        "text": "Khi Nhà nước thu hồi đất, pháp luật quy định ba loại hỗ trợ chính: (1) hỗ trợ đào tạo, chuyển đổi nghề và tìm kiếm việc làm (Điều 22, NĐ 88/2024); (2) hỗ trợ tái định cư, bao gồm tiền hỗ trợ để tự lo chỗ ở (Điều 23, NĐ 88/2024); (3) hỗ trợ bằng tiền tương đương 30 kg gạo cho mỗi nhân khẩu trong một số trường hợp đặc thù (Điều 19, NĐ 88/2024).",
+        "citation_ids": [
+          "C1",
+          "C3",
+          "C4"
+        ]
+      },
+      {
+        "kind": "legal_rule",
+        "text": "Các khoản hỗ trợ không tự động áp dụng cho mọi hộ gia đình, cá nhân; chúng chỉ được hưởng khi hộ đáp ứng các điều kiện quy định, ví dụ: phải có hợp đồng giao khoán (đối với hỗ trợ đào tạo, chuyển đổi nghề), phải đủ tiêu chuẩn về diện tích thu hồi, mức thu nhập, hoặc có nhu cầu tự lo chỗ ở (đối với hỗ trợ tái định cư), và mức hỗ trợ không vượt quá các giới hạn do UBND cấp tỉnh quy định.",
+        "citation_ids": [
+          "C1",
+          "C3",
+          "C4"
+        ]
+      }
+    ],
+    "missing_facts": [],
+    "next_steps": [],
+    "out_of_scope": false
+  }
+}

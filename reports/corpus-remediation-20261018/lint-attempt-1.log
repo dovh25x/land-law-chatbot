@@ -1,0 +1,1712 @@
+I001 [*] Import block is un-sorted or un-formatted
+  --> backend/landlaw/agent.py:1:1
+   |
+ 1 | / import asyncio
+ 2 | | import json
+ 3 | | import re
+ 4 | | import time
+ 5 | | import uuid
+ 6 | | from datetime import date, datetime, timedelta
+ 7 | | from typing import Any, Literal, TypedDict
+ 8 | |
+ 9 | | from langgraph.graph import END, START, StateGraph
+10 | | from pydantic import BaseModel, Field
+11 | |
+12 | | from .models import ChatRequest, ChatResult, Citation, Claim, Document, Draft, Evidence, Relation, TraceEvent
+13 | | from .provider import Budget, BudgetExceeded, GroqProvider, ProviderUnavailable
+14 | | from .security import local_date, normalize, redact, utcnow
+15 | | from .store import RateLimited, Store
+16 | | from .publication import public_status
+   | |______________________________________^
+help: Organize imports
+   |
+13 | from .provider import Budget, BudgetExceeded, GroqProvider, ProviderUnavailable
+14 + from .publication import public_status
+15 | from .security import local_date, normalize, redact, utcnow
+16 | from .store import RateLimited, Store
+   - from .publication import public_status
+17 |
+   |
+
+F401 [*] `datetime.timedelta` imported but unused
+ --> backend/landlaw/agent.py:6:38
+  |
+4 | import time
+5 | import uuid
+6 | from datetime import date, datetime, timedelta
+  |                                      ^^^^^^^^^
+7 | from typing import Any, Literal, TypedDict
+  |
+help: Remove unused import: `datetime.timedelta`
+  |
+5 | import uuid
+  - from datetime import date, datetime, timedelta
+6 + from datetime import date, datetime
+7 | from typing import Any, Literal, TypedDict
+  |
+
+F401 [*] `.security.utcnow` imported but unused
+  --> backend/landlaw/agent.py:14:54
+   |
+12 | from .models import ChatRequest, ChatResult, Citation, Claim, Document, Draft, Evidence, Relation, TraceEvent
+13 | from .provider import Budget, BudgetExceeded, GroqProvider, ProviderUnavailable
+14 | from .security import local_date, normalize, redact, utcnow
+   |                                                      ^^^^^^
+15 | from .store import RateLimited, Store
+16 | from .publication import public_status
+   |
+help: Remove unused import: `.security.utcnow`
+   |
+13 | from .provider import Budget, BudgetExceeded, GroqProvider, ProviderUnavailable
+   - from .security import local_date, normalize, redact, utcnow
+14 + from .security import local_date, normalize, redact
+15 | from .store import RateLimited, Store
+   |
+
+FURB167 [*] Use of regular expression alias `re.I`
+   --> backend/landlaw/agent.py:148:64
+    |
+146 |     """
+147 |     if not relation.get('target_locators_complete'):return True
+148 |     article=re.match(r'^Điều (\d+[a-z]?)\b',item.chunk.locator,re.I)
+    |                                                                ^^^^
+149 |     if not article:return True
+150 |     basis=set(re.findall(r'\bkhoan\s+(\d+)\s+dieu\s+'+re.escape(article[1])+r'\b',normalize(claim.text)))
+    |
+help: Replace with `re.IGNORECASE`
+    |
+147 |     if not relation.get('target_locators_complete'):return True
+    -     article=re.match(r'^Điều (\d+[a-z]?)\b',item.chunk.locator,re.I)
+148 +     article=re.match(r'^Điều (\d+[a-z]?)\b',item.chunk.locator,re.IGNORECASE)
+149 |     if not article:return True
+    |
+
+B023 Function definition does not bind loop variable `number_pattern`
+    --> backend/landlaw/agent.py:1180:83
+     |
+1178 |             number_pattern=r'(?<![\d/])(\d{1,6})/((?:19|20)\d{2})(?!/\d)'
+1179 |             def act_numbers(text):
+1180 |                 return {f'{int(sequence)}/{year}' for sequence,year in re.findall(number_pattern,text)}
+     |                                                                                   ^^^^^^^^^^^^^^
+1181 |             claimed_numbers=act_numbers(normalized_claim)
+1182 |             source_numbers=act_numbers(normalized_source)
+     |
+
+SIM102 Use a single `if` statement instead of nested `if` statements
+    --> backend/landlaw/agent.py:1208:13
+     |
+1206 |                       for i in claim.citation_ids if i in evidence):
+1207 |                   structural_issues.append(f'Claim {index}: cần đoạn quy định hiệu lực có đúng ngày, không dùng ngày ban hành')
+1208 | /             if 'chuyen giao cho uy ban nhan dan cap xa' in normalized_claim:
+1209 | |                 if any('chuyen giao cho chu tich uy ban nhan dan cap xa' in normalize(evidence[i].chunk.text)
+1210 | |                        for i in claim.citation_ids if i in evidence):
+     | |_____________________________________________________________________^
+1211 |                       structural_issues.append(f'Claim {index}: nhầm Chủ tịch UBND cấp xã với UBND cấp xã')
+1212 |               # A current assertion from an affected original article must also cite the effective amendment.
+     |
+help: Combine `if` statements using `and`
+
+F841 Local variable `checked_at` is assigned to but never used
+    --> backend/landlaw/agent.py:1362:13
+     |
+1360 | …     stale = False
+1361 | …     if release:
+1362 | …         checked_at = datetime.fromisoformat(release["checked_at"].replace("Z", "+00:00"))
+     |           ^^^^^^^^^^
+1363 | …         stale = not await asyncio.to_thread(self.store.source_fresh, release, {evidence[i].document.id for c in claims for i in c.…
+1364 | …     if stale and state["as_of"] >= local_date():
+     |
+help: Remove assignment to unused variable `checked_at`
+     |
+1361 |         if release:
+     -             checked_at = datetime.fromisoformat(release["checked_at"].replace("Z", "+00:00"))
+1362 +             datetime.fromisoformat(release["checked_at"].replace("Z", "+00:00"))
+1363 |             stale = not await asyncio.to_thread(self.store.source_fresh, release, {evidence[i].document.id for c in claims for i in c.citation_ids} if claims else None)
+     |
+note: This is an unsafe fix and may change runtime behavior
+
+FURB162 Unnecessary timezone replacement with zero offset
+    --> backend/landlaw/agent.py:1362:49
+     |
+1360 | …     stale = False
+1361 | …     if release:
+1362 | …         checked_at = datetime.fromisoformat(release["checked_at"].replace("Z", "+00:00"))
+     |                                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+1363 | …         stale = not await asyncio.to_thread(self.store.source_fresh, release, {evidence[i].document.id for c in claims for i in c.…
+1364 | …     if stale and state["as_of"] >= local_date():
+     |
+help: Remove `.replace()` call
+     |
+1361 |         if release:
+     -             checked_at = datetime.fromisoformat(release["checked_at"].replace("Z", "+00:00"))
+1362 +             checked_at = datetime.fromisoformat(release["checked_at"])
+1363 |             stale = not await asyncio.to_thread(self.store.source_fresh, release, {evidence[i].document.id for c in claims for i in c.citation_ids} if claims else None)
+     |
+note: This is an unsafe fix and may change runtime behavior
+
+I001 [*] Import block is un-sorted or un-formatted
+  --> backend/landlaw/api.py:1:1
+   |
+ 1 | / import asyncio
+ 2 | | import json
+ 3 | | import logging
+ 4 | | import secrets
+ 5 | | import time
+ 6 | | import uuid
+ 7 | | import hashlib
+ 8 | | import hmac
+ 9 | | import sys
+10 | | import httpx
+11 | | from datetime import datetime, timedelta
+12 | | from contextlib import asynccontextmanager
+13 | |
+14 | | from fastapi import FastAPI, HTTPException, Query, Request
+15 | | from fastapi.exceptions import RequestValidationError
+16 | | from fastapi.middleware.cors import CORSMiddleware
+17 | | from fastapi.responses import JSONResponse, StreamingResponse
+18 | |
+19 | | from .agent import Agent
+20 | | from .evaluation import configuration_fingerprint
+21 | | from .config import Settings, get_settings
+22 | | from .models import ChatRequest, ChatResult, TraceEvent
+23 | | from .provider import GroqProvider
+24 | | from .security import digest, hash_ip, local_date, new_token, redact, utcnow
+25 | | from .store import RateLimited, Store
+26 | | from .publication import public_status
+   | |______________________________________^
+27 |
+28 |   logger = logging.getLogger("landlaw")
+   |
+help: Organize imports
+   |
+1  | import asyncio
+2  + import hashlib
+3  + import hmac
+4  | import json
+5  | import logging
+6  | import secrets
+7  + import sys
+8  | import time
+9  | import uuid
+   - import hashlib
+   - import hmac
+   - import sys
+   - import httpx
+10 + from contextlib import asynccontextmanager
+11 | from datetime import datetime, timedelta
+   - from contextlib import asynccontextmanager
+12 |
+13 + import httpx
+14 | from fastapi import FastAPI, HTTPException, Query, Request
+--------------------------------------------------------------------------------
+19 | from .agent import Agent
+   - from .evaluation import configuration_fingerprint
+20 | from .config import Settings, get_settings
+21 + from .evaluation import configuration_fingerprint
+22 | from .models import ChatRequest, ChatResult, TraceEvent
+23 | from .provider import GroqProvider
+24 + from .publication import public_status
+25 | from .security import digest, hash_ip, local_date, new_token, redact, utcnow
+26 | from .store import RateLimited, Store
+   - from .publication import public_status
+27 |
+   |
+
+F401 [*] `datetime.datetime` imported but unused
+  --> backend/landlaw/api.py:11:22
+   |
+ 9 | import sys
+10 | import httpx
+11 | from datetime import datetime, timedelta
+   |                      ^^^^^^^^
+12 | from contextlib import asynccontextmanager
+   |
+help: Remove unused import
+   |
+10 | import httpx
+   - from datetime import datetime, timedelta
+11 | from contextlib import asynccontextmanager
+   |
+
+F401 [*] `datetime.timedelta` imported but unused
+  --> backend/landlaw/api.py:11:32
+   |
+ 9 | import sys
+10 | import httpx
+11 | from datetime import datetime, timedelta
+   |                                ^^^^^^^^^
+12 | from contextlib import asynccontextmanager
+   |
+help: Remove unused import
+   |
+10 | import httpx
+   - from datetime import datetime, timedelta
+11 | from contextlib import asynccontextmanager
+   |
+
+F401 [*] `.models.ChatResult` imported but unused
+  --> backend/landlaw/api.py:22:34
+   |
+20 | from .evaluation import configuration_fingerprint
+21 | from .config import Settings, get_settings
+22 | from .models import ChatRequest, ChatResult, TraceEvent
+   |                                  ^^^^^^^^^^
+23 | from .provider import GroqProvider
+24 | from .security import digest, hash_ip, local_date, new_token, redact, utcnow
+   |
+help: Remove unused import
+   |
+21 | from .config import Settings, get_settings
+   - from .models import ChatRequest, ChatResult, TraceEvent
+22 + from .models import ChatRequest
+23 | from .provider import GroqProvider
+   |
+
+F401 [*] `.models.TraceEvent` imported but unused
+  --> backend/landlaw/api.py:22:46
+   |
+20 | from .evaluation import configuration_fingerprint
+21 | from .config import Settings, get_settings
+22 | from .models import ChatRequest, ChatResult, TraceEvent
+   |                                              ^^^^^^^^^^
+23 | from .provider import GroqProvider
+24 | from .security import digest, hash_ip, local_date, new_token, redact, utcnow
+   |
+help: Remove unused import
+   |
+21 | from .config import Settings, get_settings
+   - from .models import ChatRequest, ChatResult, TraceEvent
+22 + from .models import ChatRequest
+23 | from .provider import GroqProvider
+   |
+
+F401 [*] `.security.digest` imported but unused
+  --> backend/landlaw/api.py:24:23
+   |
+22 | from .models import ChatRequest, ChatResult, TraceEvent
+23 | from .provider import GroqProvider
+24 | from .security import digest, hash_ip, local_date, new_token, redact, utcnow
+   |                       ^^^^^^
+25 | from .store import RateLimited, Store
+26 | from .publication import public_status
+   |
+help: Remove unused import
+   |
+23 | from .provider import GroqProvider
+   - from .security import digest, hash_ip, local_date, new_token, redact, utcnow
+24 + from .security import hash_ip, new_token, utcnow
+25 | from .store import RateLimited, Store
+   |
+
+F401 [*] `.security.local_date` imported but unused
+  --> backend/landlaw/api.py:24:40
+   |
+22 | from .models import ChatRequest, ChatResult, TraceEvent
+23 | from .provider import GroqProvider
+24 | from .security import digest, hash_ip, local_date, new_token, redact, utcnow
+   |                                        ^^^^^^^^^^
+25 | from .store import RateLimited, Store
+26 | from .publication import public_status
+   |
+help: Remove unused import
+   |
+23 | from .provider import GroqProvider
+   - from .security import digest, hash_ip, local_date, new_token, redact, utcnow
+24 + from .security import hash_ip, new_token, utcnow
+25 | from .store import RateLimited, Store
+   |
+
+F401 [*] `.security.redact` imported but unused
+  --> backend/landlaw/api.py:24:63
+   |
+22 | from .models import ChatRequest, ChatResult, TraceEvent
+23 | from .provider import GroqProvider
+24 | from .security import digest, hash_ip, local_date, new_token, redact, utcnow
+   |                                                               ^^^^^^
+25 | from .store import RateLimited, Store
+26 | from .publication import public_status
+   |
+help: Remove unused import
+   |
+23 | from .provider import GroqProvider
+   - from .security import digest, hash_ip, local_date, new_token, redact, utcnow
+24 + from .security import hash_ip, new_token, utcnow
+25 | from .store import RateLimited, Store
+   |
+
+BLE001 Do not catch blind exception: `Exception`
+  --> backend/landlaw/api.py:90:16
+   |
+88 | …         async with asyncio.timeout(max(0.1,settings.turn_timeout_seconds-(time.monotonic()-started))):
+89 | …             response = await call_next(request)
+90 | …     except Exception:
+   |              ^^^^^^^^^
+91 | …         logger.error(json.dumps({"request_id": request_id, "event": "request_failed"}))
+92 | …         response = JSONResponse({"detail": "Dịch vụ dữ liệu chưa sẵn sàng. Vui lòng thử lại.", "request_id": request_id}, status_cod…
+   |
+
+BLE001 Do not catch blind exception: `Exception`
+   --> backend/landlaw/api.py:123:16
+    |
+121 |             await asyncio.to_thread(state["store"].ready)
+122 |             release = await asyncio.to_thread(state["store"].release, None, True)
+123 |         except Exception:
+    |                ^^^^^^^^^
+124 |             return JSONResponse({"status": "not_ready", "database": False, "reason": "database_unavailable"}, status_code=503)
+125 |         configured = state["provider"].configured
+    |
+
+BLE001 Do not catch blind exception: `Exception`
+   --> backend/landlaw/api.py:261:24
+    |
+259 | …         outcome='cancelled'
+260 | …         raise
+261 | …     except Exception as exc:
+    |              ^^^^^^^^^
+262 | …         logger.error(json.dumps({'event':'turn_failed','request_id':request.state.request_id,'error_type':type(exc).__name__}))
+263 | …         queue.put_nowait(('failure',{'status':'error','code':'turn_failed',
+    |
+
+BLE001 Do not catch blind exception: `Exception`
+   --> backend/landlaw/api.py:269:32
+    |
+267 |                         try:
+268 |                             await asyncio.wait_for(asyncio.to_thread(state['store'].finish_turn,turn_id,outcome),timeout=2)
+269 |                         except Exception:
+    |                                ^^^^^^^^^
+270 |                             logger.error(json.dumps({'event':'turn_metadata_update_failed','request_id':request.state.request_id}))
+271 |                     queue.put_nowait(('done',{}))
+    |
+
+I001 [*] Import block is un-sorted or un-formatted
+  --> backend/landlaw/cli.py:1:1
+   |
+ 1 | / import asyncio
+ 2 | | import json
+ 3 | | from pathlib import Path
+ 4 | |
+ 5 | | import httpx
+ 6 | | import typer
+ 7 | | from pydantic import BaseModel, SecretStr
+ 8 | |
+ 9 | | from .config import Settings
+10 | | from .evaluation import evaluate, evaluate_retrieval, configuration_fingerprint
+11 | | from .publication import validate_corpus
+12 | | from .ingest import build_corpus, json_write
+13 | | from .provider import Budget, GroqProvider
+14 | | from .security import utcnow
+15 | | from .store import Store
+   | |________________________^
+16 |
+17 |   app = typer.Typer(no_args_is_help=True, pretty_exceptions_show_locals=False)
+   |
+help: Organize imports
+   |
+9  | from .config import Settings
+   - from .evaluation import evaluate, evaluate_retrieval, configuration_fingerprint
+   - from .publication import validate_corpus
+10 + from .evaluation import configuration_fingerprint, evaluate, evaluate_retrieval
+11 | from .ingest import build_corpus, json_write
+12 | from .provider import Budget, GroqProvider
+13 + from .publication import validate_corpus
+14 | from .security import utcnow
+   |
+
+F401 [*] `httpx` imported but unused
+ --> backend/landlaw/cli.py:5:8
+  |
+3 | from pathlib import Path
+4 |
+5 | import httpx
+  |        ^^^^^
+6 | import typer
+7 | from pydantic import BaseModel, SecretStr
+  |
+help: Remove unused import: `httpx`
+  |
+4 |
+  - import httpx
+5 | import typer
+  |
+
+BLE001 Do not catch blind exception: `Exception`
+  --> backend/landlaw/cli.py:46:20
+   |
+44 |             try:
+45 |                 checks["database_ready"] = await asyncio.to_thread(store.ready)
+46 |             except Exception:
+   |                    ^^^^^^^^^
+47 |                 checks["database_ready"] = False
+48 |             if live and provider.configured:
+   |
+
+BLE001 Do not catch blind exception: `Exception`
+  --> backend/landlaw/cli.py:55:24
+   |
+53 | …         checks["generation_live"] = True
+54 | …         checks["embedding_live"] = len(await provider.embed("Kiểm tra kết nối", query=True)) == settings.embedding_dimensions
+55 | …     except Exception as exc:
+   |              ^^^^^^^^^
+56 | …         checks["generation_or_embedding_error"] = type(exc).__name__
+57 | …         if type(exc).__name__ in {"ProviderUnavailable", "RateLimited"}:
+   |
+
+PLW1510 `subprocess.run` without explicit `check` argument
+   --> backend/landlaw/cli.py:184:12
+    |
+182 |     import os
+183 |     import subprocess
+184 |     result=subprocess.run(['node','scripts/verify_live_ui.mjs','--chat'],
+    |            ^^^^^^^^^^^^^^
+185 |         env={**os.environ,'LIVE_BASE_URL':base_url.rstrip('/')})
+186 |     if result.returncode:raise typer.Exit(result.returncode)
+    |
+help: Add explicit `check=False`
+    |
+184 |     result=subprocess.run(['node','scripts/verify_live_ui.mjs','--chat'],
+    -         env={**os.environ,'LIVE_BASE_URL':base_url.rstrip('/')})
+185 +         check=False, env={**os.environ,'LIVE_BASE_URL':base_url.rstrip('/')})
+186 |     if result.returncode:raise typer.Exit(result.returncode)
+    |
+note: This suggestion may be incorrect or produce invalid syntax. It requires manual review and cannot be applied automatically
+
+I001 [*] Import block is un-sorted or un-formatted
+  --> backend/landlaw/evaluation.py:1:1
+   |
+ 1 | / import asyncio
+ 2 | | import contextvars
+ 3 | | import hashlib
+ 4 | | import json
+ 5 | | import re
+ 6 | | import math
+ 7 | | import statistics
+ 8 | | import time
+ 9 | | import uuid
+10 | | from datetime import date, timedelta
+11 | | from pathlib import Path
+12 | |
+13 | | from .agent import Agent
+14 | | from .ingest import json_write
+15 | | from .models import ChatRequest
+16 | | from .security import local_date, new_token, utcnow
+   | |___________________________________________________^
+help: Organize imports
+  |
+4 | import json
+5 + import math
+6 | import re
+  - import math
+7 | import statistics
+  |
+
+F401 [*] `datetime.timedelta` imported but unused
+  --> backend/landlaw/evaluation.py:10:28
+   |
+ 8 | import time
+ 9 | import uuid
+10 | from datetime import date, timedelta
+   |                            ^^^^^^^^^
+11 | from pathlib import Path
+   |
+help: Remove unused import: `datetime.timedelta`
+   |
+9  | import uuid
+   - from datetime import date, timedelta
+10 + from datetime import date
+11 | from pathlib import Path
+   |
+
+I001 [*] Import block is un-sorted or un-formatted
+  --> backend/landlaw/ingest.py:1:1
+   |
+ 1 | / import asyncio
+ 2 | | import hashlib
+ 3 | | import io
+ 4 | | import json
+ 5 | | import logging
+ 6 | | import re
+ 7 | | import shutil
+ 8 | | import socket
+ 9 | | import subprocess
+10 | | import tempfile
+11 | | from datetime import datetime
+12 | | from pathlib import Path
+13 | | from urllib.parse import urljoin
+14 | |
+15 | | import httpx
+16 | | from bs4 import BeautifulSoup
+17 | | from pypdf import PdfReader
+18 | |
+19 | | from .config import Settings
+20 | | from .models import Chunk, Document, Relation
+21 | | from .provider import GroqProvider, ProviderUnavailable
+22 | | from .embedding import contract
+23 | | from .security import digest, normalize, official_url, public_ip_address, redact, utcnow
+24 | | from .store import RateLimited
+   | |______________________________^
+25 |
+26 |   MAX_DOWNLOAD = 25 * 1024 * 1024
+   |
+help: Organize imports
+   |
+19 | from .config import Settings
+20 + from .embedding import contract
+21 | from .models import Chunk, Document, Relation
+22 | from .provider import GroqProvider, ProviderUnavailable
+   - from .embedding import contract
+23 | from .security import digest, normalize, official_url, public_ip_address, redact, utcnow
+   |
+
+C405 Unnecessary list literal (rewrite as a set literal)
+   --> backend/landlaw/ingest.py:193:29
+    |
+191 |                     next_article += 1
+192 |                 positions.append(heading.start())
+193 |         boundaries = sorted(set([0, *positions, *([appendix_start] if appendix_start is not None else []), len(text)]))
+    |                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+194 |         for section_index, (start, end) in enumerate(zip(boundaries, boundaries[1:])):
+195 |             if appendix_start is not None and start >= appendix_start:
+    |
+help: Rewrite as a set literal
+    |
+192 |                 positions.append(heading.start())
+    -         boundaries = sorted(set([0, *positions, *([appendix_start] if appendix_start is not None else []), len(text)]))
+193 +         boundaries = sorted({0, *positions, *([appendix_start] if appendix_start is not None else []), len(text)})
+194 |         for section_index, (start, end) in enumerate(zip(boundaries, boundaries[1:])):
+    |
+note: This is an unsafe fix and may change runtime behavior
+
+RUF007 Prefer `itertools.pairwise()` over `zip()` when iterating over successive pairs
+   --> backend/landlaw/ingest.py:194:54
+    |
+192 |                 positions.append(heading.start())
+193 |         boundaries = sorted(set([0, *positions, *([appendix_start] if appendix_start is not None else []), len(text)]))
+194 |         for section_index, (start, end) in enumerate(zip(boundaries, boundaries[1:])):
+    |                                                      ^^^
+195 |             if appendix_start is not None and start >= appendix_start:
+196 |                 active_article, appendix = None, True
+    |
+help: Replace `zip()` with `itertools.pairwise()`
+    |
+24  | from .store import RateLimited
+25  + import itertools
+26  |
+--------------------------------------------------------------------------------
+194 |         boundaries = sorted(set([0, *positions, *([appendix_start] if appendix_start is not None else []), len(text)]))
+    -         for section_index, (start, end) in enumerate(zip(boundaries, boundaries[1:])):
+195 +         for section_index, (start, end) in enumerate(itertools.pairwise(boundaries)):
+196 |             if appendix_start is not None and start >= appendix_start:
+    |
+note: This is an unsafe fix and may change runtime behavior
+
+SIM905 [*] Consider using a list literal instead of `str.split`
+   --> backend/landlaw/ingest.py:254:30
+    |
+252 |     # Publication headers alone have no rule or context; retain page/locator on
+253 |     # substantive passages and preserve their stable IDs/checkpoints.
+254 |     allowed_header_words=set('cong bao ha noi so ngay thang nam'.split())
+    |                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+255 |     chunks=[chunk for chunk in chunks if not (len(normalize(chunk.text))<180
+256 |         and 'cong bao' in normalize(chunk.text)
+    |
+help: Replace with list literal
+    |
+253 |     # substantive passages and preserve their stable IDs/checkpoints.
+    -     allowed_header_words=set('cong bao ha noi so ngay thang nam'.split())
+254 +     allowed_header_words=set(['cong', 'bao', 'ha', 'noi', 'so', 'ngay', 'thang', 'nam'])
+255 |     chunks=[chunk for chunk in chunks if not (len(normalize(chunk.text))<180
+    |
+
+FURB162 Unnecessary timezone replacement with zero offset
+   --> backend/landlaw/ingest.py:386:43
+    |
+384 |         source_files=source_files,
+385 |         source_pages=source_pages,
+386 |         checked_at=datetime.fromisoformat(source["checked_at"].replace("Z", "+00:00")) if offline else utcnow(), checksum=checksum,
+    |                                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+387 |         chunks=chunks_for(source_id, pages, source.get('expected_article_count')))
+388 |     indexed_articles = source.get('index_articles')
+    |
+help: Remove `.replace()` call
+    |
+385 |         source_pages=source_pages,
+    -         checked_at=datetime.fromisoformat(source["checked_at"].replace("Z", "+00:00")) if offline else utcnow(), checksum=checksum,
+386 +         checked_at=datetime.fromisoformat(source["checked_at"]) if offline else utcnow(), checksum=checksum,
+387 |         chunks=chunks_for(source_id, pages, source.get('expected_article_count')))
+    |
+note: This is an unsafe fix and may change runtime behavior
+
+I001 [*] Import block is un-sorted or un-formatted
+ --> backend/landlaw/ops.py:2:1
+  |
+1 |   """Operator-only metadata commands. Never archive or expose conversation bodies."""
+2 | / import hashlib
+3 | | import json
+4 | | from datetime import datetime, timedelta
+5 | | from pathlib import Path
+6 | | from .security import utcnow, official_url
+  | |__________________________________________^
+help: Organize imports
+  |
+5 | from pathlib import Path
+  - from .security import utcnow, official_url
+6 |
+7 + from .security import official_url, utcnow
+8 +
+9 |
+  |
+
+FURB162 Unnecessary timezone replacement with zero offset
+  --> backend/landlaw/ops.py:15:36
+   |
+13 |     if not doc or doc['checksum']!=receipt.get('checksum'):
+14 |         raise ValueError('Receipt must match an active source checksum')
+15 |     checked=datetime.fromisoformat(receipt['checked_at'].replace('Z','+00:00'))
+   |                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+16 |     if checked.tzinfo is None or checked>utcnow() or checked<utcnow()-timedelta(days=7):
+17 |         raise ValueError('Receipt requires a recent, non-future timezone-aware check')
+   |
+help: Remove `.replace()` call
+   |
+14 |         raise ValueError('Receipt must match an active source checksum')
+   -     checked=datetime.fromisoformat(receipt['checked_at'].replace('Z','+00:00'))
+15 +     checked=datetime.fromisoformat(receipt['checked_at'])
+16 |     if checked.tzinfo is None or checked>utcnow() or checked<utcnow()-timedelta(days=7):
+   |
+note: This is an unsafe fix and may change runtime behavior
+
+I001 [*] Import block is un-sorted or un-formatted
+  --> backend/landlaw/provider.py:1:1
+   |
+ 1 | / import asyncio
+ 2 | | import json
+ 3 | | import math
+ 4 | | import time
+ 5 | | from dataclasses import dataclass
+ 6 | |
+ 7 | | import httpx
+ 8 | | from pydantic import BaseModel, ValidationError
+ 9 | |
+10 | | from .config import Settings
+11 | | from .models import Draft
+12 | | from .security import utcnow
+13 | | from .store import RateLimited, Store
+14 | | from .embedding import contract
+   | |_______________________________^
+help: Organize imports
+   |
+10 | from .config import Settings
+11 + from .embedding import contract
+12 | from .models import Draft
+13 | from .security import utcnow
+14 | from .store import RateLimited, Store
+   - from .embedding import contract
+15 |
+   |
+
+F401 [*] `.security.utcnow` imported but unused
+  --> backend/landlaw/provider.py:12:23
+   |
+10 | from .config import Settings
+11 | from .models import Draft
+12 | from .security import utcnow
+   |                       ^^^^^^
+13 | from .store import RateLimited, Store
+14 | from .embedding import contract
+   |
+help: Remove unused import: `.security.utcnow`
+   |
+11 | from .models import Draft
+   - from .security import utcnow
+12 | from .store import RateLimited, Store
+   |
+
+F841 Local variable `selected` is assigned to but never used
+   --> backend/landlaw/provider.py:247:9
+    |
+245 |         if budget:
+246 |             budget.embedding_calls += 1
+247 |         selected = contract(self.settings,release)
+    |         ^^^^^^^^
+248 |         return (await self._embed_local([text],title,query))[0]
+    |
+help: Remove assignment to unused variable `selected`
+    |
+246 |             budget.embedding_calls += 1
+    -         selected = contract(self.settings,release)
+247 +         contract(self.settings,release)
+248 |         return (await self._embed_local([text],title,query))[0]
+    |
+note: This is an unsafe fix and may change runtime behavior
+
+I001 [*] Import block is un-sorted or un-formatted
+  --> backend/landlaw/publication.py:14:5
+   |
+13 |   def validate_corpus(release, corpus=None):
+14 | /     from .security import official_url
+15 | |     from .local_embedding import MODEL
+   | |______________________________________^
+16 |       if not release.get('embedded') or not release.get('documents'):
+17 |           raise ValueError('Complete embedded corpus is required')
+   |
+help: Organize imports
+   |
+13 | def validate_corpus(release, corpus=None):
+14 +     from .local_embedding import MODEL
+15 |     from .security import official_url
+   -     from .local_embedding import MODEL
+16 |     if not release.get('embedded') or not release.get('documents'):
+   |
+
+SIM905 [*] Consider using a list literal instead of `str.split`
+ --> backend/landlaw/retrieval.py:8:12
+  |
+6 | …security import normalize
+7 | …
+8 | … set('toi cua co la va hay thi ma khi duoc theo nhung nao the nhu voi trong tai ve cho den tren mot cac nhieu nay do khong chua luon can con phai het toan bo ngay nam ha noi xin hoi giup hay lieu se da dang'.split())
+  |       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+help: Replace with list literal
+  |
+7 |
+  - STOP = set('toi cua co la va hay thi ma khi duoc theo nhung nao the nhu voi trong tai ve cho den tren mot cac nhieu nay do khong chua luon can con phai het toan bo ngay nam ha noi xin hoi giup hay lieu se da dang'.split())
+8 + STOP = set(['toi', 'cua', 'co', 'la', 'va', 'hay', 'thi', 'ma', 'khi', 'duoc', 'theo', 'nhung', 'nao', 'the', 'nhu', 'voi', 'trong', 'tai', 've', 'cho', 'den', 'tren', 'mot', 'cac', 'nhieu', 'nay', 'do', 'khong', 'chua', 'luon', 'can', 'con', 'phai', 'het', 'toan', 'bo', 'ngay', 'nam', 'ha', 'noi', 'xin', 'hoi', 'giup', 'hay', 'lieu', 'se', 'da', 'dang'])
+9 |
+  |
+
+FURB167 [*] Use of regular expression alias `re.I`
+  --> backend/landlaw/retrieval.py:29:85
+   |
+27 |         headings = {}
+28 |         for row in rows:
+29 |             match = re.search(r'Điều\s+\d+[a-z]?\s*[.:]\s*([^\n]+)', row['prefix'], re.I)
+   |                                                                                     ^^^^
+30 |             if match:
+31 |                 title = re.split(r'\s+1\.\s|\s+[a-zđ]\)\s', match[1], maxsplit=1)[0][:260]
+   |
+help: Replace with `re.IGNORECASE`
+   |
+28 |         for row in rows:
+   -             match = re.search(r'Điều\s+\d+[a-z]?\s*[.:]\s*([^\n]+)', row['prefix'], re.I)
+29 +             match = re.search(r'Điều\s+\d+[a-z]?\s*[.:]\s*([^\n]+)', row['prefix'], re.IGNORECASE)
+30 |             if match:
+   |
+
+UP017 [*] Use `datetime.UTC` alias
+  --> backend/landlaw/security.py:17:25
+   |
+16 | def utcnow():
+17 |     return datetime.now(timezone.utc)
+   |                         ^^^^^^^^^^^^
+help: Convert to `datetime.UTC` alias
+   |
+6  | import unicodedata
+   - from datetime import datetime, timezone
+7  + from datetime import datetime, timezone, UTC
+8  | from urllib.parse import urlparse
+--------------------------------------------------------------------------------
+16 | def utcnow():
+   -     return datetime.now(timezone.utc)
+17 +     return datetime.now(UTC)
+18 |
+   |
+
+I001 [*] Import block is un-sorted or un-formatted
+  --> backend/landlaw/store.py:2:1
+   |
+ 1 |   """Durable storage. SQLite is development-only; PostgreSQL is required in production."""
+ 2 | / import json
+ 3 | | import base64
+ 4 | | import gzip
+ 5 | | import math
+ 6 | | import re
+ 7 | | import sqlite3
+ 8 | | import threading
+ 9 | | from collections import OrderedDict
+10 | | from copy import deepcopy
+11 | | from contextlib import contextmanager
+12 | | from datetime import timedelta
+13 | | from pathlib import Path
+14 | |
+15 | | from .config import Settings
+16 | | from .models import Chunk, Document, Evidence, Relation
+17 | | from .security import digest, normalize, utcnow
+18 | | from .retrieval import HeadingIndex, terms
+   | |__________________________________________^
+19 |
+20 |   SQLITE_SCHEMA = """
+   |
+help: Organize imports
+   |
+1  | """Durable storage. SQLite is development-only; PostgreSQL is required in production."""
+   - import json
+2  | import base64
+3  | import gzip
+4  + import json
+5  | import math
+--------------------------------------------------------------------------------
+9  | from collections import OrderedDict
+10 + from contextlib import contextmanager
+11 | from copy import deepcopy
+   - from contextlib import contextmanager
+12 | from datetime import timedelta
+--------------------------------------------------------------------------------
+16 | from .models import Chunk, Document, Evidence, Relation
+   - from .security import digest, normalize, utcnow
+17 | from .retrieval import HeadingIndex, terms
+18 + from .security import digest, normalize, utcnow
+19 |
+   |
+
+SIM117 [*] Use a single `with` statement with multiple contexts instead of nested `with` statements
+  --> backend/landlaw/store.py:90:13
+   |
+88 |       def transaction(self):
+89 |           if self.pool:
+90 | /             with self.pool.connection() as conn:
+91 | |                 with conn.transaction():
+   | |________________________________________^
+92 |                       yield conn
+93 |           else:
+   |
+help: Combine `with` statements
+   |
+89 |         if self.pool:
+   -             with self.pool.connection() as conn:
+   -                 with conn.transaction():
+   -                     yield conn
+90 +             with self.pool.connection() as conn, conn.transaction():
+91 +                 yield conn
+92 |         else:
+   |
+
+FURB162 Unnecessary timezone replacement with zero offset
+   --> backend/landlaw/store.py:204:52
+    |
+202 |                     return False
+203 |                 stamp=reviews[0]['checked_at']
+204 |             if not stamp or datetime.fromisoformat(stamp.replace('Z','+00:00')) < cutoff:
+    |                                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+205 |                 return False
+206 |         return True
+    |
+help: Remove `.replace()` call
+    |
+203 |                 stamp=reviews[0]['checked_at']
+    -             if not stamp or datetime.fromisoformat(stamp.replace('Z','+00:00')) < cutoff:
+204 +             if not stamp or datetime.fromisoformat(stamp) < cutoff:
+205 |                 return False
+    |
+note: This is an unsafe fix and may change runtime behavior
+
+FURB167 [*] Use of regular expression alias `re.I`
+   --> backend/landlaw/store.py:404:68
+    |
+402 |                     # lists and lose the clause to which they belong.
+403 |                     opening = next((row for row in candidates if re.search(
+404 |                         rf'\bĐiều\s+{number}\s*[.:]', row['text'], re.I)), None)
+    |                                                                    ^^^^
+405 |                     if opening:
+406 |                         ranked = [opening] + [row for row in ranked if row['id'] != opening['id']]
+    |
+help: Replace with `re.IGNORECASE`
+    |
+403 |                     opening = next((row for row in candidates if re.search(
+    -                         rf'\bĐiều\s+{number}\s*[.:]', row['text'], re.I)), None)
+404 +                         rf'\bĐiều\s+{number}\s*[.:]', row['text'], re.IGNORECASE)), None)
+405 |                     if opening:
+    |
+
+F841 Local variable `number` is assigned to but never used
+   --> backend/landlaw/store.py:574:13
+    |
+572 |                 rows_by_id[row["id"]] = row
+573 |         for chunk_id, row in rows_by_id.items():
+574 |             number = docs[row["document_id"]].document_number
+    |             ^^^^^^
+575 |             if row['document_id'] in exact_docs:
+576 |                 scores[chunk_id] += 0.1
+    |
+help: Remove assignment to unused variable `number`
+    |
+573 |         for chunk_id, row in rows_by_id.items():
+    -             number = docs[row["document_id"]].document_number
+574 +             docs[row["document_id"]].document_number
+575 |             if row['document_id'] in exact_docs:
+    |
+note: This is an unsafe fix and may change runtime behavior
+
+SIM102 Use a single `if` statement instead of nested `if` statements
+   --> backend/landlaw/store.py:583:13
+    |
+581 |   …         doc=docs[row['document_id']]
+582 |   …         temporal=any(t in normalized_query for t in ('lich su','chuyen tiep','hieu luc','thay the','bai bo','nam 2023','nam 2013'…
+583 | / …         if as_of and doc.id not in exact_docs and not temporal:
+584 | | …             if (doc.effective_to and as_of>=doc.effective_to) or (doc.effective_from and as_of<doc.effective_from):
+    | |_____________________________________________________________________________________________________________________^
+585 |   …                 scores[chunk_id] *= .35
+586 |   …     return [Evidence(chunk=self._chunk(rows_by_id[i]), document=docs[rows_by_id[i]["document_id"]], score=scores[i])
+    |
+help: Combine `if` statements using `and`
+
+I001 [*] Import block is un-sorted or un-formatted
+  --> scripts/evaluate_corpus_candidate.py:2:1
+   |
+ 1 |   """Restore/evaluate an immutable candidate in isolated databases; never serving DB."""
+ 2 | / import argparse
+ 3 | | import asyncio
+ 4 | | import json
+ 5 | | import tempfile
+ 6 | | import uuid
+ 7 | | from pathlib import Path
+ 8 | |
+ 9 | | import psycopg
+10 | | from psycopg import sql
+11 | | from psycopg.conninfo import make_conninfo
+12 | | from pydantic import SecretStr
+13 | |
+14 | | from landlaw.config import Settings
+15 | | from landlaw.evaluation import evaluate_retrieval
+16 | | from landlaw.ingest import coverage
+17 | | from landlaw.provider import GroqProvider
+18 | | from landlaw.publication import validate_corpus
+19 | | from landlaw.security import digest, utcnow
+20 | | from landlaw.store import Store
+   | |_______________________________^
+help: Organize imports
+   |
+9  | import psycopg
+   - from psycopg import sql
+   - from psycopg.conninfo import make_conninfo
+   - from pydantic import SecretStr
+   -
+10 | from landlaw.config import Settings
+--------------------------------------------------------------------------------
+16 | from landlaw.store import Store
+17 + from psycopg import sql
+18 + from psycopg.conninfo import make_conninfo
+19 + from pydantic import SecretStr
+20 |
+   |
+
+BLE001 Do not catch blind exception: `Exception`
+  --> scripts/evaluate_corpus_candidate.py:88:12
+   |
+86 |     try:
+87 |         asyncio.run(main(args))
+88 |     except Exception as error:
+   |            ^^^^^^^^^
+89 |         # Database driver exceptions may contain credentials; preserve type only.
+90 |         print(json.dumps({'passed': False, 'error_type': type(error).__name__}), flush=True)
+   |
+
+I001 [*] Import block is un-sorted or un-formatted
+  --> scripts/prepare_corpus_candidate.py:2:1
+   |
+ 1 |   """Rebuild offline staging, reusing exact vectors; never activate or refresh reviews."""
+ 2 | / import argparse
+ 3 | | import asyncio
+ 4 | | import json
+ 5 | | import tempfile
+ 6 | | from pathlib import Path
+ 7 | |
+ 8 | | from pydantic import SecretStr
+ 9 | |
+10 | | from landlaw.config import Settings
+11 | | from landlaw.ingest import build_corpus
+12 | | from landlaw.provider import GroqProvider
+13 | | from landlaw.publication import validate_corpus
+14 | | from landlaw.security import digest
+15 | | from landlaw.store import Store
+   | |_______________________________^
+help: Organize imports
+   |
+7  |
+   - from pydantic import SecretStr
+   -
+8  | from landlaw.config import Settings
+--------------------------------------------------------------------------------
+13 | from landlaw.store import Store
+14 + from pydantic import SecretStr
+15 |
+   |
+
+I001 [*] Import block is un-sorted or un-formatted
+  --> tests/conftest.py:1:1
+   |
+ 1 | / from landlaw.embedding import contract
+ 2 | | import uuid
+ 3 | | from datetime import date
+ 4 | |
+ 5 | | import pytest
+ 6 | |
+ 7 | | from landlaw.config import Settings
+ 8 | | from landlaw.models import Chunk, Document
+ 9 | | from landlaw.security import digest, new_token, utcnow
+10 | | from landlaw.store import Store
+   | |_______________________________^
+help: Organize imports
+  |
+  - from landlaw.embedding import contract
+1 | import uuid
+2 | from datetime import date
+3 |
+4 | import pytest
+  -
+5 | from landlaw.config import Settings
+6 + from landlaw.embedding import contract
+7 | from landlaw.models import Chunk, Document
+  |
+
+I001 [*] Import block is un-sorted or un-formatted
+  --> tests/test_agent.py:1:1
+   |
+ 1 | / from datetime import date, timedelta
+ 2 | |
+ 3 | | import pytest
+ 4 | |
+ 5 | | from landlaw.agent import Agent, Plan, ToolCall, Verification, applicability
+ 6 | | from landlaw.models import ChatRequest, Claim, Draft
+ 7 | | from landlaw.provider import Budget, BudgetExceeded, ProviderUnavailable
+ 8 | | from landlaw.security import utcnow
+ 9 | | from landlaw.store import RateLimited
+10 | | from conftest import document, release, session
+   | |_______________________________________________^
+help: Organize imports
+   |
+3  | import pytest
+   -
+4  + from conftest import document, release, session
+5  | from landlaw.agent import Agent, Plan, ToolCall, Verification, applicability
+--------------------------------------------------------------------------------
+9  | from landlaw.store import RateLimited
+   - from conftest import document, release, session
+10 |
+   |
+
+I001 [*] Import block is un-sorted or un-formatted
+   --> tests/test_agent.py:240:5
+    |
+239 |   def test_groq_context_selects_complete_passages_and_never_cites_omitted_text(store,settings):
+240 | /     from landlaw.models import Evidence
+241 | |     import json
+    | |_______________^
+242 |       law=document()
+243 |       chunks=[law.chunks[0].model_copy(update={'id':f'law-{i}','text':('Điều kiện pháp lý đầy đủ. '*90)+str(i)})
+    |
+help: Organize imports
+    |
+239 | def test_groq_context_selects_complete_passages_and_never_cites_omitted_text(store,settings):
+    -     from landlaw.models import Evidence
+240 |     import json
+241 +
+242 +     from landlaw.models import Evidence
+243 |     law=document()
+    |
+
+I001 [*] Import block is un-sorted or un-formatted
+   --> tests/test_agent.py:536:5
+    |
+535 |   async def test_retry_prioritizes_new_evidence_over_a_full_previous_context(store,settings,monkeypatch):
+536 | /     from landlaw.models import Evidence
+537 | |     from landlaw.agent import SupportingQuote
+    | |_____________________________________________^
+538 |       docs=[document(f'old-{i}') for i in range(24)]+[document('new')]
+539 |       release(store,docs)
+    |
+help: Organize imports
+    |
+535 | async def test_retry_prioritizes_new_evidence_over_a_full_previous_context(store,settings,monkeypatch):
+536 +     from landlaw.agent import SupportingQuote
+537 |     from landlaw.models import Evidence
+    -     from landlaw.agent import SupportingQuote
+538 |     docs=[document(f'old-{i}') for i in range(24)]+[document('new')]
+    |
+
+I001 [*] Import block is un-sorted or un-formatted
+   --> tests/test_agent.py:876:5
+    |
+874 | @pytest.mark.parametrize('timing', ['before_expiry','after_expiry','unrelated_transition','operative_transition'])
+875 | async def test_expired_legal_rule_requires_its_actual_operative_transition_even_if_model_approves(store,settings,timing):
+876 |     from landlaw.models import Evidence,Relation
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+877 |     old=document('old',document_number='56/2024/QĐ-UBND',text='Điều 19. Hộ đủ điều kiện được mua một căn hộ tái định cư.')
+878 |     old.effective_to=date(2026,4,2)
+    |
+help: Organize imports
+    |
+875 | async def test_expired_legal_rule_requires_its_actual_operative_transition_even_if_model_approves(store,settings,timing):
+    -     from landlaw.models import Evidence,Relation
+876 +     from landlaw.models import Evidence, Relation
+877 |     old=document('old',document_number='56/2024/QĐ-UBND',text='Điều 19. Hộ đủ điều kiện được mua một căn hộ tái định cư.')
+    |
+
+I001 [*] Import block is un-sorted or un-formatted
+   --> tests/test_agent.py:946:5
+    |
+944 |   @pytest.mark.asyncio
+945 |   async def test_planning_task_news_only_describes_source_limits_with_literal_proof(store,settings):
+946 | /     from landlaw.models import Evidence
+947 | |     from landlaw.agent import State
+    | |___________________________________^
+948 |       text='Cổng thông tin công bố Quyết định 1234/QĐ-UBND phê duyệt Nhiệm vụ quy hoạch phân khu đô thị, tỷ lệ 1/2000.'
+949 |       news=document('news',text=text).model_copy(update={'source_kind':'official_news'})
+    |
+help: Organize imports
+    |
+945 | async def test_planning_task_news_only_describes_source_limits_with_literal_proof(store,settings):
+946 +     from landlaw.agent import State
+947 |     from landlaw.models import Evidence
+    -     from landlaw.agent import State
+948 |     text='Cổng thông tin công bố Quyết định 1234/QĐ-UBND phê duyệt Nhiệm vụ quy hoạch phân khu đô thị, tỷ lệ 1/2000.'
+    |
+
+I001 [*] Import block is un-sorted or un-formatted
+    --> tests/test_agent.py:998:5
+     |
+ 996 |       ('Các trường hợp tại khoản 1 được hỗ trợ khi có giấy tờ.',['Khoản 3 Điều 19'],True)])
+ 997 |   def test_partial_amendment_never_invalidates_proven_different_clause(basis,scope,expected):
+ 998 | /     from landlaw.agent import amendment_affects_claim
+ 999 | |     from landlaw.models import Evidence,Claim
+     | |_____________________________________________^
+1000 |       law=document();item=Evidence(document=law,chunk=law.chunks[0].model_copy(update={'locator':'Điều 19'}))
+1001 |       relation={'target_locators_complete':True,'target_locators':scope}
+     |
+help: Organize imports
+     |
+998  |     from landlaw.agent import amendment_affects_claim
+     -     from landlaw.models import Evidence,Claim
+999  +     from landlaw.models import Claim, Evidence
+1000 |     law=document();item=Evidence(document=law,chunk=law.chunks[0].model_copy(update={'locator':'Điều 19'}))
+     |
+
+I001 [*] Import block is un-sorted or un-formatted
+ --> tests/test_api.py:1:1
+  |
+1 | / import json
+2 | |
+3 | | from fastapi.testclient import TestClient
+4 | |
+5 | | from landlaw.api import create_app
+6 | | from conftest import release
+7 | | from test_agent import FakeProvider
+  | |___________________________________^
+help: Organize imports
+  |
+2 |
+3 + from conftest import release
+4 | from fastapi.testclient import TestClient
+  -
+5 | from landlaw.api import create_app
+  - from conftest import release
+6 | from test_agent import FakeProvider
+  |
+
+I001 [*] Import block is un-sorted or un-formatted
+  --> tests/test_groq_provider.py:1:1
+   |
+ 1 | / import json
+ 2 | |
+ 3 | | import httpx
+ 4 | | import pytest
+ 5 | | from pydantic import BaseModel
+ 6 | |
+ 7 | | from landlaw.agent import Plan, Verification
+ 8 | | from landlaw.models import Draft
+ 9 | | from landlaw.provider import Budget, GroqProvider, strict_generation_schema
+10 | | from landlaw.store import RateLimited
+   | |_____________________________________^
+help: Organize imports
+   |
+4  | import pytest
+   - from pydantic import BaseModel
+   -
+5  | from landlaw.agent import Plan, Verification
+6  | from landlaw.models import Draft
+7  | from landlaw.provider import Budget, GroqProvider, strict_generation_schema
+8  | from landlaw.store import RateLimited
+9  + from pydantic import BaseModel
+10 |
+   |
+
+I001 [*] Import block is un-sorted or un-formatted
+   --> tests/test_groq_provider.py:113:5
+    |
+111 |   @pytest.mark.parametrize('groq_available', [True, False])
+112 |   async def test_groq_requires_its_own_key(settings, store, groq_available):
+113 | /     from pydantic import SecretStr
+114 | |     from landlaw.provider import ProviderUnavailable
+    | |____________________________________________________^
+115 |       class Probe(BaseModel):
+116 |           ok: bool
+    |
+help: Organize imports
+    |
+112 | async def test_groq_requires_its_own_key(settings, store, groq_available):
+113 +     from landlaw.provider import ProviderUnavailable
+114 |     from pydantic import SecretStr
+    -     from landlaw.provider import ProviderUnavailable
+115 |     class Probe(BaseModel):
+    |
+
+I001 [*] Import block is un-sorted or un-formatted
+ --> tests/test_ingest_and_evaluation.py:2:1
+  |
+2 | / import pytest
+3 | |
+4 | | from landlaw.config import Settings
+5 | | from landlaw.evaluation import dataset, summarise
+6 | |
+7 | |
+8 | | from landlaw.ingest import Quarantine, chunks_for, coverage, html_text, table_layout
+9 | | from landlaw.security import official_url, redact
+  | |_________________________________________________^
+help: Organize imports
+  |
+2 | import pytest
+  -
+3 | from landlaw.config import Settings
+4 | from landlaw.evaluation import dataset, summarise
+  -
+  -
+5 | from landlaw.ingest import Quarantine, chunks_for, coverage, html_text, table_layout
+  |
+
+ISC004 Unparenthesized implicit string concatenation in collection
+  --> tests/test_ingest_and_evaluation.py:87:18
+   |
+86 |   def test_unpunctuated_articles_and_appendix_preserve_distinct_locators_and_units():
+87 |       pages = [(1, 'Điều 1\nQuyết định chủ trương đầu tư dự án theo hồ sơ chính thức.\n'
+   |  __________________^
+88 | |                  'Điều 2\n1. Mục tiêu đầu tư theo nghị quyết được Quốc hội thông qua.\n'
+89 | |                  'Thực hiện quy định tại\nĐiều 95 của Luật này khi giải quyết hồ sơ.'),
+   | |_____________________________________________________________________________________^
+90 |                (6, 'PHỤ LỤC\nĐơn vị tính: tỷ đồng\nTT   Dự án   Tổng mức đầu tư\n'
+91 |                    '1   Bồi thường, hỗ trợ, tái định cư   19.590\n'
+   |
+help: Did you forget a comma?
+help: Wrap implicitly concatenated strings in parentheses
+   |
+86 | def test_unpunctuated_articles_and_appendix_preserve_distinct_locators_and_units():
+   -     pages = [(1, 'Điều 1\nQuyết định chủ trương đầu tư dự án theo hồ sơ chính thức.\n'
+87 +     pages = [(1, ('Điều 1\nQuyết định chủ trương đầu tư dự án theo hồ sơ chính thức.\n'
+88 |                  'Điều 2\n1. Mục tiêu đầu tư theo nghị quyết được Quốc hội thông qua.\n'
+   -                  'Thực hiện quy định tại\nĐiều 95 của Luật này khi giải quyết hồ sơ.'),
+89 +                  'Thực hiện quy định tại\nĐiều 95 của Luật này khi giải quyết hồ sơ.')),
+90 |              (6, 'PHỤ LỤC\nĐơn vị tính: tỷ đồng\nTT   Dự án   Tổng mức đầu tư\n'
+   |
+note: This is an unsafe fix and may change runtime behavior
+
+ISC004 Unparenthesized implicit string concatenation in collection
+  --> tests/test_ingest_and_evaluation.py:90:18
+   |
+88 |                    'Điều 2\n1. Mục tiêu đầu tư theo nghị quyết được Quốc hội thông qua.\n'
+89 |                    'Thực hiện quy định tại\nĐiều 95 của Luật này khi giải quyết hồ sơ.'),
+90 |                (6, 'PHỤ LỤC\nĐơn vị tính: tỷ đồng\nTT   Dự án   Tổng mức đầu tư\n'
+   |  __________________^
+91 | |                  '1   Bồi thường, hỗ trợ, tái định cư   19.590\n'
+92 | |                  '1.1   Hà Nội   13.370\n')]
+   | |__________________________________________^
+93 |       chunks = chunks_for('project', pages)
+94 |       assert {c.locator for c in chunks} == {'Điều 1', 'Điều 2', 'Trang 6'}
+   |
+help: Did you forget a comma?
+help: Wrap implicitly concatenated strings in parentheses
+   |
+89 |                  'Thực hiện quy định tại\nĐiều 95 của Luật này khi giải quyết hồ sơ.'),
+   -              (6, 'PHỤ LỤC\nĐơn vị tính: tỷ đồng\nTT   Dự án   Tổng mức đầu tư\n'
+90 +              (6, ('PHỤ LỤC\nĐơn vị tính: tỷ đồng\nTT   Dự án   Tổng mức đầu tư\n'
+91 |                  '1   Bồi thường, hỗ trợ, tái định cư   19.590\n'
+   -                  '1.1   Hà Nội   13.370\n')]
+92 +                  '1.1   Hà Nội   13.370\n'))]
+93 |     chunks = chunks_for('project', pages)
+   |
+note: This is an unsafe fix and may change runtime behavior
+
+I001 [*] Import block is un-sorted or un-formatted
+   --> tests/test_ingest_and_evaluation.py:172:5
+    |
+171 |   def test_resuming_preserves_failed_attempt_without_overwriting_it(tmp_path):
+172 | /     import json
+173 | |     from landlaw.evaluation import preserve_attempt
+    | |___________________________________________________^
+174 |       failed={'case_id':'S01','mode':'agentic','result':{'status':'error','trace_id':'first'}}
+175 |       path=preserve_attempt(tmp_path,failed)
+    |
+help: Organize imports
+    |
+172 |     import json
+173 +
+174 |     from landlaw.evaluation import preserve_attempt
+    |
+
+I001 [*] Import block is un-sorted or un-formatted
+   --> tests/test_ingest_and_evaluation.py:239:5
+    |
+238 |   async def test_retrieval_benchmark_skips_no_gold_cases_and_never_generates_or_writes_sessions(store, settings, monkeypatch):
+239 | /     from types import SimpleNamespace
+240 | |     from conftest import release
+241 | |     from landlaw.evaluation import evaluate_retrieval
+242 | |     from landlaw.provider import GroqProvider
+243 | |     import landlaw.evaluation as evaluation
+    | |___________________________________________^
+244 |       release(store)
+245 |       cases = [{'id': 'gold', 'question': 'điều kiện bồi thường', 'gold_chunk_ids': ['law-1']},
+    |
+help: Organize imports
+    |
+239 |     from types import SimpleNamespace
+240 +
+241 +     import landlaw.evaluation as evaluation
+242 |     from conftest import release
+243 |     from landlaw.evaluation import evaluate_retrieval
+244 |     from landlaw.provider import GroqProvider
+    -     import landlaw.evaluation as evaluation
+245 |     release(store)
+    |
+
+PLR0402 [*] Use `from landlaw import evaluation` in lieu of alias
+   --> tests/test_ingest_and_evaluation.py:243:12
+    |
+241 |     from landlaw.evaluation import evaluate_retrieval
+242 |     from landlaw.provider import GroqProvider
+243 |     import landlaw.evaluation as evaluation
+    |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+244 |     release(store)
+245 |     cases = [{'id': 'gold', 'question': 'điều kiện bồi thường', 'gold_chunk_ids': ['law-1']},
+    |
+help: Replace with `from landlaw import evaluation`
+    |
+242 |     from landlaw.provider import GroqProvider
+    -     import landlaw.evaluation as evaluation
+243 +     from landlaw import evaluation
+244 |     release(store)
+    |
+
+I001 [*] Import block is un-sorted or un-formatted
+   --> tests/test_ingest_and_evaluation.py:315:5
+    |
+313 |   async def test_reviewed_partial_pdf_preserves_physical_page_and_rejects_ambiguous_mapping(
+314 |           settings, numbers, scope, accepted):
+315 | /     from pypdf import PdfWriter
+316 | |     from landlaw.ingest import collect_source
+317 | |     from landlaw.security import digest
+    | |_______________________________________^
+318 |       raw = settings.data_dir / 'raw'
+319 |       raw.mkdir(parents=True, exist_ok=True)
+    |
+help: Organize imports
+    |
+314 |         settings, numbers, scope, accepted):
+    -     from pypdf import PdfWriter
+315 |     from landlaw.ingest import collect_source
+316 |     from landlaw.security import digest
+317 +     from pypdf import PdfWriter
+318 |     raw = settings.data_dir / 'raw'
+    |
+
+I001 [*] Import block is un-sorted or un-formatted
+  --> tests/test_local_embeddings.py:1:1
+   |
+ 1 | / import ast
+ 2 | | import json
+ 3 | | from pathlib import Path
+ 4 | |
+ 5 | | import httpx
+ 6 | | import pytest
+ 7 | |
+ 8 | | from landlaw.embedding import contract
+ 9 | | from landlaw.local_embedding import MODEL, Encoder
+10 | | from landlaw.provider import GroqProvider
+   | |_________________________________________^
+help: Organize imports
+  |
+6 | import pytest
+  -
+7 | from landlaw.embedding import contract
+  |
+
+F401 [*] `json` imported but unused
+ --> tests/test_local_embeddings.py:2:8
+  |
+1 | import ast
+2 | import json
+  |        ^^^^
+3 | from pathlib import Path
+  |
+help: Remove unused import: `json`
+  |
+1 | import ast
+  - import json
+2 | from pathlib import Path
+  |
+
+F401 [*] `landlaw.local_embedding.Encoder` imported but unused
+  --> tests/test_local_embeddings.py:9:44
+   |
+ 8 | from landlaw.embedding import contract
+ 9 | from landlaw.local_embedding import MODEL, Encoder
+   |                                            ^^^^^^^
+10 | from landlaw.provider import GroqProvider
+   |
+help: Remove unused import: `landlaw.local_embedding.Encoder`
+   |
+8  | from landlaw.embedding import contract
+   - from landlaw.local_embedding import MODEL, Encoder
+9  + from landlaw.local_embedding import MODEL
+10 | from landlaw.provider import GroqProvider
+   |
+
+I001 [*] Import block is un-sorted or un-formatted
+  --> tests/test_offline_colab.py:2:1
+   |
+ 1 |   """Technical fixtures only: these vectors never enter a legal corpus."""
+ 2 | / import hashlib
+ 3 | | import importlib.util
+ 4 | | import json
+ 5 | | from pathlib import Path
+ 6 | | import zipfile
+ 7 | |
+ 8 | | import pytest
+   | |_____________^
+ 9 |
+10 |   spec = importlib.util.spec_from_file_location("offline_colab", Path("scripts/offline_e5_colab.py"))
+   |
+help: Organize imports
+  |
+4 | import json
+5 + import zipfile
+6 | from pathlib import Path
+  - import zipfile
+7 |
+  |
+
+F401 [*] `zipfile` imported but unused
+ --> tests/test_offline_colab.py:6:8
+  |
+4 | import json
+5 | from pathlib import Path
+6 | import zipfile
+  |        ^^^^^^^
+7 |
+8 | import pytest
+  |
+help: Remove unused import: `zipfile`
+  |
+5 | from pathlib import Path
+  - import zipfile
+6 |
+  |
+
+I001 [*] Import block is un-sorted or un-formatted
+  --> tests/test_production_contract.py:1:1
+   |
+ 1 | / import hashlib
+ 2 | | import hmac
+ 3 | | import json
+ 4 | | import time
+ 5 | | import uuid
+ 6 | | from concurrent.futures import ThreadPoolExecutor
+ 7 | |
+ 8 | | import pytest
+ 9 | | from fastapi.testclient import TestClient
+10 | | from landlaw.api import create_app
+11 | | from landlaw.models import ChatRequest
+12 | | from landlaw.provider import Budget, GroqProvider
+13 | | from landlaw.store import RateLimited
+14 | | from conftest import release, session
+15 | | from test_agent import FakeProvider
+   | |___________________________________^
+help: Organize imports
+   |
+8  | import pytest
+9  + from conftest import release, session
+10 | from fastapi.testclient import TestClient
+--------------------------------------------------------------------------------
+14 | from landlaw.store import RateLimited
+   - from conftest import release, session
+15 | from test_agent import FakeProvider
+   |
+
+F401 [*] `landlaw.provider.Budget` imported but unused
+  --> tests/test_production_contract.py:12:30
+   |
+10 | from landlaw.api import create_app
+11 | from landlaw.models import ChatRequest
+12 | from landlaw.provider import Budget, GroqProvider
+   |                              ^^^^^^
+13 | from landlaw.store import RateLimited
+14 | from conftest import release, session
+   |
+help: Remove unused import: `landlaw.provider.Budget`
+   |
+11 | from landlaw.models import ChatRequest
+   - from landlaw.provider import Budget, GroqProvider
+12 + from landlaw.provider import GroqProvider
+13 | from landlaw.store import RateLimited
+   |
+
+I001 [*] Import block is un-sorted or un-formatted
+  --> tests/test_production_contract.py:74:5
+   |
+73 |   def test_freshness_early_exit_uses_no_provider_calls(store,settings):
+74 | /     from datetime import timedelta
+75 | |     from landlaw.security import utcnow
+76 | |     from landlaw.agent import Agent
+77 | |     import asyncio
+   | |__________________^
+78 |       value=release(store);value['id']='stale';value['checked_at']=(utcnow()-timedelta(days=8)).isoformat()
+79 |       store.stage(value);store.publish('stale')
+   |
+help: Organize imports
+   |
+73 | def test_freshness_early_exit_uses_no_provider_calls(store,settings):
+74 +     import asyncio
+75 |     from datetime import timedelta
+   -     from landlaw.security import utcnow
+76 +
+77 |     from landlaw.agent import Agent
+   -     import asyncio
+78 +     from landlaw.security import utcnow
+79 |     value=release(store);value['id']='stale';value['checked_at']=(utcnow()-timedelta(days=8)).isoformat()
+   |
+
+I001 [*] Import block is un-sorted or un-formatted
+  --> tests/test_production_contract.py:87:5
+   |
+86 |   def test_signed_session_requires_valid_turnstile_hostname_and_action(settings,store,monkeypatch):
+87 | /     from pydantic import SecretStr
+88 | |     import landlaw.api as api_module
+   | |____________________________________^
+89 |       settings=settings.model_copy(update={'app_env':'production','ingress_secret':SecretStr('fixture-signing-key'),
+90 |                                           'turnstile_secret_key':SecretStr('fixture-challenge-secret')})
+   |
+help: Organize imports
+   |
+86 | def test_signed_session_requires_valid_turnstile_hostname_and_action(settings,store,monkeypatch):
+87 +     import landlaw.api as api_module
+88 |     from pydantic import SecretStr
+   -     import landlaw.api as api_module
+89 |     settings=settings.model_copy(update={'app_env':'production','ingress_secret':SecretStr('fixture-signing-key'),
+   |
+
+I001 [*] Import block is un-sorted or un-formatted
+ --> tests/test_provider.py:1:1
+  |
+1 | / import pytest
+2 | | from landlaw.provider import Budget, BudgetExceeded, GroqProvider, ProviderUnavailable
+  | |______________________________________________________________________________________^
+3 |
+4 |   def test_llm_budget_and_invalid_vectors():
+  |
+help: Organize imports
+  |
+3 |
+4 +
+5 | def test_llm_budget_and_invalid_vectors():
+  |
+
+I001 [*] Import block is un-sorted or un-formatted
+ --> tests/test_retrieval_headings.py:1:1
+  |
+1 | / from datetime import date
+2 | | from conftest import document,release
+3 | | from landlaw.security import digest
+4 | | from landlaw.models import Chunk
+  | |________________________________^
+help: Organize imports
+  |
+1 | from datetime import date
+  - from conftest import document,release
+  - from landlaw.security import digest
+2 +
+3 + from conftest import document, release
+4 | from landlaw.models import Chunk
+5 + from landlaw.security import digest
+6 |
+  |
+
+F841 Local variable `other` is assigned to but never used
+  --> tests/test_retrieval_headings.py:27:63
+   |
+26 | def test_heading_suggestions_respect_project_and_time_but_keep_national(store):
+27 |     national=document();ring=document('ring',project='ring4');other=document('other',project='olympic');old=document('old');old.effect…
+   |                                                               ^^^^^
+28 |     release(store,[national,ring,old])
+29 |     suggestions=store.article_candidates('điều kiện bồi thường','r1',date(2026,1,1),'ring4')
+   |
+help: Remove assignment to unused variable `other`
+   |
+26 | def test_heading_suggestions_respect_project_and_time_but_keep_national(store):
+   -     national=document();ring=document('ring',project='ring4');other=document('other',project='olympic');old=document('old');old.effective_to=date(2025,1,1)
+27 +     national=document();ring=document('ring',project='ring4');document('other',project='olympic');old=document('old');old.effective_to=date(2025,1,1)
+28 |     release(store,[national,ring,old])
+   |
+note: This is an unsafe fix and may change runtime behavior
+
+I001 [*] Import block is un-sorted or un-formatted
+ --> tests/test_store.py:1:1
+  |
+1 | / import concurrent.futures
+2 | | import json
+3 | | from datetime import timedelta
+4 | |
+5 | | import pytest
+6 | |
+7 | | from landlaw.security import utcnow
+8 | | from landlaw.store import RateLimited, Store
+9 | | from conftest import document, release, session
+  | |_______________________________________________^
+help: Organize imports
+  |
+5 | import pytest
+  -
+6 + from conftest import document, release, session
+7 | from landlaw.security import utcnow
+8 | from landlaw.store import RateLimited, Store
+  - from conftest import document, release, session
+9 |
+  |
+
+I001 [*] Import block is un-sorted or un-formatted
+   --> tests/test_store.py:163:5
+    |
+162 |   def test_backups_reject_all_conversation_archives(store,settings,tmp_path):
+163 | /     from landlaw.store import Store
+164 | |     import json
+165 | |     from conftest import session,release
+    | |________________________________________^
+166 |       release(store)
+167 |       session(store)
+    |
+help: Organize imports
+    |
+162 | def test_backups_reject_all_conversation_archives(store,settings,tmp_path):
+    -     from landlaw.store import Store
+163 |     import json
+    -     from conftest import session,release
+164 +
+165 +     from conftest import release, session
+166 +     from landlaw.store import Store
+167 |     release(store)
+    |
+
+I001 [*] Import block is un-sorted or un-formatted
+   --> tests/test_store.py:204:5
+    |
+202 |   ])
+203 |   def test_effectivity_search_retains_source_verified_replacement_clause(store, query):
+204 | /     from datetime import date
+205 | |     from landlaw.models import Relation
+    | |_______________________________________^
+206 |       old=document('old-rule',text='Điều 1. Quy định bồi thường theo hồ sơ.',
+207 |           document_number='17/2021/QĐ-UBND')
+    |
+help: Organize imports
+    |
+204 |     from datetime import date
+205 +
+206 |     from landlaw.models import Relation
+    |
+
+Found 82 errors.
+[*] 59 fixable with `--fix` (12 unsafe fixes available with `--fix --unsafe-fixes`).

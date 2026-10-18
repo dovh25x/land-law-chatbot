@@ -1,0 +1,20 @@
+{
+  "review_status": "pending",
+  "engine": "tesseract 5.5.0",
+  "language": "vie",
+  "source_pdf_sha256": "a4b48290f866ac0b4d13f64de6a6a7d276f992373bb8f0e4a542bc8a52d7784a",
+  "ocr_sha256": "c3c12e1e6f74236356e5d98bf3a233768eee5e60f1b514a3eaca96287effb6a0",
+  "generated_at": "2026-10-18T17:21:22.741127+00:00",
+  "scope": "OCR diagnostics only; confidence does not certify legal text, dates, numbers or applicability.",
+  "pages": 58,
+  "flagged_pages": [
+    {
+      "page": 6,
+      "characters": 2,
+      "words": 1,
+      "mean_word_confidence": 92.58,
+      "needs_attention": true,
+      "review_status": "pending"
+    }
+  ]
+}

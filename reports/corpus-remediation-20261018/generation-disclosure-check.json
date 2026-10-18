@@ -1,0 +1,291 @@
+{
+  "scope": "Read-only disclosure check for the three limited frozen evaluation cases",
+  "candidate_sha256": "845bef1d3928d41fc5e694f5747a311f87f9c42591b3b516554196ce66bc8149",
+  "selected_cases": [
+    {
+      "id": "N01",
+      "split": "natural",
+      "question": "Nhà xưởng của tôi phải di dời do thu hồi đất, máy móc tháo ra bị hư hại thì có khoản bồi thường nào được xem xét?",
+      "as_of": "2024-08-02",
+      "gold_chunk_ids": [
+        "luat-dat-dai-2024-104-1-0"
+      ],
+      "rubric": [
+        "Phân biệt chi phí di chuyển với thiệt hại khi tháo dỡ/vận chuyển/lắp đặt máy móc; không bảo đảm số tiền."
+      ],
+      "source_review": "Đối chiếu locator và toàn văn snapshot trước sửa runtime; gold là đoạn cần thiết, không phải danh mục mọi đoạn liên quan."
+    },
+    {
+      "id": "N03",
+      "split": "natural",
+      "question": "Người đang trực tiếp làm nông mất đất có được hỗ trợ học nghề hay tìm việc không?",
+      "as_of": "2024-08-02",
+      "gold_chunk_ids": [
+        "luat-dat-dai-2024-107-1-parent",
+        "luat-dat-dai-2024-107-1-0"
+      ],
+      "rubric": [
+        "Phân biệt hỗ trợ chuyển nghề và quyền lợi cụ thể; có nguồn đúng phạm vi."
+      ],
+      "source_review": "Đối chiếu locator và toàn văn snapshot trước sửa runtime; gold là đoạn cần thiết, không phải danh mục mọi đoạn liên quan."
+    },
+    {
+      "id": "N06",
+      "split": "natural",
+      "question": "Tôi nghe nói quy định bồi thường Hà Nội năm 2024 đã bị thay thế, cần tra văn bản nào?",
+      "as_of": "2026-10-17",
+      "gold_chunk_ids": [
+        "qd-40-2026-hanoi-0-2-0"
+      ],
+      "rubric": [
+        "Nêu QĐ40/2026 thay QĐ56/2024 theo nguồn và thời điểm; không áp dụng máy móc cho hồ sơ cũ."
+      ],
+      "source_review": "Đối chiếu locator và toàn văn snapshot trước sửa runtime; gold là đoạn cần thiết, không phải danh mục mọi đoạn liên quan."
+    }
+  ],
+  "private_user_history": false,
+  "question_source": "Committed data/evaluation/natural.jsonl; not an actual user conversation",
+  "corpus_sources": [
+    {
+      "id": "luat-dat-dai-2024",
+      "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=211189"
+    },
+    {
+      "id": "luat-43-2024",
+      "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=211201"
+    },
+    {
+      "id": "nd-88-2024",
+      "url": "https://xaydungchinhsach.chinhphu.vn/toan-van-nghi-dinh-quy-dinh-ve-boi-thuong-ho-tro-tai-dinh-cu-khi-nha-nuoc-thu-hoi-dat-119240906111916662.htm"
+    },
+    {
+      "id": "nd-71-2024",
+      "url": "https://congbao.chinhphu.vn/van-ban/nghi-dinh-so-71-2024-nd-cp-42155.htm"
+    },
+    {
+      "id": "nd-101-2024",
+      "url": "https://xaydungchinhsach.chinhphu.vn/toan-van-nghi-dinh-101-2024-nd-cp-quy-dinh-dang-ky-cap-giay-chung-nhan-quyen-su-dung-dat-quyen-so-huu-tai-san-gan-lien-voi-dat-119240801170006295.htm"
+    },
+    {
+      "id": "nd-102-2024",
+      "url": "https://congbao.chinhphu.vn/van-ban/nghi-dinh-so-102-2024-nd-cp-42485/51276.htm"
+    },
+    {
+      "id": "nd-103-2024",
+      "url": "https://congbao.chinhphu.vn/van-ban/nghi-dinh-so-103-2024-nd-cp-42499.htm"
+    },
+    {
+      "id": "nd-104-2024",
+      "url": "https://congbao.chinhphu.vn/van-ban/nghi-dinh-so-104-2024-nd-cp-42495.htm"
+    },
+    {
+      "id": "nd-151-2025",
+      "url": "https://congbao.chinhphu.vn/van-ban/nghi-dinh-so-151-2025-nd-cp-45191.htm"
+    },
+    {
+      "id": "nd-226-2025",
+      "url": "https://congbao.chinhphu.vn/van-ban/nghi-dinh-so-226-2025-nd-cp-45839/58217.htm"
+    },
+    {
+      "id": "nd-49-2026",
+      "url": "https://congbao.chinhphu.vn/van-ban/nghi-dinh-so-49-2026-nd-cp-468908.htm"
+    },
+    {
+      "id": "qd-56-2024-hanoi",
+      "url": "https://vbpl.vn/hanoi/Pages/ivbpq-toanvan.aspx?ItemID=169992&Keyword="
+    },
+    {
+      "id": "qd-38-2025-hanoi",
+      "url": "https://congbao.hanoi.gov.vn/Default.aspx?p_attribute=4875&pageid=45002"
+    },
+    {
+      "id": "qd-10-2026-hanoi",
+      "url": "https://congbao.hanoi.gov.vn/Default.aspx?p_attribute=5204&pageid=45002"
+    },
+    {
+      "id": "qd-40-2026-hanoi",
+      "url": "https://congbao.hanoi.gov.vn/Default.aspx?p_attribute=5335&pageid=45002"
+    },
+    {
+      "id": "qd-55-2024-hanoi",
+      "url": "https://congbao.hanoi.gov.vn/Default.aspx?p_attribute=1904&pageid=45002"
+    },
+    {
+      "id": "qd-61-2024-hanoi",
+      "url": "https://congbao.hanoi.gov.vn/Default.aspx?p_attribute=1917&pageid=45002"
+    },
+    {
+      "id": "qd-71-2024-hanoi",
+      "url": "https://congbao.hanoi.gov.vn/Default.aspx?p_attribute=4654&pageid=45002"
+    },
+    {
+      "id": "qd-40-2025-hanoi",
+      "url": "https://congbao.hanoi.gov.vn/Default.aspx?p_attribute=4877&pageid=45002"
+    },
+    {
+      "id": "luat-thu-do-2024",
+      "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=211197"
+    },
+    {
+      "id": "luat-quy-hoach-2017",
+      "url": "https://congbao.chinhphu.vn/van-ban/luat-so-21-2017-qh14-25327.htm"
+    },
+    {
+      "id": "luat-quy-hoach-do-thi-2024",
+      "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=212475"
+    },
+    {
+      "id": "luat-144-2025",
+      "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=216526"
+    },
+    {
+      "id": "nd-178-2025",
+      "url": "https://congbao.chinhphu.vn/van-ban/nghi-dinh-so-178-2025-nd-cp-45368.htm"
+    },
+    {
+      "id": "luat-dat-dai-2013",
+      "url": "https://congbao.chinhphu.vn/van-ban/luat-so-45-2013-qh13-5391/6773.htm"
+    },
+    {
+      "id": "nd-47-2014",
+      "url": "https://congbao.chinhphu.vn/van-ban/nghi-dinh-so-47-2014-nd-cp-10330.htm"
+    },
+    {
+      "id": "qd-27-2024-hanoi",
+      "url": "https://congbao.hanoi.gov.vn/Default.aspx?p_attribute=1805&pageid=45002"
+    },
+    {
+      "id": "luat-khieu-nai-2011",
+      "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=162374"
+    },
+    {
+      "id": "nd-124-2020",
+      "url": "https://congbao.chinhphu.vn/van-ban/nghi-dinh-so-124-2020-nd-cp-32304/33027.htm"
+    },
+    {
+      "id": "luat-136-2025",
+      "url": "https://congbao.chinhphu.vn/van-ban/luat-so-136-2025-qh15-468696.htm"
+    },
+    {
+      "id": "luat-nha-o-2023",
+      "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=209627"
+    },
+    {
+      "id": "ring4-nq56-2022",
+      "url": "https://congbao.chinhphu.vn/van-ban/nghi-quyet-so-56-2022-qh15-37456.htm"
+    },
+    {
+      "id": "ring4-hadong-2025",
+      "url": "https://hanoi.gov.vn/tin-dia-phuong/quan-ha-dong-day-nhanh-tien-do-thuc-hien-du-an-vanh-dai-4-4250416202518818.htm"
+    },
+    {
+      "id": "ring4-hotro-2025",
+      "url": "https://hanoi.gov.vn/tin-tuc-su-kien-noi-bat/ho-tro-toi-da-de-hoan-thanh-du-an-vanh-dai-4-vung-thu-do-4251126183340466.htm"
+    },
+    {
+      "id": "ring4-phuluong-2025",
+      "url": "https://phuluong.hanoi.gov.vn/chi-dao-cua-dia-phuong/phu-luong-day-nhanh-tien-do-chi-tra-boi-thuong-ho-tro-gpmb-du-an-duong-vanh-dai-4-vung-thu-do-ha-noi-2792251112170551337.htm"
+    },
+    {
+      "id": "luat-thu-do-2026",
+      "url": "https://congbao.chinhphu.vn/van-ban/luat-so-02-2026-qh16-469529.htm"
+    },
+    {
+      "id": "qd-566-2026-hanoi",
+      "url": "https://congbao.hanoi.gov.vn/Default.aspx?p_attribute=5255&pageid=45002"
+    },
+    {
+      "id": "nq-52-2025-hanoi",
+      "url": "https://congbao.hanoi.gov.vn/Default.aspx?p_attribute=5054&pageid=45002"
+    },
+    {
+      "id": "qd-89-2025-hanoi",
+      "url": "https://congbao.hanoi.gov.vn/Default.aspx?p_attribute=5098&pageid=45002"
+    },
+    {
+      "id": "qd-19-2026-hanoi",
+      "url": "https://congbao.hanoi.gov.vn/Default.aspx?p_attribute=5252&pageid=45002"
+    },
+    {
+      "id": "ring4-trienkhai-2022",
+      "url": "https://baochinhphu.vn/khoi-cong-xay-dung-duong-vanh-dai-4-vung-thu-do-ha-noi-truoc-30-6-2023-102220818172858529.htm"
+    },
+    {
+      "id": "luat-146-2025",
+      "url": "https://congbao.chinhphu.vn/van-ban/luat-so-146-2025-qh15-468706/61741.htm"
+    },
+    {
+      "id": "nq-254-2025",
+      "url": "https://xaydungchinhsach.chinhphu.vn/toan-van-nghi-quyet-254-2025-qh15-quy-dinh-mot-so-co-che-chinh-sach-thao-go-kho-khan-vuong-mac-trong-to-chuc-thi-hanh-luat-dat-dai-119251225171010998.htm"
+    },
+    {
+      "id": "nq-258-2025",
+      "url": "https://phudien.hanoi.gov.vn/phu-dien-voi-cong-tac-bau-cu-dai-bieu-quoc-hoi-khoa-xvi-va-dai-bieu-hoi-dong-nhan-dan-cac-cap-nhiem-ky-2026-2031/cac-nghi-quyet-thong-qua-cua-quoc-hoi-ve-ky-hop-thu-10-quoc-hoi-khoa-xv-2794260206110358458.htm"
+    },
+    {
+      "id": "luat-71-2025",
+      "url": "https://congbao.chinhphu.vn/van-ban/luat-so-71-2025-qh15-45555.htm"
+    },
+    {
+      "id": "nq-90-2026-hanoi",
+      "url": "https://datafiles.hanoi.gov.vn/gov-hni/6249/VanBan/2026/2/2/NQPQ-90-2026.pdf"
+    },
+    {
+      "id": "luat-58-2024",
+      "url": "https://congbao.chinhphu.vn/van-ban/luat-so-58-2024-qh15-43571/53709.htm"
+    },
+    {
+      "id": "luat-84-2025",
+      "url": "https://congbao.chinhphu.vn/van-ban/luat-so-84-2025-qh15-45518.htm"
+    },
+    {
+      "id": "luat-93-2025",
+      "url": "https://congbao.chinhphu.vn/van-ban/luat-so-93-2025-qh15-45589.htm"
+    },
+    {
+      "id": "luat-95-2025",
+      "url": "https://congbao.chinhphu.vn/van-ban/luat-so-95-2025-qh15-45582.htm"
+    },
+    {
+      "id": "luat-116-2025",
+      "url": "https://congbao.chinhphu.vn/van-ban/luat-so-116-2025-qh15-468678/61574.htm"
+    },
+    {
+      "id": "luat-130-2025",
+      "url": "https://congbao.chinhphu.vn/van-ban/luat-so-130-2025-qh15-468690.htm"
+    },
+    {
+      "id": "luat-142-2025",
+      "url": "https://congbao.chinhphu.vn/van-ban/luat-so-142-2025-qh15-468702.htm"
+    },
+    {
+      "id": "luat-147-2025",
+      "url": "https://congbao.chinhphu.vn/van-ban/luat-so-147-2025-qh15-468707.htm"
+    },
+    {
+      "id": "luat-quy-hoach-2025",
+      "url": "https://congbao.chinhphu.vn/van-ban/luat-so-112-2025-qh15-468674/61642.htm"
+    },
+    {
+      "id": "nd-141-2025",
+      "url": "https://congbao.chinhphu.vn/van-ban/nghi-dinh-so-141-2025-nd-cp-45063/56732.htm"
+    },
+    {
+      "id": "nd-155-2026",
+      "url": "https://congbao.chinhphu.vn/van-ban/nghi-dinh-so-155-2026-nd-cp-469547.htm"
+    },
+    {
+      "id": "luat-35-2018",
+      "url": "https://congbao.chinhphu.vn/van-ban/nghi-quyet-so-35-2018-qh14-27813/24738.htm"
+    },
+    {
+      "id": "nd-06-2020",
+      "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=198762"
+    }
+  ],
+  "source_scope": "Published Vietnamese legal instruments and official Ring4 project decisions; no user-uploaded case dossier is included",
+  "destination": "https://api.groq.com/openai/v1/chat/completions",
+  "authorization": "User explicitly updated Groq key and requested continuation and checking the rate limit; Groq is the fixed approved inference provider in AGENTS.md",
+  "credential_handling": "Settings key used only in Authorization header, never stored in report",
+  "serving_database_access": false
+}

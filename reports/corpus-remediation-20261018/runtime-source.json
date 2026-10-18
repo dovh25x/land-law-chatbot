@@ -1,0 +1,42 @@
+{
+  "checked_at": "2026-10-18T17:35:22.676015+00:00",
+  "implementation_commit": "e778240978bcabadc34ab1c8808a48a5f34415a1",
+  "sqlite_configuration_sha256": "817e38259d90a2ac6b31650fb3092cc18fccd25d7ebbbdd504ecbd98cb0737f5",
+  "runtime_source_sha256": {
+    "backend/landlaw/agent.py": "974c8502d544c87bd197ae67cb018772112d010e38f3a7c41380d2fb3ddf830f",
+    "backend/landlaw/provider.py": "bc771b50d18c7d5265cbc7563268931f5154325e735a5bf3e059afd516632ac3",
+    "backend/landlaw/embedding.py": "fb4c2bdff5a0a9b95a4471cc0151365e6ac17df4edafd28fa1bb944fc0e44d37",
+    "backend/landlaw/local_embedding.py": "1eb8f720050cdc720377467694c91538f9767e236044654cf96d70c00e94b493",
+    "backend/landlaw/store.py": "bb0cab7311b5d12cee58e69885349ced629ccc725940fc22bb76903be5e7cd02",
+    "backend/landlaw/retrieval.py": "3b178b134f5a152d0ea122140fc5d0ffb7a3a375546e8d2da18fa7a18262f7d4",
+    "backend/landlaw/config.py": "ef7ab86aa499aad8da71a14a402e0283570c7ce6484252553983b5938c286a8b",
+    "backend/landlaw/publication.py": "439134d22b76663f27314c6542116123fdf34385ef1a6732de6436fe30b8405c",
+    "backend/landlaw/models.py": "a6dcdce3ee2e7b1b3f3b9fda590c795e9cce3662d25f980ce678daa2651b5171",
+    "backend/landlaw/security.py": "a541f4ec06f0412713d9229baca0bee9bc0e378ee12455c084a905d6d1553cb5",
+    "backend/landlaw/api.py": "e35a73c750bc96712112cfd2fe36c07ed95601fb6e131bb0ca6cd93d24cb75f8"
+  },
+  "locked_suites": {
+    "smoke": {
+      "cases": 20,
+      "sha256": "38aa8da29bf41a94b4cf8fd8a5ca6769232b87884aeed573c10f5586a09d7254"
+    },
+    "supplemental": {
+      "cases": 4,
+      "sha256": "e6bb5c9f7ba3a589237835b68d95e491ff2c16aad83683a8437f4a74e4120fea"
+    },
+    "natural": {
+      "cases": 8,
+      "sha256": "b068bb4e717439938c96e459a63c9a1832b1990d88005cf6a768d9e9c0871e74"
+    }
+  },
+  "retrieval_engine_unchanged_since_measured_candidate": {
+    "store.py": true,
+    "provider.py": true,
+    "embedding.py": true,
+    "local_embedding.py": true,
+    "retrieval.py": true,
+    "config.py": true
+  },
+  "candidate_sha256": "845bef1d3928d41fc5e694f5747a311f87f9c42591b3b516554196ce66bc8149",
+  "candidate_identical_across_preparation_attempts": true
+}

@@ -1,0 +1,28 @@
+........................................................................ [ 33%]
+...................................F.................................... [ 67%]
+.....................................................................    [100%]
+=================================== FAILURES ===================================
+_ test_assistance_catalogue_is_published_as_verified_without_extra_conditions __
+
+store = <landlaw.store.Store object at 0x74595bc68dd0>
+settings = Settings(app_env='development', llm_provider='groq', groq_api_key=SecretStr('**********'), groq_model='openai/gpt-oss-...alogue_is_p0/data'), reports_dir=PosixPath('/tmp/pytest-of-dovh25x/pytest-18/test_assistance_catalogue_is_p0/reports'))
+
+    async def test_assistance_catalogue_is_published_as_verified_without_extra_conditions(store, settings):
+        source = ('Điều 108. Hỗ trợ khi Nhà nước thu hồi đất. '
+                  '1. Hỗ trợ gồm: a) Hỗ trợ ổn định đời sống; b) Hỗ trợ ổn định sản xuất, kinh doanh.')
+        release(store,[document(text=source)]);sid,_=session(store)
+        draft=Draft(status='answered',claims=[Claim(text='Theo Điều 108, Nhà nước hỗ trợ gồm hỗ trợ ổn định đời sống và hỗ trợ ổn định sản xuất, kinh doanh.',citation_ids=['law-1'])])
+        result=await Agent(store,FakeProvider(settings,draft=draft)).run(ChatRequest(session_id=sid,message='Các nhóm hỗ trợ là gì?',as_of=date(2024,8,2)),noop)
+        assert result.status=='answered'
+        assert draft.claims[0].text in result.content
+        assert 'chưa phải kết luận hộ cụ thể được nhận tất cả' not in result.content
+>       assert result.content.count('Đây là danh mục') == 1
+E       AssertionError: assert 0 == 1
+E        +  where 0 = <built-in method count of str object at 0x74595beca790>('Đây là danh mục')
+E        +    where <built-in method count of str object at 0x74595beca790> = 'Đã đối chiếu các căn cứ dưới đây.\n\nTheo Điều 108, Nhà nước hỗ trợ gồm hỗ trợ ổn định đời sống và hỗ trợ ổn định sản xuất, kinh doanh. [1]\n\nThời điểm xem xét: 02/08/2024. Dữ liệu được kiểm tra: 2026-10-18.'.count
+E        +      where 'Đã đối chiếu các căn cứ dưới đây.\n\nTheo Điều 108, Nhà nước hỗ trợ gồm hỗ trợ ổn định đời sống và hỗ trợ ổn định sản xuất, kinh doanh. [1]\n\nThời điểm xem xét: 02/08/2024. Dữ liệu được kiểm tra: 2026-10-18.' = ChatResult(status='answered', publication_profile='academic', quality_status='academic_prototype', retrieval_mode='lex...', mode='agentic', support_level='full', retry_after=None, retrieved_chunk_ids=['law-1'], evidence_chunk_ids=['law-1']).content
+
+tests/test_agent.py:1162: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_agent.py::test_assistance_catalogue_is_published_as_verified_without_extra_conditions
+1 failed, 212 passed in 21.57s

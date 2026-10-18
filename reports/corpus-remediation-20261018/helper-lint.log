@@ -1,0 +1,12 @@
+BLE001 Do not catch blind exception: `Exception`
+  --> scripts/evaluate_corpus_candidate.py:87:12
+   |
+85 |     try:
+86 |         asyncio.run(main(args))
+87 |     except Exception as error:
+   |            ^^^^^^^^^
+88 |         # Database driver exceptions may contain credentials; preserve type only.
+89 |         print(json.dumps({'passed': False, 'error_type': type(error).__name__}), flush=True)
+   |
+
+Found 3 errors (2 fixed, 1 remaining).

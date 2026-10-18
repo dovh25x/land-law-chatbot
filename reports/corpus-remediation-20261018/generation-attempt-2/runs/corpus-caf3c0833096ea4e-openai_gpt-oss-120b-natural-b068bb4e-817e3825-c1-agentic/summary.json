@@ -1,0 +1,43 @@
+{
+  "status": "awaiting_review",
+  "dataset_sha256": "b068bb4e717439938c96e459a63c9a1832b1990d88005cf6a768d9e9c0871e74",
+  "generated_at": "2026-10-18T18:03:20.637436+00:00",
+  "cases": 8,
+  "acceptance_passed": false,
+  "results": [
+    {
+      "mode": "agentic",
+      "completed": 8,
+      "reviewed": 0,
+      "llm_calls": 26,
+      "limited_or_error": 1
+    }
+  ],
+  "run_id": "corpus-caf3c0833096ea4e-openai_gpt-oss-120b-natural-b068bb4e-817e3825-c1-agentic",
+  "release": "corpus-caf3c0833096ea4e",
+  "model": "openai/gpt-oss-120b",
+  "llm_provider": "groq",
+  "embedding_model": "multilingual-e5-small-onnx-q8-window-v1",
+  "split": "natural",
+  "corpus_embedded": true,
+  "publication_candidate": false,
+  "notes": [
+    "Technical regression evaluation; not independent legal certification."
+  ],
+  "as_of": "2026-10-19",
+  "configuration_sha256": "817e38259d90a2ac6b31650fb3092cc18fccd25d7ebbbdd504ecbd98cb0737f5",
+  "suite_sha256": "b068bb4e717439938c96e459a63c9a1832b1990d88005cf6a768d9e9c0871e74",
+  "storage_backend": "sqlite",
+  "execution_modes": [
+    "agentic"
+  ],
+  "execution_concurrency": 1,
+  "attempt_history": {
+    "attempts": 12,
+    "retry_attempts": 4,
+    "limited_or_error_attempts": 5,
+    "scope": "Every new attempt is retained; legacy checkpoints imported as latest results only.",
+    "directory": "reports/corpus-remediation-20261018/generation-attempt-2/runs/corpus-caf3c0833096ea4e-openai_gpt-oss-120b-natural-b068bb4e-817e3825-c1-agentic/attempts"
+  },
+  "latency_scope": "CLI run, modes ['agentic'], concurrency 1; provider-reported cooldown between turns excluded. Public API single-user p95 measured separately."
+}
