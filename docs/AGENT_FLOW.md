@@ -4,6 +4,10 @@
 
 Giữ một pipeline Agentic RAG trong `backend/landlaw/agent.py`. Các node của LangGraph là các bước trong cùng một lượt hỏi, không phải nhiều agent độc lập. Planner chọn công cụ chỉ đọc, synthesis tạo draft, verifier kiểm tra trước khi `finish` dựng đáp án. Cấu trúc này phù hợp với phạm vi Vành đai 4, corpus có xuất xứ và ngân sách Free đã cố định; chưa có căn cứ để thay model, thêm reranker hoặc tách pipeline.
 
+Câu hỏi pháp lý chưa chỉ định điều khoản được tra từ nguyên văn câu hỏi trước khi tổng hợp, thay vì dùng một request để đoán điều. Khi người dùng chỉ rõ văn bản và điều, hệ thống mở nguồn đó; các trường hợp còn mơ hồ vẫn có planner giới hạn. History chỉ giúp giải tham chiếu, không trở thành chứng cứ.
+
+Ngữ cảnh giữ đoạn cha đầy đủ của các kết quả chính trước chứng cứ bổ sung và bỏ chunk con nằm nguyên văn trong đoạn cha. Việc này chỉ chọn các passage đã có, không tạo tóm tắt hay đổi trích dẫn lúc verify. Câu hỏi quy định hiện hành không tự kéo thêm lời mở đầu của văn bản đã bị thay thế; metadata quan hệ và cổng kiểm tra tác động pháp lý vẫn giữ nguyên. Mỗi claim phải tự mang điều kiện về chủ thể của nó, kể cả khi claim khác đã nêu điều kiện đó.
+
 Tuy nhiên, kiểm chứng chỉ có ý nghĩa khi bước phát hành tuân thủ toàn bộ verdict. Hai điểm cần sửa trong implementation:
 
 | Điểm phản biện | Hành vi cần đạt |

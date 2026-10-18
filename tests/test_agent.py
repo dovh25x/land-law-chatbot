@@ -236,6 +236,62 @@ def test_prompt_keeps_passages_and_deduplicates_document_legal_metadata(store,se
     assert len(selected)==len(metadata)==1 and selected[0]['citation_id']=='law-2'
 
 
+def test_parent_context_retains_clause_continuation_without_duplicate_children(store,settings):
+    from landlaw.models import Evidence
+    law=document()
+    first=law.chunks[0].model_copy(update={'id':'law-a','parent_id':'law-a-parent',
+        'text':'Điều 12. Điều kiện. 1. Đối tượng được quy định tại điểm a, b. '})
+    second=first.model_copy(update={'id':'law-b',
+        'text':'2. Trường hợp thuộc khoản 1 được hỗ trợ khi có một trong các giấy tờ sau đây.'})
+    parent=first.model_copy(update={'id':'law-a-parent','parent_id':None,
+        'text':first.text+second.text,'locator':'Điều 1 · ngữ cảnh'})
+    state={'evidence':[Evidence(chunk=c,document=law) for c in [first,second,parent]],
+        'release':{'documents':[law.model_dump(mode='json')],'relations':[]}}
+    agent=Agent(store,FakeProvider(settings))
+    passages,_=agent.prompt_context(state)
+    assert [p['citation_id'] for p in passages]==[parent.id]
+    assert first.text in passages[0]['text'] and second.text in passages[0]['text']
+    # A verifier must see the exact citation selected by the draft, even when
+    # it is an incomplete child; deduplication must not silently repair proof.
+    selected,_=agent.prompt_context(state,{second.id})
+    assert selected[0]['citation_id']==second.id and selected[0]['text']==second.text
+
+
+async def test_unlocated_legal_question_searches_original_question_without_speculating_article(store,settings):
+    payload=release(store)
+    question='Khi chuyển cơ sở vì thu hồi đất, chi phí tháo dỡ được xem xét thế nào?'
+    provider=FakeProvider(settings)
+    async def unexpected(*args,**kwargs):raise AssertionError('No speculative planner call needed')
+    provider.generate=unexpected
+    state={'request':ChatRequest(session_id='00000000-0000-0000-0000-000000000000',message=question),
+        'release':payload,'budget':Budget(),'trace':[],'emit':noop,'history':[]}
+    await Agent(store,provider).plan(state)
+    assert state['plan'].tools==[ToolCall(name='search_law',query=question)]
+    assert state['budget'].llm_calls==0
+
+
+async def test_primary_parent_survives_full_secondary_evidence_on_retry(store,settings,monkeypatch):
+    from landlaw.models import Evidence
+    docs=[document(f'new-{i}') for i in range(8)]
+    previous=[document(f'old-{i}') for i in range(8)]
+    first=docs[0].chunks[0]
+    first.parent_id='new-0-parent'
+    parent=first.model_copy(update={'id':first.parent_id,'parent_id':None,
+        'text':first.text+' Điều kiện tiếp theo phải được đọc cùng đoạn đầu.'})
+    docs[0].chunks.append(parent)
+    payload=release(store,docs+previous)
+    monkeypatch.setattr(store,'search',lambda *args:[Evidence(chunk=d.chunks[0],document=d) for d in docs])
+    state={'request':ChatRequest(session_id='0'*32,message='Điều kiện bồi thường?'),
+        'release':payload,'plan':Plan(),'budget':Budget(),'as_of':date(2024,8,2),
+        'verification':Verification(followup_query='căn cứ bổ sung'),
+        'evidence':[Evidence(chunk=d.chunks[0],document=d) for d in previous],
+        'rounds':1,'tool_notes':[],'trace':[],'emit':noop}
+    await Agent(store,FakeProvider(settings)).tools(state)
+    assert len(state['evidence'])==16
+    assert parent.id in {item.chunk.id for item in state['evidence']}
+    assert [e.document.id for e in state['evidence'][:8]]==[d.id for d in docs]
+
+
 def test_groq_context_selects_complete_passages_and_never_cites_omitted_text(store,settings):
     from landlaw.models import Evidence
     import json
@@ -325,8 +381,8 @@ async def test_future_immediate_application_states_only_verified_start_and_asks_
 
 
 @pytest.mark.parametrize('question,status,facts',[
-    ('Điều kiện bồi thường khi thu hồi đất?','answered',[]),
-    ('Nhà tôi cần kiểm tra điều kiện bồi thường khi thu hồi đất?','clarification_needed',['Ngày phê duyệt phương án của gia đình'])])
+    ('Điều 95 có điều kiện bồi thường khi thu hồi đất nào?','answered',[]),
+    ('Nhà tôi cần kiểm tra Điều 95 về điều kiện bồi thường khi thu hồi đất?','clarification_needed',['Ngày phê duyệt phương án của gia đình'])])
 async def test_missing_tool_identifier_falls_back_and_never_becomes_public_question(store,settings,question,status,facts):
     law=document(document_number='31/2024/QH15',issued_on=date(2024,1,18))
     release(store,[law]);sid,_=session(store)
@@ -402,7 +458,7 @@ async def test_graph_calls_tools_and_verifies_before_answer(store, settings):
     result = await Agent(store, FakeProvider(settings)).run(ChatRequest(session_id=sid, message="Điều kiện bồi thường?"), capture)
     assert result.status == "answered"
     assert result.citations[0].id == "law-1"
-    assert result.llm_calls == 3 and result.tool_calls >= 2
+    assert result.llm_calls == 2 and result.tool_calls >= 2
     assert events.index("synthesis") < events.index("verification")
 
 
@@ -554,7 +610,7 @@ async def test_retry_prioritizes_new_evidence_over_a_full_previous_context(store
                 return Verification(supported_claim_indexes=[0],supporting_quotes=[SupportingQuote(
                     claim_index=0,citation_id=citation,quote=docs[-1].chunks[0].text)])
             return Verification(needs_more_evidence=True,followup_query='new',issues=['Cần chứng cứ mới'])
-    result=await Agent(store,Fresh(settings)).run(ChatRequest(session_id=sid,message='bồi thường'),noop)
+    result=await Agent(store,Fresh(settings)).run(ChatRequest(session_id=sid,message='Điều 95 về bồi thường'),noop)
     assert result.status=='answered' and result.citations[0].id=='new-1'
     assert result.llm_calls<=6 and result.tool_calls<=12
 
@@ -721,7 +777,7 @@ async def test_invalid_planner_falls_back_only_to_bounded_read_and_still_verifie
                 for _ in range(3):budget.llm()
                 raise ProviderUnavailable('Invalid planning JSON',format_failure=True)
             return await super().generate(schema,instruction,payload,budget)
-    result=await Agent(store,FormatFailure(settings)).run(ChatRequest(session_id=sid,message='Điều kiện bồi thường?'),noop)
+    result=await Agent(store,FormatFailure(settings)).run(ChatRequest(session_id=sid,message='Điều 95 có điều kiện bồi thường nào?'),noop)
     assert result.status=='answered' and result.llm_calls==5
     assert result.citations and any(e.step=='verification' for e in result.trace)
     assert any('Planner chưa trả đúng schema' in e.summary and e.tool=='search_law' for e in result.trace)
@@ -731,7 +787,7 @@ async def test_invalid_planner_falls_back_only_to_bounded_read_and_still_verifie
 async def test_planner_quota_does_not_trigger_fallback_or_unverified_answer(store,settings):
     release(store);sid,_=session(store)
     result=await Agent(store,FakeProvider(settings,failure=RateLimited(3600,source='provider'))).run(
-        ChatRequest(session_id=sid,message='Điều kiện bồi thường?'),noop)
+        ChatRequest(session_id=sid,message='Điều 95 có điều kiện bồi thường nào?'),noop)
     assert result.status=='limited' and result.tool_calls==0 and not result.verified_claims
     assert result.retry_after==3600
 
@@ -1245,3 +1301,42 @@ async def test_assistance_catalogue_cannot_be_repaired_by_a_post_verification_di
     assert bool(state['result'].verified_claims) == approved
     assert 'Đây là danh mục loại hỗ trợ trong nguồn' not in state['result'].content
     assert 'Chưa giải thích điều kiện riêng' not in state['result'].content
+
+
+@pytest.mark.parametrize('qualified', [False, True])
+async def test_farming_actor_cannot_lose_income_and_approval_date_conditions(store,settings,qualified):
+    from landlaw.models import Evidence
+    source=('Điều 12. Hỗ trợ. 1. Cá nhân trực tiếp sản xuất nông nghiệp được hỗ trợ khi '
+            'có thu nhập từ sản xuất nông nghiệp trên đất đó tại thời điểm phê duyệt phương án '
+            'bồi thường và không thuộc trường hợp người hưởng lương hưu.')
+    law=document(text=source);law.chunks[0].locator='Điều 12'
+    text='Cá nhân trực tiếp sản xuất nông nghiệp được hỗ trợ'
+    text+=(' khi có thu nhập từ sản xuất nông nghiệp trên đất đó tại thời điểm phê duyệt phương án '
+           'bồi thường và không thuộc trường hợp người hưởng lương hưu.' if qualified else ' nếu không hưởng lương hưu.')
+    state={'request':ChatRequest(session_id='0'*32,message='Ai được hỗ trợ?'),
+        'release':{'documents':[law.model_dump(mode='json')],'relations':[]},
+        'draft':Draft(status='answered',claims=[Claim(text=text,citation_ids=['law-1'])]),
+        'evidence':[Evidence(chunk=law.chunks[0],document=law,applicability='current')],
+        'as_of':date(2024,8,2),'budget':Budget(),'trace':[],'emit':noop,'history':[]}
+    await Agent(store,FakeProvider(settings)).verify(state)
+    assert bool(state['verification'].supported_claim_indexes) is qualified
+
+
+@pytest.mark.parametrize('independent', [False, True])
+async def test_alternative_document_claim_must_carry_its_own_actor_prerequisite(store,settings,independent):
+    from landlaw.models import Evidence
+    source=('Điều 12. Điều kiện. 2. Các trường hợp quy định tại khoản 1 Điều này được bồi thường '
+            'khi có một trong các điều kiện sau: a) Có giấy chứng nhận; b) Có quyết định giao đất.')
+    law=document(text=source);law.chunks[0].locator='Điều 12'
+    text='Được bồi thường khi có giấy chứng nhận hoặc có quyết định giao đất.'
+    if independent:text='Trường hợp thuộc khoản 1 Điều này '+text[0].lower()+text[1:]
+    state={'request':ChatRequest(session_id='0'*32,message='Giấy chứng nhận có phải điều kiện duy nhất?'),
+        'release':{'documents':[law.model_dump(mode='json')],'relations':[]},
+        'draft':Draft(status='answered',claims=[
+            Claim(text='Đối tượng phải thuộc khoản 1 Điều này.',citation_ids=['law-1']),
+            Claim(text=text,citation_ids=['law-1'])]),
+        'evidence':[Evidence(chunk=law.chunks[0],document=law,applicability='current')],
+        'as_of':date(2024,8,2),'budget':Budget(),'trace':[],'emit':noop,'history':[]}
+    provider=FakeProvider(settings,verification=Verification(supported_claim_indexes=[0,1]))
+    await Agent(store,provider).verify(state)
+    assert bool(state['verification'].supported_claim_indexes) is independent

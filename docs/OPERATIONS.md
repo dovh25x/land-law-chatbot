@@ -76,6 +76,8 @@ Kiểm tra bằng `scripts/audit_corpus.py --snapshot <candidate.json> --output 
 
 Chạy generation bằng `scripts/evaluate_generation_candidate.py --backup <candidate-backup.json> --output <thư-mục-run-mới>`. Khi provider còn quota và cooldown đã hết, dùng cùng output với `--resume --split natural` (hoặc split cần tiếp tục). Helper dùng SQLite tạm và scope operator, giữ checkpoint/attempt của bộ khóa, lưu `operator-cooldown.json` và không gửi request trước mốc provider cho phép. Ca đã hoàn tất không được chạy lại chỉ để chọn kết quả đẹp; ca limited/error và ca chưa thực thi có thể tiếp tục. Giữ model và gói hosting đã thống nhất; khi operator cập nhật credential, tiếp tục từ checkpoint và vẫn tuân thủ hạn mức thực tế cùng Retry-After của provider.
 
+Thêm `--postgres` vào helper generation để đánh giá trên PostgreSQL riêng: script tạo database với tên ngẫu nhiên, áp dụng migration, restore ứng viên, rồi chỉ dọn database do chính lần chạy tạo. Không dùng SQLite để suy ra kết quả PostgreSQL.
+
 `coverage_passed` kiểm tra phạm vi Vành đai 4, nguồn bắt buộc và chứng cứ dự án đã duyệt. `publication_ready` còn yêu cầu embedding đầy đủ, metadata đã duyệt, không có gap, relation chưa giải quyết hoặc ingest issue. Đây là cổng kỹ thuật; vẫn cần freshness, suite khóa và các bước phát hành bên dưới.
 
 Lệnh `land-law publish` từ chối candidate không đạt coverage/dependency hoặc chưa đạt freshness, trước khi backup và đổi active state. Database staging dùng cho đánh giá không thay thế lệnh phát hành này.
@@ -154,3 +156,12 @@ Log JSON chỉ chứa metadata vận hành; không ghi câu hỏi, đáp án, hi
 `.venv/bin/land-law cleanup` dọn metadata hết hạn. Workflow operations chạy theo lịch mỗi giờ; lỗi workflow được thông báo theo cấu hình notification GitHub của người vận hành. Đây không phải hệ thống cảnh báo hoặc SLA hoàn chỉnh.
 
 Nội dung đi qua Cloudflare/Render tới Groq. Operator phải kiểm tra chính sách và cấu hình data controls của tổ chức tại provider trước khi khẳng định Zero Data Retention; repository không chứng minh được setting tài khoản đó. Lịch sử dài hạn chỉ ở client không phải cam kết nội dung không được xử lý bên ngoài thiết bị.
+
+
+## Cổng kiểm tra trước deploy
+
+`scripts/check_release_readiness.py --manifest <inputs.json> --output <report-mới.json>` tính lại điều kiện từ artifact gắn SHA-256, không mở database phục vụ. Manifest gồm `source_commit` và map `inputs`; mỗi phần tử là `{path, sha256}` hoặc null nếu còn thiếu. Các key bắt buộc để đạt gồm `snapshot`, `backup`, `review:smoke`, `review:supplemental`, `review:natural`, `restore:sqlite`, `restore:postgresql`, `software`, `release_download` và `postgres_runtime`. Receipt nguồn thật có thể bổ sung bằng key `source_receipt:<document_id>`; lệnh chỉ áp dụng chúng vào SQLite tạm để kiểm tra, không tạo receipt thay người rà soát.
+
+Cổng kiểm tra đối chiếu nội dung backup với snapshot, dependency/coverage, freshness, bộ khóa và fingerprint PostgreSQL hiện tại, checksum answer, trích dẫn nguyên văn, review nội dung, restore hai backend và ngưỡng retrieval. Smoke và supplemental phải đạt từng ca; natural phải đạt đầy đủ ít nhất năm trong sáu câu nội dung, các ca an toàn phải đạt và không còn lỗi thực thi. Software evidence ghi `source_commit` và `checks` gồm tên `backend`, `secrets`, `frontend_unit`, `frontend_build`, `frontend_e2e`, lệnh đã chạy, exit code, đường dẫn log và `log_sha256`. Bằng chứng tải Release phải chỉ đúng file backup đã tải, hash, corpus ID và URL GitHub; chuẩn bị package local không thay thế bước này.
+
+Lệnh deploy production yêu cầu biến `RELEASE_READINESS_REPORT` trỏ tới báo cáo mới trong vòng một ngày; nó tính lại các cổng từ input trước khi dùng credentials hoặc gọi dịch vụ. Workflow production yêu cầu input `readiness_report` và thực hiện cùng kiểm tra trước mọi bước deploy. Báo cáo cùng toàn bộ input được ràng buộc phải hiện diện trong checkout/workspace chạy deploy; không dùng đường dẫn staging local không tồn tại trong CI. Một cờ `ready=true` ghi sẵn không bỏ qua việc kiểm tra lại. Báo cáo blocked chỉ ghi việc còn thiếu và không cho phép phát hành. Đây là cổng kỹ thuật, không phải chứng nhận pháp lý độc lập.

@@ -1,6 +1,11 @@
 name: Deploy verified build
 on:
   workflow_dispatch:
+    inputs:
+      readiness_report:
+        description: 'Path to the verified readiness report; all bound inputs must exist in this checkout'
+        required: true
+        type: string
 concurrency:
   group: production-deploy
   cancel-in-progress: false
@@ -21,6 +26,10 @@ jobs:
           cache: npm
           cache-dependency-path: frontend/package-lock.json
       - run: pip install -r requirements.lock && pip install --no-deps -e .
+      - name: Recompute publication gates before any deployment
+        env:
+          RELEASE_READINESS_REPORT: ${{ inputs.readiness_report }}
+        run: python -c 'import os; from scripts.check_release_readiness import require_ready; require_ready(os.environ["RELEASE_READINESS_REPORT"])'
       - run: npm ci && npm run build
         working-directory: frontend
         env:
@@ -38,6 +47,7 @@ jobs:
         env:
           RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
           RENDER_SERVICE_ID: ${{ vars.RENDER_SERVICE_ID }}
+          RELEASE_READINESS_REPORT: ${{ inputs.readiness_report }}
         run: python scripts/deploy.py backend
       - name: Live smoke
         run: npx --prefix frontend playwright install --with-deps chromium && node scripts/verify_live_ui.mjs --chat

@@ -412,6 +412,13 @@ class Agent:
                 locator=f'Điều {article[1]}',query=request.message[:1000])])
             await self.event(state,'routing','Đã nhận diện văn bản và điều được người dùng chỉ rõ; mở nguồn tương ứng.',
                              'open_article',named)
+        elif legal_topic and not article:
+            # Without an explicit provision, search the citizen's actual question.
+            # A speculative article choice can discard the governing principle
+            # and spend a model request before evidence has even been retrieved.
+            tool='search_project' if request.project else 'search_law'
+            state['plan']=Plan(tools=[ToolCall(name=tool,query=request.message[:1000])])
+            await self.event(state,'routing','Chưa có điều khoản chỉ định; tìm chứng cứ từ câu hỏi gốc trước khi tổng hợp.',tool)
         else:
             catalogue=self.catalogue(state['release'])
             suggested=await asyncio.to_thread(self.store.article_candidates,request.message,
@@ -578,6 +585,8 @@ class Agent:
             number in normalize(d.get('document_number') or '') for number in requested_numbers)}
         wanted_types={kind for phrase,kind in [('bai bo','repeals'),('thay the','replaces'),('sua doi','amends')]
                       if phrase in question}
+        temporal_question=bool(wanted_types) or any(term in question for term in ('hieu luc','chuyen tiep')) or bool(
+            re.search(r'\b(?:truoc|cu)\b',question))
         def starts_by_question(doc_id):
             starts=catalogue.get(doc_id,{}).get('effective_from')
             return bool(starts and date.fromisoformat(starts)<=state['as_of'])
@@ -604,6 +613,12 @@ class Agent:
                         and relation.source_id not in requested_docs):
                     # Keep the relationship in metadata, but do not crowd a
                     # historical answer with an unrequested future amendment.
+                    continue
+                if (relation.source_id==doc_id and relation.type in {'replaces','repeals','transition'}
+                        and not temporal_question and relation.target_id not in requested_docs):
+                    # Validity remains in relation metadata. An ordinary lookup
+                    # of a current rule does not need the repealed act's preamble
+                    # or unrelated old-file transitions in its answer context.
                     continue
                 if relation.source_id==doc_id and relation.source_locator and state['budget'].tool_calls<12:
                     numbers=re.findall(r'Điều\s+(\d+)',relation.source_locator)
@@ -638,13 +653,19 @@ class Agent:
         for item in previous_evidence:
             found.setdefault(item.chunk.id,item)
         # Keep existing hits stable and add parent text, capped to a bounded context.
+        parent_ids=set()
         for item in list(found.values())[:8]:
             if item.chunk.parent_id:
                 parent = await asyncio.to_thread(self.store.chunk, item.chunk.parent_id, release_id)
                 if parent:
+                    parent_ids.add(parent.id)
                     found.setdefault(parent.id, Evidence(chunk=parent, document=item.document, applicability=item.applicability))
         candidates=list(found.values())
-        secondary=sorted(candidates[8:],key=lambda item:item.chunk.id in operative_ids,reverse=True)
+        # Relationship expansion can fill every secondary slot before parents
+        # are appended. Keep the complete context of primary hits before extra
+        # relation passages; unrepresented amendments still veto claims later.
+        secondary=sorted(candidates[8:],key=lambda item:(item.chunk.id in parent_ids,
+                                                       item.chunk.id in operative_ids),reverse=True)
         state["evidence"] = candidates[:8]+secondary[:8]
         state["rounds"] += 1
         return state
@@ -684,6 +705,24 @@ class Agent:
         passages,documents=[],{}
         candidates=self.context(state)
         if self.provider.settings.llm_provider == 'groq' and selected_ids is None:
+            # A parent is an existing, verbatim source passage, not a summary.
+            # Prefer it to contained children only when it can enter the bounded
+            # prompt. Never change citation IDs/text during verification.
+            parents={e.chunk.id:e for e in state['evidence'] if e.chunk.id.endswith('-parent')}
+            by_id={item['citation_id']:item for item in candidates}
+            covered={}
+            for evidence in state['evidence']:
+                parent=parents.get(evidence.chunk.parent_id)
+                if (parent and parent.document.id==evidence.document.id
+                        and parent.chunk.locator.split(' · ')[0]==evidence.chunk.locator.split(' · ')[0]
+                        and evidence.chunk.text in parent.chunk.text
+                        and len(parent.chunk.text)<=4000):
+                    covered[evidence.chunk.id]=parent.chunk.id
+            unique={}
+            for item in candidates:
+                key=covered.get(item['citation_id'],item['citation_id'])
+                unique.setdefault(key,by_id[key])
+            candidates=list(unique.values())
             question=normalize(state['request'].message) if state.get('request') else ''
             numbers=set(re.findall(r'(?<![\d/])\d{1,6}/(?:19|20)\d{2}(?!/\d)',question))
             articles=set(re.findall(r'\bdieu\s+(\d+[a-z]?)\b',question))
@@ -698,8 +737,10 @@ class Agent:
                 document_match=any(n in normalize(item.get('document_number') or '') for n in numbers)
                 operative=temporal and any(term in body for term in ('co hieu luc','thay the','bai bo'))
                 overlap=len(terms & set(body.split()))/max(1,len(body.split()))**.5
+                heading=re.match(r'dieu\s+\d+[a-z]?\s*[.:]\s*(.*?)(?:\s+1\.\s|$)',body)
+                heading_overlap=len(terms & set(heading[1].split()))/max(1,len(set(heading[1].split()))) if heading else 0
                 timely=not temporal or item['applicability']!='future' or document_match
-                return (exact_article and (document_match or not numbers),timely,reference_matches,body_numbers,operative,document_match,overlap)
+                return (exact_article and (document_match or not numbers),timely,reference_matches,body_numbers,operative,document_match,item['applicability']=='current',heading_overlap,overlap)
             candidates=sorted(candidates,key=relevant,reverse=True)
             named_docs={item['document_id'] for item in candidates if any(
                 n in normalize(item.get('document_number') or '') for n in numbers)}
@@ -814,6 +855,13 @@ class Agent:
             contexts=[{**item,'citation_id':aliases[item['citation_id']]} for item in contexts]
             state["draft"] = await self.provider.generate(Draft,
                 "Answer the exact question directly, in Vietnamese. Put ALL legal content in at most three concise claims "
+                "Prefer the exact operative wording of the source over a loose paraphrase. Include only what is needed "
+                "to answer the question: do not volunteer rates, durations, numeric amounts, exhaustive actor lists or "
+                "additional benefit categories when they are not requested. A rule about a numbered clause needs "
+                "both that operative clause and its eligibility prerequisites in the SAME claim and citations. "
+                "Use the provided complete parent passage where a child ends before the rule or its conditions. "
+                "For alternative documents, retain 'trường hợp thuộc khoản ...' as the actor prerequisite; do not "
+                "turn an actor from that prerequisite clause into an example of a qualifying document. "
                 "with citation_ids from allowed_citation_ids (C1, C2...), never document IDs. summary is not displayed. "
                 "Keep each claim atomic: separate eligible actors from alternative qualifying documents/conditions. "
                 "For an exclusivity question, start with the direct answer and retain source-defined eligibility by clause "
@@ -851,6 +899,8 @@ class Agent:
                 "in the cited clause, including delayed-payment treatment when explaining an old approved plan. "
                 "Only state requested commencement dates when the operative cited text contains them; issue dates are not "
                 "commencement. Commencement/replacement alone does not exclude every old case: transitions need their own source. "
+                "For a policy-replacement lookup, put a brief next_step asking to compare recovery/approved-plan dates "
+                "and the transitional provisions before applying it to an old file; do not assert the old file's outcome. "
                 "No additional repeal scope or universal rule inferred from one example. For missing or conflicting sources, "
                 "state the limit; coverage_gaps/unresolved_relations are not legal proof. Unavailable historical text cannot "
                 "be inferred from a replacement act. next_steps are generic file/source checks; legal conditions/time limits "
@@ -1084,6 +1134,11 @@ class Agent:
                 structural_issues.append(f'Claim {index}: không biến điều kiện hợp đồng giao khoán của nhóm sử dụng đất cụ thể thành điều kiện chung nhận hỗ trợ')
             groups=('cong dong dan cu','to chuc ton giao','to chuc nuoc ngoai','to chuc kinh te','nguoi goc viet nam')
             source_body=normalize(' '.join(evidence[c].chunk.text for c in claim.citation_ids if c in evidence))
+            if ('duoc ho tro' in normalized_claim and 'truc tiep san xuat nong nghiep' in normalized_claim
+                    and 'tai thoi diem phe duyet phuong an' in source_body
+                    and 'thu nhap tu san xuat nong nghiep' in source_body):
+                if not ('thu nhap' in normalized_claim and 'thoi diem phe duyet phuong an' in normalized_claim):
+                    structural_issues.append(f'Claim {index}: chủ thể trực tiếp sản xuất nông nghiệp thiếu điều kiện thu nhập và thời điểm phê duyệt phương án trong nguồn')
             prefix=re.match(r'^(?:khi|neu|truong hop)\b([^,;.]{0,200})',normalized_claim)
             if prefix and re.search(r'\bchua\b',prefix[1]) and not re.search(r'\bchua\b',source_body):
                 structural_issues.append(f'Claim {index}: điều kiện chưa xảy ra trong câu hỏi không được đoạn nguồn xác lập làm căn cứ áp dụng')
@@ -1133,9 +1188,8 @@ class Agent:
             normalized_source=normalize(cited_text)
             prerequisites=re.findall(r'cac truong hop quy dinh tai khoan (\d+) dieu nay duoc .{0,120}?khi co',normalized_source)
             if prerequisites and 'duoc' in normalized_claim:
-                all_claims=normalize(' '.join(c.text for c in draft.claims))
                 for clause in prerequisites:
-                    if not re.search(rf'(?:thuoc|truong hop|doi tuong).{{0,80}}khoan {clause}\b|\bkhoan {clause}.{{0,80}}(?:truong hop|doi tuong|thuoc)',all_claims):
+                    if not re.search(rf'(?:thuoc|truong hop|doi tuong).{{0,80}}khoan {clause}\b|\bkhoan {clause}.{{0,80}}(?:truong hop|doi tuong|thuoc)',normalized_claim):
                         structural_issues.append(f'Claim {index}: các điều kiện thay thế chỉ áp dụng cho trường hợp thuộc khoản {clause}; cần nêu điều kiện về đối tượng trước khi kết luận')
             if ('mot trong cac dieu kien' in normalized_source
                     and any(term in normalized_claim for term in ('con phai co', 'dong thoi phai co', 'tat ca cac dieu kien'))):

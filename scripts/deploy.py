@@ -61,4 +61,11 @@ def frontend(preview=False):
 
 
 if __name__ == "__main__":
+    if sys.argv[1] in {'backend', 'frontend'}:
+        # Recompute evidence before credentials, network calls or a public write.
+        from check_release_readiness import require_ready
+        try:
+            require_ready(required('RELEASE_READINESS_REPORT'))
+        except (ValueError, OSError, KeyError, json.JSONDecodeError):
+            raise SystemExit('Deployment blocked: complete current release-readiness evidence is required') from None
     {"backend": backend, "frontend": frontend, "frontend-preview": lambda: frontend(preview=True)}[sys.argv[1]]()
