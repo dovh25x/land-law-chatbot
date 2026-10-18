@@ -1,0 +1,35 @@
+{
+  "checked_at": "2026-10-17T17:25:13.586806+00:00",
+  "source_commit": "578d31f1f5f2622c9c60a39b7d7f286fc35935f0",
+  "frontend": "https://hanoi-land-law.pages.dev",
+  "frontend_deployment": {
+    "id": "99fa4454-dd64-4b70-82e7-f7a57e1279b3",
+    "url": "https://99fa4454.hanoi-land-law.pages.dev",
+    "source_commit": "578d31f1f5f2622c9c60a39b7d7f286fc35935f0",
+    "status": "success"
+  },
+  "backend_deployment": {
+    "id": "dep-db9qsorbc2fs73ctl7pg",
+    "status": "live",
+    "source_commit": "578d31f1f5f2622c9c60a39b7d7f286fc35935f0",
+    "plan": "free"
+  },
+  "runtime": {
+    "corpus_release": "corpus-581da76c79b0b362",
+    "storage": "postgresql",
+    "generation_available": true,
+    "generation_reason": null,
+    "configuration_sha256": "d767061305cb1a20082843252b1d6eba01a69f72fdabc95c62494c19242d175c",
+    "evaluation_matches_active_release": true,
+    "evaluation_matches_active_configuration": false
+  },
+  "security": {
+    "direct_backend_status": 403,
+    "public_missing_turnstile_status": 400,
+    "public_missing_turnstile_code": "challenge_required"
+  },
+  "physical_device_required": false,
+  "mobile_validation": "Emulated mobile accepted by user",
+  "deployment_passed": true,
+  "negative_security_checks_passed": true
+}

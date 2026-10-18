@@ -1040,6 +1040,70 @@ async def test_semantic_issue_blocks_a_contradictorily_approved_claim(store, set
     assert not result.verified_claims and not result.citations
 
 
+@pytest.mark.parametrize('verification', [
+    Verification(supported_claim_indexes=[0], issues=['Chủ thể và điều kiện chưa được chứng minh']),
+    Verification(supported_claim_indexes=[0], needs_more_evidence=True, followup_query='điều kiện bồi thường'),
+])
+async def test_unresolved_verification_blocks_release_even_when_all_indexes_are_approved(store, settings, verification):
+    release(store); sid, _ = session(store)
+    provider = FakeProvider(settings, verification=verification)
+    provider.draft.next_steps = ['Đối chiếu hồ sơ đã ẩn danh.']
+    result = await Agent(store, provider).run(
+        ChatRequest(session_id=sid, message='Điều kiện bồi thường được quy định thế nào?'), noop)
+    assert result.status == 'insufficient_evidence'
+    assert not result.verified_claims and not result.citations
+    assert provider.draft.claims[0].text not in result.content
+    assert provider.draft.next_steps[0] not in result.content
+    assert result.llm_calls <= 6 and result.tool_calls <= 12
+
+
+@pytest.mark.parametrize('needs_more_evidence', [False, True])
+async def test_resolved_verification_can_publish_after_repair_or_retrieval(store, settings, needs_more_evidence):
+    release(store); sid, _ = session(store)
+
+    class RecoveringProvider(FakeProvider):
+        checks = 0
+
+        async def generate(self, schema, instruction, payload, budget):
+            if schema is Verification:
+                self.checks += 1
+                self.verification = (Verification(supported_claim_indexes=[0],
+                    issues=[] if needs_more_evidence else ['Cần kiểm tra lại điều kiện'],
+                    needs_more_evidence=needs_more_evidence, followup_query='điều kiện bồi thường')
+                    if self.checks == 1 else Verification(supported_claim_indexes=[0]))
+            return await super().generate(schema, instruction, payload, budget)
+
+    provider = RecoveringProvider(settings)
+    result = await Agent(store, provider).run(
+        ChatRequest(session_id=sid, message='Điều kiện bồi thường được quy định thế nào?'), noop)
+    assert provider.checks == 2
+    assert result.status == 'answered' and result.verified_claims and result.citations
+    assert result.llm_calls <= 6 and result.tool_calls <= 12
+    assert any(event.step == 'repair' for event in result.trace) is not needs_more_evidence
+
+
+@pytest.mark.parametrize('qualified', [False, True])
+async def test_future_qualification_must_be_verified_before_finish(store, settings, qualified):
+    start = date(2027, 1, 1)
+    law = document(document_number='40/2027/QĐ-UBND',
+                   text='Điều 1. Quyết định có hiệu lực thi hành từ ngày 01/01/2027.')
+    law.effective_from = start
+    release(store, [law]); sid, _ = session(store)
+    text = 'Quyết định có hiệu lực thi hành từ ngày 01/01/2027.'
+    if qualified:
+        text += ' Văn bản này chưa có hiệu lực tại ngày 18/10/2026.'
+    draft = Draft(status='answered', claims=[Claim(kind='applicability', text=text, citation_ids=['law-1'])])
+    result = await Agent(store, FakeProvider(settings, draft=draft)).run(
+        ChatRequest(session_id=sid, message='40/2027/QĐ-UBND có hiệu lực từ khi nào?', as_of=date(2026, 10, 18)), noop)
+    if qualified:
+        assert result.status == 'answered', result.trace
+        assert result.verified_claims[0].text == text
+    else:
+        assert result.status == 'insufficient_evidence'
+        assert not result.verified_claims and not result.citations
+    assert draft.claims[0].text == text
+
+
 async def test_private_guarantee_requests_clarification_without_consuming_tools(store, settings):
     release(store); sid, _ = session(store)
     result = await Agent(store, FakeProvider(settings)).run(

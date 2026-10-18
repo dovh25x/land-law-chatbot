@@ -1,11 +1,28 @@
-# Tài liệu hệ thống
+# Tài liệu kỹ thuật
 
-- [PRD](PRD.md): vấn đề, người dùng, phạm vi và hành vi cần đạt.
-- [Kiến trúc](ARCHITECTURE.md): luồng xử lý, ranh giới tin cậy và lưu trữ.
-- [API](API.md): contract phiên, SSE, history và lỗi.
-- [Frontend](FRONTEND.md): thiết kế Figma, component và kiểm tra tương tác.
-- [Vận hành](OPERATIONS.md): cấu hình, freshness, quota, khôi phục và triển khai.
-- [Đánh giá](EVALUATION.md): bộ câu hỏi khóa, metric và đọc báo cáo.
-- [ADR](adr/README.md): các quyết định và hệ quả.
+Tài liệu mô tả phạm vi sản phẩm, thiết kế và cách vận hành Hanoi Land Law Assistant. Các kết quả đo và xác minh thuộc từng phiên bản được lưu trong `reports/`; tài liệu thiết kế không thay thế bằng chứng thực thi.
 
-`reports/` lưu bằng chứng từng lần chạy. Tài liệu mô tả contract và cách vận hành; không thay thế kết quả kiểm chứng triển khai. Các phần cần quyền cloud hoặc chưa được chạy phải được ghi rõ trong artifact tương ứng.
+## Lộ trình đọc
+
+| Nhu cầu | Tài liệu |
+|---|---|
+| Cài đặt và chạy ứng dụng | [README](../README.md) |
+| Hiểu vấn đề, người dùng và phạm vi | [PRD](PRD.md) |
+| Đọc luồng xử lý và ranh giới tin cậy | [Kiến trúc](ARCHITECTURE.md) |
+| Phản biện thiết kế và xem agent flow | [Agent flow](AGENT_FLOW.md) |
+| Tích hợp phiên, chat và SSE | [API](API.md) |
+| Phát triển giao diện theo Figma | [Frontend](FRONTEND.md) |
+| Triển khai, xử lý sự cố và khôi phục | [Vận hành](OPERATIONS.md) |
+| Chạy và diễn giải đánh giá | [Đánh giá](EVALUATION.md) |
+| Hiểu các lựa chọn kiến trúc | [ADR](adr/README.md) |
+| Chỉnh sửa hoặc xuất lại sơ đồ | [Nguồn diagram](diagrams/README.md) |
+
+## Quy ước tài liệu
+
+- README là điểm bắt đầu; mỗi tài liệu chuyên đề chịu trách nhiệm cho một chủ đề, dùng liên kết thay vì sao chép nội dung.
+- PRD mô tả hành vi cần đạt. Kiến trúc và API mô tả implementation; khác biệt hoặc giới hạn đã biết phải được ghi rõ.
+- ADR lưu bối cảnh, lựa chọn và hệ quả của quyết định. Trạng thái “chấp nhận” không có nghĩa mọi tiêu chí chất lượng đã đạt.
+- `reports/` chứa kết quả, checksum, cấu hình và phạm vi kiểm chứng của từng lần chạy. Không cập nhật số liệu bằng cách sửa tài liệu thiết kế.
+- Ví dụ cấu hình không chứa credentials. `.env.example` liệt kê tên biến; secret được quản lý ngoài Git.
+
+Khi thay đổi subsystem, cập nhật tài liệu sở hữu contract đó và ADR nếu quyết định kiến trúc thay đổi. Không viết lại artifact lịch sử để khiến kết quả cũ có vẻ khớp phiên bản mới.

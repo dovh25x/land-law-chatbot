@@ -1,0 +1,18 @@
+{
+  "checked_at": "2026-10-17T17:22:54.306320+00:00",
+  "model": "openai/gpt-oss-120b",
+  "usage_scope": "operator",
+  "public_browser_flow_verified": false,
+  "passed": false,
+  "error_category": "ProviderUnavailable",
+  "retry_after": null,
+  "llm_calls": 1,
+  "retryable": true,
+  "format_failure": true,
+  "responses": [
+    {
+      "http_status": 400,
+      "error_code": "json_validate_failed"
+    }
+  ]
+}

@@ -1,55 +1,103 @@
 # Vành đai 4 · Trợ lý pháp lý
 
-Hỏi đáp tiếng Việt về bồi thường, hỗ trợ và tái định cư cho dự án Vành đai 4 tại Hà Nội. Mỗi kết luận cần có chứng cứ trong corpus và được kiểm tra trước khi trả lời. Tin dự án chỉ cung cấp bối cảnh; hệ thống không xác định thửa đất, tính tiền hoặc bảo đảm quyền lợi cá nhân.
+Ứng dụng tra cứu bằng tiếng Việt về bồi thường, hỗ trợ và tái định cư cho dự án Vành đai 4 tại Hà Nội. Hệ thống kết hợp nguồn pháp luật và hồ sơ dự án có xuất xứ với một pipeline Agentic RAG; kết luận chỉ được phát sau bước kiểm chứng.
 
-Giao diện hội thoại, thư viện nguồn và chi tiết thực thi là ba cách kiểm tra kết quả. Hội thoại lưu tại trình duyệt trong 7 ngày, không đồng bộ thiết bị. Nội dung câu hỏi và ngữ cảnh được gửi tới Groq để xử lý; không nhập thông tin định danh hoặc hồ sơ riêng tư.
+[Ứng dụng](https://hanoi-land-law.pages.dev) · [Tài liệu](docs/README.md) · [Kiến trúc](docs/ARCHITECTURE.md) · [Đánh giá](docs/EVALUATION.md)
 
-## Chạy local
+## Khả năng và phạm vi
 
-Cần Python 3.12, Node.js 24 và khoảng 1 GiB dung lượng trống cho môi trường/model/corpus.
+- Tra cứu quy định, điều kiện áp dụng, mốc hiệu lực và quan hệ sửa đổi hoặc thay thế văn bản.
+- Hỏi tiếp theo ngữ cảnh hội thoại; mở nguồn, điều khoản, trang và đoạn trích của câu trả lời.
+- Xem các bước thực thi quan sát được để đối chiếu quá trình tra cứu.
+- Tra cứu thư viện nguồn độc lập với chức năng sinh câu trả lời.
+- Lưu và xóa hội thoại trên thiết bị; hỗ trợ giao diện sáng, tối và màn hình nhỏ.
+
+Phạm vi vận hành chỉ gồm Vành đai 4 và luật chung liên quan. Thông tin tổng quan dự án không xác định thửa đất, số tiền bồi thường hoặc quyền lợi của một hộ cụ thể. Sản phẩm đang ở trạng thái **bản thử nghiệm**, chưa có thẩm định pháp lý độc lập.
+
+Hội thoại được lưu trong trình duyệt tối đa 7 ngày, không đồng bộ thiết bị. Khi gửi câu hỏi, nội dung và ngữ cảnh cần thiết được truyền tới backend và Groq để xử lý. Không nhập thông tin định danh hoặc hồ sơ riêng tư. Xem [ranh giới dữ liệu](docs/ARCHITECTURE.md#lưu-trữ-và-quyền-riêng-tư).
+
+## Khởi chạy local
+
+### 1. Chuẩn bị môi trường
+
+Sử dụng Python 3.12 và Node.js 24. Các lệnh bên dưới chạy từ thư mục gốc repository, trừ khi có chỉ dẫn khác.
 
 ```bash
 python3 -m venv .venv
 .venv/bin/pip install -r requirements.lock
 .venv/bin/pip install --no-deps -e .
+npm --prefix frontend ci
 cp .env.example .env
 .venv/bin/python backend/landlaw/local_embedding.py download models/e5
-npm --prefix frontend ci
 ```
 
-Điền `GROQ_API_KEY` trong `.env`. Local dùng SQLite: để trống `DATABASE_URL` và `ADMIN_DATABASE_URL`, đặt `SQLITE_PATH=data/ring4.db`. Không dùng credentials production cho quickstart.
+Trong `.env`, cấu hình `GROQ_API_KEY`, giữ `APP_ENV=development`, để trống `DATABASE_URL` và `ADMIN_DATABASE_URL`, đặt `SQLITE_PATH=data/ring4.db`. Model E5 được tải riêng và xác minh checksum; không cần chạy lại embedding của corpus phát hành.
 
-Corpus hiện tại: [`corpus-581da76c79b0b362`](https://github.com/dovh25x/land-law-chatbot/releases/tag/corpus-581da76c79b0b362), gồm 59 tài liệu và 7.555 chunk, giữ embedding E5 có sẵn. Tải ba asset `corpus-backup.json`, `manifest.json`, `SHA256SUMS` từ Release; không cần ingest lại.
+### 2. Tải và khôi phục corpus
 
-Đặt ba asset ở thư mục gốc repo và chạy:
+Tải `corpus-backup.json`, `manifest.json` và `SHA256SUMS` từ [corpus Release](https://github.com/dovh25x/land-law-chatbot/releases/tag/corpus-581da76c79b0b362). Snapshot này chứa 59 tài liệu và 7.555 chunk, không chứa hội thoại hoặc model cache.
+
+Đặt ba asset tại thư mục gốc repository, rồi chạy:
 
 ```bash
 sha256sum -c SHA256SUMS
 DATABASE_URL='' ADMIN_DATABASE_URL='' SQLITE_PATH=data/ring4.db .venv/bin/land-law restore corpus-backup.json
+```
+
+Chỉ restore vào database local mới hoặc database dành riêng cho việc khôi phục. Quy trình PostgreSQL và kiểm tra toàn vẹn được mô tả trong [vận hành](docs/OPERATIONS.md#backup-và-khôi-phục).
+
+### 3. Chạy backend và frontend
+
+Terminal thứ nhất:
+
+```bash
 .venv/bin/uvicorn landlaw.api:app --host 127.0.0.1 --port 8000
 ```
 
-Trong terminal khác: `cd frontend && npm run dev`. Vite proxy phục vụ API local. Production dùng API cùng origin qua Cloudflare; không trỏ giao diện trực tiếp tới Render.
+Terminal thứ hai:
 
-## Kiến trúc và đọc source
+```bash
+npm --prefix frontend run dev
+```
 
-![Kiến trúc](docs/diagrams/architecture.svg)
+Mở địa chỉ Vite in trong terminal. Vite chuyển tiếp `/api` và `/readyz` tới backend local. OpenAPI có tại `http://127.0.0.1:8000/docs` trong môi trường development.
 
-FastAPI/LangGraph điều phối một pipeline plan → công cụ chỉ đọc → synthesis → verify. Groq GPT-OSS 120B sinh JSON; E5 ONNX Q8 384 chiều và hybrid retrieval tìm chứng cứ. SQLite phục vụ local; PostgreSQL/pgvector phục vụ cloud. Embedding của snapshot được giữ khi thu gọn corpus.
+Nguồn quá hạn hoặc giới hạn thực tế của Groq có thể ngăn sinh câu trả lời dù ứng dụng khởi động thành công. Kiểm tra `/api/v1/status`; không tự đổi ngày kiểm tra nguồn để vượt điều kiện này.
 
-Bắt đầu từ [PRD](docs/PRD.md), [kiến trúc](docs/ARCHITECTURE.md), rồi [API](docs/API.md). [Mục lục tài liệu](docs/README.md) dẫn tới vận hành, thiết kế Figma, đánh giá và các ADR. `AGENTS.md` chỉ giữ ngữ cảnh phát triển ngắn.
+## Kiến trúc tổng quan
 
-## Kiểm tra và kết quả
+![Kiến trúc hệ thống](docs/diagrams/architecture.svg)
+
+React/Vite giao tiếp với FastAPI qua Cloudflare Pages Function. Backend chạy một graph plan → retrieval/tools → synthesis → verify, dùng Groq GPT-OSS 120B và E5 ONNX Q8 384 chiều. SQLite hỗ trợ local; PostgreSQL/pgvector phục vụ deployment. Ingest và OCR thực hiện ngoài runtime phục vụ chat.
+
+| Thư mục | Trách nhiệm |
+|---|---|
+| `backend/landlaw/` | API, điều phối agent, retrieval, provider và lưu trữ |
+| `frontend/` | Giao diện, lịch sử tại trình duyệt và proxy Cloudflare |
+| `data/` | Manifest nguồn, quan hệ văn bản và các bộ câu hỏi đã khóa |
+| `migrations/` | Schema và phân quyền PostgreSQL |
+| `scripts/` | Đánh giá, đóng gói corpus, triển khai và xác minh |
+| `docs/` | Yêu cầu sản phẩm, thiết kế hệ thống, contract và ADR |
+| `reports/` | Artifact đánh giá và kiểm tra có phiên bản |
+
+Bắt đầu với [PRD](docs/PRD.md), sau đó đọc [kiến trúc](docs/ARCHITECTURE.md) và [API](docs/API.md). Hướng dẫn dành cho coding agent nằm trong [AGENTS.md](AGENTS.md).
+
+## Kiểm tra và đánh giá
 
 ```bash
 .venv/bin/python -m pytest -q
 .venv/bin/python scripts/check_secrets.py
-cd frontend
-npm test
-npm run build
-npm run test:e2e
+npm --prefix frontend test
+npm --prefix frontend run build
+npm --prefix frontend run test:e2e
 ```
 
-Unit/E2E dùng fixture; không chứng minh chất lượng model thật. Kết quả có phiên bản nằm tại [reports](reports/), gồm [bộ câu hỏi tự nhiên trên cấu hình hiện tại](reports/evaluation/ring4-c4f0c661/natural/results.md), API chỉ công bố `reports/latest.json` kèm kiểm tra fingerprint. Báo cáo cũ dùng corpus/cấu hình khác là bằng chứng lịch sử; không suy ra chất lượng phiên bản hiện hành. Không diễn giải tỷ lệ đạt gồm cả hỏi lại/từ chối thành độ chính xác pháp luật.
+Unit test và E2E dùng fixture để kiểm tra hành vi phần mềm. Đánh giá chất lượng model được thực hiện riêng trên các bộ câu hỏi đã khóa; phương pháp, mẫu số và quy tắc công bố nằm tại [hướng dẫn đánh giá](docs/EVALUATION.md).
 
-Giới hạn: corpus có coverage gaps, kiểm tra hiệu lực và verifier có thể bỏ sót; chưa có thẩm định pháp lý độc lập. Free hosting có cold start và hạn mức provider. Khi nguồn quá hạn, thiếu chứng cứ hoặc hết ngân sách, hệ thống phải công khai giới hạn thay vì suy đoán.
+[Báo cáo có phiên bản](reports/evaluation/ring4-c4f0c661/README.md) ghi rõ các ca chưa đáp ứng yêu cầu. API công bố `reports/latest.json` kèm trạng thái khớp corpus và fingerprint. Kết quả SQLite không được trình bày như kết quả PostgreSQL; tỷ lệ đạt gồm cả hỏi lại và từ chối không phải độ chính xác pháp luật.
+
+## Vận hành và giới hạn
+
+Deployment sử dụng Cloudflare Pages, Render và Supabase trên cấu hình Free hiện có. Cold start, hạn mức provider và yêu cầu tương tác Turnstile có thể ảnh hưởng trải nghiệm. Chưa có cam kết SLA; corpus còn coverage gaps và verifier có thể bỏ sót hoặc từ chối quá mức.
+
+Xem [runbook vận hành](docs/OPERATIONS.md) để cấu hình ingress, quản lý quota, rà soát nguồn, triển khai và khôi phục. Trạng thái kiểm chứng deployment nằm trong [artifact triển khai](reports/deployment-ring4.json), tách biệt với đánh giá chất lượng câu trả lời.

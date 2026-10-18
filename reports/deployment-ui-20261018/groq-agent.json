@@ -1,0 +1,35 @@
+{
+  "checked_at": "2026-10-17T17:24:28.813794+00:00",
+  "model": "openai/gpt-oss-120b",
+  "usage_scope": "operator",
+  "public_browser_flow_verified": false,
+  "runtime_configuration_sha256": "d767061305cb1a20082843252b1d6eba01a69f72fdabc95c62494c19242d175c",
+  "probe": "Existing Agent pipeline with application schemas; technical Probe schema failures remain in separate attempts.",
+  "passed": true,
+  "status": "answered",
+  "support_level": "full",
+  "llm_calls": 4,
+  "tool_calls": 8,
+  "tokens": 7848,
+  "elapsed_ms": 33580,
+  "citations": 1,
+  "corpus_release": "corpus-581da76c79b0b362",
+  "responses": [
+    {
+      "http_status": 200,
+      "error_code": null
+    },
+    {
+      "http_status": 200,
+      "error_code": null
+    },
+    {
+      "http_status": 429,
+      "error_code": "rate_limit_exceeded"
+    },
+    {
+      "http_status": 200,
+      "error_code": null
+    }
+  ]
+}

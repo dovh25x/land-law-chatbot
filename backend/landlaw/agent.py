@@ -1107,6 +1107,8 @@ class Agent:
                 if not current_transitions and not (disclosed_history and requested_history):
                     structural_issues.append(f'Claim {index}: văn bản đã hết hiệu lực tại thời điểm hỏi; cần nguồn chuyển tiếp đang áp dụng hoặc giới hạn rõ việc mô tả quy định lịch sử')
             if claim.kind=='applicability' and any(evidence[i].applicability=='future' for i in claim.citation_ids if i in evidence):
+                if not any(phrase in normalized_claim for phrase in ('chua co hieu luc', 'chua den ngay co hieu luc')):
+                    structural_issues.append(f'Claim {index}: phải nêu rõ văn bản chưa có hiệu lực trong chính claim trước khi kiểm chứng')
                 if any(phrase in normalized_claim for phrase in ('duoc boi thuong','duoc ho tro','co quyen','dong/','trieu dong')):
                     structural_issues.append(f'Claim {index}: không dùng nhãn hiệu lực để áp dụng quyền lợi từ văn bản tương lai')
             cited_text=' '.join(evidence[i].chunk.text for i in claim.citation_ids if i in evidence)
@@ -1331,18 +1333,14 @@ class Agent:
         draft, check = state["draft"], state["verification"]
         supported = set(check.supported_claim_indexes)
         claims = [c for i, c in enumerate(draft.claims) if i in supported]
-        if len(claims) != len(draft.claims):
+        if len(claims) != len(draft.claims) or check.issues or check.needs_more_evidence:
             # Partial paragraphs can lose the subject or condition they depend on.
-            # Prefer source-only limitation to releasing a misleading fragment.
+            # Global issues and unresolved evidence requests also veto release,
+            # even when the verifier contradictorily approves every index.
             claims=[]
         for claim in claims:
             claim.text=re.sub(r'\s*\(C\d+\)', '', claim.text)
         evidence = {e.chunk.id: e for e in state["evidence"]}
-        for index,claim in enumerate(claims):
-            if claim.kind=='applicability' and all(evidence[i].applicability=='future' for i in claim.citation_ids):
-                qualification=f"Văn bản này chưa có hiệu lực tại ngày {state['as_of'].strftime('%d/%m/%Y')}."
-                if qualification not in claim.text:
-                    claims[index]=claim.model_copy(update={'text':claim.text+' '+qualification})
         cited_ids = list(dict.fromkeys(i for c in claims for i in c.citation_ids))
         citations = [Citation(id=i, document_id=evidence[i].document.id, title=evidence[i].document.title,
                               document_number=evidence[i].document.document_number, url=str(evidence[i].document.url),
@@ -1351,7 +1349,7 @@ class Agent:
                               source_review_notes=evidence[i].document.source_review_notes,
                               page=evidence[i].chunk.page, source_url=citation_source_url(evidence[i])) for i in cited_ids]
         status = draft.status
-        if draft.claims and (len(claims) != len(draft.claims) or check.issues):
+        if len(claims) != len(draft.claims) or check.issues or check.needs_more_evidence:
             status = "insufficient_evidence"
         if status == "answered" and not claims:
             status = "insufficient_evidence"
@@ -1402,7 +1400,7 @@ class Agent:
             for number in ('40/2026','56/2024'))
         if historical_question and any(g['document_id']=='qd-56-2024-hanoi' for g in (release or {}).get('coverage_gaps',[])):
             content+='\n\nBộ dữ liệu chưa có toàn văn đạt kiểm tra của QĐ56/2024; chưa thể xác định đầy đủ quyền lợi hồ sơ lịch sử phụ thuộc văn bản này.'
-        if draft.next_steps and not check.issues and not outside:
+        if draft.next_steps and not check.issues and not check.needs_more_evidence and not outside:
             content += "\n\nBước tiếp theo:\n" + "\n".join(f"- {x}" for x in draft.next_steps)
         content += f"\n\nThời điểm xem xét: {state['as_of'].strftime('%d/%m/%Y')}."
         if release:

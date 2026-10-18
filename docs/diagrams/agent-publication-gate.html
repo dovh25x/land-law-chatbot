@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cổng phát hành: verdict sạch mới được trả claim</title>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500;600&family=Noto+Serif:ital@0;1&family=Noto+Sans+KR:wght@400;500;600&family=Noto+Serif+KR:wght@400&family=Noto+Sans+TC:wght@400;500;600&family=Noto+Serif+TC:wght@400&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --color-paper:   #f5f5f5;   /* white-smoke */
+      --color-ink:     #2d3142;   /* jet-black */
+      --color-muted:   #4f5d75;   /* blue-slate */
+      --color-accent:  #bf4520;   /* burnt-tangerine */
+      --font-sans:     'Geist', system-ui, sans-serif;
+      --font-serif:    'Instrument Serif', 'Noto Serif', 'Noto Serif KR', serif;
+      --font-mono:     'Geist Mono', ui-monospace, monospace;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      background: var(--color-paper);
+      color: var(--color-ink);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 3rem 2rem;
+    }
+
+    .frame { max-width: 1280px; min-width: 0; width: 100%; }
+    /* The SVG holds its readable width (min-width == the viewBox width, so the
+       type ramp is never silently scaled down). This wrapper lets a narrow
+       screen scroll the diagram instead of the whole page. */
+    .diagram-container { width: 100%; overflow-x: auto; }
+
+    .eyebrow {
+      font-family: var(--font-mono);
+      font-size: 0.66rem;
+      font-weight: 500;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--color-muted);
+      margin-bottom: 0.5rem;
+    }
+
+    h1 {
+      font-family: var(--font-serif);
+      font-size: clamp(1.5rem, 2.4vw + 0.75rem, 2rem);
+      font-weight: 400;
+      letter-spacing: -0.02em;
+      line-height: 1.15;
+      color: var(--color-ink);
+      margin-bottom: 1.5rem;
+    }
+
+    svg { width: 100%; min-width: 1280px; display: block; }
+    /* Paper has no scrollbar, so the local scroller would clip instead of
+       scroll. Let the diagram scale down to the sheet: smaller but whole
+       beats sharp but cut off. Must come after the svg rule above - a media
+       query adds no specificity, so a later plain rule would win. */
+    @media print {
+      .diagram-container { overflow-x: visible; }
+      svg { min-width: 0; }
+    }
+  </style>
+<style>
+.node {fill:#fff;stroke:#4f5d75;stroke-width:1}
+.focus {fill:#fff;stroke:#bf4520;stroke-width:2}
+.decision {fill:#fff;stroke:#4f5d75;stroke-width:1}
+.name {font:600 12px 'Geist',system-ui,sans-serif;fill:#2d3142}
+.detail {font:400 11px 'Geist',system-ui,sans-serif;fill:#4f5d75}
+.technical {font:400 9px 'Geist Mono',ui-monospace,monospace;fill:#4f5d75}
+.heading {font:400 28px 'Instrument Serif','Noto Serif',serif;fill:#2d3142}
+.arrow-label {font:400 8px 'Geist Mono',ui-monospace,monospace;fill:#4f5d75;letter-spacing:.06em}
+.edge {fill:none;stroke:#4f5d75;stroke-width:1.5;marker-end:url(#arrow)}
+.legend {font:400 11px 'Geist',system-ui,sans-serif;fill:#4f5d75}
+</style></head>
+<body>
+  <div class="frame">
+    <p class="eyebrow">Flowchart · Diagram Design</p>
+    <h1>Cổng phát hành: verdict sạch mới được trả claim</h1>
+
+    <!-- Replace agent-publication-gate with a unique slug for this diagram before export. -->
+    <div class="diagram-container">
+      <svg viewBox="0 0 1280 720" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="agent-publication-gate-title agent-publication-gate-desc">
+<title id="agent-publication-gate-title">Cổng phát hành: verdict sạch mới được trả claim</title>
+<desc id="agent-publication-gate-desc">Lỗi cấu trúc, lỗi ngữ nghĩa, thiếu nguồn hoặc sai thời điểm đều ngăn phát hành nhóm claim và citation.</desc>
+<defs><marker id="arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><path d="M0 0L8 3L0 6" fill="#4f5d75"/></marker></defs>
+<rect width="1280" height="720" fill="#f5f5f5"/>
+<text class="heading" x="40" y="56" text-anchor="start">Cổng phát hành: verdict sạch mới được trả claim</text>
+<path class="edge" d="M176 200V272"/>
+<path class="edge" d="M288 328H384"/>
+<path class="edge" d="M176 384V484"/>
+<path class="edge" d="M608 328H656"/>
+<path class="edge" d="M880 328H936Q944 328 944 320V220Q944 212 952 212H1008"/>
+<path class="edge" d="M768 384V512Q768 520 776 520H1008"/>
+<path class="edge" d="M288 520H336Q344 520 344 528V592Q344 600 352 600H1112Q1120 600 1120 592V556"/><rect x="316.0" y="302" width="40" height="14" fill="#f5f5f5"/><text class="arrow-label" x="336" y="312" text-anchor="middle">CÓ</text>
+<rect x="196.0" y="422" width="56" height="14" fill="#f5f5f5"/><text class="arrow-label" x="224" y="432" text-anchor="middle">KHÔNG</text>
+<rect x="956.0" y="258" width="40" height="14" fill="#f5f5f5"/><text class="arrow-label" x="976" y="268" text-anchor="middle">CÓ</text>
+<rect x="784.0" y="422" width="56" height="14" fill="#f5f5f5"/><text class="arrow-label" x="812" y="432" text-anchor="middle">KHÔNG</text><rect class="node" x="64" y="128" width="224" height="72" rx="6"/><text class="name" x="176.0" y="156" text-anchor="middle">Draft và chứng cứ</text><text class="detail" x="176.0" y="176" text-anchor="middle">Chỉ dữ liệu của lượt hiện tại</text>
+<polygon class="decision" points="176,272.0 288.0,328 176,384.0 64.0,328"/><text class="name" x="176" y="324" text-anchor="middle">Cấu trúc hợp lệ?</text><text class="detail" x="176" y="344" text-anchor="middle">Nguồn, chủ thể, thời điểm</text>
+<rect class="node" x="384" y="292" width="224" height="72" rx="6"/><text class="name" x="496.0" y="320" text-anchor="middle">Kiểm chứng nội dung</text><text class="detail" x="496.0" y="340" text-anchor="middle">Ngữ nghĩa và span nguyên văn</text>
+<rect class="node" x="64" y="484" width="224" height="72" rx="6"/><text class="name" x="176.0" y="512" text-anchor="middle">Ghi lỗi cấu trúc</text><text class="detail" x="176.0" y="532" text-anchor="middle">Không gọi LLM duyệt lại lỗi</text>
+<polygon class="decision" points="768,272.0 880.0,328 768,384.0 656.0,328"/><text class="name" x="768" y="324" text-anchor="middle">Đủ để phát hành?</text><text class="detail" x="768" y="344" text-anchor="middle">Verdict sạch; nguồn phù hợp</text>
+<rect class="focus" x="1008" y="176" width="224" height="72" rx="6"/><text class="name" x="1120.0" y="204" text-anchor="middle">Trả claim đã duyệt</text><text class="detail" x="1120.0" y="224" text-anchor="middle">Giữ điều kiện đã kiểm chứng</text>
+<rect class="focus" x="1008" y="484" width="224" height="72" rx="6"/><text class="name" x="1120.0" y="512" text-anchor="middle">Thiếu chứng cứ</text><text class="detail" x="1120.0" y="532" text-anchor="middle">Loại nhóm claim và citation</text><text class="detail" x="656" y="128" text-anchor="start">Tại finish, sau retry / repair nếu có</text><text class="detail" x="656" y="152" text-anchor="start">Đủ claim được duyệt; không issues</text><text class="detail" x="656" y="172" text-anchor="start">Không needs_more_evidence; đủ mới và đúng phạm vi</text><text class="legend" x="40" y="656" text-anchor="start">Lỗi còn tồn tại phủ quyết phát hành, kể cả khi verifier duyệt tất cả index.</text><text class="legend" x="40" y="680" text-anchor="start">Claim tương lai phải nêu rõ chưa có hiệu lực trước verify; finish không tự nối điều kiện.</text>
+</svg>
+    </div>
+  </div>
+</body>
+</html>

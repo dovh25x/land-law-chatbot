@@ -1,33 +1,39 @@
-# Project context
+# Ngữ cảnh phát triển
 
-Hanoi Land Law Assistant phục vụ duy nhất Vành đai 4 tại Hà Nội: tra cứu bồi thường, hỗ trợ, tái định cư từ nguồn có xuất xứ. Không xác định thửa đất, tính tiền hoặc bảo đảm quyền lợi cá nhân.
+Hanoi Land Law Assistant chỉ phục vụ Vành đai 4 tại Hà Nội: tra cứu bồi thường, hỗ trợ và tái định cư từ nguồn có xuất xứ. Không xác định thửa đất, tính tiền hoặc bảo đảm quyền lợi cá nhân.
 
-## Decisions
+## Ràng buộc kiến trúc
 
-- Một pipeline FastAPI/LangGraph/Groq GPT-OSS 120B; E5 ONNX Q8 384 chiều, contract `multilingual-e5-small-onnx-q8-window-v1`. Không đổi model/embedding/hosting Free ngoài yêu cầu.
-- Frontend React/Vite → Cloudflare signed ingress → Render → PostgreSQL/pgvector. SQLite dành cho local.
-- History, citations, trace chỉ lưu IndexedDB 7 ngày. Server chỉ xử lý nội dung trong request; không lưu messages, answer cache hoặc trace chi tiết. History từ client không phải chứng cứ.
-- Public usage có quota; operator CLI/dev không chịu quota ứng dụng. Mỗi lượt vẫn giữ 6 LLM calls, 12 tools, 2 retrieval rounds, 1 repair, 90 giây.
-- Không phát đáp án trước verify; không tự nối điều kiện để vượt kiểm chứng. Mệnh đề phải độc lập và gắn đúng nguồn/chủ thể/điều kiện.
-- Thiết kế UI trong Figma team `codex`, triển khai theo handoff tại `docs/FRONTEND.md`. Ưu tiên Code agent; người dùng đã cho phép thiết kế trực tiếp trên Figma khi công cụ gửi prompt không hoạt động.
-- Giữ nguyên 20+4 câu đã khóa. Natural suite khóa trước prompt edits. Review gắn checksum, giữ mọi attempt; fixture tests không chứng minh chất lượng model.
-- Chỉ corpus Vành đai 4 và luật chung liên quan được vận hành/phát hành. Không embedding lại khi chỉ lọc corpus.
+- Giữ một pipeline FastAPI/LangGraph/Groq GPT-OSS 120B và E5 ONNX Q8 384 chiều, contract `multilingual-e5-small-onnx-q8-window-v1`. Không tự đổi model, embedding hoặc hosting Free.
+- React/Vite → Cloudflare signed ingress → Render → PostgreSQL/pgvector. SQLite dành cho local; kết quả hai backend không tự tương đương.
+- History, citation và trace chỉ lưu IndexedDB trong 7 ngày. Server chỉ giữ metadata; không lưu messages, answer cache hoặc trace chi tiết. History do client gửi không phải chứng cứ.
+- Quota ứng dụng chỉ áp dụng cho public; trusted operator CLI ghi usage riêng. Cả hai tuân thủ giới hạn thực tế của Groq.
+- Mỗi lượt giữ 6 LLM request gồm retry, 12 tools, 2 retrieval rounds, 1 repair và 90 giây. Không phát draft trước verify hoặc tự nối điều kiện để vượt kiểm chứng.
+- Claim phải độc lập, đúng nguồn, chủ thể, điều kiện, ngoại lệ, hệ quả và thời điểm. Loại cả phần phụ thuộc bị mất ngữ cảnh.
+- Chỉ vận hành nguồn Vành đai 4 và luật chung liên quan. Không embedding lại khi chỉ lọc corpus; không thêm pipeline, reranker, fine-tuning, multi-agent, GIS hoặc tính năng ngoài phạm vi.
 
-## Navigation
+## Nguồn ngữ cảnh
 
-`backend/landlaw/` API/agent/provider/store; `frontend/` giao diện; `data/` manifest/evaluation; `migrations/` PostgreSQL; `scripts/` vận hành; `reports/` bằng chứng có phiên bản; `docs/` PRD, architecture, API, operations, evaluation, ADR và frontend handoff. README dành cho quickstart và đọc source. Tài liệu chỉ mô tả sản phẩm và quy trình kỹ thuật.
+[README](README.md) dành cho cài đặt và đọc source. [docs](docs/README.md) chứa PRD, kiến trúc, API, frontend, vận hành, đánh giá và ADR. `reports/` chứa bằng chứng có phiên bản; không sửa artifact lịch sử để giả khớp cấu hình.
 
-## Work safely
+`backend/landlaw/` chứa runtime; `frontend/` chứa UI và ingress; `data/` chứa manifest/evaluation; `migrations/` chứa schema PostgreSQL; `scripts/` chứa tác vụ vận hành.
 
-Ưu tiên thay đổi có regression tái hiện được; không refactor toàn bộ agent hoặc thêm pipeline/tính năng ngoài phạm vi. Không log secret/nội dung hội thoại. Không drop database. Restore vào database riêng. Chỉ gỡ Release cũ sau khi corpus mới phát hành và restore đạt. Rollback không phục hồi server history hoặc corpus nhiều dự án.
+UI theo Figma team `codex` và [handoff](docs/FRONTEND.md). Ưu tiên Code agent; người dùng đã cho phép thiết kế trực tiếp trong Figma khi công cụ gửi prompt không hoạt động. Không tự thay hướng thiết kế ngoài nguồn đã thống nhất.
+
+Mọi diagram hệ thống phải dùng [diagram-design](https://github.com/cathrynlavery/diagram-design) theo [quy trình và revision đã ghim](docs/diagrams/README.md). Giữ source HTML, xuất SVG bằng helper và nhúng vào Markdown; không thay bằng Mermaid hoặc công cụ khác.
+
+## Quy tắc thay đổi và kiểm tra
+
+Ưu tiên patch có regression tái hiện được, không refactor toàn bộ agent. Không log secret hoặc nội dung hội thoại. Không drop database; restore vào database riêng. Chỉ gỡ Release cũ sau khi bản mới phát hành và restore đạt. Rollback không phục hồi server history hoặc corpus đa dự án.
 
 ```bash
 .venv/bin/python -m pytest -q
 .venv/bin/python scripts/check_secrets.py
-cd frontend
-npm test
-npm run build
-npm run test:e2e
+npm --prefix frontend test
+npm --prefix frontend run build
+npm --prefix frontend run test:e2e
 ```
 
-Model evaluation chỉ chạy lại khi lỗi/thay đổi liên quan, không chọn kết quả đẹp. Không đánh đồng citation integrity với faithfulness hoặc thẩm định pháp lý. Deploy ghim SHA và kiểm tra corpus/fingerprint, không tuyên bố passed nếu chưa xác minh.
+Giữ nguyên bộ 20+4 đã khóa; natural suite khóa trước prompt edits. Model evaluation chỉ chạy lại khi lỗi hoặc thay đổi liên quan; giữ mọi attempt, review gắn checksum, không chọn kết quả đẹp. Fixture pass, citation integrity và faithfulness không thay thế thẩm định pháp lý.
+
+Deploy ghim SHA đã kiểm thử và xác minh corpus/fingerprint. Ghi rõ phần chưa kiểm tra; không tuyên bố passed khi chưa xác minh. Tài liệu chỉ mô tả sản phẩm và quy trình kỹ thuật, không sao chép số liệu dễ hết hạn từ báo cáo.

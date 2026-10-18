@@ -1,0 +1,25 @@
+{
+  "passed": false,
+  "checked_at": "2026-10-17T17:25:01.889Z",
+  "base_url": "https://hanoi-land-law.pages.dev",
+  "phase": "turnstile",
+  "error": "Managed Turnstile did not produce a token; human interaction may be required.",
+  "llm_generation_checked": false,
+  "turnstile_token_observed": false,
+  "turnstile_browser_checked": false,
+  "physical_device": false,
+  "checks": [
+    {
+      "width": 1440,
+      "device_mode": "desktop_browser",
+      "physical_device": false,
+      "corpus_documents": 59,
+      "corpus_release": "corpus-581da76c79b0b362",
+      "runtime_configuration_sha256": "d767061305cb1a20082843252b1d6eba01a69f72fdabc95c62494c19242d175c",
+      "report_matches_configuration": false,
+      "report_matches_corpus": true,
+      "responsive": true,
+      "source_access": true
+    }
+  ]
+}

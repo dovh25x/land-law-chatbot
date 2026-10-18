@@ -1,0 +1,60 @@
+{
+  "checked_at": "2026-10-17T17:27:21.255182+00:00",
+  "deployed_source_commit": "578d31f1f5f2622c9c60a39b7d7f286fc35935f0",
+  "deployment_verified": true,
+  "github_ci_verified": true,
+  "navigation_verified": true,
+  "mobile_mode": "emulated; physical testing waived by user",
+  "verified_viewports": [
+    1440,
+    390,
+    320
+  ],
+  "groq_existing_agent_pipeline_verified": true,
+  "groq_usage_scope": "operator",
+  "groq_probe_attempts": [
+    "groq-operator-attempt-1.json",
+    "groq-operator-attempt-2.json",
+    "groq-agent.json"
+  ],
+  "groq_probe_limitations": "Two standalone technical Probe schema calls failed. Application Agent pipeline succeeded with four calls including a provider 429 retry; all attempts retained. Not a quality evaluation.",
+  "turnstile": {
+    "widget_rendered": true,
+    "visual_evidence": "live/turnstile.png",
+    "visual_observation": "Cloudflare Verify you are human checkbox is visible. DOM-only checkbox/frame detection did not see the closed widget.",
+    "interactive_challenge_automated": false,
+    "test_keys_used": false,
+    "missing_token_rejected": true,
+    "valid_token_session_creation_verified": false
+  },
+  "public_browser_generation_verified": false,
+  "public_browser_blocker": "Managed Turnstile did not produce a token; human interaction may be required.",
+  "all_requested_positive_checks_verified": false,
+  "unchanged": [
+    "Groq GPT-OSS 120B and E5 ONNX Q8 384 contract",
+    "Render Free and existing Cloudflare hosting",
+    "PostgreSQL corpus and publication",
+    "Server metadata-only persistence; browser conversation history",
+    "Locked model evaluation suites"
+  ],
+  "workspace": {
+    "head": "578d31f1f5f2622c9c60a39b7d7f286fc35935f0",
+    "pre_existing_documentation_changes_preserved": true
+  },
+  "evidence_checksums": {
+    "ci.json": "dde9e765d56bad325b5abbf1d2219ec3ed991c50c6ca6bb97453363ddd09fc5c",
+    "cloudflare-deploy.log": "eb5af5863178273d4bf5563f4d8634dd4f9238dee4215f8e288e9354a19ab44c",
+    "deployment.json": "e9806201cf1e6285898e774d276ec447363468a9e5981e00b5f4bade9ffec1fb",
+    "groq-agent.json": "3126e347ed6eff24c36e9f14ec65aba580c2651708f35fdb90c8d80a16407c4c",
+    "groq-operator-attempt-1.json": "4108236eb9d5991f61c8a61d969a68c01e1c95001b12ae1abe52ff4dc9494849",
+    "groq-operator-attempt-2.json": "6ece0bec41778d71fa877d9940defc697b2e2d763d98860c60cd4ba8a9ad0d55",
+    "live/generation.json": "8a416d7259484a36bfbb3706e02d20e43134c8e49af3649cfdc40340e88bf004",
+    "live/navigation-1440.png": "fa5817a042f082900a04694d5fa13e1577d8a527d7bf533ba5b5c3dcfef14fe0",
+    "live/navigation-320.png": "9deedb0fd9c054e890edaa0952b3e18e0b63866ea550232d4817dad7f97476cd",
+    "live/navigation-390.png": "9e172202732a3ff805d61bf45d21fbfe9066391183fbeec098af32bc43f5c678",
+    "live/navigation.json": "ebb964c9a7e75dd8e426ea0a07bdbca3090d60766dc3969f2806745a65944cdb",
+    "live/turnstile-widget.json": "2d976bd743bdcc7a34625d0d965a305e722d1b8d2a0d5fa79332394b752afe99",
+    "live/turnstile.png": "5a1b73f4b0ca996f39f2ca9244b0334358871662de1ecf9622ad9d405c0ffe4b",
+    "render-deploy.json": "d44b3dcac11e1ccdd3a1bd2035248936becfd929a51d8e031a4ff8191bb149b5"
+  }
+}
