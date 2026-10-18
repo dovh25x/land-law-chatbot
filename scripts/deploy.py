@@ -18,9 +18,9 @@ def required(name):
     return value
 
 
-def backend():
+def backend(tested_commit=None):
     token, service_id = required("RENDER_API_KEY"), required("RENDER_SERVICE_ID")
-    commit=subprocess.check_output(["git","rev-parse","HEAD"],text=True).strip()
+    commit=tested_commit or subprocess.check_output(["git","rev-parse","HEAD"],text=True).strip()
     with httpx.Client(base_url="https://api.render.com/v1", timeout=30,
                       headers={"Authorization": f"Bearer {token}"}) as client:
         service = client.get(f"/services/{service_id}")
@@ -49,23 +49,27 @@ def backend():
     raise SystemExit("Deployment still pending; resume status check using the returned deployment in dashboard")
 
 
-def frontend(preview=False):
+def frontend(preview=False, tested_commit=None):
     required("CLOUDFLARE_API_TOKEN"); required("CLOUDFLARE_ACCOUNT_ID")
     project = required("CLOUDFLARE_PAGES_PROJECT")
     api_url = '' if preview else required("VITE_API_BASE_URL")
     if not preview and api_url != 'https://'+project+'.pages.dev':
         raise SystemExit("Production frontend requires the canonical same-origin Pages API")
     subprocess.run(["npm", "run", "build"], cwd="frontend", check=True, env={**os.environ, 'VITE_API_BASE_URL': api_url})
-    subprocess.run(["npx", "--yes", "wrangler@4", "pages", "deploy", "dist", "--project-name", project,
-                    "--branch", "main"], cwd="frontend", check=True)
+    command=["npx", "--yes", "wrangler@4", "pages", "deploy", "dist", "--project-name", project,
+             "--branch", "main"]
+    if tested_commit:command.extend(['--commit-hash',tested_commit])
+    subprocess.run(command, cwd="frontend", check=True)
 
 
 if __name__ == "__main__":
+    tested_commit=None
     if sys.argv[1] in {'backend', 'frontend'}:
         # Recompute evidence before credentials, network calls or a public write.
         from check_release_readiness import require_ready
         try:
-            require_ready(required('RELEASE_READINESS_REPORT'))
+            tested_commit=require_ready(required('RELEASE_READINESS_REPORT'))['source_commit']
         except (ValueError, OSError, KeyError, json.JSONDecodeError):
             raise SystemExit('Deployment blocked: complete current release-readiness evidence is required') from None
-    {"backend": backend, "frontend": frontend, "frontend-preview": lambda: frontend(preview=True)}[sys.argv[1]]()
+    {"backend": lambda: backend(tested_commit), "frontend": lambda: frontend(tested_commit=tested_commit),
+     "frontend-preview": lambda: frontend(preview=True)}[sys.argv[1]]()

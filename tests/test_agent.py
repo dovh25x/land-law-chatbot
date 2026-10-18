@@ -1357,3 +1357,26 @@ def test_ranked_principle_keeps_its_continuation_before_keyword_dense_neighbor(s
     passages,_=Agent(store,FakeProvider(settings)).prompt_context(state)
     assert 'principle-end' in {p['citation_id'] for p in passages}
     assert {p['citation_id'] for p in passages[:2]}=={'principle-start','principle-end'}
+
+
+def test_topic_evidence_cannot_be_displaced_by_generic_authority_headings(store,settings):
+    from landlaw.models import Evidence
+    law=document()
+    generic=law.chunks[0].model_copy(update={'id':'general-authority','locator':'Điều 4',
+        'text':'Điều 4. Cơ quan có thẩm quyền quy định. '+('Ủy ban nhân dân có thẩm quyền theo quy định của pháp luật. '*60)})
+    precise=generic.model_copy(update={'id':'asset-rule','locator':'Điều 16',
+        'text':'Điều 16. Bồi thường chi phí di chuyển tài sản. 1. Bồi thường chi phí di chuyển tài sản khi thu hồi đất. 2. Ủy ban nhân dân cấp tỉnh quy định mức bồi thường.'})
+    state={'request':ChatRequest(session_id='0'*32,message='Ai có thẩm quyền quy định mức bồi thường chi phí chuyển tài sản?'),
+        'evidence':[Evidence(chunk=c,document=law,applicability='current') for c in [generic,precise]],
+        'release':{'documents':[law.model_dump(mode='json')],'relations':[]}}
+    passages,_=Agent(store,FakeProvider(settings)).prompt_context(state)
+    assert passages[0]['citation_id']=='asset-rule'
+
+
+def test_model_list_formatting_changes_only_whitespace_not_dates_or_decimals():
+    from landlaw.agent import model_passage_text
+    text='Điều 12. Nội dung. 1. Mốc 02/04/2026, hệ số 1.5; a) Trường hợp thứ nhất; b) Trường hợp thứ hai. 2. Điều kiện tiếp theo.'
+    formatted=model_passage_text(text)
+    assert ' '.join(formatted.split())==' '.join(text.split())
+    assert '\n1. ' in formatted and '\na) ' in formatted and '\n2. ' in formatted
+    assert '02/04/2026' in formatted and '1.5' in formatted

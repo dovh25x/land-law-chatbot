@@ -297,6 +297,11 @@ def source_spans(evidence):
     return result
 
 
+def model_passage_text(text):
+    """Expose legal list boundaries using whitespace only; citations stay raw."""
+    return re.sub(r'\s+(?=(?:\d{1,2}\.\s|[a-zđ]\)\s))', '\n', text)
+
+
 def resolve_places(aliases, query, as_of):
     query = normalize(query)
     candidates = []
@@ -732,6 +737,19 @@ class Agent:
             references=re.findall(r'\b(?:diem\s+[a-zđ]\s+)?khoan\s+\d+\s+dieu\s+\d+[a-z]?\b',question)
             terms=set(re.findall(r'[a-z0-9]{3,}',question))-{'quyet','dinh','dieu','ngay','theo','khong','van','ban','toi'}
             temporal=any(term in question for term in ('hieu luc','thay the','bai bo','ap dung ngay'))
+            group_scores={}
+            principle_groups=set()
+            safeguard=any(term in question for term in ('bao dam','dam bao','nguyen tac'))
+            lexical_scores={}
+            for item in candidates:
+                body=normalize(item['text'])
+                heading=re.match(r'dieu\s+\d+[a-z]?\s*[.:]\s*(.*?)(?:\s+1\.\s|$)',body)
+                overlap=len(terms & set(body.split()))/max(1,len(body.split()))**.5
+                heading_overlap=len(terms & set(heading[1].split()))/max(1,len(set(heading[1].split()))) if heading else 0
+                key=(item['document_id'],item['locator'].split(' · ')[0])
+                group_scores[key]=max(group_scores.get(key,0),overlap+heading_overlap)
+                lexical_scores[item['citation_id']]=(heading_overlap,overlap)
+                if safeguard and heading and 'nguyen tac' in heading[1]:principle_groups.add(key)
             def relevant(item):
                 body=normalize(item['text']);locator=normalize(item['locator'])
                 exact_article=any(re.match(rf'^dieu {n}(?:\s|$)',locator) for n in articles)
@@ -739,15 +757,14 @@ class Agent:
                 reference_matches=sum(reference in body for reference in references)
                 document_match=any(n in normalize(item.get('document_number') or '') for n in numbers)
                 operative=temporal and any(term in body for term in ('co hieu luc','thay the','bai bo'))
-                overlap=len(terms & set(body.split()))/max(1,len(body.split()))**.5
-                heading=re.match(r'dieu\s+\d+[a-z]?\s*[.:]\s*(.*?)(?:\s+1\.\s|$)',body)
-                heading_overlap=len(terms & set(heading[1].split()))/max(1,len(set(heading[1].split()))) if heading else 0
+                heading_overlap,overlap=lexical_scores[item['citation_id']]
                 timely=not temporal or item['applicability']!='future' or document_match
                 # RRF already ranks substantive evidence. Keep continuations
                 # with that article instead of letting keyword-dense benefits
                 # displace the governing principle in the bounded prompt.
-                group=group_order[(item['document_id'],item['locator'].split(' · ')[0])]
-                return (exact_article and (document_match or not numbers),timely,reference_matches,body_numbers,operative,document_match,item['applicability']=='current',-group,heading_overlap,overlap)
+                key=(item['document_id'],item['locator'].split(' · ')[0])
+                group=group_order[key]
+                return (exact_article and (document_match or not numbers),timely,reference_matches,body_numbers,operative,document_match,item['applicability']=='current',key in principle_groups,group_scores[key],-group,heading_overlap,overlap)
             candidates=sorted(candidates,key=relevant,reverse=True)
             named_docs={item['document_id'] for item in candidates if any(
                 n in normalize(item.get('document_number') or '') for n in numbers)}
@@ -859,13 +876,17 @@ class Agent:
         else:
             contexts,documents=self.prompt_context(state)
             aliases={item['citation_id']:f'C{index+1}' for index,item in enumerate(contexts)}
-            contexts=[{**item,'citation_id':aliases[item['citation_id']]} for item in contexts]
+            contexts=[{**item,'citation_id':aliases[item['citation_id']],
+                       'text':model_passage_text(item['text'])} for item in contexts]
             state["draft"] = await self.provider.generate(Draft,
                 "Answer the actual question in Vietnamese. Use ONE concise, independently qualified claim by default; "
                 "at most three for genuinely separate requested propositions. Put ALL legal content in claims; summary "
                 "is not displayed. citation_ids must be allowed C1/C2 aliases, never document IDs. "
-                "Prefer the source's exact operative wording. Each claim must itself retain its actor, land/asset scope, "
-                "eligibility prerequisites, OR alternatives, exceptions, consequence and applicable time. Do not rely "
+                "Prefer the source's exact operative wording. "
+                "For procedural safeguards, quote the operative sentence establishing the required ordering or "
+                "precondition before other general principles or neighboring benefit/publicity rules. "
+                "Each claim must itself retain its actor, land/asset scope, eligibility prerequisites, OR alternatives, "
+                "exceptions, consequence and applicable time. Do not rely "
                 "on a different claim for a missing condition. Cite every passage needed, including continuations. "
                 "Use the complete parent passage when a child omits conditions; a title/preamble proves no rule. "
                 "Only answer what was asked. Do not add unasked rates, durations, amounts, exhaustive actor lists or "

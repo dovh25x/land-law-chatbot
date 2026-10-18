@@ -11,7 +11,7 @@ from pathlib import Path
 
 import psycopg
 from landlaw.config import Settings
-from landlaw.evaluation import configuration_fingerprint, evaluate
+from landlaw.evaluation import configuration_fingerprint, dataset, evaluate
 from landlaw.provider import GroqProvider, ProviderUnavailable
 from landlaw.security import utcnow
 from landlaw.store import Store
@@ -63,34 +63,48 @@ def candidate_settings(args, folder):
 
 
 async def main(args):
+    if args.no_generation and not args.case_id:
+        raise ValueError('Offline guard evaluation requires explicit frozen case IDs')
     if args.output.exists() and not args.resume:
         raise ValueError('Output exists; use --resume for the same frozen run or select a new directory')
     args.output.mkdir(parents=True, exist_ok=True)
     cooldown_path = args.output/'operator-cooldown.json'
-    if cooldown_path.exists():
+    if cooldown_path.exists() and not args.no_generation:
         cooldown = json.loads(cooldown_path.read_text())
         if datetime.fromisoformat(cooldown['not_before']) > utcnow():
             print(json.dumps({'deferred_until': cooldown['not_before'], 'generation_calls': 0}))
             return
     with tempfile.TemporaryDirectory(prefix='landlaw-generation-candidate-') as folder, candidate_settings(args, folder) as settings:
+        splits=args.split or ('smoke','supplemental','natural')
+        cases={split:{case['id'] for case in dataset(settings.data_dir/f'evaluation/{split}.jsonl')}
+               for split in splits}
+        if args.case_id and not set(args.case_id)<=set().union(*cases.values()):
+            raise ValueError('Unknown frozen case ID for the selected suites')
         fingerprint = lock_configuration(settings, args.output)
         store = Store(settings)
         provider = GroqProvider(settings, store, usage_scope='operator')
         generate = provider.generate
         async def frozen_generate(*positional, **keyword):
+            if args.no_generation:
+                raise ProviderUnavailable('Provider calls disabled for offline guard evaluation',retryable=False)
             if configuration_fingerprint(settings) != fingerprint:
                 raise ValueError('Source changed during model evaluation')
             return await generate(*positional, **keyword)
         provider.generate = frozen_generate
         try:
             store.restore(args.backup)
-            for split in args.split or ('smoke', 'supplemental', 'natural'):
+            for split in splits:
+                chosen=[identifier for identifier in args.case_id or [] if identifier in cases[split]]
+                if args.case_id and not chosen:continue
                 if configuration_fingerprint(settings) != fingerprint:
                     raise ValueError('Source changed between frozen suites')
-                report = await evaluate(settings, store, provider, split, concurrency=1)
+                report = await evaluate(settings, store, provider, split, concurrency=1,case_ids=chosen or None)
                 if configuration_fingerprint(settings) != fingerprint:
                     raise ValueError('Source changed during frozen suite')
                 print(json.dumps({'split': split, 'run_id': report['run_id'], 'results': report['results']}), flush=True)
+                if args.no_generation:
+                    print(json.dumps({'generation_calls_disabled':True,'split':split,'case_ids':chosen}),flush=True)
+                    continue  # Never clear an inherited provider cooldown.
                 remaining = store.cooldown()
                 cooldown_path.write_text(json.dumps({
                     'not_before': (utcnow()+timedelta(seconds=remaining)).isoformat(),
@@ -110,6 +124,8 @@ if __name__ == '__main__':
     parser.add_argument('--split', action='append', choices=('smoke', 'supplemental', 'natural'))
     parser.add_argument('--resume', action='store_true')
     parser.add_argument('--postgres', action='store_true', help='Use a newly created disposable PostgreSQL database; never the serving database')
+    parser.add_argument('--case-id', action='append', help='Prioritize an existing frozen case without changing its full-suite denominator')
+    parser.add_argument('--no-generation', action='store_true', help='Enforce zero provider calls for explicitly selected deterministic cases')
     args = parser.parse_args()
     try:
         asyncio.run(main(args))

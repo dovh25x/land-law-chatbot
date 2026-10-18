@@ -21,6 +21,17 @@ def checksum(path):
     return hashlib.sha256(Path(path).read_bytes()).hexdigest()
 
 
+def revision_matches(tested, head):
+    if not isinstance(tested, str) or len(tested) != 40 or any(c not in '0123456789abcdef' for c in tested):
+        return False
+    if subprocess.run(['git', 'merge-base', '--is-ancestor', tested, head], capture_output=True, check=False).returncode:
+        return False
+    # Evidence must be committable after testing without a self-referential SHA.
+    # Only documentation/evidence may differ; application, CI and data cannot.
+    changed = subprocess.check_output(['git', 'diff', '--name-only', tested], text=True).splitlines()
+    return all(path.startswith(('reports/', 'docs/')) or path == 'README.md' for path in changed)
+
+
 def model_gate(report, candidate, suite, settings):
     """Technical rubric gate, never an independent legal certification."""
     cases = dataset(Path('data/evaluation')/(suite+'.jsonl'))
@@ -82,7 +93,8 @@ def inspect(manifest):
     settings = Settings()
     postgres = settings.model_copy(update={'database_url': SecretStr('postgresql://isolated-evaluation')})
     head = subprocess.check_output(['git', 'rev-parse', 'HEAD'], text=True).strip()
-    checks = {'tested_revision': manifest.get('source_commit') == head,
+    tested = manifest.get('source_commit')
+    checks = {'tested_revision': revision_matches(tested, head),
               'coverage': coverage(candidate)['publication_ready']}
     with tempfile.TemporaryDirectory(prefix='landlaw-readiness-') as folder:
         local = settings.model_copy(update={'database_url': SecretStr(''), 'admin_database_url': SecretStr(''),
@@ -119,7 +131,7 @@ def inspect(manifest):
     software = json.loads(Path(item['path']).read_text()) if item else {}
     required = {'backend', 'secrets', 'frontend_unit', 'frontend_build', 'frontend_e2e'}
     entries = {r['name']: r for r in software.get('checks', [])}
-    checks['software'] = (software.get('source_commit') == head and required <= entries.keys()
+    checks['software'] = (software.get('source_commit') == tested and required <= entries.keys()
         and all(entries[name].get('exit_code') == 0
             and checksum(entries[name]['log']) == entries[name]['log_sha256'] for name in required))
     item = inputs.get('release_download')
@@ -132,7 +144,7 @@ def inspect(manifest):
     runtime = json.loads(Path(item['path']).read_text()) if item else {}
     checks['postgres_runtime'] = (runtime.get('passed') is True and runtime.get('corpus_id') == candidate['id']
         and all(runtime.get(key) is True for key in ('runtime_role_tested', 'parallel_session_lease', 'history_writes_revoked')))
-    return {'checked_at': utcnow().isoformat(), 'source_commit': head, 'corpus_id': candidate['id'],
+    return {'checked_at': utcnow().isoformat(), 'source_commit': tested, 'checked_out_revision': head, 'corpus_id': candidate['id'],
             'ready': all(checks.values()), 'checks': checks,
             'blocked': [name for name, passed in checks.items() if not passed],
             'scope': 'Recomputed technical publication gates; not independent legal certification or deployment proof.',

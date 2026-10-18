@@ -27,9 +27,17 @@ jobs:
           cache-dependency-path: frontend/package-lock.json
       - run: pip install -r requirements.lock && pip install --no-deps -e .
       - name: Recompute publication gates before any deployment
+        id: readiness
         env:
           RELEASE_READINESS_REPORT: ${{ inputs.readiness_report }}
-        run: python -c 'import os; from scripts.check_release_readiness import require_ready; require_ready(os.environ["RELEASE_READINESS_REPORT"])'
+        run: |
+          python - <<'PY'
+          import os
+          from scripts.check_release_readiness import require_ready
+          result = require_ready(os.environ['RELEASE_READINESS_REPORT'])
+          with open(os.environ['GITHUB_OUTPUT'], 'a') as output:
+              output.write('tested_commit='+result['source_commit']+'\n')
+          PY
       - run: npm ci && npm run build
         working-directory: frontend
         env:
@@ -42,7 +50,7 @@ jobs:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           workingDirectory: frontend
-          command: pages deploy dist --project-name=${{ vars.CLOUDFLARE_PAGES_PROJECT }} --branch=main
+          command: pages deploy dist --project-name=${{ vars.CLOUDFLARE_PAGES_PROJECT }} --branch=main --commit-hash=${{ steps.readiness.outputs.tested_commit }}
       - name: Deploy existing free backend
         env:
           RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
