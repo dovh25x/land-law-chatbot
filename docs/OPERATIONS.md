@@ -76,6 +76,8 @@ Kiểm tra bằng `scripts/audit_corpus.py --snapshot <candidate.json> --output 
 
 Chạy generation bằng `scripts/evaluate_generation_candidate.py --backup <candidate-backup.json> --output <thư-mục-run-mới>`. Khi provider còn quota và cooldown đã hết, dùng cùng output với `--resume --split natural` (hoặc split cần tiếp tục). Helper dùng SQLite tạm và scope operator, giữ checkpoint/attempt của bộ khóa, lưu `operator-cooldown.json` và không gửi request trước mốc provider cho phép. Ca đã hoàn tất không được chạy lại chỉ để chọn kết quả đẹp; ca limited/error và ca chưa thực thi có thể tiếp tục. Giữ model và gói hosting đã thống nhất; khi operator cập nhật credential, tiếp tục từ checkpoint và vẫn tuân thủ hạn mức thực tế cùng Retry-After của provider.
 
+Không sửa source runtime trong khi evaluation đang chạy. Helper ghi `configuration-lock.json`, kiểm tra fingerprint trước mỗi request và mỗi split; source/configuration khác cần output mới. Không resume thư mục chứa fingerprint khác.
+
 Thêm `--postgres` vào helper generation để đánh giá trên PostgreSQL riêng: script tạo database với tên ngẫu nhiên, áp dụng migration, restore ứng viên, rồi chỉ dọn database do chính lần chạy tạo. Không dùng SQLite để suy ra kết quả PostgreSQL.
 
 `coverage_passed` kiểm tra phạm vi Vành đai 4, nguồn bắt buộc và chứng cứ dự án đã duyệt. `publication_ready` còn yêu cầu embedding đầy đủ, metadata đã duyệt, không có gap, relation chưa giải quyết hoặc ingest issue. Đây là cổng kỹ thuật; vẫn cần freshness, suite khóa và các bước phát hành bên dưới.

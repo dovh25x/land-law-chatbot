@@ -58,3 +58,21 @@ def test_recorded_ready_boolean_cannot_override_recomputed_failure(tmp_path, mon
     monkeypatch.setattr('scripts.check_release_readiness.inspect', lambda _: {'ready': False, 'blocked': ['source_freshness']})
     with pytest.raises(ValueError, match='source_freshness'):
         require_ready(path)
+
+
+def test_candidate_evaluation_refuses_configuration_changes_in_same_output(tmp_path,settings,monkeypatch):
+    from scripts.evaluate_generation_candidate import lock_configuration
+    first=lock_configuration(settings,tmp_path)
+    assert lock_configuration(settings,tmp_path)==first
+    monkeypatch.setattr('scripts.evaluate_generation_candidate.configuration_fingerprint',lambda _: 'changed')
+    with pytest.raises(ValueError,match='changed'):
+        lock_configuration(settings,tmp_path)
+
+
+def test_legacy_evaluation_checkpoint_cannot_be_resumed_under_different_source(tmp_path,settings):
+    from scripts.evaluate_generation_candidate import lock_configuration
+    metadata=tmp_path/'runs'/'historical'/'metadata.json'
+    metadata.parent.mkdir(parents=True)
+    metadata.write_text(json.dumps({'configuration_sha256':'different'}))
+    with pytest.raises(ValueError,match='different'):
+        lock_configuration(settings,tmp_path)

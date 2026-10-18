@@ -11,13 +11,28 @@ from pathlib import Path
 
 import psycopg
 from landlaw.config import Settings
-from landlaw.evaluation import evaluate
+from landlaw.evaluation import configuration_fingerprint, evaluate
 from landlaw.provider import GroqProvider, ProviderUnavailable
 from landlaw.security import utcnow
 from landlaw.store import Store
 from psycopg import sql
 from psycopg.conninfo import make_conninfo
 from pydantic import SecretStr
+
+
+def lock_configuration(settings, output):
+    fingerprint = configuration_fingerprint(settings)
+    path = output/'configuration-lock.json'
+    if path.exists():
+        if json.loads(path.read_text())['configuration_sha256'] != fingerprint:
+            raise ValueError('Source/configuration changed; use a new evaluation output')
+    else:
+        existing = [json.loads(p.read_text())['configuration_sha256']
+                    for p in (output/'runs').glob('*/metadata.json')]
+        if any(value != fingerprint for value in existing):
+            raise ValueError('Historical output has a different configuration')
+        path.write_text(json.dumps({'configuration_sha256': fingerprint}, indent=2)+'\n')
+    return fingerprint
 
 
 @contextmanager
@@ -58,12 +73,23 @@ async def main(args):
             print(json.dumps({'deferred_until': cooldown['not_before'], 'generation_calls': 0}))
             return
     with tempfile.TemporaryDirectory(prefix='landlaw-generation-candidate-') as folder, candidate_settings(args, folder) as settings:
+        fingerprint = lock_configuration(settings, args.output)
         store = Store(settings)
         provider = GroqProvider(settings, store, usage_scope='operator')
+        generate = provider.generate
+        async def frozen_generate(*positional, **keyword):
+            if configuration_fingerprint(settings) != fingerprint:
+                raise ValueError('Source changed during model evaluation')
+            return await generate(*positional, **keyword)
+        provider.generate = frozen_generate
         try:
             store.restore(args.backup)
             for split in args.split or ('smoke', 'supplemental', 'natural'):
+                if configuration_fingerprint(settings) != fingerprint:
+                    raise ValueError('Source changed between frozen suites')
                 report = await evaluate(settings, store, provider, split, concurrency=1)
+                if configuration_fingerprint(settings) != fingerprint:
+                    raise ValueError('Source changed during frozen suite')
                 print(json.dumps({'split': split, 'run_id': report['run_id'], 'results': report['results']}), flush=True)
                 remaining = store.cooldown()
                 cooldown_path.write_text(json.dumps({
