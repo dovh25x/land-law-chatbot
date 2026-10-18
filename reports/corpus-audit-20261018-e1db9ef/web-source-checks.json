@@ -1,0 +1,32 @@
+{
+  "scope": "Supplementary official-page web checks; no source receipt changed.",
+  "results": [
+    {
+      "url": "https://congbao.hanoi.gov.vn/Default.aspx?p_attribute=5335&pageid=45002",
+      "web_reader": "timeout",
+      "note": "Direct PDF comparison succeeded separately."
+    },
+    {
+      "url": "https://vbpl.vn/hanoi/Pages/ivbpq-toanvan.aspx?ItemID=169992&Keyword=",
+      "web_reader": "403",
+      "note": "Historical cached snapshot retained with disclosed cache age."
+    },
+    {
+      "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=206398",
+      "web_reader": "metadata and official PDF link available",
+      "document_number": "106/NQ-CP",
+      "issued_on": "2022-08-18"
+    },
+    {
+      "url": "https://datafiles.chinhphu.vn/cpp/files/vbpq/2022/08/106.signed.pdf",
+      "web_reader": "PDF recognized, 9 pages, zero extracted text lines",
+      "note": "OCR/source review candidate; page screenshot attempt also encountered timeout."
+    },
+    {
+      "url": "https://congbao.chinhphu.vn/van-ban/luat-so-02-2026-qh16-469529.htm",
+      "web_reader": "metadata and attachments available",
+      "issued_on": "2026-04-23",
+      "effective_from": "2026-07-01"
+    }
+  ]
+}

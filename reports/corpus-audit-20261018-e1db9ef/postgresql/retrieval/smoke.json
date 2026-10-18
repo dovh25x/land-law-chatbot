@@ -1,0 +1,248 @@
+{
+  "checked_at": "2026-10-18T16:28:04.456630+00:00",
+  "split": "smoke",
+  "suite_sha256": "38aa8da29bf41a94b4cf8fd8a5ca6769232b87884aeed573c10f5586a09d7254",
+  "release": "corpus-581da76c79b0b362",
+  "configuration_sha256": "3fbb34e479b86c4ca44ab8d3b2fbc7e861a0bfc8f372d4332d9c25274b0bb694",
+  "backend": "postgresql",
+  "k": 8,
+  "eligible_cases": 11,
+  "hits": 9,
+  "hit_rate": 0.8181818181818182,
+  "gold_recall_at_8": 0.8181818181818182,
+  "history_groups": {
+    "False": {
+      "cases": 10,
+      "gold_recall_at_8": 0.9
+    },
+    "True": {
+      "cases": 1,
+      "gold_recall_at_8": 0.0
+    }
+  },
+  "generation_calls": 0,
+  "results": [
+    {
+      "id": "S01",
+      "has_history": false,
+      "gold_chunk_ids": [
+        "qd-40-2026-hanoi-0-2-0"
+      ],
+      "retrieved_chunk_ids": [
+        "qd-56-2024-hanoi-0-2-0",
+        "qd-56-2024-hanoi-0-5-0",
+        "qd-56-2024-hanoi-0-23-0",
+        "qd-56-2024-hanoi-0-3-0",
+        "qd-56-2024-hanoi-0-0-0",
+        "qd-40-2026-hanoi-0-2-0",
+        "qd-40-2025-hanoi-7-1-0",
+        "qd-40-2025-hanoi-7-0-0"
+      ],
+      "hit": true,
+      "gold_recall_at_8": 1.0,
+      "elapsed_ms": 14562
+    },
+    {
+      "id": "S02",
+      "has_history": false,
+      "gold_chunk_ids": [
+        "qd-40-2026-hanoi-0-2-0"
+      ],
+      "retrieved_chunk_ids": [
+        "qd-40-2026-hanoi-0-2-0",
+        "qd-40-2026-hanoi-9-1-1",
+        "qd-40-2026-hanoi-10-0-0",
+        "qd-40-2026-hanoi-2-2-0",
+        "qd-40-2026-hanoi-8-2-0",
+        "qd-40-2026-hanoi-0-0-0",
+        "qd-40-2026-hanoi-2-1-0",
+        "qd-40-2026-hanoi-0-1-0"
+      ],
+      "hit": true,
+      "gold_recall_at_8": 1.0,
+      "elapsed_ms": 2930
+    },
+    {
+      "id": "S03",
+      "has_history": false,
+      "gold_chunk_ids": [
+        "qd-10-2026-hanoi-4-1-0"
+      ],
+      "retrieved_chunk_ids": [
+        "qd-10-2026-hanoi-4-1-0",
+        "qd-38-2025-hanoi-4-2-0",
+        "qd-10-2026-hanoi-0-0-0",
+        "qd-38-2025-hanoi-0-0-0",
+        "qd-10-2026-hanoi-4-2-0",
+        "qd-38-2025-hanoi-4-3-0",
+        "qd-38-2025-hanoi-4-1-0",
+        "qd-38-2025-hanoi-0-1-0"
+      ],
+      "hit": true,
+      "gold_recall_at_8": 1.0,
+      "elapsed_ms": 2205
+    },
+    {
+      "id": "S04",
+      "has_history": false,
+      "gold_chunk_ids": [
+        "nd-88-2024-0-31-0"
+      ],
+      "retrieved_chunk_ids": [
+        "nd-88-2024-0-31-0",
+        "nd-88-2024-0-31-1",
+        "nd-88-2024-0-3-0",
+        "nd-88-2024-0-3-3",
+        "nd-88-2024-0-33-0",
+        "nd-88-2024-0-28-0",
+        "nd-88-2024-0-10-0",
+        "nd-88-2024-0-29-0"
+      ],
+      "hit": true,
+      "gold_recall_at_8": 1.0,
+      "elapsed_ms": 3950
+    },
+    {
+      "id": "S05",
+      "has_history": false,
+      "gold_chunk_ids": [
+        "nd-151-2025-2-2-0"
+      ],
+      "retrieved_chunk_ids": [
+        "nd-151-2025-2-2-0",
+        "nd-151-2025-3-0-0",
+        "nd-151-2025-5-0-0",
+        "nd-151-2025-4-0-0",
+        "nd-151-2025-3-0-1",
+        "nd-151-2025-4-0-1",
+        "nd-151-2025-26-0-0",
+        "nd-151-2025-26-0-1"
+      ],
+      "hit": true,
+      "gold_recall_at_8": 1.0,
+      "elapsed_ms": 3607
+    },
+    {
+      "id": "S06",
+      "has_history": false,
+      "gold_chunk_ids": [
+        "luat-dat-dai-2024-98-0-1",
+        "luat-dat-dai-2024-99-0-0"
+      ],
+      "retrieved_chunk_ids": [
+        "luat-dat-dai-2024-99-0-0",
+        "luat-dat-dai-2024-98-0-1",
+        "luat-dat-dai-2024-97-1-0",
+        "luat-dat-dai-2024-98-0-0",
+        "luat-dat-dai-2024-99-1-0",
+        "luat-dat-dai-2024-239-1-0",
+        "luat-dat-dai-2024-167-0-1",
+        "luat-dat-dai-2024-167-0-0"
+      ],
+      "hit": true,
+      "gold_recall_at_8": 1.0,
+      "elapsed_ms": 3291
+    },
+    {
+      "id": "S07",
+      "has_history": false,
+      "gold_chunk_ids": [
+        "luat-dat-dai-2024-104-1-0"
+      ],
+      "retrieved_chunk_ids": [
+        "luat-dat-dai-2024-104-1-0",
+        "luat-dat-dai-2024-239-1-0",
+        "luat-dat-dai-2024-244-1-0",
+        "luat-dat-dai-2024-95-0-0",
+        "luat-dat-dai-2024-245-0-0",
+        "luat-dat-dai-2024-214-1-1",
+        "luat-dat-dai-2024-167-0-0",
+        "luat-dat-dai-2024-102-1-0"
+      ],
+      "hit": true,
+      "gold_recall_at_8": 1.0,
+      "elapsed_ms": 3962
+    },
+    {
+      "id": "S08",
+      "has_history": false,
+      "gold_chunk_ids": [
+        "luat-dat-dai-2024-106-1-0"
+      ],
+      "retrieved_chunk_ids": [
+        "luat-dat-dai-2024-106-1-0",
+        "luat-dat-dai-2024-244-1-0",
+        "luat-dat-dai-2024-244-1-1",
+        "luat-dat-dai-2024-93-1-0",
+        "luat-dat-dai-2024-94-0-0",
+        "luat-dat-dai-2024-107-1-0",
+        "luat-dat-dai-2024-107-1-1",
+        "luat-dat-dai-2024-95-1-0"
+      ],
+      "hit": true,
+      "gold_recall_at_8": 1.0,
+      "elapsed_ms": 2748
+    },
+    {
+      "id": "S13",
+      "has_history": false,
+      "gold_chunk_ids": [
+        "qd-40-2026-hanoi-0-2-0"
+      ],
+      "retrieved_chunk_ids": [
+        "qd-56-2024-hanoi-0-2-0",
+        "qd-56-2024-hanoi-0-5-0",
+        "qd-56-2024-hanoi-0-0-0",
+        "qd-56-2024-hanoi-0-23-0",
+        "qd-38-2025-hanoi-0-1-0",
+        "qd-38-2025-hanoi-4-1-0",
+        "nd-226-2025-33-0-0",
+        "luat-thu-do-2024-66-0-0"
+      ],
+      "hit": false,
+      "gold_recall_at_8": 0.0,
+      "elapsed_ms": 1615
+    },
+    {
+      "id": "S14",
+      "has_history": true,
+      "gold_chunk_ids": [
+        "qd-40-2026-hanoi-0-2-0"
+      ],
+      "retrieved_chunk_ids": [
+        "nd-124-2020-42-0-0",
+        "nd-124-2020-43-0-0",
+        "luat-thu-do-2026-4-0-1",
+        "luat-130-2025-14-2-0",
+        "luat-84-2025-39-0-0",
+        "nd-102-2024-190-0-0",
+        "qd-56-2024-hanoi-0-2-0",
+        "nd-124-2020-20-0-0"
+      ],
+      "hit": false,
+      "gold_recall_at_8": 0.0,
+      "elapsed_ms": 1561
+    },
+    {
+      "id": "S18",
+      "has_history": false,
+      "gold_chunk_ids": [
+        "qd-40-2026-hanoi-0-2-0"
+      ],
+      "retrieved_chunk_ids": [
+        "qd-56-2024-hanoi-0-2-0",
+        "qd-56-2024-hanoi-0-5-0",
+        "qd-40-2026-hanoi-0-2-0",
+        "qd-40-2026-hanoi-2-2-0",
+        "qd-56-2024-hanoi-0-0-0",
+        "qd-40-2026-hanoi-10-0-0",
+        "qd-40-2026-hanoi-9-1-0",
+        "qd-40-2026-hanoi-13-1-0"
+      ],
+      "hit": true,
+      "gold_recall_at_8": 1.0,
+      "elapsed_ms": 2509
+    }
+  ],
+  "scope": "Raw-question hybrid search without history rewriting, article routing or legal-relation expansion; any gold chunk in top 8 counts as a hit. Not legal answer accuracy."
+}

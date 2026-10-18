@@ -1,0 +1,18 @@
+{
+  "checked_at": "2026-10-18T16:26:21.390335+00:00",
+  "results": {
+    "/readyz": {
+      "error_type": "ReadTimeout"
+    },
+    "/api/v1/status": {
+      "status": 200,
+      "body": {
+        "generation_available": true,
+        "reason": null,
+        "retry_after": null,
+        "corpus_release": "corpus-581da76c79b0b362",
+        "api_version": 2
+      }
+    }
+  }
+}

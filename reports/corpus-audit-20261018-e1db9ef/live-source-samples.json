@@ -1,0 +1,56 @@
+{
+  "checked_at": "2026-10-18T16:26:21.389841+00:00",
+  "scope": "Five first PDF attachments, byte comparison only; does not review later amendments or refresh source receipts.",
+  "results": [
+    {
+      "id": "ring4-nq56-2022",
+      "url": "https://congbaocdn.chinhphu.vn/CongBaoCP/VanBan/2022/6/37456/41071-1-2022559-56056-2022-qh15.pdf",
+      "expected_sha256": "73408318ccfff465240e44ae9ba355e0680ea6a9ab4f0a5a90beefa3ecd0464c",
+      "http_status": 200,
+      "pdf": true,
+      "bytes": 350796,
+      "download_sha256": "73408318ccfff465240e44ae9ba355e0680ea6a9ab4f0a5a90beefa3ecd0464c",
+      "matches_snapshot_bytes": true
+    },
+    {
+      "id": "nd-226-2025",
+      "url": "https://congbaocdn.chinhphu.vn/CongBaoCP/VanBan/2025/8/45839/58217-1-20251089-1090226-2025-nd-cp.pdf",
+      "expected_sha256": "a5ffd2aa04a7571ea1c7a238888a6fd968273ad9ff2b19d46358f9c787069bf2",
+      "http_status": 200,
+      "pdf": true,
+      "bytes": 604446,
+      "download_sha256": "a5ffd2aa04a7571ea1c7a238888a6fd968273ad9ff2b19d46358f9c787069bf2",
+      "matches_snapshot_bytes": true
+    },
+    {
+      "id": "qd-40-2026-hanoi",
+      "url": "https://datafiles.hanoi.gov.vn/gov-hni/6249/VanBanCongBao/2026/5/29/QDPQ-40-2026_signed.pdf",
+      "expected_sha256": "c29db72a649d0cf5376917ef391562e82b31f2d79a2682f686c261867d42843a",
+      "http_status": 200,
+      "pdf": true,
+      "bytes": 704357,
+      "download_sha256": "c29db72a649d0cf5376917ef391562e82b31f2d79a2682f686c261867d42843a",
+      "matches_snapshot_bytes": true
+    },
+    {
+      "id": "luat-thu-do-2026",
+      "url": "https://congbaocdn.chinhphu.vn/180507251028987904/2026/5/26/469529-1779680404_v1_1779775245_signed.pdf",
+      "expected_sha256": "6ec9bc8d1c48bdcc94cec5216871506093b804eb3b3d21b9f5a8070e097dd530",
+      "http_status": 200,
+      "pdf": true,
+      "bytes": 1051994,
+      "download_sha256": "6ec9bc8d1c48bdcc94cec5216871506093b804eb3b3d21b9f5a8070e097dd530",
+      "matches_snapshot_bytes": true
+    },
+    {
+      "id": "luat-dat-dai-2024",
+      "url": "https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/9/31-2024-qh15_1.pdf",
+      "expected_sha256": "2558044082ee768192a311aee548eb9fae4daada546013aa5181eb91c8842637",
+      "http_status": 200,
+      "pdf": true,
+      "bytes": 1338272,
+      "download_sha256": "2558044082ee768192a311aee548eb9fae4daada546013aa5181eb91c8842637",
+      "matches_snapshot_bytes": true
+    }
+  ]
+}

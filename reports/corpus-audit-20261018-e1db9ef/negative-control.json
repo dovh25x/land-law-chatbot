@@ -1,0 +1,13 @@
+{
+  "fixture": "Temporary copy with one deliberately corrupted public-law chunk text; active snapshot unchanged.",
+  "passed": true,
+  "audit_failed_as_expected": true,
+  "corruption_detected_at_chunk_id": "luat-dat-dai-2024-0-0-0",
+  "detected_errors": [
+    {
+      "kind": "chunk_integrity",
+      "chunk_id": "luat-dat-dai-2024-0-0-0"
+    }
+  ],
+  "scope": "Negative control for checksum detection, not legal quality or a corpus attempt."
+}
