@@ -1340,3 +1340,20 @@ async def test_alternative_document_claim_must_carry_its_own_actor_prerequisite(
     provider=FakeProvider(settings,verification=Verification(supported_claim_indexes=[0,1]))
     await Agent(store,provider).verify(state)
     assert bool(state['verification'].supported_claim_indexes) is independent
+
+
+def test_ranked_principle_keeps_its_continuation_before_keyword_dense_neighbor(store,settings):
+    from landlaw.models import Evidence
+    law=document()
+    opening=law.chunks[0].model_copy(update={'id':'principle-start','locator':'Điều 12',
+        'text':'Điều 12. Nguyên tắc bồi thường, hỗ trợ và tái định cư. '+('Phạm vi và nguyên tắc chung. '*20)})
+    continuation=opening.model_copy(update={'id':'principle-end',
+        'text':'6. Việc bố trí tái định cư phải hoàn thành trước khi có quyết định thu hồi đất. '+('Điều kiện về nơi ở và cơ quan thực hiện. '*25)})
+    neighbor=opening.model_copy(update={'id':'nearby-benefit','locator':'Điều 19',
+        'text':'Điều 19. Bố trí chỗ ở mới, hỗ trợ thuê nhà. '+('Bố trí chỗ ở mới và hỗ trợ thuê nhà. '*140)})
+    state={'request':ChatRequest(session_id='0'*32,message='Chưa bố trí chỗ ở mới thì thu hồi đất cần bảo đảm gì?'),
+        'evidence':[Evidence(chunk=c,document=law,applicability='current') for c in [opening,neighbor,continuation]],
+        'release':{'documents':[law.model_dump(mode='json')],'relations':[]}}
+    passages,_=Agent(store,FakeProvider(settings)).prompt_context(state)
+    assert 'principle-end' in {p['citation_id'] for p in passages}
+    assert {p['citation_id'] for p in passages[:2]}=={'principle-start','principle-end'}

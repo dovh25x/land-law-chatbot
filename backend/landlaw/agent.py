@@ -723,6 +723,9 @@ class Agent:
                 key=covered.get(item['citation_id'],item['citation_id'])
                 unique.setdefault(key,by_id[key])
             candidates=list(unique.values())
+            group_order={}
+            for item in candidates:
+                group_order.setdefault((item['document_id'],item['locator'].split(' · ')[0]),len(group_order))
             question=normalize(state['request'].message) if state.get('request') else ''
             numbers=set(re.findall(r'(?<![\d/])\d{1,6}/(?:19|20)\d{2}(?!/\d)',question))
             articles=set(re.findall(r'\bdieu\s+(\d+[a-z]?)\b',question))
@@ -740,7 +743,11 @@ class Agent:
                 heading=re.match(r'dieu\s+\d+[a-z]?\s*[.:]\s*(.*?)(?:\s+1\.\s|$)',body)
                 heading_overlap=len(terms & set(heading[1].split()))/max(1,len(set(heading[1].split()))) if heading else 0
                 timely=not temporal or item['applicability']!='future' or document_match
-                return (exact_article and (document_match or not numbers),timely,reference_matches,body_numbers,operative,document_match,item['applicability']=='current',heading_overlap,overlap)
+                # RRF already ranks substantive evidence. Keep continuations
+                # with that article instead of letting keyword-dense benefits
+                # displace the governing principle in the bounded prompt.
+                group=group_order[(item['document_id'],item['locator'].split(' · ')[0])]
+                return (exact_article and (document_match or not numbers),timely,reference_matches,body_numbers,operative,document_match,item['applicability']=='current',-group,heading_overlap,overlap)
             candidates=sorted(candidates,key=relevant,reverse=True)
             named_docs={item['document_id'] for item in candidates if any(
                 n in normalize(item.get('document_number') or '') for n in numbers)}
@@ -854,58 +861,39 @@ class Agent:
             aliases={item['citation_id']:f'C{index+1}' for index,item in enumerate(contexts)}
             contexts=[{**item,'citation_id':aliases[item['citation_id']]} for item in contexts]
             state["draft"] = await self.provider.generate(Draft,
-                "Answer the exact question directly, in Vietnamese. Put ALL legal content in at most three concise claims "
-                "Prefer the exact operative wording of the source over a loose paraphrase. Include only what is needed "
-                "to answer the question: do not volunteer rates, durations, numeric amounts, exhaustive actor lists or "
-                "additional benefit categories when they are not requested. A rule about a numbered clause needs "
-                "both that operative clause and its eligibility prerequisites in the SAME claim and citations. "
-                "Use the provided complete parent passage where a child ends before the rule or its conditions. "
-                "For alternative documents, retain 'trường hợp thuộc khoản ...' as the actor prerequisite; do not "
-                "turn an actor from that prerequisite clause into an example of a qualifying document. "
-                "with citation_ids from allowed_citation_ids (C1, C2...), never document IDs. summary is not displayed. "
-                "Keep each claim atomic: separate eligible actors from alternative qualifying documents/conditions. "
-                "For an exclusivity question, start with the direct answer and retain source-defined eligibility by clause "
-                "reference; do not spend a separate claim enumerating unasked actor categories. A conclusion spanning "
-                "multiple passages must cite all of them, including a continuation of the same numbered clause. "
-                "Answer only the requested proposition. Do not enumerate actor categories when asked whether a "
-                "document is the only qualifying condition; instead retain the prerequisite clause and explain "
-                "the documentary alternatives with OR, never as cumulative AND requirements. "
-                "Never list types of people or organizations as examples of documentary conditions in a different clause. "
-                "Do not substitute implementation/coercion budgets for household compensation or add a new triggering "
-                "condition from the question to a different rule. Omit unrelated transition and cost-administration details. "
-                "For lists of assistance, retain material eligibility limits and explicitly say that categories are not "
-                "automatic entitlements for every household. A cross-reference alone does not explain its conditions: "
-                "explain them only when its actual text is supplied, otherwise disclose that limit. "
-                "answered requires at least one sourced claim. Each cited passage must prove the exact rule, actor, scope "
-                "and applicable date: a preamble or act name is insufficient. Do not substitute a similar clause for the one asked. "
-                "Preserve numbered clauses and legal point letters exactly; use bullets if you are renumbering a summary. "
-                "When explaining a provision, explicitly state its clause and article as the legal basis so a "
-                "partial amendment to a DIFFERENT clause is not mistaken for amendment of the stated rule. "
-                "When alternative conditions apply only to cases defined in another clause, explicitly retain that "
-                "eligibility prerequisite, even when answering whether a certificate is the sole condition. "
-                "A general rule can be answered without private-case facts. For case-specific rights, ask for missing land type, "
-                "When question_kind is general_rule, explain the sourced rule and its conditions instead of asking for a "
-                "real household's facts. Do not mistake scoped source gaps for the supplied verified evidence. "
-                "papers and decision/approved-plan dates; never ask the user to provide law already in the corpus. "
-                "No guaranteed household/parcel rights or compensation amounts from general project information. "
-                "official_news is context only (kind=context). unverified cannot prove current law; historical needs the "
-                "For a question about what an official news article establishes, cite kind=context for its stated "
-                "approval stage and limits: a report of planning tasks does not itself establish approved plans or "
-                "individual land recovery. Do not require the unpublished original decision just to explain those limits. "
-                "relevant historical or transitional rule. future may support kind=applicability stating NOT yet effective, "
-                "never current rights. provision_specific requires the exact clause's dates, not the whole article's status. "
-                "Preserve actors exactly: Chủ tịch UBND is different from UBND. Explain material conditions/exceptions "
-                    "An article heading may combine different actors; the relevant numbered clause must prove any origin actor. "
-                "in the cited clause, including delayed-payment treatment when explaining an old approved plan. "
-                "Only state requested commencement dates when the operative cited text contains them; issue dates are not "
-                "commencement. Commencement/replacement alone does not exclude every old case: transitions need their own source. "
-                "For a policy-replacement lookup, put a brief next_step asking to compare recovery/approved-plan dates "
-                "and the transitional provisions before applying it to an old file; do not assert the old file's outcome. "
-                "No additional repeal scope or universal rule inferred from one example. For missing or conflicting sources, "
-                "state the limit; coverage_gaps/unresolved_relations are not legal proof. Unavailable historical text cannot "
-                "be inferred from a replacement act. next_steps are generic file/source checks; legal conditions/time limits "
-                "belong in sourced claims. Do not repeat claims. Set out_of_scope for unrelated topics; never give medical "
-                "treatment or other unrelated advice. Resolve previous_issues using evidence, without inventing new facts.",
+                "Answer the actual question in Vietnamese. Use ONE concise, independently qualified claim by default; "
+                "at most three for genuinely separate requested propositions. Put ALL legal content in claims; summary "
+                "is not displayed. citation_ids must be allowed C1/C2 aliases, never document IDs. "
+                "Prefer the source's exact operative wording. Each claim must itself retain its actor, land/asset scope, "
+                "eligibility prerequisites, OR alternatives, exceptions, consequence and applicable time. Do not rely "
+                "on a different claim for a missing condition. Cite every passage needed, including continuations. "
+                "Use the complete parent passage when a child omits conditions; a title/preamble proves no rule. "
+                "Only answer what was asked. Do not add unasked rates, durations, amounts, exhaustive actor lists or "
+                "neighboring benefits. Quantities needed to state an eligibility condition must retain their scope. "
+                "Do not turn a condition in the user's question into a new legal trigger in the source. "
+                "For document alternatives, retain the prerequisite 'trường hợp thuộc khoản ...' in the SAME claim; "
+                "explain the alternatives with OR, never AND. An actor category is not a qualifying document. "
+                "For assistance catalogues, distinguish the categories from eligibility: not every household "
+                "automatically receives every category. Preserve income, approval-date and exclusion conditions "
+                "when the operative source uses them to define an eligible actor. Do not invent conditions from "
+                "cross-references: explain them only with actual text, otherwise disclose the missing scope. "
+                "Preserve exact article/clause/point references, including the scope of partial amendments. Use "
+                "bullets for summary lists, not invented legal point letters or numbered clauses. Distinguish "
+                "Chủ tịch UBND from UBND and household compensation from implementation/coercion expenses. "
+                "current evidence supports current rules; historical requires a disclosed historical question or "
+                "operative transition; future supports only applicability saying NOT yet effective with the "
+                "source-proven commencement. provision_specific requires the actual clause dates. Issue dates "
+                "are not commencement. Replacement alone does not decide old files: include a next_step to check "
+                "recovery/approved-plan dates and transitions before applying a replacement to an old file. "
+                "No whole-act repeal inferred from a partial change. Respect source review notes, special policies "
+                "and unresolved dependencies. coverage_gaps and history are not legal evidence. "
+                "General rules need no invented private file. For personal rights ask for land type, papers and "
+                "recovery/approved-plan dates, never ask the citizen to provide law already available. Never "
+                "guarantee parcel/household rights or money from general project facts. official_news is context "
+                "only; planning-task approval does not establish approved plans or household recovery. "
+                "If the main proposition lacks proof, use insufficient_evidence rather than substituting a nearby "
+                "rule. next_steps are generic checks, never unchecked legal conditions. Repair previous_issues "
+                "from supplied evidence without broadening the answer. Out-of-scope topics get no legal/medical advice.",
                 {"question": redact(state["request"].message), "as_of": str(state["as_of"]), "history": state["history"],
                  "missing_facts": state["plan"].missing_facts, "tool_results": state["tool_notes"], "evidence": contexts,
                  "documents":documents,
