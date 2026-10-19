@@ -1,0 +1,42 @@
+{
+  "checked_at": "2026-10-19T05:09:11.633937+00:00",
+  "released": true,
+  "release_url": "https://github.com/dovh25x/land-law-chatbot/releases/tag/corpus-a26bc99e541fbbe2",
+  "production_deployed": true,
+  "frontend": "https://hanoi-land-law.pages.dev",
+  "source_commit": "6ca8f12f0d770f2076de20f0d070460894bd0bc8",
+  "configuration_sha256": "380801c7436b04ac3535585b949a937656bec603fa6db3197f313bcd8cb9401c",
+  "corpus_id": "corpus-a26bc99e541fbbe2",
+  "documents": 60,
+  "chunks": 7392,
+  "generation_available": false,
+  "generation_reason": "disabled",
+  "publication_profile": "academic",
+  "operator_exception": true,
+  "full_quality_readiness_passed": false,
+  "technical_checks": {
+    "public_download_checksum": true,
+    "sqlite_restore_retrieval": true,
+    "postgresql_restore_retrieval": true,
+    "runtime_role_and_privacy": true,
+    "signed_ingress": true,
+    "live_source_library": true,
+    "responsive_browser_navigation": true
+  },
+  "not_live_tested": [
+    "Turnstile session challenge",
+    "LLM answer generation",
+    "physical mobile device"
+  ],
+  "quality_gaps": [
+    "coverage",
+    "source_freshness",
+    "generation:smoke",
+    "generation:supplemental",
+    "generation:natural"
+  ],
+  "old_database_retained": true,
+  "old_release_retained": true,
+  "server_conversation_history_restored": false,
+  "standard_deployment_gate_changed": false
+}

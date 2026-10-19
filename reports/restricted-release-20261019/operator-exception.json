@@ -1,0 +1,32 @@
+{
+  "checked_at": "2026-10-19T04:55:18.725649+00:00",
+  "user_directive": "cứ coi như các điều kiện đã đáp ứng ở mức tối thiểu rồi phát hành toàn bộ corpus và deploy đi",
+  "authorization_scope": "Operator exception: publish all 60 curated Ring4/shared-law documents and deploy tested software with generation disabled. Pending/unreviewed raw sources remain excluded.",
+  "source_commit": "6ca8f12f0d770f2076de20f0d070460894bd0bc8",
+  "readiness_passed": false,
+  "failed_checks": [
+    "coverage",
+    "source_freshness",
+    "generation:smoke",
+    "generation:supplemental",
+    "generation:natural",
+    "release_download"
+  ],
+  "generation_enabled": false,
+  "historical_and_current_chat_blocked": [
+    {
+      "as_of": "2024-09-01",
+      "status": 503,
+      "code": "generation_disabled"
+    },
+    {
+      "as_of": "2026-10-19",
+      "status": 503,
+      "code": "generation_disabled"
+    }
+  ],
+  "document_library_available": true,
+  "provider_calls": 0,
+  "old_release_must_be_retained": true,
+  "database_restore_into_serving_database": false
+}

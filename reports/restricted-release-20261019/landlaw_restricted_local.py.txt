@@ -1,0 +1,47 @@
+import hashlib, json, sys, tempfile, uuid
+from pathlib import Path
+ROOT=Path('/home/dovh25x/projects/land-law-chatbot')
+sys.path[:0]=[str(ROOT/'tests'),str(ROOT/'scripts')]
+from conftest import release
+from test_agent import FakeProvider
+from fastapi.testclient import TestClient
+from landlaw.config import Settings
+from landlaw.store import Store
+from landlaw.evaluation import configuration_fingerprint
+from landlaw.security import utcnow
+from check_release_readiness import inspect
+
+out=ROOT/'reports/restricted-release-20261019'
+out.mkdir(exist_ok=True)
+manifest=json.loads((ROOT/'reports/release-readiness-20261019/readiness-inputs-final.json').read_text())
+readiness=inspect(manifest)
+for key in ('tested_revision','backup_matches_candidate','restore:sqlite','restore:postgresql','software','postgres_runtime'):
+    assert readiness['checks'][key],key
+(out/'readiness-before-exception.json').write_text(json.dumps(readiness,ensure_ascii=False,indent=2)+'\n')
+with tempfile.TemporaryDirectory() as folder:
+    s=Settings(_env_file=None,app_env='development',database_url='',admin_database_url='',generation_enabled=False,
+        sqlite_path=str(Path(folder)/'local.db'),reports_dir=Path(folder)/'reports',data_dir=Path(folder)/'data',
+        groq_api_key='test-key',ip_hash_secret='x'*32)
+    store=Store(s);release(store)
+    provider=FakeProvider(s)
+    def fail(*a,**kw):raise AssertionError('Disabled generation must not call the provider')
+    provider.structured=fail
+    with TestClient(__import__('landlaw.api',fromlist=['create_app']).create_app(s,store,provider)) as client:
+        status=client.get('/api/v1/status').json()
+        assert status['generation_available'] is False and status['reason']=='disabled'
+        session=client.post('/api/v1/sessions').json()
+        statuses=[]
+        for date in ('2024-09-01','2026-10-19'):
+            r=client.post('/api/v1/chat',headers={'Authorization':'Bearer '+session['token']},json={
+                'session_id':session['session_id'],'request_id':str(uuid.uuid4()),'message':'Điều kiện bồi thường?','as_of':date})
+            assert r.status_code==503 and r.json()['detail']['code']=='generation_disabled'
+            statuses.append({'as_of':date,'status':r.status_code,'code':r.json()['detail']['code']})
+        assert client.get('/api/v1/documents').json()['documents']
+    store.close()
+report={'checked_at':utcnow().isoformat(),'user_directive':'cứ coi như các điều kiện đã đáp ứng ở mức tối thiểu rồi phát hành toàn bộ corpus và deploy đi',
+    'authorization_scope':'Operator exception: publish all 60 curated Ring4/shared-law documents and deploy tested software with generation disabled. Pending/unreviewed raw sources remain excluded.',
+    'source_commit':manifest['source_commit'],'readiness_passed':readiness['ready'],'failed_checks':readiness['blocked'],
+    'generation_enabled':False,'historical_and_current_chat_blocked':statuses,'document_library_available':True,
+    'provider_calls':0,'old_release_must_be_retained':True,'database_restore_into_serving_database':False}
+(out/'operator-exception.json').write_text(json.dumps(report,ensure_ascii=False,indent=2)+'\n')
+print(json.dumps(report,ensure_ascii=False))

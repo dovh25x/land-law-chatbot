@@ -1,0 +1,20 @@
+import hashlib,json
+from pathlib import Path
+import httpx
+from landlaw.security import utcnow
+ROOT=Path('/home/dovh25x/projects/land-law-chatbot');OUT=ROOT/'reports/restricted-release-20261019'
+url='https://github.com/dovh25x/land-law-chatbot/releases/download/corpus-a26bc99e541fbbe2/corpus-backup.json'
+target=ROOT/'data/staging/restricted-release-20261019/public-download/corpus-backup.json'
+assert not target.exists();target.parent.mkdir(parents=True,exist_ok=True)
+with httpx.stream('GET',url,follow_redirects=True,timeout=60) as response:
+    response.raise_for_status()
+    with target.open('wb') as f:
+        for chunk in response.iter_bytes():f.write(chunk)
+sha=hashlib.sha256(target.read_bytes()).hexdigest()
+assert sha=='204547346cf550e75ae165956cf3dc8dd19264da301876f80e725c39529069b2'
+assert target.read_bytes()==(ROOT/'data/staging/restricted-release-20261019/downloaded/corpus-backup.json').read_bytes()
+report={'checked_at':utcnow().isoformat(),'downloaded':True,'authenticated':False,'url':url,
+    'path':str(target.relative_to(ROOT)),'backup_sha256':sha,'corpus_id':'corpus-a26bc99e541fbbe2',
+    'bytes':target.stat().st_size,'identical_to_restored_asset':True}
+(OUT/'release-public-download.json').write_text(json.dumps(report,indent=2)+'\n')
+print(json.dumps(report))

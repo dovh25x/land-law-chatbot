@@ -1,0 +1,34 @@
+import json, sys
+from pathlib import Path
+import httpx
+from dotenv import dotenv_values
+ROOT=Path('/home/dovh25x/projects/land-law-chatbot')
+OUT=ROOT/'reports/restricted-release-20261019'
+env=dotenv_values(ROOT/'.env')
+commit='6ca8f12f0d770f2076de20f0d070460894bd0bc8'
+sid=env['RENDER_SERVICE_ID']
+prefix='render-corpus-deploy' if len(sys.argv)>2 and sys.argv[2]=='corpus' else 'render-deploy'
+exception=json.loads((OUT/'operator-exception.json').read_text())
+assert exception['source_commit']==commit and exception['generation_enabled'] is False
+with httpx.Client(base_url='https://api.render.com/v1',timeout=45,
+        headers={'Authorization':'Bearer '+env['RENDER_API_KEY']}) as c:
+    r=c.get('/services/'+sid);r.raise_for_status();service=r.json()
+    assert service['serviceDetails']['plan']=='free'
+    assert service.get('autoDeployTrigger')=='off'
+    r=c.get(f'/services/{sid}/env-vars?limit=100');r.raise_for_status()
+    current={x['envVar']['key']:x['envVar']['value'] for x in r.json()}
+    assert current['GENERATION_ENABLED']=='false' and current['GROQ_API_KEY']==env['GROQ_API_KEY']
+    if sys.argv[1]=='trigger':
+        assert not (OUT/(prefix+'-trigger.json')).exists()
+        r=c.post(f'/services/{sid}/deploys',json={'clearCache':'do_not_clear','commitId':commit});r.raise_for_status()
+        result=r.json()
+        report={'id':result['id'],'status':result['status'],'requested_commit':commit,
+            'generation_enabled':False,'readiness_waiver':'operator-exception.json','plan':'free'}
+        (OUT/(prefix+'-trigger.json')).write_text(json.dumps(report,indent=2)+'\n')
+    else:
+        initial=json.loads((OUT/(prefix+'-trigger.json')).read_text())
+        r=c.get(f"/services/{sid}/deploys/{initial['id']}");r.raise_for_status();result=r.json()
+        report={'id':result['id'],'status':result['status'],'commit':result.get('commit',{}).get('id'),'url':service['serviceDetails']['url']}
+        if report['status']=='live':assert report['commit']==commit
+        with (OUT/(prefix+'-status.jsonl')).open('a') as f:f.write(json.dumps(report)+'\n')
+    print(json.dumps(report))

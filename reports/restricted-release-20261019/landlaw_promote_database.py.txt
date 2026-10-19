@@ -1,0 +1,87 @@
+import hashlib, json, sys, uuid
+from pathlib import Path
+from concurrent.futures import ThreadPoolExecutor
+import httpx
+from dotenv import dotenv_values, set_key
+from psycopg.conninfo import make_conninfo, conninfo_to_dict
+from pydantic import SecretStr
+from landlaw.config import Settings
+from landlaw.security import new_token, utcnow
+from landlaw.store import Store
+
+ROOT=Path('/home/dovh25x/projects/land-law-chatbot')
+OUT=ROOT/'reports/restricted-release-20261019'
+env=dotenv_values(ROOT/'.env')
+candidate=json.loads((ROOT/'data/staging/readiness-20261019-attempt-1/candidate.json').read_text())
+name=json.loads((OUT/'downloaded-restore/isolated-databases.jsonl').read_text().splitlines()[-1])['database']
+assert name.startswith('landlaw_restore_')
+for backend in ('sqlite','postgresql'):
+    r=json.loads((OUT/'downloaded-restore'/backend/'restore-and-retrieval.json').read_text())
+    assert r['restored_exactly'] is True and r['corpus_id']==candidate['id']
+    assert r['backup_sha256']=='204547346cf550e75ae165956cf3dc8dd19264da301876f80e725c39529069b2'
+assert hashlib.sha256((ROOT/'data/staging/restricted-release-20261019/downloaded/corpus-backup.json').read_bytes()).hexdigest()==r['backup_sha256']
+runtime=make_conninfo(env['DATABASE_URL'],dbname=name)
+owner=make_conninfo(env['ADMIN_DATABASE_URL'],dbname=name)
+settings=Settings()
+assert settings.database_url.get_secret_value()==env['DATABASE_URL']
+if sys.argv[1]=='verify':
+    assert not (OUT/'promoted-database-verification.json').exists()
+    a=Store(settings.model_copy(update={'database_url':SecretStr(owner)}))
+    b=Store(settings.model_copy(update={'database_url':SecretStr(runtime)}))
+    old=Store(settings.for_operator())
+    try:
+        assert old.state('active_release')=='corpus-581da76c79b0b362'
+        backup=ROOT/'data/backups/restricted-release-20261019-before-cutover.json'
+        assert not backup.exists();old.backup(backup)
+        assert a.release()==candidate and b.release(None,True)['id']==candidate['id']
+        assert b.rows('SELECT count(*) AS n FROM chunks')[0]['n']==7392
+        for table in ('messages','traces','answer_cache'):
+            assert not a.rows(f'SELECT * FROM {table}')
+            assert not b.rows("SELECT has_table_privilege(current_user,?,'INSERT') AS allowed",('public.'+table,))[0]['allowed']
+        sid=str(uuid.uuid4());token=new_token();b.create_session(sid,token)
+        assert b.authenticate(sid,token) and not b.authenticate(sid,'wrong')
+        with ThreadPoolExecutor(max_workers=2) as pool:
+            outcomes=list(pool.map(lambda _:b.start_turn(str(uuid.uuid4()),sid,'operator-cutover-check'),range(2)))
+        assert outcomes.count(None)==outcomes.count('session_busy')==1
+        publication={'profile':'academic','published_at':utcnow().isoformat(),'generation_enabled':False,
+            'readiness_passed':False,'operator_exception':'reports/restricted-release-20261019/operator-exception.json',
+            'release_url':'https://github.com/dovh25x/land-law-chatbot/releases/tag/corpus-a26bc99e541fbbe2',
+            'limitations':['coverage','source_freshness','generation:smoke','generation:supplemental','generation:natural']}
+        assert not a.publication(candidate['id'])
+        a.set_state('publication:'+candidate['id']+':academic',json.dumps(publication,sort_keys=True,ensure_ascii=False))
+        report={'checked_at':utcnow().isoformat(),'database':name,'passed':True,'corpus_id':candidate['id'],
+            'documents':60,'chunks':7392,'runtime_role_tested':True,'parallel_session_lease':True,'history_writes_revoked':True,
+            'old_database_changed':False,'old_corpus_retained':True,'generation_enabled':False,'readiness_passed':False,
+            'rollback_backup':str(backup.relative_to(ROOT)),'rollback_backup_sha256':hashlib.sha256(backup.read_bytes()).hexdigest(),
+            'publication':publication,'scope':'Verified restored candidate in its separate retained database, before serving connection cutover.'}
+        (OUT/'promoted-database-verification.json').write_text(json.dumps(report,ensure_ascii=False,indent=2)+'\n')
+        print(json.dumps(report))
+    finally:a.close();b.close();old.close()
+else:
+    assert json.loads((OUT/'promoted-database-verification.json').read_text())['passed']
+    assert json.loads((OUT/'release-publication.json').read_text())['isDraft'] is False
+    assert json.loads((OUT/'release-public-download.json').read_text())['backup_sha256']==r['backup_sha256']
+    assert not (OUT/'render-database-cutover.json').exists()
+    rollback=ROOT/'.env.rollback-20261019'
+    assert not rollback.exists();rollback.touch(mode=0o600)
+    for key in ('DATABASE_URL','ADMIN_DATABASE_URL'):set_key(rollback,key,env[key])
+    with httpx.Client(base_url='https://api.render.com/v1',timeout=45,
+            headers={'Authorization':'Bearer '+env['RENDER_API_KEY']}) as c:
+        sid=env['RENDER_SERVICE_ID']
+        r=c.get('/services/'+sid);r.raise_for_status()
+        assert r.json()['serviceDetails']['plan']=='free' and r.json().get('autoDeployTrigger')=='off'
+        r=c.get(f'/services/{sid}/env-vars?limit=100');r.raise_for_status()
+        current={x['envVar']['key']:x['envVar']['value'] for x in r.json()}
+        assert current['GENERATION_ENABLED']=='false'
+        assert conninfo_to_dict(current['DATABASE_URL'])==conninfo_to_dict(env['DATABASE_URL'])
+        r=c.put(f'/services/{sid}/env-vars/DATABASE_URL',json={'value':runtime});r.raise_for_status()
+        r=c.get(f'/services/{sid}/env-vars?limit=100');r.raise_for_status()
+        after={x['envVar']['key']:x['envVar']['value'] for x in r.json()}
+        assert conninfo_to_dict(after['DATABASE_URL'])==conninfo_to_dict(runtime) and after['GENERATION_ENABLED']=='false'
+    set_key(ROOT/'.env','DATABASE_URL',runtime)
+    set_key(ROOT/'.env','ADMIN_DATABASE_URL',owner)
+    report={'checked_at':utcnow().isoformat(),'configured_database':name,'corpus_id':candidate['id'],
+        'generation_enabled':False,'old_database_retained':True,'local_operator_config_synchronized':True,
+        'rollback_config':str(rollback.relative_to(ROOT)),'redeploy_required':True}
+    (OUT/'render-database-cutover.json').write_text(json.dumps(report,indent=2)+'\n')
+    print(json.dumps(report))

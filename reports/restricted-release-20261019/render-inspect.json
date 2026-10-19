@@ -1,0 +1,35 @@
+{
+  "plan": "free",
+  "runtime": "docker",
+  "url": "https://land-law-chatbot.onrender.com",
+  "auto_deploy": "off",
+  "generation_enabled_before": "true",
+  "configured_groq_key_matches_local": false,
+  "deployments": [
+    {
+      "id": "dep-db9qsorbc2fs73ctl7pg",
+      "status": "live",
+      "commit": "578d31f1f5f2622c9c60a39b7d7f286fc35935f0"
+    },
+    {
+      "id": "dep-db9pjarrjlhs73fmvia0",
+      "status": "deactivated",
+      "commit": "3c161c6764a620ce52abb414cc935a863d6c46a7"
+    },
+    {
+      "id": "dep-db9lgl61egvs73fnjm80",
+      "status": "deactivated",
+      "commit": "d75357643a86d24751940282dd72018d16824731"
+    },
+    {
+      "id": "dep-db9l0ou1egvs73flu7o0",
+      "status": "deactivated",
+      "commit": "43ea73a15b06c8f5c89714f81b8b1e5325ff406e"
+    },
+    {
+      "id": "dep-db90f7brjlhs73dpiegg",
+      "status": "deactivated",
+      "commit": "8651dfb9430e7ead0baa000e1f50387048f73c16"
+    }
+  ]
+}

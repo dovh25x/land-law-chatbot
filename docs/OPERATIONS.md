@@ -72,7 +72,7 @@ Sau restore phải đánh giá lại freshness. Backup không tự chứng minh 
 
 Để chuẩn bị bản sửa corpus, dùng `scripts/prepare_corpus_candidate.py --source <snapshot.json> --output <thư-mục-mới>`. Lệnh chỉ đọc raw đã duyệt ở chế độ offline, tái sử dụng chính xác vector theo title/checksum và chỉ embed đoạn mới hoặc đổi nội dung. Output gồm snapshot, backup và báo cáo; database dùng để đóng gói là SQLite tạm. Lệnh không ghi receipt freshness hoặc thay active corpus đang phục vụ.
 
-Kiểm tra bằng `scripts/audit_corpus.py --snapshot <candidate.json> --output <báo-cáo-mới.json> --replay-parser`, sau đó `scripts/evaluate_corpus_candidate.py --snapshot <candidate.json> --backup <candidate-backup.json> --output <thư-mục-mới> --postgres`. Lệnh thứ hai restore và đo retrieval riêng trên SQLite và một PostgreSQL database mới, rồi chỉ xóa database mà chính lần chạy đó tạo. Cần owner connection có quyền tạo database; không coi kết quả SQLite là kết quả PostgreSQL. Báo cáo retrieval không thay cho kiểm thử runtime role, generation hoặc review pháp lý.
+Kiểm tra bằng `scripts/audit_corpus.py --snapshot <candidate.json> --output <báo-cáo-mới.json> --replay-parser`, sau đó `scripts/evaluate_corpus_candidate.py --snapshot <candidate.json> --backup <candidate-backup.json> --output <thư-mục-mới> --postgres`. Lệnh thứ hai restore và đo retrieval riêng trên SQLite và một PostgreSQL database mới; giữ database cùng receipt sau lần chạy, kể cả khi lỗi. Cần owner connection có quyền tạo database; không coi kết quả SQLite là kết quả PostgreSQL. Báo cáo retrieval không thay cho kiểm thử runtime role, generation hoặc review pháp lý.
 
 Chạy generation bằng `scripts/evaluate_generation_candidate.py --backup <candidate-backup.json> --output <thư-mục-run-mới>`. Khi provider còn quota và cooldown đã hết, dùng cùng output với `--resume --split natural` (hoặc split cần tiếp tục). Helper dùng SQLite tạm và scope operator, giữ checkpoint/attempt của bộ khóa, lưu `operator-cooldown.json` và không gửi request trước mốc provider cho phép. Ca đã hoàn tất không được chạy lại chỉ để chọn kết quả đẹp; ca limited/error và ca chưa thực thi có thể tiếp tục. Giữ model và gói hosting đã thống nhất; khi operator cập nhật credential, tiếp tục từ checkpoint và vẫn tuân thủ hạn mức thực tế cùng Retry-After của provider.
 
@@ -111,7 +111,9 @@ Khôi phục local theo [README](../README.md#2-tải-và-khôi-phục-corpus). 
 4. Kiểm tra runtime role đọc được corpus, không ghi được payload hội thoại; kiểm tra lease và truy xuất.
 5. Ghi artifact và dọn tài nguyên tạm đúng phạm vi của lần chạy.
 
-`scripts/verify_postgres_restore.py` dùng schema tạm. `scripts/verify_postgres_database.py` tạo database tạm riêng và cần quyền tạo database; script chỉ xóa database tạm do chính lần chạy tạo. Cả hai không phải lệnh restore đè database đang phục vụ.
+`scripts/verify_postgres_restore.py` dùng schema tạm. `scripts/verify_postgres_database.py` tạo database riêng và cần quyền tạo database; script giữ database cùng receipt sau lần chạy. Cả hai không phải lệnh restore đè database đang phục vụ.
+
+Nếu không đủ dung lượng để giữ hai corpus trong cùng database, khôi phục và kiểm tra bản mới tại database riêng trên hạ tầng đã chọn. Trước khi chuyển `DATABASE_URL`, kiểm tra lại quyền runtime, checksum và fingerprint; lưu cấu hình rollback ở nơi dành cho secret. Redeploy đúng SHA đã kiểm thử, xác minh corpus qua signed ingress và giữ nguyên database cũ. Chuyển kết nối không mang theo metadata phiên cũ; lịch sử hội thoại vẫn thuộc trình duyệt.
 
 Không coi backup hợp lệ chỉ vì file đã được tạo. Bằng chứng restore phải xác định rõ database/schema thử nghiệm và các bước đã kiểm tra.
 
