@@ -52,6 +52,7 @@ def configuration_fingerprint(settings):
     configuration = {"model": settings.generation_model, "llm_provider": settings.llm_provider, "embedding_model": settings.embedding_model,
                      "dimensions": settings.embedding_dimensions, 'embedding_provider':settings.embedding_provider,
                      "timeout_seconds": settings.turn_timeout_seconds,
+                     "allow_stale_generation": settings.allow_stale_generation,
                      "storage_backend": "postgresql" if settings.database_url.get_secret_value() else "sqlite",
                      "llm_budget": 6, "tool_budget": 12, "retrieval_rounds": 2}
     return hashlib.sha256(json.dumps(configuration, sort_keys=True).encode()+b"".join(p.read_bytes() for p in files)).hexdigest()

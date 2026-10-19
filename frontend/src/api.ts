@@ -15,6 +15,9 @@ export interface GenerationStatus {
   reason: 'disabled' | 'source_stale' | 'provider_limited' | null
   retry_after?: number | null
   corpus_release?: string | null
+  source_fresh?: boolean
+  warning?: 'source_stale' | null
+  source_checked_at?: string | null
 }
 
 export class APIError extends Error {

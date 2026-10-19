@@ -7,6 +7,38 @@ from conftest import release
 from test_agent import FakeProvider
 
 
+def test_stale_generation_exception_requires_an_actual_corpus(settings, store):
+    settings.allow_stale_generation = True
+    with TestClient(create_app(settings, store, FakeProvider(settings))) as client:
+        status = client.get('/api/v1/status').json()
+        assert not status['generation_available'] and status['reason'] == 'source_stale'
+
+
+def test_explicit_stale_generation_is_reported_without_faking_freshness(settings, store):
+    from datetime import timedelta
+    from landlaw.security import utcnow
+    payload = release(store)
+    payload['id'] = 'old-snapshot'
+    payload['checked_at'] = (utcnow()-timedelta(days=8)).isoformat()
+    store.stage(payload); store.publish(payload['id'])
+    with TestClient(create_app(settings, store, FakeProvider(settings))) as client:
+        status = client.get('/api/v1/status').json()
+        assert not status['generation_available'] and status['reason'] == 'source_stale'
+        settings.allow_stale_generation = True
+        status = client.get('/api/v1/status').json()
+        assert status['generation_available'] and status['reason'] is None
+        assert status['source_fresh'] is False and status['warning'] == 'source_stale'
+        assert status['source_checked_at'] == payload['checked_at']
+        settings.generation_enabled = False
+        status = client.get('/api/v1/status').json()
+        assert not status['generation_available'] and status['reason'] == 'disabled'
+        settings.generation_enabled = True
+        store.set_cooldown(30)
+        status = client.get('/api/v1/status').json()
+        assert not status['generation_available'] and status['reason'] == 'provider_limited'
+        assert status['warning'] == 'source_stale'
+
+
 def test_auth_sse_and_browser_history_contract(settings,store):
     release(store)
     with TestClient(create_app(settings,store,FakeProvider(settings))) as client:

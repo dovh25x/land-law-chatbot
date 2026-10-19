@@ -500,6 +500,27 @@ async def test_stale_corpus_does_not_claim_current_law(store, settings):
     assert "quá bảy ngày" in result.content
 
 
+@pytest.mark.parametrize('verification_fails', [False, True])
+async def test_explicit_stale_generation_keeps_warning_and_claim_verification(store, settings, verification_fails):
+    settings.allow_stale_generation = True
+    payload = release(store)
+    payload['id'] = 'unreviewed-snapshot'
+    payload['checked_at'] = (utcnow()-timedelta(days=8)).isoformat()
+    store.stage(payload); store.publish(payload['id'])
+    verification = Verification(supported_claim_indexes=[], issues=['Unsupported claim']) if verification_fails else None
+    sid, _ = session(store)
+    result = await Agent(store, FakeProvider(settings, verification=verification)).run(
+        ChatRequest(session_id=sid, message='bồi thường thu hồi đất'), noop)
+    assert result.llm_calls > 0
+    assert 'Nguồn chưa được rà soát cập nhật' in result.content
+    assert not store.source_fresh(store.release())
+    assert store.release()['checked_at'] == payload['checked_at']
+    if verification_fails:
+        assert result.status == 'insufficient_evidence' and not result.verified_claims and not result.citations
+    else:
+        assert result.status == 'answered' and result.verified_claims and result.citations
+
+
 @pytest.mark.parametrize("failure,status", [(RateLimited(30), "limited"), (BudgetExceeded(), "limited"), (ProviderUnavailable("API unavailable"), "error")])
 async def test_provider_failures_return_explicit_status(store, settings, failure, status):
     release(store)

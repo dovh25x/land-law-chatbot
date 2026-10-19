@@ -157,6 +157,7 @@ function App() {
   const ready = readiness?.status === 'ready'
   const connectionMessage = connecting ? 'Đang kết nối dịch vụ. Lần khởi động đầu có thể mất khoảng một phút…'
     : generation && !generation.generation_available ? `${generationLabel(generation)}.${generation.retry_after ? ` Thử lại sau ${generation.retry_after} giây.` : ''} Thư viện nguồn vẫn truy cập được.`
+    : generation?.warning === 'source_stale' ? 'Nguồn chưa được rà soát cập nhật. AI trả lời theo snapshot; chưa xác nhận quy định hiện hành. Vui lòng đối chiếu nguồn chính thức.'
     : !ready ? readiness?.status === 'not_deployed' ? 'Bản xem trước giao diện. Backend chưa được triển khai.' : 'Dịch vụ chưa sẵn sàng. Bạn có thể kiểm tra lại kết nối.' : ''
 
   return <div onClickCapture={event => { const button = (event.target as HTMLElement).closest('button'); button?.focus() }} className={`app-shell page-${page} ${sourcePanel ? 'panel-open' : ''} ${navOpen ? 'nav-open' : ''} ${collapsed ? 'sidebar-collapsed' : ''}`}>

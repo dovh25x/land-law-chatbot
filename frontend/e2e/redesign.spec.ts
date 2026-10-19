@@ -106,6 +106,20 @@ for (const reason of ['disabled', 'source_stale', 'provider_limited']) {
   })
 }
 
+test('explicit stale-source generation warns visibly and allows a verified response', async ({ page }) => {
+  await page.route('**/api/v1/status', route => route.fulfill({ json: {
+    generation_available: true, reason: null, source_fresh: false, warning: 'source_stale',
+    source_checked_at: '2026-10-11T17:32:27Z',
+  } }))
+  let posts = 0
+  page.on('request', request => { if (request.url().endsWith('/chat')) posts++ })
+  await page.goto('/')
+  await expect(page.locator('.connection-note')).toContainText('Nguồn chưa được rà soát cập nhật')
+  await send(page)
+  expect(posts).toBe(1)
+  await expect(page.locator('.message.assistant')).toContainText('Đáp án kiểm thử')
+})
+
 test('a disconnected SSE is not retried and never produces a draft', async ({ page }) => {
   let posts = 0
   await page.route('**/api/v1/chat', route => { posts++; return route.fulfill({ contentType: 'text/event-stream', body: 'event: progress\ndata: {"step":"retrieve","summary":"Đang tra cứu","document_ids":[],"elapsed_ms":1}\n\n' }) })

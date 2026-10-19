@@ -1455,7 +1455,7 @@ class Agent:
         if release:
             checked_at = datetime.fromisoformat(release["checked_at"].replace("Z", "+00:00"))
             stale = not await asyncio.to_thread(self.store.source_fresh, release, {evidence[i].document.id for c in claims for i in c.citation_ids} if claims else None)
-        if stale and state["as_of"] >= local_date():
+        if stale and state["as_of"] >= local_date() and not self.provider.settings.allow_stale_generation:
             status = "insufficient_evidence"
             claims, citations = [], []
         outside=state['plan'].out_of_scope or draft.out_of_scope
@@ -1468,7 +1468,10 @@ class Agent:
                  "clarification_needed": "Cần bổ sung dữ kiện để xác định quy định áp dụng cho hồ sơ cụ thể.",
                  "insufficient_evidence": "Chưa có đủ chứng cứ đã xác minh để kết luận đầy đủ."}[status]
         if stale and state["as_of"] >= local_date():
-            intro = "Bộ dữ liệu đã quá bảy ngày chưa được kiểm tra nguồn; chưa thể xác nhận quy định hiện hành."
+            if self.provider.settings.allow_stale_generation:
+                intro = "Nguồn chưa được rà soát cập nhật; nội dung tham khảo từ snapshot, chưa xác nhận quy định hiện hành. " + intro
+            else:
+                intro = "Bộ dữ liệu đã quá bảy ngày chưa được kiểm tra nguồn; chưa thể xác nhận quy định hiện hành."
         content = intro
         if state.get('unsupported_references'):
             content='Chưa có văn bản mang số '+', '.join(state['unsupported_references'])+' đã được kiểm chứng trong corpus. Chưa thể xác nhận nội dung, mức tiền hoặc quyền lợi được viện dẫn; cần đối chiếu nguồn văn bản chính thức. Không suy ra văn bản có hay không tồn tại chỉ từ việc thiếu trong corpus.'
@@ -1533,7 +1536,8 @@ class Agent:
                         'document_number':known[c.document_id].get('document_number'), 'locator':c.locator}
                         for c in item.citations if c.document_id in known]}
                     for item in request.history]
-                if state['as_of'] >= local_date() and not await asyncio.to_thread(self.store.source_fresh, state['release'] or {}):
+                if (state['as_of'] >= local_date() and not self.provider.settings.allow_stale_generation
+                        and not await asyncio.to_thread(self.store.source_fresh, state['release'] or {})):
                     state['result']=ChatResult(**public_status(state['release']),status='insufficient_evidence',
                         content='Nguồn đã quá bảy ngày chưa được kiểm tra lại; chưa thể xác nhận quy định hiện hành. Có thể xem snapshot trong thư viện nguồn.',
                         as_of=state['as_of'],corpus_release=(state['release'] or {}).get('id'),trace_id=str(uuid.uuid4()),

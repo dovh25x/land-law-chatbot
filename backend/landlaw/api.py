@@ -175,10 +175,12 @@ def create_app(settings: Settings | None = None, store: Store | None = None, pro
         release=await asyncio.to_thread(state['store'].release,None,True)
         fresh=bool(release) and await asyncio.to_thread(state['store'].source_fresh,release)
         delay=await asyncio.to_thread(state['store'].cooldown)
-        enabled=settings.generation_enabled and fresh and not delay
+        enabled=bool(release) and settings.generation_enabled and (fresh or settings.allow_stale_generation) and not delay
         return {'generation_available':enabled,'reason':'disabled' if not settings.generation_enabled else
-            'source_stale' if not fresh else 'provider_limited' if delay else None,
-            'retry_after':delay or None,'corpus_release':(release or {}).get('id'), 'api_version':2}
+            'source_stale' if not fresh and (not settings.allow_stale_generation or not release) else 'provider_limited' if delay else None,
+            'retry_after':delay or None,'corpus_release':(release or {}).get('id'), 'api_version':2,
+            'source_fresh':fresh,'warning':None if fresh else 'source_stale',
+            'source_checked_at':(release or {}).get('checked_at')}
 
     @app.get("/api/v1/documents")
     async def documents():
