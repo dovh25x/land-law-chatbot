@@ -1,0 +1,899 @@
+deploy	Set up job	﻿2026-10-19T06:28:05.3043218Z Current runner version: '2.337.0'
+deploy	Set up job	2026-10-19T06:28:05.3070508Z ##[group]Runner Image Provisioner
+deploy	Set up job	2026-10-19T06:28:05.3071422Z Hosted Compute Agent
+deploy	Set up job	2026-10-19T06:28:05.3072123Z Version: 20261012.601
+deploy	Set up job	2026-10-19T06:28:05.3072879Z Commit: f3dc54e1fb89da6852db922499a0233137369e1d
+deploy	Set up job	2026-10-19T06:28:05.3073622Z Build Date: 2026-10-12T17:48:21Z
+deploy	Set up job	2026-10-19T06:28:05.3074935Z Worker ID: {dd792170-ac69-4705-9fed-a93674c61504}
+deploy	Set up job	2026-10-19T06:28:05.3075748Z Region: westus2
+deploy	Set up job	2026-10-19T06:28:05.3076372Z Cloud: Azure
+deploy	Set up job	2026-10-19T06:28:05.3076981Z ##[endgroup]
+deploy	Set up job	2026-10-19T06:28:05.3078703Z ##[group]Operating System
+deploy	Set up job	2026-10-19T06:28:05.3079475Z Ubuntu
+deploy	Set up job	2026-10-19T06:28:05.3080013Z 24.04.5
+deploy	Set up job	2026-10-19T06:28:05.3080571Z LTS
+deploy	Set up job	2026-10-19T06:28:05.3081189Z ##[endgroup]
+deploy	Set up job	2026-10-19T06:28:05.3081752Z ##[group]Runner Image
+deploy	Set up job	2026-10-19T06:28:05.3082433Z Image: ubuntu-24.04
+deploy	Set up job	2026-10-19T06:28:05.3083101Z Version: 20261012.334.1
+deploy	Set up job	2026-10-19T06:28:05.3084276Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20261012.334/images/ubuntu/Ubuntu2404-Readme.md
+deploy	Set up job	2026-10-19T06:28:05.3086383Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20261012.334
+deploy	Set up job	2026-10-19T06:28:05.3087405Z ##[endgroup]
+deploy	Set up job	2026-10-19T06:28:05.3088614Z ##[group]GITHUB_TOKEN Permissions
+deploy	Set up job	2026-10-19T06:28:05.3090814Z Contents: read
+deploy	Set up job	2026-10-19T06:28:05.3091442Z Metadata: read
+deploy	Set up job	2026-10-19T06:28:05.3092113Z ##[endgroup]
+deploy	Set up job	2026-10-19T06:28:05.3094311Z Secret source: Actions
+deploy	Set up job	2026-10-19T06:28:05.3095795Z Cache mode: write
+deploy	Set up job	2026-10-19T06:28:05.3096801Z Prepare workflow directory
+deploy	Set up job	2026-10-19T06:28:05.3651529Z Prepare all required actions
+deploy	Set up job	2026-10-19T06:28:05.3700607Z Getting action download info
+deploy	Set up job	2026-10-19T06:28:05.7205905Z Download action repository 'actions/checkout@v4' (SHA:11d5960a326750d5838078e36cf38b85af677262)
+deploy	Set up job	2026-10-19T06:28:05.8216160Z Download action repository 'actions/setup-python@v5' (SHA:a26af69be951a213d495a4c3e4e4022e16d87065)
+deploy	Set up job	2026-10-19T06:28:05.9004888Z Download action repository 'actions/setup-node@v4' (SHA:49933ea5288caeca8642d1e84afbd3f7d6820020)
+deploy	Set up job	2026-10-19T06:28:05.9858283Z Download action repository 'actions/upload-artifact@v4' (SHA:ea165f8d65b6e75b540449e92b4886f43607fa02)
+deploy	Set up job	2026-10-19T06:28:06.1989167Z Complete job name: deploy
+deploy	Run actions/checkout@v4	﻿2026-10-19T06:28:06.2844249Z ##[group]Run actions/checkout@v4
+deploy	Run actions/checkout@v4	2026-10-19T06:28:06.2845645Z with:
+deploy	Run actions/checkout@v4	2026-10-19T06:28:06.2846181Z   ref: f3f99722cfe1fb81c29607eda16055f3a1640ac4
+deploy	Run actions/checkout@v4	2026-10-19T06:28:06.2846908Z   repository: dovh25x/land-law-chatbot
+deploy	Run actions/checkout@v4	2026-10-19T06:28:06.2850801Z   token: ***
+deploy	Run actions/checkout@v4	2026-10-19T06:28:06.2851257Z   ssh-strict: true
+deploy	Run actions/checkout@v4	2026-10-19T06:28:06.2851728Z   ssh-user: git
+deploy	Run actions/checkout@v4	2026-10-19T06:28:06.2852197Z   persist-credentials: true
+deploy	Run actions/checkout@v4	2026-10-19T06:28:06.2852698Z   clean: true
+deploy	Run actions/checkout@v4	2026-10-19T06:28:06.2853179Z   sparse-checkout-cone-mode: true
+deploy	Run actions/checkout@v4	2026-10-19T06:28:06.2853724Z   fetch-depth: 1
+deploy	Run actions/checkout@v4	2026-10-19T06:28:06.2854176Z   fetch-tags: false
+deploy	Run actions/checkout@v4	2026-10-19T06:28:06.2854979Z   show-progress: true
+deploy	Run actions/checkout@v4	2026-10-19T06:28:06.2855465Z   lfs: false
+deploy	Run actions/checkout@v4	2026-10-19T06:28:06.2855899Z   submodules: false
+deploy	Run actions/checkout@v4	2026-10-19T06:28:06.2856362Z   set-safe-directory: true
+deploy	Run actions/checkout@v4	2026-10-19T06:28:06.2856913Z   allow-unsafe-pr-checkout: false
+deploy	Run actions/checkout@v4	2026-10-19T06:28:06.2857730Z env:
+deploy	Run actions/checkout@v4	2026-10-19T06:28:06.2858179Z   ALLOW_STALE_GENERATION: true
+deploy	Run actions/checkout@v4	2026-10-19T06:28:06.2858697Z ##[endgroup]
+deploy	Run actions/checkout@v4	2026-10-19T06:28:06.4113021Z Syncing repository: dovh25x/land-law-chatbot
+deploy	Run actions/checkout@v4	2026-10-19T06:28:06.4116275Z ##[group]Getting Git version info
+deploy	Run actions/checkout@v4	2026-10-19T06:28:06.4117706Z Working directory is '/home/runner/work/land-law-chatbot/land-law-chatbot'
+deploy	Run actions/checkout@v4	2026-10-19T06:28:06.4147032Z [command]/usr/bin/git version
+deploy	Run actions/checkout@v4	2026-10-19T06:28:06.4296655Z git version 2.55.0
+deploy	Run actions/checkout@v4	2026-10-19T06:28:06.4348106Z ##[endgroup]
+deploy	Run actions/checkout@v4	2026-10-19T06:28:06.4386492Z Temporarily overriding HOME='/home/runner/work/_temp/bba5c13f-57c5-4817-8d07-f73b82fa39c1' before making global git config changes
+deploy	Run actions/checkout@v4	2026-10-19T06:28:06.4387996Z Adding repository directory to the temporary git global config as a safe directory
+deploy	Run actions/checkout@v4	2026-10-19T06:28:06.4389467Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/land-law-chatbot/land-law-chatbot
+deploy	Run actions/checkout@v4	2026-10-19T06:28:06.4407756Z Deleting the contents of '/home/runner/work/land-law-chatbot/land-law-chatbot'
+deploy	Run actions/checkout@v4	2026-10-19T06:28:06.4413426Z ##[group]Initializing the repository
+deploy	Run actions/checkout@v4	2026-10-19T06:28:06.4419188Z [command]/usr/bin/git init /home/runner/work/land-law-chatbot/land-law-chatbot
+deploy	Run actions/checkout@v4	2026-10-19T06:28:06.4534603Z hint: Using 'master' as the name for the initial branch. This default branch name
+deploy	Run actions/checkout@v4	2026-10-19T06:28:06.4536737Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+deploy	Run actions/checkout@v4	2026-10-19T06:28:06.4538459Z hint: to use in all of your new repositories, which will suppress this warning,
+deploy	Run actions/checkout@v4	2026-10-19T06:28:06.4539861Z hint: call:
+deploy	Run actions/checkout@v4	2026-10-19T06:28:06.4540728Z hint:
+deploy	Run actions/checkout@v4	2026-10-19T06:28:06.4543226Z hint: 	git config --global init.defaultBranch <name>
+deploy	Run actions/checkout@v4	2026-10-19T06:28:06.4544697Z hint:
+deploy	Run actions/checkout@v4	2026-10-19T06:28:06.4545877Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+deploy	Run actions/checkout@v4	2026-10-19T06:28:06.4547597Z hint: 'development'. The just-created branch can be renamed via this command:
+deploy	Run actions/checkout@v4	2026-10-19T06:28:06.4549884Z hint:
+deploy	Run actions/checkout@v4	2026-10-19T06:28:06.4550780Z hint: 	git branch -m <name>
+deploy	Run actions/checkout@v4	2026-10-19T06:28:06.4552112Z hint:
+deploy	Run actions/checkout@v4	2026-10-19T06:28:06.4553294Z hint: Disable this message with "git config set advice.defaultBranchName false"
+deploy	Run actions/checkout@v4	2026-10-19T06:28:06.4555124Z Initialized empty Git repository in /home/runner/work/land-law-chatbot/land-law-chatbot/.git/
+deploy	Run actions/checkout@v4	2026-10-19T06:28:06.4558627Z [command]/usr/bin/git remote add origin https://github.com/dovh25x/land-law-chatbot
+deploy	Run actions/checkout@v4	2026-10-19T06:28:06.4640609Z ##[endgroup]
+deploy	Run actions/checkout@v4	2026-10-19T06:28:06.4739352Z ##[group]Disabling automatic garbage collection
+deploy	Run actions/checkout@v4	2026-10-19T06:28:06.4740671Z [command]/usr/bin/git config --local gc.auto 0
+deploy	Run actions/checkout@v4	2026-10-19T06:28:06.4742331Z ##[endgroup]
+deploy	Run actions/checkout@v4	2026-10-19T06:28:06.4743053Z ##[group]Setting up auth
+deploy	Run actions/checkout@v4	2026-10-19T06:28:06.4744724Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+deploy	Run actions/checkout@v4	2026-10-19T06:28:06.4753640Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+deploy	Run actions/checkout@v4	2026-10-19T06:28:06.5212162Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+deploy	Run actions/checkout@v4	2026-10-19T06:28:06.5251973Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+deploy	Run actions/checkout@v4	2026-10-19T06:28:06.5484976Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+deploy	Run actions/checkout@v4	2026-10-19T06:28:06.5523295Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+deploy	Run actions/checkout@v4	2026-10-19T06:28:06.5765364Z [command]/usr/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+deploy	Run actions/checkout@v4	2026-10-19T06:28:06.5810712Z ##[endgroup]
+deploy	Run actions/checkout@v4	2026-10-19T06:28:06.5811897Z ##[group]Fetching the repository
+deploy	Run actions/checkout@v4	2026-10-19T06:28:06.5821547Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin f3f99722cfe1fb81c29607eda16055f3a1640ac4
+deploy	Run actions/checkout@v4	2026-10-19T06:28:07.2109943Z From https://github.com/dovh25x/land-law-chatbot
+deploy	Run actions/checkout@v4	2026-10-19T06:28:07.2111963Z  * branch            f3f99722cfe1fb81c29607eda16055f3a1640ac4 -> FETCH_HEAD
+deploy	Run actions/checkout@v4	2026-10-19T06:28:07.2116920Z ##[endgroup]
+deploy	Run actions/checkout@v4	2026-10-19T06:28:07.2118860Z ##[group]Determining the checkout info
+deploy	Run actions/checkout@v4	2026-10-19T06:28:07.2120976Z ##[endgroup]
+deploy	Run actions/checkout@v4	2026-10-19T06:28:07.2122456Z [command]/usr/bin/git sparse-checkout disable
+deploy	Run actions/checkout@v4	2026-10-19T06:28:07.2181015Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+deploy	Run actions/checkout@v4	2026-10-19T06:28:07.2218296Z ##[group]Checking out the ref
+deploy	Run actions/checkout@v4	2026-10-19T06:28:07.2223630Z [command]/usr/bin/git checkout --progress --force f3f99722cfe1fb81c29607eda16055f3a1640ac4
+deploy	Run actions/checkout@v4	2026-10-19T06:28:07.3500590Z Note: switching to 'f3f99722cfe1fb81c29607eda16055f3a1640ac4'.
+deploy	Run actions/checkout@v4	2026-10-19T06:28:07.3502250Z 
+deploy	Run actions/checkout@v4	2026-10-19T06:28:07.3503161Z You are in 'detached HEAD' state. You can look around, make experimental
+deploy	Run actions/checkout@v4	2026-10-19T06:28:07.3505638Z changes and commit them, and you can discard any commits you make in this
+deploy	Run actions/checkout@v4	2026-10-19T06:28:07.3508158Z state without impacting any branches by switching back to a branch.
+deploy	Run actions/checkout@v4	2026-10-19T06:28:07.3509538Z 
+deploy	Run actions/checkout@v4	2026-10-19T06:28:07.3510429Z If you want to create a new branch to retain commits you create, you may
+deploy	Run actions/checkout@v4	2026-10-19T06:28:07.3512522Z do so (now or later) by using -c with the switch command. Example:
+deploy	Run actions/checkout@v4	2026-10-19T06:28:07.3514029Z 
+deploy	Run actions/checkout@v4	2026-10-19T06:28:07.3515298Z   git switch -c <new-branch-name>
+deploy	Run actions/checkout@v4	2026-10-19T06:28:07.3516600Z 
+deploy	Run actions/checkout@v4	2026-10-19T06:28:07.3517441Z Or undo this operation with:
+deploy	Run actions/checkout@v4	2026-10-19T06:28:07.3518656Z 
+deploy	Run actions/checkout@v4	2026-10-19T06:28:07.3519471Z   git switch -
+deploy	Run actions/checkout@v4	2026-10-19T06:28:07.3520564Z 
+deploy	Run actions/checkout@v4	2026-10-19T06:28:07.3522054Z Turn off this advice by setting config variable advice.detachedHead to false
+deploy	Run actions/checkout@v4	2026-10-19T06:28:07.3524155Z 
+deploy	Run actions/checkout@v4	2026-10-19T06:28:07.3526108Z HEAD is now at f3f9972 Target the visible topbar when checking snapshot-free mobile UI
+deploy	Run actions/checkout@v4	2026-10-19T06:28:07.3532814Z ##[endgroup]
+deploy	Run actions/checkout@v4	2026-10-19T06:28:07.3575097Z [command]/usr/bin/git log -1 --format=%H
+deploy	Run actions/checkout@v4	2026-10-19T06:28:07.3605305Z f3f99722cfe1fb81c29607eda16055f3a1640ac4
+deploy	Run actions/setup-python@v5	﻿2026-10-19T06:28:07.4003020Z ##[group]Run actions/setup-python@v5
+deploy	Run actions/setup-python@v5	2026-10-19T06:28:07.4004374Z with:
+deploy	Run actions/setup-python@v5	2026-10-19T06:28:07.4005579Z   python-version: 3.12
+deploy	Run actions/setup-python@v5	2026-10-19T06:28:07.4006652Z   check-latest: false
+deploy	Run actions/setup-python@v5	2026-10-19T06:28:07.4016837Z   token: ***
+deploy	Run actions/setup-python@v5	2026-10-19T06:28:07.4017851Z   update-environment: true
+deploy	Run actions/setup-python@v5	2026-10-19T06:28:07.4019013Z   allow-prereleases: false
+deploy	Run actions/setup-python@v5	2026-10-19T06:28:07.4020156Z   freethreaded: false
+deploy	Run actions/setup-python@v5	2026-10-19T06:28:07.4021170Z env:
+deploy	Run actions/setup-python@v5	2026-10-19T06:28:07.4022085Z   ALLOW_STALE_GENERATION: true
+deploy	Run actions/setup-python@v5	2026-10-19T06:28:07.4023235Z ##[endgroup]
+deploy	Run actions/setup-python@v5	2026-10-19T06:28:07.5421367Z ##[group]Installed versions
+deploy	Run actions/setup-python@v5	2026-10-19T06:28:07.5572617Z (node:2312) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+deploy	Run actions/setup-python@v5	2026-10-19T06:28:07.5574222Z (Use `node --trace-deprecation ...` to show where the warning was created)
+deploy	Run actions/setup-python@v5	2026-10-19T06:28:07.5575499Z Successfully set up CPython (3.12.15)
+deploy	Run actions/setup-python@v5	2026-10-19T06:28:07.5576687Z ##[endgroup]
+deploy	Run actions/setup-node@v4	﻿2026-10-19T06:28:07.5804039Z ##[group]Run actions/setup-node@v4
+deploy	Run actions/setup-node@v4	2026-10-19T06:28:07.5804919Z with:
+deploy	Run actions/setup-node@v4	2026-10-19T06:28:07.5805342Z   node-version: 24
+deploy	Run actions/setup-node@v4	2026-10-19T06:28:07.5805779Z   cache: npm
+deploy	Run actions/setup-node@v4	2026-10-19T06:28:07.5806294Z   cache-dependency-path: frontend/package-lock.json
+deploy	Run actions/setup-node@v4	2026-10-19T06:28:07.5806925Z   always-auth: false
+deploy	Run actions/setup-node@v4	2026-10-19T06:28:07.5807384Z   check-latest: false
+deploy	Run actions/setup-node@v4	2026-10-19T06:28:07.5811883Z   token: ***
+deploy	Run actions/setup-node@v4	2026-10-19T06:28:07.5812307Z env:
+deploy	Run actions/setup-node@v4	2026-10-19T06:28:07.5812725Z   ALLOW_STALE_GENERATION: true
+deploy	Run actions/setup-node@v4	2026-10-19T06:28:07.5813364Z   pythonLocation: /opt/hostedtoolcache/Python/3.12.15/x64
+deploy	Run actions/setup-node@v4	2026-10-19T06:28:07.5814250Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.12.15/x64/lib/pkgconfig
+deploy	Run actions/setup-node@v4	2026-10-19T06:28:07.5815294Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.15/x64
+deploy	Run actions/setup-node@v4	2026-10-19T06:28:07.5816061Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.15/x64
+deploy	Run actions/setup-node@v4	2026-10-19T06:28:07.5816832Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.15/x64
+deploy	Run actions/setup-node@v4	2026-10-19T06:28:07.5817613Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.12.15/x64/lib
+deploy	Run actions/setup-node@v4	2026-10-19T06:28:07.5818338Z ##[endgroup]
+deploy	Run actions/setup-node@v4	2026-10-19T06:28:07.7339127Z Found in cache @ /opt/hostedtoolcache/node/24.21.0/x64
+deploy	Run actions/setup-node@v4	2026-10-19T06:28:07.7344804Z (node:2320) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+deploy	Run actions/setup-node@v4	2026-10-19T06:28:07.7346024Z (Use `node --trace-deprecation ...` to show where the warning was created)
+deploy	Run actions/setup-node@v4	2026-10-19T06:28:07.7348327Z ##[group]Environment details
+deploy	Run actions/setup-node@v4	2026-10-19T06:28:08.1744728Z node: v24.21.0
+deploy	Run actions/setup-node@v4	2026-10-19T06:28:08.1745302Z npm: 11.19.0
+deploy	Run actions/setup-node@v4	2026-10-19T06:28:08.1805361Z yarn: 1.22.22
+deploy	Run actions/setup-node@v4	2026-10-19T06:28:08.1806530Z ##[endgroup]
+deploy	Run actions/setup-node@v4	2026-10-19T06:28:08.1807159Z [command]/opt/hostedtoolcache/node/24.21.0/x64/bin/npm config get cache
+deploy	Run actions/setup-node@v4	2026-10-19T06:28:08.3611551Z /home/runner/.npm
+deploy	Run actions/setup-node@v4	2026-10-19T06:28:08.6120958Z Cache hit for: node-cache-Linux-x64-npm-3f5af821617769c6816a3a234ba40df4055eb533c760cbc4c77eccba8c407d7e
+deploy	Run actions/setup-node@v4	2026-10-19T06:28:08.6232952Z (node:2320) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+deploy	Run actions/setup-node@v4	2026-10-19T06:28:09.9103723Z Received 0 of 31715507 (0.0%), 0.0 MBs/sec
+deploy	Run actions/setup-node@v4	2026-10-19T06:28:10.2121646Z Received 31715507 of 31715507 (100.0%), 23.2 MBs/sec
+deploy	Run actions/setup-node@v4	2026-10-19T06:28:10.2122853Z Cache Size: ~30 MB (31715507 B)
+deploy	Run actions/setup-node@v4	2026-10-19T06:28:10.2158730Z [command]/usr/bin/tar -xf /home/runner/work/_temp/8c969931-46f2-4d26-9f45-e6846d46673b/cache.tzst -P -C /home/runner/work/land-law-chatbot/land-law-chatbot --use-compress-program unzstd
+deploy	Run actions/setup-node@v4	2026-10-19T06:28:10.3942914Z Cache restored successfully
+deploy	Run actions/setup-node@v4	2026-10-19T06:28:10.3961830Z Cache restored from key: node-cache-Linux-x64-npm-3f5af821617769c6816a3a234ba40df4055eb533c760cbc4c77eccba8c407d7e
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	﻿2026-10-19T06:28:10.4139161Z ##[group]Run pip install -r requirements.lock && pip install --no-deps -e .
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:10.4139856Z [36;1mpip install -r requirements.lock && pip install --no-deps -e .[0m
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:10.4440107Z shell: /usr/bin/bash -e {0}
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:10.4440574Z env:
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:10.4440910Z   ALLOW_STALE_GENERATION: true
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:10.4441395Z   pythonLocation: /opt/hostedtoolcache/Python/3.12.15/x64
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:10.4442101Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.12.15/x64/lib/pkgconfig
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:10.4442746Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.15/x64
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:10.4443328Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.15/x64
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:10.4443916Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.15/x64
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:10.4444825Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.12.15/x64/lib
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:10.4445334Z ##[endgroup]
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:11.4328750Z Collecting annotated-doc==0.0.5 (from -r requirements.lock (line 1))
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:11.4915930Z   Downloading annotated_doc-0.0.5-py3-none-any.whl.metadata (6.5 kB)
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:11.5075069Z Collecting annotated-types==0.8.0 (from -r requirements.lock (line 2))
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:11.5149281Z   Downloading annotated_types-0.8.0-py3-none-any.whl.metadata (15 kB)
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:11.5437931Z Collecting anyio==4.15.1 (from -r requirements.lock (line 3))
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:11.5511778Z   Downloading anyio-4.15.1-py3-none-any.whl.metadata (4.7 kB)
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:11.5713077Z Collecting beautifulsoup4==4.15.0 (from -r requirements.lock (line 4))
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:11.5788556Z   Downloading beautifulsoup4-4.15.0-py3-none-any.whl.metadata (3.8 kB)
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:11.6031047Z Collecting certifi==2026.7.22 (from -r requirements.lock (line 5))
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:11.6106081Z   Downloading certifi-2026.7.22-py3-none-any.whl.metadata (2.5 kB)
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:11.7446521Z Collecting cffi==2.1.1 (from -r requirements.lock (line 6))
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:11.7524845Z   Downloading cffi-2.1.1-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (2.5 kB)
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:11.8822469Z Collecting charset-normalizer==3.5.2 (from -r requirements.lock (line 7))
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:11.8900488Z   Downloading charset_normalizer-3.5.2-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (46 kB)
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:11.9181170Z Collecting click==8.5.0 (from -r requirements.lock (line 8))
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:11.9276250Z   Downloading click-8.5.0-py3-none-any.whl.metadata (2.6 kB)
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:12.1111498Z Collecting cryptography==50.0.2 (from -r requirements.lock (line 9))
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:12.1186645Z   Downloading cryptography-50.0.2-cp311-abi3-manylinux_2_34_x86_64.whl.metadata (4.4 kB)
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:12.1348599Z Collecting distro==1.9.0 (from -r requirements.lock (line 10))
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:12.1420804Z   Downloading distro-1.9.0-py3-none-any.whl.metadata (6.8 kB)
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:12.2034375Z Collecting fastapi==0.143.0 (from -r requirements.lock (line 11))
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:12.2113511Z   Downloading fastapi-0.143.0-py3-none-any.whl.metadata (26 kB)
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:12.2326183Z Collecting h11==0.16.0 (from -r requirements.lock (line 12))
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:12.2405873Z   Downloading h11-0.16.0-py3-none-any.whl.metadata (8.3 kB)
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:12.2605652Z Collecting httpcore==1.0.9 (from -r requirements.lock (line 13))
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:12.2692278Z   Downloading httpcore-1.0.9-py3-none-any.whl.metadata (21 kB)
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:12.2871164Z Collecting httpcore2==2.13.1 (from -r requirements.lock (line 14))
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:12.2948540Z   Downloading httpcore2-2.13.1-py3-none-any.whl.metadata (26 kB)
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:12.3185379Z Collecting httpx==0.28.1 (from -r requirements.lock (line 15))
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:12.3267031Z   Downloading httpx-0.28.1-py3-none-any.whl.metadata (7.1 kB)
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:12.3463756Z Collecting httpx2==2.13.1 (from -r requirements.lock (line 16))
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:12.3539684Z   Downloading httpx2-2.13.1-py3-none-any.whl.metadata (9.8 kB)
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:12.3732534Z Collecting idna==3.20 (from -r requirements.lock (line 17))
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:12.3808568Z   Downloading idna-3.20-py3-none-any.whl.metadata (7.2 kB)
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:12.3970207Z Collecting iniconfig==2.3.1 (from -r requirements.lock (line 18))
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:12.4045093Z   Downloading iniconfig-2.3.1-py3-none-any.whl.metadata (2.8 kB)
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:12.4219291Z Collecting jsonpatch==1.35 (from -r requirements.lock (line 19))
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:12.4297616Z   Downloading jsonpatch-1.35-py3-none-any.whl.metadata (3.7 kB)
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:12.4470105Z Collecting jsonpointer==3.2.1 (from -r requirements.lock (line 20))
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:12.4562650Z   Downloading jsonpointer-3.2.1-py3-none-any.whl.metadata (2.6 kB)
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:12.4996511Z Collecting langchain-core==1.6.9 (from -r requirements.lock (line 21))
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:12.5083113Z   Downloading langchain_core-1.6.9-py3-none-any.whl.metadata (4.8 kB)
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:12.5250280Z Collecting langchain-protocol==0.0.19 (from -r requirements.lock (line 22))
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:12.5322988Z   Downloading langchain_protocol-0.0.19-py3-none-any.whl.metadata (2.4 kB)
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:12.5697734Z Collecting langgraph==1.2.14 (from -r requirements.lock (line 23))
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:12.5777337Z   Downloading langgraph-1.2.14-py3-none-any.whl.metadata (4.9 kB)
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:12.5989558Z Collecting langgraph-checkpoint==4.2.0 (from -r requirements.lock (line 24))
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:12.6068369Z   Downloading langgraph_checkpoint-4.2.0-py3-none-any.whl.metadata (6.7 kB)
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:12.6255979Z Collecting langgraph-prebuilt==1.1.0 (from -r requirements.lock (line 25))
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:12.6340840Z   Downloading langgraph_prebuilt-1.1.0-py3-none-any.whl.metadata (5.2 kB)
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:12.6577778Z Collecting langgraph-sdk==0.4.6 (from -r requirements.lock (line 26))
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:12.6670469Z   Downloading langgraph_sdk-0.4.6-py3-none-any.whl.metadata (5.1 kB)
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:12.7290763Z Collecting langsmith==0.14.7 (from -r requirements.lock (line 27))
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:12.7477293Z   Downloading langsmith-0.14.7-py3-none-any.whl.metadata (22 kB)
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:12.7741818Z Collecting markdown-it-py==4.2.0 (from -r requirements.lock (line 28))
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:12.7817010Z   Downloading markdown_it_py-4.2.0-py3-none-any.whl.metadata (7.4 kB)
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:12.7997076Z Collecting mdurl==0.1.2 (from -r requirements.lock (line 29))
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:12.8075017Z   Downloading mdurl-0.1.2-py3-none-any.whl.metadata (1.6 kB)
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:12.8576114Z Collecting opentelemetry-api==1.45.1 (from -r requirements.lock (line 30))
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:12.8652267Z   Downloading opentelemetry_api-1.45.1-py3-none-any.whl.metadata (1.4 kB)
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:13.1091219Z Collecting orjson==3.13.0 (from -r requirements.lock (line 31))
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:13.1168782Z   Downloading orjson-3.13.0-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (42 kB)
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:13.1869098Z Collecting ormsgpack==1.12.2 (from -r requirements.lock (line 32))
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:13.1980502Z   Downloading ormsgpack-1.12.2-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (3.2 kB)
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:13.2188515Z Collecting packaging==26.3 (from -r requirements.lock (line 33))
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:13.2260247Z   Downloading packaging-26.3-py3-none-any.whl.metadata (3.5 kB)
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:13.2422199Z Collecting pluggy==1.6.0 (from -r requirements.lock (line 34))
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:13.2495680Z   Downloading pluggy-1.6.0-py3-none-any.whl.metadata (4.8 kB)
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:13.2727412Z Collecting psycopg==3.3.6 (from -r requirements.lock (line 35))
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:13.2811973Z   Downloading psycopg-3.3.6-py3-none-any.whl.metadata (4.4 kB)
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:13.4506495Z Collecting psycopg-binary==3.3.6 (from -r requirements.lock (line 36))
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:13.4595819Z   Downloading psycopg_binary-3.3.6-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (2.7 kB)
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:13.4763497Z Collecting psycopg-pool==3.3.3 (from -r requirements.lock (line 37))
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:13.4837207Z   Downloading psycopg_pool-3.3.3-py3-none-any.whl.metadata (2.8 kB)
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:13.5012763Z Collecting pycparser==3.11 (from -r requirements.lock (line 38))
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:13.5090106Z   Downloading pycparser-3.11-py3-none-any.whl.metadata (8.2 kB)
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:13.6159772Z Collecting pydantic==2.14.0 (from -r requirements.lock (line 39))
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:13.6239588Z   Downloading pydantic-2.14.0-py3-none-any.whl.metadata (131 kB)
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:13.6545389Z Collecting pydantic-settings==2.15.0 (from -r requirements.lock (line 40))
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:13.6634766Z   Downloading pydantic_settings-2.15.0-py3-none-any.whl.metadata (3.9 kB)
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:14.3689991Z Collecting pydantic_core==2.50.0 (from -r requirements.lock (line 41))
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:14.3768359Z   Downloading pydantic_core-2.50.0-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (6.5 kB)
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:14.3982945Z Collecting Pygments==2.21.0 (from -r requirements.lock (line 42))
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:14.4055694Z   Downloading pygments-2.21.0-py3-none-any.whl.metadata (2.5 kB)
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:14.4296870Z Collecting pypdf==6.20.0 (from -r requirements.lock (line 43))
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:14.4369782Z   Downloading pypdf-6.20.0-py3-none-any.whl.metadata (7.6 kB)
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:14.4993363Z Collecting pytest==9.1.1 (from -r requirements.lock (line 44))
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:14.5070321Z   Downloading pytest-9.1.1-py3-none-any.whl.metadata (7.6 kB)
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:14.5303522Z Collecting pytest-asyncio==1.4.0 (from -r requirements.lock (line 45))
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:14.5391483Z   Downloading pytest_asyncio-1.4.0-py3-none-any.whl.metadata (4.1 kB)
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:14.5589029Z Collecting python-dotenv==1.2.4 (from -r requirements.lock (line 46))
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:14.5663710Z   Downloading python_dotenv-1.2.4-py3-none-any.whl.metadata (29 kB)
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:14.6443393Z Collecting PyYAML==6.0.3 (from -r requirements.lock (line 47))
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:14.6520106Z   Downloading pyyaml-6.0.3-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (2.4 kB)
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:14.6761730Z Collecting requests==2.34.2 (from -r requirements.lock (line 48))
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:14.6833560Z   Downloading requests-2.34.2-py3-none-any.whl.metadata (4.8 kB)
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:14.6998632Z Collecting requests-toolbelt==1.0.0 (from -r requirements.lock (line 49))
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:14.7068629Z   Downloading requests_toolbelt-1.0.0-py2.py3-none-any.whl.metadata (14 kB)
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:14.7344935Z Collecting respx==0.23.1 (from -r requirements.lock (line 50))
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:14.7418867Z   Downloading respx-0.23.1-py2.py3-none-any.whl.metadata (4.3 kB)
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:14.7843976Z Collecting rich==15.0.0 (from -r requirements.lock (line 51))
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:14.7921634Z   Downloading rich-15.0.0-py3-none-any.whl.metadata (18 kB)
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:15.1295051Z Collecting ruff==0.17.0 (from -r requirements.lock (line 52))
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:15.1371956Z   Downloading ruff-0.17.0-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (20 kB)
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:15.1662326Z Collecting shellingham==1.5.4 (from -r requirements.lock (line 53))
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:15.1743387Z   Downloading shellingham-1.5.4-py2.py3-none-any.whl.metadata (3.5 kB)
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:15.1910415Z Collecting sniffio==1.3.1 (from -r requirements.lock (line 54))
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:15.1982297Z   Downloading sniffio-1.3.1-py3-none-any.whl.metadata (3.9 kB)
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:15.2195370Z Collecting soupsieve==3.0.1 (from -r requirements.lock (line 55))
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:15.2281503Z   Downloading soupsieve-3.0.1-py3-none-any.whl.metadata (4.4 kB)
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:15.2542508Z Collecting starlette==1.7.0 (from -r requirements.lock (line 56))
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:15.2620565Z   Downloading starlette-1.7.0-py3-none-any.whl.metadata (6.6 kB)
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:15.2819229Z Collecting tenacity==9.2.1 (from -r requirements.lock (line 57))
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:15.2898997Z   Downloading tenacity-9.2.1-py3-none-any.whl.metadata (1.4 kB)
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:15.3064255Z Collecting truststore==0.10.4 (from -r requirements.lock (line 58))
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:15.3139756Z   Downloading truststore-0.10.4-py3-none-any.whl.metadata (4.4 kB)
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:15.3367407Z Collecting typer==0.27.3 (from -r requirements.lock (line 59))
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:15.3440334Z   Downloading typer-0.27.3-py3-none-any.whl.metadata (16 kB)
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:15.3598632Z Collecting typing-inspection==0.4.4 (from -r requirements.lock (line 60))
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:15.3673173Z   Downloading typing_inspection-0.4.4-py3-none-any.whl.metadata (2.6 kB)
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:15.3866623Z Collecting typing_extensions==4.16.0 (from -r requirements.lock (line 61))
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:15.3948635Z   Downloading typing_extensions-4.16.0-py3-none-any.whl.metadata (3.3 kB)
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:15.4220857Z Collecting urllib3==2.8.0 (from -r requirements.lock (line 62))
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:15.4296908Z   Downloading urllib3-2.8.0-py3-none-any.whl.metadata (7.4 kB)
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:15.5494706Z Collecting uuid_utils==0.17.1 (from -r requirements.lock (line 63))
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:15.5572210Z   Downloading uuid_utils-0.17.1-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (6.4 kB)
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:15.5843961Z Collecting uvicorn==0.54.0 (from -r requirements.lock (line 64))
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:15.5920353Z   Downloading uvicorn-0.54.0-py3-none-any.whl.metadata (6.6 kB)
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:15.7743401Z Collecting websockets==16.1.1 (from -r requirements.lock (line 65))
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:15.7824043Z   Downloading websockets-16.1.1-cp312-cp312-manylinux1_x86_64.manylinux_2_28_x86_64.manylinux_2_5_x86_64.whl.metadata (6.8 kB)
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:15.9616295Z Collecting xxhash==4.0.1 (from -r requirements.lock (line 66))
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:15.9693418Z   Downloading xxhash-4.0.1-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (17 kB)
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:16.1218516Z Collecting zstandard==0.25.0 (from -r requirements.lock (line 67))
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:16.1297369Z   Downloading zstandard-0.25.0-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (3.3 kB)
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:17.1333679Z Collecting numpy==2.5.4 (from -r requirements.lock (line 68))
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:17.1412629Z   Downloading numpy-2.5.4-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl.metadata (6.6 kB)
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:17.2105593Z Collecting onnxruntime==1.31.0 (from -r requirements.lock (line 69))
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:17.2180951Z   Downloading onnxruntime-1.31.0-cp312-cp312-manylinux_2_28_x86_64.whl.metadata (5.7 kB)
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:17.2711244Z Collecting sentencepiece==0.2.2 (from -r requirements.lock (line 70))
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:17.2791539Z   Downloading sentencepiece-0.2.2-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl.metadata (33 kB)
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:17.4891315Z Collecting protobuf==7.36.2 (from -r requirements.lock (line 71))
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:17.4970364Z   Downloading protobuf-7.36.2-cp310-abi3-manylinux2014_x86_64.whl.metadata (595 bytes)
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:17.5132240Z Collecting flatbuffers==25.12.19 (from -r requirements.lock (line 72))
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:17.5205435Z   Downloading flatbuffers-25.12.19-py2.py3-none-any.whl.metadata (1.0 kB)
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:17.6511167Z WARNING: The candidate selected for download or install is a yanked version: 'soupsieve' candidate (version 3.0.1 at https://files.pythonhosted.org/packages/3a/cd/8092ac4e9009b4a480ba212f5cdfd26dabfc97990b176bbc70c7662d6f05/soupsieve-3.0.1-py3-none-any.whl (from https://pypi.org/simple/soupsieve/) (requires-python:>=3.11))
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:17.6516393Z Reason for being yanked: Python < 3.11.5 has broken possessive quantifiers in re, which are required for Soup Sieve 3.0. Yank to prevent users on older Python 3.11 versions from getting boken functionality. We will release a new 3.0+ release that requires at least Python 3.11.5.
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:17.6583830Z Downloading annotated_doc-0.0.5-py3-none-any.whl (5.3 kB)
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:17.6677844Z Downloading annotated_types-0.8.0-py3-none-any.whl (13 kB)
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:17.6769143Z Downloading anyio-4.15.1-py3-none-any.whl (132 kB)
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:17.6869978Z Downloading beautifulsoup4-4.15.0-py3-none-any.whl (109 kB)
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:17.6967294Z Downloading certifi-2026.7.22-py3-none-any.whl (136 kB)
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:17.7066117Z Downloading cffi-2.1.1-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (221 kB)
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:17.7265840Z Downloading charset_normalizer-3.5.2-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (257 kB)
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:17.7368313Z Downloading click-8.5.0-py3-none-any.whl (125 kB)
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:17.7465995Z Downloading cryptography-50.0.2-cp311-abi3-manylinux_2_34_x86_64.whl (4.8 MB)
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:17.7823811Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 4.8/4.8 MB 137.7 MB/s  0:00:00
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:17.7902473Z Downloading distro-1.9.0-py3-none-any.whl (20 kB)
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:17.8030752Z Downloading fastapi-0.143.0-py3-none-any.whl (144 kB)
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:17.8128799Z Downloading h11-0.16.0-py3-none-any.whl (37 kB)
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:17.8252966Z Downloading httpcore-1.0.9-py3-none-any.whl (78 kB)
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:17.8350864Z Downloading httpcore2-2.13.1-py3-none-any.whl (83 kB)
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:17.8445381Z Downloading httpx-0.28.1-py3-none-any.whl (73 kB)
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:17.8540413Z Downloading httpx2-2.13.1-py3-none-any.whl (95 kB)
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:17.8634678Z Downloading idna-3.20-py3-none-any.whl (69 kB)
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:17.8727843Z Downloading iniconfig-2.3.1-py3-none-any.whl (7.6 kB)
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:17.8822561Z Downloading jsonpatch-1.35-py3-none-any.whl (17 kB)
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:17.8917115Z Downloading jsonpointer-3.2.1-py3-none-any.whl (8.3 kB)
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:17.9023161Z Downloading langchain_core-1.6.9-py3-none-any.whl (572 kB)
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:17.9082088Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 573.0/573.0 kB 104.4 MB/s  0:00:00
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:17.9171978Z Downloading langsmith-0.14.7-py3-none-any.whl (861 kB)
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:17.9236196Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 862.0/862.0 kB 163.0 MB/s  0:00:00
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:17.9309501Z Downloading pydantic-2.14.0-py3-none-any.whl (487 kB)
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:17.9458923Z Downloading pyyaml-6.0.3-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (807 kB)
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:17.9516701Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 807.9/807.9 kB 162.4 MB/s  0:00:00
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:17.9589772Z Downloading tenacity-9.2.1-py3-none-any.whl (32 kB)
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:17.9689984Z Downloading typing_extensions-4.16.0-py3-none-any.whl (45 kB)
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:17.9785772Z Downloading uuid_utils-0.17.1-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (323 kB)
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:17.9886613Z Downloading langchain_protocol-0.0.19-py3-none-any.whl (7.3 kB)
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:17.9981062Z Downloading langgraph-1.2.14-py3-none-any.whl (255 kB)
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:18.0087429Z Downloading langgraph_checkpoint-4.2.0-py3-none-any.whl (56 kB)
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:18.0183188Z Downloading langgraph_prebuilt-1.1.0-py3-none-any.whl (41 kB)
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:18.0290692Z Downloading langgraph_sdk-0.4.6-py3-none-any.whl (162 kB)
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:18.0392491Z Downloading websockets-16.1.1-cp312-cp312-manylinux1_x86_64.manylinux_2_28_x86_64.manylinux_2_5_x86_64.whl (187 kB)
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:18.0490127Z Downloading markdown_it_py-4.2.0-py3-none-any.whl (91 kB)
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:18.0585476Z Downloading mdurl-0.1.2-py3-none-any.whl (10.0 kB)
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:18.0678962Z Downloading opentelemetry_api-1.45.1-py3-none-any.whl (60 kB)
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:18.0773235Z Downloading orjson-3.13.0-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (130 kB)
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:18.0869424Z Downloading ormsgpack-1.12.2-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (212 kB)
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:18.0964228Z Downloading packaging-26.3-py3-none-any.whl (129 kB)
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:18.1058188Z Downloading pluggy-1.6.0-py3-none-any.whl (20 kB)
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:18.1146458Z Downloading psycopg-3.3.6-py3-none-any.whl (215 kB)
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:18.1254331Z Downloading psycopg_binary-3.3.6-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (5.2 MB)
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:18.1446339Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 5.2/5.2 MB 306.9 MB/s  0:00:00
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:18.1519588Z Downloading psycopg_pool-3.3.3-py3-none-any.whl (40 kB)
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:18.1612664Z Downloading pycparser-3.11-py3-none-any.whl (51 kB)
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:18.1706605Z Downloading pydantic_settings-2.15.0-py3-none-any.whl (69 kB)
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:18.1832021Z Downloading pydantic_core-2.50.0-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (2.2 MB)
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:18.1934308Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 2.2/2.2 MB 244.2 MB/s  0:00:00
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:18.2008176Z Downloading pygments-2.21.0-py3-none-any.whl (1.3 MB)
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:18.2076553Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.3/1.3 MB 229.9 MB/s  0:00:00
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:18.2195626Z Downloading pypdf-6.20.0-py3-none-any.whl (401 kB)
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:18.2300613Z Downloading pytest-9.1.1-py3-none-any.whl (386 kB)
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:18.2399421Z Downloading pytest_asyncio-1.4.0-py3-none-any.whl (16 kB)
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:18.2487645Z Downloading python_dotenv-1.2.4-py3-none-any.whl (23 kB)
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:18.2574495Z Downloading requests-2.34.2-py3-none-any.whl (73 kB)
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:18.2667956Z Downloading urllib3-2.8.0-py3-none-any.whl (135 kB)
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:18.2761495Z Downloading requests_toolbelt-1.0.0-py2.py3-none-any.whl (54 kB)
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:18.2856831Z Downloading respx-0.23.1-py2.py3-none-any.whl (25 kB)
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:18.2949285Z Downloading rich-15.0.0-py3-none-any.whl (310 kB)
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:18.3051448Z Downloading ruff-0.17.0-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (10.4 MB)
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:18.3902870Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 10.4/10.4 MB 126.4 MB/s  0:00:00
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:18.3977010Z Downloading shellingham-1.5.4-py2.py3-none-any.whl (9.8 kB)
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:18.4066475Z Downloading sniffio-1.3.1-py3-none-any.whl (10 kB)
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:18.4166382Z Downloading soupsieve-3.0.1-py3-none-any.whl (41 kB)
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:18.4258323Z Downloading starlette-1.7.0-py3-none-any.whl (78 kB)
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:18.4353749Z Downloading truststore-0.10.4-py3-none-any.whl (18 kB)
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:18.4443179Z Downloading typer-0.27.3-py3-none-any.whl (123 kB)
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:18.4538407Z Downloading typing_inspection-0.4.4-py3-none-any.whl (14 kB)
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:18.4629953Z Downloading uvicorn-0.54.0-py3-none-any.whl (87 kB)
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:18.4726286Z Downloading xxhash-4.0.1-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (261 kB)
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:18.4854296Z Downloading zstandard-0.25.0-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (5.5 MB)
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:18.5028384Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 5.5/5.5 MB 351.9 MB/s  0:00:00
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:18.5105684Z Downloading numpy-2.5.4-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl (16.7 MB)
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:18.5595740Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 16.7/16.7 MB 357.2 MB/s  0:00:00
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:18.5670801Z Downloading onnxruntime-1.31.0-cp312-cp312-manylinux_2_28_x86_64.whl (23.8 MB)
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:18.6334657Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 23.8/23.8 MB 369.1 MB/s  0:00:00
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:18.6414820Z Downloading sentencepiece-0.2.2-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl (1.4 MB)
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:18.6567896Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.4/1.4 MB 91.9 MB/s  0:00:00
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:18.6641355Z Downloading protobuf-7.36.2-cp310-abi3-manylinux2014_x86_64.whl (343 kB)
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:18.6740257Z Downloading flatbuffers-25.12.19-py2.py3-none-any.whl (26 kB)
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:19.0732447Z Installing collected packages: flatbuffers, zstandard, xxhash, websockets, uuid_utils, urllib3, typing_extensions, truststore, tenacity, soupsieve, sniffio, shellingham, sentencepiece, ruff, PyYAML, python-dotenv, pypdf, Pygments, pycparser, psycopg-binary, protobuf, pluggy, packaging, ormsgpack, orjson, numpy, mdurl, jsonpointer, iniconfig, idna, h11, distro, click, charset-normalizer, certifi, annotated-types, annotated-doc, uvicorn, typing-inspection, requests, pytest, pydantic_core, psycopg-pool, psycopg, opentelemetry-api, onnxruntime, markdown-it-py, langchain-protocol, jsonpatch, httpcore2, httpcore, cffi, beautifulsoup4, anyio, starlette, rich, requests-toolbelt, pytest-asyncio, pydantic, httpx2, httpx, cryptography, typer, respx, pydantic-settings, langsmith, fastapi, langchain-core, langgraph-sdk, langgraph-checkpoint, langgraph-prebuilt, langgraph
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:28.6473895Z 
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:28.6542054Z Successfully installed PyYAML-6.0.3 Pygments-2.21.0 annotated-doc-0.0.5 annotated-types-0.8.0 anyio-4.15.1 beautifulsoup4-4.15.0 certifi-2026.7.22 cffi-2.1.1 charset-normalizer-3.5.2 click-8.5.0 cryptography-50.0.2 distro-1.9.0 fastapi-0.143.0 flatbuffers-25.12.19 h11-0.16.0 httpcore-1.0.9 httpcore2-2.13.1 httpx-0.28.1 httpx2-2.13.1 idna-3.20 iniconfig-2.3.1 jsonpatch-1.35 jsonpointer-3.2.1 langchain-core-1.6.9 langchain-protocol-0.0.19 langgraph-1.2.14 langgraph-checkpoint-4.2.0 langgraph-prebuilt-1.1.0 langgraph-sdk-0.4.6 langsmith-0.14.7 markdown-it-py-4.2.0 mdurl-0.1.2 numpy-2.5.4 onnxruntime-1.31.0 opentelemetry-api-1.45.1 orjson-3.13.0 ormsgpack-1.12.2 packaging-26.3 pluggy-1.6.0 protobuf-7.36.2 psycopg-3.3.6 psycopg-binary-3.3.6 psycopg-pool-3.3.3 pycparser-3.11 pydantic-2.14.0 pydantic-settings-2.15.0 pydantic_core-2.50.0 pypdf-6.20.0 pytest-9.1.1 pytest-asyncio-1.4.0 python-dotenv-1.2.4 requests-2.34.2 requests-toolbelt-1.0.0 respx-0.23.1 rich-15.0.0 ruff-0.17.0 sentencepiece-0.2.2 shellingham-1.5.4 sniffio-1.3.1 soupsieve-3.0.1 starlette-1.7.0 tenacity-9.2.1 truststore-0.10.4 typer-0.27.3 typing-inspection-0.4.4 typing_extensions-4.16.0 urllib3-2.8.0 uuid_utils-0.17.1 uvicorn-0.54.0 websockets-16.1.1 xxhash-4.0.1 zstandard-0.25.0
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:29.3791438Z Obtaining file:///home/runner/work/land-law-chatbot/land-law-chatbot
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:29.3810270Z   Installing build dependencies: started
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:30.2257272Z   Installing build dependencies: finished with status 'done'
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:30.2263354Z   Checking if build backend supports build_editable: started
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:30.5739867Z   Checking if build backend supports build_editable: finished with status 'done'
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:30.5749803Z   Getting requirements to build editable: started
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:30.9332256Z   Getting requirements to build editable: finished with status 'done'
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:30.9342131Z   Preparing editable metadata (pyproject.toml): started
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:31.1520749Z   Preparing editable metadata (pyproject.toml): finished with status 'done'
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:31.1589631Z Building wheels for collected packages: hanoi-land-law
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:31.1598078Z   Building editable for hanoi-land-law (pyproject.toml): started
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:31.4110407Z   Building editable for hanoi-land-law (pyproject.toml): finished with status 'done'
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:31.4117765Z   Created wheel for hanoi-land-law: filename=hanoi_land_law-0.1.0-0.editable-py3-none-any.whl size=1872 sha256=05e887f097af7d85ce92babe43a98e0c5634a297b7de27eb9d12f3398a47b520
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:31.4120029Z   Stored in directory: /tmp/pip-ephem-wheel-cache-jks9ibqu/wheels/f8/3c/45/e516ea8127352363dfa05ab5a4b9546f2b0a8d16b16654b0e6
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:31.4142386Z Successfully built hanoi-land-law
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:31.4260523Z Installing collected packages: hanoi-land-law
+deploy	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:28:31.4382735Z Successfully installed hanoi-land-law-0.1.0
+deploy	Pin committed application source	﻿2026-10-19T06:28:31.5157252Z ##[group]Run python - <<'PY'
+deploy	Pin committed application source	2026-10-19T06:28:31.5157670Z [36;1mpython - <<'PY'[0m
+deploy	Pin committed application source	2026-10-19T06:28:31.5157983Z [36;1mimport os[0m
+deploy	Pin committed application source	2026-10-19T06:28:31.5158309Z [36;1mfrom scripts.deploy import preflight[0m
+deploy	Pin committed application source	2026-10-19T06:28:31.5158694Z [36;1mcommit = preflight()[0m
+deploy	Pin committed application source	2026-10-19T06:28:31.5159103Z [36;1mwith open(os.environ['GITHUB_OUTPUT'], 'a') as output:[0m
+deploy	Pin committed application source	2026-10-19T06:28:31.5159598Z [36;1m    output.write('tested_commit='+commit+'\n')[0m
+deploy	Pin committed application source	2026-10-19T06:28:31.5159976Z [36;1mPY[0m
+deploy	Pin committed application source	2026-10-19T06:28:31.5227485Z shell: /usr/bin/bash -e {0}
+deploy	Pin committed application source	2026-10-19T06:28:31.5227848Z env:
+deploy	Pin committed application source	2026-10-19T06:28:31.5228126Z   ALLOW_STALE_GENERATION: true
+deploy	Pin committed application source	2026-10-19T06:28:31.5228557Z   pythonLocation: /opt/hostedtoolcache/Python/3.12.15/x64
+deploy	Pin committed application source	2026-10-19T06:28:31.5229163Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.12.15/x64/lib/pkgconfig
+deploy	Pin committed application source	2026-10-19T06:28:31.5229761Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.15/x64
+deploy	Pin committed application source	2026-10-19T06:28:31.5230313Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.15/x64
+deploy	Pin committed application source	2026-10-19T06:28:31.5230919Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.15/x64
+deploy	Pin committed application source	2026-10-19T06:28:31.5231450Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.12.15/x64/lib
+deploy	Pin committed application source	2026-10-19T06:28:31.5231903Z ##[endgroup]
+deploy	Run npm ci && npm run build	﻿2026-10-19T06:28:31.8178646Z ##[group]Run npm ci && npm run build
+deploy	Run npm ci && npm run build	2026-10-19T06:28:31.8179051Z [36;1mnpm ci && npm run build[0m
+deploy	Run npm ci && npm run build	2026-10-19T06:28:31.8245050Z shell: /usr/bin/bash -e {0}
+deploy	Run npm ci && npm run build	2026-10-19T06:28:31.8245429Z env:
+deploy	Run npm ci && npm run build	2026-10-19T06:28:31.8245708Z   ALLOW_STALE_GENERATION: true
+deploy	Run npm ci && npm run build	2026-10-19T06:28:31.8246145Z   pythonLocation: /opt/hostedtoolcache/Python/3.12.15/x64
+deploy	Run npm ci && npm run build	2026-10-19T06:28:31.8246742Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.12.15/x64/lib/pkgconfig
+deploy	Run npm ci && npm run build	2026-10-19T06:28:31.8247358Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.15/x64
+deploy	Run npm ci && npm run build	2026-10-19T06:28:31.8247899Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.15/x64
+deploy	Run npm ci && npm run build	2026-10-19T06:28:31.8248423Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.15/x64
+deploy	Run npm ci && npm run build	2026-10-19T06:28:31.8248948Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.12.15/x64/lib
+deploy	Run npm ci && npm run build	2026-10-19T06:28:31.8249479Z   VITE_API_BASE_URL: https://hanoi-land-law.pages.dev
+deploy	Run npm ci && npm run build	2026-10-19T06:28:31.8249965Z   VITE_TURNSTILE_SITE_KEY: 0x4AAAAAAFZMtKxdfJkXm2lN
+deploy	Run npm ci && npm run build	2026-10-19T06:28:31.8250374Z ##[endgroup]
+deploy	Run npm ci && npm run build	2026-10-19T06:28:36.7629339Z 
+deploy	Run npm ci && npm run build	2026-10-19T06:28:36.7630163Z added 184 packages, and audited 185 packages in 5s
+deploy	Run npm ci && npm run build	2026-10-19T06:28:36.7630718Z 
+deploy	Run npm ci && npm run build	2026-10-19T06:28:36.7631077Z 84 packages are looking for funding
+deploy	Run npm ci && npm run build	2026-10-19T06:28:36.7631924Z   run `npm fund` for details
+deploy	Run npm ci && npm run build	2026-10-19T06:28:36.7643796Z 
+deploy	Run npm ci && npm run build	2026-10-19T06:28:36.7644284Z found 0 vulnerabilities
+deploy	Run npm ci && npm run build	2026-10-19T06:28:36.7655562Z npm warn install-scripts 1 package has install scripts not yet covered by allowScripts:
+deploy	Run npm ci && npm run build	2026-10-19T06:28:36.7656772Z npm warn install-scripts   esbuild@0.25.12 (postinstall: node install.js)
+deploy	Run npm ci && npm run build	2026-10-19T06:28:36.7657448Z npm warn install-scripts
+deploy	Run npm ci && npm run build	2026-10-19T06:28:36.7658307Z npm warn install-scripts Run `npm install-scripts ls` to review, or `npm install-scripts approve <pkg>` to allow.
+deploy	Run npm ci && npm run build	2026-10-19T06:28:36.9260450Z 
+deploy	Run npm ci && npm run build	2026-10-19T06:28:36.9261249Z > hanoi-land-law-web@0.1.0 build
+deploy	Run npm ci && npm run build	2026-10-19T06:28:36.9261927Z > tsc -b && vite build
+deploy	Run npm ci && npm run build	2026-10-19T06:28:36.9262228Z 
+deploy	Run npm ci && npm run build	2026-10-19T06:28:39.5858341Z [36mvite v6.4.4 [32mbuilding for production...[36m[39m
+deploy	Run npm ci && npm run build	2026-10-19T06:28:39.6596433Z transforming...
+deploy	Run npm ci && npm run build	2026-10-19T06:28:41.9327377Z [32m✓[39m 1750 modules transformed.
+deploy	Run npm ci && npm run build	2026-10-19T06:28:42.1898119Z rendering chunks...
+deploy	Run npm ci && npm run build	2026-10-19T06:28:42.2020490Z computing gzip size...
+deploy	Run npm ci && npm run build	2026-10-19T06:28:42.2168794Z [2mdist/[22m[32mindex.html                                                  [39m[1m[2m  0.59 kB[22m[1m[22m[2m │ gzip:   0.41 kB[22m
+deploy	Run npm ci && npm run build	2026-10-19T06:28:42.2171027Z [2mdist/[22m[2massets/[22m[32mbe-vietnam-pro-vietnamese-400-normal-BuGn0gnm.woff   [39m[1m[2m  6.57 kB[22m[1m[22m
+deploy	Run npm ci && npm run build	2026-10-19T06:28:42.2173845Z [2mdist/[22m[2massets/[22m[32mbe-vietnam-pro-vietnamese-600-normal-DkpCIyan.woff   [39m[1m[2m  6.88 kB[22m[1m[22m
+deploy	Run npm ci && npm run build	2026-10-19T06:28:42.2177861Z [2mdist/[22m[2massets/[22m[32mbe-vietnam-pro-vietnamese-500-normal-CfdwVo8-.woff   [39m[1m[2m  6.88 kB[22m[1m[22m
+deploy	Run npm ci && npm run build	2026-10-19T06:28:42.2180223Z [2mdist/[22m[2massets/[22m[32mbe-vietnam-pro-vietnamese-700-normal-By_5yT39.woff   [39m[1m[2m  6.89 kB[22m[1m[22m
+deploy	Run npm ci && npm run build	2026-10-19T06:28:42.2182773Z [2mdist/[22m[2massets/[22m[32mbe-vietnam-pro-latin-ext-400-normal-DYBYyMQr.woff    [39m[1m[2m  8.90 kB[22m[1m[22m
+deploy	Run npm ci && npm run build	2026-10-19T06:28:42.2185179Z [2mdist/[22m[2massets/[22m[32mbe-vietnam-pro-latin-ext-700-normal-4Hjo2OtD.woff    [39m[1m[2m  9.19 kB[22m[1m[22m
+deploy	Run npm ci && npm run build	2026-10-19T06:28:42.2187120Z [2mdist/[22m[2massets/[22m[32mbe-vietnam-pro-latin-ext-500-normal-CK0UkkKf.woff    [39m[1m[2m  9.20 kB[22m[1m[22m
+deploy	Run npm ci && npm run build	2026-10-19T06:28:42.2189090Z [2mdist/[22m[2massets/[22m[32mbe-vietnam-pro-latin-ext-600-normal-BeUwKxhG.woff    [39m[1m[2m  9.22 kB[22m[1m[22m
+deploy	Run npm ci && npm run build	2026-10-19T06:28:42.2191103Z [2mdist/[22m[2massets/[22m[32mbe-vietnam-pro-vietnamese-400-normal-CRcqvyg1.woff2  [39m[1m[2m 11.53 kB[22m[1m[22m
+deploy	Run npm ci && npm run build	2026-10-19T06:28:42.2193382Z [2mdist/[22m[2massets/[22m[32mbe-vietnam-pro-vietnamese-500-normal-DREgrEoJ.woff2  [39m[1m[2m 12.17 kB[22m[1m[22m
+deploy	Run npm ci && npm run build	2026-10-19T06:28:42.2195696Z [2mdist/[22m[2massets/[22m[32mbe-vietnam-pro-vietnamese-600-normal-nyU-ZL2p.woff2  [39m[1m[2m 12.18 kB[22m[1m[22m
+deploy	Run npm ci && npm run build	2026-10-19T06:28:42.2198329Z [2mdist/[22m[2massets/[22m[32mbe-vietnam-pro-vietnamese-700-normal-Csr0PCuG.woff2  [39m[1m[2m 12.47 kB[22m[1m[22m
+deploy	Run npm ci && npm run build	2026-10-19T06:28:42.2200444Z [2mdist/[22m[2massets/[22m[32mbe-vietnam-pro-latin-ext-400-normal-CiZNW1ec.woff2   [39m[1m[2m 13.06 kB[22m[1m[22m
+deploy	Run npm ci && npm run build	2026-10-19T06:28:42.2202535Z [2mdist/[22m[2massets/[22m[32mbe-vietnam-pro-latin-ext-500-normal-h0Fp6aX0.woff2   [39m[1m[2m 13.55 kB[22m[1m[22m
+deploy	Run npm ci && npm run build	2026-10-19T06:28:42.2204831Z [2mdist/[22m[2massets/[22m[32mbe-vietnam-pro-latin-ext-600-normal-BNd8euf0.woff2   [39m[1m[2m 13.61 kB[22m[1m[22m
+deploy	Run npm ci && npm run build	2026-10-19T06:28:42.2206928Z [2mdist/[22m[2massets/[22m[32mbe-vietnam-pro-latin-ext-700-normal-C8_gqRu2.woff2   [39m[1m[2m 13.85 kB[22m[1m[22m
+deploy	Run npm ci && npm run build	2026-10-19T06:28:42.2208961Z [2mdist/[22m[2massets/[22m[32mbe-vietnam-pro-latin-400-normal-bXgqVju9.woff        [39m[1m[2m 16.43 kB[22m[1m[22m
+deploy	Run npm ci && npm run build	2026-10-19T06:28:42.2211011Z [2mdist/[22m[2massets/[22m[32mbe-vietnam-pro-latin-700-normal-C2EtzaOi.woff        [39m[1m[2m 16.91 kB[22m[1m[22m
+deploy	Run npm ci && npm run build	2026-10-19T06:28:42.2213024Z [2mdist/[22m[2massets/[22m[32mbe-vietnam-pro-latin-500-normal-BJkVuMHw.woff        [39m[1m[2m 17.00 kB[22m[1m[22m
+deploy	Run npm ci && npm run build	2026-10-19T06:28:42.2215223Z [2mdist/[22m[2massets/[22m[32mbe-vietnam-pro-latin-600-normal-5IO4e7bK.woff        [39m[1m[2m 17.02 kB[22m[1m[22m
+deploy	Run npm ci && npm run build	2026-10-19T06:28:42.2217291Z [2mdist/[22m[2massets/[22m[32mbe-vietnam-pro-latin-400-normal-PpnXBOrz.woff2       [39m[1m[2m 21.17 kB[22m[1m[22m
+deploy	Run npm ci && npm run build	2026-10-19T06:28:42.2219404Z [2mdist/[22m[2massets/[22m[32mbe-vietnam-pro-latin-500-normal-B6LVzGNe.woff2       [39m[1m[2m 21.89 kB[22m[1m[22m
+deploy	Run npm ci && npm run build	2026-10-19T06:28:42.2221437Z [2mdist/[22m[2massets/[22m[32mbe-vietnam-pro-latin-600-normal-BZDkUTrt.woff2       [39m[1m[2m 22.03 kB[22m[1m[22m
+deploy	Run npm ci && npm run build	2026-10-19T06:28:42.2223470Z [2mdist/[22m[2massets/[22m[32mbe-vietnam-pro-latin-700-normal-DlW1Zbsh.woff2       [39m[1m[2m 22.15 kB[22m[1m[22m
+deploy	Run npm ci && npm run build	2026-10-19T06:28:42.2225780Z [2mdist/[22m[2massets/[22m[35mindex-CkS6N6gB.css                                   [39m[1m[2m 27.32 kB[22m[1m[22m[2m │ gzip:   6.07 kB[22m
+deploy	Run npm ci && npm run build	2026-10-19T06:28:42.2227893Z [2mdist/[22m[2massets/[22m[36mindex-CcTVp9G3.js                                    [39m[1m[2m401.46 kB[22m[1m[22m[2m │ gzip: 123.97 kB[22m
+deploy	Run npm ci && npm run build	2026-10-19T06:28:42.2229183Z [32m✓ built in 2.60s[39m
+deploy	Run env -u ALLOW_STALE_GENERATION python -m pytest -q && python scripts/check_secrets.py	﻿2026-10-19T06:28:42.2930733Z ##[group]Run env -u ALLOW_STALE_GENERATION python -m pytest -q && python scripts/check_secrets.py
+deploy	Run env -u ALLOW_STALE_GENERATION python -m pytest -q && python scripts/check_secrets.py	2026-10-19T06:28:42.2931666Z [36;1menv -u ALLOW_STALE_GENERATION python -m pytest -q && python scripts/check_secrets.py[0m
+deploy	Run env -u ALLOW_STALE_GENERATION python -m pytest -q && python scripts/check_secrets.py	2026-10-19T06:28:42.2998303Z shell: /usr/bin/bash -e {0}
+deploy	Run env -u ALLOW_STALE_GENERATION python -m pytest -q && python scripts/check_secrets.py	2026-10-19T06:28:42.2998610Z env:
+deploy	Run env -u ALLOW_STALE_GENERATION python -m pytest -q && python scripts/check_secrets.py	2026-10-19T06:28:42.2998836Z   ALLOW_STALE_GENERATION: true
+deploy	Run env -u ALLOW_STALE_GENERATION python -m pytest -q && python scripts/check_secrets.py	2026-10-19T06:28:42.2999202Z   pythonLocation: /opt/hostedtoolcache/Python/3.12.15/x64
+deploy	Run env -u ALLOW_STALE_GENERATION python -m pytest -q && python scripts/check_secrets.py	2026-10-19T06:28:42.2999680Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.12.15/x64/lib/pkgconfig
+deploy	Run env -u ALLOW_STALE_GENERATION python -m pytest -q && python scripts/check_secrets.py	2026-10-19T06:28:42.3000167Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.15/x64
+deploy	Run env -u ALLOW_STALE_GENERATION python -m pytest -q && python scripts/check_secrets.py	2026-10-19T06:28:42.3000594Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.15/x64
+deploy	Run env -u ALLOW_STALE_GENERATION python -m pytest -q && python scripts/check_secrets.py	2026-10-19T06:28:42.3001022Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.15/x64
+deploy	Run env -u ALLOW_STALE_GENERATION python -m pytest -q && python scripts/check_secrets.py	2026-10-19T06:28:42.3001451Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.12.15/x64/lib
+deploy	Run env -u ALLOW_STALE_GENERATION python -m pytest -q && python scripts/check_secrets.py	2026-10-19T06:28:42.3001827Z ##[endgroup]
+deploy	Run env -u ALLOW_STALE_GENERATION python -m pytest -q && python scripts/check_secrets.py	2026-10-19T06:28:50.3899706Z ........................................................................ [ 28%]
+deploy	Run env -u ALLOW_STALE_GENERATION python -m pytest -q && python scripts/check_secrets.py	2026-10-19T06:28:54.1250035Z ........................................................................ [ 56%]
+deploy	Run env -u ALLOW_STALE_GENERATION python -m pytest -q && python scripts/check_secrets.py	2026-10-19T06:28:55.1383322Z ........................................................................ [ 84%]
+deploy	Run env -u ALLOW_STALE_GENERATION python -m pytest -q && python scripts/check_secrets.py	2026-10-19T06:28:56.1812558Z .........................................                                [100%]
+deploy	Run env -u ALLOW_STALE_GENERATION python -m pytest -q && python scripts/check_secrets.py	2026-10-19T06:28:56.1813338Z 257 passed in 11.79s
+deploy	Run env -u ALLOW_STALE_GENERATION python -m pytest -q && python scripts/check_secrets.py	2026-10-19T06:28:57.7000277Z No configured secret or recognized credential pattern found in source and public artifacts.
+deploy	Run npm test	﻿2026-10-19T06:28:57.7139117Z ##[group]Run npm test
+deploy	Run npm test	2026-10-19T06:28:57.7139661Z [36;1mnpm test[0m
+deploy	Run npm test	2026-10-19T06:28:57.7233149Z shell: /usr/bin/bash -e {0}
+deploy	Run npm test	2026-10-19T06:28:57.7233486Z env:
+deploy	Run npm test	2026-10-19T06:28:57.7233728Z   ALLOW_STALE_GENERATION: true
+deploy	Run npm test	2026-10-19T06:28:57.7234087Z   pythonLocation: /opt/hostedtoolcache/Python/3.12.15/x64
+deploy	Run npm test	2026-10-19T06:28:57.7234999Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.12.15/x64/lib/pkgconfig
+deploy	Run npm test	2026-10-19T06:28:57.7235704Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.15/x64
+deploy	Run npm test	2026-10-19T06:28:57.7236134Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.15/x64
+deploy	Run npm test	2026-10-19T06:28:57.7236581Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.15/x64
+deploy	Run npm test	2026-10-19T06:28:57.7237010Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.12.15/x64/lib
+deploy	Run npm test	2026-10-19T06:28:57.7237359Z ##[endgroup]
+deploy	Run npm test	2026-10-19T06:28:57.8399671Z 
+deploy	Run npm test	2026-10-19T06:28:57.8400367Z > hanoi-land-law-web@0.1.0 test
+deploy	Run npm test	2026-10-19T06:28:57.8400992Z > vitest run src
+deploy	Run npm test	2026-10-19T06:28:57.8401267Z 
+deploy	Run npm test	2026-10-19T06:28:58.2102192Z 
+deploy	Run npm test	2026-10-19T06:28:58.2104718Z [1m[30m[46m RUN [49m[39m[22m [36mv5.0.3 [39m[90m/home/runner/work/land-law-chatbot/land-law-chatbot/frontend[39m
+deploy	Run npm test	2026-10-19T06:28:58.2105633Z 
+deploy	Run npm test	2026-10-19T06:28:58.4867166Z  [32m✓[39m src/ingress.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 45[2mms[22m[39m
+deploy	Run npm test	2026-10-19T06:28:58.5002369Z  [32m✓[39m src/api.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 46[2mms[22m[39m
+deploy	Run npm test	2026-10-19T06:28:58.5036113Z 
+deploy	Run npm test	2026-10-19T06:28:58.5041074Z [2m Test Files [22m [1m[32m2 passed[39m[22m[90m (2)[39m
+deploy	Run npm test	2026-10-19T06:28:58.5042113Z [2m      Tests [22m [1m[32m7 passed[39m[22m[90m (7)[39m
+deploy	Run npm test	2026-10-19T06:28:58.5042934Z [2m   Start at [22m 06:28:58
+deploy	Run npm test	2026-10-19T06:28:58.5046625Z [2m   Duration [22m 284ms[2m (transform 56%, tests 30%, import 10%, worker 4%)[22m
+deploy	Run npm test	2026-10-19T06:28:58.5061019Z 
+deploy	Deploy frontend	﻿2026-10-19T06:28:58.5349839Z ##[group]Run npx --yes wrangler@4 pages deploy dist --project-name="$CLOUDFLARE_PAGES_PROJECT" --branch=main --commit-hash="$DEPLOY_SOURCE_COMMIT"
+deploy	Deploy frontend	2026-10-19T06:28:58.5350925Z [36;1mnpx --yes wrangler@4 pages deploy dist --project-name="$CLOUDFLARE_PAGES_PROJECT" --branch=main --commit-hash="$DEPLOY_SOURCE_COMMIT"[0m
+deploy	Deploy frontend	2026-10-19T06:28:58.5415614Z shell: /usr/bin/bash -e {0}
+deploy	Deploy frontend	2026-10-19T06:28:58.5415918Z env:
+deploy	Deploy frontend	2026-10-19T06:28:58.5416153Z   ALLOW_STALE_GENERATION: true
+deploy	Deploy frontend	2026-10-19T06:28:58.5416510Z   pythonLocation: /opt/hostedtoolcache/Python/3.12.15/x64
+deploy	Deploy frontend	2026-10-19T06:28:58.5417006Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.12.15/x64/lib/pkgconfig
+deploy	Deploy frontend	2026-10-19T06:28:58.5417477Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.15/x64
+deploy	Deploy frontend	2026-10-19T06:28:58.5418128Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.15/x64
+deploy	Deploy frontend	2026-10-19T06:28:58.5418560Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.15/x64
+deploy	Deploy frontend	2026-10-19T06:28:58.5419013Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.12.15/x64/lib
+deploy	Deploy frontend	2026-10-19T06:28:58.5419904Z   CLOUDFLARE_API_TOKEN: ***
+deploy	Deploy frontend	2026-10-19T06:28:58.5420270Z   CLOUDFLARE_ACCOUNT_ID: ***
+deploy	Deploy frontend	2026-10-19T06:28:58.5420580Z   CLOUDFLARE_PAGES_PROJECT: hanoi-land-law
+deploy	Deploy frontend	2026-10-19T06:28:58.5420994Z   DEPLOY_SOURCE_COMMIT: f3f99722cfe1fb81c29607eda16055f3a1640ac4
+deploy	Deploy frontend	2026-10-19T06:28:58.5421390Z ##[endgroup]
+deploy	Deploy frontend	2026-10-19T06:29:05.6101963Z 
+deploy	Deploy frontend	2026-10-19T06:29:05.6102770Z  ⛅️ wrangler 4.151.1
+deploy	Deploy frontend	2026-10-19T06:29:05.6103262Z ────────────────────
+deploy	Deploy frontend	2026-10-19T06:29:06.1534925Z ✨ Compiled Worker successfully
+deploy	Deploy frontend	2026-10-19T06:29:06.7338166Z Uploading... (32/32)
+deploy	Deploy frontend	2026-10-19T06:29:06.7345378Z ✨ Success! Uploaded 0 files (32 already uploaded) (0.28 sec)
+deploy	Deploy frontend	2026-10-19T06:29:06.7345911Z 
+deploy	Deploy frontend	2026-10-19T06:29:07.1244158Z ✨ Uploading _headers
+deploy	Deploy frontend	2026-10-19T06:29:07.1280001Z ✨ Uploading Functions bundle
+deploy	Deploy frontend	2026-10-19T06:29:07.1285296Z ✨ Uploading _routes.json
+deploy	Deploy frontend	2026-10-19T06:29:07.7285496Z 🌎 Deploying...
+deploy	Deploy frontend	2026-10-19T06:29:08.9644701Z ✨ Deployment complete! Take a peek over at https://006f3efe.hanoi-land-law.pages.dev
+deploy	Deploy existing free backend	﻿2026-10-19T06:29:09.0618408Z ##[group]Run python scripts/deploy.py backend
+deploy	Deploy existing free backend	2026-10-19T06:29:09.0618858Z [36;1mpython scripts/deploy.py backend[0m
+deploy	Deploy existing free backend	2026-10-19T06:29:09.0691803Z shell: /usr/bin/bash -e {0}
+deploy	Deploy existing free backend	2026-10-19T06:29:09.0692149Z env:
+deploy	Deploy existing free backend	2026-10-19T06:29:09.0692415Z   ALLOW_STALE_GENERATION: true
+deploy	Deploy existing free backend	2026-10-19T06:29:09.0692828Z   pythonLocation: /opt/hostedtoolcache/Python/3.12.15/x64
+deploy	Deploy existing free backend	2026-10-19T06:29:09.0693375Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.12.15/x64/lib/pkgconfig
+deploy	Deploy existing free backend	2026-10-19T06:29:09.0693918Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.15/x64
+deploy	Deploy existing free backend	2026-10-19T06:29:09.0694757Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.15/x64
+deploy	Deploy existing free backend	2026-10-19T06:29:09.0695278Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.15/x64
+deploy	Deploy existing free backend	2026-10-19T06:29:09.0695809Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.12.15/x64/lib
+deploy	Deploy existing free backend	2026-10-19T06:29:09.0696717Z   RENDER_API_KEY: ***
+deploy	Deploy existing free backend	2026-10-19T06:29:09.0697049Z   RENDER_SERVICE_ID: srv-db5tipks728c7390gs60
+deploy	Deploy existing free backend	2026-10-19T06:29:09.0697508Z   DEPLOY_SOURCE_COMMIT: f3f99722cfe1fb81c29607eda16055f3a1640ac4
+deploy	Deploy existing free backend	2026-10-19T06:29:09.0697986Z ##[endgroup]
+deploy	Deploy existing free backend	2026-10-19T06:29:09.9804316Z {"checked_at": "2026-10-19T06:29:09.979723+00:00", "source_commit": "f3f99722cfe1fb81c29607eda16055f3a1640ac4", "status": "monitoring", "deploy_id": "dep-dbarhdcs728c739dbsj0", "receipt": "reports/deployments/render-2ff57ec6bc06458e9988542e32474c12.jsonl"}
+deploy	Deploy existing free backend	2026-10-19T06:29:10.1052656Z {"checked_at": "2026-10-19T06:29:10.104804+00:00", "source_commit": "f3f99722cfe1fb81c29607eda16055f3a1640ac4", "status": "build_in_progress", "deploy_id": "dep-dbarhdcs728c739dbsj0", "receipt": "reports/deployments/render-2ff57ec6bc06458e9988542e32474c12.jsonl"}
+deploy	Deploy existing free backend	2026-10-19T06:29:35.7199931Z {"checked_at": "2026-10-19T06:29:35.719416+00:00", "source_commit": "f3f99722cfe1fb81c29607eda16055f3a1640ac4", "status": "update_in_progress", "deploy_id": "dep-dbarhdcs728c739dbsj0", "receipt": "reports/deployments/render-2ff57ec6bc06458e9988542e32474c12.jsonl"}
+deploy	Deploy existing free backend	2026-10-19T06:30:06.5149158Z {"checked_at": "2026-10-19T06:30:06.514361+00:00", "source_commit": "f3f99722cfe1fb81c29607eda16055f3a1640ac4", "status": "live", "deploy_id": "dep-dbarhdcs728c739dbsj0", "receipt": "reports/deployments/render-2ff57ec6bc06458e9988542e32474c12.jsonl"}
+deploy	Deploy existing free backend	2026-10-19T06:30:06.5152536Z {"checked_at": "2026-10-19T06:30:06.514564+00:00", "source_commit": "f3f99722cfe1fb81c29607eda16055f3a1640ac4", "status": "verified", "url": "https://land-law-chatbot.onrender.com", "deploy_id": "dep-dbarhdcs728c739dbsj0", "receipt": "reports/deployments/render-2ff57ec6bc06458e9988542e32474c12.jsonl"}
+deploy	Verify live navigation and source identity	﻿2026-10-19T06:30:06.5567602Z ##[group]Run npx --prefix frontend playwright install --with-deps chromium && node scripts/verify_live_ui.mjs
+deploy	Verify live navigation and source identity	2026-10-19T06:30:06.5568546Z [36;1mnpx --prefix frontend playwright install --with-deps chromium && node scripts/verify_live_ui.mjs[0m
+deploy	Verify live navigation and source identity	2026-10-19T06:30:06.5634058Z shell: /usr/bin/bash -e {0}
+deploy	Verify live navigation and source identity	2026-10-19T06:30:06.5634373Z env:
+deploy	Verify live navigation and source identity	2026-10-19T06:30:06.5634884Z   ALLOW_STALE_GENERATION: true
+deploy	Verify live navigation and source identity	2026-10-19T06:30:06.5635267Z   pythonLocation: /opt/hostedtoolcache/Python/3.12.15/x64
+deploy	Verify live navigation and source identity	2026-10-19T06:30:06.5635780Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.12.15/x64/lib/pkgconfig
+deploy	Verify live navigation and source identity	2026-10-19T06:30:06.5636281Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.15/x64
+deploy	Verify live navigation and source identity	2026-10-19T06:30:06.5636724Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.15/x64
+deploy	Verify live navigation and source identity	2026-10-19T06:30:06.5637175Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.15/x64
+deploy	Verify live navigation and source identity	2026-10-19T06:30:06.5637624Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.12.15/x64/lib
+deploy	Verify live navigation and source identity	2026-10-19T06:30:06.5638095Z   LIVE_BASE_URL: https://hanoi-land-law.pages.dev
+deploy	Verify live navigation and source identity	2026-10-19T06:30:06.5638555Z   LIVE_EXPECTED_CORPUS: corpus-a26bc99e541fbbe2
+deploy	Verify live navigation and source identity	2026-10-19T06:30:06.5638925Z   LIVE_REPORT_DIR: reports/deployment-live
+deploy	Verify live navigation and source identity	2026-10-19T06:30:06.5639246Z ##[endgroup]
+deploy	Verify live navigation and source identity	2026-10-19T06:30:07.3612803Z Installing dependencies...
+deploy	Verify live navigation and source identity	2026-10-19T06:30:07.3711788Z Switching to root user to install dependencies...
+deploy	Verify live navigation and source identity	2026-10-19T06:30:07.4966432Z Get:1 file:/etc/apt/apt-mirrors.txt Mirrorlist [144 B]
+deploy	Verify live navigation and source identity	2026-10-19T06:30:07.5263721Z Get:6 https://packages.microsoft.com/ubuntu/24.04/prod noble InRelease [3600 B]
+deploy	Verify live navigation and source identity	2026-10-19T06:30:07.6140995Z Get:7 https://packages.microsoft.com/ubuntu/24.04/prod noble/main armhf Packages [12.4 kB]
+deploy	Verify live navigation and source identity	2026-10-19T06:30:07.6248770Z Get:8 https://packages.microsoft.com/ubuntu/24.04/prod noble/main arm64 Packages [557 kB]
+deploy	Verify live navigation and source identity	2026-10-19T06:30:07.6336053Z Get:9 https://packages.microsoft.com/ubuntu/24.04/prod noble/main amd64 Packages [618 kB]
+deploy	Verify live navigation and source identity	2026-10-19T06:30:07.6602222Z Hit:2 http://azure.archive.ubuntu.com/ubuntu noble InRelease
+deploy	Verify live navigation and source identity	2026-10-19T06:30:07.6613346Z Get:3 http://azure.archive.ubuntu.com/ubuntu noble-updates InRelease [126 kB]
+deploy	Verify live navigation and source identity	2026-10-19T06:30:07.6666635Z Get:4 http://azure.archive.ubuntu.com/ubuntu noble-backports InRelease [126 kB]
+deploy	Verify live navigation and source identity	2026-10-19T06:30:07.6695274Z Get:5 http://azure.archive.ubuntu.com/ubuntu noble-security InRelease [126 kB]
+deploy	Verify live navigation and source identity	2026-10-19T06:30:07.7756565Z Get:10 http://azure.archive.ubuntu.com/ubuntu noble-updates/main amd64 Packages [1397 kB]
+deploy	Verify live navigation and source identity	2026-10-19T06:30:07.7845568Z Get:11 http://azure.archive.ubuntu.com/ubuntu noble-updates/main Translation-en [308 kB]
+deploy	Verify live navigation and source identity	2026-10-19T06:30:07.7876218Z Get:12 http://azure.archive.ubuntu.com/ubuntu noble-updates/universe amd64 Packages [1704 kB]
+deploy	Verify live navigation and source identity	2026-10-19T06:30:07.7962498Z Get:13 http://azure.archive.ubuntu.com/ubuntu noble-updates/universe Translation-en [342 kB]
+deploy	Verify live navigation and source identity	2026-10-19T06:30:07.8005818Z Get:14 http://azure.archive.ubuntu.com/ubuntu noble-updates/restricted amd64 Packages [1805 kB]
+deploy	Verify live navigation and source identity	2026-10-19T06:30:07.8090401Z Get:15 http://azure.archive.ubuntu.com/ubuntu noble-updates/restricted Translation-en [411 kB]
+deploy	Verify live navigation and source identity	2026-10-19T06:30:07.8939178Z Get:16 http://azure.archive.ubuntu.com/ubuntu noble-security/main amd64 Packages [1144 kB]
+deploy	Verify live navigation and source identity	2026-10-19T06:30:07.9002797Z Get:17 http://azure.archive.ubuntu.com/ubuntu noble-security/main Translation-en [231 kB]
+deploy	Verify live navigation and source identity	2026-10-19T06:30:07.9028116Z Get:18 http://azure.archive.ubuntu.com/ubuntu noble-security/universe amd64 Packages [1222 kB]
+deploy	Verify live navigation and source identity	2026-10-19T06:30:07.9091191Z Get:19 http://azure.archive.ubuntu.com/ubuntu noble-security/universe Translation-en [246 kB]
+deploy	Verify live navigation and source identity	2026-10-19T06:30:07.9577230Z Get:20 http://azure.archive.ubuntu.com/ubuntu noble-security/restricted amd64 Packages [1713 kB]
+deploy	Verify live navigation and source identity	2026-10-19T06:30:07.9647341Z Get:21 http://azure.archive.ubuntu.com/ubuntu noble-security/restricted Translation-en [392 kB]
+deploy	Verify live navigation and source identity	2026-10-19T06:30:11.4657918Z Fetched 12.5 MB in 1s (9372 kB/s)
+deploy	Verify live navigation and source identity	2026-10-19T06:30:12.4960426Z Reading package lists...
+deploy	Verify live navigation and source identity	2026-10-19T06:30:12.5208754Z Reading package lists...
+deploy	Verify live navigation and source identity	2026-10-19T06:30:12.7798266Z Building dependency tree...
+deploy	Verify live navigation and source identity	2026-10-19T06:30:12.7806721Z Reading state information...
+deploy	Verify live navigation and source identity	2026-10-19T06:30:13.0159549Z libasound2t64 is already the newest version (1.2.11-1ubuntu0.3).
+deploy	Verify live navigation and source identity	2026-10-19T06:30:13.0160595Z libasound2t64 set to manually installed.
+deploy	Verify live navigation and source identity	2026-10-19T06:30:13.0161522Z libatk-bridge2.0-0t64 is already the newest version (2.52.0-1build1).
+deploy	Verify live navigation and source identity	2026-10-19T06:30:13.0162704Z libatk-bridge2.0-0t64 set to manually installed.
+deploy	Verify live navigation and source identity	2026-10-19T06:30:13.0163707Z libatk1.0-0t64 is already the newest version (2.52.0-1build1).
+deploy	Verify live navigation and source identity	2026-10-19T06:30:13.0164799Z libatk1.0-0t64 set to manually installed.
+deploy	Verify live navigation and source identity	2026-10-19T06:30:13.0165720Z libatspi2.0-0t64 is already the newest version (2.52.0-1build1).
+deploy	Verify live navigation and source identity	2026-10-19T06:30:13.0166509Z libatspi2.0-0t64 set to manually installed.
+deploy	Verify live navigation and source identity	2026-10-19T06:30:13.0167246Z libcairo2 is already the newest version (1.18.0-3build1).
+deploy	Verify live navigation and source identity	2026-10-19T06:30:13.0167931Z libcairo2 set to manually installed.
+deploy	Verify live navigation and source identity	2026-10-19T06:30:13.0168654Z libcups2t64 is already the newest version (2.4.7-1.2ubuntu7.14).
+deploy	Verify live navigation and source identity	2026-10-19T06:30:13.0169362Z libcups2t64 set to manually installed.
+deploy	Verify live navigation and source identity	2026-10-19T06:30:13.0169914Z libdbus-1-3 is already the newest version (1.14.10-4ubuntu4.1).
+deploy	Verify live navigation and source identity	2026-10-19T06:30:13.0170380Z libdbus-1-3 set to manually installed.
+deploy	Verify live navigation and source identity	2026-10-19T06:30:13.0170855Z libdrm2 is already the newest version (2.4.125-1ubuntu0.1~24.04.2).
+deploy	Verify live navigation and source identity	2026-10-19T06:30:13.0171302Z libdrm2 set to manually installed.
+deploy	Verify live navigation and source identity	2026-10-19T06:30:13.0171759Z libgbm1 is already the newest version (25.2.8-0ubuntu0.24.04.4).
+deploy	Verify live navigation and source identity	2026-10-19T06:30:13.0172191Z libgbm1 set to manually installed.
+deploy	Verify live navigation and source identity	2026-10-19T06:30:13.0172645Z libglib2.0-0t64 is already the newest version (2.80.0-6ubuntu3.9).
+deploy	Verify live navigation and source identity	2026-10-19T06:30:13.0173333Z libglib2.0-0t64 set to manually installed.
+deploy	Verify live navigation and source identity	2026-10-19T06:30:13.0173805Z libnspr4 is already the newest version (2:4.35-1.1build1).
+deploy	Verify live navigation and source identity	2026-10-19T06:30:13.0174217Z libnspr4 set to manually installed.
+deploy	Verify live navigation and source identity	2026-10-19T06:30:13.0175028Z libnss3 is already the newest version (2:3.98-1ubuntu0.2).
+deploy	Verify live navigation and source identity	2026-10-19T06:30:13.0175460Z libnss3 set to manually installed.
+deploy	Verify live navigation and source identity	2026-10-19T06:30:13.0175926Z libpango-1.0-0 is already the newest version (1.52.1+ds-1build1).
+deploy	Verify live navigation and source identity	2026-10-19T06:30:13.0176376Z libpango-1.0-0 set to manually installed.
+deploy	Verify live navigation and source identity	2026-10-19T06:30:13.0177029Z libx11-6 is already the newest version (2:1.8.7-1ubuntu0.1).
+deploy	Verify live navigation and source identity	2026-10-19T06:30:13.0177454Z libx11-6 set to manually installed.
+deploy	Verify live navigation and source identity	2026-10-19T06:30:13.0177873Z libxcb1 is already the newest version (1.15-1ubuntu2).
+deploy	Verify live navigation and source identity	2026-10-19T06:30:13.0178271Z libxcb1 set to manually installed.
+deploy	Verify live navigation and source identity	2026-10-19T06:30:13.0178846Z libxcomposite1 is already the newest version (1:0.4.5-1build3).
+deploy	Verify live navigation and source identity	2026-10-19T06:30:13.0179619Z libxcomposite1 set to manually installed.
+deploy	Verify live navigation and source identity	2026-10-19T06:30:13.0180433Z libxdamage1 is already the newest version (1:1.1.6-1build1).
+deploy	Verify live navigation and source identity	2026-10-19T06:30:13.0181156Z libxdamage1 set to manually installed.
+deploy	Verify live navigation and source identity	2026-10-19T06:30:13.0181862Z libxext6 is already the newest version (2:1.3.4-1build2).
+deploy	Verify live navigation and source identity	2026-10-19T06:30:13.0182294Z libxext6 set to manually installed.
+deploy	Verify live navigation and source identity	2026-10-19T06:30:13.0182721Z libxfixes3 is already the newest version (1:6.0.0-2build1).
+deploy	Verify live navigation and source identity	2026-10-19T06:30:13.0183155Z libxfixes3 set to manually installed.
+deploy	Verify live navigation and source identity	2026-10-19T06:30:13.0183592Z libxkbcommon0 is already the newest version (1.6.0-1build1).
+deploy	Verify live navigation and source identity	2026-10-19T06:30:13.0184038Z libxkbcommon0 set to manually installed.
+deploy	Verify live navigation and source identity	2026-10-19T06:30:13.0184767Z libxrandr2 is already the newest version (2:1.5.2-2build1).
+deploy	Verify live navigation and source identity	2026-10-19T06:30:13.0185998Z libxrandr2 set to manually installed.
+deploy	Verify live navigation and source identity	2026-10-19T06:30:13.0186755Z xvfb is already the newest version (2:21.1.12-1ubuntu1.8).
+deploy	Verify live navigation and source identity	2026-10-19T06:30:13.0187556Z fonts-noto-color-emoji is already the newest version (2.047-0ubuntu0.24.04.1).
+deploy	Verify live navigation and source identity	2026-10-19T06:30:13.0188164Z libfontconfig1 is already the newest version (2.15.0-1.1ubuntu2).
+deploy	Verify live navigation and source identity	2026-10-19T06:30:13.0188623Z libfontconfig1 set to manually installed.
+deploy	Verify live navigation and source identity	2026-10-19T06:30:13.0189122Z libfreetype6 is already the newest version (2.13.2+dfsg-1ubuntu0.2).
+deploy	Verify live navigation and source identity	2026-10-19T06:30:13.0189977Z libfreetype6 set to manually installed.
+deploy	Verify live navigation and source identity	2026-10-19T06:30:13.0190879Z fonts-liberation is already the newest version (1:2.1.5-3).
+deploy	Verify live navigation and source identity	2026-10-19T06:30:13.0191762Z fonts-liberation set to manually installed.
+deploy	Verify live navigation and source identity	2026-10-19T06:30:13.0192578Z The following additional packages will be installed:
+deploy	Verify live navigation and source identity	2026-10-19T06:30:13.0193611Z   xfonts-encodings xfonts-utils
+deploy	Verify live navigation and source identity	2026-10-19T06:30:13.0194165Z Recommended packages:
+deploy	Verify live navigation and source identity	2026-10-19T06:30:13.0195064Z   fonts-ipafont-mincho fonts-tlwg-loma
+deploy	Verify live navigation and source identity	2026-10-19T06:30:13.0484814Z The following NEW packages will be installed:
+deploy	Verify live navigation and source identity	2026-10-19T06:30:13.0486065Z   fonts-freefont-ttf fonts-ipafont-gothic fonts-tlwg-loma-otf fonts-unifont
+deploy	Verify live navigation and source identity	2026-10-19T06:30:13.0496924Z   fonts-wqy-zenhei xfonts-cyrillic xfonts-encodings xfonts-scalable
+deploy	Verify live navigation and source identity	2026-10-19T06:30:13.0497616Z   xfonts-utils
+deploy	Verify live navigation and source identity	2026-10-19T06:30:13.0734038Z 0 upgraded, 9 newly installed, 0 to remove and 44 not upgraded.
+deploy	Verify live navigation and source identity	2026-10-19T06:30:13.0735145Z Need to get 21.1 MB of archives.
+deploy	Verify live navigation and source identity	2026-10-19T06:30:13.0735940Z After this operation, 79.5 MB of additional disk space will be used.
+deploy	Verify live navigation and source identity	2026-10-19T06:30:13.0736846Z Get:1 file:/etc/apt/apt-mirrors.txt Mirrorlist [144 B]
+deploy	Verify live navigation and source identity	2026-10-19T06:30:13.1592389Z Get:2 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 fonts-ipafont-gothic all 00303-21ubuntu1 [3513 kB]
+deploy	Verify live navigation and source identity	2026-10-19T06:30:13.3111811Z Get:3 http://azure.archive.ubuntu.com/ubuntu noble/main amd64 fonts-freefont-ttf all 20211204+svn4273-2 [5641 kB]
+deploy	Verify live navigation and source identity	2026-10-19T06:30:13.5042876Z Get:4 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 fonts-tlwg-loma-otf all 1:0.7.3-1 [107 kB]
+deploy	Verify live navigation and source identity	2026-10-19T06:30:13.5760597Z Get:5 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 fonts-unifont all 1:15.1.01-1build1 [2993 kB]
+deploy	Verify live navigation and source identity	2026-10-19T06:30:13.7113453Z Get:6 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 fonts-wqy-zenhei all 0.9.45-8 [7472 kB]
+deploy	Verify live navigation and source identity	2026-10-19T06:30:13.9500898Z Get:7 http://azure.archive.ubuntu.com/ubuntu noble/main amd64 xfonts-encodings all 1:1.0.5-0ubuntu2 [578 kB]
+deploy	Verify live navigation and source identity	2026-10-19T06:30:14.0333622Z Get:8 http://azure.archive.ubuntu.com/ubuntu noble/main amd64 xfonts-utils amd64 1:7.7+6build3 [94.4 kB]
+deploy	Verify live navigation and source identity	2026-10-19T06:30:14.1048139Z Get:9 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 xfonts-cyrillic all 1:1.0.5+nmu1 [384 kB]
+deploy	Verify live navigation and source identity	2026-10-19T06:30:14.1782163Z Get:10 http://azure.archive.ubuntu.com/ubuntu noble/main amd64 xfonts-scalable all 1:1.0.3-1.3 [304 kB]
+deploy	Verify live navigation and source identity	2026-10-19T06:30:14.4569833Z Fetched 21.1 MB in 1s (18.9 MB/s)
+deploy	Verify live navigation and source identity	2026-10-19T06:30:14.4819853Z Selecting previously unselected package fonts-ipafont-gothic.
+deploy	Verify live navigation and source identity	2026-10-19T06:30:14.5151635Z (Reading database ... 
+deploy	Verify live navigation and source identity	2026-10-19T06:30:14.5152089Z (Reading database ... 5%
+deploy	Verify live navigation and source identity	2026-10-19T06:30:14.5152431Z (Reading database ... 10%
+deploy	Verify live navigation and source identity	2026-10-19T06:30:14.5152765Z (Reading database ... 15%
+deploy	Verify live navigation and source identity	2026-10-19T06:30:14.5153081Z (Reading database ... 20%
+deploy	Verify live navigation and source identity	2026-10-19T06:30:14.5153397Z (Reading database ... 25%
+deploy	Verify live navigation and source identity	2026-10-19T06:30:14.5154182Z (Reading database ... 30%
+deploy	Verify live navigation and source identity	2026-10-19T06:30:14.5154960Z (Reading database ... 35%
+deploy	Verify live navigation and source identity	2026-10-19T06:30:14.5155469Z (Reading database ... 40%
+deploy	Verify live navigation and source identity	2026-10-19T06:30:14.5155981Z (Reading database ... 45%
+deploy	Verify live navigation and source identity	2026-10-19T06:30:14.5156338Z (Reading database ... 50%
+deploy	Verify live navigation and source identity	2026-10-19T06:30:14.5202244Z (Reading database ... 55%
+deploy	Verify live navigation and source identity	2026-10-19T06:30:14.6158999Z (Reading database ... 60%
+deploy	Verify live navigation and source identity	2026-10-19T06:30:14.8205506Z (Reading database ... 65%
+deploy	Verify live navigation and source identity	2026-10-19T06:30:15.0087071Z (Reading database ... 70%
+deploy	Verify live navigation and source identity	2026-10-19T06:30:15.2121300Z (Reading database ... 75%
+deploy	Verify live navigation and source identity	2026-10-19T06:30:15.3541036Z (Reading database ... 80%
+deploy	Verify live navigation and source identity	2026-10-19T06:30:15.5570783Z (Reading database ... 85%
+deploy	Verify live navigation and source identity	2026-10-19T06:30:15.7088795Z (Reading database ... 90%
+deploy	Verify live navigation and source identity	2026-10-19T06:30:15.8655264Z (Reading database ... 95%
+deploy	Verify live navigation and source identity	2026-10-19T06:30:15.8655980Z (Reading database ... 100%
+deploy	Verify live navigation and source identity	2026-10-19T06:30:15.8656923Z (Reading database ... 203540 files and directories currently installed.)
+deploy	Verify live navigation and source identity	2026-10-19T06:30:15.8701303Z Preparing to unpack .../0-fonts-ipafont-gothic_00303-21ubuntu1_all.deb ...
+deploy	Verify live navigation and source identity	2026-10-19T06:30:15.8793235Z Unpacking fonts-ipafont-gothic (00303-21ubuntu1) ...
+deploy	Verify live navigation and source identity	2026-10-19T06:30:16.1155564Z Selecting previously unselected package fonts-freefont-ttf.
+deploy	Verify live navigation and source identity	2026-10-19T06:30:16.1288041Z Preparing to unpack .../1-fonts-freefont-ttf_20211204+svn4273-2_all.deb ...
+deploy	Verify live navigation and source identity	2026-10-19T06:30:16.1295394Z Unpacking fonts-freefont-ttf (20211204+svn4273-2) ...
+deploy	Verify live navigation and source identity	2026-10-19T06:30:16.2145908Z Selecting previously unselected package fonts-tlwg-loma-otf.
+deploy	Verify live navigation and source identity	2026-10-19T06:30:16.2279027Z Preparing to unpack .../2-fonts-tlwg-loma-otf_1%3a0.7.3-1_all.deb ...
+deploy	Verify live navigation and source identity	2026-10-19T06:30:16.2288154Z Unpacking fonts-tlwg-loma-otf (1:0.7.3-1) ...
+deploy	Verify live navigation and source identity	2026-10-19T06:30:16.2505965Z Selecting previously unselected package fonts-unifont.
+deploy	Verify live navigation and source identity	2026-10-19T06:30:16.2642147Z Preparing to unpack .../3-fonts-unifont_1%3a15.1.01-1build1_all.deb ...
+deploy	Verify live navigation and source identity	2026-10-19T06:30:16.2649247Z Unpacking fonts-unifont (1:15.1.01-1build1) ...
+deploy	Verify live navigation and source identity	2026-10-19T06:30:16.3850370Z Selecting previously unselected package fonts-wqy-zenhei.
+deploy	Verify live navigation and source identity	2026-10-19T06:30:16.3980510Z Preparing to unpack .../4-fonts-wqy-zenhei_0.9.45-8_all.deb ...
+deploy	Verify live navigation and source identity	2026-10-19T06:30:16.4092141Z Unpacking fonts-wqy-zenhei (0.9.45-8) ...
+deploy	Verify live navigation and source identity	2026-10-19T06:30:16.8802864Z Selecting previously unselected package xfonts-encodings.
+deploy	Verify live navigation and source identity	2026-10-19T06:30:16.8935731Z Preparing to unpack .../5-xfonts-encodings_1%3a1.0.5-0ubuntu2_all.deb ...
+deploy	Verify live navigation and source identity	2026-10-19T06:30:16.8943540Z Unpacking xfonts-encodings (1:1.0.5-0ubuntu2) ...
+deploy	Verify live navigation and source identity	2026-10-19T06:30:16.9271628Z Selecting previously unselected package xfonts-utils.
+deploy	Verify live navigation and source identity	2026-10-19T06:30:16.9410232Z Preparing to unpack .../6-xfonts-utils_1%3a7.7+6build3_amd64.deb ...
+deploy	Verify live navigation and source identity	2026-10-19T06:30:16.9417716Z Unpacking xfonts-utils (1:7.7+6build3) ...
+deploy	Verify live navigation and source identity	2026-10-19T06:30:16.9843760Z Selecting previously unselected package xfonts-cyrillic.
+deploy	Verify live navigation and source identity	2026-10-19T06:30:16.9978417Z Preparing to unpack .../7-xfonts-cyrillic_1%3a1.0.5+nmu1_all.deb ...
+deploy	Verify live navigation and source identity	2026-10-19T06:30:16.9986361Z Unpacking xfonts-cyrillic (1:1.0.5+nmu1) ...
+deploy	Verify live navigation and source identity	2026-10-19T06:30:17.0336861Z Selecting previously unselected package xfonts-scalable.
+deploy	Verify live navigation and source identity	2026-10-19T06:30:17.0471200Z Preparing to unpack .../8-xfonts-scalable_1%3a1.0.3-1.3_all.deb ...
+deploy	Verify live navigation and source identity	2026-10-19T06:30:17.0479080Z Unpacking xfonts-scalable (1:1.0.3-1.3) ...
+deploy	Verify live navigation and source identity	2026-10-19T06:30:17.0900988Z Setting up fonts-wqy-zenhei (0.9.45-8) ...
+deploy	Verify live navigation and source identity	2026-10-19T06:30:17.1019159Z Setting up fonts-freefont-ttf (20211204+svn4273-2) ...
+deploy	Verify live navigation and source identity	2026-10-19T06:30:17.1036994Z Setting up fonts-tlwg-loma-otf (1:0.7.3-1) ...
+deploy	Verify live navigation and source identity	2026-10-19T06:30:17.1055311Z Setting up xfonts-encodings (1:1.0.5-0ubuntu2) ...
+deploy	Verify live navigation and source identity	2026-10-19T06:30:17.1074102Z Setting up fonts-ipafont-gothic (00303-21ubuntu1) ...
+deploy	Verify live navigation and source identity	2026-10-19T06:30:17.1146148Z update-alternatives: using /usr/share/fonts/opentype/ipafont-gothic/ipag.ttf to provide /usr/share/fonts/truetype/fonts-japanese-gothic.ttf (fonts-japanese-gothic.ttf) in auto mode
+deploy	Verify live navigation and source identity	2026-10-19T06:30:17.1161549Z Setting up fonts-unifont (1:15.1.01-1build1) ...
+deploy	Verify live navigation and source identity	2026-10-19T06:30:17.1179369Z Setting up xfonts-utils (1:7.7+6build3) ...
+deploy	Verify live navigation and source identity	2026-10-19T06:30:17.1221693Z Setting up xfonts-cyrillic (1:1.0.5+nmu1) ...
+deploy	Verify live navigation and source identity	2026-10-19T06:30:17.1793650Z Setting up xfonts-scalable (1:1.0.3-1.3) ...
+deploy	Verify live navigation and source identity	2026-10-19T06:30:17.2175222Z Processing triggers for man-db (2.12.0-4build2) ...
+deploy	Verify live navigation and source identity	2026-10-19T06:30:17.2193656Z Not building database; man-db/auto-update is not 'true'.
+deploy	Verify live navigation and source identity	2026-10-19T06:30:17.2206138Z Processing triggers for fontconfig (2.15.0-1.1ubuntu2) ...
+deploy	Verify live navigation and source identity	2026-10-19T06:30:17.9858655Z 
+deploy	Verify live navigation and source identity	2026-10-19T06:30:17.9859501Z Running kernel seems to be up-to-date.
+deploy	Verify live navigation and source identity	2026-10-19T06:30:17.9859973Z 
+deploy	Verify live navigation and source identity	2026-10-19T06:30:17.9860261Z No services need to be restarted.
+deploy	Verify live navigation and source identity	2026-10-19T06:30:17.9860611Z 
+deploy	Verify live navigation and source identity	2026-10-19T06:30:17.9860926Z No containers need to be restarted.
+deploy	Verify live navigation and source identity	2026-10-19T06:30:17.9861260Z 
+deploy	Verify live navigation and source identity	2026-10-19T06:30:17.9861598Z No user sessions are running outdated binaries.
+deploy	Verify live navigation and source identity	2026-10-19T06:30:17.9861990Z 
+deploy	Verify live navigation and source identity	2026-10-19T06:30:17.9862865Z No VM guests are running outdated hypervisor (qemu) binaries on this host.
+deploy	Verify live navigation and source identity	2026-10-19T06:30:19.2643175Z Downloading Chrome for Testing 156.0.8078.4 (playwright chromium v1248) from https://cdn.playwright.dev/builds/cft/156.0.8078.4/linux64/chrome-linux64.zip
+deploy	Verify live navigation and source identity	2026-10-19T06:30:19.6965069Z |                                                                                |   0% of 191.1 MiB
+deploy	Verify live navigation and source identity	2026-10-19T06:30:20.0115621Z |■■■■■■■■                                                                        |  10% of 191.1 MiB
+deploy	Verify live navigation and source identity	2026-10-19T06:30:20.1002376Z |■■■■■■■■■■■■■■■■                                                                |  20% of 191.1 MiB
+deploy	Verify live navigation and source identity	2026-10-19T06:30:20.2023430Z |■■■■■■■■■■■■■■■■■■■■■■■■                                                        |  30% of 191.1 MiB
+deploy	Verify live navigation and source identity	2026-10-19T06:30:20.2819481Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                                |  40% of 191.1 MiB
+deploy	Verify live navigation and source identity	2026-10-19T06:30:20.3869343Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                        |  50% of 191.1 MiB
+deploy	Verify live navigation and source identity	2026-10-19T06:30:20.4848541Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                |  60% of 191.1 MiB
+deploy	Verify live navigation and source identity	2026-10-19T06:30:20.5759894Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                        |  70% of 191.1 MiB
+deploy	Verify live navigation and source identity	2026-10-19T06:30:20.6941112Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                |  80% of 191.1 MiB
+deploy	Verify live navigation and source identity	2026-10-19T06:30:20.7809186Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■        |  90% of 191.1 MiB
+deploy	Verify live navigation and source identity	2026-10-19T06:30:20.8749085Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■| 100% of 191.1 MiB
+deploy	Verify live navigation and source identity	2026-10-19T06:30:24.2117147Z Chrome for Testing 156.0.8078.4 (playwright chromium v1248) downloaded to /home/runner/.cache/ms-playwright/chromium-1248
+deploy	Verify live navigation and source identity	2026-10-19T06:30:24.2122207Z Downloading FFmpeg (playwright ffmpeg v1013) from https://cdn.playwright.dev/dbazure/download/playwright/builds/ffmpeg/1013/ffmpeg-linux.zip
+deploy	Verify live navigation and source identity	2026-10-19T06:30:24.6016015Z |                                                                                |   0% of 2.2 MiB
+deploy	Verify live navigation and source identity	2026-10-19T06:30:24.6153290Z |■■■■■■■■                                                                        |  10% of 2.2 MiB
+deploy	Verify live navigation and source identity	2026-10-19T06:30:24.6225523Z |■■■■■■■■■■■■■■■■                                                                |  20% of 2.2 MiB
+deploy	Verify live navigation and source identity	2026-10-19T06:30:24.6262593Z |■■■■■■■■■■■■■■■■■■■■■■■■                                                        |  30% of 2.2 MiB
+deploy	Verify live navigation and source identity	2026-10-19T06:30:24.6286311Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                                |  40% of 2.2 MiB
+deploy	Verify live navigation and source identity	2026-10-19T06:30:24.6329978Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                        |  50% of 2.2 MiB
+deploy	Verify live navigation and source identity	2026-10-19T06:30:24.6360062Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                |  60% of 2.2 MiB
+deploy	Verify live navigation and source identity	2026-10-19T06:30:24.6378410Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                        |  70% of 2.2 MiB
+deploy	Verify live navigation and source identity	2026-10-19T06:30:24.6403245Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                |  80% of 2.2 MiB
+deploy	Verify live navigation and source identity	2026-10-19T06:30:24.6420426Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■        |  90% of 2.2 MiB
+deploy	Verify live navigation and source identity	2026-10-19T06:30:24.6434250Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■| 100% of 2.2 MiB
+deploy	Verify live navigation and source identity	2026-10-19T06:30:24.7082801Z FFmpeg (playwright ffmpeg v1013) downloaded to /home/runner/.cache/ms-playwright/ffmpeg-1013
+deploy	Verify live navigation and source identity	2026-10-19T06:30:24.7086972Z Downloading Chrome Headless Shell 156.0.8078.4 (playwright chromium-headless-shell v1248) from https://cdn.playwright.dev/builds/cft/156.0.8078.4/linux64/chrome-headless-shell-linux64.zip
+deploy	Verify live navigation and source identity	2026-10-19T06:30:25.1275499Z |                                                                                |   0% of 120 MiB
+deploy	Verify live navigation and source identity	2026-10-19T06:30:25.2365704Z |■■■■■■■■                                                                        |  10% of 120 MiB
+deploy	Verify live navigation and source identity	2026-10-19T06:30:25.3106105Z |■■■■■■■■■■■■■■■■                                                                |  20% of 120 MiB
+deploy	Verify live navigation and source identity	2026-10-19T06:30:25.3848758Z |■■■■■■■■■■■■■■■■■■■■■■■■                                                        |  30% of 120 MiB
+deploy	Verify live navigation and source identity	2026-10-19T06:30:25.4696805Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                                |  40% of 120 MiB
+deploy	Verify live navigation and source identity	2026-10-19T06:30:25.5199668Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                        |  50% of 120 MiB
+deploy	Verify live navigation and source identity	2026-10-19T06:30:25.5768665Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                |  60% of 120 MiB
+deploy	Verify live navigation and source identity	2026-10-19T06:30:25.6517623Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                        |  70% of 120 MiB
+deploy	Verify live navigation and source identity	2026-10-19T06:30:25.7090972Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                |  80% of 120 MiB
+deploy	Verify live navigation and source identity	2026-10-19T06:30:25.7719834Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■        |  90% of 120 MiB
+deploy	Verify live navigation and source identity	2026-10-19T06:30:25.8386534Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■| 100% of 120 MiB
+deploy	Verify live navigation and source identity	2026-10-19T06:30:28.2540774Z Chrome Headless Shell 156.0.8078.4 (playwright chromium-headless-shell v1248) downloaded to /home/runner/.cache/ms-playwright/chromium_headless_shell-1248
+deploy	Verify live navigation and source identity	2026-10-19T06:30:44.5973033Z {"passed":true,"output":"/home/runner/work/land-law-chatbot/land-law-chatbot/reports/deployment-live/navigation.json","llm_generation_checked":false}
+deploy	Run actions/upload-artifact@v4	﻿2026-10-19T06:30:44.6487652Z ##[group]Run actions/upload-artifact@v4
+deploy	Run actions/upload-artifact@v4	2026-10-19T06:30:44.6487987Z with:
+deploy	Run actions/upload-artifact@v4	2026-10-19T06:30:44.6488213Z   name: deployment-evidence
+deploy	Run actions/upload-artifact@v4	2026-10-19T06:30:44.6488610Z   path: reports/deployments
+deploy	Run actions/upload-artifact@v4	reports/deployment-live
+deploy	Run actions/upload-artifact@v4	reports/deployment-chat
+deploy	Run actions/upload-artifact@v4	
+deploy	Run actions/upload-artifact@v4	2026-10-19T06:30:44.6489049Z   if-no-files-found: warn
+deploy	Run actions/upload-artifact@v4	2026-10-19T06:30:44.6489297Z   compression-level: 6
+deploy	Run actions/upload-artifact@v4	2026-10-19T06:30:44.6489533Z   overwrite: false
+deploy	Run actions/upload-artifact@v4	2026-10-19T06:30:44.6489764Z   include-hidden-files: false
+deploy	Run actions/upload-artifact@v4	2026-10-19T06:30:44.6490018Z env:
+deploy	Run actions/upload-artifact@v4	2026-10-19T06:30:44.6490225Z   ALLOW_STALE_GENERATION: true
+deploy	Run actions/upload-artifact@v4	2026-10-19T06:30:44.6490790Z   pythonLocation: /opt/hostedtoolcache/Python/3.12.15/x64
+deploy	Run actions/upload-artifact@v4	2026-10-19T06:30:44.6491250Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.12.15/x64/lib/pkgconfig
+deploy	Run actions/upload-artifact@v4	2026-10-19T06:30:44.6491698Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.15/x64
+deploy	Run actions/upload-artifact@v4	2026-10-19T06:30:44.6492103Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.15/x64
+deploy	Run actions/upload-artifact@v4	2026-10-19T06:30:44.6492504Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.15/x64
+deploy	Run actions/upload-artifact@v4	2026-10-19T06:30:44.6492950Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.12.15/x64/lib
+deploy	Run actions/upload-artifact@v4	2026-10-19T06:30:44.6493295Z ##[endgroup]
+deploy	Run actions/upload-artifact@v4	2026-10-19T06:30:44.8252056Z (node:3828) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+deploy	Run actions/upload-artifact@v4	2026-10-19T06:30:44.8253640Z (Use `node --trace-deprecation ...` to show where the warning was created)
+deploy	Run actions/upload-artifact@v4	2026-10-19T06:30:44.8334636Z Multiple search paths detected. Calculating the least common ancestor of all paths
+deploy	Run actions/upload-artifact@v4	2026-10-19T06:30:44.8338044Z The least common ancestor is /home/runner/work/land-law-chatbot/land-law-chatbot/reports. This will be the root directory of the artifact
+deploy	Run actions/upload-artifact@v4	2026-10-19T06:30:44.8339330Z With the provided path, there will be 5 files uploaded
+deploy	Run actions/upload-artifact@v4	2026-10-19T06:30:44.8344275Z Artifact name is valid!
+deploy	Run actions/upload-artifact@v4	2026-10-19T06:30:44.8346712Z Root directory input is valid!
+deploy	Run actions/upload-artifact@v4	2026-10-19T06:30:45.2330036Z Beginning upload of artifact content to blob storage
+deploy	Run actions/upload-artifact@v4	2026-10-19T06:30:45.2703823Z (node:3828) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+deploy	Run actions/upload-artifact@v4	2026-10-19T06:30:45.8243626Z Uploaded bytes 217052
+deploy	Run actions/upload-artifact@v4	2026-10-19T06:30:45.9046270Z Finished uploading artifact content to blob storage!
+deploy	Run actions/upload-artifact@v4	2026-10-19T06:30:45.9047844Z SHA256 digest of uploaded artifact zip is 45a9c5ba415f59125cac5f03a1bf4bb33af8df947095d867b8e81948b22ad42b
+deploy	Run actions/upload-artifact@v4	2026-10-19T06:30:45.9048939Z Finalizing artifact upload
+deploy	Run actions/upload-artifact@v4	2026-10-19T06:30:46.1799478Z Artifact deployment-evidence.zip successfully finalized. Artifact ID 12167111918
+deploy	Run actions/upload-artifact@v4	2026-10-19T06:30:46.1801228Z Artifact deployment-evidence has been successfully uploaded! Final size is 217052 bytes. Artifact ID is 12167111918
+deploy	Run actions/upload-artifact@v4	2026-10-19T06:30:46.1807478Z Artifact download URL: https://github.com/dovh25x/land-law-chatbot/actions/runs/39209976619/artifacts/12167111918
+deploy	Post Run actions/setup-node@v4	﻿2026-10-19T06:30:46.1988105Z Post job cleanup.
+deploy	Post Run actions/setup-node@v4	2026-10-19T06:30:46.3278470Z (node:3841) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+deploy	Post Run actions/setup-node@v4	2026-10-19T06:30:46.3279654Z (Use `node --trace-deprecation ...` to show where the warning was created)
+deploy	Post Run actions/setup-node@v4	2026-10-19T06:30:46.3283081Z Cache hit occurred on the primary key node-cache-Linux-x64-npm-3f5af821617769c6816a3a234ba40df4055eb533c760cbc4c77eccba8c407d7e, not saving cache.
+deploy	Post Run actions/setup-python@v5	﻿2026-10-19T06:30:46.3401872Z Post job cleanup.
+deploy	Post Run actions/setup-python@v5	2026-10-19T06:30:46.4691481Z (node:3849) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+deploy	Post Run actions/setup-python@v5	2026-10-19T06:30:46.4693569Z (Use `node --trace-deprecation ...` to show where the warning was created)
+deploy	Post Run actions/checkout@v4	﻿2026-10-19T06:30:46.4834853Z Post job cleanup.
+deploy	Post Run actions/checkout@v4	2026-10-19T06:30:46.5777345Z [command]/usr/bin/git version
+deploy	Post Run actions/checkout@v4	2026-10-19T06:30:46.5823678Z git version 2.55.0
+deploy	Post Run actions/checkout@v4	2026-10-19T06:30:46.5866668Z Temporarily overriding HOME='/home/runner/work/_temp/70fb2f5a-75a5-4ad7-b8f6-db1dc6f8a4cf' before making global git config changes
+deploy	Post Run actions/checkout@v4	2026-10-19T06:30:46.5868491Z Adding repository directory to the temporary git global config as a safe directory
+deploy	Post Run actions/checkout@v4	2026-10-19T06:30:46.5875083Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/land-law-chatbot/land-law-chatbot
+deploy	Post Run actions/checkout@v4	2026-10-19T06:30:46.5920254Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+deploy	Post Run actions/checkout@v4	2026-10-19T06:30:46.5962850Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+deploy	Post Run actions/checkout@v4	2026-10-19T06:30:46.6223599Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+deploy	Post Run actions/checkout@v4	2026-10-19T06:30:46.6253496Z http.https://github.com/.extraheader
+deploy	Post Run actions/checkout@v4	2026-10-19T06:30:46.6268060Z [command]/usr/bin/git config --local --unset-all http.https://github.com/.extraheader
+deploy	Post Run actions/checkout@v4	2026-10-19T06:30:46.6307832Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+deploy	Post Run actions/checkout@v4	2026-10-19T06:30:46.6584103Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+deploy	Post Run actions/checkout@v4	2026-10-19T06:30:46.6627922Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+deploy	Complete job	﻿2026-10-19T06:30:46.7060328Z Cleaning up orphan processes
+deploy	Complete job	2026-10-19T06:30:46.7381240Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-node@v4, actions/setup-python@v5, actions/upload-artifact@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/

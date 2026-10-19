@@ -1,0 +1,17 @@
+
+> hanoi-land-law-web@0.1.0 test:e2e
+> playwright test redesign.spec.ts -g snapshot metadata
+
+[WebServer] (node:33414) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 2 tests using 2 workers
+
+(node:33443) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:33442) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 [mobile] › e2e/redesign.spec.ts:109:1 › snapshot metadata stays out of the UI, including previously saved answer preambles (3.2s)
+  ✓  2 [desktop] › e2e/redesign.spec.ts:109:1 › snapshot metadata stays out of the UI, including previously saved answer preambles (3.3s)
+
+  2 passed (6.6s)
