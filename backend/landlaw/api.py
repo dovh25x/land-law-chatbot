@@ -212,10 +212,16 @@ def create_app(settings: Settings | None = None, store: Store | None = None, pro
     async def evaluations():
         path = settings.reports_dir / "latest.json"
         active = await asyncio.to_thread(state['store'].state, 'active_release')
-        if not path.exists():
-            return {"status": "not_run", "message": "Chưa chạy benchmark với API và corpus thật.", "results": [], 'active_release':active, 'matches_active_release':False}
-        report = json.loads(path.read_text())
-        return {**report, 'evaluation_release':report.get('release'), 'active_release':active,
+        report = json.loads(path.read_text()) if path.exists() else {"status": "not_run", "results": []}
+        archive_path = settings.reports_dir / 'public-evaluations.json'
+        archive = json.loads(archive_path.read_text()) if archive_path.exists() else {}
+        runs = [{**run, 'matches_active_release': bool(active and run.get('release') == active),
+                 'matches_active_configuration': run.get('configuration_sha256') == state['configuration']}
+                for run in archive.get('runs', [])]
+        preferred = next((r for r in runs if r['matches_active_release'] and r.get('complete')), None)
+        preferred = preferred or next((r for r in runs if r['matches_active_release']), None) or next(iter(runs), None)
+        return {**report, **archive, 'runs': runs, 'default_run_id': preferred['id'] if preferred else None,
+                'evaluation_release':report.get('release'), 'active_release':active,
                 'active_configuration_sha256':state['configuration'],
                 'matches_active_configuration':report.get('configuration_sha256')==state['configuration'],
                 'matches_active_release':bool(active and active==report.get('release'))}

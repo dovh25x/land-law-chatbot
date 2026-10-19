@@ -117,3 +117,9 @@ Khi hủy, client đóng stream. Khi mất kết nối trước kết quả cu�
 | `503` | `generation_disabled`, `challenge_unavailable` hoặc lỗi dịch vụ | Hiển thị giới hạn; thư viện nguồn vẫn có thể truy cập |
 
 Payload lỗi validation chỉ chứa vị trí và loại lỗi, không echo nội dung đầu vào. Giới hạn provider phát sinh sau khi mở stream được phản ánh trong kết quả hoặc lỗi SSE, không nhất thiết bằng HTTP `429`.
+
+## Công bố số liệu đánh giá
+
+`GET /api/v1/evaluations/latest` giữ các field summary cũ và bổ sung `runs`, `retrieval_runs`, `faithfulness_runs`, `sources`, `errata`, `default_run_id`. Mỗi run giữ corpus, model, backend, fingerprint, các suite và ca đã/chưa thực hiện; API gắn `matches_active_release`/`matches_active_configuration` theo deployment, không sửa identity artifact. Mặc định chọn bộ đầy đủ gần nhất của corpus đang phục vụ, sau đó mới tới lần chạy còn dở.
+
+`reports/public-evaluations.json` là bản chiếu public được tạo ngoại tuyến từ artifact đã commit; `sources` giữ đường dẫn GitHub ghim revision và SHA-256. Chỉ chứa câu hỏi benchmark khóa, nhận xét và chỉ số; không trả payload đáp án, hội thoại, token phiên hoặc trace chi tiết. Download trên frontend dùng chính JSON đã nhận, không cần thêm endpoint server.

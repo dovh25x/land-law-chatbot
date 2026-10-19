@@ -76,11 +76,9 @@ test('evaluation makes a mismatched report explicit instead of presenting invent
   await page.goto('/')
   await navigate(page, 'Đánh giá hệ thống')
   await expect(page.getByRole('status')).toContainText('Chưa hoàn tất đánh giá trên cấu hình đang hoạt động')
-  await expect(page.locator('.evaluation-summary')).toContainText('Chưa có báo cáo khớp')
+  await expect(page.locator('.evaluation-summary')).toContainText('Khác cấu hình đang chạy')
   await expect(page.locator('.evaluation-details pre')).toHaveCount(0)
-  await expect(page.getByText('old-test-model')).toBeHidden()
-  await page.getByText('Xem báo cáo của phiên bản trước', { exact: true }).click()
-  await expect(page.getByText('old-test-model')).toBeVisible()
+  await expect(page.getByText('old-test-model', { exact: true })).toBeVisible()
 })
 
 test('compact header preserves data disclosure and returns keyboard focus', async ({ page }, info) => {

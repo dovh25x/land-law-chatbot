@@ -93,3 +93,9 @@ Nếu artifact cũ không có telemetry bước sinh Draft, ghi `answer_origin=u
 Báo cáo số liệu chỉ ở `reports/`; tài liệu này định nghĩa phương pháp. Xem [báo cáo có phiên bản](../reports/evaluation/ring4-c4f0c661/README.md) và [trạng thái triển khai](../reports/deployment-ring4.json). Các báo cáo corpus đã bị thu hồi asset giữ nguyên checksum và công khai hạn chế tái lập.
 
 Rubric và readiness nội dung được giữ để đo, rà soát và công bố giới hạn; deploy mặc định không yêu cầu chúng đạt. Người vận hành có thể bật chế độ yêu cầu quality qua runbook. Việc bỏ điều kiện chặn deploy không đổi nhãn kết quả lịch sử hoặc thay kiểm chứng claim/citation trong runtime.
+
+### Dashboard và lịch sử công khai
+
+Chạy `.venv/bin/python scripts/build_public_evaluations.py` để tạo `reports/public-evaluations.json` từ các evaluation/retrieval/faithfulness artifact đã commit. Lệnh chỉ tổng hợp metadata theo allowlist, kiểm kê checksum, không gọi model, truy cập database hoặc sửa báo cáo gốc. Các lần dở dang, fail, limited, chưa rà soát và ca chưa thực hiện đều được công bố. Không chọn kết quả tốt nhất hoặc gộp các cấu hình khác nhau. Bản chiếu public có thể cập nhật khi bổ sung artifact; artifact đầu vào giữ nguyên.
+
+Mặc định của dashboard là bộ đầy đủ gần nhất trên corpus đang phục vụ, không phải điểm cao nhất. Lần kiểm tra riêng mới hơn vẫn nằm trong lịch sử và selector. Source checksum và link GitHub ghim commit cho phép đối chiếu dữ liệu. Đính chính nhận xét là chú thích riêng, không sửa verdict hoặc artifact lịch sử. Các chỉ số retrieval và faithfulness giữ phạm vi, backend và fingerprint gốc, không tự chứng nhận deployment.

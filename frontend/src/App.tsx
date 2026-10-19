@@ -1,3 +1,5 @@
+import { EvaluationPage } from './EvaluationPage'
+import type { EvaluationData } from './evaluation'
 import { listConversations, saveConversation, deleteConversation, clearConversations, type Conversation, newConversation as makeConversation } from './history'
 import { useEffect, useRef, useState } from 'react'
 import ReactMarkdown from 'react-markdown'
@@ -34,7 +36,7 @@ function App() {
   const [evaluationState, setEvaluationState] = useState<'loading' | 'ready' | 'error'>('loading')
   const [trace, setTrace] = useState<Trace[]>([]), [traceOpen, setTraceOpen] = useState(false)
   const [sourcePanel, setSourcePanel] = useState<SourceSelection | null>(null)
-  const [evaluation, setEvaluation] = useState<Record<string, unknown> | null>(null), [search, setSearch] = useState(''), [sourceKind, setSourceKind] = useState('all')
+  const [evaluation, setEvaluation] = useState<EvaluationData | null>(null), [search, setSearch] = useState(''), [sourceKind, setSourceKind] = useState('all')
   const inputRef = useRef<HTMLTextAreaElement>(null), navRef = useRef<HTMLElement>(null)
   const sessionRef = useRef<Session | null>(null), abortRef = useRef<AbortController | null>(null), stopReason = useRef('')
   const chatScroll = useRef<HTMLDivElement>(null), nearBottom = useRef(true), [showBottom, setShowBottom] = useState(false)
@@ -62,7 +64,7 @@ function App() {
       fetch(BASE + '/readyz', { signal }).then(response => response.json() as Promise<Readiness>),
       getJSON<GenerationStatus>('/api/v1/status', signal),
       getJSON<{ documents: LegalDocument[]; references?: LegalDocument[] }>('/api/v1/documents', signal),
-      getJSON<Record<string, unknown>>('/api/v1/evaluations/latest', signal),
+      getJSON<EvaluationData>('/api/v1/evaluations/latest', signal),
     ])
     if (signal?.aborted) return
     const [ready, status, sources, report] = results
@@ -171,8 +173,6 @@ function App() {
   }
   function navigate(target: Page) { setDataOpen(false); setPage(target); setNavOpen(false); setTraceOpen(false); setSourcePanel(null) }
   const filteredDocs = docs.filter(doc => (sourceKind === 'all' || doc.source_kind === sourceKind) && searchText(`${doc.title} ${doc.document_number || ''}`).includes(searchText(search)))
-  const evaluationWarning = evaluation && evaluation.status !== 'not_run' && (!evaluation.matches_active_release || !evaluation.matches_active_configuration || evaluation.status !== 'reviewed')
-    ? 'Chưa hoàn tất đánh giá trên cấu hình đang hoạt động. Không diễn giải kết quả của phiên bản khác thành chất lượng bản hiện tại.' : ''
   const ready = readiness?.status === 'ready'
   const connectionMessage = connecting ? 'Đang kết nối dịch vụ. Lần khởi động đầu có thể mất khoảng một phút…'
     : generation && !generation.generation_available ? `${generationLabel(generation)}.${generation.retry_after ? ` Thử lại sau ${generation.retry_after} giây.` : ''} Thư viện nguồn vẫn truy cập được.`
@@ -219,35 +219,12 @@ function App() {
       {page === 'sources' && <section className="content-page"><h1>Thư viện văn bản</h1><p className="page-intro">Tìm văn bản và mở nguồn gốc để kiểm tra căn cứ.</p><div className="library-toolbar"><label className="searchbox"><Search size={20}/><input value={search} onChange={event => setSearch(event.target.value)} placeholder="Tìm theo số hiệu hoặc tên văn bản…" aria-label="Tìm văn bản"/></label><label className="source-filter"><span>Loại nguồn</span><select aria-label="Loại nguồn" value={sourceKind} onChange={event => setSourceKind(event.target.value)}><option value="all">Tất cả nguồn</option>{Object.entries(sourceKinds).map(([key, label]) => <option key={key} value={key}>{label}</option>)}</select></label></div>
         {docsState === 'loading' ? <div className="empty-state" role="status"><LoaderCircle className="spin" size={24}/><p>Đang tải thư viện…</p></div> : docsState === 'error' ? <div className="empty-state" role="alert"><h2>Chưa tải được thư viện</h2><p>Không thể xác định danh sách tài liệu lúc này.</p><button className="button button-secondary" onClick={() => void refresh()}>Thử tải lại thư viện</button></div> : <><div className="library-count"><strong>{filteredDocs.length}/{docs.length} tài liệu trong thư viện</strong>{readiness?.checked_at && <span>Nguồn kiểm tra: {formatDate(readiness.checked_at)}</span>}</div>{!docs.length ? <div className="empty-state"><BookOpen size={28}/><h2>Corpus chưa được công bố</h2><p>Tài liệu xuất hiện khi nguồn được thu thập và đưa vào thư viện.</p><button className="button button-secondary" onClick={() => void refresh()}>Kiểm tra lại</button></div> : <><div className="document-list">{filteredDocs.map(document => <DocumentRow key={document.id} document={document} onOpen={doc => openSource(doc)}/>)}</div>{!filteredDocs.length && <div className="empty-state"><Search size={24}/><h2>Không tìm thấy văn bản</h2><p>Thử số hiệu, từ khóa ngắn hơn hoặc loại nguồn khác.</p><button className="button button-secondary" onClick={() => { setSearch(''); setSourceKind('all') }}>Xóa từ khóa</button></div>}</>}</>}
       </section>}
-      {page === 'evaluation' && <section className="content-page"><h1>Đánh giá hệ thống</h1><p className="page-intro">Báo cáo kỹ thuật gắn với corpus và cấu hình đã chạy.</p>{evaluationWarning && <aside className="warning-note" role="status"><ShieldCheck size={20}/><p>{evaluationWarning}</p></aside>}<div className="evaluation-summary"><div><small>Corpus đang hoạt động</small><strong>{readiness?.corpus_release || 'Chưa công bố'}</strong></div><div><small>Phạm vi công bố</small><strong>Bản thử nghiệm</strong></div><div><small>Báo cáo khớp cấu hình</small><strong>{evaluation?.matches_active_configuration && evaluation?.matches_active_release ? 'Khớp phiên bản đang chạy' : 'Chưa có báo cáo khớp'}</strong></div></div>
-        {evaluationState === 'loading' ? <p role="status">Đang tải báo cáo…</p> : evaluationState === 'error' ? <div className="empty-state" role="alert"><h2>Chưa tải được báo cáo</h2><button className="button button-secondary" onClick={() => void refresh()}>Thử tải lại báo cáo</button></div> : !evaluation || evaluation.status === 'not_run' ? <div className="empty-state"><h2>Chưa có kết quả kiểm tra trên bản này</h2><p>Kết quả sẽ được công bố sau khi chạy và rà soát.</p></div> : evaluationWarning ? <details><summary>Xem báo cáo của phiên bản trước</summary><EvaluationTable evaluation={evaluation}/></details> : <EvaluationTable evaluation={evaluation}/> }
-      </section>}
+      {page === 'evaluation' && <EvaluationPage data={evaluation} readiness={readiness} state={evaluationState} onRefresh={() => void refresh()}/>}
     </main>
     {dataOpen && <DataPanel readiness={readiness} generation={generation} connecting={connecting} onRefresh={() => void refresh()} onClose={() => setDataOpen(false)}/>}
     {sourcePanel && <SourcePanel source={sourcePanel.source} citations={sourcePanel.citations} onSelect={citation => openSource(citation, sourcePanel.citations)} onClose={() => setSourcePanel(null)}/>}
     {traceOpen && <TracePanel trace={trace} onClose={() => setTraceOpen(false)}/>}
     {deletion && <ConfirmDialog title={deletion.title} busy={deleting} onCancel={() => setDeletion(null)} onConfirm={() => void confirmDeletion()}/>}
   </div>
-}
-function EvaluationTable({ evaluation }: { evaluation: Record<string, unknown> }) {
-  const rows = (evaluation.case_results || []) as {id:string;status:string;review:string;seconds:number;note:string;citations_valid?:boolean|null;answer_origin?:string}[]
-  const counts = (evaluation.results || []) as {pass?:number;partial?:number;fail?:number}[]
-  const metrics = evaluation.metrics as {groups?:Record<string,{cases:number;pass:number;partial:number;fail:number}>;answer_origin?:Record<string,number>;usage?:Record<string,{samples:number;median:number|null;p95:number|null}>} | undefined
-  const supplemental = evaluation.supplemental as {cases:number;completed:number;pass:number;partial:number;fail:number;execution_failures:number;note:string} | undefined
-  const retrieval=evaluation.retrieval as {gold_recall_at_8?:number;storage_backend?:string;backend?:string;eligible_cases?:number}|undefined
-  const faithfulness=evaluation.faithfulness as {sampled_faithfulness?:number|null;scored_cases:number;expected_cases:number;total_judged_claims:number;judge_model:string}|undefined
-  const limitations = Array.isArray(evaluation.limitations) ? evaluation.limitations.filter((item): item is string => typeof item === 'string') : []
-  const groupLabels: Record<string,string> = {answered:'Trả lời nội dung',clarification:'Hỏi làm rõ',insufficient:'Thiếu chứng cứ / ngoài phạm vi',execution_failure:'Lỗi thực thi'}
-  return <><p>Model: <strong>{String(evaluation.model || 'Chưa xác định')}</strong> · {String(evaluation.status)}</p>
-    <p>{counts[0]?.pass ?? 0} đạt · {counts[0]?.partial ?? 0} một phần · {counts[0]?.fail ?? 0} chưa đạt. Đây là đánh giá kỹ thuật, chưa được thẩm định pháp lý độc lập. Tổng số đạt gồm cả hỏi lại và từ chối, không phải độ chính xác trả lời pháp luật.</p>
-    {retrieval&&<section className="metric-card"><h2>Gold Recall@8</h2><p> {retrieval.gold_recall_at_8==null?'Chưa đo':(retrieval.gold_recall_at_8*100).toFixed(1)+'%'} · Backend: {retrieval.storage_backend||retrieval.backend||'Xem artifact'}. Truy vấn gốc, không phải evidence sau agent routing.</p></section>}
-    {faithfulness&&<section className="metric-card"><h2>Faithfulness mẫu</h2><p> {faithfulness.sampled_faithfulness==null?'Chưa chấm':(faithfulness.sampled_faithfulness*100).toFixed(1)+'%'} · {faithfulness.scored_cases}/{faithfulness.expected_cases} ca có điểm · {faithfulness.total_judged_claims} mệnh đề · Judge: {faithfulness.judge_model}. Cùng model, không phải thẩm định độc lập.</p></section>}
-    {metrics?.groups && <div className="evaluation-table"><table><thead><tr><th>Nhóm hành vi</th><th>Số ca</th><th>Đạt</th><th>Một phần</th><th>Chưa đạt</th></tr></thead><tbody>{Object.entries(metrics.groups).map(([name,g])=><tr key={name}><td>{groupLabels[name] || name}</td><td>{g.cases}</td><td>{g.pass}</td><td>{g.partial}</td><td>{g.fail}</td></tr>)}</tbody></table></div>}
-    {metrics?.answer_origin && <p>Luồng xử lý: {metrics.answer_origin.llm ?? 0} có bước sinh bằng LLM · {metrics.answer_origin.deterministic ?? 0} theo quy tắc · {metrics.answer_origin.unknown ?? 0} chưa xác định từ artifact.</p>}
-    {metrics?.usage && <details className="evaluation-details"><summary>Thống kê vận hành</summary><div className="evaluation-table"><table><thead><tr><th>Chỉ số</th><th>Số mẫu</th><th>Median</th><th>p95</th></tr></thead><tbody>{Object.entries(metrics.usage).map(([name,v])=><tr key={name}><td>{({elapsed_ms:'Thời gian (ms)',token_usage:'Token',llm_calls:'Lần gọi LLM',tool_calls:'Lần gọi công cụ'} as Record<string,string>)[name] || name}</td><td>{v.samples}</td><td>{v.median ?? '—'}</td><td>{v.p95 ?? '—'}</td></tr>)}</tbody></table><p>Thống kê một lượt chạy CLI; không phải cam kết tốc độ của dịch vụ.</p></div></details>}
-    {supplemental && <aside className="warning-note"><ShieldCheck size={20}/><div><strong>Kiểm tra bổ sung</strong><p>{supplemental.completed}/{supplemental.cases} ca đã thực hiện · {supplemental.pass} đạt · {supplemental.partial} một phần · {supplemental.fail} chưa đạt · {supplemental.execution_failures} lỗi thực thi.</p><p>{supplemental.note}</p></div></aside>}
-    {!!limitations.length && <ul className="secondary-copy">{limitations.map((text,index)=><li key={index}>{text}</li>)}</ul>}
-    <details className="evaluation-details" open><summary>Kết quả từng ca</summary><div className="evaluation-table"><table><thead><tr><th>Ca</th><th>Kết quả</th><th>Giây</th><th>Nguồn trích dẫn</th><th>Nhận xét</th></tr></thead><tbody>{rows.map(r=><tr key={r.id}><td>{r.id}</td><td>{({pass:'Đạt',partial:'Một phần',fail:'Chưa đạt'} as Record<string,string>)[r.review] || 'Chưa rà soát'}</td><td>{r.seconds.toFixed(1)}</td><td>{r.citations_valid == null ? 'Không áp dụng' : r.citations_valid ? 'Khớp corpus' : 'Không khớp'}</td><td>{r.note}</td></tr>)}</tbody></table></div></details>
-  </>
 }
 export default App
