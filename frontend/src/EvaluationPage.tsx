@@ -1,6 +1,7 @@
 import { useState } from 'react'
-import { ArrowDownToLine, ArrowUpRight, Check, ChevronRight, CircleHelp, Clock3, Layers, Search, SlidersHorizontal } from 'lucide-react'
+import { ArrowDownToLine, ArrowUpRight, Check, ChevronRight, CircleHelp, Clock3, Layers, Search, SlidersHorizontal, TrendingUp } from 'lucide-react'
 import type { Readiness } from './api'
+import { evaluationHighlights } from './evaluationHighlights'
 import { availableRuns, emptyCounts, groupLabels, suiteLabels, totals, verdictLabels, type Artifact, type Counts, type EvaluationData, type EvaluationRun, type Suite, type Verdict } from './evaluation'
 
 const count = (value:number|undefined|null) => value == null ? '—' : new Intl.NumberFormat('vi-VN',{maximumFractionDigits:1}).format(value)
@@ -8,6 +9,21 @@ const percent = (value:number|undefined|null) => value == null ? 'Chưa đo' : `
 const date = (value?:string) => value && !Number.isNaN(Date.parse(value)) ? new Intl.DateTimeFormat('vi-VN',{dateStyle:'short',timeStyle:'short',timeZone:'Asia/Ho_Chi_Minh'}).format(new Date(value)) : 'Chưa ghi nhận thời gian'
 const backend = (value?:string) => ({postgresql:'PostgreSQL',sqlite:'SQLite'}[value||''] || 'Chưa ghi backend')
 function SourceLink({source,label='Xem báo cáo gốc'}:{source?:Artifact;label?:string}) {return source?.url ? <a className="eval-source-link" href={source.url} target="_blank" rel="noreferrer">{label}<ArrowUpRight size={14}/></a> : null}
+function Highlights({data}:{data:EvaluationData}) {
+ const highlights=evaluationHighlights(data)
+ if(!highlights.length)return null
+ return <section className="eval-highlights" aria-labelledby="evaluation-highlights-title">
+  <div className="eval-section-heading"><div><h2 id="evaluation-highlights-title"><TrendingUp size={19}/>Kết quả nổi bật đã ghi nhận</h2><p>Giá trị cao nhất của từng chỉ số trong các báo cáo đã công bố. Mỗi thẻ có mẫu và phiên bản riêng; không phải điểm tổng hợp của bản đang chạy.</p></div></div>
+  <div className="eval-highlight-grid">{highlights.map(item=><article key={item.kind} className="eval-highlight-card" data-metric={item.kind}>
+   <div className="eval-highlight-title"><span>{item.title}</span><span className="eval-highlight-record">CAO NHẤT ĐÃ GHI NHẬN</span></div>
+   <strong className="eval-highlight-value">{percent(item.value)}</strong><p className="eval-highlight-sample">{item.sample}</p>
+   <p className="eval-highlight-description">{item.description}</p>
+   <div className="eval-highlight-provenance"><span>{!item.release?'Chưa ghi nhận corpus':item.release===data.active_release?(item.configuration_sha256===data.active_configuration_sha256?'Khớp phiên bản đang chạy':'Cùng corpus · cấu hình trước'):'Kết quả lịch sử · corpus khác'}</span><span>{backend(item.backend)} · {date(item.checked_at)}</span><span>Cấu hình <code>{item.configuration_sha256?.slice(0,8)||'chưa ghi nhận'}</code></span></div>
+   <SourceLink source={item.source} label="Xem phép đo gốc"/>
+  </article>)}</div>
+  <button className="eval-highlight-jump" onClick={()=>document.getElementById('evaluation-run-details')?.scrollIntoView({block:'start'})}>Xem toàn bộ kết quả và các ca chưa đạt<ChevronRight size={16}/></button>
+ </section>
+}
 function Distribution({counts,total,label}:{counts:Counts;total:number;label:string}) {return <div className="eval-distribution" role="img" aria-label={`${label}: ${Object.entries(counts).map(([key,value])=>`${value} ${verdictLabels[key as Verdict]}`).join(', ')}`}>
  {(Object.keys(counts) as Verdict[]).map(key=>counts[key]>0&&<span key={key} className={`eval-fill verdict-${key}`} style={{width:`${counts[key]/Math.max(total,1)*100}%`}}/>)}
 </div>}
@@ -52,7 +68,8 @@ export function EvaluationPage({data,readiness,state,onRefresh}:{data:Evaluation
  function download(){if(!data)return;const url=URL.createObjectURL(new Blob([JSON.stringify(data,null,2)],{type:'application/json'}));const a=document.createElement('a');a.href=url;a.download='landlaw-evaluation-reports.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),0)}
  return <section className="content-page evaluation-page"><header className="eval-page-heading"><div><div className="eval-kicker"><span className="eval-kicker-dot"/>ĐO LƯỜNG & CẢI THIỆN</div><h1>Đánh giá hệ thống</h1><p className="page-intro">Kết quả từng bộ câu hỏi, khả năng tìm nguồn và lịch sử các lần chạy.</p></div><button className="button button-secondary eval-download" onClick={download} disabled={!data||!runs.length}><ArrowDownToLine size={17}/>Tải số liệu</button></header>
  {state==='loading'?<div className="eval-loading" role="status">Đang tải báo cáo…</div>:state==='error'?<div className="empty-state" role="alert"><h2>Chưa tải được báo cáo</h2><button className="button button-secondary" onClick={onRefresh}>Thử tải lại báo cáo</button></div>:!run?<div className="empty-state"><Layers size={28}/><h2>Chưa có kết quả kiểm tra trên bản này</h2><p>Kết quả được hiển thị khi có artifact đánh giá.</p></div>:<>
- <div className="eval-run-picker"><label htmlFor="evaluation-run"><SlidersHorizontal size={17}/>Lần đánh giá</label><select id="evaluation-run" value={run.id} onChange={e=>choose(e.target.value)}>{runs.map(r=><option key={r.id} value={r.id}>{date(r.checked_at)} · {backend(r.backend)} · {r.suites.reduce((n,s)=>n+s.executed,0)}/{r.suites.reduce((n,s)=>n+s.expected,0)} ca · {r.configuration_sha256?.slice(0,8)||r.model}</option>)}</select><span className="eval-badge">{runs.length} lần chạy</span></div>
+ <Highlights data={data!}/>
+ <div className="eval-run-picker" id="evaluation-run-details"><label htmlFor="evaluation-run"><SlidersHorizontal size={17}/>Lần đánh giá</label><select id="evaluation-run" value={run.id} onChange={e=>choose(e.target.value)}>{runs.map(r=><option key={r.id} value={r.id}>{date(r.checked_at)} · {backend(r.backend)} · {r.suites.reduce((n,s)=>n+s.executed,0)}/{r.suites.reduce((n,s)=>n+s.expected,0)} ca · {r.configuration_sha256?.slice(0,8)||r.model}</option>)}</select><span className="eval-badge">{runs.length} lần chạy</span></div>
  <div className="eval-version-context evaluation-summary"><span><Layers size={16}/>{run.matches_active_release?'Cùng corpus đang phục vụ':'Corpus của lần chạy trước'}</span><span>{backend(run.backend)}</span><span>{run.model}</span><span>{run.matches_active_configuration&&run.matches_active_release?<><Check size={15}/>Khớp phiên bản đang chạy</>:'Khác cấu hình đang chạy'}</span></div>
  {(!run.matches_active_configuration||!run.matches_active_release)&&<p className="eval-version-note" role="status">Chưa hoàn tất đánh giá trên cấu hình đang hoạt động. Số liệu dưới đây thuộc lần chạy đã chọn.</p>}
  {expected>0&&<div className="eval-stat-grid">{(['pass','partial','fail','not_run'] as Verdict[]).map(key=><article className={`eval-stat stat-${key}`} key={key}><span><i className={`eval-dot verdict-${key}`}/>{key==='not_run'&&sums.awaiting_review?'Chưa hoàn tất':verdictLabels[key]}</span><strong>{count(sums[key]+(key==='not_run'?sums.awaiting_review:0))}{key==='pass'&&<small>/{expected}</small>}</strong><p>{({pass:'Ca đáp ứng đủ tiêu chí',partial:'Ca còn thiếu một phần yêu cầu',fail:'Gồm cả lỗi và giới hạn thực thi',not_run:`${sums.not_run} chưa chạy · ${sums.awaiting_review} chưa rà soát`} as Record<string,string>)[key]}</p></article>)}</div>}

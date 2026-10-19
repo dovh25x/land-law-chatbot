@@ -373,3 +373,18 @@ summary { cursor: pointer; min-height: 44px; padding: 12px 0; font-size: 14px; l
 .eval-full-metrics > div { margin:16px 0 24px; }
 .eval-full-metrics h3 { font-size:14px; font-weight:500; margin-bottom:10px; }
 .eval-legacy-limitations { font-size:12px; line-height:1.8; color:var(--muted); }
+
+.eval-highlights { margin:0 0 30px; }
+.eval-highlights .eval-section-heading h2 { display:flex; align-items:center; gap:8px; }
+.eval-highlight-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:14px; }
+.eval-highlight-card { display:flex; flex-direction:column; padding:20px; background:var(--eval-pass-bg); border:1px solid var(--border); border-radius:12px; }
+.eval-highlight-title { display:flex; flex-direction:column; gap:10px; font-size:13px; font-weight:500; }
+.eval-highlight-record { color:var(--eval-pass); font-size:9px; font-weight:500; letter-spacing:.7px; }
+.eval-highlight-value { display:block; font-size:44px; font-weight:600; letter-spacing:-1.5px; color:var(--eval-pass); margin:18px 0 8px; line-height:1.1; font-variant-numeric:tabular-nums; }
+.eval-highlight-sample { font-size:12px; font-weight:500; line-height:1.8; }
+.eval-highlight-description { font-size:11px; color:var(--muted); line-height:1.8; margin-top:8px; }
+.eval-highlight-provenance { display:flex; flex-direction:column; gap:4px; border-top:1px solid var(--border); margin-top:16px; padding-top:12px; color:var(--muted); font-size:10px; line-height:1.7; }
+.eval-highlight-card .eval-source-link { align-self:flex-start; margin-top:auto; padding-top:10px; }
+.eval-highlight-jump { display:flex; align-items:center; gap:6px; min-height:44px; margin-top:8px; padding:8px 0; font-size:12px; text-align:left; }
+#evaluation-run-details { scroll-margin-top:16px; }
+@media(max-width:1100px) { .eval-highlight-grid { grid-template-columns:1fr; }.eval-highlight-value { font-size:38px; } }
