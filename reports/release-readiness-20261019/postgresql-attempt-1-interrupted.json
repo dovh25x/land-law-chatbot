@@ -1,0 +1,6 @@
+{
+  "status": "interrupted",
+  "reason": "New source-condition failures found in the completed SQLite diagnostic run require regression fixes before final acceptance. Historical partial checkpoints and model outputs retained.",
+  "signal": "SIGINT; asyncio finally closed provider/store and the helper cleanup targets only its randomly named temporary database.",
+  "legal_acceptance": false
+}

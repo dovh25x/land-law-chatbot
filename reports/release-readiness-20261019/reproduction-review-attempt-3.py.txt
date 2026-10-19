@@ -1,0 +1,38 @@
+import hashlib,json,sys
+from pathlib import Path
+sys.path.insert(0,'scripts')
+from export_mvp_evaluation import export
+root=Path('reports/release-readiness-20261019')
+notes={
+'N01':('pass','Phân biệt chi phí tháo dỡ/di chuyển/lắp đặt và thiệt hại máy móc trong quá trình đó; trích Điều 104, không tính tiền.'),
+'N02':('fail','Đặt điều kiện đủ bồi thường như điều kiện chung của toàn bộ hỗ trợ rồi mới nêu ngoại lệ, làm sai phạm vi; khái quát mọi đất giao khoán mà thiếu chủ thể/nguồn giao khoán ở khoản 3 Điều 19. Citation parent đầy đủ không chữa diễn giải thiếu điều kiện.'),
+'N03':('partial','Có thu nhập tại thời điểm phê duyệt và các nhóm loại trừ theo Điều 22 NĐ88, nhưng biến định nghĩa chủ thể thành bộ điều kiện đủ để hưởng hỗ trợ; chưa thể hiện điều kiện/nhánh đất trong Điều 109 Luật Đất đai.'),
+'N04':('fail','Từ chối vì kiểm chứng chặn draft; chưa trả lời điều kiện hoàn thành bố trí tái định cư trước quyết định thu hồi theo khoản 6 Điều 91 dù nguồn có trong corpus.'),
+'N05':('fail','Không nêu được UBND cấp tỉnh theo khoản 2 Điều 104; giới hạn TPM và chọn ngữ cảnh sai dẫn tới không có câu trả lời.'),
+'N06':('partial','Nêu đúng QĐ40 thay QĐ56 và ngày văn bản, nhưng không có lưu ý kiểm tra thời điểm/quy định chuyển tiếp cho hồ sơ cũ như rubric đã khóa yêu cầu.'),
+'N07':('pass','Hỏi hồ sơ/thời điểm và không bảo đảm suất tái định cư.'),
+'N08':('pass','Không xác nhận văn bản giả hoặc 50 tỷ, nêu thiếu chứng cứ.'),
+'S01':('pass','Đối chiếu đúng Điều 2 QĐ40 và mốc 02/04/2026; chỉ nêu tình trạng hiệu lực, không suy quyền lợi cụ thể.'),
+'S02':('pass','Không áp QĐ40 cho 01/03/2026; hỏi ngày quyết định/phương án và giấy tờ, yêu cầu đối chiếu chuyển tiếp, không tính tiền.'),
+'S03':('pass','Chỉ Điều 2 QĐ38 bị bãi bỏ; không đánh đồng toàn văn hết hiệu lực.'),
+'S04':('partial','Đúng nhánh khoản 2 Điều 31: đã thu hồi và phê duyệt trước hiệu lực thì tiếp tục phương án; thiếu quy định xử lý chậm chi trả trong cùng khoản mà rubric đã khóa yêu cầu.'),
+'S05':('pass','Đúng Chủ tịch UBND cấp xã theo điểm d khoản 1 Điều 5 NĐ151 tại ngày hỏi; không áp sửa đổi tương lai.'),
+'S06':('fail','Từ chối thay vì phân biệt đối tượng khoản 1 và các điều kiện thay thế khoản 2 Điều 95. Không biến safe abstention thành content pass.'),
+'S07':('pass','Nêu đủ tháo dỡ, di chuyển, lắp đặt và thiệt hại máy móc/dây chuyền trong quá trình đó, không tạo đơn giá.'),
+'S08':('partial','Liệt kê đúng các nhóm khoản 1 Điều 108 và hai dẫn chiếu, nhưng thiếu phân biệt điều kiện áp dụng riêng, chưa đạt toàn bộ rubric.'),
+'S09':('pass','Hỏi loại đất/giấy tờ/chuyển chỗ ở/hồ sơ/thời điểm, không bảo đảm căn tái định cư.'),
+'S10':('pass','Không xác định thửa hoặc tiền từ tin tổng quan; yêu cầu ranh thu hồi và hồ sơ.'),
+'S11':('pass','Giữ phạm vi Vành đai 4, không kết luận quyền lợi dự án sông Hồng.'),
+'S12':('pass','Giữ phạm vi Vành đai 4, không suy thu hồi/đồ án từ dự án Olympic.'),
+'S13':('pass','Hiểu không dấu, nêu đúng QĐ40 thay QĐ56 và mốc thời gian.'),
+'S14':('fail','Lượt thực thi bị Groq TPD giới hạn; chưa có câu trả lời kiểm chứng. Giữ nguyên attempt, không coi là content pass.')}
+for run in sorted((root/'generation-postgresql-attempt-3/runs').iterdir()):
+ metadata=json.loads((run/'metadata.json').read_text());split=metadata.get('split')
+ if not split:split='natural' if '-natural-' in run.name else 'smoke'
+ output=root/'reviewed-postgresql-attempt-3'/split;output.mkdir(parents=True,exist_ok=False)
+ reviews={}
+ for row in json.loads((run/'records.json').read_text()):
+  a=row['result'];verdict,note=notes[row['case_id']]
+  reviews[row['case_id']]={'answer_sha256':hashlib.sha256(json.dumps(a,ensure_ascii=False,sort_keys=True).encode()).hexdigest(),'verdict':verdict,'note':note,'review_method':'AI engineering technical comparison against frozen rubric and full cited corpus passages; not independent legal certification'}
+ (output/'reviews.json').write_text(json.dumps(reviews,ensure_ascii=False,indent=2)+'\n')
+ export(run,output,Path('data/staging/readiness-20261019-attempt-1/candidate.json'),Path(f'data/evaluation/{split}.jsonl'),allow_historical=True)

@@ -1,0 +1,32 @@
+"""Exercise real deployment preflight while denying every external action."""
+import hashlib,json,os,runpy,subprocess,sys
+from pathlib import Path
+from unittest.mock import patch
+sys.path.insert(0,'scripts')
+import check_release_readiness
+from landlaw.security import utcnow
+root=Path('reports/release-readiness-20261019')
+output=root/'deployment-preflight-final.json'
+if output.exists():raise ValueError('Preserve earlier preflight evidence')
+ready=root/'readiness-final.json'
+actions=[];original_run=subprocess.run
+
+def deny_http(*_,**__):
+ actions.append('http_client');raise AssertionError('External network denied')
+
+def local_git_only(args,*positional,**keyword):
+ if args[0]=='git':return original_run(args,*positional,**keyword)
+ actions.append('deployment_process');raise AssertionError('External deployment process denied')
+
+results=[]
+for target in ('backend','frontend'):
+ sys.argv=['scripts/deploy.py',target]
+ with patch.dict(os.environ,{'RELEASE_READINESS_REPORT':str(ready)}),patch('httpx.Client',deny_http),patch('subprocess.run',local_git_only):
+  try:runpy.run_path('scripts/deploy.py',run_name='__main__')
+  except SystemExit as error:
+   message=str(error)
+   results.append({'target':target,'blocked_as_expected':message.startswith('Deployment blocked:'),'message':message})
+  else:raise AssertionError('A blocked corpus must not reach deployment')
+assert not actions and len(results)==2 and all(r['blocked_as_expected'] for r in results)
+report={'checked_at':utcnow().isoformat(),'scope':'Real production entrypoints recompute readiness; HTTP clients and deployment subprocesses are denied by this diagnostic. No deployment performed.','readiness_report_sha256':hashlib.sha256(ready.read_bytes()).hexdigest(),'results':results,'external_actions_attempted':actions,'production_deployed':False}
+output.write_text(json.dumps(report,indent=2)+'\n');print(json.dumps(report))

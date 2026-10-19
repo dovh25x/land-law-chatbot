@@ -1,0 +1,88 @@
+{
+  "checked_at": "2026-10-18T18:22:42.908000+00:00",
+  "split": "supplemental",
+  "suite_sha256": "e6bb5c9f7ba3a589237835b68d95e491ff2c16aad83683a8437f4a74e4120fea",
+  "release": "corpus-a26bc99e541fbbe2",
+  "configuration_sha256": "c3b9fd3a526ee4d6335b43c6c9e1353dbc0f9d57d3b63fe02baace23e0d0bcb5",
+  "backend": "postgresql",
+  "k": 8,
+  "eligible_cases": 3,
+  "hits": 3,
+  "hit_rate": 1.0,
+  "gold_recall_at_8": 1.0,
+  "history_groups": {
+    "False": {
+      "cases": 3,
+      "gold_recall_at_8": 1.0
+    },
+    "True": {
+      "cases": 0,
+      "gold_recall_at_8": null
+    }
+  },
+  "generation_calls": 0,
+  "results": [
+    {
+      "id": "X01",
+      "has_history": false,
+      "gold_chunk_ids": [
+        "luat-dat-dai-2024-104-1-0"
+      ],
+      "retrieved_chunk_ids": [
+        "luat-dat-dai-2024-104-1-0",
+        "nd-88-2024-0-25-1",
+        "nd-88-2024-0-13-0",
+        "nd-102-2024-48-0-0",
+        "nd-103-2024-28-1-0",
+        "nd-88-2024-0-17-0",
+        "nd-88-2024-0-4-0",
+        "nd-88-2024-0-17-1"
+      ],
+      "hit": true,
+      "gold_recall_at_8": 1.0,
+      "elapsed_ms": 1929
+    },
+    {
+      "id": "X02",
+      "has_history": false,
+      "gold_chunk_ids": [
+        "luat-dat-dai-2024-106-1-0"
+      ],
+      "retrieved_chunk_ids": [
+        "luat-dat-dai-2024-107-1-0",
+        "nd-88-2024-0-3-1",
+        "luat-dat-dai-2024-106-1-0",
+        "luat-dat-dai-2024-107-1-1",
+        "nd-88-2024-0-23-0",
+        "nd-102-2024-11-1-0",
+        "nd-88-2024-0-4-0",
+        "nd-103-2024-18-0-0"
+      ],
+      "hit": true,
+      "gold_recall_at_8": 1.0,
+      "elapsed_ms": 3361
+    },
+    {
+      "id": "X03",
+      "has_history": false,
+      "gold_chunk_ids": [
+        "luat-dat-dai-2024-98-0-1",
+        "luat-dat-dai-2024-99-0-0"
+      ],
+      "retrieved_chunk_ids": [
+        "luat-dat-dai-2024-98-0-1",
+        "luat-dat-dai-2024-99-0-0",
+        "luat-dat-dai-2024-97-1-0",
+        "luat-dat-dai-2024-98-0-0",
+        "luat-dat-dai-2024-102-1-0",
+        "luat-dat-dai-2024-100-2-0",
+        "luat-dat-dai-2024-94-1-0",
+        "luat-dat-dai-2024-95-0-0"
+      ],
+      "hit": true,
+      "gold_recall_at_8": 1.0,
+      "elapsed_ms": 2753
+    }
+  ],
+  "scope": "Raw-question hybrid search including bounded source-replacement candidates; no history rewriting or agent tool calls. Any gold chunk in top 8 counts as a hit. Not legal answer accuracy."
+}

@@ -1,0 +1,6 @@
+{
+  "status": "interrupted",
+  "acceptance_eligible": false,
+  "reason": "Runtime source changed while the Python process retained its already imported module. Natural records belong to the earlier fd163e0 runtime. The partial smoke records hash later on-disk runtime bytes, so cannot prove which compiled runtime produced the answer. They must not be merged with attempt 3.",
+  "mitigation": "Attempts 3 and 4 use separate roots; helper now locks fingerprint before every provider request and split. All attempt-2 files are preserved without rewriting."
+}

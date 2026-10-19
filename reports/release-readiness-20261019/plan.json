@@ -1,0 +1,18 @@
+{
+  "baseline_commit": "749c76d",
+  "baseline_corpus": "corpus-caf3c0833096ea4e",
+  "frozen_suites": {
+    "smoke": "38aa8da29bf41a94b4cf8fd8a5ca6769232b87884aeed573c10f5586a09d7254",
+    "supplemental": "e6bb5c9f7ba3a589237835b68d95e491ff2c16aad83683a8437f4a74e4120fea",
+    "natural": "b068bb4e717439938c96e459a63c9a1832b1990d88005cf6a768d9e9c0871e74"
+  },
+  "acceptance": "Existing criteria from reports/corpus-remediation-20261018/PLAN.md remain unchanged: natural content >=5/6; provenance/dependencies/freshness, software, both-backend restore, downloaded Release and tested deployment SHA must be verified. AI engineering reviews do not claim independent legal certification.",
+  "planned_changes": [
+    "Ground unlocated legal lookups in original-question retrieval, without a speculative planner call",
+    "Deduplicate exact parent/child passages before bounded context selection",
+    "Keep answers concise, independently qualified and fully verified",
+    "Review staged legal sources with primary provenance; leave unverified content quarantined",
+    "Bind deployment to versioned acceptance evidence; do not publish a failing candidate"
+  ],
+  "serving_database_mutation": false
+}

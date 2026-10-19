@@ -1,0 +1,85 @@
+{
+  "checked_at": "2026-10-19T04:28:58.326542+00:00",
+  "source_commit": "6ca8f12f0d770f2076de20f0d070460894bd0bc8",
+  "checked_out_revision": "6ca8f12f0d770f2076de20f0d070460894bd0bc8",
+  "corpus_id": "corpus-a26bc99e541fbbe2",
+  "ready": false,
+  "checks": {
+    "tested_revision": true,
+    "coverage": false,
+    "backup_matches_candidate": true,
+    "source_freshness": false,
+    "generation:smoke": false,
+    "generation:supplemental": false,
+    "generation:natural": false,
+    "restore:sqlite": true,
+    "restore:postgresql": true,
+    "software": true,
+    "release_download": false,
+    "postgres_runtime": true
+  },
+  "blocked": [
+    "coverage",
+    "source_freshness",
+    "generation:smoke",
+    "generation:supplemental",
+    "generation:natural",
+    "release_download"
+  ],
+  "scope": "Recomputed technical publication gates; not independent legal certification or deployment proof.",
+  "manifest": {
+    "source_commit": "6ca8f12f0d770f2076de20f0d070460894bd0bc8",
+    "inputs": {
+      "snapshot": {
+        "path": "data/staging/readiness-20261019-attempt-1/candidate.json",
+        "sha256": "d4694c30042b65fe0874bc95618e7b979484e6f05599ff702434d73b95e9f6ff"
+      },
+      "backup": {
+        "path": "data/staging/readiness-20261019-attempt-1/candidate-backup.json",
+        "sha256": "204547346cf550e75ae165956cf3dc8dd19264da301876f80e725c39529069b2"
+      },
+      "software": {
+        "path": "reports/release-readiness-20261019/software-checks-release-final.json",
+        "sha256": "76369a717a3b29a22682a52d98e560b4d18d7076b88dfe75e6950e1a78f4f548"
+      },
+      "postgres_runtime": {
+        "path": "reports/release-readiness-20261019/postgres-runtime-role.json",
+        "sha256": "56b2a2c789e06a0034b3af58c7627bde6bf205ba2d98a2e044fe3ad29affb915"
+      },
+      "release_download": null,
+      "review:smoke": {
+        "path": "reports/release-readiness-20261019/reviewed-postgresql-attempt-5/smoke/evaluation.json",
+        "sha256": "a700a296e4803e02307a073025b823cf29db7b983fea717e38bad50b724bd1e8"
+      },
+      "review:supplemental": {
+        "path": "reports/release-readiness-20261019/reviewed-postgresql-attempt-5/supplemental/evaluation.json",
+        "sha256": "5716c841980591a6e2a4cde117314d008f8b978344a0ecbbc9ba0e4331d1c57c"
+      },
+      "review:natural": {
+        "path": "reports/release-readiness-20261019/reviewed-postgresql-attempt-5/natural/evaluation.json",
+        "sha256": "7416236da8bbbee24eb2c64ba651fe9c7eb8a6bf93c0eb5b6ea7b11a1b8309df"
+      },
+      "restore:sqlite": {
+        "path": "reports/release-readiness-20261019/restore-and-retrieval-attempt-1/sqlite/restore-and-retrieval.json",
+        "sha256": "e29e42d4e6b1b293c1aec0eb9e4adc066df6601d9849718db600c32d056c8cd1"
+      },
+      "restore:postgresql": {
+        "path": "reports/release-readiness-20261019/restore-and-retrieval-attempt-1/postgresql/restore-and-retrieval.json",
+        "sha256": "20d4f24123b1ff4100798c5a4c4d378971982f142c2c070c4698d72fd5c74d01"
+      },
+      "targeted_review:natural": {
+        "path": "reports/release-readiness-20261019/reviewed-postgresql-attempt-6/natural/evaluation.json",
+        "sha256": "21fcdb5f12e27c1bbb15e42e5ce2ed62c721229e77a3e4b1bb5c9791cb4036dd"
+      },
+      "runtime_source": {
+        "path": "reports/release-readiness-20261019/runtime-attempt-6.json",
+        "sha256": "c9039029e6ccff4d736844e0c36a6a499e2100a42b9724c169fc871975b30ff1"
+      },
+      "frontend_source_parity": {
+        "path": "reports/release-readiness-20261019/frontend-source-parity.json",
+        "sha256": "6c58e95f6b556248c2446586b2be857bbfa0aa101e3a1752955ee9c3d2b913e4"
+      }
+    }
+  },
+  "serving_state_changed": false
+}

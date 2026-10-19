@@ -1,0 +1,61 @@
+PLW1510 `subprocess.run` without explicit `check` argument
+  --> scripts/check_release_readiness.py:27:8
+   |
+25 |     if not isinstance(tested, str) or len(tested) != 40 or any(c not in '0123456789abcdef' for c in tested):
+26 |         return False
+27 |     if subprocess.run(['git', 'merge-base', '--is-ancestor', tested, head], capture_output=True).returncode:
+   |        ^^^^^^^^^^^^^^
+28 |         return False
+29 |     # Evidence must be committable after testing without a self-referential SHA.
+   |
+help: Add explicit `check=False`
+   |
+26 |         return False
+   -     if subprocess.run(['git', 'merge-base', '--is-ancestor', tested, head], capture_output=True).returncode:
+27 +     if subprocess.run(['git', 'merge-base', '--is-ancestor', tested, head], check=False, capture_output=True).returncode:
+28 |         return False
+   |
+note: This suggestion may be incorrect or produce invalid syntax. It requires manual review and cannot be applied automatically
+
+I001 [*] Import block is un-sorted or un-formatted
+  --> tests/test_release_readiness.py:83:5
+   |
+81 |   @pytest.mark.parametrize('changed_path', ['backend/runtime.py', 'data/sources.json'])
+82 |   def test_report_commit_does_not_invalidate_tested_revision_but_source_edits_do(tmp_path,monkeypatch,changed_path):
+83 | /     import subprocess
+84 | |     from scripts.check_release_readiness import revision_matches
+   | |________________________________________________________________^
+85 |       monkeypatch.chdir(tmp_path)
+86 |       def git(*args):
+   |
+help: Organize imports
+   |
+83 |     import subprocess
+84 +
+85 |     from scripts.check_release_readiness import revision_matches
+   |
+
+I001 [*] Import block is un-sorted or un-formatted
+   --> tests/test_release_readiness.py:104:5
+    |
+103 |   async def test_offline_guards_cannot_call_provider_or_clear_inherited_cooldown(tmp_path,settings,monkeypatch):
+104 | /     from contextlib import contextmanager
+105 | |     from datetime import timedelta
+106 | |     from types import SimpleNamespace
+107 | |     from landlaw.provider import ProviderUnavailable
+108 | |     from scripts import evaluate_generation_candidate as helper
+    | |_______________________________________________________________^
+109 |       output=tmp_path/'output';output.mkdir()
+110 |       cooldown=output/'operator-cooldown.json'
+    |
+help: Organize imports
+    |
+106 |     from types import SimpleNamespace
+107 +
+108 |     from landlaw.provider import ProviderUnavailable
+109 +
+110 |     from scripts import evaluate_generation_candidate as helper
+    |
+
+Found 3 errors.
+[*] 2 fixable with `--fix`.

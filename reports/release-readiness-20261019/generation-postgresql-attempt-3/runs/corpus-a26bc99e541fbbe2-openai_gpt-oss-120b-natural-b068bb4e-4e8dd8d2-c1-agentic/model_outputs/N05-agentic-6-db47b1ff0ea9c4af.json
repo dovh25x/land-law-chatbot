@@ -1,0 +1,16 @@
+{
+  "scope": "Unverified structured model output for developer diagnosis; never delivered as a chatbot answer. No hidden reasoning.",
+  "schema": "Verification",
+  "case_mode": "N05-agentic",
+  "llm_calls": 6,
+  "output": {
+    "supported_claim_indexes": [],
+    "supporting_quotes": [],
+    "supporting_spans": [],
+    "issues": [
+      "Claim 0: Không có bằng chứng trong các đoạn trích (S1, S2) cho thấy Ủy ban nhân dân cấp có thẩm quyền quy định mức bồi thường chi phí chuyển tài sản; các đoạn chỉ đề cập đến việc ban hành quyết định thu hồi đất và quy trình thuyết phục."
+    ],
+    "needs_more_evidence": true,
+    "followup_query": "Vui lòng cung cấp điều khoản cụ thể của Luật Đất đai (hoặc văn bản pháp luật liên quan) quy định ai là cơ quan nhà nước có thẩm quyền quy định mức bồi thường chi phí chuyển tài sản."
+  }
+}

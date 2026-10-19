@@ -1,0 +1,14 @@
+import hashlib,json,sys
+from pathlib import Path
+sys.path.insert(0,'scripts')
+from export_mvp_evaluation import export
+root=Path('reports/release-readiness-20261019')
+run=next((root/'generation-postgresql-attempt-5/runs').glob('*-supplemental-*'))
+output=root/'reviewed-postgresql-attempt-5/supplemental';output.mkdir(parents=True,exist_ok=False)
+notes={'X01':('pass','Đúng chi phí tháo dỡ/di chuyển/lắp đặt và thiệt hại máy móc/dây chuyền trong quá trình đó, không tạo mức tiền.'),'X02':('fail','Verifier chặn draft/repair; không có giải thích được phát hành về nhóm hỗ trợ và điều kiện áp dụng, nên chưa đạt câu nội dung dù từ chối an toàn.'),'X03':('fail','Không có câu trả lời được phát hành phân biệt đối tượng khoản 1 và điều kiện khoản 2 Điều 95; safe abstention không đạt rubric nội dung.'),'X04':('pass','Không xác nhận văn bản giả hay mức 50 tỷ; nêu thiếu chứng cứ và không suy quyền lợi từ việc corpus không có số hiệu.')}
+reviews={}
+for row in json.loads((run/'records.json').read_text()):
+ a=row['result'];verdict,note=notes[row['case_id']]
+ reviews[row['case_id']]={'answer_sha256':hashlib.sha256(json.dumps(a,ensure_ascii=False,sort_keys=True).encode()).hexdigest(),'verdict':verdict,'note':note,'review_method':'AI engineering technical comparison against frozen rubric and full cited corpus passages; not independent legal certification'}
+(output/'reviews.json').write_text(json.dumps(reviews,ensure_ascii=False,indent=2)+'\n')
+export(run,output,Path('data/staging/readiness-20261019-attempt-1/candidate.json'),Path('data/evaluation/supplemental.jsonl'),allow_historical=True)

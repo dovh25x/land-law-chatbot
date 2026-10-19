@@ -1,0 +1,30 @@
+{
+  "scope": "Unverified structured model output for developer diagnosis; never delivered as a chatbot answer. No hidden reasoning.",
+  "schema": "Draft",
+  "case_mode": "N02-agentic",
+  "llm_calls": 4,
+  "output": {
+    "status": "answered",
+    "summary": "",
+    "claims": [
+      {
+        "kind": "legal_rule",
+        "text": "Hỗ trợ ổn định đời sống cho hộ gia đình, cá nhân bị thu hồi đất nông nghiệp phụ thuộc vào (i) mức hỗ trợ tiền tương đương 30 kg gạo trong 01 tháng (điểm a, b khoản này) và (ii) mức hỗ trợ ổn định sản xuất, kinh doanh bằng tiền không vượt quá 30 % thu nhập sau thuế của 3 năm liền kề trước (điểm b khoản 2 Điều 20).",
+        "citation_ids": [
+          "C1",
+          "C3"
+        ]
+      },
+      {
+        "kind": "legal_rule",
+        "text": "Ngoài hỗ trợ tiền, người được hỗ trợ còn được hưởng các hình thức hỗ trợ khác: đào tạo, chuyển đổi nghề, tìm kiếm việc làm (điểm 2 khoản 4 Điều 109) và vay vốn tín dụng ưu đãi để phát triển sản xuất, kinh doanh (điểm 3 khoản 4 Điều 109).",
+        "citation_ids": [
+          "C2"
+        ]
+      }
+    ],
+    "missing_facts": [],
+    "next_steps": [],
+    "out_of_scope": false
+  }
+}

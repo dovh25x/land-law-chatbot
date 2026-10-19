@@ -1,0 +1,99 @@
+F.F..F                                                                   [100%]
+=================================== FAILURES ===================================
+_ test_contract_land_support_cannot_omit_the_sources_contract_requirement[False] _
+
+store = <landlaw.store.Store object at 0x7accd4c0eba0>
+settings = Settings(app_env='development', llm_provider='groq', groq_api_key=SecretStr('**********'), groq_model='openai/gpt-oss-..._support_can0/data'), reports_dir=PosixPath('/tmp/pytest-of-dovh25x/pytest-4/test_contract_land_support_can0/reports'))
+qualified = False
+
+    @pytest.mark.parametrize('qualified', [False, True])
+    async def test_contract_land_support_cannot_omit_the_sources_contract_requirement(store, settings, qualified):
+        from landlaw.models import Evidence
+        source = ('Điều 19. Hộ gia đình, cá nhân sử dụng đất do nhận giao khoán đất để sử dụng vào mục đích '
+                  'nông nghiệp từ các nông, lâm trường quốc doanh và có hợp đồng giao khoán sử dụng đất '
+                  'thì Ủy ban nhân dân cấp tỉnh quyết định mức hỗ trợ, thời gian hỗ trợ.')
+        doc = document(text=source)
+        payload = release(store, [doc])
+        text = ('Hộ gia đình, cá nhân nhận giao khoán đất nông nghiệp từ các nông, lâm trường quốc doanh '
+                + ('và có hợp đồng giao khoán sử dụng đất ' if qualified else '')
+                + 'thì Ủy ban nhân dân cấp tỉnh quyết định mức hỗ trợ, thời gian hỗ trợ.')
+        draft = Draft(status='answered', claims=[Claim(text=text, citation_ids=['law-1'])])
+        state = {'request':ChatRequest(session_id='00000000-0000-4000-8000-000000000000', message='Hỗ trợ phụ thuộc điều kiện gì?'),
+                 'budget':Budget(), 'release':payload, 'as_of':date(2024,8,2), 'plan':Plan(),
+                 'evidence':[Evidence(chunk=doc.chunks[0], document=doc, applicability='current')],
+                 'draft':draft, 'trace':[], 'emit':noop}
+        agent = Agent(store, FakeProvider(settings))
+        await agent.verify(state)
+        await agent.finish(state)
+>       assert bool(state['result'].verified_claims) is qualified
+E       AssertionError: assert True is False
+E        +  where True = bool([Claim(kind='legal_rule', text='Hộ gia đình, cá nhân nhận giao khoán đất nông nghiệp từ các nông, lâm trường quốc doanh thì Ủy ban nhân dân cấp tỉnh quyết định mức hỗ trợ, thời gian hỗ trợ.', citation_ids=['law-1'])])
+E        +    where [Claim(kind='legal_rule', text='Hộ gia đình, cá nhân nhận giao khoán đất nông nghiệp từ các nông, lâm trường quốc doanh thì Ủy ban nhân dân cấp tỉnh quyết định mức hỗ trợ, thời gian hỗ trợ.', citation_ids=['law-1'])] = ChatResult(status='answered', publication_profile='academic', quality_status='academic_prototype', retrieval_mode='una...', mode='agentic', support_level='full', retry_after=None, retrieved_chunk_ids=['law-1'], evidence_chunk_ids=['law-1']).verified_claims
+
+tests/test_agent.py:1441: AssertionError
+__ test_legal_rule_reference_to_another_claim_is_not_independent_proof[False] __
+
+store = <landlaw.store.Store object at 0x7accd4d92e90>
+settings = Settings(app_env='development', llm_provider='groq', groq_api_key=SecretStr('**********'), groq_model='openai/gpt-oss-...ference_to_a0/data'), reports_dir=PosixPath('/tmp/pytest-of-dovh25x/pytest-4/test_legal_rule_reference_to_a0/reports'))
+independent = False
+
+    @pytest.mark.parametrize('independent', [False, True])
+    async def test_legal_rule_reference_to_another_claim_is_not_independent_proof(store, settings, independent):
+        from landlaw.models import Evidence
+        doc = document(document_number='88/2024/NĐ-CP', text='Hộ gia đình đủ điều kiện được bồi thường về đất được xem xét hỗ trợ.')
+        commencement = doc.chunks[0].model_copy(update={'id':'law-2', 'locator':'Điều 30',
+            'text':'Nghị định này có hiệu lực thi hành từ ngày 01 tháng 8 năm 2024.'})
+        doc.chunks.append(commencement)
+        payload = release(store, [doc])
+        text = ('Nghị định này có hiệu lực thi hành từ ngày 01/08/2024.' if independent else
+                'Các quy định trên áp dụng cho mọi hồ sơ kể từ ngày 01/08/2024.')
+        draft = Draft(status='answered', claims=[Claim(text=doc.chunks[0].text, citation_ids=['law-1']),
+            Claim(kind='applicability' if independent else 'legal_rule', text=text, citation_ids=['law-2'])])
+        state = {'request':ChatRequest(session_id='00000000-0000-4000-8000-000000000000', message='Nguồn quy định hỗ trợ thế nào?'),
+                 'budget':Budget(), 'release':payload, 'as_of':date(2024,8,2), 'plan':Plan(),
+                 'evidence':[Evidence(chunk=c, document=doc, applicability='current') for c in doc.chunks],
+                 'draft':draft, 'trace':[], 'emit':noop}
+        agent = Agent(store, FakeProvider(settings, verification=Verification(supported_claim_indexes=[0,1])))
+        await agent.verify(state)
+        await agent.finish(state)
+>       assert bool(state['result'].verified_claims) is independent
+E       AssertionError: assert True is False
+E        +  where True = bool([Claim(kind='legal_rule', text='Hộ gia đình đủ điều kiện được bồi thường về đất được xem xét hỗ trợ.', citation_ids=['...laim(kind='legal_rule', text='Các quy định trên áp dụng cho mọi hồ sơ kể từ ngày 01/08/2024.', citation_ids=['law-2'])])
+E        +    where [Claim(kind='legal_rule', text='Hộ gia đình đủ điều kiện được bồi thường về đất được xem xét hỗ trợ.', citation_ids=['...laim(kind='legal_rule', text='Các quy định trên áp dụng cho mọi hồ sơ kể từ ngày 01/08/2024.', citation_ids=['law-2'])] = ChatResult(status='answered', publication_profile='academic', quality_status='academic_prototype', retrieval_mode='una... support_level='full', retry_after=None, retrieved_chunk_ids=['law-1', 'law-2'], evidence_chunk_ids=['law-1', 'law-2']).verified_claims
+
+tests/test_agent.py:1466: AssertionError
+_ test_state_enterprise_cannot_replace_the_specific_contract_land_source_actor[True] _
+
+store = <landlaw.store.Store object at 0x7accd4db1eb0>
+settings = Settings(app_env='development', llm_provider='groq', groq_api_key=SecretStr('**********'), groq_model='openai/gpt-oss-...ise_cannot_r1/data'), reports_dir=PosixPath('/tmp/pytest-of-dovh25x/pytest-4/test_state_enterprise_cannot_r1/reports'))
+broader_actor = True
+
+    @pytest.mark.parametrize('broader_actor', [False, True])
+    async def test_state_enterprise_cannot_replace_the_specific_contract_land_source_actor(store, settings, broader_actor):
+        from landlaw.models import Evidence
+        source = ('Điều 19. Hộ gia đình, cá nhân nhận giao khoán đất nông nghiệp từ các nông, lâm trường quốc doanh '
+                  'và có hợp đồng giao khoán sử dụng đất thì Ủy ban nhân dân cấp tỉnh quyết định mức hỗ trợ.')
+        doc = document(text=source)
+        payload = release(store, [doc])
+        actor = 'doanh nghiệp nhà nước' if broader_actor else 'các nông, lâm trường quốc doanh'
+        text = ('Hộ gia đình, cá nhân nhận giao khoán đất nông nghiệp từ '+actor+
+                ' và có hợp đồng giao khoán sử dụng đất thì Ủy ban nhân dân cấp tỉnh quyết định mức hỗ trợ.')
+        draft = Draft(status='answered', claims=[Claim(text=text, citation_ids=['law-1'])])
+        state = {'request':ChatRequest(session_id='00000000-0000-4000-8000-000000000000', message='Nhóm nhận giao khoán nào được xem xét hỗ trợ?'),
+                 'budget':Budget(), 'release':payload, 'as_of':date(2024,8,2), 'plan':Plan(),
+                 'evidence':[Evidence(chunk=doc.chunks[0], document=doc, applicability='current')],
+                 'draft':draft, 'trace':[], 'emit':noop}
+        agent = Agent(store, FakeProvider(settings))
+        await agent.verify(state)
+        await agent.finish(state)
+>       assert bool(state['result'].verified_claims) is not broader_actor
+E       AssertionError: assert True is not True
+E        +  where True = bool([Claim(kind='legal_rule', text='Hộ gia đình, cá nhân nhận giao khoán đất nông nghiệp từ doanh nghiệp nhà nước và có hợp đồng giao khoán sử dụng đất thì Ủy ban nhân dân cấp tỉnh quyết định mức hỗ trợ.', citation_ids=['law-1'])])
+E        +    where [Claim(kind='legal_rule', text='Hộ gia đình, cá nhân nhận giao khoán đất nông nghiệp từ doanh nghiệp nhà nước và có hợp đồng giao khoán sử dụng đất thì Ủy ban nhân dân cấp tỉnh quyết định mức hỗ trợ.', citation_ids=['law-1'])] = ChatResult(status='answered', publication_profile='academic', quality_status='academic_prototype', retrieval_mode='una...', mode='agentic', support_level='full', retry_after=None, retrieved_chunk_ids=['law-1'], evidence_chunk_ids=['law-1']).verified_claims
+
+tests/test_agent.py:1489: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_agent.py::test_contract_land_support_cannot_omit_the_sources_contract_requirement[False]
+FAILED tests/test_agent.py::test_legal_rule_reference_to_another_claim_is_not_independent_proof[False]
+FAILED tests/test_agent.py::test_state_enterprise_cannot_replace_the_specific_contract_land_source_actor[True]
+3 failed, 3 passed, 131 deselected in 2.31s

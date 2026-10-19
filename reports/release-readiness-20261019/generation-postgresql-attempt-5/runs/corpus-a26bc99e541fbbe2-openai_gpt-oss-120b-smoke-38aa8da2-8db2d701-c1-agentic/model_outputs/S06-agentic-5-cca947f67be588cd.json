@@ -1,0 +1,24 @@
+{
+  "scope": "Unverified structured model output for developer diagnosis; never delivered as a chatbot answer. No hidden reasoning.",
+  "schema": "Draft",
+  "case_mode": "S06-agentic",
+  "llm_calls": 5,
+  "output": {
+    "status": "answered",
+    "summary": "",
+    "claims": [
+      {
+        "kind": "legal_rule",
+        "text": "Đối tượng được bồi thường về đất theo Điều 95 Luật Đất đai 2024 là hộ gia đình, cá nhân đang sử dụng đất không phải là đất thuê trả tiền thuê đất hằng năm (C1) và, trong trường hợp thuộc khoản 1 Điều 95, phải có một trong các giấy tờ về quyền sử dụng đất hoặc quyết định giao/cho thuê đất (C3); tuy nhiên, giấy chứng nhận quyền sử dụng đất không phải là điều kiện duy nhất vì Điều 95 còn quy định các trường hợp khác được bồi thường khi có: (a) nhận chuyển quyền sử dụng đất từ người có quyền sử dụng đất hợp pháp nhưng chưa hoàn thành thủ tục đăng ký (C2); (b) sử dụng đất theo hợp đồng thế chấp để xử lý nợ (C2); (c) văn bản công nhận kết quả đấu giá quyền sử dụng đất đã hoàn thành nghĩa vụ tài chính (C2); (d) các trường hợp cộng đồng dân cư, người gốc Việt Nam định cư ở nước ngoài, tổ chức tôn giáo, tổ chức kinh tế, tổ chức ngoại giao,... khi đáp ứng các giấy tờ hoặc quyết định giao/cho thuê đất theo quy định (C2, C3).",
+        "citation_ids": [
+          "C1",
+          "C2",
+          "C3"
+        ]
+      }
+    ],
+    "missing_facts": [],
+    "next_steps": [],
+    "out_of_scope": false
+  }
+}

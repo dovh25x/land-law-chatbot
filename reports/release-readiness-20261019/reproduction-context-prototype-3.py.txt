@@ -1,0 +1,48 @@
+import inspect,json,re,textwrap,types
+from pathlib import Path
+from datetime import date
+from types import SimpleNamespace
+from landlaw.agent import Agent,applicability
+from landlaw.config import Settings
+from landlaw.models import ChatRequest,Document,Evidence
+
+source=textwrap.dedent(inspect.getsource(Agent.prompt_context))
+old="return (exact_article and (document_match or not numbers),timely,reference_matches,body_numbers,operative,document_match,item['applicability']=='current',-group,heading_overlap,overlap)"
+new="return (exact_article and (document_match or not numbers),timely,reference_matches,body_numbers,operative,document_match,item['applicability']=='current',principle_groups.get((item['document_id'],item['locator'].split(' · ')[0]),False),group_scores[(item['document_id'],item['locator'].split(' · ')[0])],-group,heading_overlap,overlap)"
+assert old in source
+block='''group_scores={}
+principle_groups={}
+safeguard=any(t in question for t in ('bao dam','dam bao','nguyen tac'))
+for item in candidates:
+    body=normalize(item['text'])
+    heading=re.match(r'dieu\\s+\\d+[a-z]?\\s*[.:]\\s*(.*?)(?:\\s+1\\.\\s|$)',body)
+    overlap=len(terms & set(body.split()))/max(1,len(body.split()))**.5
+    heading_overlap=len(terms & set(heading[1].split()))/max(1,len(set(heading[1].split()))) if heading else 0
+    key=(item['document_id'],item['locator'].split(' · ')[0])
+    group_scores[key]=max(group_scores.get(key,0),overlap+heading_overlap)
+    if safeguard and heading and 'nguyen tac' in heading[1]:principle_groups[key]=True
+def relevant(item):'''
+source=source.replace('        def relevant(item):',textwrap.indent(block,'        ')).replace(old,new)
+ns=dict(Agent.prompt_context.__globals__);exec(compile(source,'<offline-context-prototype>','exec'),ns)
+prototype=ns['prompt_context']
+c=json.loads(Path('data/staging/readiness-20261019-attempt-1/candidate.json').read_text())
+docs={d['id']:Document.model_validate(d) for d in c['documents']};chunks={ch.id:(doc,ch) for doc in docs.values() for ch in doc.chunks}
+cases={v['id']:v for v in map(json.loads,Path('data/evaluation/natural.jsonl').read_text().splitlines())}
+agent=Agent(None,SimpleNamespace(settings=Settings()));results=[]
+for backend in ['sqlite','postgresql']:
+ raw=json.loads(Path(f'reports/release-readiness-20261019/restore-and-retrieval-attempt-1/{backend}/retrieval/natural.json').read_text())
+ for row in raw['results']:
+  case=cases[row['id']];evidence=[];seen=set()
+  for cid in row['retrieved_chunk_ids']:
+   doc,chunk=chunks[cid]
+   evidence.append(Evidence(document=doc,chunk=chunk,applicability=applicability(doc,date.fromisoformat(case['as_of']),chunk)));seen.add(cid)
+  for e in list(evidence):
+   if e.chunk.parent_id and e.chunk.parent_id not in seen:
+    doc,chunk=chunks[e.chunk.parent_id];evidence.append(Evidence(document=doc,chunk=chunk,applicability=e.applicability));seen.add(chunk.id)
+  state={'request':ChatRequest(session_id='0'*32,message=case['question']),'release':c,'evidence':evidence}
+  actual,_=agent.prompt_context(state);proposed,_=prototype(agent,state)
+  def covered(passages):
+   return [cid for cid in row['gold_chunk_ids'] if any(chunks[cid][0].id==p['document_id'] and chunks[cid][1].text in p['text'] for p in passages)]
+  results.append({'backend':backend,'case':row['id'],'current_ids':[p['citation_id'] for p in actual],'proposed_ids':[p['citation_id'] for p in proposed],'current_gold_text_covered':covered(actual),'proposed_gold_text_covered':covered(proposed)})
+Path('reports/release-readiness-20261019/context-prototype-3.json').write_text(json.dumps({'scope':'Offline proposed prompt selection using frozen raw retrieval hits plus available parents. No model calls; gold is used only after selection to measure text inclusion, never as ranking input. No claim of end-to-end legal correctness.','results':results},ensure_ascii=False,indent=2)+'\n')
+print(json.dumps(results,ensure_ascii=False))

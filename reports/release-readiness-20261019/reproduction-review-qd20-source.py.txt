@@ -1,0 +1,40 @@
+from pathlib import Path
+import json,hashlib
+from datetime import datetime,timezone
+pages=['''ỦY BAN NHÂN DÂN THÀNH PHỐ HÀ NỘI
+CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM
+Độc lập - Tự do - Hạnh phúc
+Số: 20/2022/QĐ-UBND
+Hà Nội, ngày 06 tháng 5 năm 2022
+QUYẾT ĐỊNH
+Về việc sửa đổi, bổ sung khoản 2 Điều 26 Quy định ban hành kèm theo Quyết định số 10/2017/QĐ-UBND ngày 29/3/2017 của UBND Thành phố ban hành quy định các nội dung thuộc thẩm quyền của UBND Thành phố về bồi thường, hỗ trợ và tái định cư khi Nhà nước thu hồi đất trên địa bàn Thành phố
+ỦY BAN NHÂN DÂN THÀNH PHỐ HÀ NỘI
+Căn cứ Luật Tổ chức chính quyền địa phương ngày 19 tháng 6 năm 2015 và Luật sửa đổi, bổ sung một số điều của Luật Tổ chức Chính phủ và Luật Tổ chức chính quyền địa phương ngày 22 tháng 11 năm 2019;
+Căn cứ Luật Đất đai ngày 29 tháng 11 năm 2013;
+Căn cứ Luật Thủ đô ngày 21 tháng 11 năm 2012;
+Căn cứ Nghị định số 43/2014/NĐ-CP ngày 15 tháng 5 năm 2014 của Chính phủ quy định chi tiết thi hành một số điều của Luật Đất đai;
+Căn cứ Nghị định số 44/2014/NĐ-CP ngày 15 tháng 5 năm 2014 của Chính phủ quy định về giá đất;
+Căn cứ Nghị định số 47/2014/NĐ-CP ngày 15 tháng 5 năm 2014 của Chính phủ quy định về bồi thường, hỗ trợ và tái định cư khi Nhà nước thu hồi đất;
+Căn cứ Nghị định số 01/2017/NĐ-CP ngày 06 tháng 01 năm 2017 của Chính phủ sửa đổi, bổ sung một số nghị định quy định chi tiết thi hành Luật đất đai;
+Xét đề nghị của Giám đốc Sở Tài nguyên và Môi trường tại các Tờ trình: số 3980/TTr-STNMT-CCQLĐĐ ngày 01/6/2021, số 8758/TTrBS-STNMT-CCQLĐĐ ngày 22/11/2021, số 1302/TTrBS-STNMT-QHKHSDĐ ngày 07/3/2022, số 2504/TTrBS-STNMT-QHKHSDĐ ngày 21/4/2022; Báo cáo của Giám đốc Sở Tư pháp tại các văn bản: số 268/BC-STP ngày 10/9/2021, số 94/STP-VBPQ ngày 12/01/2022 và số 467/STP-VBPQ ngày 01/3/2022.
+QUYẾT ĐỊNH:
+Điều 1. Sửa đổi khoản 2 Điều 26 Quy định ban hành kèm theo Quyết định số 10/2017/QĐ-UBND ngày 29/3/2017 như sau:
+“2. Trường hợp đủ điều kiện được bồi thường bằng đất ở:
+''','''Trường hợp hộ gia đình có nhiều thế hệ, nhiều cặp vợ chồng cùng sinh sống trên một thửa đất ở thu hồi mà đủ điều kiện tách thành từng hộ gia đình riêng theo quy định của pháp luật về cư trú hoặc có nhiều hộ gia đình có chung quyền sử dụng một (01) thửa đất ở thu hồi thì mỗi hộ gia đình được giao một (01) suất tái định cư bằng hạn mức giao đất ở tại địa phương và không vượt quá diện tích đất ở bị thu hồi (diện tích đất được giao đã bao gồm diện tích đất được bồi thường theo quy định tại Điều 7 Quy định này). Trường hợp mỗi hộ được giao một (01) suất tái định cư bằng hạn mức giao đất ở tối thiểu tại địa phương vượt quá diện tích đất ở bị thu hồi, phần diện tích đất tái định cư vượt diện tích đất ở bị thu hồi phải tính tiền sử dụng đất theo giá đất khi giao đất tái định cư nhân hệ số điều chỉnh K theo quy định tại điểm b khoản 3 Điều 7 Quy định này.”
+Điều 2. Quyết định này có hiệu lực thi hành kể từ ngày 16 tháng 5 năm 2022.
+Chánh Văn phòng Ủy ban nhân dân Thành phố; Giám đốc các sở, ban, ngành; Chủ tịch Ủy ban nhân dân các quận, huyện và thị xã Sơn Tây; các tổ chức, hộ gia đình, cá nhân có liên quan chịu trách nhiệm thi hành Quyết định này./.
+TM. ỦY BAN NHÂN DÂN
+CHỦ TỊCH
+Chu Ngọc Anh
+''']
+p=Path('data/raw/qd-20-2022-government-reviewed.txt');assert not p.exists();p.write_text('\f'.join(pages))
+pdf=Path('data/raw/qd-20-2022-government-signed.pdf');sha=lambda p:hashlib.sha256(p.read_bytes()).hexdigest()
+url='https://vanban.chinhphu.vn/?classid=1&docid=205909&pageid=27160';attachment='https://datafiles.chinhphu.vn/cpp/files/vbpq/2022/06/20hn.signed.pdf'
+now=datetime.now(timezone.utc).isoformat()
+review={'document_id':'qd-20-2022-hanoi','checked_at':now,'pdf_sha256':sha(pdf),'transcription_sha256':sha(p),'pages_visually_reviewed':[1,2],'review_method':'AI engineering visual comparison of both government PDF pages and archive copy; not independent legal certification','scope':'All operative provisions and legal preamble transcribed. Distribution list, incoming stamp and facsimile signature omitted; page boundaries preserved. No numeric entitlement calculation implemented.','metadata':{'issued_on':'2022-05-06','effective_from':'2022-05-16','effective_to':'2024-04-20'},'relation_review':'Article 1 replaces clause 2 Article 26 of QD10/2017, including Article 7 reference and excess-area coefficient rule. Article 2 of QD27/2024 repeals QD20/2022 entirely from 20/04/2024; no assumption that a later act revives it. QD10 endpoint and referenced Article 7 still pending.','evidence_urls':[url,attachment,'https://congbao.hanoi.gov.vn/Default.aspx?p_attribute=1805&pageid=45002'],'freshness_receipt_created':False}
+Path('reports/release-readiness-20261019/qd20-2022-review.json').write_text(json.dumps(review,ensure_ascii=False,indent=2)+'\n')
+sources_path=Path('data/sources.json');sources=json.loads(sources_path.read_text());assert not any(s['id']=='qd-20-2022-hanoi' for s in sources)
+sources.append({'id':'qd-20-2022-hanoi','title':'Sửa đổi khoản 2 Điều 26 Quy định bồi thường, hỗ trợ, tái định cư Hà Nội (lịch sử)','url':url,'publication_url':url,'metadata_url':url,'source_kind':'legal','document_number':'20/2022/QĐ-UBND','issued_on':'2022-05-06','effective_from':'2022-05-16','effective_to':'2024-04-20','issuer':'UBND thành phố Hà Nội','jurisdiction':'Hanoi','project':None,'topics':['bồi thường','tái định cư','lịch sử'],'review_status':'verified','checked_at':now,'attachment_urls':[attachment],'raw_paths':[str(pdf)],'raw_checksums':{str(pdf):sha(pdf)},'ocr_reviewed':True,'ocr_sidecars':[{'pdf_sha256':sha(pdf),'ocr_path':str(p),'ocr_sha256':sha(p),'review_status':'verified','processing_method':'Manual transcription visually compared with the two government PDF pages; preamble and operative clauses retained, nonoperative distribution/stamp omitted.'}],'source_review_notes':'Đã đối chiếu hai trang PDF công bố trên cổng Chính phủ. Điều 1 sửa riêng khoản 2 Điều 26 QĐ10/2017; còn phải đọc Điều 7 được dẫn chiếu. Hiệu lực 16/05/2022, bị bãi bỏ toàn bộ theo khoản 2 Điều 2 QĐ27/2024 từ 20/04/2024. Không áp dụng như quyền lợi hiện hành, không suy tái định cư tự động hoặc tính tiền. Chưa thẩm định pháp lý độc lập.'})
+sources_path.write_text(json.dumps(sources,ensure_ascii=False,indent=2)+'\n')
+p=Path('data/legal_relations.json');relations=json.loads(p.read_text());relations.append({'source_id':'qd-20-2022-hanoi','target_id':'qd-10-2017-hanoi','type':'amends','source_locator':'Điều 1','locator':'Điều 1','target_locators':['khoản 2 Điều 26'],'target_locators_complete':True,'source_url':url,'explanation':'Điều 1 sửa khoản 2 Điều 26; giữ dẫn chiếu Điều 7 và điều kiện giao đất ở, không sửa toàn bộ QĐ10. Hiệu lực 16/05/2022; QĐ20 bị QĐ27/2024 bãi bỏ từ 20/04/2024.'});p.write_text(json.dumps(relations,ensure_ascii=False,indent=2)+'\n')
+print('Reviewed historical QD20/2022 staged; serving database and freshness receipts unchanged.')

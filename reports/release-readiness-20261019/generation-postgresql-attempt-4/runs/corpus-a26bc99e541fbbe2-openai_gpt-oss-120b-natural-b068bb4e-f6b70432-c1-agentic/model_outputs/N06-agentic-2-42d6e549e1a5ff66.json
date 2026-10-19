@@ -1,0 +1,33 @@
+{
+  "scope": "Unverified structured model output for developer diagnosis; never delivered as a chatbot answer. No hidden reasoning.",
+  "schema": "Verification",
+  "case_mode": "N06-agentic",
+  "llm_calls": 2,
+  "output": {
+    "supported_claim_indexes": [
+      0,
+      1
+    ],
+    "supporting_quotes": [],
+    "supporting_spans": [
+      {
+        "claim_index": 0,
+        "citation_id": "C1",
+        "span_id": "S1"
+      },
+      {
+        "claim_index": 1,
+        "citation_id": "C2",
+        "span_id": "S2"
+      },
+      {
+        "claim_index": 1,
+        "citation_id": "C1",
+        "span_id": "S1"
+      }
+    ],
+    "issues": [],
+    "needs_more_evidence": false,
+    "followup_query": ""
+  }
+}

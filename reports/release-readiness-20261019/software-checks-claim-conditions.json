@@ -1,0 +1,66 @@
+{
+  "source_commit": "6ca8f12f0d770f2076de20f0d070460894bd0bc8",
+  "scope": "248 backend tests and a secret scan passed on this source. Frontend files unchanged since the retained passing unit/build/E2E logs. These checks do not certify corpus legal quality or deployment readiness.",
+  "checks": [
+    {
+      "name": "backend",
+      "argv": [
+        ".venv/bin/python",
+        "-m",
+        "pytest",
+        "-q"
+      ],
+      "exit_code": 0,
+      "log": "reports/release-readiness-20261019/backend-tests-claim-conditions.log",
+      "log_sha256": "b42a61a9c2fdac03a29bcc000460cd08dd799ced3b5ff1aa0ce40c21e7442c45"
+    },
+    {
+      "name": "secrets",
+      "argv": [
+        ".venv/bin/python",
+        "scripts/check_secrets.py"
+      ],
+      "exit_code": 0,
+      "log": "reports/release-readiness-20261019/secrets-claim-conditions.log",
+      "log_sha256": "766d75c21b58f1924ca7617ba55b3944d6d327b8f64a36ceba52c177e79340c7"
+    },
+    {
+      "name": "frontend_unit",
+      "argv": [
+        "npm",
+        "--prefix",
+        "frontend",
+        "test"
+      ],
+      "exit_code": 0,
+      "log": "reports/release-readiness-20261019/frontend-unit.log",
+      "log_sha256": "338eb65f89084552622f0a6139419f5bd5a30bd3a68a50940d8b74e8a75dab49"
+    },
+    {
+      "name": "frontend_build",
+      "argv": [
+        "npm",
+        "--prefix",
+        "frontend",
+        "run",
+        "build"
+      ],
+      "exit_code": 0,
+      "log": "reports/release-readiness-20261019/frontend-build.log",
+      "log_sha256": "7f82dd6732c3297938107108e6da17f4ac1b33b44bb0cfabeb914dd18063d9d1"
+    },
+    {
+      "name": "frontend_e2e",
+      "argv": [
+        "npm",
+        "--prefix",
+        "frontend",
+        "run",
+        "test:e2e"
+      ],
+      "exit_code": 0,
+      "log": "reports/release-readiness-20261019/frontend-e2e.log",
+      "log_sha256": "0b06a3af6efde2df6df7e93e0f353b03559ef4e26cefbdc6706c7ec2b910eea8"
+    }
+  ]
+}

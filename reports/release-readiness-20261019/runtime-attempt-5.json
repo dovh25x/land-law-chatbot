@@ -1,0 +1,28 @@
+{
+  "source_commit": "4d0fd9f1788eebe41ebce0f4d9d35a7d5f337caf",
+  "scope": "Frozen runtime for PostgreSQL attempt 5 after the repair-context regression; source must not change during execution. Attempt 4 remains historical and separate.",
+  "sha256": {
+    "backend/landlaw/config.py": "ef7ab86aa499aad8da71a14a402e0283570c7ce6484252553983b5938c286a8b",
+    "backend/landlaw/store.py": "bb0cab7311b5d12cee58e69885349ced629ccc725940fc22bb76903be5e7cd02",
+    "backend/landlaw/publication.py": "439134d22b76663f27314c6542116123fdf34385ef1a6732de6436fe30b8405c",
+    "backend/landlaw/security.py": "a541f4ec06f0412713d9229baca0bee9bc0e378ee12455c084a905d6d1553cb5",
+    "backend/landlaw/retrieval.py": "3b178b134f5a152d0ea122140fc5d0ffb7a3a375546e8d2da18fa7a18262f7d4",
+    "backend/landlaw/__init__.py": "4b147aa291df62cb1cb3c15378685a0ca7bba9f5b3d557d75d7e439742139aeb",
+    "backend/landlaw/local_embedding.py": "1eb8f720050cdc720377467694c91538f9767e236044654cf96d70c00e94b493",
+    "backend/landlaw/models.py": "a6dcdce3ee2e7b1b3f3b9fda590c795e9cce3662d25f980ce678daa2651b5171",
+    "backend/landlaw/evaluation.py": "228868e28f207e88016111e77425e3bda8883c5c130d3867e16e332b098e3015",
+    "backend/landlaw/cli.py": "5f9490401a1b1cd94490c6d826aad242c60d722dfe45f2055a5c1d322445488e",
+    "backend/landlaw/ingest.py": "8716638cdbafc641570db75d1c8ea1e81254cc363c471604b33c3093d20151b0",
+    "backend/landlaw/agent.py": "6ffa3acd2f7ea6a1789b54a94673a1343ca3aa836f37af5441379caf03e98abf",
+    "backend/landlaw/ops.py": "09bb19536a7f72a92f1516d8f23e209e478f39d7f3ecc42a1b90db985c5ec0e6",
+    "backend/landlaw/embedding.py": "fb4c2bdff5a0a9b95a4471cc0151365e6ac17df4edafd28fa1bb944fc0e44d37",
+    "backend/landlaw/provider.py": "bc771b50d18c7d5265cbc7563268931f5154325e735a5bf3e059afd516632ac3",
+    "backend/landlaw/api.py": "e35a73c750bc96712112cfd2fe36c07ed95601fb6e131bb0ca6cd93d24cb75f8",
+    "scripts/evaluate_generation_candidate.py": "34f8d0d139923219b594e5790521ef07f1536c48e87780c588b5e9f27c313838",
+    "scripts/check_release_readiness.py": "77b8b2139184f6ec337b75bf287550f853d190d8a7e1d35589cdf00a55542b1b",
+    "scripts/deploy.py": "f57426ed9dd60fce48258e2822d297e69ef1772b472db3a2d3a4ada0ee6cecc7",
+    ".github/workflows/deploy.yml": "d797c1b5c5e19cc3ad41029f6cb8b94e306a91ee8849addbf061b2c798203d09"
+  },
+  "postgresql_configuration_sha256": "8db2d701d6d27b69f3cb01615c9a8a16ef3a3fe74fb7c117721f2349f2a523dc",
+  "sqlite_configuration_sha256": "a34d44cfe2431983db307581c366f6f3092fc533b8813117f29a853f05f20f6a"
+}

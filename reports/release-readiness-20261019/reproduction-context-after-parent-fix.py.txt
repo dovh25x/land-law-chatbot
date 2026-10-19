@@ -1,0 +1,24 @@
+import asyncio,json,tempfile
+from pathlib import Path
+from pydantic import SecretStr
+from landlaw.agent import Agent,Plan,ToolCall
+from landlaw.config import Settings
+from landlaw.provider import GroqProvider,Budget
+from landlaw.models import ChatRequest
+from landlaw.store import Store
+from datetime import date
+async def main():
+ with tempfile.TemporaryDirectory() as f:
+  settings=Settings().model_copy(update={'database_url':SecretStr(''),'admin_database_url':SecretStr(''),'sqlite_path':str(Path(f)/'s.db')})
+  store=Store(settings);store.restore(Path('data/staging/readiness-20261019-attempt-1/candidate-backup.json'));provider=GroqProvider(settings,store)
+  try:
+   agent=Agent(store,provider);suite=[json.loads(l) for l in Path('data/evaluation/natural.jsonl').read_text().splitlines()][:6];checks=[]
+   async def emit(_):pass
+   for c in suite:
+    state={'request':ChatRequest(session_id='0'*32,message=c['question']),'release':store.release(None,True),'budget':Budget(),'trace':[],'emit':emit,'evidence':[],'as_of':date.fromisoformat(c['as_of']),'rounds':0,'tool_notes':[],'plan':Plan(tools=[ToolCall(name='search_law',query=c['question'])])}
+    await agent.tools(state);ctx,docs=agent.prompt_context(state)
+    checks.append({'case':c['id'],'generation_calls':state['budget'].llm_calls,'context':ctx,'document_count':len(docs),'total_context_characters':len(json.dumps([ctx,docs],ensure_ascii=False))})
+   Path('reports/release-readiness-20261019/context-selection-after-parent-fix.json').write_text(json.dumps(checks,ensure_ascii=False,indent=2)+'\n')
+   print(json.dumps([{'case':c['case'],'context_ids':[p['citation_id'] for p in c['context']],'chars':c['total_context_characters']} for c in checks]))
+  finally:await provider.close();store.close()
+asyncio.run(main())

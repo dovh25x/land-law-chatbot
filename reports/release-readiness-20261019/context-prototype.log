@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "/tmp/landlaw-context-prototype.py", line 22, in <module>
+    ns=dict(Agent.prompt_context.__globals__);exec(compile(source,'<offline-context-prototype>','exec'),ns)
+                                                   ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<offline-context-prototype>", line 61
+    candidates=sorted(candidates,key=relevant,reverse=True)
+                                                           ^
+IndentationError: unindent does not match any outer indentation level

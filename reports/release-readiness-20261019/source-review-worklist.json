@@ -1,0 +1,272 @@
+{
+  "checked_at": "2026-10-18T18:39:47.461076+00:00",
+  "pending_manifest_sources": [
+    {
+      "document_id": "qd-10-2017-hanoi",
+      "document_number": "10/2017/QĐ-UBND",
+      "publication_url": "https://vanban.chinhphu.vn/?pageid=27160&docid=189167",
+      "files": [
+        {
+          "path": "data/raw/qd-10-2017-hanoi-new-official-1.pdf",
+          "sha256": "c83909ebab6958ce58ca4c94b6143717acf1a6edfcaf157efd4473d7a175b0ea",
+          "physical_pages": 41
+        }
+      ],
+      "ocr_candidates": [
+        {
+          "ocr_path": "data/raw/qd-10-2017-hanoi-remediation-ocr.txt",
+          "ocr_sha256": "d0c44877b35c7fcdf6ec705ee4598aff17f129362ec297530c3ff8c265c6da0d",
+          "pdf_sha256": "c83909ebab6958ce58ca4c94b6143717acf1a6edfcaf157efd4473d7a175b0ea",
+          "review_status": "pending",
+          "processing_method": "Tesseract 5.5.0 vie psm3 @216dpi"
+        }
+      ],
+      "status": "pending",
+      "required_review": [
+        "Compare the actual operative pages and numeric content to the PDF, not OCR confidence",
+        "Check issue/commencement/expiry and partial amendment scope from primary sources",
+        "Include definitions, eligibility/exception references and transitional clauses",
+        "Record reviewed checksums and honest scope before offline rebuild"
+      ],
+      "specific_notes": " Remediation: PDF có hash và OCR ứng viên; trạng thái pending giữ nguyên, chưa đủ điều kiện làm chứng cứ."
+    },
+    {
+      "document_id": "qd-30-2019-hanoi",
+      "document_number": "30/2019/QĐ-UBND",
+      "publication_url": "https://vanban.hanoi.gov.vn/chi-tiet-van-ban/quyet-dinh-so-30-2019-qd-ubnd-cua-ubnd-tp-ha-noi-ve-viec-ban-hanh-quy-dinh-va-bang-gia-cac-loai-dat-189067",
+      "files": [
+        {
+          "path": "data/raw/qd-30-2019-hanoi-attachment-1.pdf",
+          "sha256": "80430edefcb74231bc6cc0b1c89fca13d5601aa0521241868da6e12638505cd9",
+          "physical_pages": 232
+        }
+      ],
+      "ocr_candidates": [
+        {
+          "ocr_path": "data/raw/qd-30-2019-hanoi-remediation-ocr.txt",
+          "ocr_sha256": "20876a2dcba21ee5550897122650d77b013ca3cc3f2849e08c883e80bc9d5e46",
+          "pdf_sha256": "80430edefcb74231bc6cc0b1c89fca13d5601aa0521241868da6e12638505cd9",
+          "review_status": "pending",
+          "processing_method": "Tesseract 5.5.0 vie psm3 @216dpi",
+          "page_numbers": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10
+          ],
+          "scope_review": "Ứng viên chỉ mục 10 trang quy định; cần duyệt đầy đủ phạm vi và dẫn chiếu trước khi phục vụ."
+        }
+      ],
+      "status": "pending",
+      "required_review": [
+        "Compare the actual operative pages and numeric content to the PDF, not OCR confidence",
+        "Check issue/commencement/expiry and partial amendment scope from primary sources",
+        "Include definitions, eligibility/exception references and transitional clauses",
+        "Record reviewed checksums and honest scope before offline rebuild"
+      ],
+      "specific_notes": " Remediation: PDF có hash và OCR ứng viên; trạng thái pending giữ nguyên, chưa đủ điều kiện làm chứng cứ."
+    },
+    {
+      "document_id": "qd-20-2023-hanoi",
+      "document_number": "20/2023/QĐ-UBND",
+      "publication_url": "https://vbpl.vn/hanoi/Pages/vbpq-toanvan.aspx?ItemID=164473",
+      "files": [
+        {
+          "path": "data/raw/qd20-direct-candidate-2.pdf",
+          "sha256": "a4b48290f866ac0b4d13f64de6a6a7d276f992373bb8f0e4a542bc8a52d7784a",
+          "physical_pages": 58
+        }
+      ],
+      "ocr_candidates": [
+        {
+          "ocr_path": "data/raw/qd-20-2023-remediation-ocr.txt",
+          "ocr_sha256": "c3c12e1e6f74236356e5d98bf3a233768eee5e60f1b514a3eaca96287effb6a0",
+          "pdf_sha256": "a4b48290f866ac0b4d13f64de6a6a7d276f992373bb8f0e4a542bc8a52d7784a",
+          "review_status": "pending",
+          "processing_method": "Tesseract 5.5.0 vie; full 58 physical pages; blank page and numeric tables require review"
+        }
+      ],
+      "status": "pending",
+      "required_review": [
+        "Compare the actual operative pages and numeric content to the PDF, not OCR confidence",
+        "Check issue/commencement/expiry and partial amendment scope from primary sources",
+        "Include definitions, eligibility/exception references and transitional clauses",
+        "Record reviewed checksums and honest scope before offline rebuild"
+      ],
+      "specific_notes": "Đã phục hồi scan 58 trang từ kho CrawlDownloads của cổng Hà Nội, đối chiếu trang đầu đúng số 20/2023/QĐ-UBND ngày 07/09/2023 và sửa QĐ30/2019. Trang metadata cũ không tải được toàn văn; chưa xác minh liên kết publication hiện tại, OCR và chuỗi pháp lý. Giữ pending, không phục vụ. URL p_steering=188741 do người dùng cung cấp hiện là NQ20/2023/NQ-HĐND ngân sách, không được dùng thay cho quyết định này."
+    },
+    {
+      "document_id": "nd-123-2024",
+      "document_number": "123/2024/NĐ-CP",
+      "publication_url": "https://vanban.chinhphu.vn/?pageid=27160&docid=211356",
+      "files": [
+        {
+          "path": "data/raw/nd-123-2024-attachment-1.pdf",
+          "sha256": "9ea21ac96c37fa31c1f0be3dd7b893f82adf8e63236c87e432c2c1f6e18e48d0",
+          "physical_pages": 38
+        }
+      ],
+      "ocr_candidates": [
+        {
+          "ocr_path": "data/raw/nd-123-2024-remediation-ocr.txt",
+          "ocr_sha256": "47e26fcde82d92bd924a56f8ef964d27a1a3a0008a27584c84dbfa4bbd648b2b",
+          "pdf_sha256": "9ea21ac96c37fa31c1f0be3dd7b893f82adf8e63236c87e432c2c1f6e18e48d0",
+          "review_status": "pending",
+          "processing_method": "Tesseract 5.5.0 vie psm3 @216dpi"
+        }
+      ],
+      "status": "pending",
+      "required_review": [
+        "Compare the actual operative pages and numeric content to the PDF, not OCR confidence",
+        "Check issue/commencement/expiry and partial amendment scope from primary sources",
+        "Include definitions, eligibility/exception references and transitional clauses",
+        "Record reviewed checksums and honest scope before offline rebuild"
+      ],
+      "specific_notes": " Remediation: PDF có hash và OCR ứng viên; trạng thái pending giữ nguyên, chưa đủ điều kiện làm chứng cứ."
+    },
+    {
+      "document_id": "ring4-nq106-2022",
+      "document_number": "106/NQ-CP",
+      "publication_url": "https://vanban.chinhphu.vn/?pageid=27160&docid=206398",
+      "files": [
+        {
+          "path": "data/raw/ring4-nq106-2022-attachment-1.pdf",
+          "sha256": "ea7b92ba9e6097f9fc5f97d55b22317b2a0ca4147ae4df47b17213f790c5f7b9",
+          "physical_pages": 9
+        }
+      ],
+      "ocr_candidates": [
+        {
+          "ocr_path": "data/raw/ring4-nq106-2022-remediation-ocr.txt",
+          "ocr_sha256": "f4bece5971e92a7dc949bfa572127d0c85abbc78b7b4b571859246c1a63a504d",
+          "pdf_sha256": "ea7b92ba9e6097f9fc5f97d55b22317b2a0ca4147ae4df47b17213f790c5f7b9",
+          "review_status": "pending",
+          "processing_method": "Tesseract 5.5.0 vie psm3 @216dpi"
+        }
+      ],
+      "status": "pending",
+      "required_review": [
+        "Compare the actual operative pages and numeric content to the PDF, not OCR confidence",
+        "Check issue/commencement/expiry and partial amendment scope from primary sources",
+        "Include definitions, eligibility/exception references and transitional clauses",
+        "Record reviewed checksums and honest scope before offline rebuild"
+      ],
+      "specific_notes": " Remediation: PDF có hash và OCR ứng viên; trạng thái pending giữ nguyên, chưa đủ điều kiện làm chứng cứ."
+    },
+    {
+      "document_id": "nd-01-2017",
+      "document_number": "01/2017/NĐ-CP",
+      "publication_url": "https://vanban.chinhphu.vn/?pageid=27160&docid=187962",
+      "files": [
+        {
+          "path": "data/raw/nd-01-2017-new-official-1.pdf",
+          "sha256": "ffc2daa105ffee450fe684f3603992d4b52bc4041db4e7b78c0bd225fc10b357",
+          "physical_pages": 51
+        }
+      ],
+      "ocr_candidates": [
+        {
+          "ocr_path": "data/raw/nd-01-2017-remediation-ocr.txt",
+          "ocr_sha256": "ea23dd50d3cbc6bf74675023d1280e94214a29350192c4fd11a157b89f351cd5",
+          "pdf_sha256": "ffc2daa105ffee450fe684f3603992d4b52bc4041db4e7b78c0bd225fc10b357",
+          "review_status": "pending",
+          "processing_method": "Tesseract 5.5.0 vie psm3 @216dpi"
+        }
+      ],
+      "status": "pending",
+      "required_review": [
+        "Compare the actual operative pages and numeric content to the PDF, not OCR confidence",
+        "Check issue/commencement/expiry and partial amendment scope from primary sources",
+        "Include definitions, eligibility/exception references and transitional clauses",
+        "Record reviewed checksums and honest scope before offline rebuild"
+      ],
+      "specific_notes": "Đã tải PDF nguồn Chính phủ; OCR máy chưa được đối chiếu đầy đủ. Không phục vụ trước khi duyệt OCR, phạm vi sửa đổi và hiệu lực/chuyển tiếp. Remediation: PDF có hash và OCR ứng viên; trạng thái pending giữ nguyên, chưa đủ điều kiện làm chứng cứ."
+    },
+    {
+      "document_id": "nd-148-2020",
+      "document_number": "148/2020/NĐ-CP",
+      "publication_url": "https://vanban.chinhphu.vn/?pageid=27160&docid=202022",
+      "files": [
+        {
+          "path": "data/raw/nd-148-2020-alternate.pdf",
+          "sha256": "d9b2afb4bc5f3ba07de979a14b931dad2e1efba3bf22d6036af0bbfb76ab061e",
+          "physical_pages": 53
+        }
+      ],
+      "ocr_candidates": [
+        {
+          "ocr_path": "data/raw/nd-148-2020-remediation-ocr.txt",
+          "ocr_sha256": "6998d2c94a645a16c9c39c1a28c547de4b842e34b05f20cb8b77ecc1cff23374",
+          "pdf_sha256": "d9b2afb4bc5f3ba07de979a14b931dad2e1efba3bf22d6036af0bbfb76ab061e",
+          "review_status": "pending",
+          "processing_method": "Tesseract 5.5.0 vie psm3 @216dpi"
+        }
+      ],
+      "status": "pending",
+      "required_review": [
+        "Compare the actual operative pages and numeric content to the PDF, not OCR confidence",
+        "Check issue/commencement/expiry and partial amendment scope from primary sources",
+        "Include definitions, eligibility/exception references and transitional clauses",
+        "Record reviewed checksums and honest scope before offline rebuild"
+      ],
+      "specific_notes": "Đã tải PDF nguồn Chính phủ; OCR máy chưa được đối chiếu đầy đủ. Không phục vụ trước khi duyệt OCR, phạm vi sửa đổi và hiệu lực/chuyển tiếp. Remediation: PDF có hash và OCR ứng viên; trạng thái pending giữ nguyên, chưa đủ điều kiện làm chứng cứ."
+    }
+  ],
+  "additional_amendment_candidate": {
+    "checked_at": "2026-10-18T18:28:27.687153+00:00",
+    "document_id": "nd-281-2026",
+    "review_status": "pending",
+    "publication_url": "https://vanban.chinhphu.vn/?docid=218863&pageid=27160&typegroupid=4",
+    "attachment_url": "https://datafiles.chinhphu.vn/cpp/files/vbpq/2026/7/281-ndcp.signed.pdf",
+    "path": "data/raw/nd-281-2026-government-candidate.pdf",
+    "sha256": "4c38d8d94d2d9781d53216c8697bc2c35f09af021f8df38ae1f48e63f5cfc5a5",
+    "pages": 7,
+    "native_text_characters": 6,
+    "issued_on_from_publication": "2026-07-13",
+    "effective_from_from_publication": "2026-08-31",
+    "relation_candidate": {
+      "source_id": "nd-281-2026",
+      "target_id": "nd-123-2024",
+      "type": "amends",
+      "scope": "Pending article-level review; no assumption that the entire target is repealed."
+    },
+    "required_before_serving_nd123": "Review this amendment, authority/transition and the relevant fulltext together with ND123. Search results, metadata and PDF availability alone are not a freshness receipt.",
+    "active_corpus_changed": false
+  },
+  "source_freshness": {
+    "scope": "All serving sources require a real new amendment/transition review; old fulltext-byte match is not sufficient.",
+    "receipts_created": 0
+  },
+  "completed_historical_endpoint_review": {
+    "document_id": "qd-20-2022-hanoi",
+    "checked_at": "2026-10-18T18:13:26.627785+00:00",
+    "pdf_sha256": "c16f1fe7680bca2e5dcdbb41ed10f68be26645bca345092d89e38dd9cb54dc45",
+    "transcription_sha256": "74b1818c9e4bfccdc6ef5f14f462e397715e9944f2fff1abf3dbf2b19b858d0d",
+    "pages_visually_reviewed": [
+      1,
+      2
+    ],
+    "review_method": "AI engineering visual comparison of both government PDF pages and archive copy; not independent legal certification",
+    "scope": "All operative provisions and legal preamble transcribed. Distribution list, incoming stamp and facsimile signature omitted; page boundaries preserved. No numeric entitlement calculation implemented.",
+    "metadata": {
+      "issued_on": "2022-05-06",
+      "effective_from": "2022-05-16",
+      "effective_to": "2024-04-20"
+    },
+    "relation_review": "Article 1 replaces clause 2 Article 26 of QD10/2017, including Article 7 reference and excess-area coefficient rule. Article 2 of QD27/2024 repeals QD20/2022 entirely from 20/04/2024; no assumption that a later act revives it. QD10 endpoint and referenced Article 7 still pending.",
+    "evidence_urls": [
+      "https://vanban.chinhphu.vn/?classid=1&docid=205909&pageid=27160",
+      "https://datafiles.chinhphu.vn/cpp/files/vbpq/2022/06/20hn.signed.pdf",
+      "https://congbao.hanoi.gov.vn/Default.aspx?p_attribute=1805&pageid=45002"
+    ],
+    "freshness_receipt_created": false
+  },
+  "no_automatic_approval": true,
+  "serving_state_changed": false
+}

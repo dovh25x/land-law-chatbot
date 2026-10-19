@@ -1,0 +1,22 @@
+{
+  "checked_at": "2026-10-18T18:55:32.205464+00:00",
+  "scope": "One small diagnostic request; not a full legal-answer or throughput benchmark",
+  "credential_source": "current Settings configuration; credential never printed or saved",
+  "responses": [
+    {
+      "http_status": 200,
+      "quota_headers": {
+        "x-ratelimit-limit-requests": "1000",
+        "x-ratelimit-limit-tokens": "8000",
+        "x-ratelimit-remaining-requests": "999",
+        "x-ratelimit-remaining-tokens": "6990",
+        "x-ratelimit-reset-requests": "1m26.4s",
+        "x-ratelimit-reset-tokens": "7.575s"
+      }
+    }
+  ],
+  "passed": true,
+  "llm_requests": 1,
+  "total_tokens": 611,
+  "model": "openai/gpt-oss-120b"
+}

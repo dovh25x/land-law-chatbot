@@ -1,0 +1,84 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+_ test_repair_receives_the_rejected_draft_with_matching_claim_indexes_and_aliases _
+
+store = <landlaw.store.Store object at 0x7687cbfe67b0>
+settings = Settings(app_env='development', llm_provider='groq', groq_api_key=SecretStr('**********'), groq_model='openai/gpt-oss-...s_the_rejec0/data'), reports_dir=PosixPath('/tmp/pytest-of-dovh25x/pytest-35/test_repair_receives_the_rejec0/reports'))
+
+    async def test_repair_receives_the_rejected_draft_with_matching_claim_indexes_and_aliases(store, settings):
+        source = ('Điều 91. Việc phê duyệt phương án bồi thường, hỗ trợ, tái định cư và '
+                  'việc bố trí tái định cư phải được hoàn thành trước khi có quyết định thu hồi đất.')
+        release(store, [document(text=source)])
+        sid, _ = session(store)
+        valid = Claim(text=source.split('. ', 1)[1], citation_ids=['law-1'])
+        invalid = Claim(text='Nếu chưa có nhà mới, mọi hộ được nhận đất ở.', citation_ids=['law-1'])
+    
+        class RepairProvider(FakeProvider):
+            def __init__(self, settings):
+                super().__init__(settings)
+                self.drafts = 0
+    
+            async def generate(self, schema, instruction, payload, budget):
+                if schema is Draft:
+                    budget.llm()
+                    self.drafts += 1
+                    if self.drafts == 1:
+                        assert payload.get('previous_draft') is None
+                        return Draft(status='answered', claims=[valid, invalid])
+                    previous = payload['previous_draft']
+                    assert [c['text'] for c in previous['claims']] == [valid.text, invalid.text]
+                    assert all(c['citation_ids'] == ['C1'] for c in previous['claims'])
+                    assert any(issue.startswith('Claim 1:') for issue in payload['previous_issues'])
+                    assert 'verified again' in instruction
+                    return Draft(status='answered', claims=[valid])
+                return await super().generate(schema, instruction, payload, budget)
+    
+        provider = RepairProvider(settings)
+>       result = await Agent(store, provider).run(ChatRequest(session_id=sid,
+            message='Việc thu hồi đất và bố trí tái định cư cần bảo đảm gì?'), noop)
+
+tests/test_agent.py:1414: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+backend/landlaw/agent.py:1527: in run
+    output = await self.graph.ainvoke(state, config={"recursion_limit": 16})
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.14/site-packages/langgraph/pregel/main.py:4155: in ainvoke
+    async for chunk in self.astream(
+.venv/lib/python3.14/site-packages/langgraph/pregel/main.py:3505: in astream
+    async for _ in runner.atick(
+.venv/lib/python3.14/site-packages/langgraph/pregel/_runner.py:397: in atick
+    await arun_with_retry(
+.venv/lib/python3.14/site-packages/langgraph/pregel/_retry.py:744: in arun_with_retry
+    return await task.proc.ainvoke(task.input, config)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.14/site-packages/langgraph/_internal/_runnable.py:756: in ainvoke
+    input = await asyncio.create_task(
+.venv/lib/python3.14/site-packages/langgraph/_internal/_runnable.py:522: in ainvoke
+    ret = await self.afunc(*args, **kwargs)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend/landlaw/agent.py:881: in synthesize
+    state["draft"] = await self.provider.generate(Draft,
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <test_agent.test_repair_receives_the_rejected_draft_with_matching_claim_indexes_and_aliases.<locals>.RepairProvider object at 0x7687cbfe7380>
+schema = <class 'landlaw.models.Draft'>
+instruction = 'Answer the actual question in Vietnamese. Use ONE concise, independently qualified claim by default; at most three fo...previous_issues from supplied evidence without broadening the answer. Out-of-scope topics get no legal/medical advice.'
+payload = {'question': 'Việc thu hồi đất và bố trí tái định cư cần bảo đảm gì?', 'as_of': '2026-10-19', 'history': [], 'missing_facts': [], ...}
+budget = Budget(llm_calls=2, tool_calls=2, tokens=0, embedding_calls=0, started=13004.580471614)
+
+    async def generate(self, schema, instruction, payload, budget):
+        if schema is Draft:
+            budget.llm()
+            self.drafts += 1
+            if self.drafts == 1:
+                assert payload.get('previous_draft') is None
+                return Draft(status='answered', claims=[valid, invalid])
+>           previous = payload['previous_draft']
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^
+E           KeyError: 'previous_draft'
+E           During task with name 'synthesize' and id 'c26b8563-9637-e0c7-5e19-80ce8383a526'
+
+tests/test_agent.py:1405: KeyError
+=========================== short test summary info ============================
+FAILED tests/test_agent.py::test_repair_receives_the_rejected_draft_with_matching_claim_indexes_and_aliases
+1 failed, 130 deselected in 1.40s

@@ -1,0 +1,13 @@
+import hashlib,json,sys
+from pathlib import Path
+sys.path.insert(0,'scripts')
+from export_mvp_evaluation import export
+root=Path('reports/release-readiness-20261019')
+run=next((root/'generation-postgresql-attempt-6/runs').glob('*-natural-*'))
+output=root/'reviewed-postgresql-attempt-6/natural';output.mkdir(parents=True,exist_ok=False)
+reviews={}
+for row in json.loads((run/'records.json').read_text()):
+ a=row['result']
+ reviews[row['case_id']]={'answer_sha256':hashlib.sha256(json.dumps(a,ensure_ascii=False,sort_keys=True).encode()).hexdigest(),'verdict':'fail','note':'N02 vẫn không đạt: không nêu rõ điều kiện đủ bồi thường ở nhánh khoản 1; chuyển phạm vi xã/phường/thị trấn nơi có đất thu hồi tại thời điểm phê duyệt thành nơi có quyết định phê duyệt; bỏ nhánh nhận giao khoán tại khoản 2. Guard mới không chứng minh mọi diễn giải còn lại đúng. Chỉ chạy 1/8 ca natural, không thay kết quả full suite bằng ca đơn lẻ.','review_method':'AI engineering technical comparison against frozen rubric and full Article 19 parent; not independent legal certification'}
+(output/'reviews.json').write_text(json.dumps(reviews,ensure_ascii=False,indent=2)+'\n')
+export(run,output,Path('data/staging/readiness-20261019-attempt-1/candidate.json'),Path('data/evaluation/natural.jsonl'))

@@ -1,0 +1,121 @@
+{
+  "recorded_at": "2026-10-18T19:27:00.258686+00:00",
+  "origin": "executed",
+  "record": {
+    "case_id": "N07",
+    "mode": "agentic",
+    "answer_origin": "deterministic",
+    "evaluation_context": [],
+    "result": {
+      "status": "clarification_needed",
+      "publication_profile": "academic",
+      "quality_status": "academic_prototype",
+      "retrieval_mode": "hybrid",
+      "coverage_gaps": [
+        {
+          "document_id": "qd-10-2017-hanoi",
+          "document_number": "10/2017/QĐ-UBND",
+          "title": "Quy định bồi thường, hỗ trợ và tái định cư Hà Nội (lịch sử)",
+          "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=189167",
+          "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+        },
+        {
+          "document_id": "qd-30-2019-hanoi",
+          "document_number": "30/2019/QĐ-UBND",
+          "title": "Quy định và bảng giá các loại đất Hà Nội 2020–2024 (lịch sử)",
+          "url": "https://vanban.hanoi.gov.vn/chi-tiet-van-ban/quyet-dinh-so-30-2019-qd-ubnd-cua-ubnd-tp-ha-noi-ve-viec-ban-hanh-quy-dinh-va-bang-gia-cac-loai-dat-189067",
+          "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+        },
+        {
+          "document_id": "qd-20-2023-hanoi",
+          "document_number": "20/2023/QĐ-UBND",
+          "title": "Sửa đổi bảng giá đất Quyết định 30/2019",
+          "url": "https://vbpl.vn/hanoi/Pages/vbpq-toanvan.aspx?ItemID=164473",
+          "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+        },
+        {
+          "document_id": "nd-123-2024",
+          "document_number": "123/2024/NĐ-CP",
+          "title": "Xử phạt vi phạm hành chính lĩnh vực đất đai",
+          "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=211356",
+          "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+        },
+        {
+          "document_id": "ring4-nq106-2022",
+          "document_number": "106/NQ-CP",
+          "title": "Triển khai Nghị quyết 56/2022/QH15 Vành đai 4",
+          "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=206398",
+          "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+        },
+        {
+          "document_id": "nd-01-2017",
+          "document_number": "01/2017/NĐ-CP",
+          "title": "Nghị định 01/2017/NĐ-CP sửa đổi, bổ sung một số nghị định quy định chi tiết thi hành Luật đất đai",
+          "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=187962",
+          "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+        },
+        {
+          "document_id": "nd-148-2020",
+          "document_number": "148/2020/NĐ-CP",
+          "title": "Nghị định 148/2020/NĐ-CP sửa đổi, bổ sung một số nghị định quy định chi tiết thi hành Luật Đất đai",
+          "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=202022",
+          "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+        }
+      ],
+      "content": "Cần bổ sung dữ kiện để xác định quy định áp dụng cho hồ sơ cụ thể.\n\nThông tin cần bổ sung:\n- Loại đất, tình trạng giấy tờ quyền sử dụng đất và nhà ở, chỉ cung cấp thông tin đã ẩn danh.\n- Ngày, căn cứ trong thông báo/quyết định thu hồi đất và phương án bồi thường, hỗ trợ, tái định cư.\n- Có phải di chuyển chỗ ở, còn nhà hoặc đất ở khác tại địa bàn hay không; hồ sơ xác định điều kiện bồi thường đất ở.\n- Vị trí xã/thôn và ranh thu hồi trong hồ sơ; thông tin tổng quan dự án chưa xác định quyền lợi của từng hộ.\n\nBước tiếp theo:\n- Đối chiếu hồ sơ đã ẩn danh với văn bản áp dụng và điều khoản chuyển tiếp; chưa thể khẳng định suất tái định cư hoặc tiền bồi thường cho hộ cụ thể.\n\nThời điểm xem xét: 17/10/2026. Dữ liệu được kiểm tra: 2026-10-11.",
+      "citations": [],
+      "verified_claims": [],
+      "as_of": "2026-10-17",
+      "corpus_release": "corpus-a26bc99e541fbbe2",
+      "trace_id": "bf9acc57-739f-4565-82b5-1f62cdf11056",
+      "trace": [
+        {
+          "step": "routing",
+          "tool": "search_law",
+          "summary": "Yêu cầu xác nhận quyền lợi hộ cụ thể cần hồ sơ; tra cứu nguồn và hỏi dữ kiện trước khi kết luận.",
+          "document_ids": [],
+          "elapsed_ms": 23
+        },
+        {
+          "step": "plan",
+          "tool": null,
+          "summary": "Đã chọn 1 công cụ; chế độ agentic.",
+          "document_ids": [],
+          "elapsed_ms": 23
+        },
+        {
+          "step": "tool",
+          "tool": null,
+          "summary": "Thiếu hồ sơ cá nhân; hỏi bổ sung trước khi truy xuất quy định áp dụng.",
+          "document_ids": [],
+          "elapsed_ms": 26
+        },
+        {
+          "step": "synthesis",
+          "tool": null,
+          "summary": "Đã tạo bản trả lời; đang kiểm tra trước khi hiển thị.",
+          "document_ids": [],
+          "elapsed_ms": 28
+        }
+      ],
+      "missing_facts": [
+        "Loại đất, tình trạng giấy tờ quyền sử dụng đất và nhà ở, chỉ cung cấp thông tin đã ẩn danh.",
+        "Ngày, căn cứ trong thông báo/quyết định thu hồi đất và phương án bồi thường, hỗ trợ, tái định cư.",
+        "Có phải di chuyển chỗ ở, còn nhà hoặc đất ở khác tại địa bàn hay không; hồ sơ xác định điều kiện bồi thường đất ở.",
+        "Vị trí xã/thôn và ranh thu hồi trong hồ sơ; thông tin tổng quan dự án chưa xác định quyền lợi của từng hộ."
+      ],
+      "llm_calls": 0,
+      "embedding_calls": 0,
+      "tool_calls": 0,
+      "token_usage": 0,
+      "elapsed_ms": 310,
+      "model": "openai/gpt-oss-120b",
+      "embedding_model": "multilingual-e5-small-onnx-q8-window-v1",
+      "mode": "agentic",
+      "support_level": "insufficient",
+      "retry_after": null,
+      "retrieved_chunk_ids": [],
+      "evidence_chunk_ids": []
+    }
+  }
+}

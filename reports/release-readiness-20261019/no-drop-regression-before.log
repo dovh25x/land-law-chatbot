@@ -1,0 +1,460 @@
+FFFFFF                                                                   [100%]
+=================================== FAILURES ===================================
+_ test_isolated_validation_retains_database_and_closes_connections[migration-generation] _
+
+tmp_path = PosixPath('/tmp/pytest-of-dovh25x/pytest-0/test_isolated_validation_retai0')
+settings = Settings(app_env='development', llm_provider='groq', groq_api_key=SecretStr('**********'), groq_model='openai/gpt-oss-...dation_retai0/data'), reports_dir=PosixPath('/tmp/pytest-of-dovh25x/pytest-0/test_isolated_validation_retai0/reports'))
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7596fc788e90>
+helper_name = 'generation', failure_point = 'migration'
+
+    @pytest.mark.parametrize('helper_name', ['generation', 'corpus', 'runtime'])
+    @pytest.mark.parametrize('failure_point', ['migration', 'validation'])
+    async def test_isolated_validation_retains_database_and_closes_connections(
+            tmp_path, settings, monkeypatch, helper_name, failure_point):
+        monkeypatch.chdir(tmp_path)
+        migrations = tmp_path/'migrations'
+        migrations.mkdir()
+        (migrations/'001.sql').write_text('VALIDATION_MIGRATION')
+        owner = 'postgresql://owner@localhost/serving'
+        settings = settings.model_copy(update={'admin_database_url': SecretStr(owner),
+                                               'database_url': SecretStr(owner)})
+        commands, connections = [], []
+    
+        class Connection:
+            def __init__(self, connection):
+                self.database = conninfo_to_dict(connection)['dbname']
+                self.closed = False
+                connections.append(self)
+            def __enter__(self): return self
+            def __exit__(self, *_): self.closed = True
+            def execute(self, command):
+                rendered = command if isinstance(command, str) else command.as_string()
+                commands.append(rendered)
+                if rendered == 'VALIDATION_MIGRATION' and failure_point == 'migration':
+                    raise ValidationFailure('migration failed')
+                return self
+            def fetchone(self): return (self.database,)
+    
+        def connect(connection, **_): return Connection(connection)
+        helper = {'generation': evaluate_generation_candidate, 'corpus': evaluate_corpus_candidate,
+                  'runtime': verify_postgres_database}[helper_name]
+        monkeypatch.setattr(helper.psycopg, 'connect', connect)
+        monkeypatch.setattr(helper, 'Settings', lambda: settings)
+        output = tmp_path/'output'
+        expected = {'id': 'fixture', 'documents': []}
+        snapshot = tmp_path/'candidate.json'
+        snapshot.write_text(json.dumps(expected))
+        backup = tmp_path/'backup.json'
+        backup.write_text(json.dumps({'state': [{'key': 'active_release', 'value': 'fixture'}],
+                                     'releases': [{'id': 'fixture', 'payload': 'fixture'}]}))
+        try:
+            with pytest.raises(ValidationFailure):
+                if helper_name == 'generation':
+                    output.mkdir()
+                    with helper.candidate_settings(SimpleNamespace(postgres=True, output=output), tmp_path):
+                        raise ValidationFailure('validation failed')
+                elif helper_name == 'corpus':
+                    monkeypatch.setattr(helper, 'validate_corpus', lambda _: None)
+                    async def evaluate(selected, *_):
+                        if selected.database_url.get_secret_value():
+                            raise ValidationFailure('validation failed')
+                    monkeypatch.setattr(helper, 'evaluate_store', evaluate)
+                    await helper.main(SimpleNamespace(output=output, snapshot=snapshot, backup=backup, postgres=True))
+                else:
+                    monkeypatch.setattr(helper, 'dotenv_values', lambda _: {'ADMIN_DATABASE_URL': owner, 'DATABASE_URL': owner})
+                    class Store:
+                        @staticmethod
+                        def decode_release(_): return expected
+                        def __init__(self, *_): raise ValidationFailure('validation failed')
+                    monkeypatch.setattr(helper, 'Store', Store)
+                    helper.main(backup, output/'runtime.json')
+        finally:
+            assert sum(command.startswith('CREATE DATABASE') for command in commands) == 1
+>           assert not any(command.startswith('DROP DATABASE') for command in commands)
+E           assert not True
+E            +  where True = any(<generator object test_isolated_validation_retains_database_and_closes_connections.<locals>.<genexpr> at 0x7596fc7cd2a0>)
+
+/home/dovh25x/projects/land-law-chatbot/tests/test_operational_databases.py:79: AssertionError
+_ test_isolated_validation_retains_database_and_closes_connections[migration-corpus] _
+
+tmp_path = PosixPath('/tmp/pytest-of-dovh25x/pytest-0/test_isolated_validation_retai1')
+settings = Settings(app_env='development', llm_provider='groq', groq_api_key=SecretStr('**********'), groq_model='openai/gpt-oss-...dation_retai1/data'), reports_dir=PosixPath('/tmp/pytest-of-dovh25x/pytest-0/test_isolated_validation_retai1/reports'))
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7596fc7e4710>
+helper_name = 'corpus', failure_point = 'migration'
+
+    @pytest.mark.parametrize('helper_name', ['generation', 'corpus', 'runtime'])
+    @pytest.mark.parametrize('failure_point', ['migration', 'validation'])
+    async def test_isolated_validation_retains_database_and_closes_connections(
+            tmp_path, settings, monkeypatch, helper_name, failure_point):
+        monkeypatch.chdir(tmp_path)
+        migrations = tmp_path/'migrations'
+        migrations.mkdir()
+        (migrations/'001.sql').write_text('VALIDATION_MIGRATION')
+        owner = 'postgresql://owner@localhost/serving'
+        settings = settings.model_copy(update={'admin_database_url': SecretStr(owner),
+                                               'database_url': SecretStr(owner)})
+        commands, connections = [], []
+    
+        class Connection:
+            def __init__(self, connection):
+                self.database = conninfo_to_dict(connection)['dbname']
+                self.closed = False
+                connections.append(self)
+            def __enter__(self): return self
+            def __exit__(self, *_): self.closed = True
+            def execute(self, command):
+                rendered = command if isinstance(command, str) else command.as_string()
+                commands.append(rendered)
+                if rendered == 'VALIDATION_MIGRATION' and failure_point == 'migration':
+                    raise ValidationFailure('migration failed')
+                return self
+            def fetchone(self): return (self.database,)
+    
+        def connect(connection, **_): return Connection(connection)
+        helper = {'generation': evaluate_generation_candidate, 'corpus': evaluate_corpus_candidate,
+                  'runtime': verify_postgres_database}[helper_name]
+        monkeypatch.setattr(helper.psycopg, 'connect', connect)
+        monkeypatch.setattr(helper, 'Settings', lambda: settings)
+        output = tmp_path/'output'
+        expected = {'id': 'fixture', 'documents': []}
+        snapshot = tmp_path/'candidate.json'
+        snapshot.write_text(json.dumps(expected))
+        backup = tmp_path/'backup.json'
+        backup.write_text(json.dumps({'state': [{'key': 'active_release', 'value': 'fixture'}],
+                                     'releases': [{'id': 'fixture', 'payload': 'fixture'}]}))
+        try:
+            with pytest.raises(ValidationFailure):
+                if helper_name == 'generation':
+                    output.mkdir()
+                    with helper.candidate_settings(SimpleNamespace(postgres=True, output=output), tmp_path):
+                        raise ValidationFailure('validation failed')
+                elif helper_name == 'corpus':
+                    monkeypatch.setattr(helper, 'validate_corpus', lambda _: None)
+                    async def evaluate(selected, *_):
+                        if selected.database_url.get_secret_value():
+                            raise ValidationFailure('validation failed')
+                    monkeypatch.setattr(helper, 'evaluate_store', evaluate)
+                    await helper.main(SimpleNamespace(output=output, snapshot=snapshot, backup=backup, postgres=True))
+                else:
+                    monkeypatch.setattr(helper, 'dotenv_values', lambda _: {'ADMIN_DATABASE_URL': owner, 'DATABASE_URL': owner})
+                    class Store:
+                        @staticmethod
+                        def decode_release(_): return expected
+                        def __init__(self, *_): raise ValidationFailure('validation failed')
+                    monkeypatch.setattr(helper, 'Store', Store)
+                    helper.main(backup, output/'runtime.json')
+        finally:
+            assert sum(command.startswith('CREATE DATABASE') for command in commands) == 1
+>           assert not any(command.startswith('DROP DATABASE') for command in commands)
+E           assert not True
+E            +  where True = any(<generator object test_isolated_validation_retains_database_and_closes_connections.<locals>.<genexpr> at 0x7596fc7cd9a0>)
+
+/home/dovh25x/projects/land-law-chatbot/tests/test_operational_databases.py:79: AssertionError
+_ test_isolated_validation_retains_database_and_closes_connections[migration-runtime] _
+
+tmp_path = PosixPath('/tmp/pytest-of-dovh25x/pytest-0/test_isolated_validation_retai2')
+settings = Settings(app_env='development', llm_provider='groq', groq_api_key=SecretStr('**********'), groq_model='openai/gpt-oss-...dation_retai2/data'), reports_dir=PosixPath('/tmp/pytest-of-dovh25x/pytest-0/test_isolated_validation_retai2/reports'))
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7596fc7b1260>
+helper_name = 'runtime', failure_point = 'migration'
+
+    @pytest.mark.parametrize('helper_name', ['generation', 'corpus', 'runtime'])
+    @pytest.mark.parametrize('failure_point', ['migration', 'validation'])
+    async def test_isolated_validation_retains_database_and_closes_connections(
+            tmp_path, settings, monkeypatch, helper_name, failure_point):
+        monkeypatch.chdir(tmp_path)
+        migrations = tmp_path/'migrations'
+        migrations.mkdir()
+        (migrations/'001.sql').write_text('VALIDATION_MIGRATION')
+        owner = 'postgresql://owner@localhost/serving'
+        settings = settings.model_copy(update={'admin_database_url': SecretStr(owner),
+                                               'database_url': SecretStr(owner)})
+        commands, connections = [], []
+    
+        class Connection:
+            def __init__(self, connection):
+                self.database = conninfo_to_dict(connection)['dbname']
+                self.closed = False
+                connections.append(self)
+            def __enter__(self): return self
+            def __exit__(self, *_): self.closed = True
+            def execute(self, command):
+                rendered = command if isinstance(command, str) else command.as_string()
+                commands.append(rendered)
+                if rendered == 'VALIDATION_MIGRATION' and failure_point == 'migration':
+                    raise ValidationFailure('migration failed')
+                return self
+            def fetchone(self): return (self.database,)
+    
+        def connect(connection, **_): return Connection(connection)
+        helper = {'generation': evaluate_generation_candidate, 'corpus': evaluate_corpus_candidate,
+                  'runtime': verify_postgres_database}[helper_name]
+        monkeypatch.setattr(helper.psycopg, 'connect', connect)
+        monkeypatch.setattr(helper, 'Settings', lambda: settings)
+        output = tmp_path/'output'
+        expected = {'id': 'fixture', 'documents': []}
+        snapshot = tmp_path/'candidate.json'
+        snapshot.write_text(json.dumps(expected))
+        backup = tmp_path/'backup.json'
+        backup.write_text(json.dumps({'state': [{'key': 'active_release', 'value': 'fixture'}],
+                                     'releases': [{'id': 'fixture', 'payload': 'fixture'}]}))
+        try:
+            with pytest.raises(ValidationFailure):
+                if helper_name == 'generation':
+                    output.mkdir()
+                    with helper.candidate_settings(SimpleNamespace(postgres=True, output=output), tmp_path):
+                        raise ValidationFailure('validation failed')
+                elif helper_name == 'corpus':
+                    monkeypatch.setattr(helper, 'validate_corpus', lambda _: None)
+                    async def evaluate(selected, *_):
+                        if selected.database_url.get_secret_value():
+                            raise ValidationFailure('validation failed')
+                    monkeypatch.setattr(helper, 'evaluate_store', evaluate)
+                    await helper.main(SimpleNamespace(output=output, snapshot=snapshot, backup=backup, postgres=True))
+                else:
+                    monkeypatch.setattr(helper, 'dotenv_values', lambda _: {'ADMIN_DATABASE_URL': owner, 'DATABASE_URL': owner})
+                    class Store:
+                        @staticmethod
+                        def decode_release(_): return expected
+                        def __init__(self, *_): raise ValidationFailure('validation failed')
+                    monkeypatch.setattr(helper, 'Store', Store)
+                    helper.main(backup, output/'runtime.json')
+        finally:
+            assert sum(command.startswith('CREATE DATABASE') for command in commands) == 1
+>           assert not any(command.startswith('DROP DATABASE') for command in commands)
+E           assert not True
+E            +  where True = any(<generator object test_isolated_validation_retains_database_and_closes_connections.<locals>.<genexpr> at 0x7596fc7cda80>)
+
+/home/dovh25x/projects/land-law-chatbot/tests/test_operational_databases.py:79: AssertionError
+_ test_isolated_validation_retains_database_and_closes_connections[validation-generation] _
+
+tmp_path = PosixPath('/tmp/pytest-of-dovh25x/pytest-0/test_isolated_validation_retai3')
+settings = Settings(app_env='development', llm_provider='groq', groq_api_key=SecretStr('**********'), groq_model='openai/gpt-oss-...dation_retai3/data'), reports_dir=PosixPath('/tmp/pytest-of-dovh25x/pytest-0/test_isolated_validation_retai3/reports'))
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7596fc77ba50>
+helper_name = 'generation', failure_point = 'validation'
+
+    @pytest.mark.parametrize('helper_name', ['generation', 'corpus', 'runtime'])
+    @pytest.mark.parametrize('failure_point', ['migration', 'validation'])
+    async def test_isolated_validation_retains_database_and_closes_connections(
+            tmp_path, settings, monkeypatch, helper_name, failure_point):
+        monkeypatch.chdir(tmp_path)
+        migrations = tmp_path/'migrations'
+        migrations.mkdir()
+        (migrations/'001.sql').write_text('VALIDATION_MIGRATION')
+        owner = 'postgresql://owner@localhost/serving'
+        settings = settings.model_copy(update={'admin_database_url': SecretStr(owner),
+                                               'database_url': SecretStr(owner)})
+        commands, connections = [], []
+    
+        class Connection:
+            def __init__(self, connection):
+                self.database = conninfo_to_dict(connection)['dbname']
+                self.closed = False
+                connections.append(self)
+            def __enter__(self): return self
+            def __exit__(self, *_): self.closed = True
+            def execute(self, command):
+                rendered = command if isinstance(command, str) else command.as_string()
+                commands.append(rendered)
+                if rendered == 'VALIDATION_MIGRATION' and failure_point == 'migration':
+                    raise ValidationFailure('migration failed')
+                return self
+            def fetchone(self): return (self.database,)
+    
+        def connect(connection, **_): return Connection(connection)
+        helper = {'generation': evaluate_generation_candidate, 'corpus': evaluate_corpus_candidate,
+                  'runtime': verify_postgres_database}[helper_name]
+        monkeypatch.setattr(helper.psycopg, 'connect', connect)
+        monkeypatch.setattr(helper, 'Settings', lambda: settings)
+        output = tmp_path/'output'
+        expected = {'id': 'fixture', 'documents': []}
+        snapshot = tmp_path/'candidate.json'
+        snapshot.write_text(json.dumps(expected))
+        backup = tmp_path/'backup.json'
+        backup.write_text(json.dumps({'state': [{'key': 'active_release', 'value': 'fixture'}],
+                                     'releases': [{'id': 'fixture', 'payload': 'fixture'}]}))
+        try:
+            with pytest.raises(ValidationFailure):
+                if helper_name == 'generation':
+                    output.mkdir()
+                    with helper.candidate_settings(SimpleNamespace(postgres=True, output=output), tmp_path):
+                        raise ValidationFailure('validation failed')
+                elif helper_name == 'corpus':
+                    monkeypatch.setattr(helper, 'validate_corpus', lambda _: None)
+                    async def evaluate(selected, *_):
+                        if selected.database_url.get_secret_value():
+                            raise ValidationFailure('validation failed')
+                    monkeypatch.setattr(helper, 'evaluate_store', evaluate)
+                    await helper.main(SimpleNamespace(output=output, snapshot=snapshot, backup=backup, postgres=True))
+                else:
+                    monkeypatch.setattr(helper, 'dotenv_values', lambda _: {'ADMIN_DATABASE_URL': owner, 'DATABASE_URL': owner})
+                    class Store:
+                        @staticmethod
+                        def decode_release(_): return expected
+                        def __init__(self, *_): raise ValidationFailure('validation failed')
+                    monkeypatch.setattr(helper, 'Store', Store)
+                    helper.main(backup, output/'runtime.json')
+        finally:
+            assert sum(command.startswith('CREATE DATABASE') for command in commands) == 1
+>           assert not any(command.startswith('DROP DATABASE') for command in commands)
+E           assert not True
+E            +  where True = any(<generator object test_isolated_validation_retains_database_and_closes_connections.<locals>.<genexpr> at 0x7596fc7cde00>)
+
+/home/dovh25x/projects/land-law-chatbot/tests/test_operational_databases.py:79: AssertionError
+_ test_isolated_validation_retains_database_and_closes_connections[validation-corpus] _
+
+tmp_path = PosixPath('/tmp/pytest-of-dovh25x/pytest-0/test_isolated_validation_retai4')
+settings = Settings(app_env='development', llm_provider='groq', groq_api_key=SecretStr('**********'), groq_model='openai/gpt-oss-...dation_retai4/data'), reports_dir=PosixPath('/tmp/pytest-of-dovh25x/pytest-0/test_isolated_validation_retai4/reports'))
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7596fc64da90>
+helper_name = 'corpus', failure_point = 'validation'
+
+    @pytest.mark.parametrize('helper_name', ['generation', 'corpus', 'runtime'])
+    @pytest.mark.parametrize('failure_point', ['migration', 'validation'])
+    async def test_isolated_validation_retains_database_and_closes_connections(
+            tmp_path, settings, monkeypatch, helper_name, failure_point):
+        monkeypatch.chdir(tmp_path)
+        migrations = tmp_path/'migrations'
+        migrations.mkdir()
+        (migrations/'001.sql').write_text('VALIDATION_MIGRATION')
+        owner = 'postgresql://owner@localhost/serving'
+        settings = settings.model_copy(update={'admin_database_url': SecretStr(owner),
+                                               'database_url': SecretStr(owner)})
+        commands, connections = [], []
+    
+        class Connection:
+            def __init__(self, connection):
+                self.database = conninfo_to_dict(connection)['dbname']
+                self.closed = False
+                connections.append(self)
+            def __enter__(self): return self
+            def __exit__(self, *_): self.closed = True
+            def execute(self, command):
+                rendered = command if isinstance(command, str) else command.as_string()
+                commands.append(rendered)
+                if rendered == 'VALIDATION_MIGRATION' and failure_point == 'migration':
+                    raise ValidationFailure('migration failed')
+                return self
+            def fetchone(self): return (self.database,)
+    
+        def connect(connection, **_): return Connection(connection)
+        helper = {'generation': evaluate_generation_candidate, 'corpus': evaluate_corpus_candidate,
+                  'runtime': verify_postgres_database}[helper_name]
+        monkeypatch.setattr(helper.psycopg, 'connect', connect)
+        monkeypatch.setattr(helper, 'Settings', lambda: settings)
+        output = tmp_path/'output'
+        expected = {'id': 'fixture', 'documents': []}
+        snapshot = tmp_path/'candidate.json'
+        snapshot.write_text(json.dumps(expected))
+        backup = tmp_path/'backup.json'
+        backup.write_text(json.dumps({'state': [{'key': 'active_release', 'value': 'fixture'}],
+                                     'releases': [{'id': 'fixture', 'payload': 'fixture'}]}))
+        try:
+            with pytest.raises(ValidationFailure):
+                if helper_name == 'generation':
+                    output.mkdir()
+                    with helper.candidate_settings(SimpleNamespace(postgres=True, output=output), tmp_path):
+                        raise ValidationFailure('validation failed')
+                elif helper_name == 'corpus':
+                    monkeypatch.setattr(helper, 'validate_corpus', lambda _: None)
+                    async def evaluate(selected, *_):
+                        if selected.database_url.get_secret_value():
+                            raise ValidationFailure('validation failed')
+                    monkeypatch.setattr(helper, 'evaluate_store', evaluate)
+                    await helper.main(SimpleNamespace(output=output, snapshot=snapshot, backup=backup, postgres=True))
+                else:
+                    monkeypatch.setattr(helper, 'dotenv_values', lambda _: {'ADMIN_DATABASE_URL': owner, 'DATABASE_URL': owner})
+                    class Store:
+                        @staticmethod
+                        def decode_release(_): return expected
+                        def __init__(self, *_): raise ValidationFailure('validation failed')
+                    monkeypatch.setattr(helper, 'Store', Store)
+                    helper.main(backup, output/'runtime.json')
+        finally:
+            assert sum(command.startswith('CREATE DATABASE') for command in commands) == 1
+>           assert not any(command.startswith('DROP DATABASE') for command in commands)
+E           assert not True
+E            +  where True = any(<generator object test_isolated_validation_retains_database_and_closes_connections.<locals>.<genexpr> at 0x7596fc7ce880>)
+
+/home/dovh25x/projects/land-law-chatbot/tests/test_operational_databases.py:79: AssertionError
+_ test_isolated_validation_retains_database_and_closes_connections[validation-runtime] _
+
+tmp_path = PosixPath('/tmp/pytest-of-dovh25x/pytest-0/test_isolated_validation_retai5')
+settings = Settings(app_env='development', llm_provider='groq', groq_api_key=SecretStr('**********'), groq_model='openai/gpt-oss-...dation_retai5/data'), reports_dir=PosixPath('/tmp/pytest-of-dovh25x/pytest-0/test_isolated_validation_retai5/reports'))
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7596fc7cea50>
+helper_name = 'runtime', failure_point = 'validation'
+
+    @pytest.mark.parametrize('helper_name', ['generation', 'corpus', 'runtime'])
+    @pytest.mark.parametrize('failure_point', ['migration', 'validation'])
+    async def test_isolated_validation_retains_database_and_closes_connections(
+            tmp_path, settings, monkeypatch, helper_name, failure_point):
+        monkeypatch.chdir(tmp_path)
+        migrations = tmp_path/'migrations'
+        migrations.mkdir()
+        (migrations/'001.sql').write_text('VALIDATION_MIGRATION')
+        owner = 'postgresql://owner@localhost/serving'
+        settings = settings.model_copy(update={'admin_database_url': SecretStr(owner),
+                                               'database_url': SecretStr(owner)})
+        commands, connections = [], []
+    
+        class Connection:
+            def __init__(self, connection):
+                self.database = conninfo_to_dict(connection)['dbname']
+                self.closed = False
+                connections.append(self)
+            def __enter__(self): return self
+            def __exit__(self, *_): self.closed = True
+            def execute(self, command):
+                rendered = command if isinstance(command, str) else command.as_string()
+                commands.append(rendered)
+                if rendered == 'VALIDATION_MIGRATION' and failure_point == 'migration':
+                    raise ValidationFailure('migration failed')
+                return self
+            def fetchone(self): return (self.database,)
+    
+        def connect(connection, **_): return Connection(connection)
+        helper = {'generation': evaluate_generation_candidate, 'corpus': evaluate_corpus_candidate,
+                  'runtime': verify_postgres_database}[helper_name]
+        monkeypatch.setattr(helper.psycopg, 'connect', connect)
+        monkeypatch.setattr(helper, 'Settings', lambda: settings)
+        output = tmp_path/'output'
+        expected = {'id': 'fixture', 'documents': []}
+        snapshot = tmp_path/'candidate.json'
+        snapshot.write_text(json.dumps(expected))
+        backup = tmp_path/'backup.json'
+        backup.write_text(json.dumps({'state': [{'key': 'active_release', 'value': 'fixture'}],
+                                     'releases': [{'id': 'fixture', 'payload': 'fixture'}]}))
+        try:
+            with pytest.raises(ValidationFailure):
+                if helper_name == 'generation':
+                    output.mkdir()
+                    with helper.candidate_settings(SimpleNamespace(postgres=True, output=output), tmp_path):
+                        raise ValidationFailure('validation failed')
+                elif helper_name == 'corpus':
+                    monkeypatch.setattr(helper, 'validate_corpus', lambda _: None)
+                    async def evaluate(selected, *_):
+                        if selected.database_url.get_secret_value():
+                            raise ValidationFailure('validation failed')
+                    monkeypatch.setattr(helper, 'evaluate_store', evaluate)
+                    await helper.main(SimpleNamespace(output=output, snapshot=snapshot, backup=backup, postgres=True))
+                else:
+                    monkeypatch.setattr(helper, 'dotenv_values', lambda _: {'ADMIN_DATABASE_URL': owner, 'DATABASE_URL': owner})
+                    class Store:
+                        @staticmethod
+                        def decode_release(_): return expected
+                        def __init__(self, *_): raise ValidationFailure('validation failed')
+                    monkeypatch.setattr(helper, 'Store', Store)
+                    helper.main(backup, output/'runtime.json')
+        finally:
+            assert sum(command.startswith('CREATE DATABASE') for command in commands) == 1
+>           assert not any(command.startswith('DROP DATABASE') for command in commands)
+E           assert not True
+E            +  where True = any(<generator object test_isolated_validation_retains_database_and_closes_connections.<locals>.<genexpr> at 0x7596fc7cef80>)
+
+/home/dovh25x/projects/land-law-chatbot/tests/test_operational_databases.py:79: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_operational_databases.py::test_isolated_validation_retains_database_and_closes_connections[migration-generation]
+FAILED tests/test_operational_databases.py::test_isolated_validation_retains_database_and_closes_connections[migration-corpus]
+FAILED tests/test_operational_databases.py::test_isolated_validation_retains_database_and_closes_connections[migration-runtime]
+FAILED tests/test_operational_databases.py::test_isolated_validation_retains_database_and_closes_connections[validation-generation]
+FAILED tests/test_operational_databases.py::test_isolated_validation_retains_database_and_closes_connections[validation-corpus]
+FAILED tests/test_operational_databases.py::test_isolated_validation_retains_database_and_closes_connections[validation-runtime]
+6 failed in 2.14s

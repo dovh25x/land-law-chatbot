@@ -1,0 +1,22 @@
+{
+  "checked_at": "2026-10-18T19:00:29.383812+00:00",
+  "document_id": "ring4-nq106-2022",
+  "pdf_sha256": "ea7b92ba9e6097f9fc5f97d55b22317b2a0ca4147ae4df47b17213f790c5f7b9",
+  "ocr_sha256": "f4bece5971e92a7dc949bfa572127d0c85abbc78b7b4b571859246c1a63a504d",
+  "method": "AI engineering visual inspection of physical PDF page 1 at 1.7x; not full-document verification or legal certification",
+  "pages_visually_reviewed": [
+    1
+  ],
+  "findings": [
+    {
+      "field": "issue_date",
+      "physical_page": 1,
+      "pdf_reading": "Hà Nội, ngày 18 tháng 8 năm 2022",
+      "ocr_candidate": "Hà Nội, ngày 48 tháng 8 năm 2022",
+      "severity": "blocking for automatic OCR promotion"
+    }
+  ],
+  "decision": "Keep source pending; do not patch one number and mark the whole nine-page document verified. Review all operative text, annexes, references and subsequent amendments before rebuilding.",
+  "serving_state_changed": false,
+  "freshness_receipt_created": false
+}

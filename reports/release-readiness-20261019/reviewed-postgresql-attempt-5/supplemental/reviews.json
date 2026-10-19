@@ -1,0 +1,26 @@
+{
+  "X01": {
+    "answer_sha256": "64e0720a2d499e5d1098ec4691fff378941065e5aee25651d7918f9c2a9417ce",
+    "verdict": "pass",
+    "note": "Đúng chi phí tháo dỡ/di chuyển/lắp đặt và thiệt hại máy móc/dây chuyền trong quá trình đó, không tạo mức tiền.",
+    "review_method": "AI engineering technical comparison against frozen rubric and full cited corpus passages; not independent legal certification"
+  },
+  "X02": {
+    "answer_sha256": "40c170ebac88521361b063aab673d17942487966f5bd3986f3eaa04a276cc9d3",
+    "verdict": "fail",
+    "note": "Verifier chặn draft/repair; không có giải thích được phát hành về nhóm hỗ trợ và điều kiện áp dụng, nên chưa đạt câu nội dung dù từ chối an toàn.",
+    "review_method": "AI engineering technical comparison against frozen rubric and full cited corpus passages; not independent legal certification"
+  },
+  "X03": {
+    "answer_sha256": "6fe784a3c09c9c3b8257145e7c45dced36b4e5e99d4609603e23c3aad8705428",
+    "verdict": "fail",
+    "note": "Không có câu trả lời được phát hành phân biệt đối tượng khoản 1 và điều kiện khoản 2 Điều 95; safe abstention không đạt rubric nội dung.",
+    "review_method": "AI engineering technical comparison against frozen rubric and full cited corpus passages; not independent legal certification"
+  },
+  "X04": {
+    "answer_sha256": "a380e7eb021b18249daedec0b226a18329491f032649c8de36a1608022237bd7",
+    "verdict": "pass",
+    "note": "Không xác nhận văn bản giả hay mức 50 tỷ; nêu thiếu chứng cứ và không suy quyền lợi từ việc corpus không có số hiệu.",
+    "review_method": "AI engineering technical comparison against frozen rubric and full cited corpus passages; not independent legal certification"
+  }
+}

@@ -1,0 +1,203 @@
+....................FF.....F..............F.................FF.......... [ 59%]
+..................................................                       [100%]
+=================================== FAILURES ===================================
+_ test_missing_tool_identifier_falls_back_and_never_becomes_public_question[\u0110i\u1ec1u ki\u1ec7n b\u1ed3i th\u01b0\u1eddng khi thu h\u1ed3i \u0111\u1ea5t?-answered-facts0] _
+
+store = <landlaw.store.Store object at 0x7a1d3deba750>
+settings = Settings(app_env='development', llm_provider='groq', groq_api_key=SecretStr('**********'), groq_model='openai/gpt-oss-...dentifier_f0/data'), reports_dir=PosixPath('/tmp/pytest-of-dovh25x/pytest-23/test_missing_tool_identifier_f0/reports'))
+question = 'Điều kiện bồi thường khi thu hồi đất?', status = 'answered'
+facts = []
+
+    @pytest.mark.parametrize('question,status,facts',[
+        ('Điều kiện bồi thường khi thu hồi đất?','answered',[]),
+        ('Nhà tôi cần kiểm tra điều kiện bồi thường khi thu hồi đất?','clarification_needed',['Ngày phê duyệt phương án của gia đình'])])
+    async def test_missing_tool_identifier_falls_back_and_never_becomes_public_question(store,settings,question,status,facts):
+        law=document(document_number='31/2024/QH15',issued_on=date(2024,1,18))
+        release(store,[law]);sid,_=session(store)
+        class Provider(FakeProvider):
+            async def generate(self,schema,instruction,payload,budget):
+                if schema is Plan:
+                    budget.llm()
+                    return Plan(tools=[ToolCall(name='check_effectivity')],missing_facts=[
+                        'document_id của văn bản','Ngày ban hành Luật 31/2024/QH15','Ngày phê duyệt phương án của gia đình'])
+                return await super().generate(schema,instruction,payload,budget)
+        result=await Agent(store,Provider(settings)).run(ChatRequest(session_id=sid,
+            message=question),noop)
+        assert result.verified_claims and result.status==status
+        assert result.missing_facts==facts
+>       assert any('Không mở được' in event.summary for event in result.trace)
+E       assert False
+E        +  where False = any(<generator object test_missing_tool_identifier_falls_back_and_never_becomes_public_question.<locals>.<genexpr> at 0x7a1d3debbb90>)
+
+tests/test_agent.py:378: AssertionError
+_ test_missing_tool_identifier_falls_back_and_never_becomes_public_question[Nh\xe0 t\xf4i c\u1ea7n ki\u1ec3m tra \u0111i\u1ec1u ki\u1ec7n b\u1ed3i th\u01b0\u1eddng khi thu h\u1ed3i \u0111\u1ea5t?-clarification_needed-facts1] _
+
+store = <landlaw.store.Store object at 0x7a1d3df61c10>
+settings = Settings(app_env='development', llm_provider='groq', groq_api_key=SecretStr('**********'), groq_model='openai/gpt-oss-...dentifier_f1/data'), reports_dir=PosixPath('/tmp/pytest-of-dovh25x/pytest-23/test_missing_tool_identifier_f1/reports'))
+question = 'Nhà tôi cần kiểm tra điều kiện bồi thường khi thu hồi đất?'
+status = 'clarification_needed'
+facts = ['Ngày phê duyệt phương án của gia đình']
+
+    @pytest.mark.parametrize('question,status,facts',[
+        ('Điều kiện bồi thường khi thu hồi đất?','answered',[]),
+        ('Nhà tôi cần kiểm tra điều kiện bồi thường khi thu hồi đất?','clarification_needed',['Ngày phê duyệt phương án của gia đình'])])
+    async def test_missing_tool_identifier_falls_back_and_never_becomes_public_question(store,settings,question,status,facts):
+        law=document(document_number='31/2024/QH15',issued_on=date(2024,1,18))
+        release(store,[law]);sid,_=session(store)
+        class Provider(FakeProvider):
+            async def generate(self,schema,instruction,payload,budget):
+                if schema is Plan:
+                    budget.llm()
+                    return Plan(tools=[ToolCall(name='check_effectivity')],missing_facts=[
+                        'document_id của văn bản','Ngày ban hành Luật 31/2024/QH15','Ngày phê duyệt phương án của gia đình'])
+                return await super().generate(schema,instruction,payload,budget)
+        result=await Agent(store,Provider(settings)).run(ChatRequest(session_id=sid,
+            message=question),noop)
+>       assert result.verified_claims and result.status==status
+E       AssertionError: assert ([Claim(kind='legal_rule', text='Cần kiểm tra điều kiện theo hồ sơ.', citation_ids=['law-1'])] and 'answered' == 'clarification_needed'
+E        +  where [Claim(kind='legal_rule', text='Cần kiểm tra điều kiện theo hồ sơ.', citation_ids=['law-1'])] = ChatResult(status='answered', publication_profile='academic', quality_status='academic_prototype', retrieval_mode='lex...', mode='agentic', support_level='full', retry_after=None, retrieved_chunk_ids=['law-1'], evidence_chunk_ids=['law-1']).verified_claims
+E         
+E         - clarification_needed
+E         + answered)
+
+tests/test_agent.py:376: AssertionError
+______________ test_graph_calls_tools_and_verifies_before_answer _______________
+
+store = <landlaw.store.Store object at 0x7a1d3c288190>
+settings = Settings(app_env='development', llm_provider='groq', groq_api_key=SecretStr('**********'), groq_model='openai/gpt-oss-...ols_and_ver0/data'), reports_dir=PosixPath('/tmp/pytest-of-dovh25x/pytest-23/test_graph_calls_tools_and_ver0/reports'))
+
+    async def test_graph_calls_tools_and_verifies_before_answer(store, settings):
+        release(store)
+        sid, _ = session(store)
+        events = []
+        async def capture(event):
+            events.append(event.step)
+        result = await Agent(store, FakeProvider(settings)).run(ChatRequest(session_id=sid, message="Điều kiện bồi thường?"), capture)
+        assert result.status == "answered"
+        assert result.citations[0].id == "law-1"
+>       assert result.llm_calls == 3 and result.tool_calls >= 2
+E       AssertionError: assert (2 == 3)
+E        +  where 2 = ChatResult(status='answered', publication_profile='academic', quality_status='academic_prototype', retrieval_mode='lex...', mode='agentic', support_level='full', retry_after=None, retrieved_chunk_ids=['law-1'], evidence_chunk_ids=['law-1']).llm_calls
+
+tests/test_agent.py:439: AssertionError
+_______ test_retry_prioritizes_new_evidence_over_a_full_previous_context _______
+
+store = <landlaw.store.Store object at 0x7a1d3c211400>
+settings = Settings(app_env='development', llm_provider='groq', groq_api_key=SecretStr('**********'), groq_model='openai/gpt-oss-...zes_new_evi0/data'), reports_dir=PosixPath('/tmp/pytest-of-dovh25x/pytest-23/test_retry_prioritizes_new_evi0/reports'))
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7a1d3c276dd0>
+
+    async def test_retry_prioritizes_new_evidence_over_a_full_previous_context(store,settings,monkeypatch):
+        from landlaw.models import Evidence
+        from landlaw.agent import SupportingQuote
+        docs=[document(f'old-{i}') for i in range(24)]+[document('new')]
+        release(store,docs)
+        sid,_=session(store)
+        def search(query,*args):
+            selected=[docs[-1]] if query=='new' else docs[int(query)*8:(int(query)+1)*8]
+            return [Evidence(chunk=d.chunks[0],document=d) for d in selected]
+        monkeypatch.setattr(store,'search',search)
+        class Fresh(FakeProvider):
+            async def generate(self,schema,instruction,payload,budget):
+                budget.llm()
+                if schema is Plan:
+                    return Plan(tools=[ToolCall(name='search_law',query=str(i)) for i in range(3)])
+                if schema is Draft:
+                    return Draft(status='answered',summary='Kết quả',claims=[Claim(text='Điều kiện được kiểm tra theo hồ sơ.',citation_ids=['new-1'])])
+                if any(e['document_id']=='new' for e in payload['evidence']):
+                    citation=next(e['citation_id'] for e in payload['evidence'] if e['document_id']=='new')
+                    return Verification(supported_claim_indexes=[0],supporting_quotes=[SupportingQuote(
+                        claim_index=0,citation_id=citation,quote=docs[-1].chunks[0].text)])
+                return Verification(needs_more_evidence=True,followup_query='new',issues=['Cần chứng cứ mới'])
+>       result=await Agent(store,Fresh(settings)).run(ChatRequest(session_id=sid,message='bồi thường'),noop)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_agent.py:591: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+backend/landlaw/agent.py:1496: in run
+    output = await self.graph.ainvoke(state, config={"recursion_limit": 16})
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.14/site-packages/langgraph/pregel/main.py:4155: in ainvoke
+    async for chunk in self.astream(
+.venv/lib/python3.14/site-packages/langgraph/pregel/main.py:3505: in astream
+    async for _ in runner.atick(
+.venv/lib/python3.14/site-packages/langgraph/pregel/_runner.py:397: in atick
+    await arun_with_retry(
+.venv/lib/python3.14/site-packages/langgraph/pregel/_retry.py:744: in arun_with_retry
+    return await task.proc.ainvoke(task.input, config)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.14/site-packages/langgraph/_internal/_runnable.py:756: in ainvoke
+    input = await asyncio.create_task(
+.venv/lib/python3.14/site-packages/langgraph/_internal/_runnable.py:522: in ainvoke
+    ret = await self.afunc(*args, **kwargs)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend/landlaw/agent.py:548: in tools
+    results = await self.search(state, call.query or state["request"].message, state["request"].project)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend/landlaw/agent.py:496: in search
+    hits = await asyncio.to_thread(self.store.search, query, vector, project,
+/usr/lib/python3.14/asyncio/threads.py:25: in to_thread
+    return await loop.run_in_executor(None, func_call)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.14/concurrent/futures/thread.py:86: in run
+    result = ctx.run(self.task)
+             ^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.14/concurrent/futures/thread.py:73: in run
+    return fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+query = 'bồi thường'
+args = (None, None, 'r1', 'multilingual-e5-small-onnx-q8-window-v1', datetime.date(2026, 10, 19))
+
+    def search(query,*args):
+>       selected=[docs[-1]] if query=='new' else docs[int(query)*8:(int(query)+1)*8]
+                                                      ^^^^^^^^^^
+E       ValueError: invalid literal for int() with base 10: 'bồi thường'
+E       During task with name 'tools' and id 'b186ae80-8d42-f5bc-cac5-18a94771bfd0'
+
+tests/test_agent.py:576: ValueError
+___ test_invalid_planner_falls_back_only_to_bounded_read_and_still_verifies ____
+
+store = <landlaw.store.Store object at 0x7a1d3c1632f0>
+settings = Settings(app_env='development', llm_provider='groq', groq_api_key=SecretStr('**********'), groq_model='openai/gpt-oss-...r_falls_bac0/data'), reports_dir=PosixPath('/tmp/pytest-of-dovh25x/pytest-23/test_invalid_planner_falls_bac0/reports'))
+
+    async def test_invalid_planner_falls_back_only_to_bounded_read_and_still_verifies(store,settings):
+        release(store);sid,_=session(store)
+        class FormatFailure(FakeProvider):
+            async def generate(self,schema,instruction,payload,budget):
+                if schema is Plan:
+                    for _ in range(3):budget.llm()
+                    raise ProviderUnavailable('Invalid planning JSON',format_failure=True)
+                return await super().generate(schema,instruction,payload,budget)
+        result=await Agent(store,FormatFailure(settings)).run(ChatRequest(session_id=sid,message='Điều kiện bồi thường?'),noop)
+>       assert result.status=='answered' and result.llm_calls==5
+E       AssertionError: assert ('answered' == 'answered'
+E         
+E           answered and 2 == 5)
+E        +  where 2 = ChatResult(status='answered', publication_profile='academic', quality_status='academic_prototype', retrieval_mode='lex...', mode='agentic', support_level='full', retry_after=None, retrieved_chunk_ids=['law-1'], evidence_chunk_ids=['law-1']).llm_calls
+
+tests/test_agent.py:759: AssertionError
+______ test_planner_quota_does_not_trigger_fallback_or_unverified_answer _______
+
+store = <landlaw.store.Store object at 0x7a1d3c163ad0>
+settings = Settings(app_env='development', llm_provider='groq', groq_api_key=SecretStr('**********'), groq_model='openai/gpt-oss-...does_not_tr0/data'), reports_dir=PosixPath('/tmp/pytest-of-dovh25x/pytest-23/test_planner_quota_does_not_tr0/reports'))
+
+    async def test_planner_quota_does_not_trigger_fallback_or_unverified_answer(store,settings):
+        release(store);sid,_=session(store)
+        result=await Agent(store,FakeProvider(settings,failure=RateLimited(3600,source='provider'))).run(
+            ChatRequest(session_id=sid,message='Điều kiện bồi thường?'),noop)
+>       assert result.status=='limited' and result.tool_calls==0 and not result.verified_claims
+E       AssertionError: assert ('limited' == 'limited'
+E         
+E           limited and 2 == 0)
+E        +  where 2 = ChatResult(status='limited', publication_profile='academic', quality_status='academic_prototype', retrieval_mode='unav...dow-v1', mode='agentic', support_level='insufficient', retry_after=3600, retrieved_chunk_ids=[], evidence_chunk_ids=[]).tool_calls
+
+tests/test_agent.py:769: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_agent.py::test_missing_tool_identifier_falls_back_and_never_becomes_public_question[\u0110i\u1ec1u ki\u1ec7n b\u1ed3i th\u01b0\u1eddng khi thu h\u1ed3i \u0111\u1ea5t?-answered-facts0]
+FAILED tests/test_agent.py::test_missing_tool_identifier_falls_back_and_never_becomes_public_question[Nh\xe0 t\xf4i c\u1ea7n ki\u1ec3m tra \u0111i\u1ec1u ki\u1ec7n b\u1ed3i th\u01b0\u1eddng khi thu h\u1ed3i \u0111\u1ea5t?-clarification_needed-facts1]
+FAILED tests/test_agent.py::test_graph_calls_tools_and_verifies_before_answer
+FAILED tests/test_agent.py::test_retry_prioritizes_new_evidence_over_a_full_previous_context
+FAILED tests/test_agent.py::test_invalid_planner_falls_back_only_to_bounded_read_and_still_verifies
+FAILED tests/test_agent.py::test_planner_quota_does_not_trigger_fallback_or_unverified_answer
+6 failed, 116 passed in 10.89s

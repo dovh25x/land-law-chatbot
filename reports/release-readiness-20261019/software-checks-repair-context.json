@@ -1,0 +1,66 @@
+{
+  "source_commit": "4d0fd9f1788eebe41ebce0f4d9d35a7d5f337caf",
+  "scope": "236 backend regression tests completed exit 0 on this source. Frontend files unchanged since recorded unit/build/E2E checks. Secret-scan evidence is superseded by the final evidence scan when present. Not proof of legal acceptance or deployment.",
+  "checks": [
+    {
+      "name": "backend",
+      "argv": [
+        ".venv/bin/python",
+        "-m",
+        "pytest",
+        "-q"
+      ],
+      "exit_code": 0,
+      "log": "reports/release-readiness-20261019/backend-tests-repair-context.log",
+      "log_sha256": "8faf48f9ba650c004e3bcce200981bb18b5e508cbf9ba650590e313754230047"
+    },
+    {
+      "name": "secrets",
+      "argv": [
+        ".venv/bin/python",
+        "scripts/check_secrets.py"
+      ],
+      "exit_code": 0,
+      "log": "reports/release-readiness-20261019/secrets-final.log",
+      "log_sha256": "766d75c21b58f1924ca7617ba55b3944d6d327b8f64a36ceba52c177e79340c7"
+    },
+    {
+      "name": "frontend_unit",
+      "argv": [
+        "npm",
+        "--prefix",
+        "frontend",
+        "test"
+      ],
+      "exit_code": 0,
+      "log": "reports/release-readiness-20261019/frontend-unit.log",
+      "log_sha256": "338eb65f89084552622f0a6139419f5bd5a30bd3a68a50940d8b74e8a75dab49"
+    },
+    {
+      "name": "frontend_build",
+      "argv": [
+        "npm",
+        "--prefix",
+        "frontend",
+        "run",
+        "build"
+      ],
+      "exit_code": 0,
+      "log": "reports/release-readiness-20261019/frontend-build.log",
+      "log_sha256": "7f82dd6732c3297938107108e6da17f4ac1b33b44bb0cfabeb914dd18063d9d1"
+    },
+    {
+      "name": "frontend_e2e",
+      "argv": [
+        "npm",
+        "--prefix",
+        "frontend",
+        "run",
+        "test:e2e"
+      ],
+      "exit_code": 0,
+      "log": "reports/release-readiness-20261019/frontend-e2e.log",
+      "log_sha256": "0b06a3af6efde2df6df7e93e0f353b03559ef4e26cefbdc6706c7ec2b910eea8"
+    }
+  ]
+}

@@ -1,0 +1,36 @@
+{"evaluation_progress": {"case_id": "S01", "mode": "agentic", "status": "answered", "elapsed_ms": 17053, "llm_calls": 0, "checkpoint_records": 1}}
+{"evaluation_progress": {"case_id": "S02", "mode": "agentic", "status": "clarification_needed", "elapsed_ms": 4842, "llm_calls": 0, "checkpoint_records": 2}}
+{"evaluation_progress": {"case_id": "S03", "mode": "agentic", "status": "answered", "elapsed_ms": 7211, "llm_calls": 0, "checkpoint_records": 3}}
+{"evaluation_progress": {"case_id": "S04", "mode": "agentic", "status": "answered", "elapsed_ms": 12636, "llm_calls": 2, "checkpoint_records": 4}}
+{"evaluation_provider_cooldown_seconds": 45.39}
+{"evaluation_progress": {"case_id": "S05", "mode": "agentic", "status": "answered", "elapsed_ms": 7420, "llm_calls": 2, "checkpoint_records": 5}}
+{"evaluation_provider_cooldown_seconds": 27.8}
+Traceback (most recent call last):
+  File "/usr/lib/python3.14/asyncio/runners.py", line 127, in run
+    return self._loop.run_until_complete(task)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "/usr/lib/python3.14/asyncio/base_events.py", line 719, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+  File "/home/dovh25x/projects/land-law-chatbot/scripts/evaluate_generation_candidate.py", line 66, in main
+    report = await evaluate(settings, store, provider, split, concurrency=1)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/dovh25x/projects/land-law-chatbot/backend/landlaw/evaluation.py", line 170, in evaluate
+    await asyncio.sleep(cooldown)
+  File "/usr/lib/python3.14/asyncio/tasks.py", line 702, in sleep
+    return await future
+           ^^^^^^^^^^^^
+asyncio.exceptions.CancelledError
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/dovh25x/projects/land-law-chatbot/scripts/evaluate_generation_candidate.py", line 89, in <module>
+    asyncio.run(main(args))
+    ~~~~~~~~~~~^^^^^^^^^^^^
+  File "/usr/lib/python3.14/asyncio/runners.py", line 204, in run
+    return runner.run(main)
+           ~~~~~~~~~~^^^^^^
+  File "/usr/lib/python3.14/asyncio/runners.py", line 132, in run
+    raise KeyboardInterrupt()
+KeyboardInterrupt

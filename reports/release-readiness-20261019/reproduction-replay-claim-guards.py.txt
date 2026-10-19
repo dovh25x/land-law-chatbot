@@ -1,0 +1,42 @@
+"""Replay an actually published CLI fixture answer through the final guards; no model calls."""
+import asyncio,hashlib,json,tempfile
+from datetime import date
+from pathlib import Path
+from pydantic import SecretStr
+from landlaw.agent import Agent,Plan,applicability
+from landlaw.config import Settings
+from landlaw.evaluation import configuration_fingerprint,dataset
+from landlaw.models import ChatRequest,Claim,Document,Draft,Evidence
+from landlaw.provider import Budget
+from landlaw.security import utcnow
+from landlaw.store import Store
+async def noop(_):pass
+class NoNetworkProvider:
+ def __init__(self,settings):self.settings=settings
+ async def generate(self,*_,**__):raise AssertionError('Structural rejection must not ask a model to approve this claim')
+async def main():
+ root=Path('reports/release-readiness-20261019');output=root/'actual-answer-guard-replay.json'
+ if output.exists():raise ValueError('Preserve prior replay evidence')
+ candidate=json.loads(Path('data/staging/readiness-20261019-attempt-1/candidate.json').read_text())
+ run=next((root/'generation-postgresql-attempt-5/runs').glob('*natural*'))
+ answer=next(r['result'] for r in json.loads((run/'records.json').read_text()) if r['case_id']=='N02')
+ case=next(c for c in dataset(Path('data/evaluation/natural.jsonl')) if c['id']=='N02')
+ sources={c['id']:(d,c) for d in candidate['documents'] for c in d['chunks']}
+ docs={};evidence=[];as_of=date.fromisoformat(case['as_of'])
+ for citation in answer['citations']:
+  raw,chunk=sources[citation['id']]
+  if raw['id'] not in docs:docs[raw['id']]=Document.model_validate(raw)
+  doc=docs[raw['id']];part=next(c for c in doc.chunks if c.id==chunk['id'])
+  evidence.append(Evidence(document=doc,chunk=part,applicability=applicability(doc,as_of,part)))
+ draft=Draft(status='answered',claims=[Claim.model_validate(c) for c in answer['verified_claims']])
+ with tempfile.TemporaryDirectory(prefix='landlaw-guard-replay-') as folder:
+  settings=Settings().for_operator().model_copy(update={'database_url':SecretStr(''),'admin_database_url':SecretStr(''),'sqlite_path':str(Path(folder)/'replay.db')})
+  store=Store(settings);budget=Budget()
+  try:
+   state={'request':ChatRequest(session_id='00000000-0000-4000-8000-000000000000',message=case['question']),'draft':draft,'evidence':evidence,'as_of':as_of,'release':candidate,'plan':Plan(),'history':[],'budget':budget,'trace':[],'emit':noop}
+   agent=Agent(store,NoNetworkProvider(settings));await agent.verify(state);await agent.finish(state)
+   result={'checked_at':utcnow().isoformat(),'scope':'Offline replay of the exact earlier N02 verified claims against final structural guards. Not new generation, full-suite evidence or legal certification.','source_configuration_sha256':configuration_fingerprint(Settings()),'original_answer_sha256':hashlib.sha256(json.dumps(answer,ensure_ascii=False,sort_keys=True).encode()).hexdigest(),'llm_requests':budget.llm_calls,'blocked':not state['verification'].supported_claim_indexes and not state['result'].verified_claims,'issues':state['verification'].issues,'original_answer_changed':False,'serving_state_changed':False}
+   assert result['blocked'] and result['llm_requests']==0 and len(result['issues'])>=3
+   output.write_text(json.dumps(result,ensure_ascii=False,indent=2)+'\n');print(json.dumps(result,ensure_ascii=False))
+  finally:store.close()
+asyncio.run(main())

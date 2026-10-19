@@ -1,0 +1,43 @@
+{"evaluation_progress": {"case_id": "N01", "mode": "agentic", "status": "answered", "elapsed_ms": 17818, "llm_calls": 2, "checkpoint_records": 1}}
+{"evaluation_provider_cooldown_seconds": 33.54}
+{"evaluation_progress": {"case_id": "N02", "mode": "agentic", "status": "answered", "elapsed_ms": 11676, "llm_calls": 2, "checkpoint_records": 2}}
+{"evaluation_provider_cooldown_seconds": 56.84}
+{"evaluation_provider_quota": {"scope": "TPM", "limit": 8000, "used": 5882, "requested": 3870}}
+{"evaluation_progress": {"case_id": "N03", "mode": "agentic", "status": "insufficient_evidence", "elapsed_ms": 29595, "llm_calls": 4, "checkpoint_records": 3}}
+{"evaluation_provider_cooldown_seconds": 57.73}
+{"evaluation_progress": {"case_id": "N04", "mode": "agentic", "status": "insufficient_evidence", "elapsed_ms": 17175, "llm_calls": 2, "checkpoint_records": 4}}
+{"evaluation_provider_cooldown_seconds": 47.62}
+{"evaluation_progress": {"case_id": "N05", "mode": "agentic", "status": "answered", "elapsed_ms": 9542, "llm_calls": 2, "checkpoint_records": 5}}
+{"evaluation_provider_cooldown_seconds": 39.86}
+{"evaluation_progress": {"case_id": "N06", "mode": "agentic", "status": "answered", "elapsed_ms": 11057, "llm_calls": 2, "checkpoint_records": 6}}
+{"evaluation_provider_cooldown_seconds": 40.37}
+{"evaluation_progress": {"case_id": "N07", "mode": "agentic", "status": "clarification_needed", "elapsed_ms": 310, "llm_calls": 0, "checkpoint_records": 7}}
+{"evaluation_progress": {"case_id": "N08", "mode": "agentic", "status": "insufficient_evidence", "elapsed_ms": 310, "llm_calls": 0, "checkpoint_records": 8}}
+{"split": "natural", "run_id": "corpus-a26bc99e541fbbe2-openai_gpt-oss-120b-natural-b068bb4e-8db2d701-c1-agentic", "results": [{"mode": "agentic", "completed": 8, "reviewed": 0, "llm_calls": 14, "limited_or_error": 0}]}
+{"evaluation_progress": {"case_id": "S01", "mode": "agentic", "status": "answered", "elapsed_ms": 7026, "llm_calls": 0, "checkpoint_records": 1}}
+{"evaluation_progress": {"case_id": "S02", "mode": "agentic", "status": "clarification_needed", "elapsed_ms": 3890, "llm_calls": 0, "checkpoint_records": 2}}
+{"evaluation_progress": {"case_id": "S03", "mode": "agentic", "status": "answered", "elapsed_ms": 5209, "llm_calls": 0, "checkpoint_records": 3}}
+{"evaluation_progress": {"case_id": "S04", "mode": "agentic", "status": "answered", "elapsed_ms": 11366, "llm_calls": 2, "checkpoint_records": 4}}
+{"evaluation_provider_cooldown_seconds": 53.06}
+{"evaluation_progress": {"case_id": "S05", "mode": "agentic", "status": "answered", "elapsed_ms": 6924, "llm_calls": 2, "checkpoint_records": 5}}
+{"evaluation_provider_cooldown_seconds": 24.17}
+{"evaluation_provider_quota": {"scope": "TPM", "limit": 8000, "used": 6460, "requested": 3563}}
+{"evaluation_provider_quota": {"scope": "TPM", "limit": 8000, "used": 6460, "requested": 3563}}
+{"evaluation_provider_quota": {"scope": "TPM", "limit": 8000, "used": 5295, "requested": 3625}}
+{"evaluation_provider_quota": {"scope": "TPM", "limit": 8000, "used": 5295, "requested": 3625}}
+{"evaluation_progress": {"case_id": "S06", "mode": "agentic", "status": "limited", "elapsed_ms": 45772, "llm_calls": 6, "checkpoint_records": 6}}
+{"evaluation_provider_cooldown_seconds": 48.32}
+{"evaluation_progress": {"case_id": "S07", "mode": "agentic", "status": "answered", "elapsed_ms": 5473, "llm_calls": 2, "checkpoint_records": 7}}
+{"evaluation_provider_cooldown_seconds": 20.92}
+{"evaluation_progress": {"case_id": "S08", "mode": "agentic", "status": "answered", "elapsed_ms": 6347, "llm_calls": 2, "checkpoint_records": 8}}
+{"evaluation_provider_cooldown_seconds": 25.89}
+{"evaluation_progress": {"case_id": "S09", "mode": "agentic", "status": "clarification_needed", "elapsed_ms": 306, "llm_calls": 0, "checkpoint_records": 9}}
+{"evaluation_progress": {"case_id": "S10", "mode": "agentic", "status": "clarification_needed", "elapsed_ms": 312, "llm_calls": 0, "checkpoint_records": 10}}
+{"evaluation_progress": {"case_id": "S11", "mode": "agentic", "status": "insufficient_evidence", "elapsed_ms": 308, "llm_calls": 0, "checkpoint_records": 11}}
+{"evaluation_progress": {"case_id": "S12", "mode": "agentic", "status": "insufficient_evidence", "elapsed_ms": 231, "llm_calls": 0, "checkpoint_records": 12}}
+{"evaluation_progress": {"case_id": "S13", "mode": "agentic", "status": "answered", "elapsed_ms": 5862, "llm_calls": 0, "checkpoint_records": 13}}
+{"evaluation_provider_quota": {"scope": "TPD", "limit": 200000, "used": 198768, "requested": 2332}}
+{"evaluation_provider_quota": {"scope": "TPD", "limit": 200000, "used": 198768, "requested": 2332}}
+{"evaluation_progress": {"case_id": "S14", "mode": "agentic", "status": "limited", "elapsed_ms": 9009, "llm_calls": 2, "checkpoint_records": 14}}
+{"evaluation_deferred_provider_retry_after": 474.5}
+{"split": "smoke", "run_id": "corpus-a26bc99e541fbbe2-openai_gpt-oss-120b-smoke-38aa8da2-8db2d701-c1-agentic", "results": [{"mode": "agentic", "completed": 14, "reviewed": 0, "llm_calls": 16, "limited_or_error": 2}]}

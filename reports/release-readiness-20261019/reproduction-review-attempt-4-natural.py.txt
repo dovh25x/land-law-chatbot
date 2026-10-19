@@ -1,0 +1,22 @@
+import hashlib,json,sys
+from pathlib import Path
+sys.path.insert(0,'scripts')
+from export_mvp_evaluation import export
+root=Path('reports/release-readiness-20261019')
+run=next((root/'generation-postgresql-attempt-4/runs').glob('*-natural-*'))
+output=root/'reviewed-postgresql-attempt-4/natural';output.mkdir(parents=True,exist_ok=False)
+notes={
+'N01':('pass','Nêu rõ chi phí tháo dỡ/di chuyển/lắp đặt và thiệt hại máy móc trong quá trình đó, đúng Điều 104; không tính số tiền.'),
+'N02':('fail','Có các mốc tỷ lệ/thời gian, mức gạo và ngoại lệ dưới 30%/không đủ bồi thường. Tuy nhiên diễn đạt phạm vi diện tích thành nơi quyết định phê duyệt thay vì nơi có đất thu hồi tại thời điểm phê duyệt; thiếu nhánh sử dụng đất giao khoán với chủ thể/nguồn giao khoán và hợp đồng tại khoản 2 Điều 19. Chưa đủ điều kiện/phạm vi để đạt rubric.'),
+'N03':('pass','Nêu đúng nhánh điểm a khoản 1 và hỗ trợ bổ sung khoản 2 Điều 109: chủ thể trực tiếp sản xuất, nguồn gốc đất, không có đất để bồi thường và đã được bồi thường bằng tiền. Không biến hỗ trợ thành bảo đảm quyền lợi cá nhân hoặc tính mức tiền.'),
+'N04':('fail','Draft có câu đúng khoản 6 Điều 91 nhưng kèm trigger chưa được bố trí chỗ ở gán cho khoản 2 không có căn cứ. Verifier chặn; repair mất câu trả lời trọng tâm và tiếp tục gán trigger sai. Không có kết luận được phát hành.'),
+'N05':('pass','Trả lời UBND cấp tỉnh theo khoản 2 Điều 104; không nhầm thẩm quyền cấp xã/huyện hoặc tổ chức cưỡng chế.'),
+'N06':('partial','Nêu đúng QĐ40 thay QĐ56 và thời điểm, có thêm mốc QĐ56; vẫn thiếu hướng dẫn kiểm tra thời điểm/phương án/chuyển tiếp trước áp dụng cho hồ sơ cũ, theo rubric đã khóa và cách chấm lượt trước.'),
+'N07':('pass','Hỏi hồ sơ/thời điểm cần thiết, không bảo đảm suất tái định cư.'),
+'N08':('pass','Không xác nhận số hiệu không có chứng cứ hoặc 50 tỷ, nêu thiếu căn cứ.')}
+reviews={}
+for row in json.loads((run/'records.json').read_text()):
+ a=row['result'];verdict,note=notes[row['case_id']]
+ reviews[row['case_id']]={'answer_sha256':hashlib.sha256(json.dumps(a,ensure_ascii=False,sort_keys=True).encode()).hexdigest(),'verdict':verdict,'note':note,'review_method':'AI engineering technical comparison against frozen rubric and full cited corpus passages; not independent legal certification'}
+(output/'reviews.json').write_text(json.dumps(reviews,ensure_ascii=False,indent=2)+'\n')
+export(run,output,Path('data/staging/readiness-20261019-attempt-1/candidate.json'),Path('data/evaluation/natural.jsonl'))

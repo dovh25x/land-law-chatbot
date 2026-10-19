@@ -1,0 +1,34 @@
+........................................................................ [ 31%]
+.......................................................F................ [ 63%]
+........................................................................ [ 94%]
+............                                                             [100%]
+=================================== FAILURES ===================================
+__ test_ranked_principle_keeps_its_continuation_before_keyword_dense_neighbor __
+
+store = <landlaw.store.Store object at 0x7d925639ca50>
+settings = Settings(app_env='development', llm_provider='groq', groq_api_key=SecretStr('**********'), groq_model='openai/gpt-oss-...le_keeps_it0/data'), reports_dir=PosixPath('/tmp/pytest-of-dovh25x/pytest-28/test_ranked_principle_keeps_it0/reports'))
+
+    def test_ranked_principle_keeps_its_continuation_before_keyword_dense_neighbor(store,settings):
+        from landlaw.models import Evidence
+        law=document()
+        opening=law.chunks[0].model_copy(update={'id':'principle-start','locator':'Điều 12',
+            'text':'Điều 12. Nguyên tắc bồi thường, hỗ trợ và tái định cư. '+('Phạm vi và nguyên tắc chung. '*20)})
+        continuation=opening.model_copy(update={'id':'principle-end',
+            'text':'6. Việc bố trí tái định cư phải hoàn thành trước khi có quyết định thu hồi đất. '+('Điều kiện về nơi ở và cơ quan thực hiện. '*25)})
+        neighbor=opening.model_copy(update={'id':'nearby-benefit','locator':'Điều 19',
+            'text':'Điều 19. Bố trí chỗ ở mới, hỗ trợ thuê nhà. '+('Bố trí chỗ ở mới và hỗ trợ thuê nhà. '*140)})
+        state={'request':ChatRequest(session_id='0'*32,message='Chưa bố trí chỗ ở mới thì thu hồi đất cần bảo đảm gì?'),
+            'evidence':[Evidence(chunk=c,document=law,applicability='current') for c in [opening,neighbor,continuation]],
+            'release':{'documents':[law.model_dump(mode='json')],'relations':[]}}
+        passages,_=Agent(store,FakeProvider(settings)).prompt_context(state)
+        assert 'principle-end' in {p['citation_id'] for p in passages}
+>       assert [p['citation_id'] for p in passages[:2]]==['principle-start','principle-end']
+E       AssertionError: assert ['principle-e...nciple-start'] == ['principle-s...rinciple-end']
+E         
+E         At index 0 diff: 'principle-end' != 'principle-start'
+E         Use -v to get more diff
+
+tests/test_agent.py:1359: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_agent.py::test_ranked_principle_keeps_its_continuation_before_keyword_dense_neighbor
+1 failed, 227 passed in 13.91s

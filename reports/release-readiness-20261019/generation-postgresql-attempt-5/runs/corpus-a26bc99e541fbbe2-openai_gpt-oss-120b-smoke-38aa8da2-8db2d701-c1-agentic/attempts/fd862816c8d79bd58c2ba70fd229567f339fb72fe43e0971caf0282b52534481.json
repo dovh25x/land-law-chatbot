@@ -1,0 +1,134 @@
+{
+  "recorded_at": "2026-10-19T04:16:01.909561+00:00",
+  "origin": "executed",
+  "record": {
+    "case_id": "S20",
+    "mode": "agentic",
+    "answer_origin": "deterministic",
+    "evaluation_context": [],
+    "result": {
+      "status": "clarification_needed",
+      "publication_profile": "academic",
+      "quality_status": "academic_prototype",
+      "retrieval_mode": "hybrid",
+      "coverage_gaps": [
+        {
+          "document_id": "qd-10-2017-hanoi",
+          "document_number": "10/2017/QĐ-UBND",
+          "title": "Quy định bồi thường, hỗ trợ và tái định cư Hà Nội (lịch sử)",
+          "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=189167",
+          "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+        },
+        {
+          "document_id": "qd-30-2019-hanoi",
+          "document_number": "30/2019/QĐ-UBND",
+          "title": "Quy định và bảng giá các loại đất Hà Nội 2020–2024 (lịch sử)",
+          "url": "https://vanban.hanoi.gov.vn/chi-tiet-van-ban/quyet-dinh-so-30-2019-qd-ubnd-cua-ubnd-tp-ha-noi-ve-viec-ban-hanh-quy-dinh-va-bang-gia-cac-loai-dat-189067",
+          "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+        },
+        {
+          "document_id": "qd-20-2023-hanoi",
+          "document_number": "20/2023/QĐ-UBND",
+          "title": "Sửa đổi bảng giá đất Quyết định 30/2019",
+          "url": "https://vbpl.vn/hanoi/Pages/vbpq-toanvan.aspx?ItemID=164473",
+          "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+        },
+        {
+          "document_id": "nd-123-2024",
+          "document_number": "123/2024/NĐ-CP",
+          "title": "Xử phạt vi phạm hành chính lĩnh vực đất đai",
+          "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=211356",
+          "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+        },
+        {
+          "document_id": "ring4-nq106-2022",
+          "document_number": "106/NQ-CP",
+          "title": "Triển khai Nghị quyết 56/2022/QH15 Vành đai 4",
+          "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=206398",
+          "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+        },
+        {
+          "document_id": "nd-01-2017",
+          "document_number": "01/2017/NĐ-CP",
+          "title": "Nghị định 01/2017/NĐ-CP sửa đổi, bổ sung một số nghị định quy định chi tiết thi hành Luật đất đai",
+          "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=187962",
+          "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+        },
+        {
+          "document_id": "nd-148-2020",
+          "document_number": "148/2020/NĐ-CP",
+          "title": "Nghị định 148/2020/NĐ-CP sửa đổi, bổ sung một số nghị định quy định chi tiết thi hành Luật Đất đai",
+          "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=202022",
+          "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+        }
+      ],
+      "content": "Tên huyện cũ chưa đủ để ánh xạ tới một xã/phường mới hoặc xác định một thửa đất thuộc dự án. Cần đối chiếu địa bàn chi tiết và ranh giới/hồ sơ thu hồi.\n\nThông tin cần bổ sung:\n- Tên xã/phường, thôn hoặc tổ dân phố trong hồ sơ cũ; địa chỉ chỉ ở mức đã ẩn danh.\n- Thời điểm lập hồ sơ và nguồn xác nhận địa bàn sau sắp xếp.\n- Ranh giới dự án và thông báo/quyết định thu hồi đối với thửa đất, nếu cần đối chiếu phạm vi.\n\nThời điểm xem xét: 12/10/2026. Dữ liệu được kiểm tra: 2026-10-11.",
+      "citations": [],
+      "verified_claims": [],
+      "as_of": "2026-10-12",
+      "corpus_release": "corpus-a26bc99e541fbbe2",
+      "trace_id": "2eff9970-a13d-4c8f-a545-6c53c605f518",
+      "trace": [
+        {
+          "step": "routing",
+          "tool": "normalize_place",
+          "summary": "Đối chiếu tên địa bàn cũ/mới trước khi xác định phạm vi hồ sơ.",
+          "document_ids": [],
+          "elapsed_ms": 19
+        },
+        {
+          "step": "plan",
+          "tool": null,
+          "summary": "Đã chọn 1 công cụ; chế độ agentic.",
+          "document_ids": [],
+          "elapsed_ms": 19
+        },
+        {
+          "step": "tool",
+          "tool": "normalize_place",
+          "summary": "Tìm thấy 2 ánh xạ địa bàn có nguồn; thiếu ánh xạ thì cần hỏi lại.",
+          "document_ids": [],
+          "elapsed_ms": 41
+        },
+        {
+          "step": "tool",
+          "tool": "normalize_place",
+          "summary": "Thu được 0 đoạn chứng cứ.",
+          "document_ids": [],
+          "elapsed_ms": 41
+        },
+        {
+          "step": "synthesis",
+          "tool": null,
+          "summary": "Đã tạo bản trả lời; đang kiểm tra trước khi hiển thị.",
+          "document_ids": [],
+          "elapsed_ms": 47
+        },
+        {
+          "step": "verification",
+          "tool": null,
+          "summary": "Chỉ giải thích giới hạn dữ liệu hoặc hỏi địa bàn còn thiếu; không kết luận quyền lợi hay phạm vi từng thửa.",
+          "document_ids": [],
+          "elapsed_ms": 50
+        }
+      ],
+      "missing_facts": [
+        "Tên xã/phường, thôn hoặc tổ dân phố trong hồ sơ cũ; địa chỉ chỉ ở mức đã ẩn danh.",
+        "Thời điểm lập hồ sơ và nguồn xác nhận địa bàn sau sắp xếp.",
+        "Ranh giới dự án và thông báo/quyết định thu hồi đối với thửa đất, nếu cần đối chiếu phạm vi."
+      ],
+      "llm_calls": 0,
+      "embedding_calls": 0,
+      "tool_calls": 1,
+      "token_usage": 0,
+      "elapsed_ms": 414,
+      "model": "openai/gpt-oss-120b",
+      "embedding_model": "multilingual-e5-small-onnx-q8-window-v1",
+      "mode": "agentic",
+      "support_level": "insufficient",
+      "retry_after": null,
+      "retrieved_chunk_ids": [],
+      "evidence_chunk_ids": []
+    }
+  }
+}

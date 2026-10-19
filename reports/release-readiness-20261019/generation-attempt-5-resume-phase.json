@@ -1,0 +1,19 @@
+{
+  "recorded_at": "2026-10-19T04:09:27.579076+00:00",
+  "source_commit": "f0fabaedcd7725cff304cdb193156dd7ec3b3420",
+  "initial_phase_source_commit": "4d0fd9f1788eebe41ebce0f4d9d35a7d5f337caf",
+  "runtime_configuration_sha256": "8db2d701d6d27b69f3cb01615c9a8a16ef3a3fe74fb7c117721f2349f2a523dc",
+  "initial_phase_configuration_sha256": "8db2d701d6d27b69f3cb01615c9a8a16ef3a3fe74fb7c117721f2349f2a523dc",
+  "runtime_generation_configuration_unchanged": true,
+  "phase_change": "Operational scripts now retain newly created isolated databases, including failure paths; no model/embedding/agent prompt or budget changes. Resume only limited/error or missing cases.",
+  "new_instructions": "Replacement AGENTS.md forbids dropping databases; no automatic DROP in this phase.",
+  "sha256": {
+    "scripts/evaluate_generation_candidate.py": "feb05fce70bb56fa173ae741c08763030a487747a19c241d99abab0027efd188",
+    "scripts/evaluate_corpus_candidate.py": "7d15a534113823a94afd3674036730c34687ebd45cff357083462892096825c6",
+    "scripts/verify_postgres_database.py": "917cb0d76ba53132622825774647b075eca360e3e96344a1ccffb2af018b265e"
+  },
+  "prior_checkpoints": {
+    "reports/release-readiness-20261019/generation-postgresql-attempt-5/runs/corpus-a26bc99e541fbbe2-openai_gpt-oss-120b-smoke-38aa8da2-8db2d701-c1-agentic/records.json": "12902a34e65b364773f308ebf831026190504437d8b75e073e5fde5e5f727d40",
+    "reports/release-readiness-20261019/generation-postgresql-attempt-5/runs/corpus-a26bc99e541fbbe2-openai_gpt-oss-120b-natural-b068bb4e-8db2d701-c1-agentic/records.json": "720ad0bfcaffb25a714d0546a5408f1c1788329b045b67942629a8af86f752ca"
+  }
+}

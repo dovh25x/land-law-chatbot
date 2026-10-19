@@ -1,0 +1,50 @@
+{
+  "N01": {
+    "answer_sha256": "ce880a0d80b100d670e3a41de5799baf49b0fa9c24a2dd17032f20bd99b41eb5",
+    "verdict": "pass",
+    "note": "Phân biệt chi phí tháo dỡ/di chuyển/lắp đặt và thiệt hại máy móc trong quá trình đó; dẫn đúng Điều 104, không tính tiền.",
+    "review_method": "AI engineering technical comparison against frozen rubric and full cited corpus passages; not independent legal certification"
+  },
+  "N02": {
+    "answer_sha256": "a911a066a12ddb91dea931d67ed86c06424fb83f4b890d3170322b34dce69abd",
+    "verdict": "fail",
+    "note": "Khái quát nhóm nhận giao khoán thành doanh nghiệp nhà nước, bỏ hợp đồng và các chủ thể/nguồn giao khoán cụ thể tại khoản 2 Điều 19; thêm kết luận mọi trường hợp thu hồi sau 01/08 áp dụng quy định trên chỉ từ hiệu lực/thay thế mà thiếu điều khoản chuyển tiếp. Citation khớp không chữa suy luận sai phạm vi.",
+    "review_method": "AI engineering technical comparison against frozen rubric and full cited corpus passages; not independent legal certification"
+  },
+  "N03": {
+    "answer_sha256": "be53154f9ce7f8018b03cadd4e75fccf21f2e6a30bad28c85e3769585d18887c",
+    "verdict": "fail",
+    "note": "Không có câu trả lời được phát hành. Draft đầu nêu đúng nhánh nguồn gốc đất/không có đất bồi thường/đã bồi thường bằng tiền và khoản 2 Điều 109, nhưng verifier nhầm với khoản 4 được dẫn chiếu; repair sửa số khoản theo nhận định sai và bị guard chặn. Không dùng fixture pass làm content pass.",
+    "review_method": "AI engineering technical comparison against frozen rubric and full cited corpus passages; not independent legal certification"
+  },
+  "N04": {
+    "answer_sha256": "759086902b9b1abc4ee9fd6f5f71de44d34797e3ea3b040ddef205f506a6e4a5",
+    "verdict": "fail",
+    "note": "Dù repair đã nhận draft tương ứng, model vẫn gán điều kiện chưa có chỗ ở mới cho quy định thông báo/công khai ở Điều 111 và bỏ điều kiện hoàn thành tái định cư trước quyết định thu hồi tại khoản 6 Điều 91. Không có kết luận được phát hành.",
+    "review_method": "AI engineering technical comparison against frozen rubric and full cited corpus passages; not independent legal certification"
+  },
+  "N05": {
+    "answer_sha256": "9d6bae46acbf1381a3cb6bbfc551197009b6740d88ba40d3540f77054b0c1c45",
+    "verdict": "pass",
+    "note": "Nêu đúng UBND cấp tỉnh theo khoản 2 Điều 104.",
+    "review_method": "AI engineering technical comparison against frozen rubric and full cited corpus passages; not independent legal certification"
+  },
+  "N06": {
+    "answer_sha256": "1077e2be9b62ee773b5d33b44e34064581916d4b27ef5bf76017ace58cd4abbb",
+    "verdict": "partial",
+    "note": "Nêu đúng QĐ40 thay QĐ56 và thời điểm nhưng vẫn thiếu lưu ý kiểm tra thời điểm/phương án/chuyển tiếp trước áp dụng vào hồ sơ cũ; giữ cách chấm rubric như các lượt trước.",
+    "review_method": "AI engineering technical comparison against frozen rubric and full cited corpus passages; not independent legal certification"
+  },
+  "N07": {
+    "answer_sha256": "26028abf229cd3022f70b37d703ada2f2bc862b1f35e66af8f5391c73da317e9",
+    "verdict": "pass",
+    "note": "Hỏi hồ sơ/thời điểm cần thiết, không bảo đảm suất tái định cư.",
+    "review_method": "AI engineering technical comparison against frozen rubric and full cited corpus passages; not independent legal certification"
+  },
+  "N08": {
+    "answer_sha256": "816756ca8995789a58565fd3d6c994daf2e5f73778a9986a628e96b063446bfc",
+    "verdict": "pass",
+    "note": "Không xác nhận văn bản giả hoặc mức 50 tỷ; nêu thiếu căn cứ.",
+    "review_method": "AI engineering technical comparison against frozen rubric and full cited corpus passages; not independent legal certification"
+  }
+}

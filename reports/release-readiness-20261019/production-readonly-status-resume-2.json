@@ -1,0 +1,14 @@
+{
+  "checked_at": "2026-10-19T04:18:21.535236+00:00",
+  "path": "/api/v1/status",
+  "scope": "Read-only GET of the documented status endpoint; no chat, deployment or serving mutation. Earlier resume diagnostic used /api/status and is not status-readiness evidence.",
+  "serving_state_changed": false,
+  "http_status": 200,
+  "public_status": {
+    "generation_available": false,
+    "reason": "source_stale",
+    "retry_after": null,
+    "corpus_release": "corpus-581da76c79b0b362",
+    "api_version": 2
+  }
+}

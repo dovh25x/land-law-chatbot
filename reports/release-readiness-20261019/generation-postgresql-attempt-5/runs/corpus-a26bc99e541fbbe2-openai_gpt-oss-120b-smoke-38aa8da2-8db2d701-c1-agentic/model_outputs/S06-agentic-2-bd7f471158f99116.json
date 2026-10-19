@@ -1,0 +1,16 @@
+{
+  "scope": "Unverified structured model output for developer diagnosis; never delivered as a chatbot answer. No hidden reasoning.",
+  "schema": "Verification",
+  "case_mode": "S06-agentic",
+  "llm_calls": 2,
+  "output": {
+    "supported_claim_indexes": [],
+    "supporting_quotes": [],
+    "supporting_spans": [],
+    "issues": [
+      "Claim 0: Không có bằng chứng đủ từ C1 để chứng minh rằng giấy chứng nhận không phải là điều kiện duy nhất; chỉ C2 mới cung cấp thông tin về các điều kiện khác."
+    ],
+    "needs_more_evidence": true,
+    "followup_query": "Vui lòng cung cấp đoạn văn cụ thể trong Điều 95 của Luật Đất đai 2024 mô tả các điều kiện bồi thường ngoài giấy chứng nhận quyền sử dụng đất, để xác nhận rằng giấy chứng nhận không phải là điều kiện duy nhất."
+  }
+}
