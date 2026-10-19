@@ -17,7 +17,7 @@ test('responsive navigation honestly shows unpublished corpus and benchmark', as
   await expect(page.getByLabel('Câu hỏi pháp luật')).toBeVisible()
   await expect(page.getByLabel('Dự án', { exact: true })).toHaveCount(0)
   await expect(page.getByRole('button', { name: 'Gửi câu hỏi' })).toBeDisabled()
-  await page.screenshot({ path: `../reports/ui-redesign-20261017/ui-${info.project.name}.png`, fullPage: true })
+  await page.screenshot({ path: info.outputPath(`ui-${info.project.name}.png`), fullPage: true })
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBeTruthy()
   if (await page.getByRole('button', { name: 'Mở menu điều hướng' }).isVisible()) await page.getByRole('button', { name: 'Mở menu điều hướng' }).click()
   await page.getByRole('button', { name: 'Thư viện văn bản', exact: true }).click()

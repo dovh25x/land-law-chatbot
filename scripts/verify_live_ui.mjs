@@ -3,6 +3,7 @@ import { chromium } from '../frontend/node_modules/playwright/index.mjs'
 import { writeFile, mkdir } from 'node:fs/promises'
 import { resolve } from 'node:path'
 import { spawnSync } from 'node:child_process'
+import { existsSync } from 'node:fs'
 
 const chat = process.argv.includes('--chat'), sourceOnly = process.argv.includes('--source-only')
 const base = process.env.LIVE_BASE_URL || 'https://hanoi-land-law.pages.dev'
@@ -10,7 +11,7 @@ const directory = process.env.LIVE_REPORT_DIR || `reports/live-${new Date().toIS
 const output = resolve(directory, chat ? (sourceOnly ? 'source-only.json' : 'generation.json') : 'navigation.json')
 const checks = []
 let phase = 'configuration', browser, turnstileTokenObserved = false, turnstileSessionVerified = false, generationChecked = false
-const local = spawnSync('.venv/bin/python', ['-c', 'import os; from landlaw.config import Settings; from landlaw.evaluation import configuration_fingerprint; from pydantic import SecretStr; s=Settings(); s=s.model_copy(update={"database_url":SecretStr("postgresql://fingerprint-only/metadata" if os.getenv("LIVE_STORAGE_BACKEND","postgresql")=="postgresql" else "")}); print(configuration_fingerprint(s))'], { encoding: 'utf8' })
+const local = spawnSync(existsSync('.venv/bin/python') ? '.venv/bin/python' : 'python3', ['-c', 'import os; from landlaw.config import Settings; from landlaw.evaluation import configuration_fingerprint; from pydantic import SecretStr; s=Settings(); s=s.model_copy(update={"database_url":SecretStr("postgresql://fingerprint-only/metadata" if os.getenv("LIVE_STORAGE_BACKEND","postgresql")=="postgresql" else "")}); print(configuration_fingerprint(s))'], { encoding: 'utf8' })
 const expected = process.env.LIVE_EXPECTED_CONFIGURATION || (local.status === 0 ? local.stdout.trim() : null)
 const menu = async page => {
   const opener = page.getByRole('button', { name: 'Mở menu điều hướng' })

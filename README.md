@@ -35,7 +35,7 @@ Trong `.env`, cấu hình `GROQ_API_KEY`, giữ `APP_ENV=development`, để tr�
 
 ### 2. Tải và khôi phục corpus
 
-Tải `corpus-backup.json`, `manifest.json` và `SHA256SUMS` từ [corpus Release](https://github.com/dovh25x/land-law-chatbot/releases/tag/corpus-581da76c79b0b362). Snapshot này chứa 59 tài liệu và 7.555 chunk, không chứa hội thoại hoặc model cache.
+Tải `corpus-backup.json`, `manifest.json` và `SHA256SUMS` từ [corpus Release](https://github.com/dovh25x/land-law-chatbot/releases/latest). Corpus không chứa hội thoại hoặc model cache; số tài liệu, chunk và checksum nằm trong manifest đi kèm từng Release.
 
 Đặt ba asset tại thư mục gốc repository, rồi chạy:
 

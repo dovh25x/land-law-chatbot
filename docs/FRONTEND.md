@@ -101,3 +101,7 @@ Các frame tối nằm cùng trang, tên bắt đầu bằng `Dark`. Frame `14:1
 - Xác nhận xóa lịch sử dùng dialog trong ứng dụng; không đổi session API hoặc quota. Theme vẫn hoạt động trong tab nếu localStorage không dùng được.
 
 E2E cho redesign dùng fixture và xuất ảnh vào thư mục báo cáo mới, không ghi đè ảnh lịch sử. Cần phân biệt kiểm tra ARIA/bàn phím tự động với kiểm tra screen reader và bàn phím ảo trên thiết bị thật; kiểm tra public deployment, Groq và Turnstile thật thực hiện riêng.
+
+Thư viện gộp nguồn đã lập chỉ mục và bản gốc tham khảo, hỗ trợ tìm tiếng Việt không dấu. Bản gốc chưa lập chỉ mục có nhãn riêng và liên kết mở tài liệu chính thức. Phiên hết hạn giữ bản nháp, xóa token cũ và cho xác minh/gửi lại chủ động; storage bị chặn vẫn giữ phiên trong bộ nhớ tab. Status được cập nhật khi tab trở lại và sau cooldown provider. Báo cáo lệch fingerprint được thu gọn mặc định, vẫn giữ cảnh báo và có thể mở xem.
+
+Ảnh E2E dùng thư mục output của lần chạy Playwright; không ghi đè artifact lịch sử trong `reports/`.

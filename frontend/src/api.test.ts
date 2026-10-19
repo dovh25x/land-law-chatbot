@@ -1,5 +1,25 @@
-import { describe, expect, it } from 'vitest'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 import { SSEParser } from './api'
+import { ask, cachedSession, clearSession, getSession } from './api'
+
+afterEach(() => { clearSession(); vi.unstubAllGlobals() })
+it('keeps a usable session in memory when sessionStorage is blocked', async () => {
+  vi.stubGlobal('sessionStorage', { getItem() { throw Error('blocked') }, setItem() { throw Error('blocked') }, removeItem() { throw Error('blocked') } })
+  const session = { session_id: 'fixture', token: 'test-token' }
+  const fetcher = vi.fn().mockResolvedValueOnce(new Response(JSON.stringify(session), { status: 201 })).mockResolvedValueOnce(new Response('{}'))
+  vi.stubGlobal('fetch', fetcher)
+  expect(await getSession()).toEqual(session)
+  expect(cachedSession()).toEqual(session)
+  expect(await getSession()).toEqual(session)
+  expect(fetcher.mock.calls.filter(([url]) => url.endsWith('/sessions'))).toHaveLength(1)
+})
+it('expires a rejected chat session without resending the question', async () => {
+  const fetcher = vi.fn().mockResolvedValue(new Response('{}', { status: 404 }))
+  vi.stubGlobal('fetch', fetcher)
+  await expect(ask({session_id:'fixture',token:'test-token'},'fixture','ring4','',new AbortController().signal,()=>{})).rejects.toMatchObject({code:'session_expired'})
+  expect(fetcher).toHaveBeenCalledTimes(1)
+  expect(cachedSession()).toBeNull()
+})
 describe('SSE protocol', () => {
   it('handles fragmented unicode frames, comments and multiple events', () => {
     const events: unknown[] = []

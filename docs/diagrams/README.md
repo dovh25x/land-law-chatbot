@@ -15,7 +15,7 @@ Các sơ đồ kỹ thuật dùng [diagram-design](https://github.com/cathrynlav
 
 Tất cả sơ đồ của hệ thống dùng `diagram-design`: HTML là source, SVG được xuất bằng helper và nhúng trong Markdown. Không dùng Mermaid hoặc công cụ khác thay thế. [Kiến trúc](../ARCHITECTURE.md#agent-flow) và [phân tích agent](../AGENT_FLOW.md) cùng dùng asset agent flow; sơ đồ trình tự chat được tái sử dụng để tránh nhiều bản lệch nhau.
 
-Agent flow dùng preset `doc-wide` 1280 × 720, mức chi tiết cân bằng cho người đọc kỹ thuật. START/END được gộp vào node đầu/cuối; cổng phát hành gộp các điều kiện verdict, độ mới nguồn và phạm vi vào một quyết định. Các điều kiện chi tiết giữ trong [phân tích agent](../AGENT_FLOW.md).
+Agent flow dùng preset `doc-wide` 1280 × 720, mức chi tiết cân bằng cho người đọc kỹ thuật. START/END được gộp vào node đầu/cuối; cổng phát hành gộp verdict và phạm vi vào một quyết định; chú thích phân biệt freshness mặc định với snapshot được chủ động cho phép. Các điều kiện chi tiết giữ trong [phân tích agent](../AGENT_FLOW.md).
 
 ## Quy trình cập nhật
 

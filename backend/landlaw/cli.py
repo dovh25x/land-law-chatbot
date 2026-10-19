@@ -188,21 +188,23 @@ def smoke(base_url: str):
 
 
 @app.command()
-def publish(release_id: str):
-    """Publish a verified academic snapshot; no legal certification."""
+def publish(release_id: str, require_quality: bool=False):
+    """Publish a corpus snapshot; quality review is opt-in, never implied."""
     settings=Settings().for_operator()
     store=Store(settings)
     try:
         release=store.release(release_id)
         if not release:raise typer.BadParameter('Unknown release')
         validate_corpus(release)
-        if not coverage(release)['publication_ready']:
+        if require_quality and not coverage(release)['publication_ready']:
             raise typer.BadParameter('Corpus coverage or legal dependencies are incomplete; publication blocked')
-        if not store.source_fresh(release):
+        if require_quality and not store.source_fresh(release):
             raise typer.BadParameter('Source freshness review required; publication blocked')
         path=settings.data_dir/'backups'/f"prepublish-{utcnow().strftime('%Y%m%dT%H%M%S')}.json"
         store.backup(path)
         store.publish(release_id,{'profile':'academic','published_at':utcnow().isoformat(),
+                                 'quality_review_required':require_quality,
+                                 'source_fresh':store.source_fresh(release),
                                  'configuration_sha256':configuration_fingerprint(settings)})
         typer.echo(f'Published academic snapshot {release_id}; backup {path}')
     finally:store.close()

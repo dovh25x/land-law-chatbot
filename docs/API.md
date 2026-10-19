@@ -19,7 +19,7 @@ Mọi `/api/` request production cần chữ ký ingress. Client sử dụng bea
 | `POST /api/v1/chat` | Bearer | Luồng SSE cho một lượt hỏi |
 | `GET /api/v1/sessions/{session_id}/messages` | Không cung cấp nội dung | `410 Gone` |
 | `GET /api/v1/sessions/{session_id}/traces/{trace_id}` | Không cung cấp nội dung | `410 Gone` |
-| `GET /api/v1/documents` | Không yêu cầu bearer | Metadata tài liệu của active corpus |
+| `GET /api/v1/documents` | Không yêu cầu bearer | `documents` của active corpus và `references` chỉ để đọc bản gốc |
 | `GET /api/v1/documents/{document_id}` | Không yêu cầu bearer | Văn bản, chunk và quan hệ; hỗ trợ query `locator` |
 | `GET /api/v1/projects` | Không yêu cầu bearer | Danh mục chỉ chứa `ring4` |
 | `GET /api/v1/status` | Không yêu cầu bearer | Khả năng generation, lý do hạn chế và thời gian chờ |
@@ -36,9 +36,15 @@ Content-Type: application/json
 {"turnstile_token":"<token do widget cấp>"}
 ```
 
-Production kiểm tra token với Turnstile, hostname được cấu hình và action `create_session`. Phản hồi `201` gồm `session_id`, `token` và `retention_days`. Bearer token được giữ trong `sessionStorage`; không đưa token vào URL, log hoặc lịch sử hội thoại.
+Production kiểm tra token với Turnstile, hostname được cấu hình và action `create_session`. Phản hồi `201` gồm `session_id`, `token` và `retention_days`. Bearer token được giữ trong `sessionStorage`, hoặc bộ nhớ tab khi storage bị chặn; không đưa token vào URL, log hoặc lịch sử hội thoại.
 
 Tạo cuộc trò chuyện mới ở frontend không tạo lại phiên API và không đặt lại quota phiên. Token không hợp lệ hoặc không có quyền trên phiên trả `404`.
+
+Khi phiên hết hạn, client bỏ token, giữ lại bản nháp và yêu cầu người dùng gửi lại sau xác minh; không tự phát lại POST chat. Widget lỗi có nút thử tải lại.
+
+## Thư viện nguồn
+
+`GET /api/v1/documents` trả `documents` đã lập chỉ mục và `references` từ danh mục nguồn chính thức trong phạm vi. Reference có `availability=reference_only`, `applicability_verified=false`, `attachment_urls` công khai và không có chunk chứng cứ. Endpoint chi tiết hỗ trợ cả hai loại; reference trả `chunks=[]`, `relations=[]`. Không đưa reference vào retrieval hoặc citation của AI trước khi ingest/rà soát. Đường dẫn raw nội bộ và ghi chú xử lý không được trả qua API.
 
 ## Gửi câu hỏi
 

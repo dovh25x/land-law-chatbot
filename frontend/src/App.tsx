@@ -2,7 +2,7 @@ import { listConversations, saveConversation, deleteConversation, clearConversat
 import { useEffect, useRef, useState } from 'react'
 import ReactMarkdown from 'react-markdown'
 import { ArrowDown, ArrowUp, BookOpen, CircleHelp, Copy, GitBranch, LoaderCircle, Menu, MessageSquare, Moon, PanelLeftClose, PanelLeftOpen, Plus, Search, ShieldCheck, Square, Sun, Trash2, X } from 'lucide-react'
-import { ask, BASE, BACKEND_CONFIGURED, getJSON, getSession, type Citation, type GenerationStatus, type LegalDocument, type Readiness, type Result, type Session, type Trace } from './api'
+import { ask, APIError, BASE, BACKEND_CONFIGURED, cachedSession, clearSession, getJSON, getSession, type Citation, type GenerationStatus, type LegalDocument, type Readiness, type Result, type Session, type Trace } from './api'
 import { ConfirmDialog, DataPanel, DocumentRow, formatDate, generationLabel, SourcePanel, sourceKinds, TracePanel, useDialog, useMedia } from './ui'
 import { Turnstile } from './Turnstile'
 
@@ -10,6 +10,7 @@ type Page = 'chat' | 'sources' | 'evaluation'
 type Message = { id: string; role: 'user' | 'assistant'; content: string; result?: Result }
 type SourceSelection = { source: Citation | LegalDocument | null; citations: Citation[] }
 const suggestions = ['Chi phí di chuyển tài sản được quy định thế nào?', 'Khi nào được hỗ trợ ổn định đời sống?', 'Cần hồ sơ gì để đối chiếu điều kiện tái định cư?']
+const searchText = (value: string) => value.toLocaleLowerCase('vi').normalize('NFD').replace(/\p{Diacritic}/gu, '').replace(/đ/g, 'd')
 const pageLabels: Record<Page, string> = { chat: 'Hỏi đáp pháp luật', sources: 'Thư viện văn bản', evaluation: 'Đánh giá hệ thống' }
 const pageIcons = { chat: MessageSquare, sources: BookOpen, evaluation: ShieldCheck }
 const labels: Record<string, string> = { answered: 'Có căn cứ', clarification_needed: 'Cần bổ sung thông tin', insufficient_evidence: 'Chưa đủ căn cứ', limited: 'Giới hạn lượt dùng', error: 'Chưa xử lý được' }
@@ -25,6 +26,7 @@ function App() {
   const [conversations, setConversations] = useState<Conversation[]>([]), [storageError, setStorageError] = useState('')
   const [deletion, setDeletion] = useState<{ id?: string; title: string } | null>(null), [deleting, setDeleting] = useState(false)
   const [theme, setTheme] = useState(initialTheme), [challenge, setChallenge] = useState<string>()
+  const [hasSession, setHasSession] = useState(() => !!cachedSession()), [challengeVersion, setChallengeVersion] = useState(0)
   const [dataOpen, setDataOpen] = useState(false), [input, setInput] = useState(''), [messages, setMessages] = useState<Message[]>([])
   const [busy, setBusy] = useState(false), [error, setError] = useState('')
   const [readiness, setReadiness] = useState<Readiness | null>(null), [generation, setGeneration] = useState<GenerationStatus | null>(null), [connecting, setConnecting] = useState(false)
@@ -59,18 +61,28 @@ function App() {
     const results = await Promise.allSettled([
       fetch(BASE + '/readyz', { signal }).then(response => response.json() as Promise<Readiness>),
       getJSON<GenerationStatus>('/api/v1/status', signal),
-      getJSON<{ documents: LegalDocument[] }>('/api/v1/documents', signal),
+      getJSON<{ documents: LegalDocument[]; references?: LegalDocument[] }>('/api/v1/documents', signal),
       getJSON<Record<string, unknown>>('/api/v1/evaluations/latest', signal),
     ])
     if (signal?.aborted) return
     const [ready, status, sources, report] = results
     setReadiness(ready.status === 'fulfilled' ? ready.value : { status: 'starting' })
     setGeneration(status.status === 'fulfilled' ? status.value : null)
-    if (sources.status === 'fulfilled') { setDocs(sources.value.documents); setDocsState('ready') } else setDocsState('error')
+    if (sources.status === 'fulfilled') { setDocs([...sources.value.documents, ...(sources.value.references || [])]); setDocsState('ready') } else setDocsState('error')
     if (report.status === 'fulfilled') { setEvaluation(report.value); setEvaluationState('ready') } else setEvaluationState('error')
     setConnecting(false)
   }
   useEffect(() => { const controller = new AbortController(); void refresh(controller.signal); return () => controller.abort() }, [])
+  useEffect(() => {
+    if (!BACKEND_CONFIGURED) return
+    const controller = new AbortController()
+    const update = () => { if (!document.hidden) void getJSON<GenerationStatus>('/api/v1/status', controller.signal).then(setGeneration).catch(() => {}) }
+    const timer = generation?.reason === 'provider_limited'
+      ? window.setTimeout(update, Math.min(300000, Math.max(1000, (generation.retry_after || 30) * 1000))) : undefined
+    document.addEventListener('visibilitychange', update)
+    window.addEventListener('focus', update)
+    return () => { controller.abort(); window.clearTimeout(timer); document.removeEventListener('visibilitychange', update); window.removeEventListener('focus', update) }
+  }, [generation])
   useEffect(() => {
     let alive = true
     void listConversations().then(saved => {
@@ -104,15 +116,17 @@ function App() {
     if (busy || !input.trim()) return
     if (!BACKEND_CONFIGURED) { setError('Backend chưa được triển khai. Bản xem trước hiện chỉ có giao diện.'); return }
     if (generation && !generation.generation_available) { setError(`${generationLabel(generation)}. Bạn vẫn có thể tra cứu thư viện nguồn.`); return }
-    if (import.meta.env.VITE_TURNSTILE_SITE_KEY && !sessionStorage.getItem('landlaw-session') && !challenge) { setError('Vui lòng hoàn tất xác minh trình duyệt trước khi gửi.'); return }
+    if (import.meta.env.VITE_TURNSTILE_SITE_KEY && !hasSession && !challenge) { setError('Vui lòng hoàn tất xác minh trình duyệt trước khi gửi.'); return }
     const question = input.trim()
     setPage('chat'); setNavOpen(false); setInput(''); setError(''); setBusy(true); setTrace([]); stopReason.current = ''; nearBottom.current = true
-    setMessages(current => [...current, { id: crypto.randomUUID(), role: 'user', content: question }])
+    const messageId = crypto.randomUUID()
+    setMessages(current => [...current, { id: messageId, role: 'user', content: question }])
     const controller = new AbortController(); abortRef.current = controller
     const timeout = window.setTimeout(() => { stopReason.current = 'Quá thời gian chờ kết nối. Server không lưu đáp án để khôi phục.'; controller.abort() }, 180000)
     let received = false
     try {
       sessionRef.current ||= await getSession(challenge)
+      setHasSession(true)
       if (controller.signal.aborted) throw new DOMException('Aborted', 'AbortError')
       await ask(sessionRef.current, question, 'ring4', '', controller.signal, (event, data) => {
         if (event === 'progress') setTrace(current => [...current, data as Trace])
@@ -125,6 +139,11 @@ function App() {
       }, messages)
       if (!received) throw new Error('Mất kết nối trước khi nhận kết quả. Server không lưu đáp án để khôi phục. Bạn có thể chủ động gửi câu hỏi mới.')
     } catch (failure) {
+      if (failure instanceof APIError && ['session_expired', 'challenge_failed', 'challenge_required'].includes(failure.code)) {
+        sessionRef.current = null; clearSession(); setHasSession(false); setChallenge(undefined); setChallengeVersion(value => value + 1)
+        setInput(current => current || question)
+        setMessages(current => current.filter(message => message.id !== messageId))
+      }
       setError(failure instanceof Error && failure.name !== 'AbortError' ? failure.message : stopReason.current || 'Lượt hỏi đã dừng. Server không lưu đáp án để khôi phục.')
     } finally { window.clearTimeout(timeout); setBusy(false); abortRef.current = null }
   }
@@ -151,7 +170,7 @@ function App() {
     setSourcePanel({ source: enriched, citations })
   }
   function navigate(target: Page) { setDataOpen(false); setPage(target); setNavOpen(false); setTraceOpen(false); setSourcePanel(null) }
-  const filteredDocs = docs.filter(doc => (sourceKind === 'all' || doc.source_kind === sourceKind) && `${doc.title} ${doc.document_number || ''}`.normalize('NFC').toLocaleLowerCase('vi').includes(search.normalize('NFC').toLocaleLowerCase('vi')))
+  const filteredDocs = docs.filter(doc => (sourceKind === 'all' || doc.source_kind === sourceKind) && searchText(`${doc.title} ${doc.document_number || ''}`).includes(searchText(search)))
   const evaluationWarning = evaluation && evaluation.status !== 'not_run' && (!evaluation.matches_active_release || !evaluation.matches_active_configuration || evaluation.status !== 'reviewed')
     ? 'Chưa hoàn tất đánh giá trên cấu hình đang hoạt động. Không diễn giải kết quả của phiên bản khác thành chất lượng bản hiện tại.' : ''
   const ready = readiness?.status === 'ready'
@@ -193,16 +212,16 @@ function App() {
         {showBottom && !!messages.length && <button className="scroll-bottom icon-button" onClick={() => { nearBottom.current = true; chatScroll.current?.scrollTo({ top: chatScroll.current.scrollHeight, behavior: 'instant' }); setShowBottom(false) }} aria-label="Về cuối hội thoại"><ArrowDown size={20}/></button>}
           {error && <div className="error-banner" role="alert"><div><strong>Chưa thể hoàn tất lượt hỏi</strong><p>{error}</p></div><button className="icon-button" onClick={() => setError('')} aria-label="Đóng thông báo"><X size={18}/></button></div>}
           {connectionMessage && <div className="connection-note" role="status"><p>{connectionMessage}</p><button className="button button-secondary" disabled={connecting} onClick={() => void refresh()}>Kiểm tra kết nối</button></div>}
-          <Turnstile onToken={setChallenge}/><div className="composer"><form id="chat-form" onSubmit={event => { event.preventDefault(); void send() }}><textarea ref={inputRef} value={input} onChange={event => setInput(event.target.value)} placeholder={mobile ? 'Nhập câu hỏi pháp luật…' : 'Hỏi về bồi thường, hỗ trợ, tái định cư…'} maxLength={4000} rows={1} aria-label="Câu hỏi pháp luật" onKeyDown={event => { if (event.key === 'Enter' && !event.shiftKey && !event.nativeEvent.isComposing && !touch) { event.preventDefault(); void send() } }}/></form><div className="composer-bottom"><span className="composer-hint">{touch ? 'Chỉ nhập tình huống đã ẩn danh' : 'Enter để gửi · Shift + Enter xuống dòng'}</span>{busy ? <button type="button" className="send-button" onClick={() => { stopReason.current = 'Bạn đã dừng lượt hỏi. Server không lưu đáp án để khôi phục.'; abortRef.current?.abort() }} aria-label="Dừng lượt hỏi"><Square size={18}/></button> : <button className="send-button" type="submit" form="chat-form" disabled={!input.trim()} aria-label="Gửi câu hỏi"><ArrowUp size={20}/></button>}</div></div>
+          <Turnstile key={challengeVersion} onToken={setChallenge} hasSession={hasSession}/><div className="composer"><form id="chat-form" onSubmit={event => { event.preventDefault(); void send() }}><textarea ref={inputRef} value={input} onChange={event => setInput(event.target.value)} placeholder={mobile ? 'Nhập câu hỏi pháp luật…' : 'Hỏi về bồi thường, hỗ trợ, tái định cư…'} maxLength={4000} rows={1} aria-label="Câu hỏi pháp luật" onKeyDown={event => { if (event.key === 'Enter' && !event.shiftKey && !event.nativeEvent.isComposing && !touch) { event.preventDefault(); void send() } }}/></form><div className="composer-bottom"><span className="composer-hint">{touch ? 'Chỉ nhập tình huống đã ẩn danh' : 'Enter để gửi · Shift + Enter xuống dòng'}</span>{busy ? <button type="button" className="send-button" onClick={() => { stopReason.current = 'Bạn đã dừng lượt hỏi. Server không lưu đáp án để khôi phục.'; abortRef.current?.abort() }} aria-label="Dừng lượt hỏi"><Square size={18}/></button> : <button className="send-button" type="submit" form="chat-form" disabled={!input.trim()} aria-label="Gửi câu hỏi"><ArrowUp size={20}/></button>}</div></div>
           {!messages.length && <div className="topic-grid" aria-label="Gợi ý câu hỏi">{suggestions.map(question => <button key={question} onClick={() => { setInput(question); inputRef.current?.focus() }}><span>{question}</span></button>)}</div>}
           <span className="sr-only" aria-live="polite">{copiedId ? 'Đã sao chép đáp án' : ''}</span><p className="disclaimer">{messages.length ? 'Có thể có sai sót. Hãy kiểm tra nguồn trước khi áp dụng.' : 'Bản thử nghiệm · Chỉ nhập tình huống đã ẩn danh.'}</p>
         </div>
       </div>}
       {page === 'sources' && <section className="content-page"><h1>Thư viện văn bản</h1><p className="page-intro">Tìm văn bản và mở nguồn gốc để kiểm tra căn cứ.</p><div className="library-toolbar"><label className="searchbox"><Search size={20}/><input value={search} onChange={event => setSearch(event.target.value)} placeholder="Tìm theo số hiệu hoặc tên văn bản…" aria-label="Tìm văn bản"/></label><label className="source-filter"><span>Loại nguồn</span><select aria-label="Loại nguồn" value={sourceKind} onChange={event => setSourceKind(event.target.value)}><option value="all">Tất cả nguồn</option>{Object.entries(sourceKinds).map(([key, label]) => <option key={key} value={key}>{label}</option>)}</select></label></div>
-        {docsState === 'loading' ? <div className="empty-state" role="status"><LoaderCircle className="spin" size={24}/><p>Đang tải thư viện…</p></div> : docsState === 'error' ? <div className="empty-state" role="alert"><h2>Chưa tải được thư viện</h2><p>Không thể xác định danh sách tài liệu lúc này.</p><button className="button button-secondary" onClick={() => void refresh()}>Thử tải lại thư viện</button></div> : <><div className="library-count"><strong>{filteredDocs.length}/{docs.length} tài liệu đã công bố</strong>{readiness?.checked_at && <span>Nguồn kiểm tra: {formatDate(readiness.checked_at)}</span>}</div>{!docs.length ? <div className="empty-state"><BookOpen size={28}/><h2>Corpus chưa được công bố</h2><p>Tài liệu chỉ xuất hiện sau bước thu thập, kiểm tra chất lượng và công bố phiên bản.</p><button className="button button-secondary" onClick={() => void refresh()}>Kiểm tra lại</button></div> : <><div className="document-list">{filteredDocs.map(document => <DocumentRow key={document.id} document={document} onOpen={doc => openSource(doc)}/>)}</div>{!filteredDocs.length && <div className="empty-state"><Search size={24}/><h2>Không tìm thấy văn bản</h2><p>Thử số hiệu, từ khóa ngắn hơn hoặc loại nguồn khác.</p><button className="button button-secondary" onClick={() => { setSearch(''); setSourceKind('all') }}>Xóa từ khóa</button></div>}</>}</>}
+        {docsState === 'loading' ? <div className="empty-state" role="status"><LoaderCircle className="spin" size={24}/><p>Đang tải thư viện…</p></div> : docsState === 'error' ? <div className="empty-state" role="alert"><h2>Chưa tải được thư viện</h2><p>Không thể xác định danh sách tài liệu lúc này.</p><button className="button button-secondary" onClick={() => void refresh()}>Thử tải lại thư viện</button></div> : <><div className="library-count"><strong>{filteredDocs.length}/{docs.length} tài liệu trong thư viện</strong>{readiness?.checked_at && <span>Nguồn kiểm tra: {formatDate(readiness.checked_at)}</span>}</div>{!docs.length ? <div className="empty-state"><BookOpen size={28}/><h2>Corpus chưa được công bố</h2><p>Tài liệu xuất hiện khi nguồn được thu thập và đưa vào thư viện.</p><button className="button button-secondary" onClick={() => void refresh()}>Kiểm tra lại</button></div> : <><div className="document-list">{filteredDocs.map(document => <DocumentRow key={document.id} document={document} onOpen={doc => openSource(doc)}/>)}</div>{!filteredDocs.length && <div className="empty-state"><Search size={24}/><h2>Không tìm thấy văn bản</h2><p>Thử số hiệu, từ khóa ngắn hơn hoặc loại nguồn khác.</p><button className="button button-secondary" onClick={() => { setSearch(''); setSourceKind('all') }}>Xóa từ khóa</button></div>}</>}</>}
       </section>}
       {page === 'evaluation' && <section className="content-page"><h1>Đánh giá hệ thống</h1><p className="page-intro">Báo cáo kỹ thuật gắn với corpus và cấu hình đã chạy.</p>{evaluationWarning && <aside className="warning-note" role="status"><ShieldCheck size={20}/><p>{evaluationWarning}</p></aside>}<div className="evaluation-summary"><div><small>Corpus đang hoạt động</small><strong>{readiness?.corpus_release || 'Chưa công bố'}</strong></div><div><small>Phạm vi công bố</small><strong>Bản thử nghiệm</strong></div><div><small>Báo cáo khớp cấu hình</small><strong>{evaluation?.matches_active_configuration && evaluation?.matches_active_release ? 'Khớp phiên bản đang chạy' : 'Chưa có báo cáo khớp'}</strong></div></div>
-        {evaluationState === 'loading' ? <p role="status">Đang tải báo cáo…</p> : evaluationState === 'error' ? <div className="empty-state" role="alert"><h2>Chưa tải được báo cáo</h2><button className="button button-secondary" onClick={() => void refresh()}>Thử tải lại báo cáo</button></div> : !evaluation || evaluation.status === 'not_run' ? <div className="empty-state"><h2>Chưa có kết quả kiểm tra trên bản này</h2><p>Kết quả sẽ được công bố sau khi chạy và rà soát.</p></div> : <EvaluationTable evaluation={evaluation}/>}
+        {evaluationState === 'loading' ? <p role="status">Đang tải báo cáo…</p> : evaluationState === 'error' ? <div className="empty-state" role="alert"><h2>Chưa tải được báo cáo</h2><button className="button button-secondary" onClick={() => void refresh()}>Thử tải lại báo cáo</button></div> : !evaluation || evaluation.status === 'not_run' ? <div className="empty-state"><h2>Chưa có kết quả kiểm tra trên bản này</h2><p>Kết quả sẽ được công bố sau khi chạy và rà soát.</p></div> : evaluationWarning ? <details><summary>Xem báo cáo của phiên bản trước</summary><EvaluationTable evaluation={evaluation}/></details> : <EvaluationTable evaluation={evaluation}/> }
       </section>}
     </main>
     {dataOpen && <DataPanel readiness={readiness} generation={generation} connecting={connecting} onRefresh={() => void refresh()} onClose={() => setDataOpen(false)}/>}

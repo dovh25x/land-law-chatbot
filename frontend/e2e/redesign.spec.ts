@@ -184,7 +184,7 @@ test('responsive themes preserve touch targets, source access and long content',
       await page.getByText('Thông tin phiên bản nguồn', { exact: true }).click()
       await expect(page.locator('.source-technical')).toContainText('a'.repeat(64))
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true)
-      await page.screenshot({ path: `../reports/ui-redesign-20261017/matrix-${info.project.name}-${width}-${theme}.png` })
+      await page.screenshot({ path: info.outputPath(`matrix-${info.project.name}-${width}-${theme}.png`) })
       await page.keyboard.press('Escape')
     }
   }

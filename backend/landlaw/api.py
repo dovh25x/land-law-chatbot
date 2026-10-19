@@ -185,12 +185,20 @@ def create_app(settings: Settings | None = None, store: Store | None = None, pro
     @app.get("/api/v1/documents")
     async def documents():
         docs = await asyncio.to_thread(state["store"].documents)
-        return {"documents": [d.model_dump(mode="json", exclude={"chunks"}) for d in docs]}
+        from .catalog import references
+        extra = await asyncio.to_thread(references, settings, {d.id for d in docs})
+        return {"documents": [d.model_dump(mode="json", exclude={"chunks"}) for d in docs], 'references': extra}
 
     @app.get("/api/v1/documents/{document_id}")
     async def document(document_id: str, locator: str | None = Query(default=None,max_length=200)):
         doc = await asyncio.to_thread(state["store"].open_document, document_id, None, locator)
         if not doc:
+            from .catalog import references
+            indexed = await asyncio.to_thread(state['store'].documents)
+            extra = await asyncio.to_thread(references, settings, {d.id for d in indexed})
+            reference = next((item for item in extra if item['id'] == document_id), None)
+            if reference:
+                return {'document': reference, 'relations': []}
             raise HTTPException(404, "Tài liệu chưa được công bố")
         return {"document": doc.model_dump(mode="json"), "relations": [r.model_dump(mode="json")
                 for r in await asyncio.to_thread(state["store"].relations, document_id)]}

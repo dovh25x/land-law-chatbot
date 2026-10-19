@@ -1,11 +1,16 @@
-name: Deploy verified build
+name: Deploy application
 on:
   workflow_dispatch:
     inputs:
-      readiness_report:
-        description: 'Path to the verified readiness report; all bound inputs must exist in this checkout'
-        required: true
+      source_sha:
+        description: 'Source commit to deploy (empty means the selected workflow revision)'
+        required: false
         type: string
+      verify_public_chat:
+        description: 'Also attempt chat with the real managed Turnstile challenge'
+        required: false
+        type: boolean
+        default: false
 concurrency:
   group: production-deploy
   cancel-in-progress: false
@@ -15,8 +20,12 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     environment: production
+    env:
+      ALLOW_STALE_GENERATION: ${{ vars.ALLOW_STALE_GENERATION || 'false' }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.source_sha || github.sha }}
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
@@ -26,24 +35,24 @@ jobs:
           cache: npm
           cache-dependency-path: frontend/package-lock.json
       - run: pip install -r requirements.lock && pip install --no-deps -e .
-      - name: Recompute publication gates before any deployment
+      - name: Pin committed application source
         id: readiness
-        env:
-          RELEASE_READINESS_REPORT: ${{ inputs.readiness_report }}
         run: |
           python - <<'PY'
           import os
-          from scripts.check_release_readiness import require_ready
-          result = require_ready(os.environ['RELEASE_READINESS_REPORT'])
+          from scripts.deploy import preflight
+          commit = preflight()
           with open(os.environ['GITHUB_OUTPUT'], 'a') as output:
-              output.write('tested_commit='+result['source_commit']+'\n')
+              output.write('tested_commit='+commit+'\n')
           PY
       - run: npm ci && npm run build
         working-directory: frontend
         env:
           VITE_API_BASE_URL: ${{ vars.API_BASE_URL }}
           VITE_TURNSTILE_SITE_KEY: ${{ vars.VITE_TURNSTILE_SITE_KEY }}
-      - run: pytest -q
+      - run: env -u ALLOW_STALE_GENERATION python -m pytest -q && python scripts/check_secrets.py
+      - run: npm test
+        working-directory: frontend
       - name: Deploy frontend
         uses: cloudflare/wrangler-action@v4
         with:
@@ -55,9 +64,25 @@ jobs:
         env:
           RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
           RENDER_SERVICE_ID: ${{ vars.RENDER_SERVICE_ID }}
-          RELEASE_READINESS_REPORT: ${{ inputs.readiness_report }}
+          DEPLOY_SOURCE_COMMIT: ${{ steps.readiness.outputs.tested_commit }}
         run: python scripts/deploy.py backend
-      - name: Live smoke
-        run: npx --prefix frontend playwright install --with-deps chromium && node scripts/verify_live_ui.mjs --chat
+      - name: Verify live navigation and source identity
+        run: npx --prefix frontend playwright install --with-deps chromium && node scripts/verify_live_ui.mjs
         env:
           LIVE_BASE_URL: ${{ vars.API_BASE_URL }}
+          LIVE_EXPECTED_CORPUS: ${{ vars.CORPUS_RELEASE }}
+          LIVE_REPORT_DIR: reports/deployment-live
+      - name: Optional public chat verification
+        if: ${{ inputs.verify_public_chat }}
+        run: node scripts/verify_live_ui.mjs --chat
+        env:
+          LIVE_BASE_URL: ${{ vars.API_BASE_URL }}
+          LIVE_REPORT_DIR: reports/deployment-chat
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: deployment-evidence
+          path: |
+            reports/deployments
+            reports/deployment-live
+            reports/deployment-chat

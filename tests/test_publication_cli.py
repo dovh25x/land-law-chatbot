@@ -34,5 +34,19 @@ def test_publish_rejects_embedded_candidate_before_backup_or_activation(settings
     monkeypatch.setattr(cli, 'Settings', lambda: settings)
     monkeypatch.setattr(cli, 'Store', lambda _: selected)
     with pytest.raises(typer.BadParameter, match='publication blocked'):
-        cli.publish('candidate')
+        cli.publish('candidate', require_quality=True)
     assert store.state('active_release') is None
+
+
+def test_publish_without_quality_gate_preserves_actual_freshness(settings, store, monkeypatch):
+    doc=document().model_dump(mode='json')
+    stamp=(utcnow()-timedelta(days=10)).isoformat()
+    doc['checked_at']=stamp
+    payload={'id':'candidate','checked_at':stamp,'documents':[doc]}
+    store.stage(payload)
+    monkeypatch.setattr(cli,'Settings',lambda:settings)
+    monkeypatch.setattr(cli,'Store',lambda _:store)
+    monkeypatch.setattr(store,'close',lambda:None)
+    cli.publish('candidate')
+    assert store.state('active_release')=='candidate'
+    assert not store.source_fresh(store.release())

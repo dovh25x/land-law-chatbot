@@ -26,6 +26,7 @@ land-law = "landlaw.cli:app"
 where = ["backend"]
 
 [tool.pytest.ini_options]
+pythonpath = ["."]
 testpaths = ["tests"]
 asyncio_mode = "auto"
 

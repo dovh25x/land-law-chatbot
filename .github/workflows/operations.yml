@@ -21,3 +21,5 @@ jobs:
       - run: land-law cleanup && land-law ops-status --check
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          GENERATION_ENABLED: ${{ vars.GENERATION_ENABLED || 'true' }}
+          ALLOW_STALE_GENERATION: ${{ vars.ALLOW_STALE_GENERATION || 'false' }}

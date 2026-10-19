@@ -54,6 +54,7 @@ export function DocumentRow({ document, onOpen }: { document: LegalDocument; onO
     <FileText size={22} className="document-symbol"/>
     <span className="document-copy"><strong>{document.title}</strong>
       <span>{document.document_number || 'Chưa có số hiệu'} · {sourceKinds[document.source_kind] || 'Nguồn khác'}</span>
+      {document.availability === 'reference_only' && <small>Bản gốc tham khảo · Chưa dùng cho câu trả lời AI</small>}
       <small>Kiểm tra {formatDate(document.checked_at)}{document.effective_from ? ` · Hiệu lực từ ${formatDate(document.effective_from)}` : ''}{document.effective_to ? ` · Mốc kết thúc ${formatDate(document.effective_to)}` : ''}</small>
     </span><ArrowUpRight size={18}/>
   </button>
@@ -101,6 +102,7 @@ export function SourcePanel({ source, citations, onSelect, onClose }: {
   const [document, setDocument] = useState<LegalDocument | null>(null)
   const [loading, setLoading] = useState(false), [error, setError] = useState('')
   const citation = source && 'excerpt' in source ? source : null
+  const files = [...new Set([...(document?.attachment_urls || []), ...(document?.source_files || []).map(item => item.url), ...(source && 'attachment_urls' in source ? source.attachment_urls || [] : [])])]
   const scrollRef = useRef<HTMLDivElement>(null)
   useEffect(() => {
     setDocument(null); setError(''); scrollRef.current?.closest('.panel-body')?.scrollTo(0, 0)
@@ -115,10 +117,12 @@ export function SourcePanel({ source, citations, onSelect, onClose }: {
   return <SidePanel title="Nguồn căn cứ" comparison icon={<FileText size={20}/>} onClose={onClose} footer={source && <>
     <ExternalSource url={source.url} primary>Mở nguồn chính thức</ExternalSource>
     {citation?.source_url && <ExternalSource url={citation.source_url}>Mở trang nguồn gốc</ExternalSource>}
+    {!citation && files.slice(0, 8).map((url, index) => <ExternalSource key={url} url={url}>Mở bản gốc {index + 1}</ExternalSource>)}
   </>}>
     {!!citations.length && <nav className="source-picker" aria-label="Nguồn của đáp án"><h3>{citations.length} nguồn trong đáp án</h3>{citations.map((item, index) => <button key={item.id} aria-current={source?.id === item.id ? 'true' : undefined} onClick={() => onSelect(item)}><span className="citation-index">{index + 1}</span><span>{item.document_number || item.title}<small>{item.locator}</small></span></button>)}</nav>}
     {source ? <div ref={scrollRef} className="source-card">
       <h3 className="source-title">{source.title}</h3><p className="source-meta">{source.document_number || 'Chưa có số hiệu'}</p>
+      {(document?.availability === 'reference_only' || ('availability' in source && source.availability === 'reference_only')) && <p className="data-note" role="note">Tài liệu gốc để bạn đối chiếu. Nội dung chưa nằm trong chỉ mục trả lời và không được dùng làm căn cứ cho kết luận AI.</p>}
       {citation ? <>
         <div className="source-excerpt"><h4>{citation.locator}</h4>{citation.page && <p className="secondary-copy">Trang nguồn: {citation.page}</p>}<blockquote>{citation.excerpt}</blockquote></div>
         <p className="source-applicability">{applicability[citation.applicability] || 'Chưa xác định trạng thái áp dụng'}</p>

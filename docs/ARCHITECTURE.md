@@ -65,7 +65,7 @@ SQLite và PostgreSQL có lexical backend khác nhau. Vì vậy storage backend 
 | Vị trí | Dữ liệu | Vòng đời |
 |---|---|---|
 | IndexedDB | Hội thoại, đáp án, citation, trace | 7 ngày từ khi tạo; tối đa 20 cuộc, 40 message/cuộc, tổng 10 MiB |
-| `sessionStorage` | Bearer token phiên API | Theo vòng đời sessionStorage; tách khỏi lịch sử dài hạn |
+| `sessionStorage` hoặc bộ nhớ tab khi bị chặn | Bearer token phiên API | Theo vòng đời storage/tab; tách khỏi lịch sử dài hạn |
 | Database backend | Corpus, hash token/IP, counters, fingerprint request, trạng thái và lease | Corpus có phiên bản; metadata được cleanup theo chính sách |
 | Log ứng dụng | Request ID, kết quả, lỗi theo loại, latency và usage | Theo cấu hình lưu log của hosting |
 | Corpus backup | Snapshot và cấu hình công khai cần khôi phục | Theo Release và quy trình vận hành |
@@ -89,3 +89,5 @@ Chi tiết cấu hình và xử lý sự cố nằm trong [vận hành](OPERATIO
 Nguồn chính thức được parse hoặc OCR ngoại tuyến, chia chunk theo điều/khoản/trang và gắn checksum, locator, ngày kiểm tra cùng quan hệ văn bản. Snapshot chỉ chuyển active sau khi kiểm tra phạm vi, tính toàn vẹn và restore riêng thành công.
 
 Corpus vận hành chỉ gồm Vành đai 4 và luật chung liên quan. Không rollback sang corpus đa dự án hoặc phiên bản ghi hội thoại lên server. Các lựa chọn kiến trúc và hệ quả được lưu trong [ADR](adr/README.md).
+
+Danh mục `catalog.py` chỉ cung cấp provenance và liên kết bản gốc chưa lập chỉ mục cho thư viện. Nó không thêm pipeline retrieval, không thay đổi corpus hoặc embedding và không cấp chứng cứ cho synthesis.

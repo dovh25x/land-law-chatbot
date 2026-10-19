@@ -25,7 +25,7 @@ Hanoi Land Law Assistant hỗ trợ quá trình tìm và đọc nguồn cho Vàn
 | Citation | Mở văn bản nguồn, locator, trang nếu có và đoạn trích tương ứng |
 | Trace | Hiển thị bước thực thi và nguồn đã dùng; không hiển thị suy nghĩ nội bộ |
 | Lịch sử | Xem lại, xóa từng cuộc, xóa toàn bộ và tự hết hạn tại trình duyệt |
-| Thư viện | Tra cứu nguồn ngay cả khi generation bị tắt hoặc đạt giới hạn |
+| Thư viện | Tìm có/không dấu, mở nguồn và bản gốc tham khảo ngay cả khi generation bị tắt hoặc đạt giới hạn |
 | Đánh giá | Hiển thị kết quả có provenance và cảnh báo khi khác corpus hoặc cấu hình |
 
 Corpus chỉ chứa nguồn Vành đai 4 và luật chung liên quan. Request chỉ định dự án khác bị từ chối. Tin dự án được dùng làm bối cảnh, không làm bằng chứng độc lập cho quyền lợi cá nhân.
@@ -38,7 +38,7 @@ Không xác định thửa đất hoặc ranh giới bằng GIS, tính số ti�
 
 - Thiếu hồ sơ cá nhân: hỏi thông tin đã ẩn danh và giải thích vì sao chưa thể kết luận.
 - Thiếu nguồn hoặc quan hệ pháp lý chưa xác minh: loại kết luận chưa được hỗ trợ và nêu giới hạn.
-- Nguồn cần rà soát: dừng generation; giữ khả năng đọc nguồn.
+- Nguồn cần rà soát: mặc định dừng generation; người vận hành có thể bật chế độ snapshot có cảnh báo, giữ mốc rà soát thật và kiểm chứng claim.
 - Quota, cold start hoặc provider giới hạn: thông báo tình trạng thực tế, không tạo câu trả lời thay thế giả.
 - Hủy hoặc mất SSE: giải thích server không lưu đáp án để khôi phục; chỉ tạo lượt mới khi người dùng chủ động.
 - Không lưu được lịch sử: thông báo hội thoại chỉ còn trong tab, không chuyển sang lưu server.
@@ -60,3 +60,5 @@ Tiêu chí chất lượng và phương pháp đo nằm trong [đánh giá](EVAL
 ## Ràng buộc
 
 Giữ một pipeline Agentic RAG, Groq GPT-OSS 120B, embedding E5 hiện tại và hosting Free. Giới hạn workflow được quy định trong [kiến trúc](ARCHITECTURE.md); quota public và quy trình xử lý sự cố nằm trong [vận hành](OPERATIONS.md).
+
+Rubric đánh giá nội dung là công cụ đo và rà soát tùy chọn, không phải điều kiện bắt buộc để deploy. Kiểm thử chức năng, tính toàn vẹn corpus, nguồn gốc citation, quyền riêng tư và giới hạn thực thi vẫn áp dụng. Bản gốc chưa lập chỉ mục được đọc trong thư viện nhưng không trở thành chứng cứ cho AI.

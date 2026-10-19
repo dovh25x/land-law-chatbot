@@ -29,11 +29,14 @@ def record_source_review(store, receipt_path: Path):
 
 def status(store):
     release=store.release(None,True)
+    fresh=bool(release) and store.source_fresh(release)
     cutoff=(utcnow()-timedelta(hours=1)).isoformat()
     turns=store.rows('SELECT status,COUNT(*) AS count FROM turns WHERE created_at>? GROUP BY status',(cutoff,))
     failed=sum(r['count'] for r in turns if r['status'] in {'error','expired'})
     return {'checked_at':utcnow().isoformat(),'database':store.ready(),'corpus':(release or {}).get('id'),
-        'sources_fresh':bool(release) and store.source_fresh(release),'generation_enabled':store.settings.generation_enabled,
+        'sources_fresh':fresh,'generation_enabled':store.settings.generation_enabled,
+        'allow_stale_generation':store.settings.allow_stale_generation,
+        'warnings':[] if fresh else ['source_stale'],
         'provider_cooldown_seconds':store.cooldown(),'last_hour_turns':{r['status']:r['count'] for r in turns},
-        'needs_attention':failed>=5 or not release or not store.source_fresh(release),
+        'needs_attention':failed>=5 or not release or (not fresh and not store.settings.allow_stale_generation),
         'usage':[{'kind':r['key'],'units':r['value']} for r in store.rows("SELECT key,value FROM counters WHERE key LIKE 'usage:%' OR key LIKE 'public:llm:%'")]}

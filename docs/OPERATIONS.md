@@ -58,7 +58,7 @@ API dùng scope `public`; CLI/dev entrypoint tin cậy dùng `operator`, ghi usa
 
 ## Rà soát nguồn và freshness
 
-Nguồn quá bảy ngày hoặc receipt cho biết `changed`/`unavailable` chặn generation. Runtime hiện kiểm tra freshness của corpus một cách bảo thủ; một nguồn cần rà soát có thể ảnh hưởng toàn bộ chat, dù thư viện vẫn truy cập được.
+Ở chế độ mặc định, nguồn quá bảy ngày hoặc receipt cho biết `changed`/`unavailable` chặn generation. Runtime hiện kiểm tra freshness của corpus một cách bảo thủ; một nguồn cần rà soát có thể ảnh hưởng toàn bộ chat, dù thư viện vẫn truy cập được.
 
 Quy trình rà soát:
 
@@ -86,7 +86,7 @@ Thêm `--postgres` vào helper generation để đánh giá trên PostgreSQL ri�
 
 `coverage_passed` kiểm tra phạm vi Vành đai 4, nguồn bắt buộc và chứng cứ dự án đã duyệt. `publication_ready` còn yêu cầu embedding đầy đủ, metadata đã duyệt, không có gap, relation chưa giải quyết hoặc ingest issue. Đây là cổng kỹ thuật; vẫn cần freshness, suite khóa và các bước phát hành bên dưới.
 
-Lệnh `land-law publish` từ chối candidate không đạt coverage/dependency hoặc chưa đạt freshness, trước khi backup và đổi active state. Database staging dùng cho đánh giá không thay thế lệnh phát hành này.
+Lệnh `land-law publish <release-id>` kiểm tra tính toàn vẹn corpus, backup rồi chuyển active; không yêu cầu rubric hay freshness đạt. Dùng `--require-quality` nếu muốn áp dụng thêm coverage/dependency và freshness trước backup. Metadata công bố ghi rõ chế độ đã dùng và freshness thực tế. Việc công bố không tạo receipt rà soát hoặc chứng nhận pháp lý.
 
 Khi chỉ thu gọn chỉ mục, khai báo `index_articles` cùng biên bản `index_scope_review`; giữ toàn văn raw, điều sửa đổi, định nghĩa, chuyển tiếp và các điều kiện được dẫn chiếu. Nếu chưa chứng minh đủ ngữ cảnh thì giữ nguyên toàn văn. OCR chỉ một phần PDF phải có `page_numbers` tăng dần, không trùng và `scope_review`; citation vẫn dùng số trang vật lý của PDF gốc. OCR chưa đối chiếu giữ `review_status=pending`.
 
@@ -172,6 +172,9 @@ Nội dung đi qua Cloudflare/Render tới Groq. Operator phải kiểm tra chí
 
 Cổng kiểm tra đối chiếu nội dung backup với snapshot, dependency/coverage, freshness, bộ khóa và fingerprint PostgreSQL hiện tại, checksum answer, trích dẫn nguyên văn, review nội dung, restore hai backend và ngưỡng retrieval. Smoke và supplemental phải đạt từng ca; natural phải đạt đầy đủ ít nhất năm trong sáu câu nội dung, các ca an toàn phải đạt và không còn lỗi thực thi. Software evidence ghi `source_commit` và `checks` gồm tên `backend`, `secrets`, `frontend_unit`, `frontend_build`, `frontend_e2e`, lệnh đã chạy, exit code, đường dẫn log và `log_sha256`. Bằng chứng tải Release phải chỉ đúng file backup đã tải, hash, corpus ID và URL GitHub; chuẩn bị package local không thay thế bước này.
 
-Lệnh deploy production yêu cầu biến `RELEASE_READINESS_REPORT` trỏ tới báo cáo mới trong vòng một ngày; nó tính lại các cổng từ input trước khi dùng credentials hoặc gọi dịch vụ. Workflow production yêu cầu input `readiness_report` và thực hiện cùng kiểm tra trước mọi bước deploy. Báo cáo cùng toàn bộ input được ràng buộc phải hiện diện trong checkout/workspace chạy deploy; không dùng đường dẫn staging local không tồn tại trong CI. Một cờ `ready=true` ghi sẵn không bỏ qua việc kiểm tra lại. Báo cáo blocked chỉ ghi việc còn thiếu và không cho phép phát hành. Đây là cổng kỹ thuật, không phải chứng nhận pháp lý độc lập.
+Deploy mặc định không yêu cầu báo cáo rubric. `scripts/deploy.py backend --commit <SHA-40-ký-tự>` và `scripts/deploy.py frontend --commit <SHA-40-ký-tự>` kiểm tra source đã commit, giữ Render Free, ghim SHA và không cho thay đổi ứng dụng chưa commit. CLI backend ghi receipt JSONL nối tiếp; khi hết thời gian theo dõi, dùng `--deployment-id <ID> --receipt <path>` để tiếp tục theo dõi cùng deployment. Preview frontend dùng branch `preview`, production dùng `main`.
 
-Commit chứa tài liệu và bằng chứng có thể được tạo sau SHA đã kiểm thử nếu chỉ khác trong `reports/`, `docs/` hoặc `README.md`. Thay đổi runtime, data hay CI bắt buộc kiểm thử SHA mới. Backend Render và frontend Cloudflare đều ghim SHA đã được cổng kiểm tra xác nhận; commit bằng chứng không tự trở thành phiên bản ứng dụng đã kiểm thử.
+Workflow **Deploy application** nhận `source_sha` tùy chọn, chạy kiểm tra phần mềm, deploy Pages/Render rồi kiểm tra navigation và corpus/fingerprint thật. Chat public là bước tùy chọn `verify_public_chat`, vì managed Turnstile có thể yêu cầu tương tác. Workflow **Runtime metadata checks** dùng cùng database runtime và các cờ generation của production; chế độ snapshot được chủ động bật vẫn báo warning nguồn cũ nhưng không bị xem là lỗi vận hành chỉ vì freshness.
+
+Khi cần bật lại rubric cho CLI deploy, đặt `REQUIRE_QUALITY_READINESS=true` cùng `RELEASE_READINESS_REPORT`; báo cáo được tính lại và phải khớp SHA. Chế độ tùy chọn không đổi các kết quả blocked lịch sử thành passed.
+Commit chứa tài liệu và bằng chứng có thể được tạo sau SHA đã kiểm thử nếu chỉ khác trong `reports/`, `docs/` hoặc `README.md`. Thay đổi runtime, data hay CI bắt buộc kiểm thử SHA mới. Backend Render và frontend Cloudflare đều ghim SHA source đã kiểm thử; commit bằng chứng không tự trở thành phiên bản ứng dụng đã kiểm thử.

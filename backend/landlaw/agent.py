@@ -293,7 +293,7 @@ def source_spans(evidence):
             quote=text[start:start+1400]
             if len(quote)<20:continue
             key=f'{item.chunk.id}:span:{start}'
-            result[key]={'span_id':key,'citation_id':item.chunk.id,'quote':quote}
+            result[key]={'span_id':key,'citation_id':item.chunk.id,'source_locator':item.chunk.locator,'quote':quote}
     return result
 
 
@@ -1211,6 +1211,9 @@ class Agent:
                     structural_issues.append(f'Claim {index}: không dùng nhãn hiệu lực để áp dụng quyền lợi từ văn bản tương lai')
             cited_text=' '.join(evidence[i].chunk.text for i in claim.citation_ids if i in evidence)
             normalized_source=normalize(cited_text)
+            if ('noi co dat thu hoi' in normalized_source and 'noi co quyet dinh phe duyet' in normalized_claim
+                    and 'noi co quyet dinh phe duyet' not in normalized_source):
+                structural_issues.append(f'Claim {index}: địa bàn nơi có đất thu hồi không phải nơi ban hành quyết định phê duyệt; giữ đúng địa bàn và mốc thời điểm trong nguồn')
             prerequisites=re.findall(r'cac truong hop quy dinh tai khoan (\d+) dieu nay duoc .{0,120}?khi co',normalized_source)
             if prerequisites and 'duoc' in normalized_claim:
                 for clause in prerequisites:
@@ -1360,6 +1363,9 @@ class Agent:
             "failure to answer the direct question. Preserve Chủ tịch UBND versus UBND exactly. "
             "Check every stated clause number and point letter against its operative text: an article heading, "
             "a reference to eligible cases, or a continuation of another clause cannot prove the attributed clause. "
+            "Keep the operative paragraph's own number distinct from cross-references inside it: a paragraph "
+            "numbered 2 that refers to paragraph 4 remains paragraph 2. source_locator identifies the cited passage, "
+            "not a licence to substitute a referenced paragraph's substantive rule. "
             "For every supported index and EVERY citation_id, select one or more supporting_spans by exact span_id "
             "from that citation's source_spans. The server extracts verbatim text: do not invent IDs or paraphrase quotes. "
             "All spans together cover the full cited passage; read continuation spans when one is incomplete. "

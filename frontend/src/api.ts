@@ -6,7 +6,7 @@ export interface Trace { step: string; tool?: string; summary: string; document_
 export interface Citation { checksum?: string; id: string; document_id: string; title: string; document_number?: string; url: string; locator: string; excerpt: string; checked_at: string; applicability: string; source_review_notes?: string; page?: number; source_url?: string }
 export interface Result { status: string; content: string; citations: Citation[]; trace: Trace[]; trace_id: string; corpus_release?: string; model: string; embedding_model: string; mode: string; llm_calls: number; tool_calls: number; token_usage: number; elapsed_ms: number; as_of: string; support_level: string; retry_after?: number | null; missing_facts?: string[] }
 export interface Session { session_id: string; token: string }
-export interface LegalDocument { checksum?: string; id: string; title: string; url: string; document_number?: string; source_kind: string; project?: ProjectID; checked_at: string; applicability_verified: boolean; effective_from?: string; effective_to?: string; source_review_notes?: string; chunks?: { id: string; locator: string; text: string }[] }
+export interface LegalDocument { checksum?: string; id: string; title: string; url: string; document_number?: string; source_kind: string; project?: ProjectID; checked_at: string; applicability_verified: boolean; effective_from?: string; effective_to?: string; source_review_notes?: string; availability?: 'reference_only'; attachment_urls?: string[]; source_files?: {url: string}[]; chunks?: { id: string; locator: string; text: string }[] }
 export interface Project { id: ProjectID; name: string; description: string; source_ids: string[]; questions: string[] }
 export interface Readiness { status: string; database?: boolean; llm_configured?: boolean; corpus_release?: string; checked_at?: string; publication_profile?: string; quality_status?: string; retrieval_mode?: string; coverage_gaps?: {document_id: string; title: string; reason: string}[] }
 
@@ -24,6 +24,20 @@ export class APIError extends Error {
   constructor(message: string, public code: string, public retryAfter?: number) { super(message) }
 }
 
+let memorySession: Session | null = null
+export function cachedSession(): Session | null {
+  if (memorySession) return memorySession
+  try {
+    const value = JSON.parse(sessionStorage.getItem('landlaw-session') || 'null')
+    if (typeof value?.session_id === 'string' && value.session_id && typeof value.token === 'string' && value.token) return memorySession = value
+  } catch { /* A tab can work without browser session storage. */ }
+  return null
+}
+export function clearSession() {
+  memorySession = null
+  try { sessionStorage.removeItem('landlaw-session') } catch { /* Memory is already cleared. */ }
+}
+
 export async function responseError(response: Response): Promise<APIError> {
   const body = await response.json().catch(() => null)
   const code = typeof body?.detail?.code === 'string' ? body.detail.code : `http_${response.status}`
@@ -31,6 +45,7 @@ export async function responseError(response: Response): Promise<APIError> {
   const seconds = raw && /^\d+$/.test(raw) ? Number(raw) : undefined
   const wait = seconds === undefined ? '' : ` Thử lại sau ${seconds} giây.`
   const messages: Record<string, string> = {
+    session_expired: 'Phiên đã hết hạn. Vui lòng xác minh trình duyệt và gửi lại câu hỏi.',
     generation_disabled: 'Trả lời bằng AI đang tạm dừng. Bạn vẫn có thể tra cứu thư viện nguồn.',
     system_busy: 'Hệ thống đang bận.',
     challenge_required: 'Vui lòng hoàn tất xác minh trình duyệt trước khi gửi.',
@@ -52,22 +67,19 @@ export async function getJSON<T>(path: string, signal?: AbortSignal): Promise<T>
 
 export async function getSession(turnstileToken?:string): Promise<Session> {
   if (!BACKEND_CONFIGURED) throw new Error('Backend chưa được triển khai. Bản xem trước hiện chỉ có giao diện.')
-  const cached = sessionStorage.getItem('landlaw-session')
+  const cached = cachedSession()
   if (cached) {
-    try {
-      const session = JSON.parse(cached) as Session
-      const response = await fetch(BASE + `/api/v1/sessions/${session.session_id}`, { headers: { Authorization: `Bearer ${session.token}` } })
-      if (response.ok) return session
+      const response = await fetch(BASE + `/api/v1/sessions/${cached.session_id}`, { headers: { Authorization: `Bearer ${cached.token}` } })
+      if (response.ok) return cached
       if (response.status !== 404 && response.status !== 410) throw new Error('Chưa tải được phiên đã lưu. Vui lòng thử lại sau khi backend khởi động.')
-    } catch (error) {
-      if (!(error instanceof SyntaxError)) throw error
-    }
-    sessionStorage.removeItem('landlaw-session')
+      clearSession()
   }
   const response = await fetch(BASE + '/api/v1/sessions', { method: 'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({turnstile_token:turnstileToken}) })
   if (!response.ok) throw await responseError(response)
   const session: Session = await response.json()
-  sessionStorage.setItem('landlaw-session', JSON.stringify(session))
+  if (!session.session_id || !session.token) throw new Error('Máy chủ chưa tạo được phiên hợp lệ. Vui lòng thử lại.')
+  memorySession = session
+  try { sessionStorage.setItem('landlaw-session', JSON.stringify(session)) } catch { /* Keep the session in this tab's memory. */ }
   return session
 }
 
@@ -97,6 +109,10 @@ export async function ask(session: Session, message: string, project: string, as
     method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${session.token}` }, signal,
     body: JSON.stringify({ session_id: session.session_id, message, project: project || null, as_of: asOf || null, request_id:requestId, history:requestHistory(history) }),
   })
+  if (response.status === 404 || response.status === 410) {
+    clearSession()
+    throw new APIError('Phiên đã hết hạn. Vui lòng xác minh trình duyệt và gửi lại câu hỏi.', 'session_expired')
+  }
   if (!response.ok) throw await responseError(response)
   if (!response.body) throw new Error('Trình duyệt không hỗ trợ luồng trả lời.')
   const parser = new SSEParser(onEvent)
