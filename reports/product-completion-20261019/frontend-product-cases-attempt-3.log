@@ -1,0 +1,23 @@
+
+> hanoi-land-law-web@0.1.0 test:e2e
+> playwright test product.spec.ts
+
+[WebServer] (node:25304) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 8 tests using 2 workers
+
+(node:25326) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:25325) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 [mobile] › e2e/product.spec.ts:16:1 › library supports accent-free search and opens reference-only originals (2.8s)
+  ✓  2 [desktop] › e2e/product.spec.ts:16:1 › library supports accent-free search and opens reference-only originals (2.7s)
+  ✓  3 [mobile] › e2e/product.spec.ts:28:1 › expired in-memory session restores the draft and never automatically resends (2.9s)
+  ✓  4 [desktop] › e2e/product.spec.ts:28:1 › expired in-memory session restores the draft and never automatically resends (3.0s)
+  ✓  5 [mobile] › e2e/product.spec.ts:47:1 › blocked sessionStorage does not prevent chat within the current tab (2.1s)
+  ✓  6 [desktop] › e2e/product.spec.ts:47:1 › blocked sessionStorage does not prevent chat within the current tab (2.1s)
+  ✓  7 [mobile] › e2e/product.spec.ts:52:1 › generation availability refreshes after a provider cooldown (2.1s)
+  ✓  8 [desktop] › e2e/product.spec.ts:52:1 › generation availability refreshes after a provider cooldown (2.3s)
+
+  8 passed (13.8s)

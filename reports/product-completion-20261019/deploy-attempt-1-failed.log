@@ -1,0 +1,17 @@
+deploy	Deploy existing free backend	﻿2026-10-19T06:10:04.0153117Z ##[group]Run python scripts/deploy.py backend
+deploy	Deploy existing free backend	2026-10-19T06:10:04.0153811Z [36;1mpython scripts/deploy.py backend[0m
+deploy	Deploy existing free backend	2026-10-19T06:10:04.0246663Z shell: /usr/bin/bash -e {0}
+deploy	Deploy existing free backend	2026-10-19T06:10:04.0247144Z env:
+deploy	Deploy existing free backend	2026-10-19T06:10:04.0247526Z   ALLOW_STALE_GENERATION: true
+deploy	Deploy existing free backend	2026-10-19T06:10:04.0248145Z   pythonLocation: /opt/hostedtoolcache/Python/3.12.15/x64
+deploy	Deploy existing free backend	2026-10-19T06:10:04.0248970Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.12.15/x64/lib/pkgconfig
+deploy	Deploy existing free backend	2026-10-19T06:10:04.0250167Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.15/x64
+deploy	Deploy existing free backend	2026-10-19T06:10:04.0250928Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.15/x64
+deploy	Deploy existing free backend	2026-10-19T06:10:04.0251675Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.15/x64
+deploy	Deploy existing free backend	2026-10-19T06:10:04.0252427Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.12.15/x64/lib
+deploy	Deploy existing free backend	2026-10-19T06:10:04.0253273Z   RENDER_API_KEY: ***
+deploy	Deploy existing free backend	2026-10-19T06:10:04.0253764Z   RENDER_SERVICE_ID: srv-db5tipks728c7390gs60
+deploy	Deploy existing free backend	2026-10-19T06:10:04.0254459Z   DEPLOY_SOURCE_COMMIT: c880baf68c6f2c8926104d1b32397ab8ada2fe6a
+deploy	Deploy existing free backend	2026-10-19T06:10:04.0255160Z ##[endgroup]
+deploy	Deploy existing free backend	2026-10-19T06:10:04.1896101Z Deployment source preflight failed: ValueError
+deploy	Deploy existing free backend	2026-10-19T06:10:04.2128031Z ##[error]Process completed with exit code 1.

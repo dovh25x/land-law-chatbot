@@ -1,0 +1,443 @@
+inspect	Set up job	﻿2026-10-19T06:08:39.8344687Z Current runner version: '2.337.0'
+inspect	Set up job	2026-10-19T06:08:39.8365340Z ##[group]Runner Image Provisioner
+inspect	Set up job	2026-10-19T06:08:39.8366054Z Hosted Compute Agent
+inspect	Set up job	2026-10-19T06:08:39.8366642Z Version: 20261012.601
+inspect	Set up job	2026-10-19T06:08:39.8367169Z Commit: f3dc54e1fb89da6852db922499a0233137369e1d
+inspect	Set up job	2026-10-19T06:08:39.8367797Z Build Date: 2026-10-12T17:48:21Z
+inspect	Set up job	2026-10-19T06:08:39.8368406Z Worker ID: {3a734e66-61c0-4cdc-acce-acc70784db3b}
+inspect	Set up job	2026-10-19T06:08:39.8368991Z Region: westus3
+inspect	Set up job	2026-10-19T06:08:39.8369757Z Cloud: Azure
+inspect	Set up job	2026-10-19T06:08:39.8370213Z ##[endgroup]
+inspect	Set up job	2026-10-19T06:08:39.8371511Z ##[group]Operating System
+inspect	Set up job	2026-10-19T06:08:39.8372039Z Ubuntu
+inspect	Set up job	2026-10-19T06:08:39.8372471Z 24.04.5
+inspect	Set up job	2026-10-19T06:08:39.8372938Z LTS
+inspect	Set up job	2026-10-19T06:08:39.8373406Z ##[endgroup]
+inspect	Set up job	2026-10-19T06:08:39.8373903Z ##[group]Runner Image
+inspect	Set up job	2026-10-19T06:08:39.8374461Z Image: ubuntu-24.04
+inspect	Set up job	2026-10-19T06:08:39.8374956Z Version: 20261012.334.1
+inspect	Set up job	2026-10-19T06:08:39.8375859Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20261012.334/images/ubuntu/Ubuntu2404-Readme.md
+inspect	Set up job	2026-10-19T06:08:39.8377315Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20261012.334
+inspect	Set up job	2026-10-19T06:08:39.8378115Z ##[endgroup]
+inspect	Set up job	2026-10-19T06:08:39.8379051Z ##[group]GITHUB_TOKEN Permissions
+inspect	Set up job	2026-10-19T06:08:39.8380921Z Contents: read
+inspect	Set up job	2026-10-19T06:08:39.8381421Z Metadata: read
+inspect	Set up job	2026-10-19T06:08:39.8382310Z ##[endgroup]
+inspect	Set up job	2026-10-19T06:08:39.8383949Z Secret source: Actions
+inspect	Set up job	2026-10-19T06:08:39.8384809Z Cache mode: write
+inspect	Set up job	2026-10-19T06:08:39.8385450Z Prepare workflow directory
+inspect	Set up job	2026-10-19T06:08:39.8647547Z Prepare all required actions
+inspect	Set up job	2026-10-19T06:08:39.8687459Z Getting action download info
+inspect	Set up job	2026-10-19T06:08:40.1782505Z Download action repository 'actions/checkout@v4' (SHA:11d5960a326750d5838078e36cf38b85af677262)
+inspect	Set up job	2026-10-19T06:08:40.3491463Z Download action repository 'actions/setup-python@v5' (SHA:a26af69be951a213d495a4c3e4e4022e16d87065)
+inspect	Set up job	2026-10-19T06:08:40.5516977Z Complete job name: inspect
+inspect	Run actions/checkout@v4	﻿2026-10-19T06:08:40.6104107Z ##[group]Run actions/checkout@v4
+inspect	Run actions/checkout@v4	2026-10-19T06:08:40.6104790Z with:
+inspect	Run actions/checkout@v4	2026-10-19T06:08:40.6105165Z   repository: dovh25x/land-law-chatbot
+inspect	Run actions/checkout@v4	2026-10-19T06:08:40.6108456Z   token: ***
+inspect	Run actions/checkout@v4	2026-10-19T06:08:40.6108816Z   ssh-strict: true
+inspect	Run actions/checkout@v4	2026-10-19T06:08:40.6109172Z   ssh-user: git
+inspect	Run actions/checkout@v4	2026-10-19T06:08:40.6109664Z   persist-credentials: true
+inspect	Run actions/checkout@v4	2026-10-19T06:08:40.6110063Z   clean: true
+inspect	Run actions/checkout@v4	2026-10-19T06:08:40.6110427Z   sparse-checkout-cone-mode: true
+inspect	Run actions/checkout@v4	2026-10-19T06:08:40.6110837Z   fetch-depth: 1
+inspect	Run actions/checkout@v4	2026-10-19T06:08:40.6111180Z   fetch-tags: false
+inspect	Run actions/checkout@v4	2026-10-19T06:08:40.6111534Z   show-progress: true
+inspect	Run actions/checkout@v4	2026-10-19T06:08:40.6111892Z   lfs: false
+inspect	Run actions/checkout@v4	2026-10-19T06:08:40.6112229Z   submodules: false
+inspect	Run actions/checkout@v4	2026-10-19T06:08:40.6112609Z   set-safe-directory: true
+inspect	Run actions/checkout@v4	2026-10-19T06:08:40.6113010Z   allow-unsafe-pr-checkout: false
+inspect	Run actions/checkout@v4	2026-10-19T06:08:40.6113590Z ##[endgroup]
+inspect	Run actions/checkout@v4	2026-10-19T06:08:40.6914569Z Syncing repository: dovh25x/land-law-chatbot
+inspect	Run actions/checkout@v4	2026-10-19T06:08:40.6916654Z ##[group]Getting Git version info
+inspect	Run actions/checkout@v4	2026-10-19T06:08:40.6917624Z Working directory is '/home/runner/work/land-law-chatbot/land-law-chatbot'
+inspect	Run actions/checkout@v4	2026-10-19T06:08:40.6919151Z [command]/usr/bin/git version
+inspect	Run actions/checkout@v4	2026-10-19T06:08:40.6974414Z git version 2.55.0
+inspect	Run actions/checkout@v4	2026-10-19T06:08:40.6990366Z ##[endgroup]
+inspect	Run actions/checkout@v4	2026-10-19T06:08:40.7001053Z Temporarily overriding HOME='/home/runner/work/_temp/c25abcb1-0ca1-49cb-bbfe-9b84a1ad1e36' before making global git config changes
+inspect	Run actions/checkout@v4	2026-10-19T06:08:40.7002820Z Adding repository directory to the temporary git global config as a safe directory
+inspect	Run actions/checkout@v4	2026-10-19T06:08:40.7007137Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/land-law-chatbot/land-law-chatbot
+inspect	Run actions/checkout@v4	2026-10-19T06:08:40.7056357Z Deleting the contents of '/home/runner/work/land-law-chatbot/land-law-chatbot'
+inspect	Run actions/checkout@v4	2026-10-19T06:08:40.7060412Z ##[group]Initializing the repository
+inspect	Run actions/checkout@v4	2026-10-19T06:08:40.7063990Z [command]/usr/bin/git init /home/runner/work/land-law-chatbot/land-law-chatbot
+inspect	Run actions/checkout@v4	2026-10-19T06:08:40.7166036Z hint: Using 'master' as the name for the initial branch. This default branch name
+inspect	Run actions/checkout@v4	2026-10-19T06:08:40.7167370Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+inspect	Run actions/checkout@v4	2026-10-19T06:08:40.7168821Z hint: to use in all of your new repositories, which will suppress this warning,
+inspect	Run actions/checkout@v4	2026-10-19T06:08:40.7169940Z hint: call:
+inspect	Run actions/checkout@v4	2026-10-19T06:08:40.7170438Z hint:
+inspect	Run actions/checkout@v4	2026-10-19T06:08:40.7171044Z hint: 	git config --global init.defaultBranch <name>
+inspect	Run actions/checkout@v4	2026-10-19T06:08:40.7171788Z hint:
+inspect	Run actions/checkout@v4	2026-10-19T06:08:40.7172533Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+inspect	Run actions/checkout@v4	2026-10-19T06:08:40.7173703Z hint: 'development'. The just-created branch can be renamed via this command:
+inspect	Run actions/checkout@v4	2026-10-19T06:08:40.7174624Z hint:
+inspect	Run actions/checkout@v4	2026-10-19T06:08:40.7175230Z hint: 	git branch -m <name>
+inspect	Run actions/checkout@v4	2026-10-19T06:08:40.7175990Z hint:
+inspect	Run actions/checkout@v4	2026-10-19T06:08:40.7177005Z hint: Disable this message with "git config set advice.defaultBranchName false"
+inspect	Run actions/checkout@v4	2026-10-19T06:08:40.7178478Z Initialized empty Git repository in /home/runner/work/land-law-chatbot/land-law-chatbot/.git/
+inspect	Run actions/checkout@v4	2026-10-19T06:08:40.7181916Z [command]/usr/bin/git remote add origin https://github.com/dovh25x/land-law-chatbot
+inspect	Run actions/checkout@v4	2026-10-19T06:08:40.7223353Z ##[endgroup]
+inspect	Run actions/checkout@v4	2026-10-19T06:08:40.7224381Z ##[group]Disabling automatic garbage collection
+inspect	Run actions/checkout@v4	2026-10-19T06:08:40.7226552Z [command]/usr/bin/git config --local gc.auto 0
+inspect	Run actions/checkout@v4	2026-10-19T06:08:40.7253673Z ##[endgroup]
+inspect	Run actions/checkout@v4	2026-10-19T06:08:40.7254563Z ##[group]Setting up auth
+inspect	Run actions/checkout@v4	2026-10-19T06:08:40.7258423Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+inspect	Run actions/checkout@v4	2026-10-19T06:08:40.7285217Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+inspect	Run actions/checkout@v4	2026-10-19T06:08:40.7596250Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+inspect	Run actions/checkout@v4	2026-10-19T06:08:40.7634651Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+inspect	Run actions/checkout@v4	2026-10-19T06:08:40.7822039Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+inspect	Run actions/checkout@v4	2026-10-19T06:08:40.7852556Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+inspect	Run actions/checkout@v4	2026-10-19T06:08:40.8038484Z [command]/usr/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+inspect	Run actions/checkout@v4	2026-10-19T06:08:40.8072456Z ##[endgroup]
+inspect	Run actions/checkout@v4	2026-10-19T06:08:40.8073119Z ##[group]Fetching the repository
+inspect	Run actions/checkout@v4	2026-10-19T06:08:40.8082294Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +c880baf68c6f2c8926104d1b32397ab8ada2fe6a:refs/remotes/origin/main
+inspect	Run actions/checkout@v4	2026-10-19T06:08:42.2463719Z From https://github.com/dovh25x/land-law-chatbot
+inspect	Run actions/checkout@v4	2026-10-19T06:08:42.2465026Z  * [new ref]         c880baf68c6f2c8926104d1b32397ab8ada2fe6a -> origin/main
+inspect	Run actions/checkout@v4	2026-10-19T06:08:42.2467605Z ##[endgroup]
+inspect	Run actions/checkout@v4	2026-10-19T06:08:42.2468470Z ##[group]Determining the checkout info
+inspect	Run actions/checkout@v4	2026-10-19T06:08:42.2471004Z ##[endgroup]
+inspect	Run actions/checkout@v4	2026-10-19T06:08:42.2475652Z [command]/usr/bin/git sparse-checkout disable
+inspect	Run actions/checkout@v4	2026-10-19T06:08:42.2526717Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+inspect	Run actions/checkout@v4	2026-10-19T06:08:42.2556968Z ##[group]Checking out the ref
+inspect	Run actions/checkout@v4	2026-10-19T06:08:42.2561413Z [command]/usr/bin/git checkout --progress --force -B main refs/remotes/origin/main
+inspect	Run actions/checkout@v4	2026-10-19T06:08:42.3547519Z Switched to a new branch 'main'
+inspect	Run actions/checkout@v4	2026-10-19T06:08:42.3549782Z branch 'main' set up to track 'origin/main'.
+inspect	Run actions/checkout@v4	2026-10-19T06:08:42.3560629Z ##[endgroup]
+inspect	Run actions/checkout@v4	2026-10-19T06:08:42.3600472Z [command]/usr/bin/git log -1 --format=%H
+inspect	Run actions/checkout@v4	2026-10-19T06:08:42.3624171Z c880baf68c6f2c8926104d1b32397ab8ada2fe6a
+inspect	Run actions/setup-python@v5	﻿2026-10-19T06:08:42.3923947Z ##[group]Run actions/setup-python@v5
+inspect	Run actions/setup-python@v5	2026-10-19T06:08:42.3924954Z with:
+inspect	Run actions/setup-python@v5	2026-10-19T06:08:42.3925693Z   python-version: 3.12
+inspect	Run actions/setup-python@v5	2026-10-19T06:08:42.3926530Z   check-latest: false
+inspect	Run actions/setup-python@v5	2026-10-19T06:08:42.3933665Z   token: ***
+inspect	Run actions/setup-python@v5	2026-10-19T06:08:42.3934469Z   update-environment: true
+inspect	Run actions/setup-python@v5	2026-10-19T06:08:42.3935362Z   allow-prereleases: false
+inspect	Run actions/setup-python@v5	2026-10-19T06:08:42.3936451Z   freethreaded: false
+inspect	Run actions/setup-python@v5	2026-10-19T06:08:42.3937217Z ##[endgroup]
+inspect	Run actions/setup-python@v5	2026-10-19T06:08:42.4978657Z ##[group]Installed versions
+inspect	Run actions/setup-python@v5	2026-10-19T06:08:42.5152764Z (node:2098) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+inspect	Run actions/setup-python@v5	2026-10-19T06:08:42.5154899Z (Use `node --trace-deprecation ...` to show where the warning was created)
+inspect	Run actions/setup-python@v5	2026-10-19T06:08:42.5156715Z Successfully set up CPython (3.12.15)
+inspect	Run actions/setup-python@v5	2026-10-19T06:08:42.5158929Z ##[endgroup]
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	﻿2026-10-19T06:08:42.5352862Z ##[group]Run pip install -r requirements.lock && pip install --no-deps -e .
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:42.5355194Z [36;1mpip install -r requirements.lock && pip install --no-deps -e .[0m
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:42.6304372Z shell: /usr/bin/bash -e {0}
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:42.6305306Z env:
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:42.6306178Z   pythonLocation: /opt/hostedtoolcache/Python/3.12.15/x64
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:42.6307501Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.12.15/x64/lib/pkgconfig
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:42.6308829Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.15/x64
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:42.6310261Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.15/x64
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:42.6311463Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.15/x64
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:42.6313034Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.12.15/x64/lib
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:42.6314135Z ##[endgroup]
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:44.0575542Z Collecting annotated-doc==0.0.5 (from -r requirements.lock (line 1))
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:44.0999001Z   Downloading annotated_doc-0.0.5-py3-none-any.whl.metadata (6.5 kB)
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:44.1085841Z Collecting annotated-types==0.8.0 (from -r requirements.lock (line 2))
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:44.1112123Z   Downloading annotated_types-0.8.0-py3-none-any.whl.metadata (15 kB)
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:44.1232270Z Collecting anyio==4.15.1 (from -r requirements.lock (line 3))
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:44.1259891Z   Downloading anyio-4.15.1-py3-none-any.whl.metadata (4.7 kB)
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:44.1370955Z Collecting beautifulsoup4==4.15.0 (from -r requirements.lock (line 4))
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:44.1395886Z   Downloading beautifulsoup4-4.15.0-py3-none-any.whl.metadata (3.8 kB)
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:44.1518621Z Collecting certifi==2026.7.22 (from -r requirements.lock (line 5))
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:44.1547847Z   Downloading certifi-2026.7.22-py3-none-any.whl.metadata (2.5 kB)
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:44.2388984Z Collecting cffi==2.1.1 (from -r requirements.lock (line 6))
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:44.2417865Z   Downloading cffi-2.1.1-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (2.5 kB)
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:44.3263378Z Collecting charset-normalizer==3.5.2 (from -r requirements.lock (line 7))
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:44.3292092Z   Downloading charset_normalizer-3.5.2-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (46 kB)
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:44.4163959Z Collecting click==8.5.0 (from -r requirements.lock (line 8))
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:44.4189934Z   Downloading click-8.5.0-py3-none-any.whl.metadata (2.6 kB)
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:44.5389766Z Collecting cryptography==50.0.2 (from -r requirements.lock (line 9))
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:44.5419092Z   Downloading cryptography-50.0.2-cp311-abi3-manylinux_2_34_x86_64.whl.metadata (4.4 kB)
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:44.7556414Z Collecting distro==1.9.0 (from -r requirements.lock (line 10))
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:44.7581087Z   Downloading distro-1.9.0-py3-none-any.whl.metadata (6.8 kB)
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:44.7839949Z Collecting fastapi==0.143.0 (from -r requirements.lock (line 11))
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:44.7867518Z   Downloading fastapi-0.143.0-py3-none-any.whl.metadata (26 kB)
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:44.7982881Z Collecting h11==0.16.0 (from -r requirements.lock (line 12))
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:44.8012467Z   Downloading h11-0.16.0-py3-none-any.whl.metadata (8.3 kB)
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:44.8127736Z Collecting httpcore==1.0.9 (from -r requirements.lock (line 13))
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:44.8160918Z   Downloading httpcore-1.0.9-py3-none-any.whl.metadata (21 kB)
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:44.8255914Z Collecting httpcore2==2.13.1 (from -r requirements.lock (line 14))
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:44.8285610Z   Downloading httpcore2-2.13.1-py3-none-any.whl.metadata (26 kB)
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:44.8409947Z Collecting httpx==0.28.1 (from -r requirements.lock (line 15))
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:44.8439832Z   Downloading httpx-0.28.1-py3-none-any.whl.metadata (7.1 kB)
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:44.8527094Z Collecting httpx2==2.13.1 (from -r requirements.lock (line 16))
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:44.8554459Z   Downloading httpx2-2.13.1-py3-none-any.whl.metadata (9.8 kB)
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:44.8658669Z Collecting idna==3.20 (from -r requirements.lock (line 17))
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:44.8686167Z   Downloading idna-3.20-py3-none-any.whl.metadata (7.2 kB)
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:44.8774471Z Collecting iniconfig==2.3.1 (from -r requirements.lock (line 18))
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:44.8801024Z   Downloading iniconfig-2.3.1-py3-none-any.whl.metadata (2.8 kB)
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:44.8902148Z Collecting jsonpatch==1.35 (from -r requirements.lock (line 19))
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:44.8927656Z   Downloading jsonpatch-1.35-py3-none-any.whl.metadata (3.7 kB)
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:44.9014875Z Collecting jsonpointer==3.2.1 (from -r requirements.lock (line 20))
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:44.9048554Z   Downloading jsonpointer-3.2.1-py3-none-any.whl.metadata (2.6 kB)
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:44.9308484Z Collecting langchain-core==1.6.9 (from -r requirements.lock (line 21))
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:44.9343301Z   Downloading langchain_core-1.6.9-py3-none-any.whl.metadata (4.8 kB)
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:44.9440954Z Collecting langchain-protocol==0.0.19 (from -r requirements.lock (line 22))
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:44.9467184Z   Downloading langchain_protocol-0.0.19-py3-none-any.whl.metadata (2.4 kB)
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:44.9710573Z Collecting langgraph==1.2.14 (from -r requirements.lock (line 23))
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:44.9737151Z   Downloading langgraph-1.2.14-py3-none-any.whl.metadata (4.9 kB)
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:44.9861475Z Collecting langgraph-checkpoint==4.2.0 (from -r requirements.lock (line 24))
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:44.9887981Z   Downloading langgraph_checkpoint-4.2.0-py3-none-any.whl.metadata (6.7 kB)
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:45.0017692Z Collecting langgraph-prebuilt==1.1.0 (from -r requirements.lock (line 25))
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:45.0049011Z   Downloading langgraph_prebuilt-1.1.0-py3-none-any.whl.metadata (5.2 kB)
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:45.0183385Z Collecting langgraph-sdk==0.4.6 (from -r requirements.lock (line 26))
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:45.0219058Z   Downloading langgraph_sdk-0.4.6-py3-none-any.whl.metadata (5.1 kB)
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:45.1107386Z Collecting langsmith==0.14.7 (from -r requirements.lock (line 27))
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:45.1146149Z   Downloading langsmith-0.14.7-py3-none-any.whl.metadata (22 kB)
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:45.1341253Z Collecting markdown-it-py==4.2.0 (from -r requirements.lock (line 28))
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:45.1367730Z   Downloading markdown_it_py-4.2.0-py3-none-any.whl.metadata (7.4 kB)
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:45.1536039Z Collecting mdurl==0.1.2 (from -r requirements.lock (line 29))
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:45.1562729Z   Downloading mdurl-0.1.2-py3-none-any.whl.metadata (1.6 kB)
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:45.1859902Z Collecting opentelemetry-api==1.45.1 (from -r requirements.lock (line 30))
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:45.1886448Z   Downloading opentelemetry_api-1.45.1-py3-none-any.whl.metadata (1.4 kB)
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:45.3530999Z Collecting orjson==3.13.0 (from -r requirements.lock (line 31))
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:45.3559824Z   Downloading orjson-3.13.0-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (42 kB)
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:45.3913144Z Collecting ormsgpack==1.12.2 (from -r requirements.lock (line 32))
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:45.3942241Z   Downloading ormsgpack-1.12.2-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (3.2 kB)
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:45.4164124Z Collecting packaging==26.3 (from -r requirements.lock (line 33))
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:45.4190124Z   Downloading packaging-26.3-py3-none-any.whl.metadata (3.5 kB)
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:45.4460714Z Collecting pluggy==1.6.0 (from -r requirements.lock (line 34))
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:45.4489486Z   Downloading pluggy-1.6.0-py3-none-any.whl.metadata (4.8 kB)
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:45.5621009Z Collecting psycopg==3.3.6 (from -r requirements.lock (line 35))
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:45.5647285Z   Downloading psycopg-3.3.6-py3-none-any.whl.metadata (4.4 kB)
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:45.6697090Z Collecting psycopg-binary==3.3.6 (from -r requirements.lock (line 36))
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:45.6727199Z   Downloading psycopg_binary-3.3.6-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (2.7 kB)
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:45.8109728Z Collecting psycopg-pool==3.3.3 (from -r requirements.lock (line 37))
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:45.8140837Z   Downloading psycopg_pool-3.3.3-py3-none-any.whl.metadata (2.8 kB)
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:45.8224880Z Collecting pycparser==3.11 (from -r requirements.lock (line 38))
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:45.8253071Z   Downloading pycparser-3.11-py3-none-any.whl.metadata (8.2 kB)
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:45.8916946Z Collecting pydantic==2.14.0 (from -r requirements.lock (line 39))
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:45.8945645Z   Downloading pydantic-2.14.0-py3-none-any.whl.metadata (131 kB)
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:45.9096944Z Collecting pydantic-settings==2.15.0 (from -r requirements.lock (line 40))
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:45.9124202Z   Downloading pydantic_settings-2.15.0-py3-none-any.whl.metadata (3.9 kB)
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:46.5113524Z Collecting pydantic_core==2.50.0 (from -r requirements.lock (line 41))
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:46.5143904Z   Downloading pydantic_core-2.50.0-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (6.5 kB)
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:46.5422896Z Collecting Pygments==2.21.0 (from -r requirements.lock (line 42))
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:46.5450311Z   Downloading pygments-2.21.0-py3-none-any.whl.metadata (2.5 kB)
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:46.5588053Z Collecting pypdf==6.20.0 (from -r requirements.lock (line 43))
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:46.5620529Z   Downloading pypdf-6.20.0-py3-none-any.whl.metadata (7.6 kB)
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:46.5807692Z Collecting pytest==9.1.1 (from -r requirements.lock (line 44))
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:46.5833933Z   Downloading pytest-9.1.1-py3-none-any.whl.metadata (7.6 kB)
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:46.5968666Z Collecting pytest-asyncio==1.4.0 (from -r requirements.lock (line 45))
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:46.5996156Z   Downloading pytest_asyncio-1.4.0-py3-none-any.whl.metadata (4.1 kB)
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:46.6101671Z Collecting python-dotenv==1.2.4 (from -r requirements.lock (line 46))
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:46.6127340Z   Downloading python_dotenv-1.2.4-py3-none-any.whl.metadata (29 kB)
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:46.6641213Z Collecting PyYAML==6.0.3 (from -r requirements.lock (line 47))
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:46.6670189Z   Downloading pyyaml-6.0.3-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (2.4 kB)
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:46.8526672Z Collecting requests==2.34.2 (from -r requirements.lock (line 48))
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:46.8551938Z   Downloading requests-2.34.2-py3-none-any.whl.metadata (4.8 kB)
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:46.8639012Z Collecting requests-toolbelt==1.0.0 (from -r requirements.lock (line 49))
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:46.8664761Z   Downloading requests_toolbelt-1.0.0-py2.py3-none-any.whl.metadata (14 kB)
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:46.8773046Z Collecting respx==0.23.1 (from -r requirements.lock (line 50))
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:46.8799791Z   Downloading respx-0.23.1-py2.py3-none-any.whl.metadata (4.3 kB)
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:46.8992615Z Collecting rich==15.0.0 (from -r requirements.lock (line 51))
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:46.9025217Z   Downloading rich-15.0.0-py3-none-any.whl.metadata (18 kB)
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:47.2892720Z Collecting ruff==0.17.0 (from -r requirements.lock (line 52))
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:47.2922588Z   Downloading ruff-0.17.0-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (20 kB)
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:47.3389201Z Collecting shellingham==1.5.4 (from -r requirements.lock (line 53))
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:47.3414997Z   Downloading shellingham-1.5.4-py2.py3-none-any.whl.metadata (3.5 kB)
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:47.3488554Z Collecting sniffio==1.3.1 (from -r requirements.lock (line 54))
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:47.3516566Z   Downloading sniffio-1.3.1-py3-none-any.whl.metadata (3.9 kB)
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:47.3642134Z Collecting soupsieve==3.0.1 (from -r requirements.lock (line 55))
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:47.3674507Z   Downloading soupsieve-3.0.1-py3-none-any.whl.metadata (4.4 kB)
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:47.3830097Z Collecting starlette==1.7.0 (from -r requirements.lock (line 56))
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:47.3856652Z   Downloading starlette-1.7.0-py3-none-any.whl.metadata (6.6 kB)
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:47.3964634Z Collecting tenacity==9.2.1 (from -r requirements.lock (line 57))
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:47.3990920Z   Downloading tenacity-9.2.1-py3-none-any.whl.metadata (1.4 kB)
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:47.4071691Z Collecting truststore==0.10.4 (from -r requirements.lock (line 58))
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:47.4097894Z   Downloading truststore-0.10.4-py3-none-any.whl.metadata (4.4 kB)
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:47.4220654Z Collecting typer==0.27.3 (from -r requirements.lock (line 59))
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:47.4245523Z   Downloading typer-0.27.3-py3-none-any.whl.metadata (16 kB)
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:47.4335594Z Collecting typing-inspection==0.4.4 (from -r requirements.lock (line 60))
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:47.4360466Z   Downloading typing_inspection-0.4.4-py3-none-any.whl.metadata (2.6 kB)
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:47.4464191Z Collecting typing_extensions==4.16.0 (from -r requirements.lock (line 61))
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:47.4495058Z   Downloading typing_extensions-4.16.0-py3-none-any.whl.metadata (3.3 kB)
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:47.4689053Z Collecting urllib3==2.8.0 (from -r requirements.lock (line 62))
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:47.4716318Z   Downloading urllib3-2.8.0-py3-none-any.whl.metadata (7.4 kB)
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:47.5649983Z Collecting uuid_utils==0.17.1 (from -r requirements.lock (line 63))
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:47.5677791Z   Downloading uuid_utils-0.17.1-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (6.4 kB)
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:47.5833041Z Collecting uvicorn==0.54.0 (from -r requirements.lock (line 64))
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:47.5859196Z   Downloading uvicorn-0.54.0-py3-none-any.whl.metadata (6.6 kB)
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:47.6974432Z Collecting websockets==16.1.1 (from -r requirements.lock (line 65))
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:47.7005331Z   Downloading websockets-16.1.1-cp312-cp312-manylinux1_x86_64.manylinux_2_28_x86_64.manylinux_2_5_x86_64.whl.metadata (6.8 kB)
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:47.8127901Z Collecting xxhash==4.0.1 (from -r requirements.lock (line 66))
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:47.8157274Z   Downloading xxhash-4.0.1-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (17 kB)
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:47.8604534Z Collecting zstandard==0.25.0 (from -r requirements.lock (line 67))
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:47.8631391Z   Downloading zstandard-0.25.0-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (3.3 kB)
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:47.9993772Z Collecting numpy==2.5.4 (from -r requirements.lock (line 68))
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:48.0024441Z   Downloading numpy-2.5.4-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl.metadata (6.6 kB)
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:48.0520360Z Collecting onnxruntime==1.31.0 (from -r requirements.lock (line 69))
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:48.0547300Z   Downloading onnxruntime-1.31.0-cp312-cp312-manylinux_2_28_x86_64.whl.metadata (5.7 kB)
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:48.0879067Z Collecting sentencepiece==0.2.2 (from -r requirements.lock (line 70))
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:48.0919008Z   Downloading sentencepiece-0.2.2-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl.metadata (33 kB)
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:48.2406748Z Collecting protobuf==7.36.2 (from -r requirements.lock (line 71))
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:48.2437927Z   Downloading protobuf-7.36.2-cp310-abi3-manylinux2014_x86_64.whl.metadata (595 bytes)
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:48.2523877Z Collecting flatbuffers==25.12.19 (from -r requirements.lock (line 72))
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:48.2554562Z   Downloading flatbuffers-25.12.19-py2.py3-none-any.whl.metadata (1.0 kB)
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:48.3453242Z WARNING: The candidate selected for download or install is a yanked version: 'soupsieve' candidate (version 3.0.1 at https://files.pythonhosted.org/packages/3a/cd/8092ac4e9009b4a480ba212f5cdfd26dabfc97990b176bbc70c7662d6f05/soupsieve-3.0.1-py3-none-any.whl (from https://pypi.org/simple/soupsieve/) (requires-python:>=3.11))
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:48.3456112Z Reason for being yanked: Python < 3.11.5 has broken possessive quantifiers in re, which are required for Soup Sieve 3.0. Yank to prevent users on older Python 3.11 versions from getting boken functionality. We will release a new 3.0+ release that requires at least Python 3.11.5.
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:48.3483240Z Downloading annotated_doc-0.0.5-py3-none-any.whl (5.3 kB)
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:48.3525799Z Downloading annotated_types-0.8.0-py3-none-any.whl (13 kB)
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:48.3690061Z Downloading anyio-4.15.1-py3-none-any.whl (132 kB)
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:48.3733954Z Downloading beautifulsoup4-4.15.0-py3-none-any.whl (109 kB)
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:48.3776671Z Downloading certifi-2026.7.22-py3-none-any.whl (136 kB)
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:48.3821688Z Downloading cffi-2.1.1-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (221 kB)
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:48.3872740Z Downloading charset_normalizer-3.5.2-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (257 kB)
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:48.3917809Z Downloading click-8.5.0-py3-none-any.whl (125 kB)
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:48.3961385Z Downloading cryptography-50.0.2-cp311-abi3-manylinux_2_34_x86_64.whl (4.8 MB)
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:48.4327886Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 4.8/4.8 MB 130.4 MB/s  0:00:00
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:48.4354234Z Downloading distro-1.9.0-py3-none-any.whl (20 kB)
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:48.4396137Z Downloading fastapi-0.143.0-py3-none-any.whl (144 kB)
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:48.4438627Z Downloading h11-0.16.0-py3-none-any.whl (37 kB)
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:48.4479840Z Downloading httpcore-1.0.9-py3-none-any.whl (78 kB)
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:48.4522978Z Downloading httpcore2-2.13.1-py3-none-any.whl (83 kB)
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:48.4566156Z Downloading httpx-0.28.1-py3-none-any.whl (73 kB)
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:48.4608014Z Downloading httpx2-2.13.1-py3-none-any.whl (95 kB)
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:48.4652365Z Downloading idna-3.20-py3-none-any.whl (69 kB)
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:48.4695546Z Downloading iniconfig-2.3.1-py3-none-any.whl (7.6 kB)
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:48.4733446Z Downloading jsonpatch-1.35-py3-none-any.whl (17 kB)
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:48.4772821Z Downloading jsonpointer-3.2.1-py3-none-any.whl (8.3 kB)
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:48.4834911Z Downloading langchain_core-1.6.9-py3-none-any.whl (572 kB)
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:48.4873857Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 573.0/573.0 kB 140.7 MB/s  0:00:00
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:48.4918602Z Downloading langsmith-0.14.7-py3-none-any.whl (861 kB)
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:48.4963441Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 862.0/862.0 kB 212.7 MB/s  0:00:00
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:48.4988846Z Downloading pydantic-2.14.0-py3-none-any.whl (487 kB)
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:48.5037017Z Downloading pyyaml-6.0.3-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (807 kB)
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:48.5078045Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 807.9/807.9 kB 214.9 MB/s  0:00:00
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:48.5102744Z Downloading tenacity-9.2.1-py3-none-any.whl (32 kB)
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:48.5143700Z Downloading typing_extensions-4.16.0-py3-none-any.whl (45 kB)
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:48.5184285Z Downloading uuid_utils-0.17.1-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (323 kB)
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:48.5229616Z Downloading langchain_protocol-0.0.19-py3-none-any.whl (7.3 kB)
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:48.5294346Z Downloading langgraph-1.2.14-py3-none-any.whl (255 kB)
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:48.5336669Z Downloading langgraph_checkpoint-4.2.0-py3-none-any.whl (56 kB)
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:48.5377998Z Downloading langgraph_prebuilt-1.1.0-py3-none-any.whl (41 kB)
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:48.5416663Z Downloading langgraph_sdk-0.4.6-py3-none-any.whl (162 kB)
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:48.5458009Z Downloading websockets-16.1.1-cp312-cp312-manylinux1_x86_64.manylinux_2_28_x86_64.manylinux_2_5_x86_64.whl (187 kB)
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:48.5503371Z Downloading markdown_it_py-4.2.0-py3-none-any.whl (91 kB)
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:48.5543174Z Downloading mdurl-0.1.2-py3-none-any.whl (10.0 kB)
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:48.5586091Z Downloading opentelemetry_api-1.45.1-py3-none-any.whl (60 kB)
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:48.5630753Z Downloading orjson-3.13.0-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (130 kB)
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:48.5672994Z Downloading ormsgpack-1.12.2-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (212 kB)
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:48.5717450Z Downloading packaging-26.3-py3-none-any.whl (129 kB)
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:48.5759561Z Downloading pluggy-1.6.0-py3-none-any.whl (20 kB)
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:48.5800691Z Downloading psycopg-3.3.6-py3-none-any.whl (215 kB)
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:48.5843921Z Downloading psycopg_binary-3.3.6-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (5.2 MB)
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:48.6273318Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 5.2/5.2 MB 121.7 MB/s  0:00:00
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:48.6301399Z Downloading psycopg_pool-3.3.3-py3-none-any.whl (40 kB)
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:48.6342302Z Downloading pycparser-3.11-py3-none-any.whl (51 kB)
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:48.6384970Z Downloading pydantic_settings-2.15.0-py3-none-any.whl (69 kB)
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:48.6438853Z Downloading pydantic_core-2.50.0-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (2.2 MB)
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:48.6559761Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 2.2/2.2 MB 184.0 MB/s  0:00:00
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:48.6589474Z Downloading pygments-2.21.0-py3-none-any.whl (1.3 MB)
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:48.6638044Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.3/1.3 MB 302.7 MB/s  0:00:00
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:48.6664601Z Downloading pypdf-6.20.0-py3-none-any.whl (401 kB)
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:48.6714203Z Downloading pytest-9.1.1-py3-none-any.whl (386 kB)
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:48.6760095Z Downloading pytest_asyncio-1.4.0-py3-none-any.whl (16 kB)
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:48.6799463Z Downloading python_dotenv-1.2.4-py3-none-any.whl (23 kB)
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:48.6838538Z Downloading requests-2.34.2-py3-none-any.whl (73 kB)
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:48.6879641Z Downloading urllib3-2.8.0-py3-none-any.whl (135 kB)
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:48.6923266Z Downloading requests_toolbelt-1.0.0-py2.py3-none-any.whl (54 kB)
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:48.6963981Z Downloading respx-0.23.1-py2.py3-none-any.whl (25 kB)
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:48.7006061Z Downloading rich-15.0.0-py3-none-any.whl (310 kB)
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:48.7052111Z Downloading ruff-0.17.0-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (10.4 MB)
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:48.7970104Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 10.4/10.4 MB 112.6 MB/s  0:00:00
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:48.8000680Z Downloading shellingham-1.5.4-py2.py3-none-any.whl (9.8 kB)
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:48.8046266Z Downloading sniffio-1.3.1-py3-none-any.whl (10 kB)
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:48.8086579Z Downloading soupsieve-3.0.1-py3-none-any.whl (41 kB)
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:48.8129616Z Downloading starlette-1.7.0-py3-none-any.whl (78 kB)
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:48.8173982Z Downloading truststore-0.10.4-py3-none-any.whl (18 kB)
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:48.8212764Z Downloading typer-0.27.3-py3-none-any.whl (123 kB)
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:48.8255186Z Downloading typing_inspection-0.4.4-py3-none-any.whl (14 kB)
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:48.8800077Z Downloading uvicorn-0.54.0-py3-none-any.whl (87 kB)
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:48.8842704Z Downloading xxhash-4.0.1-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (261 kB)
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:48.8885407Z Downloading zstandard-0.25.0-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (5.5 MB)
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:48.9233190Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 5.5/5.5 MB 160.8 MB/s  0:00:00
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:48.9263445Z Downloading numpy-2.5.4-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl (16.7 MB)
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:49.0374627Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 16.7/16.7 MB 151.5 MB/s  0:00:00
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:49.0404406Z Downloading onnxruntime-1.31.0-cp312-cp312-manylinux_2_28_x86_64.whl (23.8 MB)
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:49.2052710Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 23.8/23.8 MB 144.3 MB/s  0:00:00
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:49.2085669Z Downloading sentencepiece-0.2.2-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl (1.4 MB)
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:49.2197721Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.4/1.4 MB 164.8 MB/s  0:00:00
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:49.2224374Z Downloading protobuf-7.36.2-cp310-abi3-manylinux2014_x86_64.whl (343 kB)
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:49.2269035Z Downloading flatbuffers-25.12.19-py2.py3-none-any.whl (26 kB)
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:49.5288565Z Installing collected packages: flatbuffers, zstandard, xxhash, websockets, uuid_utils, urllib3, typing_extensions, truststore, tenacity, soupsieve, sniffio, shellingham, sentencepiece, ruff, PyYAML, python-dotenv, pypdf, Pygments, pycparser, psycopg-binary, protobuf, pluggy, packaging, ormsgpack, orjson, numpy, mdurl, jsonpointer, iniconfig, idna, h11, distro, click, charset-normalizer, certifi, annotated-types, annotated-doc, uvicorn, typing-inspection, requests, pytest, pydantic_core, psycopg-pool, psycopg, opentelemetry-api, onnxruntime, markdown-it-py, langchain-protocol, jsonpatch, httpcore2, httpcore, cffi, beautifulsoup4, anyio, starlette, rich, requests-toolbelt, pytest-asyncio, pydantic, httpx2, httpx, cryptography, typer, respx, pydantic-settings, langsmith, fastapi, langchain-core, langgraph-sdk, langgraph-checkpoint, langgraph-prebuilt, langgraph
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:59.9007680Z 
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:08:59.9052149Z Successfully installed PyYAML-6.0.3 Pygments-2.21.0 annotated-doc-0.0.5 annotated-types-0.8.0 anyio-4.15.1 beautifulsoup4-4.15.0 certifi-2026.7.22 cffi-2.1.1 charset-normalizer-3.5.2 click-8.5.0 cryptography-50.0.2 distro-1.9.0 fastapi-0.143.0 flatbuffers-25.12.19 h11-0.16.0 httpcore-1.0.9 httpcore2-2.13.1 httpx-0.28.1 httpx2-2.13.1 idna-3.20 iniconfig-2.3.1 jsonpatch-1.35 jsonpointer-3.2.1 langchain-core-1.6.9 langchain-protocol-0.0.19 langgraph-1.2.14 langgraph-checkpoint-4.2.0 langgraph-prebuilt-1.1.0 langgraph-sdk-0.4.6 langsmith-0.14.7 markdown-it-py-4.2.0 mdurl-0.1.2 numpy-2.5.4 onnxruntime-1.31.0 opentelemetry-api-1.45.1 orjson-3.13.0 ormsgpack-1.12.2 packaging-26.3 pluggy-1.6.0 protobuf-7.36.2 psycopg-3.3.6 psycopg-binary-3.3.6 psycopg-pool-3.3.3 pycparser-3.11 pydantic-2.14.0 pydantic-settings-2.15.0 pydantic_core-2.50.0 pypdf-6.20.0 pytest-9.1.1 pytest-asyncio-1.4.0 python-dotenv-1.2.4 requests-2.34.2 requests-toolbelt-1.0.0 respx-0.23.1 rich-15.0.0 ruff-0.17.0 sentencepiece-0.2.2 shellingham-1.5.4 sniffio-1.3.1 soupsieve-3.0.1 starlette-1.7.0 tenacity-9.2.1 truststore-0.10.4 typer-0.27.3 typing-inspection-0.4.4 typing_extensions-4.16.0 urllib3-2.8.0 uuid_utils-0.17.1 uvicorn-0.54.0 websockets-16.1.1 xxhash-4.0.1 zstandard-0.25.0
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:09:00.4556696Z Obtaining file:///home/runner/work/land-law-chatbot/land-law-chatbot
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:09:00.4571486Z   Installing build dependencies: started
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:09:01.2037767Z   Installing build dependencies: finished with status 'done'
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:09:01.2042971Z   Checking if build backend supports build_editable: started
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:09:01.4584046Z   Checking if build backend supports build_editable: finished with status 'done'
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:09:01.4590640Z   Getting requirements to build editable: started
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:09:01.7340623Z   Getting requirements to build editable: finished with status 'done'
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:09:01.7347731Z   Preparing editable metadata (pyproject.toml): started
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:09:01.8863454Z   Preparing editable metadata (pyproject.toml): finished with status 'done'
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:09:01.8910672Z Building wheels for collected packages: hanoi-land-law
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:09:01.8917008Z   Building editable for hanoi-land-law (pyproject.toml): started
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:09:02.0637720Z   Building editable for hanoi-land-law (pyproject.toml): finished with status 'done'
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:09:02.0643153Z   Created wheel for hanoi-land-law: filename=hanoi_land_law-0.1.0-0.editable-py3-none-any.whl size=1872 sha256=764efc633332b6ed68751ac9a7ae58948e603315a5006be1f7a978fbf885291a
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:09:02.0644536Z   Stored in directory: /tmp/pip-ephem-wheel-cache-36bw93yz/wheels/f8/3c/45/e516ea8127352363dfa05ab5a4b9546f2b0a8d16b16654b0e6
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:09:02.0662138Z Successfully built hanoi-land-law
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:09:02.0748713Z Installing collected packages: hanoi-land-law
+inspect	Run pip install -r requirements.lock && pip install --no-deps -e .	2026-10-19T06:09:02.0836091Z Successfully installed hanoi-land-law-0.1.0
+inspect	Run land-law cleanup && land-law ops-status --check	﻿2026-10-19T06:09:02.1321202Z ##[group]Run land-law cleanup && land-law ops-status --check
+inspect	Run land-law cleanup && land-law ops-status --check	2026-10-19T06:09:02.1321601Z [36;1mland-law cleanup && land-law ops-status --check[0m
+inspect	Run land-law cleanup && land-law ops-status --check	2026-10-19T06:09:02.1381203Z shell: /usr/bin/bash -e {0}
+inspect	Run land-law cleanup && land-law ops-status --check	2026-10-19T06:09:02.1381430Z env:
+inspect	Run land-law cleanup && land-law ops-status --check	2026-10-19T06:09:02.1381653Z   pythonLocation: /opt/hostedtoolcache/Python/3.12.15/x64
+inspect	Run land-law cleanup && land-law ops-status --check	2026-10-19T06:09:02.1382009Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.12.15/x64/lib/pkgconfig
+inspect	Run land-law cleanup && land-law ops-status --check	2026-10-19T06:09:02.1382361Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.15/x64
+inspect	Run land-law cleanup && land-law ops-status --check	2026-10-19T06:09:02.1382663Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.15/x64
+inspect	Run land-law cleanup && land-law ops-status --check	2026-10-19T06:09:02.1382958Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.15/x64
+inspect	Run land-law cleanup && land-law ops-status --check	2026-10-19T06:09:02.1383256Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.12.15/x64/lib
+inspect	Run land-law cleanup && land-law ops-status --check	2026-10-19T06:09:02.1384277Z   DATABASE_URL: ***
+inspect	Run land-law cleanup && land-law ops-status --check	2026-10-19T06:09:02.1384466Z   GENERATION_ENABLED: true
+inspect	Run land-law cleanup && land-law ops-status --check	2026-10-19T06:09:02.1384668Z   ALLOW_STALE_GENERATION: true
+inspect	Run land-law cleanup && land-law ops-status --check	2026-10-19T06:09:02.1384864Z ##[endgroup]
+inspect	Run land-law cleanup && land-law ops-status --check	2026-10-19T06:09:04.9964740Z Expired session, turn and quota metadata removed.
+inspect	Run land-law cleanup && land-law ops-status --check	2026-10-19T06:09:08.3372295Z {
+inspect	Run land-law cleanup && land-law ops-status --check	2026-10-19T06:09:08.3372866Z   "checked_at": "2026-10-19T06:09:07.868343+00:00",
+inspect	Run land-law cleanup && land-law ops-status --check	2026-10-19T06:09:08.3373345Z   "database": true,
+inspect	Run land-law cleanup && land-law ops-status --check	2026-10-19T06:09:08.3373860Z   "corpus": "corpus-a26bc99e541fbbe2",
+inspect	Run land-law cleanup && land-law ops-status --check	2026-10-19T06:09:08.3374326Z   "sources_fresh": false,
+inspect	Run land-law cleanup && land-law ops-status --check	2026-10-19T06:09:08.3374760Z   "generation_enabled": true,
+inspect	Run land-law cleanup && land-law ops-status --check	2026-10-19T06:09:08.3375082Z   "allow_stale_generation": true,
+inspect	Run land-law cleanup && land-law ops-status --check	2026-10-19T06:09:08.3375393Z   "warnings": [
+inspect	Run land-law cleanup && land-law ops-status --check	2026-10-19T06:09:08.3375637Z     "source_stale"
+inspect	Run land-law cleanup && land-law ops-status --check	2026-10-19T06:09:08.3375876Z   ],
+inspect	Run land-law cleanup && land-law ops-status --check	2026-10-19T06:09:08.3376120Z   "provider_cooldown_seconds": 0,
+inspect	Run land-law cleanup && land-law ops-status --check	2026-10-19T06:09:08.3376446Z   "last_hour_turns": {},
+inspect	Run land-law cleanup && land-law ops-status --check	2026-10-19T06:09:08.3376728Z   "needs_attention": false,
+inspect	Run land-law cleanup && land-law ops-status --check	2026-10-19T06:09:08.3377004Z   "usage": [
+inspect	Run land-law cleanup && land-law ops-status --check	2026-10-19T06:09:08.3377229Z     {
+inspect	Run land-law cleanup && land-law ops-status --check	2026-10-19T06:09:08.3377545Z       "kind": "usage:operator:local-embedding-items:2026-10-19",
+inspect	Run land-law cleanup && land-law ops-status --check	2026-10-19T06:09:08.3377949Z       "units": 1
+inspect	Run land-law cleanup && land-law ops-status --check	2026-10-19T06:09:08.3378187Z     },
+inspect	Run land-law cleanup && land-law ops-status --check	2026-10-19T06:09:08.3378353Z     {
+inspect	Run land-law cleanup && land-law ops-status --check	2026-10-19T06:09:08.3378529Z       "kind": "usage:operator:llm:2026-10-19",
+inspect	Run land-law cleanup && land-law ops-status --check	2026-10-19T06:09:08.3378753Z       "units": 2
+inspect	Run land-law cleanup && land-law ops-status --check	2026-10-19T06:09:08.3378910Z     },
+inspect	Run land-law cleanup && land-law ops-status --check	2026-10-19T06:09:08.3379057Z     {
+inspect	Run land-law cleanup && land-law ops-status --check	2026-10-19T06:09:08.3379457Z       "kind": "usage:operator:tokens:2026-10-19",
+inspect	Run land-law cleanup && land-law ops-status --check	2026-10-19T06:09:08.3379758Z       "units": 5688
+inspect	Run land-law cleanup && land-law ops-status --check	2026-10-19T06:09:08.3379924Z     }
+inspect	Run land-law cleanup && land-law ops-status --check	2026-10-19T06:09:08.3380067Z   ]
+inspect	Run land-law cleanup && land-law ops-status --check	2026-10-19T06:09:08.3380213Z }
+inspect	Post Run actions/setup-python@v5	﻿2026-10-19T06:09:08.4678317Z Post job cleanup.
+inspect	Post Run actions/setup-python@v5	2026-10-19T06:09:08.5653889Z (node:2266) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+inspect	Post Run actions/setup-python@v5	2026-10-19T06:09:08.5654539Z (Use `node --trace-deprecation ...` to show where the warning was created)
+inspect	Post Run actions/checkout@v4	﻿2026-10-19T06:09:08.5863996Z Post job cleanup.
+inspect	Post Run actions/checkout@v4	2026-10-19T06:09:08.6542827Z [command]/usr/bin/git version
+inspect	Post Run actions/checkout@v4	2026-10-19T06:09:08.6577875Z git version 2.55.0
+inspect	Post Run actions/checkout@v4	2026-10-19T06:09:08.6639593Z Temporarily overriding HOME='/home/runner/work/_temp/1347b6ad-eddb-4685-bb5f-38c24fcd891e' before making global git config changes
+inspect	Post Run actions/checkout@v4	2026-10-19T06:09:08.6640585Z Adding repository directory to the temporary git global config as a safe directory
+inspect	Post Run actions/checkout@v4	2026-10-19T06:09:08.6645067Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/land-law-chatbot/land-law-chatbot
+inspect	Post Run actions/checkout@v4	2026-10-19T06:09:08.6677000Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+inspect	Post Run actions/checkout@v4	2026-10-19T06:09:08.6710590Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+inspect	Post Run actions/checkout@v4	2026-10-19T06:09:08.6915244Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+inspect	Post Run actions/checkout@v4	2026-10-19T06:09:08.6945326Z http.https://github.com/.extraheader
+inspect	Post Run actions/checkout@v4	2026-10-19T06:09:08.6951893Z [command]/usr/bin/git config --local --unset-all http.https://github.com/.extraheader
+inspect	Post Run actions/checkout@v4	2026-10-19T06:09:08.6984566Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+inspect	Post Run actions/checkout@v4	2026-10-19T06:09:08.7192784Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+inspect	Post Run actions/checkout@v4	2026-10-19T06:09:08.7227779Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+inspect	Complete job	﻿2026-10-19T06:09:08.7564330Z Cleaning up orphan processes
+inspect	Complete job	2026-10-19T06:09:08.7806409Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-python@v5. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/

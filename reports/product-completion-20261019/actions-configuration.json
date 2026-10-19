@@ -1,0 +1,68 @@
+{
+  "checked_at": "2026-10-19T05:57:49.284694+00:00",
+  "updates": [
+    {
+      "kind": "secret",
+      "name": "DATABASE_URL",
+      "updated": true
+    },
+    {
+      "kind": "secret",
+      "name": "GROQ_API_KEY",
+      "updated": true
+    },
+    {
+      "kind": "secret",
+      "name": "RENDER_API_KEY",
+      "updated": true
+    },
+    {
+      "kind": "secret",
+      "name": "CLOUDFLARE_API_TOKEN",
+      "updated": true
+    },
+    {
+      "kind": "secret",
+      "name": "CLOUDFLARE_ACCOUNT_ID",
+      "updated": true
+    },
+    {
+      "kind": "variable",
+      "name": "API_BASE_URL",
+      "updated": true
+    },
+    {
+      "kind": "variable",
+      "name": "CLOUDFLARE_PAGES_PROJECT",
+      "updated": true
+    },
+    {
+      "kind": "variable",
+      "name": "RENDER_SERVICE_ID",
+      "updated": true
+    },
+    {
+      "kind": "variable",
+      "name": "VITE_TURNSTILE_SITE_KEY",
+      "updated": true
+    },
+    {
+      "kind": "variable",
+      "name": "ALLOW_STALE_GENERATION",
+      "updated": true
+    },
+    {
+      "kind": "variable",
+      "name": "GENERATION_ENABLED",
+      "updated": true
+    },
+    {
+      "kind": "variable",
+      "name": "CORPUS_RELEASE",
+      "updated": true
+    }
+  ],
+  "secret_values_logged": false,
+  "owner_database_credentials_added": false,
+  "target": "Repository configuration used by the production environment; no environment-level overrides exist."
+}

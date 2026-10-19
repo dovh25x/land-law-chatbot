@@ -1,0 +1,42 @@
+........................................................................ [ 28%]
+........................................................................ [ 56%]
+........................................................................ [ 84%]
+..........F..............................                                [100%]
+=================================== FAILURES ===================================
+_________ test_publish_without_quality_gate_preserves_actual_freshness _________
+
+settings = Settings(app_env='development', llm_provider='groq', groq_api_key=SecretStr('**********'), groq_model='openai/gpt-oss-...t_quality_g0/data'), reports_dir=PosixPath('/tmp/pytest-of-dovh25x/pytest-11/test_publish_without_quality_g0/reports'))
+store = <landlaw.store.Store object at 0x7931fa8236b0>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7931fcdaa7b0>
+
+    def test_publish_without_quality_gate_preserves_actual_freshness(settings, store, monkeypatch):
+        doc=document().model_dump(mode='json')
+        stamp=(utcnow()-timedelta(days=10)).isoformat()
+        doc['checked_at']=stamp
+        payload={'id':'candidate','checked_at':stamp,'documents':[doc]}
+        store.stage(payload)
+        monkeypatch.setattr(cli,'Settings',lambda:settings)
+        monkeypatch.setattr(cli,'Store',lambda _:store)
+        monkeypatch.setattr(store,'close',lambda:None)
+>       cli.publish('candidate')
+
+tests/test_publication_cli.py:50: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+backend/landlaw/cli.py:198: in publish
+    validate_corpus(release)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+release = {'id': 'candidate', 'checked_at': '2026-10-09T06:06:58.833629+00:00', 'documents': [{'id': 'law', 'title': 'Văn bản law', 'url': 'https://vanban.chinhphu.vn/?docid=1', 'publication_url': None, ...}]}
+corpus = None
+
+    def validate_corpus(release, corpus=None):
+        from .security import official_url
+        from .local_embedding import MODEL
+        if not release.get('embedded') or not release.get('documents'):
+>           raise ValueError('Complete embedded corpus is required')
+E           ValueError: Complete embedded corpus is required
+
+backend/landlaw/publication.py:17: ValueError
+=========================== short test summary info ============================
+FAILED tests/test_publication_cli.py::test_publish_without_quality_gate_preserves_actual_freshness
+1 failed, 256 passed in 19.84s

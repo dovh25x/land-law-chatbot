@@ -1,0 +1,30 @@
+........................................................................ [ 28%]
+........................................................................ [ 56%]
+........................................................................ [ 84%]
+..F....................................                                  [100%]
+=================================== FAILURES ===================================
+_______________ test_freshness_early_exit_uses_no_provider_calls _______________
+
+store = <landlaw.store.Store object at 0x7ceba85e42d0>
+settings = Settings(app_env='development', llm_provider='groq', groq_api_key=SecretStr('**********'), groq_model='openai/gpt-oss-...ly_exit_uses0/data'), reports_dir=PosixPath('/tmp/pytest-of-dovh25x/pytest-8/test_freshness_early_exit_uses0/reports'))
+
+    def test_freshness_early_exit_uses_no_provider_calls(store,settings):
+        from datetime import timedelta
+        from landlaw.security import utcnow
+        from landlaw.agent import Agent
+        import asyncio
+        value=release(store);value['id']='stale';value['checked_at']=(utcnow()-timedelta(days=8)).isoformat()
+        store.stage(value);store.publish('stale')
+        s,_=session(store)
+        async def emit(_):pass
+        result=asyncio.run(Agent(store,FakeProvider(settings)).run(ChatRequest(session_id=s,message='Quy định hiện nay?'),emit))
+>       assert result.status=='insufficient_evidence' and result.llm_calls==0 and result.tool_calls==0
+E       AssertionError: assert ('answered' == 'insufficient_evidence'
+E         
+E         - insufficient_evidence
+E         + answered)
+
+tests/test_production_contract.py:83: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_production_contract.py::test_freshness_early_exit_uses_no_provider_calls
+1 failed, 254 passed in 24.17s

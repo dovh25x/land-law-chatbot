@@ -1,0 +1,93 @@
+
+> hanoi-land-law-web@0.1.0 test:e2e
+> playwright test product.spec.ts
+
+[WebServer] (node:23676) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 8 tests using 2 workers
+
+(node:23697) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:23698) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 [desktop] › e2e/product.spec.ts:16:1 › library supports accent-free search and opens reference-only originals (2.9s)
+  ✓  2 [mobile] › e2e/product.spec.ts:16:1 › library supports accent-free search and opens reference-only originals (3.3s)
+  ✓  3 [desktop] › e2e/product.spec.ts:28:1 › expired in-memory session restores the draft and never automatically resends (3.2s)
+  ✓  4 [mobile] › e2e/product.spec.ts:28:1 › expired in-memory session restores the draft and never automatically resends (3.4s)
+  ✓  5 [desktop] › e2e/product.spec.ts:47:1 › blocked sessionStorage does not prevent chat within the current tab (2.4s)
+  ✓  6 [mobile] › e2e/product.spec.ts:47:1 › blocked sessionStorage does not prevent chat within the current tab (2.0s)
+  ✘  7 [desktop] › e2e/product.spec.ts:52:1 › generation availability refreshes after a provider cooldown (6.4s)
+  ✘  8 [mobile] › e2e/product.spec.ts:52:1 › generation availability refreshes after a provider cooldown (6.3s)
+
+
+  1) [desktop] › e2e/product.spec.ts:52:1 › generation availability refreshes after a provider cooldown 
+
+    Error: expect(locator).toContainText(expected) failed
+
+    Locator: locator('.connection-note')
+    Expected substring: "Nhà cung cấp AI đang giới hạn"
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toContainText" locator('.connection-note') with timeout 5000ms
+      - waiting for locator('.connection-note')
+
+
+      54 |   await page.route('**/api/v1/status',r=>r.fulfill({json:++calls===1?{generation_available:false,reason:'provider_limited',retry_after:1}:{generation_available:true,reason:null}}))
+      55 |   await page.goto('/')
+    > 56 |   await expect(page.locator('.connection-note')).toContainText('Nhà cung cấp AI đang giới hạn')
+         |                                                  ^
+      57 |   await page.clock.fastForward(1100)
+      58 |   await expect(page.locator('.connection-note')).toHaveCount(0)
+      59 |   expect(calls).toBeGreaterThan(1)
+        at /home/dovh25x/projects/land-law-chatbot/frontend/e2e/product.spec.ts:56:50
+
+    Error Context: test-results/product-generation-availab-2da91-s-after-a-provider-cooldown-desktop/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/product-generation-availab-2da91-s-after-a-provider-cooldown-desktop/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/product-generation-availab-2da91-s-after-a-provider-cooldown-desktop/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2) [mobile] › e2e/product.spec.ts:52:1 › generation availability refreshes after a provider cooldown 
+
+    Error: expect(locator).toContainText(expected) failed
+
+    Locator: locator('.connection-note')
+    Expected substring: "Nhà cung cấp AI đang giới hạn"
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toContainText" locator('.connection-note') with timeout 5000ms
+      - waiting for locator('.connection-note')
+
+
+      54 |   await page.route('**/api/v1/status',r=>r.fulfill({json:++calls===1?{generation_available:false,reason:'provider_limited',retry_after:1}:{generation_available:true,reason:null}}))
+      55 |   await page.goto('/')
+    > 56 |   await expect(page.locator('.connection-note')).toContainText('Nhà cung cấp AI đang giới hạn')
+         |                                                  ^
+      57 |   await page.clock.fastForward(1100)
+      58 |   await expect(page.locator('.connection-note')).toHaveCount(0)
+      59 |   expect(calls).toBeGreaterThan(1)
+        at /home/dovh25x/projects/land-law-chatbot/frontend/e2e/product.spec.ts:56:50
+
+    Error Context: test-results/product-generation-availab-2da91-s-after-a-provider-cooldown-mobile/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/product-generation-availab-2da91-s-after-a-provider-cooldown-mobile/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/product-generation-availab-2da91-s-after-a-provider-cooldown-mobile/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2 failed
+    [desktop] › e2e/product.spec.ts:52:1 › generation availability refreshes after a provider cooldown 
+    [mobile] › e2e/product.spec.ts:52:1 › generation availability refreshes after a provider cooldown 
+  6 passed (20.1s)

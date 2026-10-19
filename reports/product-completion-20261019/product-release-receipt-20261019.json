@@ -1,0 +1,56 @@
+{
+  "checked_at": "2026-10-19T06:16:20.598875+00:00",
+  "source_commit": "b8f2953c8c329a2670e5669d1091ff7862b874a5",
+  "public_url": "https://hanoi-land-law.pages.dev",
+  "deployments": {
+    "render": {
+      "id": "dep-dbar9rc9v7es739l8qag",
+      "status": "live",
+      "commit": "b8f2953c8c329a2670e5669d1091ff7862b874a5"
+    },
+    "cloudflare": {
+      "id": "897238b0-abe5-4ab8-9900-d86545eb7af7",
+      "commit": "b8f2953c8c329a2670e5669d1091ff7862b874a5",
+      "status": "success"
+    }
+  },
+  "configuration_sha256": "cc345ca773ec6f9deb57106c37db6827b462ebf0c503e86cdd1a4400f8b10598",
+  "corpus": {
+    "id": "corpus-a26bc99e541fbbe2",
+    "indexed_documents": 60,
+    "chunks": 7392,
+    "reference_only_documents": 8,
+    "backup_sha256": "204547346cf550e75ae165956cf3dc8dd19264da301876f80e725c39529069b2",
+    "reembedded": false
+  },
+  "software": {
+    "backend_passed": 257,
+    "frontend_unit_passed": 7,
+    "frontend_e2e_passed": 78,
+    "frontend_build_passed": true,
+    "docker_memory_limit_mib": 512,
+    "ci_run": "https://github.com/dovh25x/land-law-chatbot/actions/runs/39208511672",
+    "deployment_run": "https://github.com/dovh25x/land-law-chatbot/actions/runs/39208524230",
+    "operations_run": "https://github.com/dovh25x/land-law-chatbot/actions/runs/39208208434"
+  },
+  "live": {
+    "navigation_widths": [
+      1440,
+      390,
+      320
+    ],
+    "accent_free_search": true,
+    "official_reference_originals": true,
+    "generation_available": true,
+    "unsigned_backend_status": 403,
+    "public_browser_chat_verified_this_run": false
+  },
+  "content_review": {
+    "deployment_gate_required": false,
+    "historical_results_preserved": true,
+    "full_model_suite_rerun": false,
+    "legal_certification": false,
+    "source_fresh": false,
+    "warning": "source_stale"
+  }
+}

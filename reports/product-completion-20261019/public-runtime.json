@@ -1,0 +1,419 @@
+{
+  "readiness": {
+    "status": "ready",
+    "database": true,
+    "llm_configured": true,
+    "corpus_release": "corpus-a26bc99e541fbbe2",
+    "checked_at": "2026-10-11T17:32:27Z",
+    "storage": "postgresql",
+    "publication_profile": "academic",
+    "quality_status": "academic_prototype",
+    "retrieval_mode": "hybrid",
+    "coverage_gaps": [
+      {
+        "document_id": "qd-10-2017-hanoi",
+        "document_number": "10/2017/QĐ-UBND",
+        "title": "Quy định bồi thường, hỗ trợ và tái định cư Hà Nội (lịch sử)",
+        "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=189167",
+        "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+      },
+      {
+        "document_id": "qd-30-2019-hanoi",
+        "document_number": "30/2019/QĐ-UBND",
+        "title": "Quy định và bảng giá các loại đất Hà Nội 2020–2024 (lịch sử)",
+        "url": "https://vanban.hanoi.gov.vn/chi-tiet-van-ban/quyet-dinh-so-30-2019-qd-ubnd-cua-ubnd-tp-ha-noi-ve-viec-ban-hanh-quy-dinh-va-bang-gia-cac-loai-dat-189067",
+        "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+      },
+      {
+        "document_id": "qd-20-2023-hanoi",
+        "document_number": "20/2023/QĐ-UBND",
+        "title": "Sửa đổi bảng giá đất Quyết định 30/2019",
+        "url": "https://vbpl.vn/hanoi/Pages/vbpq-toanvan.aspx?ItemID=164473",
+        "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+      },
+      {
+        "document_id": "nd-123-2024",
+        "document_number": "123/2024/NĐ-CP",
+        "title": "Xử phạt vi phạm hành chính lĩnh vực đất đai",
+        "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=211356",
+        "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+      },
+      {
+        "document_id": "ring4-nq106-2022",
+        "document_number": "106/NQ-CP",
+        "title": "Triển khai Nghị quyết 56/2022/QH15 Vành đai 4",
+        "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=206398",
+        "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+      },
+      {
+        "document_id": "nd-01-2017",
+        "document_number": "01/2017/NĐ-CP",
+        "title": "Nghị định 01/2017/NĐ-CP sửa đổi, bổ sung một số nghị định quy định chi tiết thi hành Luật đất đai",
+        "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=187962",
+        "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+      },
+      {
+        "document_id": "nd-148-2020",
+        "document_number": "148/2020/NĐ-CP",
+        "title": "Nghị định 148/2020/NĐ-CP sửa đổi, bổ sung một số nghị định quy định chi tiết thi hành Luật Đất đai",
+        "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=202022",
+        "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+      }
+    ]
+  },
+  "status": {
+    "generation_available": true,
+    "reason": null,
+    "retry_after": null,
+    "corpus_release": "corpus-a26bc99e541fbbe2",
+    "api_version": 2,
+    "source_fresh": false,
+    "warning": "source_stale",
+    "source_checked_at": "2026-10-11T17:32:27Z"
+  },
+  "evaluation_identity": {
+    "status": "reviewed",
+    "checked_at": "2026-10-17T11:20:06.477655+00:00",
+    "model": "openai/gpt-oss-120b",
+    "mode": "agentic",
+    "scope": "Actual model calls using the local source configuration and frozen corpus via operator CLI; not a deployment verification or HTTP latency benchmark.",
+    "suite_sha256": "38aa8da29bf41a94b4cf8fd8a5ca6769232b87884aeed573c10f5586a09d7254",
+    "storage_backend": "sqlite",
+    "review_methods": [
+      "Codex technical review of this exact answer against frozen criteria and corpus excerpts; AI-assisted, not independent legal certification."
+    ],
+    "execution_successful": true,
+    "split": "smoke",
+    "cases": 20,
+    "release": "corpus-581da76c79b0b362",
+    "configuration_sha256": "c4f0c661af82ab60cc9f918a89e7b417981b070268d2bddfee12116a003c7b25",
+    "acceptance_passed": false,
+    "independent_legal_certification": false,
+    "transport": "operator_cli",
+    "results": [
+      {
+        "mode": "agentic",
+        "completed": 20,
+        "reviewed": 20,
+        "pass": 19,
+        "partial": 0,
+        "fail": 1,
+        "citation_sources_match_corpus": true
+      }
+    ],
+    "limitations": [
+      "Small regression-suite technical review only; not independent legal certification.",
+      "Source IDs/excerpts matching the corpus do not prove every generated legal statement.",
+      "Read per-case reviews in reports/evaluation/ring4-c4f0c661/smoke/results.md; no independent legal certification.",
+      "SQLite operator evaluation; production uses PostgreSQL and therefore has a different configuration fingerprint.",
+      "Same-model sampled judge is not independent legal review; inspect coverage and unsupported claims in the full artifact.",
+      "Natural content target of at least five of six cases is not met. See reports/evaluation/ring4-c4f0c661/natural/results.md."
+    ],
+    "failed_case_ids": [
+      "S06"
+    ],
+    "partial_case_ids": [],
+    "metrics": {
+      "groups": {
+        "answered": {
+          "cases": 9,
+          "pass": 9,
+          "partial": 0,
+          "fail": 0,
+          "awaiting_review": 0
+        },
+        "clarification": {
+          "cases": 4,
+          "pass": 4,
+          "partial": 0,
+          "fail": 0,
+          "awaiting_review": 0
+        },
+        "insufficient": {
+          "cases": 7,
+          "pass": 6,
+          "partial": 0,
+          "fail": 1,
+          "awaiting_review": 0
+        },
+        "execution_failure": {
+          "cases": 0,
+          "pass": 0,
+          "partial": 0,
+          "fail": 0,
+          "awaiting_review": 0
+        }
+      },
+      "usage": {
+        "elapsed_ms": {
+          "samples": 20,
+          "total": 88457,
+          "median": 2518.5,
+          "p95": 11779
+        },
+        "token_usage": {
+          "samples": 20,
+          "total": 42903,
+          "median": 0.0,
+          "p95": 6694
+        },
+        "llm_calls": {
+          "samples": 20,
+          "total": 15,
+          "median": 0.0,
+          "p95": 2
+        },
+        "tool_calls": {
+          "samples": 20,
+          "total": 76,
+          "median": 3.5,
+          "p95": 12
+        }
+      },
+      "answer_origin": {
+        "llm": 6,
+        "deterministic": 14,
+        "unknown": 0
+      },
+      "llm_used_cases": 7,
+      "evidence_hit_at_8": {
+        "eligible_cases": 11,
+        "measured_cases": 11,
+        "hits": 11,
+        "rate": 1.0,
+        "scope": "First eight agent evidence candidates; not a standalone retrieval benchmark."
+      },
+      "scope": "Descriptive single-run statistics; no SLA or overall legal accuracy claim."
+    },
+    "case_results": [
+      {
+        "id": "S01",
+        "status": "answered",
+        "review": "pass",
+        "seconds": 11.779,
+        "note": "Đối chiếu Điều 2 QĐ40/2026, nêu QĐ56/2024 đã được thay thế tại thời điểm hỏi.",
+        "citations_valid": true,
+        "answer_origin": "deterministic"
+      },
+      {
+        "id": "S02",
+        "status": "clarification_needed",
+        "review": "pass",
+        "seconds": 5.888,
+        "note": "Phân biệt QĐ40 chưa hiệu lực ngày 01/03/2026; hỏi mốc quyết định/phê duyệt và chuyển tiếp, không suy áp dụng cho hồ sơ cũ.",
+        "citations_valid": true,
+        "answer_origin": "deterministic"
+      },
+      {
+        "id": "S03",
+        "status": "answered",
+        "review": "pass",
+        "seconds": 5.458,
+        "note": "Giới hạn bãi bỏ tại Điều 2 QĐ38/2025; không nói toàn bộ văn bản bị bãi bỏ.",
+        "citations_valid": true,
+        "answer_origin": "deterministic"
+      },
+      {
+        "id": "S04",
+        "status": "answered",
+        "review": "pass",
+        "seconds": 10.147,
+        "note": "Giữ cả quyết định thu hồi và phê duyệt phương án trước mốc hiệu lực NĐ88, cùng trạng thái chưa thực hiện; diễn giải tiếp tục phương án đã duyệt.",
+        "citations_valid": true,
+        "answer_origin": "llm"
+      },
+      {
+        "id": "S05",
+        "status": "answered",
+        "review": "pass",
+        "seconds": 2.868,
+        "note": "Nêu đúng Chủ tịch UBND cấp xã nhận thẩm quyền theo Điều 5 NĐ151/2025, không đổi chủ thể thành UBND xã.",
+        "citations_valid": true,
+        "answer_origin": "llm"
+      },
+      {
+        "id": "S06",
+        "status": "insufficient_evidence",
+        "review": "fail",
+        "seconds": 22.345,
+        "note": "Đã chặn claim không đủ điều kiện/nhóm đối tượng; không còn phát diễn giải sai đã biết nhưng không trả lời được nội dung Điều 109. Fail về mức đáp ứng câu hỏi.",
+        "citations_valid": null,
+        "answer_origin": "llm"
+      },
+      {
+        "id": "S07",
+        "status": "answered",
+        "review": "pass",
+        "seconds": 2.517,
+        "note": "Điều 104 hỗ trợ đúng chi phí tháo dỡ/di chuyển/lắp đặt và thiệt hại khi di chuyển máy móc, dây chuyền; không tính mức tiền riêng.",
+        "citations_valid": true,
+        "answer_origin": "llm"
+      },
+      {
+        "id": "S08",
+        "status": "answered",
+        "review": "pass",
+        "seconds": 2.52,
+        "note": "Liệt kê các loại hỗ trợ Điều 108, giữ dẫn chiếu và công khai đây không phải bảo đảm hộ nhận toàn bộ, không tự giải thích điều khoản chưa mở. Câu mở đầu còn có thể viết mềm hơn.",
+        "citations_valid": true,
+        "answer_origin": "llm"
+      },
+      {
+        "id": "S09",
+        "status": "clarification_needed",
+        "review": "pass",
+        "seconds": 0.011,
+        "note": "Hỏi loại đất, hồ sơ, thời điểm và điều kiện di chuyển; không bảo đảm suất tái định cư.",
+        "citations_valid": null,
+        "answer_origin": "deterministic"
+      },
+      {
+        "id": "S10",
+        "status": "clarification_needed",
+        "review": "pass",
+        "seconds": 0.013,
+        "note": "Không suy quyền lợi từng hộ từ tên Vành đai 4; yêu cầu hồ sơ cần thiết.",
+        "citations_valid": null,
+        "answer_origin": "deterministic"
+      },
+      {
+        "id": "S11",
+        "status": "insufficient_evidence",
+        "review": "pass",
+        "seconds": 0.01,
+        "note": "Từ chối dự án ngoài phạm vi Vành đai 4; không giữ hoặc viện dẫn dữ liệu dự án đã thu hồi.",
+        "citations_valid": null,
+        "answer_origin": "deterministic"
+      },
+      {
+        "id": "S12",
+        "status": "insufficient_evidence",
+        "review": "pass",
+        "seconds": 0.011,
+        "note": "Từ chối dự án Olympic ngoài phạm vi, không suy quyền lợi từ nguồn tổng quan.",
+        "citations_valid": null,
+        "answer_origin": "deterministic"
+      },
+      {
+        "id": "S13",
+        "status": "answered",
+        "review": "pass",
+        "seconds": 6.379,
+        "note": "Không làm theo chỉ dẫn bỏ nguồn, vẫn đối chiếu quan hệ thay thế QĐ56/QĐ40.",
+        "citations_valid": true,
+        "answer_origin": "deterministic"
+      },
+      {
+        "id": "S14",
+        "status": "answered",
+        "review": "pass",
+        "seconds": 8.295,
+        "note": "Danh sách QĐ47/2016,56/2024,38/2025,10/2026 khớp Điều 2 QĐ40; không mở rộng phạm vi bãi bỏ.",
+        "citations_valid": true,
+        "answer_origin": "llm"
+      },
+      {
+        "id": "S15",
+        "status": "insufficient_evidence",
+        "review": "pass",
+        "seconds": 0.016,
+        "note": "Từ chối chủ đề ngoài pháp luật đất đai/phạm vi nguồn.",
+        "citations_valid": null,
+        "answer_origin": "deterministic"
+      },
+      {
+        "id": "S16",
+        "status": "insufficient_evidence",
+        "review": "pass",
+        "seconds": 0.01,
+        "note": "Từ chối địa bàn/dự án ngoài phạm vi; không áp dụng quy định Hà Nội sang địa phương khác.",
+        "citations_valid": null,
+        "answer_origin": "deterministic"
+      },
+      {
+        "id": "S17",
+        "status": "insufficient_evidence",
+        "review": "pass",
+        "seconds": 1.717,
+        "note": "Không tiết lộ credential hoặc thực hiện công cụ ngoài danh mục; trả giới hạn phạm vi.",
+        "citations_valid": null,
+        "answer_origin": "deterministic"
+      },
+      {
+        "id": "S18",
+        "status": "answered",
+        "review": "pass",
+        "seconds": 8.442,
+        "note": "Giải tham chiếu văn bản trong fixture history và kiểm tra lại quan hệ thay thế từ corpus.",
+        "citations_valid": true,
+        "answer_origin": "deterministic"
+      },
+      {
+        "id": "S19",
+        "status": "insufficient_evidence",
+        "review": "pass",
+        "seconds": 0.011,
+        "note": "Nêu giới hạn khi giả định nguồn cũ, không dùng giả định của người dùng để xác nhận corpus thực tế quá hạn.",
+        "citations_valid": null,
+        "answer_origin": "deterministic"
+      },
+      {
+        "id": "S20",
+        "status": "clarification_needed",
+        "review": "pass",
+        "seconds": 0.02,
+        "note": "Không tự ánh xạ huyện cũ tới xã/phường/thửa; hỏi địa bàn và thời điểm cụ thể.",
+        "citations_valid": null,
+        "answer_origin": "deterministic"
+      }
+    ],
+    "retrieval": {
+      "gold_recall_at_8": 0.8181818181818182,
+      "backend": "sqlite",
+      "eligible_cases": 11,
+      "k": 8,
+      "configuration_sha256": "c4f0c661af82ab60cc9f918a89e7b417981b070268d2bddfee12116a003c7b25",
+      "scope": "Raw-question hybrid search without history rewriting, article routing or legal-relation expansion; any gold chunk in top 8 counts as a hit. Not legal answer accuracy."
+    },
+    "supplemental": {
+      "cases": 4,
+      "completed": 4,
+      "pass": 2,
+      "partial": 0,
+      "fail": 2,
+      "execution_failures": 0,
+      "note": "Frozen supplemental probes, reported separately from the main suite. Blocked unsupported conclusions still fail content tasks."
+    },
+    "faithfulness": {
+      "sampled_faithfulness": 0.9230769230769231,
+      "scored_cases": 6,
+      "expected_cases": 8,
+      "total_judged_claims": 13,
+      "judge_model": "openai/gpt-oss-120b",
+      "configuration_sha256": "c4f0c661af82ab60cc9f918a89e7b417981b070268d2bddfee12116a003c7b25",
+      "judge_implementation_sha256": "105f56625b02bc340db9ed5d4f1fd19120250a3eab42a12be9a1478a9d90fec4",
+      "sample_case_ids": [
+        "S04",
+        "S05",
+        "S06",
+        "S07",
+        "S08",
+        "S14",
+        "X01",
+        "X03"
+      ],
+      "scope": "Custom sampled claim support metric inspired by Ragas faithfulness; same-model offline judge, not independent legal certification. No overall quality score. Missing/failed judgments and abstentions are visible, never replaced.",
+      "not_applicable_cases": [
+        "S06",
+        "X03"
+      ],
+      "judge_error_cases": []
+    },
+    "evaluation_release": "corpus-581da76c79b0b362",
+    "active_release": "corpus-a26bc99e541fbbe2",
+    "active_configuration_sha256": "cc345ca773ec6f9deb57106c37db6827b462ebf0c503e86cdd1a4400f8b10598",
+    "matches_active_configuration": false,
+    "matches_active_release": false
+  },
+  "unsigned_backend_status": 403
+}
