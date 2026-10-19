@@ -40,7 +40,7 @@ Không bảo đảm mọi lượt dùng hết các bước hoặc hoàn tất re
 
 ![Cổng phát hành đáp án](diagrams/agent-publication-gate.svg)
 
-Sơ đồ cổng phát hành gộp kiểm tra verdict, độ mới nguồn và phạm vi vào quyết định cuối; nhánh retry/repair được trình bày ở graph phía trên. Nhánh không có claim có thể trả thông báo hoặc hỏi làm rõ bằng quy tắc. `answered` luôn cần ít nhất một claim. Các bước generic trong `next_steps` chỉ được hiển thị khi không có lỗi kiểm chứng, không yêu cầu thêm chứng cứ và không ngoài phạm vi; điều kiện hoặc thời hạn pháp lý phải nằm trong claim có nguồn. Summary do model sinh không được dùng để dựng phần trả lời.
+Sơ đồ cổng phát hành gộp kiểm tra verdict và phạm vi vào quyết định cuối; chú thích nêu chính sách nguồn quá hạn theo chế độ vận hành; nhánh retry/repair được trình bày ở graph phía trên. Nhánh không có claim có thể trả thông báo hoặc hỏi làm rõ bằng quy tắc. `answered` luôn cần ít nhất một claim. Các bước generic trong `next_steps` chỉ được hiển thị khi không có lỗi kiểm chứng, không yêu cầu thêm chứng cứ và không ngoài phạm vi; điều kiện hoặc thời hạn pháp lý phải nằm trong claim có nguồn. Summary do model sinh không được dùng để dựng phần trả lời.
 
 Với claim `applicability` dẫn văn bản tương lai, nội dung phải nói rõ chưa có hiệu lực trước khi được duyệt. Kiểm tra cấu trúc này chỉ nhận các cách diễn đạt phủ định đã quy định; nó không thay thế kiểm chứng ngữ nghĩa của toàn câu hoặc tự chứng minh ngày bắt đầu hiệu lực.
 
@@ -52,7 +52,7 @@ Với nhóm nhận giao khoán, claim phải giữ điều kiện hợp đồng 
 
 Sơ đồ trình tự tái sử dụng asset chung: API và agent được gộp thành một lifeline, Groq và corpus được gộp ở mức tổng quan. Đây là hai nơi xử lý khác nhau; corpus không được lưu tại Groq. Sơ đồ rút gọn các lượt gọi model và công cụ; thứ tự lặp thực tế theo graph ở trên. E5 ONNX Q8 chạy local tại backend cho query embedding; Groq chỉ xử lý generation. SQLite dùng khi phát triển local, không được coi có retrieval tương đương PostgreSQL. CLI operator dùng cùng agent và budget, ghi usage riêng, không đi qua quota public của API.
 
-`Agent.run` kiểm tra provider được cấu hình, tải release, lọc history theo catalogue và chặn câu hỏi hiện hành nếu nguồn quá hạn trước khi vào graph. History chỉ phục vụ giải tham chiếu; citation cũ không trở thành chứng cứ cho lượt mới. API có deadline bao phủ phần DB và agent, đồng thời hủy công việc khi kết thúc stream.
+`Agent.run` kiểm tra provider được cấu hình, tải release, lọc history theo catalogue và mặc định chặn câu hỏi hiện hành nếu nguồn quá hạn trước khi vào graph. Khi `ALLOW_STALE_GENERATION=true`, lượt hỏi có thể dùng snapshot với cảnh báo nguồn cũ; mốc rà soát thật và kiểm chứng claim được giữ nguyên. History chỉ phục vụ giải tham chiếu; citation cũ không trở thành chứng cứ cho lượt mới. API có deadline bao phủ phần DB và agent, đồng thời hủy công việc khi kết thúc stream.
 
 ## Giới hạn và cách kiểm tra
 

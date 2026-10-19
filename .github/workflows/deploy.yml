@@ -54,12 +54,13 @@ jobs:
       - run: npm test
         working-directory: frontend
       - name: Deploy frontend
-        uses: cloudflare/wrangler-action@v4
-        with:
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          workingDirectory: frontend
-          command: pages deploy dist --project-name=${{ vars.CLOUDFLARE_PAGES_PROJECT }} --branch=main --commit-hash=${{ steps.readiness.outputs.tested_commit }}
+        working-directory: frontend
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          CLOUDFLARE_PAGES_PROJECT: ${{ vars.CLOUDFLARE_PAGES_PROJECT }}
+          DEPLOY_SOURCE_COMMIT: ${{ steps.readiness.outputs.tested_commit }}
+        run: npx --yes wrangler@4 pages deploy dist --project-name="$CLOUDFLARE_PAGES_PROJECT" --branch=main --commit-hash="$DEPLOY_SOURCE_COMMIT"
       - name: Deploy existing free backend
         env:
           RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}

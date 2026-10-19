@@ -91,3 +91,5 @@ Chỉ dùng `--public-summary reports/latest.json` sau khi mọi ca suite chính
 Nếu artifact cũ không có telemetry bước sinh Draft, ghi `answer_origin=unknown`; không suy ra có generation chỉ từ số lần gọi planner/verifier. Không có citation thì integrity là “không áp dụng”.
 
 Báo cáo số liệu chỉ ở `reports/`; tài liệu này định nghĩa phương pháp. Xem [báo cáo có phiên bản](../reports/evaluation/ring4-c4f0c661/README.md) và [trạng thái triển khai](../reports/deployment-ring4.json). Các báo cáo corpus đã bị thu hồi asset giữ nguyên checksum và công khai hạn chế tái lập.
+
+Rubric và readiness nội dung được giữ để đo, rà soát và công bố giới hạn; deploy mặc định không yêu cầu chúng đạt. Người vận hành có thể bật chế độ yêu cầu quality qua runbook. Việc bỏ điều kiện chặn deploy không đổi nhãn kết quả lịch sử hoặc thay kiểm chứng claim/citation trong runtime.
