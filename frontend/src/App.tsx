@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from 'react'
 import ReactMarkdown from 'react-markdown'
 import { ArrowDown, ArrowUp, BookOpen, CircleHelp, Copy, GitBranch, LoaderCircle, Menu, MessageSquare, Moon, PanelLeftClose, PanelLeftOpen, Plus, Search, ShieldCheck, Square, Sun, Trash2, X } from 'lucide-react'
 import { ask, APIError, BASE, BACKEND_CONFIGURED, cachedSession, clearSession, getJSON, getSession, type Citation, type GenerationStatus, type LegalDocument, type Readiness, type Result, type Session, type Trace } from './api'
-import { ConfirmDialog, DataPanel, DocumentRow, formatDate, generationLabel, SourcePanel, sourceKinds, TracePanel, useDialog, useMedia } from './ui'
+import { ConfirmDialog, DataPanel, DocumentRow, formatDate, generationLabel, SourcePanel, sourceKinds, answerText, TracePanel, useDialog, useMedia } from './ui'
 import { Turnstile } from './Turnstile'
 
 type Page = 'chat' | 'sources' | 'evaluation'
@@ -176,7 +176,6 @@ function App() {
   const ready = readiness?.status === 'ready'
   const connectionMessage = connecting ? 'Đang kết nối dịch vụ. Lần khởi động đầu có thể mất khoảng một phút…'
     : generation && !generation.generation_available ? `${generationLabel(generation)}.${generation.retry_after ? ` Thử lại sau ${generation.retry_after} giây.` : ''} Thư viện nguồn vẫn truy cập được.`
-    : generation?.warning === 'source_stale' ? 'Nguồn chưa được rà soát cập nhật. AI trả lời theo snapshot; chưa xác nhận quy định hiện hành. Vui lòng đối chiếu nguồn chính thức.'
     : !ready ? readiness?.status === 'not_deployed' ? 'Bản xem trước giao diện. Backend chưa được triển khai.' : 'Dịch vụ chưa sẵn sàng. Bạn có thể kiểm tra lại kết nối.' : ''
 
   return <div onClickCapture={event => { const button = (event.target as HTMLElement).closest('button'); button?.focus() }} className={`app-shell page-${page} ${sourcePanel ? 'panel-open' : ''} ${navOpen ? 'nav-open' : ''} ${collapsed ? 'sidebar-collapsed' : ''}`}>
@@ -202,10 +201,10 @@ function App() {
           {!messages.length ? <div className="welcome"><div className="welcome-mark"><MessageSquare size={28}/></div><h1>Bạn muốn tìm hiểu điều gì?</h1><p className="intro">Bồi thường, hỗ trợ và tái định cư<br className="mobile-break"/> cho Vành đai 4 tại Hà Nội.</p></div> : <div className="messages">{messages.map(message => <article key={message.id} className={`message ${message.role}`}>
             <div className="message-label">{message.role === 'user' ? 'Bạn' : 'Vành đai 4'}</div>
             {message.result && message.result.status !== 'answered' && <span className={`answer-status ${message.result.status}`}>{labels[message.result.status] || 'Trạng thái chưa xác định'}</span>}
-            <div className="message-body"><ReactMarkdown components={{ a: ({ children }) => <span>{children}</span> }}>{message.content}</ReactMarkdown></div>
+            <div className="message-body"><ReactMarkdown components={{ a: ({ children }) => <span>{children}</span> }}>{message.role === 'assistant' ? answerText(message.content) : message.content}</ReactMarkdown></div>
             {!!message.result?.retry_after && <p className="secondary-copy">Thử lại sau {message.result.retry_after} giây.</p>}
             {!!message.result?.citations?.length && <div className="citations" aria-label="Căn cứ của đáp án">{message.result.citations.map((citation, index) => <button key={citation.id} onClick={() => openSource(citation, message.result!.citations)} aria-label={`[${index + 1}] ${citation.title} ${citation.document_number || ''} · ${citation.locator}`}><span className="citation-index">{index + 1}</span><span><strong>{citation.document_number || citation.title}</strong><small>{citation.document_number ? `${citation.title} · ` : ''}{citation.locator}</small></span></button>)}</div>}
-            {message.result && <div className="answer-actions">{!!message.result.citations?.length && <button onClick={() => openSource(null, message.result!.citations)}><BookOpen size={16}/>Xem nguồn</button>}<button className="trace-link" aria-label="Xem quá trình kiểm chứng" onClick={() => { setSourcePanel(null); setDataOpen(false); setTrace(message.result!.trace || []); setTraceOpen(true) }}><GitBranch size={16}/>Chi tiết thực thi</button><button onClick={() => void copyAnswer(message.id, message.content)}><Copy size={16}/>{copiedId === message.id ? 'Đã sao chép' : 'Sao chép'}</button></div>}
+            {message.result && <div className="answer-actions">{!!message.result.citations?.length && <button onClick={() => openSource(null, message.result!.citations)}><BookOpen size={16}/>Xem nguồn</button>}<button className="trace-link" aria-label="Xem quá trình kiểm chứng" onClick={() => { setSourcePanel(null); setDataOpen(false); setTrace(message.result!.trace || []); setTraceOpen(true) }}><GitBranch size={16}/>Chi tiết thực thi</button><button onClick={() => void copyAnswer(message.id, answerText(message.content))}><Copy size={16}/>{copiedId === message.id ? 'Đã sao chép' : 'Sao chép'}</button></div>}
           </article>)}{busy && <div className="working" role="status"><LoaderCircle className="spin" size={18}/><span>{trace.at(-1)?.summary || 'Đang kết nối và chuẩn bị tra cứu…'}</span><button onClick={() => { setSourcePanel(null); setDataOpen(false); setTraceOpen(true) }}>Xem quá trình</button></div>}</div>}
         </div>
         <div className="composer-area">

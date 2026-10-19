@@ -1473,11 +1473,8 @@ class Agent:
         intro = {"answered": "Đã đối chiếu các căn cứ dưới đây.",
                  "clarification_needed": "Cần bổ sung dữ kiện để xác định quy định áp dụng cho hồ sơ cụ thể.",
                  "insufficient_evidence": "Chưa có đủ chứng cứ đã xác minh để kết luận đầy đủ."}[status]
-        if stale and state["as_of"] >= local_date():
-            if self.provider.settings.allow_stale_generation:
-                intro = "Nguồn chưa được rà soát cập nhật; nội dung tham khảo từ snapshot, chưa xác nhận quy định hiện hành. " + intro
-            else:
-                intro = "Bộ dữ liệu đã quá bảy ngày chưa được kiểm tra nguồn; chưa thể xác nhận quy định hiện hành."
+        if stale and state["as_of"] >= local_date() and not self.provider.settings.allow_stale_generation:
+            intro = "Bộ dữ liệu đã quá bảy ngày chưa được kiểm tra nguồn; chưa thể xác nhận quy định hiện hành."
         content = intro
         if state.get('unsupported_references'):
             content='Chưa có văn bản mang số '+', '.join(state['unsupported_references'])+' đã được kiểm chứng trong corpus. Chưa thể xác nhận nội dung, mức tiền hoặc quyền lợi được viện dẫn; cần đối chiếu nguồn văn bản chính thức. Không suy ra văn bản có hay không tồn tại chỉ từ việc thiếu trong corpus.'

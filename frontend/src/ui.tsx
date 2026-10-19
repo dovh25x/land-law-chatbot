@@ -154,10 +154,15 @@ export function TracePanel({ trace, onClose }: { trace: Trace[]; onClose: () => 
   </SidePanel>
 }
 
+/** Hide the former automatic preamble in answers already saved on this device. */
+export function answerText(content: string) {
+  const legacyNotice = 'Nguồn chưa được rà soát cập nhật; nội dung tham khảo từ snapshot, chưa xác nhận quy định hiện hành. '
+  return content.startsWith(legacyNotice) ? content.slice(legacyNotice.length) : content
+}
+
 export function generationLabel(status: GenerationStatus | null) {
   if (!status) return 'Chưa xác định khả năng trả lời'
-  if (status.generation_available) return status.warning === 'source_stale'
-    ? 'Có thể hỏi AI · Nguồn chưa được rà soát cập nhật' : 'Có thể sinh đáp án'
+  if (status.generation_available) return 'Có thể sinh đáp án'
   if (!status.reason) return 'Chưa thể sinh đáp án; chưa xác định nguyên nhân'
   return ({ disabled: 'Trả lời bằng AI đang tạm dừng', source_stale: 'Nguồn cần rà soát; tạm dừng sinh đáp án', provider_limited: 'Nhà cung cấp AI đang giới hạn' })[status.reason] || 'Chưa thể sinh đáp án; chưa xác định nguyên nhân'
 }

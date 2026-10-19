@@ -38,7 +38,7 @@ Không xác định thửa đất hoặc ranh giới bằng GIS, tính số ti�
 
 - Thiếu hồ sơ cá nhân: hỏi thông tin đã ẩn danh và giải thích vì sao chưa thể kết luận.
 - Thiếu nguồn hoặc quan hệ pháp lý chưa xác minh: loại kết luận chưa được hỗ trợ và nêu giới hạn.
-- Nguồn cần rà soát: mặc định dừng generation; người vận hành có thể bật chế độ snapshot có cảnh báo, giữ mốc rà soát thật và kiểm chứng claim.
+- Nguồn cần rà soát: mặc định dừng generation; người vận hành có thể bật chế độ snapshot với trạng thái freshness lưu trong metadata/reports, giữ mốc rà soát thật và kiểm chứng claim.
 - Quota, cold start hoặc provider giới hạn: thông báo tình trạng thực tế, không tạo câu trả lời thay thế giả.
 - Hủy hoặc mất SSE: giải thích server không lưu đáp án để khôi phục; chỉ tạo lượt mới khi người dùng chủ động.
 - Không lưu được lịch sử: thông báo hội thoại chỉ còn trong tab, không chuyển sang lưu server.

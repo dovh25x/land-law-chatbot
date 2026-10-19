@@ -106,7 +106,7 @@ for (const reason of ['disabled', 'source_stale', 'provider_limited']) {
   })
 }
 
-test('explicit stale-source generation warns visibly and allows a verified response', async ({ page }) => {
+test('snapshot metadata stays out of the UI, including previously saved answer preambles', async ({ page }) => {
   await page.route('**/api/v1/status', route => route.fulfill({ json: {
     generation_available: true, reason: null, source_fresh: false, warning: 'source_stale',
     source_checked_at: '2026-10-11T17:32:27Z',
@@ -114,10 +114,18 @@ test('explicit stale-source generation warns visibly and allows a verified respo
   let posts = 0
   page.on('request', request => { if (request.url().endsWith('/chat')) posts++ })
   await page.goto('/')
-  await expect(page.locator('.connection-note')).toContainText('Nguồn chưa được rà soát cập nhật')
+  await expect(page.locator('.connection-note')).toHaveCount(0)
+  await page.route('**/api/v1/chat', route => route.fulfill({ contentType: 'text/event-stream', body: 'event: result\ndata: '+JSON.stringify({...result,content:'Nguồn chưa được rà soát cập nhật; nội dung tham khảo từ snapshot, chưa xác nhận quy định hiện hành. Đáp án kiểm thử'})+'\n\n' }))
   await send(page)
   expect(posts).toBe(1)
   await expect(page.locator('.message.assistant')).toContainText('Đáp án kiểm thử')
+  await expect(page.locator('.message.assistant')).not.toContainText('Nguồn chưa được rà soát cập nhật')
+  await page.reload()
+  await expect(page.locator('.message.assistant')).toContainText('Đáp án kiểm thử')
+  await expect(page.locator('.message.assistant')).not.toContainText('Nguồn chưa được rà soát cập nhật')
+  await page.getByRole('button', { name: 'Thông tin dữ liệu và kết nối' }).click()
+  await expect(page.getByLabel('Dữ liệu và phạm vi sử dụng', { exact: true })).toContainText('Có thể sinh đáp án')
+  await expect(page.getByLabel('Dữ liệu và phạm vi sử dụng', { exact: true })).not.toContainText('Nguồn chưa được rà soát cập nhật')
 })
 
 test('a disconnected SSE is not retried and never produces a draft', async ({ page }) => {

@@ -105,3 +105,5 @@ E2E cho redesign dùng fixture và xuất ảnh vào thư mục báo cáo mới,
 Thư viện gộp nguồn đã lập chỉ mục và bản gốc tham khảo, hỗ trợ tìm tiếng Việt không dấu. Bản gốc chưa lập chỉ mục có nhãn riêng và liên kết mở tài liệu chính thức. Phiên hết hạn giữ bản nháp, xóa token cũ và cho xác minh/gửi lại chủ động; storage bị chặn vẫn giữ phiên trong bộ nhớ tab. Status được cập nhật khi tab trở lại và sau cooldown provider. Báo cáo lệch fingerprint được thu gọn mặc định, vẫn giữ cảnh báo và có thể mở xem.
 
 Ảnh E2E dùng thư mục output của lần chạy Playwright; không ghi đè artifact lịch sử trong `reports/`.
+
+Khi generation được cho phép trên snapshot, không hiển thị banner hoặc lời mở đầu tự động cảnh báo nguồn cũ. Metadata API, ngày kiểm tra nguồn và reports giữ trạng thái thực tế. Câu cảnh báo tự động ở đầu đáp án đã lưu trên thiết bị được bỏ khi hiển thị/sao chép; nội dung gốc trong IndexedDB không bị viết lại.

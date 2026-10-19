@@ -52,7 +52,7 @@ Với nhóm nhận giao khoán, claim phải giữ điều kiện hợp đồng 
 
 Sơ đồ trình tự tái sử dụng asset chung: API và agent được gộp thành một lifeline, Groq và corpus được gộp ở mức tổng quan. Đây là hai nơi xử lý khác nhau; corpus không được lưu tại Groq. Sơ đồ rút gọn các lượt gọi model và công cụ; thứ tự lặp thực tế theo graph ở trên. E5 ONNX Q8 chạy local tại backend cho query embedding; Groq chỉ xử lý generation. SQLite dùng khi phát triển local, không được coi có retrieval tương đương PostgreSQL. CLI operator dùng cùng agent và budget, ghi usage riêng, không đi qua quota public của API.
 
-`Agent.run` kiểm tra provider được cấu hình, tải release, lọc history theo catalogue và mặc định chặn câu hỏi hiện hành nếu nguồn quá hạn trước khi vào graph. Khi `ALLOW_STALE_GENERATION=true`, lượt hỏi có thể dùng snapshot với cảnh báo nguồn cũ; mốc rà soát thật và kiểm chứng claim được giữ nguyên. History chỉ phục vụ giải tham chiếu; citation cũ không trở thành chứng cứ cho lượt mới. API có deadline bao phủ phần DB và agent, đồng thời hủy công việc khi kết thúc stream.
+`Agent.run` kiểm tra provider được cấu hình, tải release, lọc history theo catalogue và mặc định chặn câu hỏi hiện hành nếu nguồn quá hạn trước khi vào graph. Khi `ALLOW_STALE_GENERATION=true`, lượt hỏi có thể dùng snapshot; trạng thái nguồn cũ chỉ ghi metadata và reports; mốc rà soát thật và kiểm chứng claim được giữ nguyên. History chỉ phục vụ giải tham chiếu; citation cũ không trở thành chứng cứ cho lượt mới. API có deadline bao phủ phần DB và agent, đồng thời hủy công việc khi kết thúc stream.
 
 ## Giới hạn và cách kiểm tra
 

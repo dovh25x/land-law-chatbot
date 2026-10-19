@@ -501,7 +501,7 @@ async def test_stale_corpus_does_not_claim_current_law(store, settings):
 
 
 @pytest.mark.parametrize('verification_fails', [False, True])
-async def test_explicit_stale_generation_keeps_warning_and_claim_verification(store, settings, verification_fails):
+async def test_explicit_stale_generation_keeps_freshness_metadata_and_claim_verification(store, settings, verification_fails):
     settings.allow_stale_generation = True
     payload = release(store)
     payload['id'] = 'unreviewed-snapshot'
@@ -512,7 +512,8 @@ async def test_explicit_stale_generation_keeps_warning_and_claim_verification(st
     result = await Agent(store, FakeProvider(settings, verification=verification)).run(
         ChatRequest(session_id=sid, message='bồi thường thu hồi đất'), noop)
     assert result.llm_calls > 0
-    assert 'Nguồn chưa được rà soát cập nhật' in result.content
+    assert 'Nguồn chưa được rà soát cập nhật' not in result.content
+    assert 'nội dung tham khảo từ snapshot' not in result.content
     assert not store.source_fresh(store.release())
     assert store.release()['checked_at'] == payload['checked_at']
     if verification_fails:
