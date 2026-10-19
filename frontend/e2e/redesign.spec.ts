@@ -123,7 +123,7 @@ test('snapshot metadata stays out of the UI, including previously saved answer p
   await page.reload()
   await expect(page.locator('.message.assistant')).toContainText('Đáp án kiểm thử')
   await expect(page.locator('.message.assistant')).not.toContainText('Nguồn chưa được rà soát cập nhật')
-  await page.getByRole('button', { name: 'Thông tin dữ liệu và kết nối' }).click()
+  await page.locator('.topbar .data-trigger').click()
   await expect(page.getByLabel('Dữ liệu và phạm vi sử dụng', { exact: true })).toContainText('Có thể sinh đáp án')
   await expect(page.getByLabel('Dữ liệu và phạm vi sử dụng', { exact: true })).not.toContainText('Nguồn chưa được rà soát cập nhật')
 })
