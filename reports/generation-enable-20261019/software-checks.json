@@ -1,0 +1,35 @@
+{
+  "source_commit": "11f795dca1e88cdd2488828565eca87099fdad08",
+  "checks": [
+    {
+      "name": "backend",
+      "exit_code": 0,
+      "log": "reports/generation-enable-20261019/backend-tests.log",
+      "log_sha256": "ea13ea30232cd486a7449eda3bcdb6c8075af2c596144d59a69befdc3d0dd50a"
+    },
+    {
+      "name": "secrets",
+      "exit_code": 0,
+      "log": "reports/generation-enable-20261019/secrets-predeploy.log",
+      "log_sha256": "766d75c21b58f1924ca7617ba55b3944d6d327b8f64a36ceba52c177e79340c7"
+    },
+    {
+      "name": "frontend_unit",
+      "exit_code": 0,
+      "log": "reports/generation-enable-20261019/frontend-unit.log",
+      "log_sha256": "2a1a9ed9df2d6728e4eebae63f6b102771b20469d5563110e730e418bf830cbf"
+    },
+    {
+      "name": "frontend_build",
+      "exit_code": 0,
+      "log": "reports/generation-enable-20261019/frontend-build.log",
+      "log_sha256": "6575b92771f6a947405a2cdfb034754d44806d0b3a9cfa917d785db132dfed42"
+    },
+    {
+      "name": "frontend_e2e",
+      "exit_code": 0,
+      "log": "reports/generation-enable-20261019/frontend-e2e.log",
+      "log_sha256": "afd8eb459e3cb0c82a01b1394796d80c4c68216de7c6d21bfc280ce47477c44f"
+    }
+  ]
+}

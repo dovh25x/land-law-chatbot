@@ -1,0 +1,55 @@
+import { chromium } from '/home/dovh25x/projects/land-law-chatbot/frontend/node_modules/playwright/index.mjs'
+import { readFile,writeFile,mkdir } from 'node:fs/promises'
+const root='/home/dovh25x/projects/land-law-chatbot',dir=root+'/reports/generation-enable-20261019/live-browser'
+const base='https://hanoi-land-law.pages.dev'
+await mkdir(dir,{recursive:true})
+const browser=await chromium.launch({headless:true})
+const report={checked_at:new Date().toISOString(),base_url:base,responsive:[],public_chat_tested:false,turnstile_token_observed:false,conversation_content_persisted:false}
+let phase='navigation'
+try {
+  for (const width of [1440,390,320]) {
+    const context=await browser.newContext({viewport:{width,height:900},isMobile:width<768,hasTouch:width<768})
+    const page=await context.newPage();await page.goto(base,{waitUntil:'domcontentloaded',timeout:90000})
+    await page.getByLabel('Câu hỏi pháp luật').waitFor()
+    await page.locator('.connection-note').filter({hasText:'Nguồn chưa được rà soát cập nhật'}).waitFor({timeout:60000})
+    if(!await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth))throw Error('Horizontal overflow')
+    await page.screenshot({path:dir+`/enabled-${width}.png`,fullPage:true})
+    report.responsive.push({width,stale_warning_visible:true,generation_available:true,physical_device:false})
+    await context.close()
+  }
+  phase='turnstile'
+  const context=await browser.newContext({viewport:{width:1440,height:900}})
+  const page=await context.newPage();await page.goto(base,{waitUntil:'domcontentloaded',timeout:90000})
+  await page.waitForFunction(()=>!!document.querySelector('input[name="cf-turnstile-response"]')?.value,{},{timeout:45000})
+  report.turnstile_token_observed=true
+  phase='generation'
+  const caseRow=(await readFile(root+'/data/evaluation/natural.jsonl','utf8')).trim().split('\n').map(JSON.parse).find(r=>r.id==='N05')
+  const sessionResponse=page.waitForResponse(r=>r.request().method()==='POST'&&r.url().endsWith('/api/v1/sessions'),{timeout:110000})
+  const response=page.waitForResponse(r=>r.request().method()==='POST'&&r.url().endsWith('/api/v1/chat'),{timeout:110000})
+  await page.getByLabel('Câu hỏi pháp luật').fill(caseRow.question)
+  await page.getByRole('button',{name:'Gửi câu hỏi'}).click()
+  const session=await sessionResponse;report.session_http=session.status()
+  const chat=await response;report.chat_http=chat.status()
+  if(session.status()!==201||!chat.ok())throw Error('Public session/chat HTTP failed')
+  await page.locator('.message.assistant').waitFor({timeout:110000})
+  const metadata=await page.evaluate(()=>new Promise((accept,reject)=>{
+    const request=indexedDB.open('landlaw-history',1)
+    request.onerror=()=>reject(Error('Browser history unavailable'))
+    request.onsuccess=()=>{const db=request.result;const q=db.transaction('conversations').objectStore('conversations').getAll()
+      q.onsuccess=()=>{const result=q.result.flatMap(c=>c.messages).filter(m=>m.role==='assistant').at(-1)?.result
+        db.close();if(!result)return reject(Error('No completed browser result'))
+        accept({status:result.status,model:result.model,llm_calls:result.llm_calls,citations:result.citations.length,
+          verified_claims:result.verified_claims?.length,stale_warning:result.content.includes('Nguồn chưa được rà soát cập nhật')})}
+      q.onerror=()=>reject(Error('Browser result unavailable'))}
+  }))
+  report.public_chat_tested=true;report.answer_metadata=metadata
+  if(metadata.model!=='openai/gpt-oss-120b'||metadata.llm_calls<1)throw Error('No actual Groq generation')
+  if(!metadata.stale_warning)throw Error('Snapshot warning missing from completed result')
+  report.completed=true;await context.close()
+} catch(error) {
+  report.completed=false;report.phase=phase
+  report.error=phase==='turnstile'?'Managed Turnstile did not provide a token automatically; public chat remains unverified in headless browser.':error.message
+} finally {
+  await browser.close();await writeFile(dir+'/probe.json',JSON.stringify(report,null,2)+'\n')
+  console.log(JSON.stringify(report))
+}

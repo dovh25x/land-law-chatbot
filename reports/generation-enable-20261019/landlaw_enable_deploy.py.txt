@@ -1,0 +1,58 @@
+import hashlib,json,subprocess,sys
+from pathlib import Path
+import httpx
+from dotenv import dotenv_values
+from landlaw.config import Settings
+from landlaw.security import utcnow
+
+ROOT=Path('/home/dovh25x/projects/land-law-chatbot');OUT=ROOT/'reports/generation-enable-20261019'
+sys.path.insert(0,str(ROOT))
+env=dotenv_values(ROOT/'.env');auth=json.loads((OUT/'operator-authorization.json').read_text());commit=auth['source_commit']
+assert auth['generation_enabled'] and auth['allow_stale_generation']
+checks=json.loads((OUT/'software-checks.json').read_text());assert checks['source_commit']==commit
+assert len(checks['checks'])==5
+for item in checks['checks']:
+    assert item['exit_code']==0 and hashlib.sha256(Path(item['log']).read_bytes()).hexdigest()==item['log_sha256']
+changed=subprocess.check_output(['git','diff','--name-only',commit],text=True).splitlines()
+assert all(p.startswith(('reports/','docs/')) for p in changed)
+s=Settings();assert s.generation_enabled and s.allow_stale_generation and s.groq_model=='openai/gpt-oss-120b'
+if sys.argv[1]=='frontend':
+    from scripts.deploy import frontend
+    frontend(tested_commit=commit)
+    sys.exit()
+sid=env['RENDER_SERVICE_ID']
+with httpx.Client(base_url='https://api.render.com/v1',timeout=45,
+        headers={'Authorization':'Bearer '+env['RENDER_API_KEY']}) as c:
+    r=c.get('/services/'+sid);r.raise_for_status();service=r.json()
+    assert service['serviceDetails']['plan']=='free' and service['serviceDetails']['runtime']=='docker'
+    assert service.get('autoDeployTrigger')=='off'
+    assert service['repo'].removesuffix('.git')=='https://github.com/dovh25x/land-law-chatbot'
+    r=c.get(f'/services/{sid}/env-vars?limit=100');r.raise_for_status()
+    current={x['envVar']['key']:x['envVar']['value'] for x in r.json()}
+    assert current['GROQ_MODEL']=='openai/gpt-oss-120b' and current['GROQ_API_KEY']==env['GROQ_API_KEY']
+    assert current['DATABASE_URL']==env['DATABASE_URL']
+    if sys.argv[1]=='configure':
+        assert not (OUT/'render-configuration.json').exists()
+        before={k:current.get(k,'false') for k in ('GENERATION_ENABLED','ALLOW_STALE_GENERATION')}
+        for key in ('GENERATION_ENABLED','ALLOW_STALE_GENERATION'):
+            r=c.put(f'/services/{sid}/env-vars/{key}',json={'value':'true'});r.raise_for_status()
+        r=c.get(f'/services/{sid}/env-vars?limit=100');r.raise_for_status()
+        after={x['envVar']['key']:x['envVar']['value'] for x in r.json()}
+        assert after['GENERATION_ENABLED']==after['ALLOW_STALE_GENERATION']=='true'
+        report={'checked_at':utcnow().isoformat(),'source_commit':commit,'plan':'free','flags_before':before,
+            'generation_enabled':True,'allow_stale_generation':True,'groq_key_matches_local':True,
+            'database_unchanged':True,'auto_deploy':'off','corpus_id':'corpus-a26bc99e541fbbe2'}
+        (OUT/'render-configuration.json').write_text(json.dumps(report,indent=2)+'\n')
+    elif sys.argv[1]=='trigger':
+        assert not (OUT/'render-trigger.json').exists()
+        assert current['GENERATION_ENABLED']==current['ALLOW_STALE_GENERATION']=='true'
+        r=c.post(f'/services/{sid}/deploys',json={'clearCache':'do_not_clear','commitId':commit});r.raise_for_status()
+        result=r.json();report={'checked_at':utcnow().isoformat(),'id':result['id'],'status':result['status'],'requested_commit':commit}
+        (OUT/'render-trigger.json').write_text(json.dumps(report,indent=2)+'\n')
+    else:
+        initial=json.loads((OUT/'render-trigger.json').read_text())
+        r=c.get(f"/services/{sid}/deploys/{initial['id']}");r.raise_for_status();result=r.json()
+        report={'checked_at':utcnow().isoformat(),'id':result['id'],'status':result['status'],'commit':result.get('commit',{}).get('id')}
+        if report['status']=='live':assert report['commit']==commit
+        with (OUT/'render-status.jsonl').open('a') as f:f.write(json.dumps(report)+'\n')
+    print(json.dumps(report))

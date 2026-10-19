@@ -1,0 +1,31 @@
+import json
+from pathlib import Path
+import httpx
+from dotenv import dotenv_values
+from landlaw.config import Settings
+from landlaw.evaluation import configuration_fingerprint
+from landlaw.security import utcnow
+OUT=Path('reports/generation-enable-20261019');env=dotenv_values('.env')
+commit=json.loads((OUT/'operator-authorization.json').read_text())['source_commit']
+with httpx.Client(timeout=55,follow_redirects=True) as c:
+    base=env['VITE_API_BASE_URL']
+    def get(path):
+        r=c.get(base+path);r.raise_for_status();return r.json()
+    status=get('/api/v1/status');ready=get('/readyz');evaluation=get('/api/v1/evaluations/latest')
+    docs=get('/api/v1/documents')['documents']
+    assert status['generation_available'] is True and status['reason'] is None
+    assert status['source_fresh'] is False and status['warning']=='source_stale'
+    assert status['corpus_release']==ready['corpus_release']=='corpus-a26bc99e541fbbe2'
+    assert len(docs)==60 and all(d.get('project') in (None,'ring4') for d in docs)
+    assert evaluation['active_configuration_sha256']==configuration_fingerprint(Settings())
+    direct=c.get('https://land-law-chatbot.onrender.com/api/v1/status');assert direct.status_code==403
+    r=c.get(f"https://api.cloudflare.com/client/v4/accounts/{env['CLOUDFLARE_ACCOUNT_ID']}/pages/projects/{env['CLOUDFLARE_PAGES_PROJECT']}/deployments",headers={'Authorization':'Bearer '+env['CLOUDFLARE_API_TOKEN']})
+    r.raise_for_status();payload=r.json();assert payload['success']
+    deployed=next(d for d in payload['result'] if d['environment']=='production' and d['latest_stage']['status']=='success')
+    assert deployed['deployment_trigger']['metadata']['commit_hash']==commit
+    report={'checked_at':utcnow().isoformat(),'base_url':base,'source_commit':commit,'generation_status':status,
+        'corpus_documents':len(docs),'storage':ready['storage'],'runtime_configuration_sha256':evaluation['active_configuration_sha256'],
+        'unsigned_backend_http':direct.status_code,'cloudflare_deployment':deployed['id'],'cloudflare_status':'success',
+        'evaluation_matches_configuration':evaluation['matches_active_configuration'],'evaluation_matches_corpus':evaluation['matches_active_release'],
+        'quality_acceptance_passed':False}
+    (OUT/'live-generation-status.json').write_text(json.dumps(report,indent=2)+'\n');print(json.dumps(report))

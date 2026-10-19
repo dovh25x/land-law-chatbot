@@ -1,0 +1,37 @@
+import asyncio,hashlib,json,uuid
+from pathlib import Path
+from landlaw.config import Settings
+from landlaw.evaluation import configuration_fingerprint
+from landlaw.models import ChatRequest
+from landlaw.provider import GroqProvider
+from landlaw.security import local_date,new_token,utcnow
+from landlaw.store import Store
+
+OUT=Path('reports/generation-enable-20261019')
+async def main():
+    s=Settings().for_operator()
+    assert s.generation_enabled and s.allow_stale_generation
+    store=Store(s);provider=GroqProvider(s,store,usage_scope='operator')
+    try:
+        release=store.release(None,True);assert release['id']=='corpus-a26bc99e541fbbe2'
+        before=store.source_fresh(release)
+        case=next(json.loads(line) for line in Path('data/evaluation/natural.jsonl').read_text().splitlines() if json.loads(line)['id']=='N05')
+        sid=str(uuid.uuid4());store.create_session(sid,new_token())
+        async def emit(event):pass
+        from landlaw.agent import Agent
+        result=await Agent(store,provider).run(ChatRequest(session_id=sid,message=case['question']),emit)
+        report={'checked_at':utcnow().isoformat(),'purpose':'Operator connectivity smoke with the current date, not a frozen-suite evaluation or legal-quality acceptance.',
+            'source_case':'N05','frozen_case_as_of_unchanged':case['as_of'],'runtime_as_of':str(result.as_of),
+            'usage_scope':'operator','corpus_id':result.corpus_release,'configuration_sha256':configuration_fingerprint(s),
+            'model':result.model,'status':result.status,'llm_calls':result.llm_calls,'tool_calls':result.tool_calls,
+            'tokens':result.token_usage,'elapsed_ms':result.elapsed_ms,'citations':len(result.citations),'verified_claims':len(result.verified_claims),
+            'source_fresh_before':before,'source_fresh_after':store.source_fresh(release),
+            'stale_warning_in_result':'Nguồn chưa được rà soát cập nhật' in result.content,
+            'retry_after':result.retry_after,'answer_sha256':hashlib.sha256(result.content.encode()).hexdigest(),
+            'conversation_content_persisted':False,'independent_legal_review':False}
+        (OUT/'operator-smoke-1.json').write_text(json.dumps(report,ensure_ascii=False,indent=2)+'\n')
+        print(json.dumps(report,ensure_ascii=False))
+    finally:
+        await provider.close();store.close()
+
+if __name__=='__main__':asyncio.run(main())
