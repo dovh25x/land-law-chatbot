@@ -49,17 +49,16 @@ def candidate_settings(args, folder):
     name = 'landlaw_generation_'+uuid.uuid4().hex[:16]
     with psycopg.connect(owner, autocommit=True, connect_timeout=15) as control:
         control.execute(sql.SQL('CREATE DATABASE {}').format(sql.Identifier(name)))
-        try:
-            isolated = make_conninfo(owner, dbname=name)
-            with psycopg.connect(isolated, autocommit=True, connect_timeout=15) as connection:
-                for migration in sorted(Path('migrations').glob('*.sql')):
-                    connection.execute(migration.read_text())
-            yield settings.model_copy(update={'database_url': SecretStr(isolated),
-                                               'admin_database_url': SecretStr('')})
-        finally:
-            # This name was generated and created above by this invocation.
-            # Never migrate, restore into, or remove the configured serving DB.
-            control.execute(sql.SQL('DROP DATABASE {} WITH (FORCE)').format(sql.Identifier(name)))
+        with (args.output/'isolated-databases.jsonl').open('a') as receipt:
+            receipt.write(json.dumps({'created_at':utcnow().isoformat(), 'database':name,
+                                      'automatic_drop':False, 'serving_database_changed':False})+'\n')
+        isolated = make_conninfo(owner, dbname=name)
+        with psycopg.connect(isolated, autocommit=True, connect_timeout=15) as connection:
+            for migration in sorted(Path('migrations').glob('*.sql')):
+                connection.execute(migration.read_text())
+        # Connections close normally; the isolated database is retained even on failure.
+        yield settings.model_copy(update={'database_url': SecretStr(isolated),
+                                           'admin_database_url': SecretStr('')})
 
 
 async def main(args):
@@ -123,7 +122,7 @@ if __name__ == '__main__':
     parser.add_argument('--output', type=Path, required=True)
     parser.add_argument('--split', action='append', choices=('smoke', 'supplemental', 'natural'))
     parser.add_argument('--resume', action='store_true')
-    parser.add_argument('--postgres', action='store_true', help='Use a newly created disposable PostgreSQL database; never the serving database')
+    parser.add_argument('--postgres', action='store_true', help='Use and retain a newly created isolated PostgreSQL database; never the serving database')
     parser.add_argument('--case-id', action='append', help='Prioritize an existing frozen case without changing its full-suite denominator')
     parser.add_argument('--no-generation', action='store_true', help='Enforce zero provider calls for explicitly selected deterministic cases')
     args = parser.parse_args()

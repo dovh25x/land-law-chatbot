@@ -1,4 +1,4 @@
-"""Restore into a newly created disposable database; never touches the serving database."""
+"""Restore into a newly created, retained database; never touches the serving database."""
 import json
 import argparse
 import uuid
@@ -23,12 +23,16 @@ def main(source, output):
     expected_chunks=sum(len(doc['chunks']) for doc in expected['documents'])
     env=dotenv_values('.env');owner=env['ADMIN_DATABASE_URL'];runtime=env['DATABASE_URL']
     name='landlaw_restore_'+uuid.uuid4().hex[:12]
-    a=b=None;created=False
+    a=b=None
     with psycopg.connect(owner,autocommit=True,connect_timeout=15) as control:
         serving=control.execute('select current_database()').fetchone()[0]
         assert serving!=name and name.startswith('landlaw_restore_')
         try:
-            control.execute(sql.SQL('CREATE DATABASE {}').format(sql.Identifier(name)));created=True
+            control.execute(sql.SQL('CREATE DATABASE {}').format(sql.Identifier(name)))
+            output.parent.mkdir(parents=True,exist_ok=True)
+            with output.with_suffix('.databases.jsonl').open('a') as receipt:
+                receipt.write(json.dumps({'created_at':utcnow().isoformat(), 'database':name,
+                                          'automatic_drop':False, 'serving_database_changed':False})+'\n')
             isolated_owner=make_conninfo(owner,dbname=name)
             isolated_runtime=make_conninfo(runtime,dbname=name)
             with psycopg.connect(isolated_owner,autocommit=True,connect_timeout=15) as c:
@@ -50,15 +54,12 @@ def main(source, output):
             assert a.rows('SELECT count(*) AS n FROM chunks')[0]['n']==expected_chunks
             result={'passed':True,'checked_at':utcnow().isoformat(),'corpus_id':release['id'],'documents':len(expected['documents']),'chunks':expected_chunks,
                     'isolated_database':True,'runtime_role_tested':True,'parallel_session_lease':True,'history_writes_revoked':True,
-                    'scope':'A newly created disposable PostgreSQL database on the existing instance; serving database never migrated or changed.'}
+                    'scope':'A newly created, retained PostgreSQL database on the existing instance; serving database never migrated or changed.'}
             output.parent.mkdir(parents=True,exist_ok=True)
             output.write_text(json.dumps(result,indent=2)+'\n');print(json.dumps(result))
         finally:
             if a:a.close()
             if b:b.close()
-            if created:
-                # Only the unpredictable name created by this invocation can be removed.
-                control.execute(sql.SQL('DROP DATABASE {} WITH (FORCE)').format(sql.Identifier(name)))
 
 if __name__=='__main__':
     parser=argparse.ArgumentParser(description=__doc__)

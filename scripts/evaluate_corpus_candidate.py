@@ -63,16 +63,15 @@ async def main(args):
         with psycopg.connect(owner, autocommit=True, connect_timeout=15) as control:
             assert control.execute('SELECT current_database()').fetchone()[0] != name
             control.execute(sql.SQL('CREATE DATABASE {}').format(sql.Identifier(name)))
-            try:
-                isolated = make_conninfo(owner, dbname=name)
-                with psycopg.connect(isolated, autocommit=True, connect_timeout=15) as connection:
-                    for migration in sorted(Path('migrations').glob('*.sql')):
-                        connection.execute(migration.read_text())
-                selected = settings.model_copy(update={'database_url': SecretStr(isolated), 'admin_database_url': SecretStr('')})
-                await evaluate_store(selected, args.backup, expected, args.output/'postgresql')
-            finally:
-                # Only the database created above by this invocation is removed.
-                control.execute(sql.SQL('DROP DATABASE {} WITH (FORCE)').format(sql.Identifier(name)))
+            with (args.output/'isolated-databases.jsonl').open('a') as receipt:
+                receipt.write(json.dumps({'created_at':utcnow().isoformat(), 'database':name,
+                                          'automatic_drop':False, 'serving_database_changed':False})+'\n')
+            isolated = make_conninfo(owner, dbname=name)
+            with psycopg.connect(isolated, autocommit=True, connect_timeout=15) as connection:
+                for migration in sorted(Path('migrations').glob('*.sql')):
+                    connection.execute(migration.read_text())
+            selected = settings.model_copy(update={'database_url': SecretStr(isolated), 'admin_database_url': SecretStr('')})
+            await evaluate_store(selected, args.backup, expected, args.output/'postgresql')
 
 
 if __name__ == '__main__':

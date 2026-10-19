@@ -78,9 +78,9 @@ Chạy generation bằng `scripts/evaluate_generation_candidate.py --backup <can
 
 Không sửa source runtime trong khi evaluation đang chạy. Helper ghi `configuration-lock.json`, kiểm tra fingerprint trước mỗi request và mỗi split; source/configuration khác cần output mới. Không resume thư mục chứa fingerprint khác.
 
-Dùng `--postgres` để đánh giá trong PostgreSQL tạm riêng; script chỉ dọn database do chính lượt chạy tạo. `--case-id <ID>` ưu tiên ca có sẵn trong bộ khóa, không đổi mẫu số của bộ đầy đủ. `--no-generation` bắt buộc chọn ID cụ thể và chặn mọi lời gọi provider, dành cho kiểm tra nhánh tất định; kết quả này không thay thế đánh giá model đầy đủ và không xóa cooldown đã lưu.
+Dùng `--postgres` để đánh giá trong PostgreSQL riêng mới tạo; script giữ database sau khi kiểm tra, kể cả khi lỗi, và chỉ đóng kết nối. Metadata tên database được nối vào receipt `isolated-databases.jsonl`; không ghi connection URL hoặc credentials. Script kiểm tra runtime ghi receipt tương ứng bên cạnh báo cáo. Không tự drop database hoặc restore vào database phục vụ. `--case-id <ID>` ưu tiên ca có sẵn trong bộ khóa, không đổi mẫu số của bộ đầy đủ. `--no-generation` bắt buộc chọn ID cụ thể và chặn mọi lời gọi provider, dành cho kiểm tra nhánh tất định; kết quả này không thay thế đánh giá model đầy đủ và không xóa cooldown đã lưu.
 
-Thêm `--postgres` vào helper generation để đánh giá trên PostgreSQL riêng: script tạo database với tên ngẫu nhiên, áp dụng migration, restore ứng viên, rồi chỉ dọn database do chính lần chạy tạo. Không dùng SQLite để suy ra kết quả PostgreSQL.
+Thêm `--postgres` vào helper generation để đánh giá trên PostgreSQL riêng: script tạo database với tên ngẫu nhiên, áp dụng migration, restore ứng viên và giữ database sau lượt chạy. Không dùng SQLite để suy ra kết quả PostgreSQL.
 
 `coverage_passed` kiểm tra phạm vi Vành đai 4, nguồn bắt buộc và chứng cứ dự án đã duyệt. `publication_ready` còn yêu cầu embedding đầy đủ, metadata đã duyệt, không có gap, relation chưa giải quyết hoặc ingest issue. Đây là cổng kỹ thuật; vẫn cần freshness, suite khóa và các bước phát hành bên dưới.
 
