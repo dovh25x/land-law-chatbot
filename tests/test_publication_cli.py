@@ -42,7 +42,10 @@ def test_publish_without_quality_gate_preserves_actual_freshness(settings, store
     doc=document().model_dump(mode='json')
     stamp=(utcnow()-timedelta(days=10)).isoformat()
     doc['checked_at']=stamp
-    payload={'id':'candidate','checked_at':stamp,'documents':[doc]}
+    for chunk in doc['chunks']:
+        chunk['embedding']=[1.0]+[0.0]*383
+    payload={'id':'candidate','checked_at':stamp,'documents':[doc], 'embedded':True,
+             'embedding_contract':contract(settings),'embedding_dimensions':384}
     store.stage(payload)
     monkeypatch.setattr(cli,'Settings',lambda:settings)
     monkeypatch.setattr(cli,'Store',lambda _:store)
