@@ -1,0 +1,125 @@
+
+> hanoi-land-law-web@0.1.0 test:e2e
+> playwright test evaluation.spec.ts figma.spec.ts navigation.spec.ts
+
+[WebServer] (node:39379) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 34 tests using 2 workers
+
+(node:39408) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:39407) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   2 [desktop] › e2e/figma.spec.ts:21:1 › Figma typography, responsive composer and mobile navigation (2.0s)
+  ✓   1 [desktop] › e2e/evaluation.spec.ts:17:1 › shows failed outcomes without hiding previous configurations and exports every published artifact (3.1s)
+  ✓   3 [desktop] › e2e/figma.spec.ts:42:1 › library search, document content and keyboard focus stay usable (2.1s)
+  ✓   4 [desktop] › e2e/evaluation.spec.ts:32:1 › incomplete attempts remain selectable with unexecuted cases in the denominator (2.6s)
+  ✓   5 [desktop] › e2e/figma.spec.ts:61:1 › chat fixes ring4 scope and sends an idempotency key (1.5s)
+  ✓   7 [desktop] › e2e/figma.spec.ts:75:1 › evaluation makes a mismatched report explicit instead of presenting invented metrics (1.6s)
+  ✓   6 [desktop] › e2e/evaluation.spec.ts:41:1 › publishes historical retrieval and faithfulness with scope and sample coverage (2.6s)
+  ✓   8 [desktop] › e2e/figma.spec.ts:84:1 › compact header preserves data disclosure and returns keyboard focus (1.9s)
+  ✓  10 [desktop] › e2e/figma.spec.ts:100:1 › theme and navigation fit a narrow screen (1.5s)
+  ✓   9 [desktop] › e2e/evaluation.spec.ts:49:1 › dashboard remains readable at 320px and supports both themes (2.8s)
+  ✓  12 [desktop] › e2e/navigation.spec.ts:12:1 › responsive navigation honestly shows unpublished corpus and benchmark (1.8s)
+  ✓  11 [desktop] › e2e/figma.spec.ts:111:1 › revised Figma answer actions copy text and preserve light/dark source access (3.0s)
+  ✓  13 [desktop] › e2e/navigation.spec.ts:31:1 › technical demo clearly discloses pending legal acceptance and coverage gaps (1.5s)
+(node:39780) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  14 [desktop] › e2e/navigation.spec.ts:43:1 › API quota errors are displayed without an invented answer (1.9s)
+  ✓  16 [desktop] › e2e/navigation.spec.ts:53:1 › verified SSE answer opens source and trace with keyboard dismissal (2.2s)
+  ✓  15 [mobile] › e2e/evaluation.spec.ts:17:1 › shows failed outcomes without hiding previous configurations and exports every published artifact (3.3s)
+  ✓  18 [mobile] › e2e/evaluation.spec.ts:32:1 › incomplete attempts remain selectable with unexecuted cases in the denominator (2.9s)
+  ✓  17 [desktop] › e2e/navigation.spec.ts:77:1 › answered composer is compact and does not cover the end of the answer (5.1s)
+  ✓  19 [mobile] › e2e/evaluation.spec.ts:41:1 › publishes historical retrieval and faithfulness with scope and sample coverage (2.9s)
+  ✘  20 [desktop] › e2e/navigation.spec.ts:98:1 › evaluation separates answer quality from refusals and labels absent citations (2.0s)
+(node:39997) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  21 [mobile] › e2e/evaluation.spec.ts:49:1 › dashboard remains readable at 320px and supports both themes (3.8s)
+  ✓  22 [mobile] › e2e/figma.spec.ts:21:1 › Figma typography, responsive composer and mobile navigation (2.0s)
+  ✓  23 [mobile] › e2e/navigation.spec.ts:12:1 › responsive navigation honestly shows unpublished corpus and benchmark (2.2s)
+  ✓  24 [mobile] › e2e/figma.spec.ts:42:1 › library search, document content and keyboard focus stay usable (2.3s)
+  ✓  25 [mobile] › e2e/navigation.spec.ts:31:1 › technical demo clearly discloses pending legal acceptance and coverage gaps (1.8s)
+  ✓  26 [mobile] › e2e/figma.spec.ts:61:1 › chat fixes ring4 scope and sends an idempotency key (1.8s)
+  ✓  27 [mobile] › e2e/navigation.spec.ts:43:1 › API quota errors are displayed without an invented answer (1.7s)
+  ✓  28 [mobile] › e2e/figma.spec.ts:75:1 › evaluation makes a mismatched report explicit instead of presenting invented metrics (1.9s)
+  ✓  29 [mobile] › e2e/navigation.spec.ts:53:1 › verified SSE answer opens source and trace with keyboard dismissal (2.8s)
+  ✓  30 [mobile] › e2e/figma.spec.ts:84:1 › compact header preserves data disclosure and returns keyboard focus (2.4s)
+  ✓  32 [mobile] › e2e/figma.spec.ts:100:1 › theme and navigation fit a narrow screen (1.8s)
+  ✓  31 [mobile] › e2e/navigation.spec.ts:77:1 › answered composer is compact and does not cover the end of the answer (5.8s)
+  ✓  33 [mobile] › e2e/figma.spec.ts:111:1 › revised Figma answer actions copy text and preserve light/dark source access (4.0s)
+  ✘  34 [mobile] › e2e/navigation.spec.ts:98:1 › evaluation separates answer quality from refusals and labels absent citations (2.0s)
+
+
+  1) [desktop] › e2e/navigation.spec.ts:98:1 › evaluation separates answer quality from refusals and labels absent citations 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByText('Verifier có thể bỏ sót diễn giải sai.', { exact: true })
+    Expected: visible
+    Error: strict mode violation: getByText('Verifier có thể bỏ sót diễn giải sai.', { exact: true }) resolved to 2 elements:
+        1) <li>Verifier có thể bỏ sót diễn giải sai.</li> aka getByRole('listitem')
+        2) <li>Verifier có thể bỏ sót diễn giải sai.</li> aka getByRole('group').filter({ hasText: 'Cách đọc chỉ số và thông tin' }).locator('li')
+
+    Call log:
+      - Expect "toBeVisible" getByText('Verifier có thể bỏ sót diễn giải sai.', { exact: true }) with timeout 5000ms
+      - waiting for getByText('Verifier có thể bỏ sót diễn giải sai.', { exact: true })
+
+
+      117 |   await expect(page.getByText('Không áp dụng', { exact: true })).toBeVisible()
+      118 |   await expect(page.locator('.eval-card-eyebrow').filter({hasText:'Bổ sung'})).toBeVisible()
+    > 119 |   await expect(page.getByText('Verifier có thể bỏ sót diễn giải sai.', { exact: true })).toBeVisible()
+          |                                                                                          ^
+      120 |   await expect(page.getByText(/không phải độ chính xác trả lời pháp luật/)).toBeVisible()
+      121 | })
+      122 |
+        at /home/dovh25x/projects/land-law-chatbot/frontend/e2e/navigation.spec.ts:119:90
+
+    Error Context: test-results/navigation-evaluation-sepa-9eb35-and-labels-absent-citations-desktop/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/navigation-evaluation-sepa-9eb35-and-labels-absent-citations-desktop/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/navigation-evaluation-sepa-9eb35-and-labels-absent-citations-desktop/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2) [mobile] › e2e/navigation.spec.ts:98:1 › evaluation separates answer quality from refusals and labels absent citations 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByText('Verifier có thể bỏ sót diễn giải sai.', { exact: true })
+    Expected: visible
+    Error: strict mode violation: getByText('Verifier có thể bỏ sót diễn giải sai.', { exact: true }) resolved to 2 elements:
+        1) <li>Verifier có thể bỏ sót diễn giải sai.</li> aka getByRole('listitem')
+        2) <li>Verifier có thể bỏ sót diễn giải sai.</li> aka getByRole('group').filter({ hasText: 'Cách đọc chỉ số và thông tin' }).locator('li')
+
+    Call log:
+      - Expect "toBeVisible" getByText('Verifier có thể bỏ sót diễn giải sai.', { exact: true }) with timeout 5000ms
+      - waiting for getByText('Verifier có thể bỏ sót diễn giải sai.', { exact: true })
+
+
+      117 |   await expect(page.getByText('Không áp dụng', { exact: true })).toBeVisible()
+      118 |   await expect(page.locator('.eval-card-eyebrow').filter({hasText:'Bổ sung'})).toBeVisible()
+    > 119 |   await expect(page.getByText('Verifier có thể bỏ sót diễn giải sai.', { exact: true })).toBeVisible()
+          |                                                                                          ^
+      120 |   await expect(page.getByText(/không phải độ chính xác trả lời pháp luật/)).toBeVisible()
+      121 | })
+      122 |
+        at /home/dovh25x/projects/land-law-chatbot/frontend/e2e/navigation.spec.ts:119:90
+
+    Error Context: test-results/navigation-evaluation-sepa-9eb35-and-labels-absent-citations-mobile/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/navigation-evaluation-sepa-9eb35-and-labels-absent-citations-mobile/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/navigation-evaluation-sepa-9eb35-and-labels-absent-citations-mobile/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2 failed
+    [desktop] › e2e/navigation.spec.ts:98:1 › evaluation separates answer quality from refusals and labels absent citations 
+    [mobile] › e2e/navigation.spec.ts:98:1 › evaluation separates answer quality from refusals and labels absent citations 
+  32 passed (48.8s)

@@ -1,0 +1,101 @@
+
+> hanoi-land-law-web@0.1.0 test:e2e
+> playwright test evaluation.spec.ts
+
+[WebServer] (node:38689) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 8 tests using 2 workers
+
+(node:38722) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:38723) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  1 [desktop] › e2e/evaluation.spec.ts:17:1 › shows failed outcomes without hiding previous configurations and exports every published artifact (8.2s)
+  ✘  2 [mobile] › e2e/evaluation.spec.ts:17:1 › shows failed outcomes without hiding previous configurations and exports every published artifact (8.3s)
+(node:38938) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:38946) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  3 [desktop] › e2e/evaluation.spec.ts:32:1 › incomplete attempts remain selectable with unexecuted cases in the denominator (2.9s)
+  ✓  4 [mobile] › e2e/evaluation.spec.ts:32:1 › incomplete attempts remain selectable with unexecuted cases in the denominator (2.9s)
+  ✓  5 [desktop] › e2e/evaluation.spec.ts:41:1 › publishes historical retrieval and faithfulness with scope and sample coverage (2.7s)
+  ✓  6 [mobile] › e2e/evaluation.spec.ts:41:1 › publishes historical retrieval and faithfulness with scope and sample coverage (2.9s)
+  ✓  7 [desktop] › e2e/evaluation.spec.ts:49:1 › dashboard remains readable at 320px and supports both themes (2.8s)
+  ✓  8 [mobile] › e2e/evaluation.spec.ts:49:1 › dashboard remains readable at 320px and supports both themes (3.3s)
+
+
+  1) [desktop] › e2e/evaluation.spec.ts:17:1 › shows failed outcomes without hiding previous configurations and exports every published artifact 
+
+    Error: expect(locator).toContainText(expected) failed
+
+    Locator: locator('.eval-case-body')
+    Expected substring: "Khoản"
+    Received string:    "Khái quát nhóm nhận giao khoán thành doanh nghiệp nhà nước, bỏ hợp đồng và các chủ thể/nguồn giao khoán cụ thể tại khoản 2 Điều 19; thêm kết luận mọi trường hợp thu hồi sau 01/08 áp dụng quy định trên chỉ từ hiệu lực/thay thế mà thiếu điều khoản chuyển tiếp. Citation khớp không chữa suy luận sai phạm vi.Thực thiĐã trả lờiThời gian11,7 giâyNguồn trích dẫnKhớp corpusLuồng xử lýCó sinh bằng LLMLần gọi LLM / công cụ2 / 8Token8.252Checksum đáp án: a911a066a12ddb91dea931d67ed86c06424fb83f4b890d3170322b34dce69abdXem báo cáo gốc"
+    Timeout: 5000ms
+
+    Call log:
+      - Expect "toContainText" locator('.eval-case-body') with timeout 5000ms
+      - waiting for locator('.eval-case-body')
+        13 × locator resolved to <div class="eval-case-body">…</div>
+           - unexpected value "Khái quát nhóm nhận giao khoán thành doanh nghiệp nhà nước, bỏ hợp đồng và các chủ thể/nguồn giao khoán cụ thể tại khoản 2 Điều 19; thêm kết luận mọi trường hợp thu hồi sau 01/08 áp dụng quy định trên chỉ từ hiệu lực/thay thế mà thiếu điều khoản chuyển tiếp. Citation khớp không chữa suy luận sai phạm vi.Thực thiĐã trả lờiThời gian11,7 giâyNguồn trích dẫnKhớp corpusLuồng xử lýCó sinh bằng LLMLần gọi LLM / công cụ2 / 8Token8.252Checksum đáp án: a911a066a12ddb91dea931d67ed86c06424fb83f4b890d3170322b34dce69abdXem báo cáo gốc"
+
+
+      23 |  await page.getByLabel('Tìm ca đánh giá').fill('N02')
+      24 |  await page.locator('.eval-case summary').click()
+    > 25 |  await expect(page.locator('.eval-case-body')).toContainText('Khoản')
+         |                                                ^
+      26 |  await expect(page.locator('.eval-case-body a')).toHaveAttribute('href',/reviewed-postgresql-attempt-5\/natural/)
+      27 |  const pending=page.waitForEvent('download');await page.getByRole('button',{name:'Tải số liệu'}).click()
+      28 |  const download=await pending;const downloaded=JSON.parse(await readFile((await download.path())!,'utf8'))
+        at /home/dovh25x/projects/land-law-chatbot/frontend/e2e/evaluation.spec.ts:25:48
+
+    Error Context: test-results/evaluation-shows-failed-ou-b253c-ts-every-published-artifact-desktop/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/evaluation-shows-failed-ou-b253c-ts-every-published-artifact-desktop/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/evaluation-shows-failed-ou-b253c-ts-every-published-artifact-desktop/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2) [mobile] › e2e/evaluation.spec.ts:17:1 › shows failed outcomes without hiding previous configurations and exports every published artifact 
+
+    Error: expect(locator).toContainText(expected) failed
+
+    Locator: locator('.eval-case-body')
+    Expected substring: "Khoản"
+    Received string:    "Khái quát nhóm nhận giao khoán thành doanh nghiệp nhà nước, bỏ hợp đồng và các chủ thể/nguồn giao khoán cụ thể tại khoản 2 Điều 19; thêm kết luận mọi trường hợp thu hồi sau 01/08 áp dụng quy định trên chỉ từ hiệu lực/thay thế mà thiếu điều khoản chuyển tiếp. Citation khớp không chữa suy luận sai phạm vi.Thực thiĐã trả lờiThời gian11,7 giâyNguồn trích dẫnKhớp corpusLuồng xử lýCó sinh bằng LLMLần gọi LLM / công cụ2 / 8Token8.252Checksum đáp án: a911a066a12ddb91dea931d67ed86c06424fb83f4b890d3170322b34dce69abdXem báo cáo gốc"
+    Timeout: 5000ms
+
+    Call log:
+      - Expect "toContainText" locator('.eval-case-body') with timeout 5000ms
+      - waiting for locator('.eval-case-body')
+        13 × locator resolved to <div class="eval-case-body">…</div>
+           - unexpected value "Khái quát nhóm nhận giao khoán thành doanh nghiệp nhà nước, bỏ hợp đồng và các chủ thể/nguồn giao khoán cụ thể tại khoản 2 Điều 19; thêm kết luận mọi trường hợp thu hồi sau 01/08 áp dụng quy định trên chỉ từ hiệu lực/thay thế mà thiếu điều khoản chuyển tiếp. Citation khớp không chữa suy luận sai phạm vi.Thực thiĐã trả lờiThời gian11,7 giâyNguồn trích dẫnKhớp corpusLuồng xử lýCó sinh bằng LLMLần gọi LLM / công cụ2 / 8Token8.252Checksum đáp án: a911a066a12ddb91dea931d67ed86c06424fb83f4b890d3170322b34dce69abdXem báo cáo gốc"
+
+
+      23 |  await page.getByLabel('Tìm ca đánh giá').fill('N02')
+      24 |  await page.locator('.eval-case summary').click()
+    > 25 |  await expect(page.locator('.eval-case-body')).toContainText('Khoản')
+         |                                                ^
+      26 |  await expect(page.locator('.eval-case-body a')).toHaveAttribute('href',/reviewed-postgresql-attempt-5\/natural/)
+      27 |  const pending=page.waitForEvent('download');await page.getByRole('button',{name:'Tải số liệu'}).click()
+      28 |  const download=await pending;const downloaded=JSON.parse(await readFile((await download.path())!,'utf8'))
+        at /home/dovh25x/projects/land-law-chatbot/frontend/e2e/evaluation.spec.ts:25:48
+
+    Error Context: test-results/evaluation-shows-failed-ou-b253c-ts-every-published-artifact-mobile/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/evaluation-shows-failed-ou-b253c-ts-every-published-artifact-mobile/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/evaluation-shows-failed-ou-b253c-ts-every-published-artifact-mobile/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2 failed
+    [desktop] › e2e/evaluation.spec.ts:17:1 › shows failed outcomes without hiding previous configurations and exports every published artifact 
+    [mobile] › e2e/evaluation.spec.ts:17:1 › shows failed outcomes without hiding previous configurations and exports every published artifact 
+  6 passed (23.5s)
