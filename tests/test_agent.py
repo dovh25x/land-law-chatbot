@@ -1417,3 +1417,73 @@ async def test_repair_receives_the_rejected_draft_with_matching_claim_indexes_an
     assert result.status == 'answered' and result.verified_claims == [valid]
     assert invalid.text not in result.content
     assert any(event.step == 'verification' for event in result.trace)
+
+
+@pytest.mark.parametrize('qualified', [False, True])
+async def test_contract_land_support_cannot_omit_the_sources_contract_requirement(store, settings, qualified):
+    from landlaw.models import Evidence
+    source = ('Điều 19. Hộ gia đình, cá nhân sử dụng đất do nhận giao khoán đất để sử dụng vào mục đích '
+              'nông nghiệp từ các nông, lâm trường quốc doanh và có hợp đồng giao khoán sử dụng đất '
+              'thì Ủy ban nhân dân cấp tỉnh quyết định mức hỗ trợ, thời gian hỗ trợ.')
+    doc = document(text=source)
+    payload = release(store, [doc])
+    text = ('Hộ gia đình, cá nhân nhận giao khoán đất nông nghiệp từ các nông, lâm trường quốc doanh '
+            + ('và có hợp đồng giao khoán sử dụng đất ' if qualified else '')
+            + 'thì Ủy ban nhân dân cấp tỉnh quyết định mức hỗ trợ, thời gian hỗ trợ.')
+    draft = Draft(status='answered', claims=[Claim(text=text, citation_ids=['law-1'])])
+    state = {'request':ChatRequest(session_id='00000000-0000-4000-8000-000000000000', message='Hỗ trợ phụ thuộc điều kiện gì?'),
+             'budget':Budget(), 'release':payload, 'as_of':date(2024,8,2), 'plan':Plan(),
+             'evidence':[Evidence(chunk=doc.chunks[0], document=doc, applicability='current')],
+             'draft':draft, 'trace':[], 'emit':noop}
+    agent = Agent(store, FakeProvider(settings))
+    await agent.verify(state)
+    await agent.finish(state)
+    assert bool(state['result'].verified_claims) is qualified
+    if not qualified:
+        assert not state['result'].citations
+        assert 'và có hợp đồng' not in state['result'].content
+
+
+@pytest.mark.parametrize('independent', [False, True])
+async def test_legal_rule_reference_to_another_claim_is_not_independent_proof(store, settings, independent):
+    from landlaw.models import Evidence
+    doc = document(document_number='88/2024/NĐ-CP', text='Hộ gia đình đủ điều kiện được bồi thường về đất được xem xét hỗ trợ.')
+    commencement = doc.chunks[0].model_copy(update={'id':'law-2', 'locator':'Điều 30',
+        'text':'Nghị định này có hiệu lực thi hành từ ngày 01 tháng 8 năm 2024.'})
+    doc.chunks.append(commencement)
+    payload = release(store, [doc])
+    text = ('Nghị định này có hiệu lực thi hành từ ngày 01/08/2024.' if independent else
+            'Các quy định trên áp dụng cho mọi hồ sơ kể từ ngày 01/08/2024.')
+    draft = Draft(status='answered', claims=[Claim(text=doc.chunks[0].text, citation_ids=['law-1']),
+        Claim(kind='applicability' if independent else 'legal_rule', text=text, citation_ids=['law-2'])])
+    state = {'request':ChatRequest(session_id='00000000-0000-4000-8000-000000000000', message='Nguồn quy định hỗ trợ thế nào?'),
+             'budget':Budget(), 'release':payload, 'as_of':date(2024,8,2), 'plan':Plan(),
+             'evidence':[Evidence(chunk=c, document=doc, applicability='current') for c in doc.chunks],
+             'draft':draft, 'trace':[], 'emit':noop}
+    agent = Agent(store, FakeProvider(settings, verification=Verification(supported_claim_indexes=[0,1])))
+    await agent.verify(state)
+    await agent.finish(state)
+    assert bool(state['result'].verified_claims) is independent
+    if not independent:
+        assert not state['result'].citations and text not in state['result'].content
+
+
+@pytest.mark.parametrize('broader_actor', [False, True])
+async def test_state_enterprise_cannot_replace_the_specific_contract_land_source_actor(store, settings, broader_actor):
+    from landlaw.models import Evidence
+    source = ('Điều 19. Hộ gia đình, cá nhân nhận giao khoán đất nông nghiệp từ các nông, lâm trường quốc doanh '
+              'và có hợp đồng giao khoán sử dụng đất thì Ủy ban nhân dân cấp tỉnh quyết định mức hỗ trợ.')
+    doc = document(text=source)
+    payload = release(store, [doc])
+    actor = 'doanh nghiệp nhà nước' if broader_actor else 'các nông, lâm trường quốc doanh'
+    text = ('Hộ gia đình, cá nhân nhận giao khoán đất nông nghiệp từ '+actor+
+            ' và có hợp đồng giao khoán sử dụng đất thì Ủy ban nhân dân cấp tỉnh quyết định mức hỗ trợ.')
+    draft = Draft(status='answered', claims=[Claim(text=text, citation_ids=['law-1'])])
+    state = {'request':ChatRequest(session_id='00000000-0000-4000-8000-000000000000', message='Nhóm nhận giao khoán nào được xem xét hỗ trợ?'),
+             'budget':Budget(), 'release':payload, 'as_of':date(2024,8,2), 'plan':Plan(),
+             'evidence':[Evidence(chunk=doc.chunks[0], document=doc, applicability='current')],
+             'draft':draft, 'trace':[], 'emit':noop}
+    agent = Agent(store, FakeProvider(settings))
+    await agent.verify(state)
+    await agent.finish(state)
+    assert bool(state['result'].verified_claims) is not broader_actor

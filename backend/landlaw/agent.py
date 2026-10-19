@@ -1153,8 +1153,11 @@ class Agent:
             if ('phai co hop dong giao khoan' in normalized_claim
                     and not any(term in normalized_claim for term in ('nhan giao khoan', 'dat nong nghiep', 'nong truong', 'lam truong'))):
                 structural_issues.append(f'Claim {index}: không biến điều kiện hợp đồng giao khoán của nhóm sử dụng đất cụ thể thành điều kiện chung nhận hỗ trợ')
-            groups=('cong dong dan cu','to chuc ton giao','to chuc nuoc ngoai','to chuc kinh te','nguoi goc viet nam')
+            groups=('cong dong dan cu','to chuc ton giao','to chuc nuoc ngoai','to chuc kinh te','nguoi goc viet nam','doanh nghiep nha nuoc')
             source_body=normalize(' '.join(evidence[c].chunk.text for c in claim.citation_ids if c in evidence))
+            if ('nhan giao khoan' in normalized_claim and 'ho tro' in normalized_claim
+                    and 'co hop dong giao khoan' in source_body and 'hop dong' not in normalized_claim):
+                structural_issues.append(f'Claim {index}: nhóm nhận giao khoán thiếu điều kiện hợp đồng trong đúng đoạn nguồn; không tự bổ sung sau kiểm chứng')
             if ('duoc ho tro' in normalized_claim and 'truc tiep san xuat nong nghiep' in normalized_claim
                     and 'tai thoi diem phe duyet phuong an' in source_body
                     and 'thu nhap tu san xuat nong nghiep' in source_body):
@@ -1179,7 +1182,8 @@ class Agent:
                     structural_issues.append(f'Claim {index}: nhóm chủ thể nêu trong kết luận không có trong đúng đoạn dẫn')
             if 'to chuc nuoc ngoai' in normalized_claim and 'chuc nang ngoai giao' in source_body and 'chuc nang ngoai giao' not in normalized_claim:
                 structural_issues.append(f'Claim {index}: thiếu giới hạn chức năng ngoại giao của chủ thể')
-            if re.search(r'\b(cac doi tuong tren|cac truong hop tren|nhu da neu o tren)\b',normalized_claim):
+            dependent_rule=re.search(r'\bcac quy dinh (?:neu )?tren\s+(?:ap dung|duoc|deu|khong|se|chi)\b',normalized_claim)
+            if re.search(r'\b(cac doi tuong tren|cac truong hop tren|nhu da neu o tren)\b',normalized_claim) or dependent_rule:
                 structural_issues.append(f'Claim {index}: kết luận phải nêu chủ thể/điều kiện độc lập, không phụ thuộc mệnh đề khác')
 
             historical=[evidence[i] for i in claim.citation_ids if i in evidence and evidence[i].applicability=='historical']

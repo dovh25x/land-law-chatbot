@@ -44,6 +44,8 @@ Sơ đồ cổng phát hành gộp kiểm tra verdict, độ mới nguồn và p
 
 Với claim `applicability` dẫn văn bản tương lai, nội dung phải nói rõ chưa có hiệu lực trước khi được duyệt. Kiểm tra cấu trúc này chỉ nhận các cách diễn đạt phủ định đã quy định; nó không thay thế kiểm chứng ngữ nghĩa của toàn câu hoặc tự chứng minh ngày bắt đầu hiệu lực.
 
+Với nhóm nhận giao khoán, claim phải giữ điều kiện hợp đồng nếu đoạn nguồn yêu cầu; không khái quát chủ thể cụ thể thành nhóm doanh nghiệp rộng hơn. Mệnh đề dùng “các quy định trên” để suy phạm vi áp dụng phải được viết lại thành claim độc lập trước khi kiểm chứng. Các chốt này có thể bác verdict duyệt sai của model, nhưng không chứng minh toàn bộ diễn giải pháp lý còn lại là đúng.
+
 ## Vòng đời request và dữ liệu
 
 ![Vòng đời một lượt hỏi](diagrams/chat-sequence.svg)
