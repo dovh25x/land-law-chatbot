@@ -370,3 +370,23 @@ async def test_s06_actor_classes_cannot_be_alternative_qualifying_documents(stor
     agent=Agent(store,FakeProvider(settings,verification=Verification(supported_claim_indexes=[0])))
     await agent.verify(state);await agent.finish(state)
     assert bool(state['result'].verified_claims) is expected
+
+
+@pytest.mark.parametrize('current_law',[True,False])
+async def test_delayed_payment_keeps_the_decision_time_legal_basis(store,settings,current_law):
+    import json
+    from datetime import date
+    from pathlib import Path
+    from conftest import release
+    from test_agent import FakeProvider,noop
+    from landlaw.agent import Agent,Plan,Verification
+    from landlaw.models import ChatRequest,Claim,Draft,Evidence
+    from landlaw.provider import Budget
+    fixture=json.loads(Path('tests/fixtures/citizen-s04-payment-time.json').read_text());source=fixture['sources'][0]
+    doc=document(text=source['excerpt'],document_number=source['document_number']).model_copy(update={'id':source['document_id']});doc.chunks[0].id=source['id'];doc.chunks[0].document_id=doc.id;doc.chunks[0].locator=source['locator'];payload=release(store,[doc])
+    text=fixture['claim'] if current_law else fixture['claim'].replace('pháp luật hiện hành','pháp luật tại thời điểm quyết định thu hồi đất')
+    state={'request':ChatRequest(session_id='00000000-0000-4000-8000-000000000000',message='Phương án đã được duyệt trước hiệu lực Nghị định88/2024 nhưng chưa thực hiện thì xử lý thế nào?'),
+        'budget':Budget(),'release':payload,'as_of':date(2024,8,2),'plan':Plan(),'evidence':[Evidence(document=doc,chunk=doc.chunks[0],applicability='current')],
+        'draft':Draft(status='answered',claims=[Claim(text=text,citation_ids=[doc.chunks[0].id])]),'trace':[],'emit':noop}
+    agent=Agent(store,FakeProvider(settings,verification=Verification(supported_claim_indexes=[0])));await agent.verify(state);await agent.finish(state)
+    assert bool(state['result'].verified_claims) is (not current_law), state['verification'].issues

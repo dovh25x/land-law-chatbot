@@ -801,6 +801,21 @@ class Agent:
                 group=group_order[key]
                 return (exact_article and (document_match or not numbers),timely,reference_matches,body_numbers,operative,document_match,item['applicability']=='current',key in principle_groups,group_scores[key],-group,prerequisite,heading_overlap,overlap)
             candidates=sorted(candidates,key=relevant,reverse=True)
+            if order_question and len(articles)<=1 and len(numbers)<=1:
+                # A timing question needs the operative prerequisite, not an
+                # adjacent rule in the same act. Keep every passage of that
+                # article, its explicit cross-references and all other acts.
+                focus=next((item for item in candidates if item['kind']=='legal'
+                    and re.search(r'phai (?:duoc )?.{0,80}truoc khi',normalize(item['text']))),None)
+                if focus:
+                    article=re.match(r'^dieu (\d+[a-z]?)',normalize(focus['locator']))
+                    if article and (not articles or article[1] in articles):
+                        key=(focus['document_id'],focus['locator'].split(' · ')[0])
+                        body=' '.join(item['text'] for item in candidates
+                            if (item['document_id'],item['locator'].split(' · ')[0])==key)
+                        required=set(re.findall(r'\bdieu\s+(\d+[a-z]?)\b',normalize(body)))|{article[1]}
+                        candidates=[item for item in candidates if item['document_id']!=focus['document_id']
+                            or any(re.match(rf'^dieu {n}(?:\s|$)',normalize(item['locator'])) for n in required)]
             named_docs={item['document_id'] for item in candidates if any(
                 n in normalize(item.get('document_number') or '') for n in numbers)}
             exact_references=[item for item in candidates if item['document_id'] in named_docs
@@ -954,7 +969,7 @@ class Agent:
                 "First find the operative sentence that directly answers the question. For a prerequisite/order "
                 "question, lead with the source's positive 'must ... before ...' rule, not general principles. "
                 "Never make the user's negative assumption a legal trigger. "
-                "Copy material actor/eligibility wording from the source without shortening it; then explain "
+                "Copy material actor, eligibility and causal-event wording from the source without shortening it; then explain "
                 "necessary terms. For a complex list, explain a clearly named branch and retain ALL its conditions "
                 "and exclusions. Do not merge branches. Preserve land origin, contract provider, income, timing, "
                 "no-land/cash-compensation requirements and geographic scope whenever present in that branch. "
@@ -1219,6 +1234,17 @@ class Agent:
                 structural_issues.append(f'Claim {index}: không biến điều kiện hợp đồng giao khoán của nhóm sử dụng đất cụ thể thành điều kiện chung nhận hỗ trợ')
             groups=('cong dong dan cu','to chuc ton giao','to chuc nuoc ngoai','to chuc kinh te','nguoi goc viet nam','doanh nghiep nha nuoc')
             source_body=normalize(' '.join(evidence[c].chunk.text for c in claim.citation_ids if c in evidence))
+            payment_time=re.search(r'chi tra.{0,35}cham.{0,100}phap luat tai thoi diem.{0,60}quyet dinh thu hoi dat',source_body)
+            if (payment_time and re.search(r'chi tra.{0,35}cham|cham chi tra',normalized_claim)
+                    and not re.search(r'phap luat.{0,30}tai thoi diem.{0,60}quyet dinh thu hoi dat',normalized_claim)):
+                structural_issues.append(f'Claim {index}: xử lý chi trả chậm cần đúng pháp luật tại thời điểm quyết định thu hồi đất trong nguồn, không thay bằng pháp luật hiện hành hoặc một mốc không xác định')
+            damage_scope=re.search(r'thiet hai khi thao do.{0,30}van chuyen.{0,30}lap dat',source_body)
+            if damage_scope and 'thiet hai' in normalized_claim and 'boi thuong' in normalized_claim:
+                phase=r'(?:thao do|van chuyen|di chuyen|lap dat)'
+                event=(re.search(r'thiet hai.{0,100}(?:khi|do|trong qua trinh).{0,70}'+phase,normalized_claim)
+                       or re.search(r'(?:khi|trong qua trinh).{0,40}'+phase+r'.{0,70}thiet hai',normalized_claim))
+                if not event:
+                    structural_issues.append(f'Claim {index}: bồi thường thiệt hại phải giữ quan hệ với quá trình tháo dỡ, vận chuyển hoặc lắp đặt; không mở rộng thành mọi thiệt hại khi phải di dời')
             agricultural_support=('ho tro' in normalized_claim and 'nong nghiep' in source_body)
             if (agricultural_support and 'truc tiep san xuat nong nghiep' in normalized_claim
                     and 'dang su dung dat nong nghiep do duoc nha nuoc giao' in source_body
