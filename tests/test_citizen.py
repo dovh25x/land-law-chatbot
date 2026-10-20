@@ -226,3 +226,29 @@ async def test_actual_n02_omissions_are_blocked_even_if_the_model_approves(store
     assert bool(state['result'].verified_claims) is qualified
     if not qualified:
         assert not state['result'].citations and text not in state['result'].content
+
+
+@pytest.mark.parametrize('variant',['actual','contract_paraphrase','exclusive_benefit'])
+async def test_n02_contract_paraphrase_cannot_lose_source_actor_scope(store,settings,variant):
+    import json
+    from datetime import date
+    from pathlib import Path
+    from conftest import release
+    from test_agent import FakeProvider, noop
+    from landlaw.agent import Agent, Plan, Verification
+    from landlaw.models import ChatRequest, Claim, Draft, Evidence
+    from landlaw.provider import Budget
+    fixture=json.loads(Path('tests/fixtures/citizen-n02-contract-scope.json').read_text())
+    doc=document(text=fixture['source'],document_number='88/2024/NĐ-CP')
+    doc.chunks[0].locator='Điều 19 · ngữ cảnh';payload=release(store,[doc])
+    text={'actual':fixture['claim'],
+          'contract_paraphrase':'Hộ sử dụng đất theo hợp đồng giao khoán được hỗ trợ ổn định đời sống do UBND cấp tỉnh quyết định mức hỗ trợ.',
+          'exclusive_benefit':'Hỗ trợ ổn định đời sống chỉ áp dụng cho hộ đủ điều kiện được bồi thường về đất.'}[variant]
+    draft=Draft(status='answered',claims=[Claim(text=text,citation_ids=[doc.chunks[0].id])])
+    state={'request':ChatRequest(session_id='00000000-0000-4000-8000-000000000000',message='Hỗ trợ ổn định đời sống phụ thuộc những gì?'),
+           'budget':Budget(),'release':payload,'as_of':date(2024,8,2),'plan':Plan(),
+           'evidence':[Evidence(document=doc,chunk=doc.chunks[0],applicability='current')],
+           'draft':draft,'trace':[],'emit':noop}
+    agent=Agent(store,FakeProvider(settings,verification=Verification(supported_claim_indexes=[0])))
+    await agent.verify(state);await agent.finish(state)
+    assert not state['result'].verified_claims and not state['result'].citations

@@ -53,6 +53,8 @@ Implementation co giãn với nội dung thật; composer còn truy cập đư�
 
 ## Việc còn lại trước phát hành đầy đủ
 
+Chủ dự án đã miễn yêu cầu reviewer pháp lý độc lập và nghiên cứu người dùng trước phát hành. [Profile phát hành](../../reports/production-readiness-20261020/RELEASE_PROFILE.md) ghi phạm vi và điều kiện kỹ thuật còn áp dụng. Các mục bên dưới vẫn là công việc hoàn thiện sản phẩm; không ghi phần được miễn là đã đạt hoặc coi rà soát AI là pháp lý độc lập.
+
 1. Reviewer nguồn/pháp lý chốt phạm vi thủ tục, phụ thuộc, địa bàn và ngày áp dụng; bổ sung raw, provenance, source review cùng corpus candidate thực. Không coi worklist là hoàn tất bước này.
 2. Annotation và freeze một phiên bản bộ dev mới; giữ draft hiện có để truy nguyên. Ca bổ sung sau prompt là phiên bản đánh giá tiếp theo. Holdout độc lập và nghiên cứu người dùng phải do quy trình nêu trong EVALUATION tổ chức, không tự gán đã đạt.
 3. Chạy model trên PostgreSQL riêng, review gắn checksum, kiểm tra journey và hai vòng usability theo kế hoạch. Kết quả SQLite chỉ là chẩn đoán riêng.

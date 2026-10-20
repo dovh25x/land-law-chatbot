@@ -1208,6 +1208,16 @@ class Agent:
             if ('nhan giao khoan' in normalized_claim and 'ho tro' in normalized_claim
                     and 'co hop dong giao khoan' in source_body and 'hop dong' not in normalized_claim):
                 structural_issues.append(f'Claim {index}: nhóm nhận giao khoán thiếu điều kiện hợp đồng trong đúng đoạn nguồn; không tự bổ sung sau kiểm chứng')
+            if ('giao khoan' in normalized_claim and 'ho tro' in normalized_claim
+                    and 'giao khoan' in source_body and 'quoc doanh' in source_body
+                    and not any(actor in normalized_claim for actor in
+                        ('quoc doanh','tap doan san xuat nong nghiep','hop tac xa nong nghiep'))):
+                structural_issues.append(f'Claim {index}: không mở rộng nhóm giao khoán từ nguồn đất được chỉ định thành mọi hợp đồng giao khoán')
+            opening=normalized_claim.split('.',1)[0]
+            if ('ho tro on dinh doi song' in opening and 'chi ap dung' in opening
+                    and 'du dieu kien' in opening and 'khong du dieu kien boi thuong ve dat' in source_body
+                    and 'khoan 1' not in opening and 'dinh muc' not in opening):
+                structural_issues.append(f'Claim {index}: không giới hạn toàn bộ hỗ trợ ổn định đời sống vào nhóm đủ điều kiện bồi thường khi nguồn còn quy định nhánh khác')
             if ('duoc ho tro' in normalized_claim and 'truc tiep san xuat nong nghiep' in normalized_claim
                     and 'tai thoi diem phe duyet phuong an' in source_body
                     and 'thu nhap tu san xuat nong nghiep' in source_body):
