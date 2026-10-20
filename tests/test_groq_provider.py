@@ -24,7 +24,9 @@ def test_strict_groq_schema_closes_nested_objects_and_uses_source_span_ids():
 
 async def test_groq_answer_has_only_citable_claims_and_no_unused_summary_field(settings,store):
     def respond(request):
-        shape=json.loads(request.content)['response_format']['json_schema']['schema']
+        payload=json.loads(request.content)
+        assert payload['reasoning_effort']=='medium' and payload['max_completion_tokens']==2048
+        shape=payload['response_format']['json_schema']['schema']
         assert 'summary' not in shape['properties']
         return httpx.Response(200,json={'choices':[{'message':{'content':json.dumps({
             'status':'answered','claims':[{'kind':'legal_rule','text':'Điều kiện có trong nguồn.',
@@ -51,6 +53,7 @@ async def test_groq_transport_has_no_remote_tools_and_does_not_expose_reasoning(
         assert (await provider.generate(Probe,'Return JSON',{},budget)).ok
         assert 'tools' not in seen[0]
         assert seen[0]['tool_choice']=='none'
+        assert seen[0]['reasoning_effort']=='low' and seen[0]['max_completion_tokens']==2048
         assert 'plain data for a separate application' in seen[0]['messages'][0]['content']
         assert seen[0]['response_format']['json_schema']['strict']
         assert budget.llm_calls==1 and budget.tokens==17

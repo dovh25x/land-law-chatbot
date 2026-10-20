@@ -56,6 +56,8 @@ Nguồn thủ tục/danh bạ vẫn đi qua store/retrieval hiện tại; action
 
 Planner có tối đa một request trước fallback. Runtime giữ một lượt đang chạy cho mỗi phiên và hai lượt đồng thời toàn hệ thống. Lease có thời hạn để giải phóng phiên khi worker chết; lease không cung cấp khả năng replay đáp án.
 
+Với GPT-OSS 120B, planner dùng `reasoning_effort=low`, synthesis và verification dùng `medium` để đối chiếu điều kiện pháp lý. Mỗi request vẫn giới hạn `max_completion_tokens=2048`; token suy luận cũng tính vào usage nhà cung cấp. Provider chỉ đọc JSON kết quả, không lưu hoặc phát reasoning. Các mức này được [Groq hỗ trợ](https://console.groq.com/docs/reasoning); đổi mức cần cohort đánh giá mới, không chuyển điểm từ cấu hình trước.
+
 Khi hết ngân sách hoặc thiếu chứng cứ, hệ thống trả giới hạn thay vì giữ kết luận chưa được hỗ trợ. Không tự gắn thêm điều kiện vào claim để làm claim vượt kiểm chứng.
 
 ## Truy xuất và embedding

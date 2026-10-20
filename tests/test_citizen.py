@@ -282,7 +282,7 @@ async def test_actual_n05_authority_cannot_be_attributed_to_the_cost_clause(stor
         assert not state['result'].citations and text not in state['result'].content
 
 
-@pytest.mark.parametrize('case,qualified', [('N03',False),('N03',True),('X02',False),('X02',True)])
+@pytest.mark.parametrize('case,qualified', [('N03',False),('N03',True),('X02',False),('X02',True),('N03_cash',False),('N03_cash',True)])
 async def test_actual_support_claims_cannot_broaden_agricultural_beneficiaries(store,settings,case,qualified):
     import json
     from datetime import date
@@ -312,8 +312,8 @@ async def test_actual_support_claims_cannot_broaden_agricultural_beneficiaries(s
     assert bool(state['result'].verified_claims) is qualified
 
 
-@pytest.mark.parametrize('use_source_rule',[False,True])
-async def test_unmet_user_housing_premise_is_not_a_new_statutory_trigger(store,settings,use_source_rule):
+@pytest.mark.parametrize('variant',['actual','latest_published','plan_substitution','source_rule'])
+async def test_unmet_user_housing_premise_is_not_a_new_statutory_trigger(store,settings,variant):
     import json
     from datetime import date
     from pathlib import Path
@@ -332,7 +332,7 @@ async def test_unmet_user_housing_premise_is_not_a_new_statutory_trigger(store,s
     doc=docs[0].model_copy(update={'chunks':[d.chunks[0] for d in docs]})
     payload=release(store,[doc])
     text=('Việc phê duyệt phương án bồi thường, hỗ trợ, tái định cư và việc bố trí tái định cư '
-          'phải được hoàn thành trước khi có quyết định thu hồi đất.') if use_source_rule else fixture['claim']
+          'phải được hoàn thành trước khi có quyết định thu hồi đất.') if variant=='source_rule' else (fixture['latest_published_claim'] if variant=='latest_published' else ('Việc phê duyệt phương án bố trí tái định cư phải được hoàn thành trước khi có quyết định thu hồi đất.' if variant=='plan_substitution' else fixture['claim']))
     state={'request':ChatRequest(session_id='00000000-0000-4000-8000-000000000000',message='Chưa được bố trí chỗ ở mới thì thu hồi đất cần bảo đảm gì?'),
            'budget':Budget(),'release':payload,'as_of':date(2024,8,2),'plan':Plan(),
            'evidence':[Evidence(document=doc,chunk=c,applicability='current') for c in doc.chunks],
@@ -340,8 +340,8 @@ async def test_unmet_user_housing_premise_is_not_a_new_statutory_trigger(store,s
            'trace':[],'emit':noop}
     agent=Agent(store,FakeProvider(settings,verification=Verification(supported_claim_indexes=[0])))
     await agent.verify(state);await agent.finish(state)
-    assert bool(state['result'].verified_claims) is use_source_rule
-    if not use_source_rule:
+    assert bool(state['result'].verified_claims) is (variant=='source_rule')
+    if variant!='source_rule':
         assert not state['result'].citations
 
 

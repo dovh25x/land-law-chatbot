@@ -208,7 +208,9 @@ class GroqProvider:
                  'response_format':{'type':'json_schema','json_schema':{'name':schema.__name__,
                                      'strict':True,'schema':shape}}}
         if self.settings.groq_model.startswith('openai/gpt-oss-'):
-            request['reasoning_effort']='low'
+            # Keep routing cheap; legal synthesis and verification need the
+            # model's normal reasoning level. Call/token/time caps stay fixed.
+            request['reasoning_effort']='medium' if schema.__name__ in {'Draft','Verification'} else 'low'
         try:
             response=await self.client.post('https://api.groq.com/openai/v1/chat/completions',
                 headers={'Authorization':'Bearer '+self.settings.groq_api_key.get_secret_value()},json=request)

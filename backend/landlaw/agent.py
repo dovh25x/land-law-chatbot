@@ -1226,19 +1226,24 @@ class Agent:
                         ('nha nuoc giao','nhan chuyen nhuong','nhan thua ke','nhan tang cho','cong nhan quyen su dung dat'))):
                 structural_issues.append(f'Claim {index}: nhóm trực tiếp sản xuất nông nghiệp thiếu phạm vi nguồn gốc sử dụng đất trong nhánh được dẫn')
             if (agricultural_support and any(group in normalized_claim for group in
-                    ('bao tro xa hoi','tro cap xa hoi','thuong binh','benh binh','gia dinh liet si'))
+                    ('truc tiep san xuat nong nghiep','bao tro xa hoi','tro cap xa hoi','thuong binh','benh binh','gia dinh liet si'))
                     and 'khong co dat de boi thuong va da duoc boi thuong bang tien' in source_body
                     and not ('khong co dat de boi thuong' in normalized_claim
                              and 'da duoc boi thuong bang tien' in normalized_claim)):
-                structural_issues.append(f'Claim {index}: nhóm chính sách xã hội thiếu điều kiện không có đất để bồi thường và đã được bồi thường bằng tiền')
+                structural_issues.append(f'Claim {index}: nhóm được hỗ trợ thiếu điều kiện không có đất để bồi thường và đã được bồi thường bằng tiền trong nhánh được dẫn')
             if (agricultural_support and 'thu nhap on dinh tu' in normalized_claim
                     and re.search(r'thu nhap on dinh tu (?:viec )?su dung dat',normalized_claim)
                     and 'thu nhap on dinh tu san xuat nong nghiep tren dat do' in source_body):
                 structural_issues.append(f'Claim {index}: không mở rộng nguồn thu nhập từ sản xuất nông nghiệp trên đất giao khoán thành thu nhập từ mọi việc sử dụng đất')
-            unmet_housing = r'\b(?:neu|khi|truong hop)\s+chua\s+(?:duoc\s+)?bo tri\b'
+            unmet_housing = r'\bchua\s+(?:(?:duoc\s+)?bo tri\b|co cho o moi\b)'
             if (claim.kind=='legal_rule' and re.search(unmet_housing, normalized_claim)
-                    and not re.search(r'\bchua\s+(?:duoc\s+)?bo tri\b', source_body)):
+                    and not re.search(unmet_housing, source_body)):
                 structural_issues.append(f'Claim {index}: chưa được bố trí chỗ ở là tình huống người hỏi, không phải điều kiện phát sinh các nghĩa vụ khác trong nguồn; cần nêu đúng quy tắc và thứ tự thực hiện được nguồn chứng minh')
+            placement_rule=re.search(r'[^.!?]*viec bo tri tai dinh cu phai duoc hoan thanh truoc khi[^.!?]*',source_body)
+            if (placement_rule
+                    and 'phe duyet phuong an bo tri tai dinh cu' in normalized_claim
+                    and 'phe duyet phuong an bo tri tai dinh cu' not in placement_rule[0]):
+                structural_issues.append(f'Claim {index}: phê duyệt phương án bố trí không thay thế việc hoàn thành bố trí tái định cư trong nguồn')
             living_amount=('ho tro on dinh doi song' in normalized_claim
                 and 'neu du dieu kien duoc boi thuong ve dat' in source_body
                 and bool(re.search(r'\b(?:30|70)\s*%|\b30\s*kg',normalized_claim)))
