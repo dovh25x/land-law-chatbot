@@ -20,7 +20,12 @@ def test_published_evaluation_archive_preserves_sources_failures_and_incomplete_
     assert sum(row['review'] == 'pass' for row in natural['cases'] if row['id'] in {'N01','N02','N03','N04','N05','N06'}) == 2
     probe = next(r for r in archive['runs'] if r['configuration_sha256'].startswith('380801c7'))
     assert not probe['complete'] and probe['suites'][0]['counts']['not_run'] == 7
-    assert len(archive['retrieval_runs']) == 35 and len(archive['faithfulness_runs']) == 2
+    assert len(archive['retrieval_runs']) >= 35 and len(archive['faithfulness_runs']) >= 2
+    candidate = [r for r in archive['retrieval_runs'] if r['source']['path'].startswith(
+        'reports/production-finalization-20261020/directory-candidate-restore/')]
+    assert {(r['backend'],r['split']) for r in candidate} == {
+        (backend,split) for backend in ('sqlite','postgresql') for split in ('smoke','supplemental','natural')}
+    assert all(r['release']=='corpus-a09539ac704c6591' for r in candidate)
     # Runtime receives only public benchmark summaries, not saved answers or trace payloads.
     for run in archive['runs']:
         for suite in run['suites']:

@@ -1,0 +1,50 @@
+F..F.                                                                    [100%]
+=================================== FAILURES ===================================
+_ test_prerequisite_focus_keeps_whole_article_and_external_evidence[Ch\u01b0a \u0111\u01b0\u1ee3c b\u1ed1 tr\xed ch\u1ed7 \u1edf m\u1edbi th\xec vi\u1ec7c thu h\u1ed3i \u0111\u1ea5t \u1edf v\xe0 t\xe1i \u0111\u1ecbnh c\u01b0 c\u1ea7n b\u1ea3o \u0111\u1ea3m g\xec?-False] _
+
+store = <landlaw.store.Store object at 0x744a8c73af90>
+settings = Settings(app_env='development', llm_provider='groq', groq_api_key=SecretStr('**********'), groq_model='openai/gpt-oss-...ocus_keeps_0/data'), reports_dir=PosixPath('/tmp/pytest-of-dovh25x/pytest-30/test_prerequisite_focus_keeps_0/reports'))
+question = 'Chưa được bố trí chỗ ở mới thì việc thu hồi đất ở và tái định cư cần bảo đảm gì?'
+include_adjacent = False
+
+    @pytest.mark.parametrize('question,include_adjacent',[
+     ('Chưa được bố trí chỗ ở mới thì việc thu hồi đất ở và tái định cư cần bảo đảm gì?',False),
+     ('Theo Điều 91 và Điều 111, chưa bố trí chỗ ở mới thì cần bảo đảm gì?',True),
+     ('Nguyên tắc bồi thường, hỗ trợ và tái định cư là gì?',True)])
+    def test_prerequisite_focus_keeps_whole_article_and_external_evidence(store,settings,question,include_adjacent):
+     fixture=json.loads(Path('tests/fixtures/citizen-n04-negative-premise.json').read_text());doc=document().model_copy(update={'id':fixture['sources'][0]['document_id'],'chunks':[]})
+     for item in fixture['sources']:
+      doc.chunks.append(document().chunks[0].model_copy(update={'id':item['id'],'document_id':doc.id,'text':item['excerpt'],'locator':item['locator']}))
+     amendment=document('amendment',text='Điều1. Sửa đổi điều kiện về thời điểm áp dụng quy định. Fixture, không làm căn cứ pháp luật.')
+     state={'request':ChatRequest(session_id='00000000-0000-4000-8000-000000000000',message=question),
+      'evidence':[Evidence(document=doc,chunk=c,applicability='current') for c in doc.chunks]+[Evidence(document=amendment,chunk=amendment.chunks[0],applicability='current')],
+      'release':{'documents':[doc.model_dump(mode='json'),amendment.model_dump(mode='json')],'relations':[]}}
+     passages,_=Agent(store,FakeProvider(settings)).prompt_context(state);ids={p['citation_id'] for p in passages}
+>    assert ('luat-dat-dai-2024-109-1-0' in ids) is include_adjacent
+E    AssertionError: assert ('luat-dat-dai-2024-109-1-0' in {'amendment-1', 'luat-dat-dai-2024-109-1-0', 'luat-dat-dai-2024-93-1-0', 'luat-dat-dai-2024-94-0-parent'}) is False
+
+tests/test_quality_candidate.py:24: AssertionError
+_______ test_damage_compensation_retains_the_source_causal_event[False] ________
+
+store = <landlaw.store.Store object at 0x744a8c655f30>
+settings = Settings(app_env='development', llm_provider='groq', groq_api_key=SecretStr('**********'), groq_model='openai/gpt-oss-...ation_retai0/data'), reports_dir=PosixPath('/tmp/pytest-of-dovh25x/pytest-30/test_damage_compensation_retai0/reports'))
+qualified = False
+
+    @pytest.mark.parametrize('qualified',[False,True])
+    async def test_damage_compensation_retains_the_source_causal_event(store,settings,qualified):
+     fixture=json.loads(Path('tests/fixtures/citizen-n01-damage-scope.json').read_text());source=fixture['sources'][0];doc=document(text=source['excerpt']).model_copy(update={'id':source['document_id']});doc.chunks[0].id=source['id'];doc.chunks[0].document_id=doc.id;doc.chunks[0].locator=source['locator'];payload=release(store,[doc])
+     text=fixture['claims'][0]['text'] if not qualified else 'Khi Nhà nước thu hồi đất mà phải di chuyển tài sản, được bồi thường chi phí tháo dỡ, di chuyển, lắp đặt; với hệ thống máy móc, dây chuyền sản xuất còn được bồi thường thiệt hại phát sinh trong quá trình tháo dỡ, vận chuyển, lắp đặt.'
+     state={'request':ChatRequest(session_id='00000000-0000-4000-8000-000000000000',message='Máy móc tháo ra bị hư hại khi phải di dời do thu hồi đất, có khoản bồi thường nào?'),
+     'budget':Budget(),'release':payload,'as_of':date(2024,8,2),'plan':Plan(),'evidence':[Evidence(document=doc,chunk=doc.chunks[0],applicability='current')],
+     'draft':Draft(status='answered',claims=[Claim(text=text,citation_ids=[doc.chunks[0].id])]),'trace':[],'emit':noop}
+     agent=Agent(store,FakeProvider(settings,verification=Verification(supported_claim_indexes=[0])));await agent.verify(state);await agent.finish(state)
+>    assert bool(state['result'].verified_claims) is qualified
+E    AssertionError: assert True is False
+E     +  where True = bool([Claim(kind='legal_rule', text='Nhà nước phải bồi thường chi phí tháo dỡ, di chuyển, lắp đặt và bồi thường thiệt hại đ...c, dây chuyền sản xuất khi phải di dời do thu hồi đất.', citation_ids=['luat-dat-dai-2024-104-1-0'], section='direct')])
+E     +    where [Claim(kind='legal_rule', text='Nhà nước phải bồi thường chi phí tháo dỡ, di chuyển, lắp đặt và bồi thường thiệt hại đ...c, dây chuyền sản xuất khi phải di dời do thu hồi đất.', citation_ids=['luat-dat-dai-2024-104-1-0'], section='direct')] = ChatResult(status='answered', publication_profile='academic', quality_status='academic_prototype', retrieval_mode='una... retry_after=None, retrieved_chunk_ids=['luat-dat-dai-2024-104-1-0'], evidence_chunk_ids=['luat-dat-dai-2024-104-1-0']).verified_claims
+
+tests/test_quality_candidate.py:36: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_quality_candidate.py::test_prerequisite_focus_keeps_whole_article_and_external_evidence[Ch\u01b0a \u0111\u01b0\u1ee3c b\u1ed1 tr\xed ch\u1ed7 \u1edf m\u1edbi th\xec vi\u1ec7c thu h\u1ed3i \u0111\u1ea5t \u1edf v\xe0 t\xe1i \u0111\u1ecbnh c\u01b0 c\u1ea7n b\u1ea3o \u0111\u1ea3m g\xec?-False]
+FAILED tests/test_quality_candidate.py::test_damage_compensation_retains_the_source_causal_event[False]
+2 failed, 3 passed in 1.88s

@@ -1,0 +1,534 @@
+backend	Run pytest -q	﻿2026-10-20T06:09:10.1756134Z ##[group]Run pytest -q
+backend	Run pytest -q	2026-10-20T06:09:10.1756578Z [36;1mpytest -q[0m
+backend	Run pytest -q	2026-10-20T06:09:10.1793906Z shell: /usr/bin/bash -e {0}
+backend	Run pytest -q	2026-10-20T06:09:10.1794214Z env:
+backend	Run pytest -q	2026-10-20T06:09:10.1794491Z   pythonLocation: /opt/hostedtoolcache/Python/3.12.15/x64
+backend	Run pytest -q	2026-10-20T06:09:10.1794905Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.12.15/x64/lib/pkgconfig
+backend	Run pytest -q	2026-10-20T06:09:10.1795294Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.15/x64
+backend	Run pytest -q	2026-10-20T06:09:10.1795625Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.15/x64
+backend	Run pytest -q	2026-10-20T06:09:10.1795966Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.15/x64
+backend	Run pytest -q	2026-10-20T06:09:10.1796301Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.12.15/x64/lib
+backend	Run pytest -q	2026-10-20T06:09:10.1796657Z ##[endgroup]
+backend	Run pytest -q	2026-10-20T06:09:21.4473016Z ........................................................................ [ 23%]
+backend	Run pytest -q	2026-10-20T06:09:24.6584109Z ........................................................................ [ 47%]
+backend	Run pytest -q	2026-10-20T06:09:26.7865834Z ........................................................................ [ 71%]
+backend	Run pytest -q	2026-10-20T06:09:27.7504393Z .....................................................F.................. [ 94%]
+backend	Run pytest -q	2026-10-20T06:09:28.1559778Z ................                                                         [100%]
+backend	Run pytest -q	2026-10-20T06:09:28.1560828Z =================================== FAILURES ===================================
+backend	Run pytest -q	2026-10-20T06:09:28.1562397Z _ test_published_evaluation_archive_preserves_sources_failures_and_incomplete_runs _
+backend	Run pytest -q	2026-10-20T06:09:28.1563162Z 
+backend	Run pytest -q	2026-10-20T06:09:28.1563787Z     def test_published_evaluation_archive_preserves_sources_failures_and_incomplete_runs():
+backend	Run pytest -q	2026-10-20T06:09:28.1564761Z         root = Path(__file__).resolve().parents[1]
+backend	Run pytest -q	2026-10-20T06:09:28.1565691Z         archive = json.loads((root/'reports/public-evaluations.json').read_text())
+backend	Run pytest -q	2026-10-20T06:09:28.1566588Z         for source in archive['sources']:
+backend	Run pytest -q	2026-10-20T06:09:28.1567543Z             assert hashlib.sha256((root/source['path']).read_bytes()).hexdigest() == source['sha256']
+backend	Run pytest -q	2026-10-20T06:09:28.1568901Z         current = next(r for r in archive['runs'] if r['configuration_sha256'].startswith('8db2d701'))
+backend	Run pytest -q	2026-10-20T06:09:28.1570026Z         assert [s['counts']['fail'] for s in current['suites']] == [2, 2, 3]
+backend	Run pytest -q	2026-10-20T06:09:28.1570963Z         natural = next(s for s in current['suites'] if s['split'] == 'natural')
+backend	Run pytest -q	2026-10-20T06:09:28.1572396Z         assert sum(row['review'] == 'pass' for row in natural['cases'] if row['id'] in {'N01','N02','N03','N04','N05','N06'}) == 2
+backend	Run pytest -q	2026-10-20T06:09:28.1573786Z         probe = next(r for r in archive['runs'] if r['configuration_sha256'].startswith('380801c7'))
+backend	Run pytest -q	2026-10-20T06:09:28.1574987Z         assert not probe['complete'] and probe['suites'][0]['counts']['not_run'] == 7
+backend	Run pytest -q	2026-10-20T06:09:28.1576259Z >       assert len(archive['retrieval_runs']) == 35 and len(archive['faithfulness_runs']) == 2
+backend	Run pytest -q	2026-10-20T06:09:28.1577192Z E       AssertionError: assert (41 == 35)
+backend	Run pytest -q	2026-10-20T06:09:28.1579156Z E        +  where 41 = len([{'checked_at': '2026-10-20T06:00:11.156381+00:00', 'split': 'natural', 'release': 'corpus-a09539ac704c6591', 'configu...9539ac704c6591', 'configuration_sha256': '106365d7915fb25d2d0b4cc9f47065dc1cb31092a57639e2952b0feaa14c5448', ...}, ...])
+backend	Run pytest -q	2026-10-20T06:09:28.1581015Z 
+backend	Run pytest -q	2026-10-20T06:09:28.1581390Z tests/test_public_evaluations.py:23: AssertionError
+backend	Run pytest -q	2026-10-20T06:09:28.1582383Z =========================== short test summary info ============================
+backend	Run pytest -q	2026-10-20T06:09:28.1584219Z FAILED tests/test_public_evaluations.py::test_published_evaluation_archive_preserves_sources_failures_and_incomplete_runs - AssertionError: assert (41 == 35)
+backend	Run pytest -q	2026-10-20T06:09:28.1586908Z  +  where 41 = len([{'checked_at': '2026-10-20T06:00:11.156381+00:00', 'split': 'natural', 'release': 'corpus-a09539ac704c6591', 'configu...9539ac704c6591', 'configuration_sha256': '106365d7915fb25d2d0b4cc9f47065dc1cb31092a57639e2952b0feaa14c5448', ...}, ...])
+backend	Run pytest -q	2026-10-20T06:09:28.1588840Z 1 failed, 303 passed in 16.55s
+backend	Run pytest -q	2026-10-20T06:09:28.3555387Z ##[error]Process completed with exit code 1.
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	﻿2026-10-20T06:09:08.2500685Z ##[group]Run npx playwright install --with-deps chromium && npx playwright test
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:08.2501351Z [36;1mnpx playwright install --with-deps chromium && npx playwright test[0m
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:08.2554070Z shell: /usr/bin/bash -e {0}
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:08.2554346Z ##[endgroup]
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:09.0187835Z Installing dependencies...
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:09.0288167Z Switching to root user to install dependencies...
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:09.1251815Z Get:1 file:/etc/apt/apt-mirrors.txt Mirrorlist [144 B]
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:09.1540490Z Get:6 https://packages.microsoft.com/ubuntu/24.04/prod noble InRelease [3600 B]
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:09.2351577Z Hit:2 http://azure.archive.ubuntu.com/ubuntu noble InRelease
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:09.2360781Z Get:3 http://azure.archive.ubuntu.com/ubuntu noble-updates InRelease [126 kB]
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:09.2390551Z Get:4 http://azure.archive.ubuntu.com/ubuntu noble-backports InRelease [126 kB]
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:09.2402946Z Get:5 http://azure.archive.ubuntu.com/ubuntu noble-security InRelease [126 kB]
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:09.3426460Z Get:7 http://azure.archive.ubuntu.com/ubuntu noble-updates/main amd64 Packages [1397 kB]
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:09.3561681Z Get:8 http://azure.archive.ubuntu.com/ubuntu noble-updates/universe amd64 Packages [1704 kB]
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:09.4506745Z Get:9 http://azure.archive.ubuntu.com/ubuntu noble-security/main amd64 Packages [1145 kB]
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:09.4559734Z Get:10 http://azure.archive.ubuntu.com/ubuntu noble-security/main Translation-en [231 kB]
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:09.4574930Z Get:11 http://azure.archive.ubuntu.com/ubuntu noble-security/universe amd64 Packages [1222 kB]
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:12.0461441Z Fetched 6081 kB in 1s (7876 kB/s)
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:13.0527654Z Reading package lists...
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:13.0853074Z Reading package lists...
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:13.2847308Z Building dependency tree...
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:13.2854280Z Reading state information...
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:13.4306052Z libasound2t64 is already the newest version (1.2.11-1ubuntu0.3).
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:13.4307150Z libasound2t64 set to manually installed.
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:13.4308210Z libatk-bridge2.0-0t64 is already the newest version (2.52.0-1build1).
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:13.4309218Z libatk-bridge2.0-0t64 set to manually installed.
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:13.4310450Z libatk1.0-0t64 is already the newest version (2.52.0-1build1).
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:13.4311341Z libatk1.0-0t64 set to manually installed.
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:13.4312275Z libatspi2.0-0t64 is already the newest version (2.52.0-1build1).
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:13.4313054Z libatspi2.0-0t64 set to manually installed.
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:13.4313813Z libcairo2 is already the newest version (1.18.0-3build1).
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:13.4314450Z libcairo2 set to manually installed.
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:13.4314984Z libcups2t64 is already the newest version (2.4.7-1.2ubuntu7.14).
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:13.4315914Z libcups2t64 set to manually installed.
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:13.4316424Z libdbus-1-3 is already the newest version (1.14.10-4ubuntu4.1).
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:13.4316909Z libdbus-1-3 set to manually installed.
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:13.4317427Z libdrm2 is already the newest version (2.4.125-1ubuntu0.1~24.04.2).
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:13.4317919Z libdrm2 set to manually installed.
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:13.4318407Z libgbm1 is already the newest version (25.2.8-0ubuntu0.24.04.4).
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:13.4318882Z libgbm1 set to manually installed.
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:13.4319385Z libglib2.0-0t64 is already the newest version (2.80.0-6ubuntu3.9).
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:13.4320113Z libglib2.0-0t64 set to manually installed.
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:13.4320679Z libnspr4 is already the newest version (2:4.35-1.1build1).
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:13.4321145Z libnspr4 set to manually installed.
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:13.4321789Z libnss3 is already the newest version (2:3.98-1ubuntu0.2).
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:13.4322295Z libnss3 set to manually installed.
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:13.4322798Z libpango-1.0-0 is already the newest version (1.52.1+ds-1build1).
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:13.4323244Z libpango-1.0-0 set to manually installed.
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:13.4323682Z libx11-6 is already the newest version (2:1.8.7-1ubuntu0.1).
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:13.4324346Z libx11-6 set to manually installed.
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:13.4324736Z libxcb1 is already the newest version (1.15-1ubuntu2).
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:13.4325102Z libxcb1 set to manually installed.
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:13.4325517Z libxcomposite1 is already the newest version (1:0.4.5-1build3).
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:13.4325950Z libxcomposite1 set to manually installed.
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:13.4326366Z libxdamage1 is already the newest version (1:1.1.6-1build1).
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:13.4326758Z libxdamage1 set to manually installed.
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:13.4327154Z libxext6 is already the newest version (2:1.3.4-1build2).
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:13.4327527Z libxext6 set to manually installed.
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:13.4327916Z libxfixes3 is already the newest version (1:6.0.0-2build1).
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:13.4328315Z libxfixes3 set to manually installed.
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:13.4328715Z libxkbcommon0 is already the newest version (1.6.0-1build1).
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:13.4329110Z libxkbcommon0 set to manually installed.
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:13.4329522Z libxrandr2 is already the newest version (2:1.5.2-2build1).
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:13.4330176Z libxrandr2 set to manually installed.
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:13.4330807Z fonts-noto-color-emoji is already the newest version (2.047-0ubuntu0.24.04.1).
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:13.4331374Z libfontconfig1 is already the newest version (2.15.0-1.1ubuntu2).
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:13.4331839Z libfontconfig1 set to manually installed.
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:13.4332296Z libfreetype6 is already the newest version (2.13.2+dfsg-1ubuntu0.2).
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:13.4332722Z libfreetype6 set to manually installed.
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:13.4333140Z fonts-liberation is already the newest version (1:2.1.5-3).
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:13.4333552Z fonts-liberation set to manually installed.
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:13.4333956Z The following additional packages will be installed:
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:13.4334351Z   xfonts-encodings xfonts-utils xserver-common
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:13.4334683Z Recommended packages:
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:13.4334987Z   fonts-ipafont-mincho fonts-tlwg-loma xfonts-base
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:13.4516587Z The following NEW packages will be installed:
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:13.4517535Z   fonts-freefont-ttf fonts-ipafont-gothic fonts-tlwg-loma-otf fonts-unifont
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:13.4523303Z   fonts-wqy-zenhei xfonts-cyrillic xfonts-encodings xfonts-scalable
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:13.4523997Z   xfonts-utils
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:13.4532188Z The following packages will be upgraded:
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:13.4532750Z   xserver-common xvfb
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:13.4724965Z 2 upgraded, 9 newly installed, 0 to remove and 37 not upgraded.
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:13.4725721Z Need to get 22.0 MB of archives.
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:13.4726462Z After this operation, 79.5 MB of additional disk space will be used.
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:13.4727293Z Get:1 file:/etc/apt/apt-mirrors.txt Mirrorlist [144 B]
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:13.6634740Z Get:2 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 fonts-ipafont-gothic all 00303-21ubuntu1 [3513 kB]
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:14.4677216Z Get:3 http://azure.archive.ubuntu.com/ubuntu noble/main amd64 fonts-freefont-ttf all 20211204+svn4273-2 [5641 kB]
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:14.6903702Z Get:4 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 fonts-tlwg-loma-otf all 1:0.7.3-1 [107 kB]
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:14.7784882Z Get:5 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 fonts-unifont all 1:15.1.01-1build1 [2993 kB]
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:14.9013731Z Get:6 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 fonts-wqy-zenhei all 0.9.45-8 [7472 kB]
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:15.1987356Z Get:7 http://azure.archive.ubuntu.com/ubuntu noble/main amd64 xfonts-encodings all 1:1.0.5-0ubuntu2 [578 kB]
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:15.2980503Z Get:8 http://azure.archive.ubuntu.com/ubuntu noble/main amd64 xfonts-utils amd64 1:7.7+6build3 [94.4 kB]
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:15.3852130Z Get:9 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 xfonts-cyrillic all 1:1.0.5+nmu1 [384 kB]
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:15.4796999Z Get:10 http://azure.archive.ubuntu.com/ubuntu noble/main amd64 xfonts-scalable all 1:1.0.3-1.3 [304 kB]
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:15.5720829Z Get:11 http://azure.archive.ubuntu.com/ubuntu noble-updates/main amd64 xserver-common all 2:21.1.12-1ubuntu1.9 [35.0 kB]
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:15.6579054Z Get:12 http://azure.archive.ubuntu.com/ubuntu noble-updates/universe amd64 xvfb amd64 2:21.1.12-1ubuntu1.9 [877 kB]
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:15.9521138Z Fetched 22.0 MB in 2s (9908 kB/s)
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:15.9769501Z Selecting previously unselected package fonts-ipafont-gothic.
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:16.0014719Z (Reading database ... 
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:16.0015254Z (Reading database ... 5%
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:16.0015695Z (Reading database ... 10%
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:16.0016018Z (Reading database ... 15%
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:16.0016298Z (Reading database ... 20%
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:16.0016552Z (Reading database ... 25%
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:16.0016835Z (Reading database ... 30%
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:16.0017086Z (Reading database ... 35%
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:16.0017331Z (Reading database ... 40%
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:16.0017576Z (Reading database ... 45%
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:16.0017821Z (Reading database ... 50%
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:16.0058017Z (Reading database ... 55%
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:16.1689386Z (Reading database ... 60%
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:16.4136350Z (Reading database ... 65%
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:16.4756437Z (Reading database ... 70%
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:16.6050394Z (Reading database ... 75%
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:16.8104002Z (Reading database ... 80%
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:17.0138347Z (Reading database ... 85%
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:17.2105631Z (Reading database ... 90%
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:17.4193050Z (Reading database ... 95%
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:17.4193613Z (Reading database ... 100%
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:17.4194198Z (Reading database ... 214410 files and directories currently installed.)
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:17.4236949Z Preparing to unpack .../00-fonts-ipafont-gothic_00303-21ubuntu1_all.deb ...
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:17.4339484Z Unpacking fonts-ipafont-gothic (00303-21ubuntu1) ...
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:17.6665482Z Selecting previously unselected package fonts-freefont-ttf.
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:17.6809567Z Preparing to unpack .../01-fonts-freefont-ttf_20211204+svn4273-2_all.deb ...
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:17.6817665Z Unpacking fonts-freefont-ttf (20211204+svn4273-2) ...
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:17.7690443Z Selecting previously unselected package fonts-tlwg-loma-otf.
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:17.7832709Z Preparing to unpack .../02-fonts-tlwg-loma-otf_1%3a0.7.3-1_all.deb ...
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:17.7841427Z Unpacking fonts-tlwg-loma-otf (1:0.7.3-1) ...
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:17.8081915Z Selecting previously unselected package fonts-unifont.
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:17.8224434Z Preparing to unpack .../03-fonts-unifont_1%3a15.1.01-1build1_all.deb ...
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:17.8232352Z Unpacking fonts-unifont (1:15.1.01-1build1) ...
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:17.9330485Z Selecting previously unselected package fonts-wqy-zenhei.
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:17.9474065Z Preparing to unpack .../04-fonts-wqy-zenhei_0.9.45-8_all.deb ...
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:17.9586428Z Unpacking fonts-wqy-zenhei (0.9.45-8) ...
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:18.4455428Z Selecting previously unselected package xfonts-encodings.
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:18.4596589Z Preparing to unpack .../05-xfonts-encodings_1%3a1.0.5-0ubuntu2_all.deb ...
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:18.4604032Z Unpacking xfonts-encodings (1:1.0.5-0ubuntu2) ...
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:18.4913658Z Selecting previously unselected package xfonts-utils.
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:18.5053662Z Preparing to unpack .../06-xfonts-utils_1%3a7.7+6build3_amd64.deb ...
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:18.5061733Z Unpacking xfonts-utils (1:7.7+6build3) ...
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:18.5433378Z Selecting previously unselected package xfonts-cyrillic.
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:18.5573375Z Preparing to unpack .../07-xfonts-cyrillic_1%3a1.0.5+nmu1_all.deb ...
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:18.5580538Z Unpacking xfonts-cyrillic (1:1.0.5+nmu1) ...
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:18.5942346Z Selecting previously unselected package xfonts-scalable.
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:18.6083443Z Preparing to unpack .../08-xfonts-scalable_1%3a1.0.3-1.3_all.deb ...
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:18.6091497Z Unpacking xfonts-scalable (1:1.0.3-1.3) ...
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:18.6492148Z Preparing to unpack .../09-xserver-common_2%3a21.1.12-1ubuntu1.9_all.deb ...
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:18.6509688Z Unpacking xserver-common (2:21.1.12-1ubuntu1.9) over (2:21.1.12-1ubuntu1.8) ...
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:18.6917660Z Preparing to unpack .../10-xvfb_2%3a21.1.12-1ubuntu1.9_amd64.deb ...
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:18.6934560Z Unpacking xvfb (2:21.1.12-1ubuntu1.9) over (2:21.1.12-1ubuntu1.8) ...
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:18.7479006Z Setting up fonts-wqy-zenhei (0.9.45-8) ...
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:18.7598401Z Setting up fonts-freefont-ttf (20211204+svn4273-2) ...
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:18.7614726Z Setting up fonts-tlwg-loma-otf (1:0.7.3-1) ...
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:18.7631745Z Setting up xfonts-encodings (1:1.0.5-0ubuntu2) ...
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:18.7647490Z Setting up fonts-ipafont-gothic (00303-21ubuntu1) ...
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:18.7731470Z update-alternatives: using /usr/share/fonts/opentype/ipafont-gothic/ipag.ttf to provide /usr/share/fonts/truetype/fonts-japanese-gothic.ttf (fonts-japanese-gothic.ttf) in auto mode
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:18.7745471Z Setting up xserver-common (2:21.1.12-1ubuntu1.9) ...
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:18.7761895Z Setting up fonts-unifont (1:15.1.01-1build1) ...
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:18.7776901Z Setting up xvfb (2:21.1.12-1ubuntu1.9) ...
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:18.7793311Z Setting up xfonts-utils (1:7.7+6build3) ...
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:18.7833707Z Setting up xfonts-cyrillic (1:1.0.5+nmu1) ...
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:18.8128960Z Setting up xfonts-scalable (1:1.0.3-1.3) ...
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:18.8404367Z Processing triggers for man-db (2.12.0-4build2) ...
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:18.8424216Z Not building database; man-db/auto-update is not 'true'.
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:18.8437670Z Processing triggers for fontconfig (2.15.0-1.1ubuntu2) ...
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:19.5942014Z 
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:19.5942568Z Running kernel seems to be up-to-date.
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:19.5942852Z 
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:19.5943025Z No services need to be restarted.
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:19.5943254Z 
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:19.5943425Z No containers need to be restarted.
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:19.5943621Z 
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:19.5943825Z No user sessions are running outdated binaries.
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:19.5944065Z 
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:19.5944408Z No VM guests are running outdated hypervisor (qemu) binaries on this host.
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:20.5135561Z Downloading Chrome for Testing 156.0.8078.4 (playwright chromium v1248) from https://cdn.playwright.dev/builds/cft/156.0.8078.4/linux64/chrome-linux64.zip
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:20.9129019Z |                                                                                |   0% of 191.1 MiB
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:21.0814275Z |■■■■■■■■                                                                        |  10% of 191.1 MiB
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:21.1660850Z |■■■■■■■■■■■■■■■■                                                                |  20% of 191.1 MiB
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:21.2645079Z |■■■■■■■■■■■■■■■■■■■■■■■■                                                        |  30% of 191.1 MiB
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:21.3323929Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                                |  40% of 191.1 MiB
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:21.4149270Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                        |  50% of 191.1 MiB
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:21.4989101Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                |  60% of 191.1 MiB
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:21.5741790Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                        |  70% of 191.1 MiB
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:21.6867271Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                |  80% of 191.1 MiB
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:21.7668540Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■        |  90% of 191.1 MiB
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:21.8541628Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■| 100% of 191.1 MiB
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:24.9226397Z Chrome for Testing 156.0.8078.4 (playwright chromium v1248) downloaded to /home/runner/.cache/ms-playwright/chromium-1248
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:24.9230693Z Downloading FFmpeg (playwright ffmpeg v1013) from https://cdn.playwright.dev/dbazure/download/playwright/builds/ffmpeg/1013/ffmpeg-linux.zip
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:25.3099416Z |                                                                                |   0% of 2.2 MiB
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:25.3202436Z |■■■■■■■■                                                                        |  10% of 2.2 MiB
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:25.3256618Z |■■■■■■■■■■■■■■■■                                                                |  20% of 2.2 MiB
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:25.3292890Z |■■■■■■■■■■■■■■■■■■■■■■■■                                                        |  30% of 2.2 MiB
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:25.3313721Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                                |  40% of 2.2 MiB
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:25.3337031Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                        |  50% of 2.2 MiB
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:25.3349249Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                |  60% of 2.2 MiB
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:25.3366773Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                        |  70% of 2.2 MiB
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:25.3386743Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                |  80% of 2.2 MiB
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:25.3430728Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■        |  90% of 2.2 MiB
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:25.3439006Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■| 100% of 2.2 MiB
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:25.4041853Z FFmpeg (playwright ffmpeg v1013) downloaded to /home/runner/.cache/ms-playwright/ffmpeg-1013
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:25.4045021Z Downloading Chrome Headless Shell 156.0.8078.4 (playwright chromium-headless-shell v1248) from https://cdn.playwright.dev/builds/cft/156.0.8078.4/linux64/chrome-headless-shell-linux64.zip
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:25.8144865Z |                                                                                |   0% of 120 MiB
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:25.9188276Z |■■■■■■■■                                                                        |  10% of 120 MiB
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:25.9906314Z |■■■■■■■■■■■■■■■■                                                                |  20% of 120 MiB
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:26.0442681Z |■■■■■■■■■■■■■■■■■■■■■■■■                                                        |  30% of 120 MiB
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:26.1135867Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                                |  40% of 120 MiB
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:26.1638040Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                        |  50% of 120 MiB
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:26.2080518Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                |  60% of 120 MiB
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:26.2669724Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                        |  70% of 120 MiB
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:26.3041322Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                |  80% of 120 MiB
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:26.3437567Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■        |  90% of 120 MiB
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:26.3971877Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■| 100% of 120 MiB
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:28.6061845Z Chrome Headless Shell 156.0.8078.4 (playwright chromium-headless-shell v1248) downloaded to /home/runner/.cache/ms-playwright/chromium_headless_shell-1248
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:30.2059038Z 
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:09:30.2060249Z Running 100 tests using 2 workers
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:33.2123957Z F··········F··········F··········F··············F······F········F···········F···
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8707781Z ····················
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8718073Z 
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8728523Z   1) [desktop] › e2e/evaluation.spec.ts:17:1 › shows failed outcomes without hiding previous configurations and exports every published artifact 
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8729331Z 
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8729676Z     Error: expect(received).toHaveLength(expected)
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8730452Z 
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8730688Z     Expected length: 63
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8731166Z     Received length: 87
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8758304Z     Received array:  [{"path": "reports/citizen-implementation-20261019/model-reviewed-attempt-1/evaluation.json", "sha256": "d2670163b9c4314012dce8091d6a8e48621f2b9a11aaa2051a38bb9f039815ef", "url": "https://github.com/dovh25x/land-law-chatbot/blob/1b10213e4a9768242e085dbd1c24307f63b35db4/reports/citizen-implementation-20261019/model-reviewed-attempt-1/evaluation.json"}, {"path": "reports/corpus-audit-20261018-e1db9ef/postgresql/retrieval/natural.json", "sha256": "0e7cfda50f7a9bf225b37d2b154b35a35d3ebdda34d82690376fac7b4d3cc88a", "url": "https://github.com/dovh25x/land-law-chatbot/blob/1b10213e4a9768242e085dbd1c24307f63b35db4/reports/corpus-audit-20261018-e1db9ef/postgresql/retrieval/natural.json"}, {"path": "reports/corpus-audit-20261018-e1db9ef/postgresql/retrieval/smoke.json", "sha256": "e31fca136b843a456d44f3466dfc97a7e71d8ba77d9fe6d5c0aade893fbb8e24", "url": "https://github.com/dovh25x/land-law-chatbot/blob/1b10213e4a9768242e085dbd1c24307f63b35db4/reports/corpus-audit-20261018-e1db9ef/postgresql/retrieval/smoke.json"}, {"path": "reports/corpus-audit-20261018-e1db9ef/postgresql/retrieval/supplemental.json", "sha256": "ea8758b9e5498677d9b811ef8e3ead5d5addec587af2ea394edf2876aa471dc6", "url": "https://github.com/dovh25x/land-law-chatbot/blob/1b10213e4a9768242e085dbd1c24307f63b35db4/reports/corpus-audit-20261018-e1db9ef/postgresql/retrieval/supplemental.json"}, {"path": "reports/corpus-audit-20261018-e1db9ef/sqlite/retrieval/natural.json", "sha256": "6737413d5988ff658a5311ea2f458817e035e7f020da5d710dfe68307ec80859", "url": "https://github.com/dovh25x/land-law-chatbot/blob/1b10213e4a9768242e085dbd1c24307f63b35db4/reports/corpus-audit-20261018-e1db9ef/sqlite/retrieval/natural.json"}, {"path": "reports/corpus-audit-20261018-e1db9ef/sqlite/retrieval/smoke.json", "sha256": "2d5787b06cb2a2d7532ecc763e7f3c491b18f74d6313b3334e85e9dc7f5826ed", "url": "https://github.com/dovh25x/land-law-chatbot/blob/1b10213e4a9768242e085dbd1c24307f63b35db4/reports/corpus-audit-20261018-e1db9ef/sqlite/retrieval/smoke.json"}, {"path": "reports/corpus-audit-20261018-e1db9ef/sqlite/retrieval/supplemental.json", "sha256": "24cf543fbb0507042967a49249d37f45f049830d7ed21af841bba4299820fba5", "url": "https://github.com/dovh25x/land-law-chatbot/blob/1b10213e4a9768242e085dbd1c24307f63b35db4/reports/corpus-audit-20261018-e1db9ef/sqlite/retrieval/supplemental.json"}, {"path": "reports/corpus-remediation-20261018/evaluation-attempt-1/postgresql/retrieval/natural.json", "sha256": "49cc59f6e7bc0f0ed78290e4d6cf7d43bc77e306692a6710b9341bdabd024283", "url": "https://github.com/dovh25x/land-law-chatbot/blob/1b10213e4a9768242e085dbd1c24307f63b35db4/reports/corpus-remediation-20261018/evaluation-attempt-1/postgresql/retrieval/natural.json"}, {"path": "reports/corpus-remediation-20261018/evaluation-attempt-1/postgresql/retrieval/smoke.json", "sha256": "2c1143479bdcc9f902bf023c08e9fc30e16b7cc021d00374ffcd403a11a482dd", "url": "https://github.com/dovh25x/land-law-chatbot/blob/1b10213e4a9768242e085dbd1c24307f63b35db4/reports/corpus-remediation-20261018/evaluation-attempt-1/postgresql/retrieval/smoke.json"}, {"path": "reports/corpus-remediation-20261018/evaluation-attempt-1/postgresql/retrieval/supplemental.json", "sha256": "a7a179ceb3a7a72d2d03e3d385b44b10075e839ba9a38f0157ac9c8857d2b43b", "url": "https://github.com/dovh25x/land-law-chatbot/blob/1b10213e4a9768242e085dbd1c24307f63b35db4/reports/corpus-remediation-20261018/evaluation-attempt-1/postgresql/retrieval/supplemental.json"}, …]
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8773864Z 
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8774551Z       27 |  const pending=page.waitForEvent('download');await page.getByRole('button',{name:'Tải số liệu'}).click()
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8775421Z       28 |  const download=await pending;const downloaded=JSON.parse(await readFile((await download.path())!,'utf8'))
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8776045Z     > 29 |  expect(downloaded.sources).toHaveLength(63)
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8776424Z          |                             ^
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8776962Z       30 |  expect(downloaded.runs.find((r:{id:string})=>r.id===probe.id).suites[0].counts.not_run).toBe(7)
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8777453Z       31 | })
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8777997Z       32 | test('historical record metrics stay in an explicit archive while current results remain available',async({page})=>{
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8778802Z         at /home/runner/work/land-law-chatbot/land-law-chatbot/frontend/e2e/evaluation.spec.ts:29:29
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8779196Z 
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8779679Z     Error Context: test-results/evaluation-shows-failed-ou-b253c-ts-every-published-artifact-desktop/error-context.md
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8780538Z 
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8781009Z     attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8781759Z     test-results/evaluation-shows-failed-ou-b253c-ts-every-published-artifact-desktop/trace.zip
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8782562Z     Usage:
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8782679Z 
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8783157Z         npx playwright show-trace test-results/evaluation-shows-failed-ou-b253c-ts-every-published-artifact-desktop/trace.zip
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8783674Z 
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8784054Z     ────────────────────────────────────────────────────────────────────────────────────────────────
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8784349Z 
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8784938Z   2) [desktop] › e2e/evaluation.spec.ts:32:1 › historical record metrics stay in an explicit archive while current results remain available 
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8785449Z 
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8785639Z     Error: expect(locator).toContainText(expected) failed
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8785878Z 
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8786378Z     Locator: getByRole('region', { name: 'Kết quả nổi bật đã ghi nhận' }).locator('[data-metric="smoke"]')
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8787005Z     Expected substring: "Kết quả lịch sử · corpus khác"
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8788213Z     Received string:    "Tỷ lệ đạt bộ chínhCAO NHẤT ĐÃ GHI NHẬN95%19/20 ca đạt đủ tiêu chíGồm trả lời, hỏi lại và từ chối đúng theo bộ tiêu chí.Cùng corpus · cấu hình trướcPostgreSQL · 12:23 20/10/26Cấu hình cd85651eXem phép đo gốc"
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8789033Z     Timeout: 5000ms
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8789352Z 
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8789441Z     Call log:
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8790509Z       - Expect "toContainText" getByRole('region', { name: 'Kết quả nổi bật đã ghi nhận' }).locator('[data-metric="smoke"]') with timeout 5000ms
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8791555Z       - waiting for getByRole('region', { name: 'Kết quả nổi bật đã ghi nhận' }).locator('[data-metric="smoke"]')
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8792366Z         14 × locator resolved to <article data-metric="smoke" class="eval-highlight-card">…</article>
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8793703Z            - unexpected value "Tỷ lệ đạt bộ chínhCAO NHẤT ĐÃ GHI NHẬN95%19/20 ca đạt đủ tiêu chíGồm trả lời, hỏi lại và từ chối đúng theo bộ tiêu chí.Cùng corpus · cấu hình trướcPostgreSQL · 12:23 20/10/26Cấu hình cd85651eXem phép đo gốc"
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8794445Z 
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8794452Z 
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8794825Z       36 |  await expect(highlights.locator('[data-metric="smoke"] .eval-highlight-value')).toHaveText('95%')
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8795748Z       37 |  await expect(highlights.locator('[data-metric="smoke"]')).toContainText('19/20 ca đạt đủ tiêu chí')
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8796662Z     > 38 |  await expect(highlights.locator('[data-metric="smoke"]')).toContainText('Kết quả lịch sử · corpus khác')
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8797246Z          |                                                            ^
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8797836Z       39 |  await expect(highlights.locator('[data-metric="recall"] .eval-highlight-value')).toHaveText('100%')
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8798701Z       40 |  await expect(highlights.locator('[data-metric="recall"]')).toContainText('3 ca có gold · Bộ bổ sung')
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8799421Z       41 |  await expect(highlights.locator('[data-metric="recall"]')).toContainText('PostgreSQL')
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8800593Z         at /home/runner/work/land-law-chatbot/land-law-chatbot/frontend/e2e/evaluation.spec.ts:38:60
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8800986Z 
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8801452Z     Error Context: test-results/evaluation-historical-reco-1ed25-nt-results-remain-available-desktop/error-context.md
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8801963Z 
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8802393Z     attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8803114Z     test-results/evaluation-historical-reco-1ed25-nt-results-remain-available-desktop/trace.zip
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8803617Z     Usage:
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8803735Z 
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8804211Z         npx playwright show-trace test-results/evaluation-historical-reco-1ed25-nt-results-remain-available-desktop/trace.zip
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8804736Z 
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8805087Z     ────────────────────────────────────────────────────────────────────────────────────────────────
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8805378Z 
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8805966Z   3) [desktop] › e2e/evaluation.spec.ts:51:1 › incomplete attempts remain selectable with unexecuted cases in the denominator 
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8806444Z 
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8806615Z     Error: expect(locator).toHaveCount(expected) failed
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8807019Z 
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8807158Z     Locator:  locator('.eval-history-row')
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8807440Z     Expected: 13
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8807644Z     Received: 24
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8807852Z     Timeout:  5000ms
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8807983Z 
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8808068Z     Call log:
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8808431Z       - Expect "toHaveCount" locator('.eval-history-row') with timeout 5000ms
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8808889Z       - waiting for locator('.eval-history-row')
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8809285Z         14 × locator resolved to 24 elements
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8809594Z            - unexpected value "24"
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8809772Z 
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8809778Z 
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8810443Z       51 | test('incomplete attempts remain selectable with unexecuted cases in the denominator',async({page})=>{
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8811257Z       52 |  await page.getByRole('button',{name:'Lịch sử đánh giá',exact:true}).click()
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8811810Z     > 53 |  await expect(page.locator('.eval-history-row')).toHaveCount(13)
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8812311Z          |                                                  ^
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8812871Z       54 |  await page.getByLabel('Lần đánh giá',{exact:true}).selectOption(probe.id)
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8813421Z       55 |  await expect(page.locator('.stat-pass strong')).toHaveText('0/8')
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8813936Z       56 |  await expect(page.locator('.stat-not_run strong')).toHaveText('7')
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8814559Z         at /home/runner/work/land-law-chatbot/land-law-chatbot/frontend/e2e/evaluation.spec.ts:53:50
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8814942Z 
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8815402Z     Error Context: test-results/evaluation-incomplete-atte-46bba-ed-cases-in-the-denominator-desktop/error-context.md
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8815937Z 
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8816332Z     attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8817123Z     test-results/evaluation-incomplete-atte-46bba-ed-cases-in-the-denominator-desktop/trace.zip
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8817636Z     Usage:
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8817748Z 
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8818224Z         npx playwright show-trace test-results/evaluation-incomplete-atte-46bba-ed-cases-in-the-denominator-desktop/trace.zip
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8818743Z 
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8819092Z     ────────────────────────────────────────────────────────────────────────────────────────────────
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8819381Z 
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8820145Z   4) [desktop] › e2e/evaluation.spec.ts:60:1 › publishes historical retrieval and faithfulness with scope and sample coverage 
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8820710Z 
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8820900Z     Error: expect(locator).toHaveCount(expected) failed
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8821140Z 
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8821308Z     Locator:  locator('.evaluation-table tbody tr')
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8821826Z     Expected: 35
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8822037Z     Received: 41
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8822244Z     Timeout:  5000ms
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8822380Z 
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8822460Z     Call log:
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8822868Z       - Expect "toHaveCount" locator('.evaluation-table tbody tr') with timeout 5000ms
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8823379Z       - waiting for locator('.evaluation-table tbody tr')
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8823809Z         14 × locator resolved to 41 elements
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8824152Z            - unexpected value "41"
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8824324Z 
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8824335Z 
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8824838Z       64 |  await expect(page.locator('.eval-faith-card').filter({hasText:'c4f0c661'})).toContainText('6/8 ca có điểm')
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8825616Z       65 |  await page.getByRole('checkbox',{name:/Hiện tất cả phiên bản/}).check()
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8826194Z     > 66 |  await expect(page.locator('.evaluation-table tbody tr')).toHaveCount(35)
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8826677Z          |                                                           ^
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8826983Z       67 | })
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8827410Z       68 | test('dashboard remains readable at 320px and supports both themes',async({page},info)=>{
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8828233Z       69 |  await page.setViewportSize({width:info.project.name==='mobile'?320:1440,height:900})
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8828929Z         at /home/runner/work/land-law-chatbot/land-law-chatbot/frontend/e2e/evaluation.spec.ts:66:59
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8829311Z 
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8829779Z     Error Context: test-results/evaluation-publishes-histo-794b6-h-scope-and-sample-coverage-desktop/error-context.md
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8830895Z 
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8831377Z     attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8832113Z     test-results/evaluation-publishes-histo-794b6-h-scope-and-sample-coverage-desktop/trace.zip
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8832634Z     Usage:
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8832753Z 
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8833250Z         npx playwright show-trace test-results/evaluation-publishes-histo-794b6-h-scope-and-sample-coverage-desktop/trace.zip
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8833769Z 
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8834126Z     ────────────────────────────────────────────────────────────────────────────────────────────────
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8834426Z 
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8835032Z   5) [mobile] › e2e/evaluation.spec.ts:17:1 › shows failed outcomes without hiding previous configurations and exports every published artifact 
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8835562Z 
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8835729Z     Error: expect(received).toHaveLength(expected)
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8835957Z 
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8836053Z     Expected length: 63
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8836292Z     Received length: 87
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8853171Z     Received array:  [{"path": "reports/citizen-implementation-20261019/model-reviewed-attempt-1/evaluation.json", "sha256": "d2670163b9c4314012dce8091d6a8e48621f2b9a11aaa2051a38bb9f039815ef", "url": "https://github.com/dovh25x/land-law-chatbot/blob/1b10213e4a9768242e085dbd1c24307f63b35db4/reports/citizen-implementation-20261019/model-reviewed-attempt-1/evaluation.json"}, {"path": "reports/corpus-audit-20261018-e1db9ef/postgresql/retrieval/natural.json", "sha256": "0e7cfda50f7a9bf225b37d2b154b35a35d3ebdda34d82690376fac7b4d3cc88a", "url": "https://github.com/dovh25x/land-law-chatbot/blob/1b10213e4a9768242e085dbd1c24307f63b35db4/reports/corpus-audit-20261018-e1db9ef/postgresql/retrieval/natural.json"}, {"path": "reports/corpus-audit-20261018-e1db9ef/postgresql/retrieval/smoke.json", "sha256": "e31fca136b843a456d44f3466dfc97a7e71d8ba77d9fe6d5c0aade893fbb8e24", "url": "https://github.com/dovh25x/land-law-chatbot/blob/1b10213e4a9768242e085dbd1c24307f63b35db4/reports/corpus-audit-20261018-e1db9ef/postgresql/retrieval/smoke.json"}, {"path": "reports/corpus-audit-20261018-e1db9ef/postgresql/retrieval/supplemental.json", "sha256": "ea8758b9e5498677d9b811ef8e3ead5d5addec587af2ea394edf2876aa471dc6", "url": "https://github.com/dovh25x/land-law-chatbot/blob/1b10213e4a9768242e085dbd1c24307f63b35db4/reports/corpus-audit-20261018-e1db9ef/postgresql/retrieval/supplemental.json"}, {"path": "reports/corpus-audit-20261018-e1db9ef/sqlite/retrieval/natural.json", "sha256": "6737413d5988ff658a5311ea2f458817e035e7f020da5d710dfe68307ec80859", "url": "https://github.com/dovh25x/land-law-chatbot/blob/1b10213e4a9768242e085dbd1c24307f63b35db4/reports/corpus-audit-20261018-e1db9ef/sqlite/retrieval/natural.json"}, {"path": "reports/corpus-audit-20261018-e1db9ef/sqlite/retrieval/smoke.json", "sha256": "2d5787b06cb2a2d7532ecc763e7f3c491b18f74d6313b3334e85e9dc7f5826ed", "url": "https://github.com/dovh25x/land-law-chatbot/blob/1b10213e4a9768242e085dbd1c24307f63b35db4/reports/corpus-audit-20261018-e1db9ef/sqlite/retrieval/smoke.json"}, {"path": "reports/corpus-audit-20261018-e1db9ef/sqlite/retrieval/supplemental.json", "sha256": "24cf543fbb0507042967a49249d37f45f049830d7ed21af841bba4299820fba5", "url": "https://github.com/dovh25x/land-law-chatbot/blob/1b10213e4a9768242e085dbd1c24307f63b35db4/reports/corpus-audit-20261018-e1db9ef/sqlite/retrieval/supplemental.json"}, {"path": "reports/corpus-remediation-20261018/evaluation-attempt-1/postgresql/retrieval/natural.json", "sha256": "49cc59f6e7bc0f0ed78290e4d6cf7d43bc77e306692a6710b9341bdabd024283", "url": "https://github.com/dovh25x/land-law-chatbot/blob/1b10213e4a9768242e085dbd1c24307f63b35db4/reports/corpus-remediation-20261018/evaluation-attempt-1/postgresql/retrieval/natural.json"}, {"path": "reports/corpus-remediation-20261018/evaluation-attempt-1/postgresql/retrieval/smoke.json", "sha256": "2c1143479bdcc9f902bf023c08e9fc30e16b7cc021d00374ffcd403a11a482dd", "url": "https://github.com/dovh25x/land-law-chatbot/blob/1b10213e4a9768242e085dbd1c24307f63b35db4/reports/corpus-remediation-20261018/evaluation-attempt-1/postgresql/retrieval/smoke.json"}, {"path": "reports/corpus-remediation-20261018/evaluation-attempt-1/postgresql/retrieval/supplemental.json", "sha256": "a7a179ceb3a7a72d2d03e3d385b44b10075e839ba9a38f0157ac9c8857d2b43b", "url": "https://github.com/dovh25x/land-law-chatbot/blob/1b10213e4a9768242e085dbd1c24307f63b35db4/reports/corpus-remediation-20261018/evaluation-attempt-1/postgresql/retrieval/supplemental.json"}, …]
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8866227Z 
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8866788Z       27 |  const pending=page.waitForEvent('download');await page.getByRole('button',{name:'Tải số liệu'}).click()
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8867626Z       28 |  const download=await pending;const downloaded=JSON.parse(await readFile((await download.path())!,'utf8'))
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8868227Z     > 29 |  expect(downloaded.sources).toHaveLength(63)
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8868571Z          |                             ^
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8869098Z       30 |  expect(downloaded.runs.find((r:{id:string})=>r.id===probe.id).suites[0].counts.not_run).toBe(7)
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8869569Z       31 | })
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8870337Z       32 | test('historical record metrics stay in an explicit archive while current results remain available',async({page})=>{
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8871357Z         at /home/runner/work/land-law-chatbot/land-law-chatbot/frontend/e2e/evaluation.spec.ts:29:29
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8871753Z 
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8872224Z     Error Context: test-results/evaluation-shows-failed-ou-b253c-ts-every-published-artifact-mobile/error-context.md
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8872732Z 
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8873149Z     attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8873873Z     test-results/evaluation-shows-failed-ou-b253c-ts-every-published-artifact-mobile/trace.zip
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8874367Z     Usage:
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8874479Z 
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8874953Z         npx playwright show-trace test-results/evaluation-shows-failed-ou-b253c-ts-every-published-artifact-mobile/trace.zip
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8875460Z 
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8875813Z     ────────────────────────────────────────────────────────────────────────────────────────────────
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8876117Z 
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8876688Z   6) [mobile] › e2e/evaluation.spec.ts:32:1 › historical record metrics stay in an explicit archive while current results remain available 
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8877191Z 
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8877374Z     Error: expect(locator).toContainText(expected) failed
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8877789Z 
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8878240Z     Locator: getByRole('region', { name: 'Kết quả nổi bật đã ghi nhận' }).locator('[data-metric="smoke"]')
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8878844Z     Expected substring: "Kết quả lịch sử · corpus khác"
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8880384Z     Received string:    "Tỷ lệ đạt bộ chínhCAO NHẤT ĐÃ GHI NHẬN95%19/20 ca đạt đủ tiêu chíGồm trả lời, hỏi lại và từ chối đúng theo bộ tiêu chí.Cùng corpus · cấu hình trướcPostgreSQL · 12:23 20/10/26Cấu hình cd85651eXem phép đo gốc"
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8881243Z     Timeout: 5000ms
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8881383Z 
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8881469Z     Call log:
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8882185Z       - Expect "toContainText" getByRole('region', { name: 'Kết quả nổi bật đã ghi nhận' }).locator('[data-metric="smoke"]') with timeout 5000ms
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8883131Z       - waiting for getByRole('region', { name: 'Kết quả nổi bật đã ghi nhận' }).locator('[data-metric="smoke"]')
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8883924Z         14 × locator resolved to <article data-metric="smoke" class="eval-highlight-card">…</article>
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8885245Z            - unexpected value "Tỷ lệ đạt bộ chínhCAO NHẤT ĐÃ GHI NHẬN95%19/20 ca đạt đủ tiêu chíGồm trả lời, hỏi lại và từ chối đúng theo bộ tiêu chí.Cùng corpus · cấu hình trướcPostgreSQL · 12:23 20/10/26Cấu hình cd85651eXem phép đo gốc"
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8885950Z 
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8885956Z 
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8886329Z       36 |  await expect(highlights.locator('[data-metric="smoke"] .eval-highlight-value')).toHaveText('95%')
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8887182Z       37 |  await expect(highlights.locator('[data-metric="smoke"]')).toContainText('19/20 ca đạt đủ tiêu chí')
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8888058Z     > 38 |  await expect(highlights.locator('[data-metric="smoke"]')).toContainText('Kết quả lịch sử · corpus khác')
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8888661Z          |                                                            ^
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8889249Z       39 |  await expect(highlights.locator('[data-metric="recall"] .eval-highlight-value')).toHaveText('100%')
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8890414Z       40 |  await expect(highlights.locator('[data-metric="recall"]')).toContainText('3 ca có gold · Bộ bổ sung')
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8891194Z       41 |  await expect(highlights.locator('[data-metric="recall"]')).toContainText('PostgreSQL')
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8891915Z         at /home/runner/work/land-law-chatbot/land-law-chatbot/frontend/e2e/evaluation.spec.ts:38:60
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8892311Z 
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8892778Z     Error Context: test-results/evaluation-historical-reco-1ed25-nt-results-remain-available-mobile/error-context.md
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8893279Z 
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8893692Z     attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8894611Z     test-results/evaluation-historical-reco-1ed25-nt-results-remain-available-mobile/trace.zip
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8895118Z     Usage:
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8895235Z 
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8895721Z         npx playwright show-trace test-results/evaluation-historical-reco-1ed25-nt-results-remain-available-mobile/trace.zip
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8896239Z 
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8896589Z     ────────────────────────────────────────────────────────────────────────────────────────────────
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8896875Z 
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8897392Z   7) [mobile] › e2e/evaluation.spec.ts:51:1 › incomplete attempts remain selectable with unexecuted cases in the denominator 
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8897855Z 
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8898028Z     Error: expect(locator).toHaveCount(expected) failed
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8898259Z 
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8898399Z     Locator:  locator('.eval-history-row')
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8898691Z     Expected: 13
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8898918Z     Received: 24
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8899123Z     Timeout:  5000ms
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8899259Z 
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8899339Z     Call log:
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8899706Z       - Expect "toHaveCount" locator('.eval-history-row') with timeout 5000ms
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8900536Z       - waiting for locator('.eval-history-row')
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8900944Z         14 × locator resolved to 24 elements
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8901266Z            - unexpected value "24"
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8901438Z 
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8901444Z 
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8901832Z       51 | test('incomplete attempts remain selectable with unexecuted cases in the denominator',async({page})=>{
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8902590Z       52 |  await page.getByRole('button',{name:'Lịch sử đánh giá',exact:true}).click()
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8903149Z     > 53 |  await expect(page.locator('.eval-history-row')).toHaveCount(13)
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8903584Z          |                                                  ^
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8904125Z       54 |  await page.getByLabel('Lần đánh giá',{exact:true}).selectOption(probe.id)
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8904695Z       55 |  await expect(page.locator('.stat-pass strong')).toHaveText('0/8')
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8905220Z       56 |  await expect(page.locator('.stat-not_run strong')).toHaveText('7')
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8905860Z         at /home/runner/work/land-law-chatbot/land-law-chatbot/frontend/e2e/evaluation.spec.ts:53:50
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8906240Z 
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8906744Z     Error Context: test-results/evaluation-incomplete-atte-46bba-ed-cases-in-the-denominator-mobile/error-context.md
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8907248Z 
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8907660Z     attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8908373Z     test-results/evaluation-incomplete-atte-46bba-ed-cases-in-the-denominator-mobile/trace.zip
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8908866Z     Usage:
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8908979Z 
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8909456Z         npx playwright show-trace test-results/evaluation-incomplete-atte-46bba-ed-cases-in-the-denominator-mobile/trace.zip
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8910442Z 
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8910855Z     ────────────────────────────────────────────────────────────────────────────────────────────────
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8911161Z 
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8911681Z   8) [mobile] › e2e/evaluation.spec.ts:60:1 › publishes historical retrieval and faithfulness with scope and sample coverage 
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8912148Z 
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8912324Z     Error: expect(locator).toHaveCount(expected) failed
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8912563Z 
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8912719Z     Locator:  locator('.evaluation-table tbody tr')
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8913030Z     Expected: 35
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8913233Z     Received: 41
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8913436Z     Timeout:  5000ms
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8913573Z 
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8913658Z     Call log:
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8914045Z       - Expect "toHaveCount" locator('.evaluation-table tbody tr') with timeout 5000ms
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8914555Z       - waiting for locator('.evaluation-table tbody tr')
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8914975Z         14 × locator resolved to 41 elements
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8915298Z            - unexpected value "41"
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8915476Z 
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8915482Z 
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8916147Z       64 |  await expect(page.locator('.eval-faith-card').filter({hasText:'c4f0c661'})).toContainText('6/8 ca có điểm')
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8916915Z       65 |  await page.getByRole('checkbox',{name:/Hiện tất cả phiên bản/}).check()
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8917485Z     > 66 |  await expect(page.locator('.evaluation-table tbody tr')).toHaveCount(35)
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8917955Z          |                                                           ^
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8918257Z       67 | })
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8918685Z       68 | test('dashboard remains readable at 320px and supports both themes',async({page},info)=>{
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8919361Z       69 |  await page.setViewportSize({width:info.project.name==='mobile'?320:1440,height:900})
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8920377Z         at /home/runner/work/land-law-chatbot/land-law-chatbot/frontend/e2e/evaluation.spec.ts:66:59
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8920783Z 
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8921253Z     Error Context: test-results/evaluation-publishes-histo-794b6-h-scope-and-sample-coverage-mobile/error-context.md
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8921764Z 
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8922185Z     attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8922892Z     test-results/evaluation-publishes-histo-794b6-h-scope-and-sample-coverage-mobile/trace.zip
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8923385Z     Usage:
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8923499Z 
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8923979Z         npx playwright show-trace test-results/evaluation-publishes-histo-794b6-h-scope-and-sample-coverage-mobile/trace.zip
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8924488Z 
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8924837Z     ────────────────────────────────────────────────────────────────────────────────────────────────
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8925134Z 
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8925235Z   8 failed
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8925947Z     [desktop] › e2e/evaluation.spec.ts:17:1 › shows failed outcomes without hiding previous configurations and exports every published artifact 
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8927032Z     [desktop] › e2e/evaluation.spec.ts:32:1 › historical record metrics stay in an explicit archive while current results remain available 
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8928051Z     [desktop] › e2e/evaluation.spec.ts:51:1 › incomplete attempts remain selectable with unexecuted cases in the denominator 
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8929035Z     [desktop] › e2e/evaluation.spec.ts:60:1 › publishes historical retrieval and faithfulness with scope and sample coverage 
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8930288Z     [mobile] › e2e/evaluation.spec.ts:17:1 › shows failed outcomes without hiding previous configurations and exports every published artifact 
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8931388Z     [mobile] › e2e/evaluation.spec.ts:32:1 › historical record metrics stay in an explicit archive while current results remain available 
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8932580Z     [mobile] › e2e/evaluation.spec.ts:51:1 › incomplete attempts remain selectable with unexecuted cases in the denominator 
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8933524Z     [mobile] › e2e/evaluation.spec.ts:60:1 › publishes historical retrieval and faithfulness with scope and sample coverage 
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.8934085Z   92 passed (1.4m)
+frontend	Run npx playwright install --with-deps chromium && npx playwright test	2026-10-20T06:10:52.9201723Z ##[error]Process completed with exit code 1.

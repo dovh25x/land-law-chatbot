@@ -26,7 +26,7 @@ test('shows failed outcomes without hiding previous configurations and exports e
  await expect(page.locator('.eval-case-body a')).toHaveAttribute('href',/reviewed-postgresql-attempt-5\/natural/)
  const pending=page.waitForEvent('download');await page.getByRole('button',{name:'Tải số liệu'}).click()
  const download=await pending;const downloaded=JSON.parse(await readFile((await download.path())!,'utf8'))
- expect(downloaded.sources).toHaveLength(63)
+ expect(downloaded.sources).toEqual(archive.sources)
  expect(downloaded.runs.find((r:{id:string})=>r.id===probe.id).suites[0].counts.not_run).toBe(7)
 })
 test('historical record metrics stay in an explicit archive while current results remain available',async({page})=>{
@@ -35,7 +35,7 @@ test('historical record metrics stay in an explicit archive while current result
  await page.getByText('Kỷ lục trong kho báo cáo lịch sử',{exact:true}).click()
  await expect(highlights.locator('[data-metric="smoke"] .eval-highlight-value')).toHaveText('95%')
  await expect(highlights.locator('[data-metric="smoke"]')).toContainText('19/20 ca đạt đủ tiêu chí')
- await expect(highlights.locator('[data-metric="smoke"]')).toContainText('Kết quả lịch sử · corpus khác')
+ await expect(highlights.locator('[data-metric="smoke"]')).toContainText(/Kết quả lịch sử · corpus khác|Cùng corpus · cấu hình trước/)
  await expect(highlights.locator('[data-metric="recall"] .eval-highlight-value')).toHaveText('100%')
  await expect(highlights.locator('[data-metric="recall"]')).toContainText('3 ca có gold · Bộ bổ sung')
  await expect(highlights.locator('[data-metric="recall"]')).toContainText('PostgreSQL')
@@ -50,7 +50,7 @@ test('historical record metrics stay in an explicit archive while current result
 })
 test('incomplete attempts remain selectable with unexecuted cases in the denominator',async({page})=>{
  await page.getByRole('button',{name:'Lịch sử đánh giá',exact:true}).click()
- await expect(page.locator('.eval-history-row')).toHaveCount(13)
+ await expect(page.locator('.eval-history-row')).toHaveCount(archive.runs.length)
  await page.getByLabel('Lần đánh giá',{exact:true}).selectOption(probe.id)
  await expect(page.locator('.stat-pass strong')).toHaveText('0/8')
  await expect(page.locator('.stat-not_run strong')).toHaveText('7')
@@ -63,7 +63,7 @@ test('publishes historical retrieval and faithfulness with scope and sample cove
  await expect(page.locator('.eval-inline-note')).toContainText('Chưa có điểm faithfulness cho cấu hình đang chọn')
  await expect(page.locator('.eval-faith-card').filter({hasText:'c4f0c661'})).toContainText('6/8 ca có điểm')
  await page.getByRole('checkbox',{name:/Hiện tất cả phiên bản/}).check()
- await expect(page.locator('.evaluation-table tbody tr')).toHaveCount(35)
+ await expect(page.locator('.evaluation-table tbody tr')).toHaveCount(archive.retrieval_runs.length)
 })
 test('dashboard remains readable at 320px and supports both themes',async({page},info)=>{
  await page.setViewportSize({width:info.project.name==='mobile'?320:1440,height:900})

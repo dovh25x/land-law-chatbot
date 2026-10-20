@@ -1,0 +1,19 @@
+{
+  "base_commit": "5a428bc73fb2327338585675bfb277a189cc6aa1",
+  "configuration_sha256": "a3eb633b20fc62db1c3ee8981ff737d9eafc9d45791c933a40c6ad324c4f7ca7",
+  "patch_sha256": "ad25f53ba86a83850ad1f4cd75fa33ba5f84d52abb2e82be008ac32bbe10b438",
+  "worktree": "/tmp/landlaw-quality-next",
+  "before": {
+    "failed": 2,
+    "passed": 3,
+    "scope": "New regression cases only"
+  },
+  "after": {
+    "passed": 309,
+    "scope": "Full backend tests in isolated worktree, no actual Groq calls"
+  },
+  "generation_evaluation_executed": false,
+  "production_deployed": false,
+  "reason": "Keep N01 causal damage qualification and restrict a prerequisite question to the whole governing article, explicit cross-references and other acts; omit unasked adjacent articles from synthesis only. Retrieval evidence/trace and verification remain intact.",
+  "remaining": "New model cohort and full release gates required before applying to production. Tests do not certify model improvement."
+}

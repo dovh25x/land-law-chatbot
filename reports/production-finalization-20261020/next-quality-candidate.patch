@@ -1,0 +1,127 @@
+diff --git a/backend/landlaw/agent.py b/backend/landlaw/agent.py
+index 93f1c46..dda9ca3 100644
+--- a/backend/landlaw/agent.py
++++ b/backend/landlaw/agent.py
+@@ -801,6 +801,21 @@ class Agent:
+                 group=group_order[key]
+                 return (exact_article and (document_match or not numbers),timely,reference_matches,body_numbers,operative,document_match,item['applicability']=='current',key in principle_groups,group_scores[key],-group,prerequisite,heading_overlap,overlap)
+             candidates=sorted(candidates,key=relevant,reverse=True)
++            if order_question and len(articles)<=1 and len(numbers)<=1:
++                # A timing question needs the operative prerequisite, not an
++                # adjacent rule in the same act. Keep every passage of that
++                # article, its explicit cross-references and all other acts.
++                focus=next((item for item in candidates if item['kind']=='legal'
++                    and re.search(r'phai (?:duoc )?.{0,80}truoc khi',normalize(item['text']))),None)
++                if focus:
++                    article=re.match(r'^dieu (\d+[a-z]?)',normalize(focus['locator']))
++                    if article and (not articles or article[1] in articles):
++                        key=(focus['document_id'],focus['locator'].split(' · ')[0])
++                        body=' '.join(item['text'] for item in candidates
++                            if (item['document_id'],item['locator'].split(' · ')[0])==key)
++                        required=set(re.findall(r'\bdieu\s+(\d+[a-z]?)\b',normalize(body)))|{article[1]}
++                        candidates=[item for item in candidates if item['document_id']!=focus['document_id']
++                            or any(re.match(rf'^dieu {n}(?:\s|$)',normalize(item['locator'])) for n in required)]
+             named_docs={item['document_id'] for item in candidates if any(
+                 n in normalize(item.get('document_number') or '') for n in numbers)}
+             exact_references=[item for item in candidates if item['document_id'] in named_docs
+@@ -954,7 +969,7 @@ class Agent:
+                 "First find the operative sentence that directly answers the question. For a prerequisite/order "
+                 "question, lead with the source's positive 'must ... before ...' rule, not general principles. "
+                 "Never make the user's negative assumption a legal trigger. "
+-                "Copy material actor/eligibility wording from the source without shortening it; then explain "
++                "Copy material actor, eligibility and causal-event wording from the source without shortening it; then explain "
+                 "necessary terms. For a complex list, explain a clearly named branch and retain ALL its conditions "
+                 "and exclusions. Do not merge branches. Preserve land origin, contract provider, income, timing, "
+                 "no-land/cash-compensation requirements and geographic scope whenever present in that branch. "
+@@ -1219,6 +1234,13 @@ class Agent:
+                 structural_issues.append(f'Claim {index}: không biến điều kiện hợp đồng giao khoán của nhóm sử dụng đất cụ thể thành điều kiện chung nhận hỗ trợ')
+             groups=('cong dong dan cu','to chuc ton giao','to chuc nuoc ngoai','to chuc kinh te','nguoi goc viet nam','doanh nghiep nha nuoc')
+             source_body=normalize(' '.join(evidence[c].chunk.text for c in claim.citation_ids if c in evidence))
++            damage_scope=re.search(r'thiet hai khi thao do.{0,30}van chuyen.{0,30}lap dat',source_body)
++            if damage_scope and 'thiet hai' in normalized_claim and 'boi thuong' in normalized_claim:
++                phase=r'(?:thao do|van chuyen|di chuyen|lap dat)'
++                event=(re.search(r'thiet hai.{0,100}(?:khi|do|trong qua trinh).{0,70}'+phase,normalized_claim)
++                       or re.search(r'(?:khi|trong qua trinh).{0,40}'+phase+r'.{0,70}thiet hai',normalized_claim))
++                if not event:
++                    structural_issues.append(f'Claim {index}: bồi thường thiệt hại phải giữ quan hệ với quá trình tháo dỡ, vận chuyển hoặc lắp đặt; không mở rộng thành mọi thiệt hại khi phải di dời')
+             agricultural_support=('ho tro' in normalized_claim and 'nong nghiep' in source_body)
+             if (agricultural_support and 'truc tiep san xuat nong nghiep' in normalized_claim
+                     and 'dang su dung dat nong nghiep do duoc nha nuoc giao' in source_body
+diff --git a/tests/fixtures/citizen-n01-damage-scope.json b/tests/fixtures/citizen-n01-damage-scope.json
+new file mode 100644
+index 0000000..6d369dc
+--- /dev/null
++++ b/tests/fixtures/citizen-n01-damage-scope.json
+@@ -0,0 +1,30 @@
++{
++  "claims": [
++    {
++      "kind": "legal_rule",
++      "text": "Nhà nước phải bồi thường chi phí tháo dỡ, di chuyển, lắp đặt và bồi thường thiệt hại đối với máy móc, dây chuyền sản xuất khi phải di dời do thu hồi đất.",
++      "citation_ids": [
++        "luat-dat-dai-2024-104-1-0"
++      ],
++      "section": "direct"
++    }
++  ],
++  "sources": [
++    {
++      "id": "luat-dat-dai-2024-104-1-0",
++      "document_id": "luat-dat-dai-2024",
++      "title": "Luật Đất đai",
++      "document_number": "31/2024/QH15",
++      "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=211189",
++      "locator": "Điều 104",
++      "excerpt": "Điều 104. Bồi thường chi phí di chuyển tài sản khi Nhà nước thu hồi đất 1. Khi Nhà nước thu hồi đất mà phải di chuyển tài sản thì được Nhà nước bồi thường chi phí để tháo dỡ, di chuyển, lắp đặt; trường hợp phải di chuyển hệ thống máy móc, dây chuyền sản xuất còn được bồi thường đối với thiệt hại khi tháo dỡ, vận chuyển, lắp đặt. 2. Ủy ban nhân dân cấp tỉnh quy định mức bồi thường tại khoản 1 Điều này.",
++      "checked_at": "2026-10-11T17:32:27Z",
++      "applicability": "current",
++      "source_review_notes": "",
++      "source_kind": "legal",
++      "page": 12,
++      "source_url": "https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/9/31-2024-qh15_2.pdf#page=12"
++    }
++  ],
++  "scope": "Actual synthetic frozen N01 output at e409d8ac, reviewed partial for causal scope; no real conversation."
++}
+diff --git a/tests/test_quality_candidate.py b/tests/test_quality_candidate.py
+new file mode 100644
+index 0000000..06a4b4d
+--- /dev/null
++++ b/tests/test_quality_candidate.py
+@@ -0,0 +1,36 @@
++import json
++from datetime import date
++from pathlib import Path
++import pytest
++from conftest import document,release
++from test_agent import FakeProvider,noop
++from landlaw.agent import Agent,Plan,Verification
++from landlaw.models import ChatRequest,Claim,Draft,Evidence
++from landlaw.provider import Budget
++
++@pytest.mark.parametrize('question,include_adjacent',[
++ ('Chưa được bố trí chỗ ở mới thì việc thu hồi đất ở và tái định cư cần bảo đảm gì?',False),
++ ('Theo Điều 91 và Điều 111, chưa bố trí chỗ ở mới thì cần bảo đảm gì?',True),
++ ('Nguyên tắc bồi thường, hỗ trợ và tái định cư là gì?',True)])
++def test_prerequisite_focus_keeps_whole_article_and_external_evidence(store,settings,question,include_adjacent):
++ fixture=json.loads(Path('tests/fixtures/citizen-n04-negative-premise.json').read_text());doc=document().model_copy(update={'id':fixture['sources'][0]['document_id'],'chunks':[]})
++ for item in fixture['sources']:
++  doc.chunks.append(document().chunks[0].model_copy(update={'id':item['id'],'document_id':doc.id,'text':item['excerpt'],'locator':item['locator']}))
++ amendment=document('amendment',text='Điều1. Sửa đổi điều kiện về thời điểm áp dụng quy định. Fixture, không làm căn cứ pháp luật.')
++ state={'request':ChatRequest(session_id='00000000-0000-4000-8000-000000000000',message=question),
++  'evidence':[Evidence(document=doc,chunk=c,applicability='current') for c in doc.chunks]+[Evidence(document=amendment,chunk=amendment.chunks[0],applicability='current')],
++  'release':{'documents':[doc.model_dump(mode='json'),amendment.model_dump(mode='json')],'relations':[]}}
++ passages,_=Agent(store,FakeProvider(settings)).prompt_context(state);ids={p['citation_id'] for p in passages}
++ assert ('luat-dat-dai-2024-109-1-0' in ids) is include_adjacent
++ assert {s['id'] for s in fixture['sources'] if s['locator'].startswith('Điều91') or s['locator'].startswith('Điều 91')}<=ids
++ assert amendment.chunks[0].id in ids
++
++@pytest.mark.parametrize('qualified',[False,True])
++async def test_damage_compensation_retains_the_source_causal_event(store,settings,qualified):
++ fixture=json.loads(Path('tests/fixtures/citizen-n01-damage-scope.json').read_text());source=fixture['sources'][0];doc=document(text=source['excerpt']).model_copy(update={'id':source['document_id']});doc.chunks[0].id=source['id'];doc.chunks[0].document_id=doc.id;doc.chunks[0].locator=source['locator'];payload=release(store,[doc])
++ text=fixture['claims'][0]['text'] if not qualified else 'Khi Nhà nước thu hồi đất mà phải di chuyển tài sản, được bồi thường chi phí tháo dỡ, di chuyển, lắp đặt; với hệ thống máy móc, dây chuyền sản xuất còn được bồi thường thiệt hại phát sinh trong quá trình tháo dỡ, vận chuyển, lắp đặt.'
++ state={'request':ChatRequest(session_id='00000000-0000-4000-8000-000000000000',message='Máy móc tháo ra bị hư hại khi phải di dời do thu hồi đất, có khoản bồi thường nào?'),
++ 'budget':Budget(),'release':payload,'as_of':date(2024,8,2),'plan':Plan(),'evidence':[Evidence(document=doc,chunk=doc.chunks[0],applicability='current')],
++ 'draft':Draft(status='answered',claims=[Claim(text=text,citation_ids=[doc.chunks[0].id])]),'trace':[],'emit':noop}
++ agent=Agent(store,FakeProvider(settings,verification=Verification(supported_claim_indexes=[0])));await agent.verify(state);await agent.finish(state)
++ assert bool(state['result'].verified_claims) is qualified

@@ -39,3 +39,7 @@ Bản native QĐ10/2017 cũng đã tải được từ nguồn chính thức, c�
 Giữ [profile hiện hành](../production-readiness-20261020/RELEASE_PROFILE.md): `academic`/`academic_prototype`; `REQUIRE_QUALITY_READINESS=false` vốn có không bị thay đổi. Phát hành bản vá phần mềm không đồng nghĩa nghiệm thu chất lượng đầy đủ. Tình trạng deployment, identity và live checks được ghi riêng trong `release-status.json` khi có bằng chứng.
 
 Corpus serving vẫn là `corpus-a26bc99e541fbbe2`; candidate61 tài liệu chưa thay thế nó. Không drop database, không restore đè serving, không gỡ Release hoặc deployment rollback cũ. Không có tiến trình tự động đổi khóa, chạy benchmark nền hoặc sử dụng hosting trả phí.
+
+## Candidate chất lượng kế tiếp
+
+[Patch riêng](next-quality-candidate.patch) và [biên bản](next-quality-candidate.json) chuẩn bị cách giữ quan hệ nhân quả của thiệt hại, đồng thời tập trung câu hỏi về điều kiện trước một bước vào toàn bộ điều chi phối và các dẫn chiếu cần thiết; vẫn giữ bằng chứng từ văn bản khác. Hồi quy mới tái hiện2 lỗi trước sửa; toàn bộ309 test backend trong worktree riêng đạt sau sửa. Chưa gọi Groq, chưa merge và chưa deploy patch này; không coi đây là bằng chứng model đã cải thiện. SHA phát hành giữ nguyên logic đã được đo ở cohort `release-policy-evaluation`.
