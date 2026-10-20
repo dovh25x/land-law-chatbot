@@ -43,3 +43,11 @@ Corpus serving vẫn là `corpus-a26bc99e541fbbe2`; candidate61 tài liệu chư
 ## Candidate chất lượng kế tiếp
 
 [Patch riêng](next-quality-candidate.patch) và [biên bản](next-quality-candidate.json) chuẩn bị cách giữ quan hệ nhân quả của thiệt hại, đồng thời tập trung câu hỏi về điều kiện trước một bước vào toàn bộ điều chi phối và các dẫn chiếu cần thiết; vẫn giữ bằng chứng từ văn bản khác. Hồi quy mới tái hiện2 lỗi trước sửa; toàn bộ309 test backend trong worktree riêng đạt sau sửa. Chưa gọi Groq, chưa merge và chưa deploy patch này; không coi đây là bằng chứng model đã cải thiện. SHA phát hành giữ nguyên logic đã được đo ở cohort `release-policy-evaluation`.
+
+## Cấu hình kết hợp sau gián đoạn
+
+Retry S04 ở cấu hình `e409d8ac` đã trả lời nhưng dùng sai mốc pháp luật; [review-v3](release-policy-evaluation/review-v3/smoke/results.md) giữ kết quả là fail và vẫn giữ attempt TPD trước đó. Bản veto riêng `aab57560` chỉ đo16 ca guard/source-fact, không có điểm nội dung LLM. Sau đó đã tích hợp patch N01/N04 cùng veto S04 vào SHA `bddeded`; toàn bộ311 test backend đạt. [Cohort mới](final-quality-evaluation/) bắt đầu lại theo fingerprint riêng, giữ nguyên bộ32 và không nhập pass của các bản cũ. Trạng thái nghiệm thu vẫn chờ bằng chứng mới, không chuyển điểm unit test thành model pass.
+
+## Checkpoint cuối của cấu hình kết hợp
+
+[Biên bản hiện tại](evaluation-checkpoint-status-final.json) có21/32 ca đã thực thi:19 pass,2 fail,11 chưa chạy. Trong19 pass có16 ca guard/source-fact không gọi LLM và3 ca nội dung N01/N04/S04 đã đối chiếu nguồn; không gọi19/32 là độ chính xác pháp luật. S06 abstention an toàn do model vẫn gán sai khoản; X02 bị lỗi định dạng rồi TPD200.000 (used196.765, requested4.134). [Review gắn checksum](final-quality-evaluation/review-v1/natural/results.md) và các suite kề bên giữ mẫu số đầy đủ. CI của SHA `bddeded` đạt311 backend, frontend unit/build/E2E và giới hạn Docker512MiB. Không có tiến trình benchmark tự tiếp tục tranh quota với public sau checkpoint này.

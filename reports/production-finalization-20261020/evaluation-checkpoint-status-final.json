@@ -1,0 +1,28 @@
+{
+  "checked_at": "2026-10-20T10:57:19.573176+00:00",
+  "source_commit": "bddededf4b3ce8827095d4fba27c17ca4be1fb4f",
+  "configuration_sha256": "83f93f6482ed90765a62c39c818d5972e3560e2a2357efa21cd55f13be603b9e",
+  "expected": 32,
+  "executed": 21,
+  "pass": 19,
+  "fail": 2,
+  "partial": 0,
+  "not_run": 11,
+  "passing_zero_llm_guard_or_source_fact_cases": 16,
+  "fully_passed_llm_cases": [
+    "N01",
+    "N04",
+    "S04"
+  ],
+  "failed_task_case_ids": [
+    "S06"
+  ],
+  "provider_limited_case_ids": [
+    "X02"
+  ],
+  "review": "final-quality-evaluation/review-v1",
+  "full_quality_gate_passed": false,
+  "citizen_v2_product_acceptance": false,
+  "automatic_background_evaluation": false,
+  "scope": "Current fingerprint only; no pass imported from historical configurations. 19/32 is not substantive legal accuracy."
+}

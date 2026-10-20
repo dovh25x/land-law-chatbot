@@ -1,7 +1,7 @@
 {
   "status": "awaiting_review",
   "dataset_sha256": "38aa8da29bf41a94b4cf8fd8a5ca6769232b87884aeed573c10f5586a09d7254",
-  "generated_at": "2026-10-20T05:58:03.870521+00:00",
+  "generated_at": "2026-10-20T06:21:43.013855+00:00",
   "cases": 20,
   "acceptance_passed": false,
   "results": [
@@ -9,8 +9,8 @@
       "mode": "agentic",
       "completed": 14,
       "reviewed": 0,
-      "llm_calls": 1,
-      "limited_or_error": 1
+      "llm_calls": 2,
+      "limited_or_error": 0
     }
   ],
   "run_id": "corpus-a26bc99e541fbbe2-openai_gpt-oss-120b-smoke-38aa8da2-e409d8ac-c1-agentic",
@@ -34,8 +34,8 @@
   ],
   "execution_concurrency": 1,
   "attempt_history": {
-    "attempts": 14,
-    "retry_attempts": 0,
+    "attempts": 15,
+    "retry_attempts": 1,
     "limited_or_error_attempts": 1,
     "scope": "Every new attempt is retained; legacy checkpoints imported as latest results only.",
     "directory": "reports/production-finalization-20261020/release-policy-evaluation/runs/corpus-a26bc99e541fbbe2-openai_gpt-oss-120b-smoke-38aa8da2-e409d8ac-c1-agentic/attempts"

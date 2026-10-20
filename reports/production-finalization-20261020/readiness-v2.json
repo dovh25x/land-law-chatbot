@@ -1,0 +1,75 @@
+{
+  "checked_at": "2026-10-20T10:59:11.308562+00:00",
+  "source_commit": "bddededf4b3ce8827095d4fba27c17ca4be1fb4f",
+  "checked_out_revision": "bddededf4b3ce8827095d4fba27c17ca4be1fb4f",
+  "corpus_id": "corpus-a26bc99e541fbbe2",
+  "ready": false,
+  "checks": {
+    "tested_revision": true,
+    "coverage": false,
+    "backup_matches_candidate": true,
+    "source_freshness": false,
+    "generation:smoke": false,
+    "generation:supplemental": false,
+    "generation:natural": false,
+    "restore:sqlite": true,
+    "restore:postgresql": true,
+    "software": true,
+    "release_download": true,
+    "postgres_runtime": true
+  },
+  "blocked": [
+    "coverage",
+    "source_freshness",
+    "generation:smoke",
+    "generation:supplemental",
+    "generation:natural"
+  ],
+  "scope": "Recomputed technical publication gates; not independent legal certification or deployment proof.",
+  "manifest": {
+    "source_commit": "bddededf4b3ce8827095d4fba27c17ca4be1fb4f",
+    "inputs": {
+      "snapshot": {
+        "path": "data/staging/production-backup-check-20261020/release.json",
+        "sha256": "d4694c30042b65fe0874bc95618e7b979484e6f05599ff702434d73b95e9f6ff"
+      },
+      "backup": {
+        "path": "data/staging/production-backup-check-20261020/corpus-backup.json",
+        "sha256": "204547346cf550e75ae165956cf3dc8dd19264da301876f80e725c39529069b2"
+      },
+      "software": {
+        "path": "reports/production-finalization-20261020/software-bddeded.json",
+        "sha256": "b82f9a70be127aa53b2f89e4172dce3a0c5db33e24fb583403361ed7d67e4694"
+      },
+      "postgres_runtime": {
+        "path": "reports/production-readiness-20261020/postgres-runtime-and-restore.json",
+        "sha256": "a7eecfce000883a8da4846e525024cf912fc87db6f5abe08c8ca08459ac99e55"
+      },
+      "release_download": {
+        "path": "reports/production-readiness-20261020/release-download.json",
+        "sha256": "f3a45dae5a9c3fb5cd7edd0481c90d85c490b9e8ebcf6febb8907ac9605bc322"
+      },
+      "review:smoke": {
+        "path": "reports/production-finalization-20261020/final-quality-evaluation/review-v1/smoke/evaluation.json",
+        "sha256": "2ff3eb44226a74dc709ec8e9fcd453755cd520adb69645afcccc7ade04f5becc"
+      },
+      "review:supplemental": {
+        "path": "reports/production-finalization-20261020/final-quality-evaluation/review-v1/supplemental/evaluation.json",
+        "sha256": "93d6288e642e58725f64aa77db347982d0d5040e5b7dc87bafad391e5847170f"
+      },
+      "review:natural": {
+        "path": "reports/production-finalization-20261020/final-quality-evaluation/review-v1/natural/evaluation.json",
+        "sha256": "8d3d8a0a334155dec2424eabfebdde8bad0eab16c942629a5e781bfc561f8d03"
+      },
+      "restore:sqlite": {
+        "path": "reports/release-readiness-20261019/restore-and-retrieval-attempt-1/sqlite/restore-and-retrieval.json",
+        "sha256": "e29e42d4e6b1b293c1aec0eb9e4adc066df6601d9849718db600c32d056c8cd1"
+      },
+      "restore:postgresql": {
+        "path": "reports/release-readiness-20261019/restore-and-retrieval-attempt-1/postgresql/restore-and-retrieval.json",
+        "sha256": "20d4f24123b1ff4100798c5a4c4d378971982f142c2c070c4698d72fd5c74d01"
+      }
+    }
+  },
+  "serving_state_changed": false
+}

@@ -1,0 +1,93 @@
+{
+  "checked_at": "2026-10-20T10:59:38.474062+00:00",
+  "/readyz": {
+    "status": "ready",
+    "database": true,
+    "llm_configured": true,
+    "corpus_release": "corpus-a26bc99e541fbbe2",
+    "checked_at": "2026-10-11T17:32:27Z",
+    "storage": "postgresql",
+    "publication_profile": "academic",
+    "quality_status": "academic_prototype",
+    "retrieval_mode": "hybrid",
+    "coverage_gaps": [
+      {
+        "document_id": "qd-10-2017-hanoi",
+        "document_number": "10/2017/QĐ-UBND",
+        "title": "Quy định bồi thường, hỗ trợ và tái định cư Hà Nội (lịch sử)",
+        "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=189167",
+        "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+      },
+      {
+        "document_id": "qd-30-2019-hanoi",
+        "document_number": "30/2019/QĐ-UBND",
+        "title": "Quy định và bảng giá các loại đất Hà Nội 2020–2024 (lịch sử)",
+        "url": "https://vanban.hanoi.gov.vn/chi-tiet-van-ban/quyet-dinh-so-30-2019-qd-ubnd-cua-ubnd-tp-ha-noi-ve-viec-ban-hanh-quy-dinh-va-bang-gia-cac-loai-dat-189067",
+        "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+      },
+      {
+        "document_id": "qd-20-2023-hanoi",
+        "document_number": "20/2023/QĐ-UBND",
+        "title": "Sửa đổi bảng giá đất Quyết định 30/2019",
+        "url": "https://vbpl.vn/hanoi/Pages/vbpq-toanvan.aspx?ItemID=164473",
+        "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+      },
+      {
+        "document_id": "nd-123-2024",
+        "document_number": "123/2024/NĐ-CP",
+        "title": "Xử phạt vi phạm hành chính lĩnh vực đất đai",
+        "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=211356",
+        "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+      },
+      {
+        "document_id": "ring4-nq106-2022",
+        "document_number": "106/NQ-CP",
+        "title": "Triển khai Nghị quyết 56/2022/QH15 Vành đai 4",
+        "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=206398",
+        "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+      },
+      {
+        "document_id": "nd-01-2017",
+        "document_number": "01/2017/NĐ-CP",
+        "title": "Nghị định 01/2017/NĐ-CP sửa đổi, bổ sung một số nghị định quy định chi tiết thi hành Luật đất đai",
+        "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=187962",
+        "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+      },
+      {
+        "document_id": "nd-148-2020",
+        "document_number": "148/2020/NĐ-CP",
+        "title": "Nghị định 148/2020/NĐ-CP sửa đổi, bổ sung một số nghị định quy định chi tiết thi hành Luật Đất đai",
+        "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=202022",
+        "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+      }
+    ]
+  },
+  "/api/v1/status": {
+    "generation_available": true,
+    "reason": null,
+    "retry_after": null,
+    "corpus_release": "corpus-a26bc99e541fbbe2",
+    "api_version": 3,
+    "capabilities": {
+      "citizen_answers": true,
+      "answer_schema_version": 2
+    },
+    "source_fresh": false,
+    "warning": "source_stale",
+    "source_checked_at": "2026-10-11T17:32:27Z"
+  },
+  "render_before": {
+    "id": "dep-dbbf4auq1p3s73cd4d10",
+    "status": "live",
+    "commit": {
+      "id": "069d21e8fcdc73161e38f678c95805539c8813cd",
+      "message": "Guard authority attribution and unsupported housing premises",
+      "createdAt": "2026-10-20T04:43:35Z"
+    }
+  },
+  "pages_before": {
+    "id": "66d937e2-18de-430c-bc51-5034deb63f83",
+    "commit": "069d21e8fcdc73161e38f678c95805539c8813cd",
+    "status": "success"
+  }
+}

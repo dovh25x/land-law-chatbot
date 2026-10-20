@@ -1,0 +1,43 @@
+{
+  "source_commit": "bddededf4b3ce8827095d4fba27c17ca4be1fb4f",
+  "checked_at": "2026-10-20T10:57:19.566915+00:00",
+  "checks": [
+    {
+      "name": "backend",
+      "exit_code": 0,
+      "log": "reports/production-finalization-20261020/logs/ci-bddeded.log",
+      "log_sha256": "86eb50814fb14729368238b16bd49180e6d1e1490931a5e64f5ed4fce5175047",
+      "evidence": "All corresponding GitHub Actions steps completed successfully on this exact commit."
+    },
+    {
+      "name": "secrets",
+      "exit_code": 0,
+      "log": "reports/production-finalization-20261020/logs/ci-bddeded.log",
+      "log_sha256": "86eb50814fb14729368238b16bd49180e6d1e1490931a5e64f5ed4fce5175047",
+      "evidence": "All corresponding GitHub Actions steps completed successfully on this exact commit."
+    },
+    {
+      "name": "frontend_unit",
+      "exit_code": 0,
+      "log": "reports/production-finalization-20261020/logs/ci-bddeded.log",
+      "log_sha256": "86eb50814fb14729368238b16bd49180e6d1e1490931a5e64f5ed4fce5175047",
+      "evidence": "All corresponding GitHub Actions steps completed successfully on this exact commit."
+    },
+    {
+      "name": "frontend_build",
+      "exit_code": 0,
+      "log": "reports/production-finalization-20261020/logs/ci-bddeded.log",
+      "log_sha256": "86eb50814fb14729368238b16bd49180e6d1e1490931a5e64f5ed4fce5175047",
+      "evidence": "All corresponding GitHub Actions steps completed successfully on this exact commit."
+    },
+    {
+      "name": "frontend_e2e",
+      "exit_code": 0,
+      "log": "reports/production-finalization-20261020/logs/ci-bddeded.log",
+      "log_sha256": "86eb50814fb14729368238b16bd49180e6d1e1490931a5e64f5ed4fce5175047",
+      "evidence": "All corresponding GitHub Actions steps completed successfully on this exact commit."
+    }
+  ],
+  "ci_run": "https://github.com/dovh25x/land-law-chatbot/actions/runs/39408958874",
+  "scope": "Exact SHA CI:311 backend tests, frontend unit/build/audit/E2E and Docker512MiB check. No model/legal certification."
+}

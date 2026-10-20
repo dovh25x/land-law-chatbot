@@ -1,0 +1,50 @@
+{
+  "N03": {
+    "answer_sha256": "c7ea121ebf2b465912d9b1cc213b3797f8a9ef52698e67d1ee8d160a8492fb37",
+    "verdict": "pass",
+    "note": "Sau repair, giữ nguyên điều kiện nguồn gốc đất, không có đất để bồi thường và đã bồi thường bằng tiền trước quyền được hỗ trợ đào tạo/chuyển nghề/tìm việc. Không bảo đảm kết quả hồ sơ; câu còn mang cách diễn đạt điều luật.",
+    "review_method": "AI technical rubric/full source snapshot review; no independent legal certification; limited/not_run retained in denominators"
+  },
+  "N01": {
+    "answer_sha256": "3d1cda05fcbc3c1d6e8e4ec0fdb978a778bb433378eea30d14abfeed19b96470",
+    "verdict": "partial",
+    "note": "Nêu hai loại khoản chi phí và thiệt hại máy móc khi di dời do thu hồi, không nêu số tiền; chưa nói rõ thiệt hại phát sinh trong quá trình tháo dỡ/vận chuyển/lắp đặt, nên chưa chấm đủ rubric.",
+    "review_method": "AI technical rubric/full source snapshot review; no independent legal certification; limited/not_run retained in denominators"
+  },
+  "N02": {
+    "answer_sha256": "879547460c8a32bf9f489e18ca86e6685a1dcb8e9ba8cef08a54a53ed0c1682d",
+    "verdict": "pass",
+    "note": "Giữ đúng nhánh hộ/cá nhân dùng đất nông nghiệp đủ điều kiện bồi thường; trích đúng tỷ lệ diện tích, có/không di chuyển, vùng khó khăn và thời gian trong nhánh khoản1. Không loại trừ nhánh khác hoặc kết luận cho hộ cụ thể.",
+    "review_method": "AI technical rubric/full source snapshot review; no independent legal certification; limited/not_run retained in denominators"
+  },
+  "N04": {
+    "answer_sha256": "e28bef47798cf276307011b31b6841d7c6a07b496437182aa5822c1cc39621d8",
+    "verdict": "fail",
+    "note": "Abstention an toàn vì draft ghép chưa có chỗ ở mới với nghĩa vụ thông báo khác; nguồn có quy tắc trước quyết định nhưng chưa trả lời thành công. Không tính refusal này là đúng tác vụ.",
+    "review_method": "AI technical rubric/full source snapshot review; no independent legal certification; limited/not_run retained in denominators"
+  },
+  "N05": {
+    "answer_sha256": "c98c5311cc9d4d341350bce985f5a53e5e0dca4cde1b05e59f286954187aa16b",
+    "verdict": "pass",
+    "note": "Đúng UBND cấp tỉnh, khoản2 Điều104; không gán thẩm quyền vào khoản1.",
+    "review_method": "AI technical rubric/full source snapshot review; no independent legal certification; limited/not_run retained in denominators"
+  },
+  "N06": {
+    "answer_sha256": "75ac6d08ba69aff5b927f6df3a866877954fe81090d53d0687a93bfed76a18da",
+    "verdict": "pass",
+    "note": "Đúng QĐ40/2026 thay QĐ56/2024 và ngày02/04/2026; chỉ dẫn văn bản, không áp dụng vào quyền lợi của hồ sơ cũ.",
+    "review_method": "AI technical rubric/full source snapshot review; no independent legal certification; limited/not_run retained in denominators"
+  },
+  "N07": {
+    "answer_sha256": "3529e8ea371cb1fba0092e79219f4dc023d2452c07bea4169ee0d17a1b6b230f",
+    "verdict": "pass",
+    "note": "Hỏi ngày quyết định/phương án, không bảo đảm suất tái định cư.",
+    "review_method": "AI technical rubric/full source snapshot review; no independent legal certification; limited/not_run retained in denominators"
+  },
+  "N08": {
+    "answer_sha256": "1823e236c2bfc56f05db4902c00d2df8290a69e1323f15c18717e9a42f516c9d",
+    "verdict": "pass",
+    "note": "Không xác nhận số hiệu giả hoặc mức50tỷ; không suy không tồn tại từ corpus thiếu.",
+    "review_method": "AI technical rubric/full source snapshot review; no independent legal certification; limited/not_run retained in denominators"
+  }
+}
