@@ -1,0 +1,23 @@
+{
+  "scope": "Unverified structured model output for developer diagnosis; never delivered as a chatbot answer. No hidden reasoning.",
+  "schema": "Draft",
+  "case_mode": "N02-agentic",
+  "llm_calls": 3,
+  "output": {
+    "status": "answered",
+    "summary": "",
+    "claims": [
+      {
+        "kind": "legal_rule",
+        "text": "Hỗ trợ ổn định đời sống cho hộ gia đình, cá nhân đang sử dụng đất nông nghiệp khi Nhà nước thu hồi đất phụ thuộc vào các điều kiện sau:\n1. Hộ (hoặc cá nhân) phải **đủ điều kiện bồi thường về đất** (theo quy định của Nghị định 47/2014/NĐ‑CP và các nghị định sửa đổi) để được hưởng hỗ trợ; nếu không đủ điều kiện bồi thường, UBND cấp tỉnh quyết định mức, thời gian và định kỳ chi trả phù hợp, nhưng không vượt mức quy định tại khoản 1 Điều 19.\n2. **Tỷ lệ diện tích đất nông nghiệp thu hồi** so với diện tích đang sử dụng:\n   - **30 % – 70 %**: hỗ trợ trong 6 tháng nếu không phải di chuyển chỗ ở; 12 tháng nếu phải di chuyển chỗ ở.\n   - **Trên 70 %**: hỗ trợ trong 12 tháng nếu không phải di chuyển chỗ ở; 24 tháng nếu phải di chuyển chỗ ở.\n3. **Địa bàn di chuyển** (nếu phải di chuyển):\n   - Nếu di chuyển tới vùng có điều kiện kinh tế‑xã hội khó khăn, thời gian hỗ trợ tối đa tăng lên 24 tháng (đối với 30‑70 %) hoặc 36 tháng (đối với >70 %).\n   - Nếu di chuyển tới vùng có điều kiện kinh tế‑xã hội đặc biệt khó khăn, thời gian hỗ trợ tối đa tăng lên 36 tháng (đối với 30‑70 %) hoặc 48 tháng (đối với >70 %).\n4. **Diện tích tính hỗ trợ**: chỉ tính diện tích thu hồi trong phạm vi xã, phường, thị trấn nơi có đất thu hồi tại thời điểm quyết định phê duyệt phương án bồi thường, hỗ trợ, tái định cư; không cộng dồn với diện tích thu hồi của các dự án trước đó.\n5. **Mức hỗ trợ cho mỗi nhân khẩu**: tiền tương đương 30 kg gạo trong 01 tháng, tính theo giá trung bình tại thời điểm hỗ trợ của địa phương.\n6. **Trường hợp thu hồi dưới 30 % diện tích** hoặc hộ không đủ điều kiện bồi thường (hoặc hộ nhận giao khoán đất theo quy định tại khoản 2 Điều 19), UBND cấp tỉnh quyết định mức, thời gian và định kỳ chi trả phù hợp, nhưng không vượt mức hỗ trợ quy định tại khoản 1 Điều 19.",
+        "citation_ids": [
+          "C1"
+        ],
+        "section": "direct"
+      }
+    ],
+    "missing_facts": [],
+    "next_steps": [],
+    "out_of_scope": false
+  }
+}

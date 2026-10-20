@@ -28,7 +28,7 @@ Directory chỉ được giữ số liên hệ trong chunk sau rà soát tườn
   --output <report-directory>/source-worklist.json
 ```
 
-Không có nguồn thủ tục/danh bạ phù hợp thì runtime nói rõ chưa chỉ được nơi nộp, địa chỉ hoặc số điện thoại. Không đưa candidate chưa duyệt vào `sources.json`, active corpus hoặc câu trả lời để làm cho tính năng có vẻ đầy đủ. Không embedding lại corpus chỉ vì đổi metadata hoặc lọc phạm vi.
+Không có nguồn thủ tục/danh bạ phù hợp thì runtime nói rõ chưa chỉ được nơi nộp, địa chỉ hoặc số điện thoại. Candidate có thể được đăng ký trong `sources.json` với trạng thái `pending` để catalogue hiển thị tham khảo; ingest phải cách ly, không tạo chunk hoặc dùng làm chứng cứ cho câu trả lời. Đăng ký manifest không phải duyệt nguồn hoặc bổ sung active corpus. Không embedding lại corpus chỉ vì đổi metadata hoặc lọc phạm vi.
 
 ## Bộ đánh giá và công bố
 

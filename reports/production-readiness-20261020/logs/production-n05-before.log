@@ -1,0 +1,38 @@
+F..                                                                      [100%]
+=================================== FAILURES ===================================
+_ test_actual_n05_authority_cannot_be_attributed_to_the_cost_clause[kho\u1ea3n 1 \u0110i\u1ec1u 104-False] _
+
+store = <landlaw.store.Store object at 0x7044815ec980>
+settings = Settings(app_env='development', llm_provider='groq', groq_api_key=SecretStr('**********'), groq_model='openai/gpt-oss-...thority_cann0/data'), reports_dir=PosixPath('/tmp/pytest-of-dovh25x/pytest-6/test_actual_n05_authority_cann0/reports'))
+reference = 'khoản 1 Điều 104', expected = False
+
+    @pytest.mark.parametrize('reference,expected', [('khoản 1 Điều 104',False),('khoản 2 Điều 104',True),('Điều 104',True)])
+    async def test_actual_n05_authority_cannot_be_attributed_to_the_cost_clause(store,settings,reference,expected):
+        import json
+        from datetime import date
+        from pathlib import Path
+        from conftest import release
+        from test_agent import FakeProvider, noop
+        from landlaw.agent import Agent, Plan, Verification
+        from landlaw.models import ChatRequest, Claim, Draft, Evidence
+        from landlaw.provider import Budget
+        fixture=json.loads(Path('tests/fixtures/citizen-n05-authority-clause.json').read_text())
+        doc=document(text=fixture['source']);doc.chunks[0].locator='Điều 104'
+        payload=release(store,[doc])
+        text=fixture['claim'].replace('khoản 1 Điều 104',reference)
+        state={'request':ChatRequest(session_id='00000000-0000-4000-8000-000000000000',message='Ai quy định mức bồi thường chi phí di chuyển tài sản?'),
+               'budget':Budget(),'release':payload,'as_of':date(2024,8,2),'plan':Plan(),
+               'evidence':[Evidence(document=doc,chunk=doc.chunks[0],applicability='current')],
+               'draft':Draft(status='answered',claims=[Claim(text=text,citation_ids=[doc.chunks[0].id])]),
+               'trace':[],'emit':noop}
+        agent=Agent(store,FakeProvider(settings,verification=Verification(supported_claim_indexes=[0])))
+        await agent.verify(state);await agent.finish(state)
+>       assert bool(state['result'].verified_claims) is expected
+E       AssertionError: assert True is False
+E        +  where True = bool([Claim(kind='legal_rule', text='Ủy ban nhân dân cấp tỉnh có thẩm quyền quy định mức bồi thường chi phí di chuyển tài sản khi Nhà nước thu hồi đất, theo khoản 1 Điều 104 Luật Đất đai 2024.', citation_ids=['law-1'], section='direct')])
+E        +    where [Claim(kind='legal_rule', text='Ủy ban nhân dân cấp tỉnh có thẩm quyền quy định mức bồi thường chi phí di chuyển tài sản khi Nhà nước thu hồi đất, theo khoản 1 Điều 104 Luật Đất đai 2024.', citation_ids=['law-1'], section='direct')] = ChatResult(status='answered', publication_profile='academic', quality_status='academic_prototype', retrieval_mode='una...', mode='agentic', support_level='full', retry_after=None, retrieved_chunk_ids=['law-1'], evidence_chunk_ids=['law-1']).verified_claims
+
+tests/test_citizen.py:278: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_citizen.py::test_actual_n05_authority_cannot_be_attributed_to_the_cost_clause[kho\u1ea3n 1 \u0110i\u1ec1u 104-False]
+1 failed, 2 passed, 19 deselected in 0.80s

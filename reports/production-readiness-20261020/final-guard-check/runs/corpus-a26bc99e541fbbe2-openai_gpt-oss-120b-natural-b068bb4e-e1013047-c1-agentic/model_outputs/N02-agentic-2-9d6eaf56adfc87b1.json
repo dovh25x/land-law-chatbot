@@ -1,0 +1,31 @@
+{
+  "scope": "Unverified structured model output for developer diagnosis; never delivered as a chatbot answer. No hidden reasoning.",
+  "schema": "Draft",
+  "case_mode": "N02-agentic",
+  "llm_calls": 2,
+  "output": {
+    "status": "answered",
+    "summary": "",
+    "claims": [
+      {
+        "kind": "legal_rule",
+        "text": "Hỗ trợ ổn định đời sống cho hộ gia đình, cá nhân đang sử dụng đất nông nghiệp khi Nhà nước thu hồi đất chỉ áp dụng cho những hộ đủ điều kiện bồi thường về đất (theo quy định của Nghị định 47/2014/NĐ-CP và các nghị định sửa đổi); trong trường hợp đủ điều kiện, mức hỗ trợ và thời gian hỗ trợ phụ thuộc vào (1) tỷ lệ phần trăm diện tích đất nông nghiệp bị thu hồi so với diện tích đang sử dụng (30‑70% hoặc trên 70%); (2) việc hộ có phải di chuyển chỗ ở hay không; (3) nếu phải di chuyển, địa bàn mới có điều kiện kinh tế‑xã hội khó khăn hay đặc biệt khó khăn; (4) diện tích đất nông nghiệp thu hồi được tính riêng cho từng dự án tại xã/phường/thị trấn nơi quyết định phê duyệt, không cộng dồn với các dự án trước; (5) mức hỗ trợ cho mỗi nhân khẩu là tiền tương đương 30 kg gạo trong 01 tháng theo giá trung bình địa phương. Thời gian hỗ trợ: • Thu hồi 30‑70%: 6 tháng (không di chuyển) hoặc 12 tháng (di chuyển); tối đa 24 tháng nếu di chuyển tới vùng khó khăn, 36 tháng nếu vùng đặc biệt khó khăn. • Thu hồi trên 70%: 12 tháng (không di chuyển) hoặc 24 tháng (di chuyển); tối đa 36 tháng nếu di chuyển tới vùng khó khăn, 48 tháng nếu vùng đặc biệt khó khăn.",
+        "citation_ids": [
+          "C1"
+        ],
+        "section": "direct"
+      },
+      {
+        "kind": "legal_rule",
+        "text": "Nếu hộ gia đình, cá nhân đang sử dụng đất nông nghiệp bị thu hồi dưới 30% diện tích hoặc không đủ điều kiện bồi thường về đất (hoặc là người nhận giao khoán đất từ doanh nghiệp quốc doanh, tập đoàn nông nghiệp, hợp tác xã), Ủy ban nhân dân cấp tỉnh quyết định mức hỗ trợ, thời gian hỗ trợ và định kỳ chi trả phù hợp, nhưng mức hỗ trợ không được vượt quá mức quy định tại khoản 1 Điều 19 (tương đương 30 kg gạo cho mỗi nhân khẩu).",
+        "citation_ids": [
+          "C1"
+        ],
+        "section": "direct"
+      }
+    ],
+    "missing_facts": [],
+    "next_steps": [],
+    "out_of_scope": false
+  }
+}

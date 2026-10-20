@@ -1,0 +1,45 @@
+F.                                                                       [100%]
+=================================== FAILURES ===================================
+____ test_unmet_user_housing_premise_is_not_a_new_statutory_trigger[False] _____
+
+store = <landlaw.store.Store object at 0x775b623ac980>
+settings = Settings(app_env='development', llm_provider='groq', groq_api_key=SecretStr('**********'), groq_model='openai/gpt-oss-...using_premis0/data'), reports_dir=PosixPath('/tmp/pytest-of-dovh25x/pytest-9/test_unmet_user_housing_premis0/reports'))
+use_source_rule = False
+
+    @pytest.mark.parametrize('use_source_rule',[False,True])
+    async def test_unmet_user_housing_premise_is_not_a_new_statutory_trigger(store,settings,use_source_rule):
+        import json
+        from datetime import date
+        from pathlib import Path
+        from conftest import release
+        from test_agent import FakeProvider, noop
+        from landlaw.agent import Agent, Plan, Verification
+        from landlaw.models import ChatRequest, Claim, Draft, Evidence
+        from landlaw.provider import Budget
+        fixture=json.loads(Path('tests/fixtures/citizen-n04-negative-premise.json').read_text())
+        docs=[]
+        for source in fixture['sources']:
+            doc=document(text=source['excerpt']).model_copy(update={'id':source['document_id']})
+            doc.chunks[0].id=source['id'];doc.chunks[0].document_id=doc.id;doc.chunks[0].locator=source['locator']
+            docs.append(doc)
+        # All passages are from the same act; retain them in one fixture document.
+        doc=docs[0].model_copy(update={'chunks':[d.chunks[0] for d in docs]})
+        payload=release(store,[doc])
+        text=('Việc phê duyệt phương án bồi thường, hỗ trợ, tái định cư và việc bố trí tái định cư '
+              'phải được hoàn thành trước khi có quyết định thu hồi đất.') if use_source_rule else fixture['claim']
+        state={'request':ChatRequest(session_id='00000000-0000-4000-8000-000000000000',message='Chưa được bố trí chỗ ở mới thì thu hồi đất cần bảo đảm gì?'),
+               'budget':Budget(),'release':payload,'as_of':date(2024,8,2),'plan':Plan(),
+               'evidence':[Evidence(document=doc,chunk=c,applicability='current') for c in doc.chunks],
+               'draft':Draft(status='answered',claims=[Claim(text=text,citation_ids=[c.id for c in doc.chunks])]),
+               'trace':[],'emit':noop}
+        agent=Agent(store,FakeProvider(settings,verification=Verification(supported_claim_indexes=[0])))
+        await agent.verify(state);await agent.finish(state)
+>       assert bool(state['result'].verified_claims) is use_source_rule
+E       AssertionError: assert True is False
+E        +  where True = bool([Claim(kind='legal_rule', text='Khi Nhà nước thu hồi đất và thực hiện tái định cư, nếu chưa bố trí chỗ ở mới cho người...tion_ids=['luat-dat-dai-2024-93-1-0', 'luat-dat-dai-2024-94-0-parent', 'luat-dat-dai-2024-109-1-0'], section='direct')])
+E        +    where [Claim(kind='legal_rule', text='Khi Nhà nước thu hồi đất và thực hiện tái định cư, nếu chưa bố trí chỗ ở mới cho người...tion_ids=['luat-dat-dai-2024-93-1-0', 'luat-dat-dai-2024-94-0-parent', 'luat-dat-dai-2024-109-1-0'], section='direct')] = ChatResult(status='answered', publication_profile='academic', quality_status='academic_prototype', retrieval_mode='una...9-1-0'], evidence_chunk_ids=['luat-dat-dai-2024-93-1-0', 'luat-dat-dai-2024-94-0-parent', 'luat-dat-dai-2024-109-1-0']).verified_claims
+
+tests/test_citizen.py:313: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_citizen.py::test_unmet_user_housing_premise_is_not_a_new_statutory_trigger[False]
+1 failed, 1 passed, 23 deselected in 0.66s

@@ -1,0 +1,16 @@
+
+> hanoi-land-law-web@0.1.0 test
+> vitest run src
+
+
+ RUN  v5.0.3 /home/dovh25x/projects/land-law-chatbot/frontend
+
+
+ Test Files  4 passed (4)
+      Tests  14 passed (14)
+   Start at  04:21:17
+   Duration  3.50s (tests 44%, transform 37%, import 14%, worker 5%)
+
+    Isolate  4 workers spawned · ~1.02s startup each (spawn + environment, per file)
+             at least ~339ms faster with isolate: false — reuses workers across files instead of one per file
+

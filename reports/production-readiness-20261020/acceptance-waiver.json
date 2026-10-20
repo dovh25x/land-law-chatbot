@@ -1,0 +1,24 @@
+{
+  "recorded_at": "2026-10-20T04:01:22.222099+00:00",
+  "authorization": "Explicit user instruction: Hãy bỏ qua tiêu chí này",
+  "waived_requirements": [
+    "independent_human_legal_reviewer_before_release",
+    "pre_release_user_usability_study"
+  ],
+  "not_completed": [
+    "independent_human_legal_review",
+    "real_user_usability_study"
+  ],
+  "remaining_requirements": [
+    "source_provenance_and_applicability",
+    "reviewed_and_frozen_evaluation_annotations",
+    "software_regressions",
+    "provider_budget_and_quota",
+    "metadata_only_server_storage",
+    "pinned_tested_source",
+    "corpus_backup_restore",
+    "production_identity_and_live_verification"
+  ],
+  "review_method_for_remaining_content": "Implementation-agent technical source review, explicitly not independent legal certification.",
+  "scope": "Waiver is not a passing score and does not authorize fabricated receipts, weakened runtime verification or omitted failed attempts."
+}

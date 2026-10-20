@@ -1,0 +1,4 @@
+{"evaluation_provider_format_error": "json_validate_failed"}
+{"evaluation_provider_quota": {"scope": "TPM", "limit": 8000, "used": 5892, "requested": 4599}}
+{"evaluation_progress": {"case_id": "N04", "mode": "agentic", "status": "insufficient_evidence", "elapsed_ms": 45290, "llm_calls": 4, "checkpoint_records": 8}}
+{"retried_case": "N04", "results": [{"mode": "agentic", "completed": 8, "reviewed": 0, "llm_calls": 15, "limited_or_error": 0}], "serving_database_changed": false}

@@ -252,3 +252,64 @@ async def test_n02_contract_paraphrase_cannot_lose_source_actor_scope(store,sett
     agent=Agent(store,FakeProvider(settings,verification=Verification(supported_claim_indexes=[0])))
     await agent.verify(state);await agent.finish(state)
     assert not state['result'].verified_claims and not state['result'].citations
+
+
+@pytest.mark.parametrize('reference,expected', [('khoản 1 Điều 104',False),('khoản 2 Điều 104',True),('Điều 104',True),('cost_scope',True)])
+async def test_actual_n05_authority_cannot_be_attributed_to_the_cost_clause(store,settings,reference,expected):
+    import json
+    from datetime import date
+    from pathlib import Path
+    from conftest import release
+    from test_agent import FakeProvider, noop
+    from landlaw.agent import Agent, Plan, Verification
+    from landlaw.models import ChatRequest, Claim, Draft, Evidence
+    from landlaw.provider import Budget
+    fixture=json.loads(Path('tests/fixtures/citizen-n05-authority-clause.json').read_text())
+    doc=document(text=fixture['source']);doc.chunks[0].locator='Điều 104'
+    payload=release(store,[doc])
+    text=fixture['claim'].replace('khoản 1 Điều 104',reference)
+    if reference=='cost_scope':
+        text='Ủy ban nhân dân cấp tỉnh quy định mức bồi thường tại khoản 1 Điều 104.'
+    state={'request':ChatRequest(session_id='00000000-0000-4000-8000-000000000000',message='Ai quy định mức bồi thường chi phí di chuyển tài sản?'),
+           'budget':Budget(),'release':payload,'as_of':date(2024,8,2),'plan':Plan(),
+           'evidence':[Evidence(document=doc,chunk=doc.chunks[0],applicability='current')],
+           'draft':Draft(status='answered',claims=[Claim(text=text,citation_ids=[doc.chunks[0].id])]),
+           'trace':[],'emit':noop}
+    agent=Agent(store,FakeProvider(settings,verification=Verification(supported_claim_indexes=[0])))
+    await agent.verify(state);await agent.finish(state)
+    assert bool(state['result'].verified_claims) is expected
+    if not expected:
+        assert not state['result'].citations and text not in state['result'].content
+
+
+@pytest.mark.parametrize('use_source_rule',[False,True])
+async def test_unmet_user_housing_premise_is_not_a_new_statutory_trigger(store,settings,use_source_rule):
+    import json
+    from datetime import date
+    from pathlib import Path
+    from conftest import release
+    from test_agent import FakeProvider, noop
+    from landlaw.agent import Agent, Plan, Verification
+    from landlaw.models import ChatRequest, Claim, Draft, Evidence
+    from landlaw.provider import Budget
+    fixture=json.loads(Path('tests/fixtures/citizen-n04-negative-premise.json').read_text())
+    docs=[]
+    for source in fixture['sources']:
+        doc=document(text=source['excerpt']).model_copy(update={'id':source['document_id']})
+        doc.chunks[0].id=source['id'];doc.chunks[0].document_id=doc.id;doc.chunks[0].locator=source['locator']
+        docs.append(doc)
+    # All passages are from the same act; retain them in one fixture document.
+    doc=docs[0].model_copy(update={'chunks':[d.chunks[0] for d in docs]})
+    payload=release(store,[doc])
+    text=('Việc phê duyệt phương án bồi thường, hỗ trợ, tái định cư và việc bố trí tái định cư '
+          'phải được hoàn thành trước khi có quyết định thu hồi đất.') if use_source_rule else fixture['claim']
+    state={'request':ChatRequest(session_id='00000000-0000-4000-8000-000000000000',message='Chưa được bố trí chỗ ở mới thì thu hồi đất cần bảo đảm gì?'),
+           'budget':Budget(),'release':payload,'as_of':date(2024,8,2),'plan':Plan(),
+           'evidence':[Evidence(document=doc,chunk=c,applicability='current') for c in doc.chunks],
+           'draft':Draft(status='answered',claims=[Claim(text=text,citation_ids=[c.id for c in doc.chunks])]),
+           'trace':[],'emit':noop}
+    agent=Agent(store,FakeProvider(settings,verification=Verification(supported_claim_indexes=[0])))
+    await agent.verify(state);await agent.finish(state)
+    assert bool(state['result'].verified_claims) is use_source_rule
+    if not use_source_rule:
+        assert not state['result'].citations

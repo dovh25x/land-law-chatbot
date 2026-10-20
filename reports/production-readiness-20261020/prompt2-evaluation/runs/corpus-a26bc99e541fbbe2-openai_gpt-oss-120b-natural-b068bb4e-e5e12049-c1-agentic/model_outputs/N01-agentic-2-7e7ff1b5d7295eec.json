@@ -1,0 +1,24 @@
+{
+  "scope": "Unverified structured model output for developer diagnosis; never delivered as a chatbot answer. No hidden reasoning.",
+  "schema": "Verification",
+  "case_mode": "N01-agentic",
+  "llm_calls": 2,
+  "output": {
+    "supported_claim_indexes": [
+      0
+    ],
+    "supporting_quotes": [],
+    "supporting_spans": [
+      {
+        "claim_index": 0,
+        "citation_id": "C1",
+        "span_id": "S1"
+      }
+    ],
+    "issues": [
+      "Claim 1 (index 1) về bồi thường nhà xưởng bằng giá trị xây dựng mới không được chứng minh bởi đoạn trích S2, vì Điều 102 chỉ quy định bồi thường cho nhà ở và công trình phục vụ đời sống gắn liền với đất của hộ gia đình, không bao gồm nhà xưởng công nghiệp."
+    ],
+    "needs_more_evidence": false,
+    "followup_query": "Vui lòng cung cấp quy định pháp luật cụ thể về bồi thường cho nhà xưởng (công trình công nghiệp) khi phải tháo dỡ hoặc di chuyển do Nhà nước thu hồi đất."
+  }
+}

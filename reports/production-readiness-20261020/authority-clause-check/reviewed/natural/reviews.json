@@ -1,0 +1,38 @@
+{
+  "N01": {
+    "answer_sha256": "706a04076e523ef2c8eb46e2b68cdd3c03108fa39f0af927b31f471d0cdcc7d6",
+    "verdict": "pass",
+    "note": "Phân biệt chi phí di chuyển và thiệt hại tháo dỡ/vận chuyển/lắp đặt máy móc; không bảo đảm mức tiền. Đối chiếu Điều 104 snapshot.",
+    "review_method": "AI technical rubric/source review; independent legal/user-research criteria waived by owner; not legal acceptance"
+  },
+  "N02": {
+    "answer_sha256": "cde64881e9ff0b419345709c16a0627d52d46d6d3df1b9aa68123faaf0761bdc",
+    "verdict": "fail",
+    "note": "Không trả lời được câu hỏi có căn cứ trong corpus; abstention giữ an toàn nhưng không đạt tác vụ.",
+    "review_method": "AI technical rubric/source review; independent legal/user-research criteria waived by owner; not legal acceptance"
+  },
+  "N03": {
+    "answer_sha256": "06f16ccaa6a134ab373a38285062e34e0b89990edad160af523856541bee75cb",
+    "verdict": "fail",
+    "note": "Không trả lời được câu hỏi có nguồn trong corpus; abstention giữ an toàn nhưng không đạt tác vụ.",
+    "review_method": "AI technical rubric/source review; independent legal/user-research criteria waived by owner; not legal acceptance"
+  },
+  "N04": {
+    "answer_sha256": "4942be4d5ae78b096674b949a100216510d180cb03564173aabe1b8f09210f36",
+    "verdict": "fail",
+    "note": "Biến tình huống chưa bố trí chỗ ở của người hỏi thành tiền đề pháp luật cho nhóm nghĩa vụ khác; mở rộng hình thức bồi thường mà thiếu chủ thể/điều kiện. Đã tái hiện regression; guard ở bản sau sẽ veto cả nhóm.",
+    "review_method": "AI technical rubric/source review; independent legal/user-research criteria waived by owner; not legal acceptance"
+  },
+  "N05": {
+    "answer_sha256": "4bf10fe6e31aea2d74040ab4563a527dd0c34b08a40b7690a98e709393ebe87e",
+    "verdict": "pass",
+    "note": "Nêu đúng UBND cấp tỉnh; citation toàn Điều 104 chứa khoản 2. Không bảo đảm mức tiền.",
+    "review_method": "AI technical rubric/source review; independent legal/user-research criteria waived by owner; not legal acceptance"
+  },
+  "N06": {
+    "answer_sha256": "8df9864c1b90f87412696e111e4964f1f7b405551d034683b6f95eee48ac2e40",
+    "verdict": "fail",
+    "note": "Không hoàn tất vì giới hạn TPD thật của Groq; giữ nguyên attempt và mẫu số, không gọi là pass hoặc lỗi diễn giải pháp luật.",
+    "review_method": "AI technical rubric/source review; independent legal/user-research criteria waived by owner; not legal acceptance"
+  }
+}

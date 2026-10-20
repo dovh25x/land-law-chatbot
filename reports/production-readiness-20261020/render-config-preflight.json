@@ -1,0 +1,21 @@
+{
+  "checked_at": "2026-10-20T04:23:55.323583+00:00",
+  "read_only": true,
+  "required_values_present": {
+    "DATABASE_URL": true,
+    "GROQ_API_KEY": true,
+    "INGRESS_SECRET": true,
+    "IP_HASH_SECRET": true,
+    "TURNSTILE_SECRET_KEY": true,
+    "PUBLIC_HOSTNAME": true
+  },
+  "admin_database_credential_absent": true,
+  "generation_model": "openai/gpt-oss-120b",
+  "embedding_model": "multilingual-e5-small-onnx-q8-window-v1",
+  "embedding_dimensions": "384",
+  "allow_stale_generation": "true",
+  "generation_enabled": "true",
+  "public_hostname": "hanoi-land-law.pages.dev",
+  "operator_key_matches_runtime_key": true,
+  "runtime_database_matches_local_runtime": true
+}

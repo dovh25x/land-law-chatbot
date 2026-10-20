@@ -202,14 +202,14 @@ def quote_matches(quote, text):
 
 
 def clause_attribution_issues(claim, evidence):
-    """Reject literal list examples attributed to a different numbered clause.
+    """Reject literal examples/authorities attributed to another numbered clause.
 
     This is a narrow structural check, not a legal entailment classifier. Only
     explicit clause/article attributions and unambiguous source list prefixes
     are compared; the semantic verifier still checks the whole proposition.
     """
     issues = []
-    for sentence in re.split(r'[.;\n]', normalize(claim.text)):
+    for sentence in re.split(r'[.;\n]', re.sub(r'\bubnd\b', 'uy ban nhan dan', normalize(claim.text))):
         references = set(re.findall(r'\bkhoan\s+(\d+)\s+dieu\s+(\d+[a-z]?)\b', sentence))
         if len(references) != 1:
             continue
@@ -233,6 +233,15 @@ def clause_attribution_issues(claim, evidence):
             if number == clause:
                 continue
             for body in texts:
+                # "According to clause 1" attributes the authority itself;
+                # "the costs in clause 1" is a valid cross-reference from
+                # the separate authority clause and must remain available.
+                attribution = re.search(
+                    rf'\b(?:theo|can cu(?: vao)?|duoc quy dinh tai)\s+(?:quy dinh tai\s+)?khoan {clause} dieu {article}\b',
+                    sentence)
+                actor = re.match(r'(?:chu tich )?uy ban nhan dan cap (?:tinh|huyen|xa)\b', body)
+                if attribution and actor and actor[0] in sentence and actor[0] not in target:
+                    issues.append(f'Chủ thể thẩm quyền nằm tại khoản {number}, không phải khoản {clause} Điều {article}')
                 for point in re.split(r'\b[a-zđ]\)\s+', body)[1:]:
                     prefix = ' '.join(re.findall(r'\w+', point)[:4])
                     if len(prefix.split()) == 4 and prefix in sentence and prefix not in target:
@@ -1197,6 +1206,10 @@ class Agent:
                 structural_issues.append(f'Claim {index}: không biến điều kiện hợp đồng giao khoán của nhóm sử dụng đất cụ thể thành điều kiện chung nhận hỗ trợ')
             groups=('cong dong dan cu','to chuc ton giao','to chuc nuoc ngoai','to chuc kinh te','nguoi goc viet nam','doanh nghiep nha nuoc')
             source_body=normalize(' '.join(evidence[c].chunk.text for c in claim.citation_ids if c in evidence))
+            unmet_housing = r'\b(?:neu|khi|truong hop)\s+chua\s+(?:duoc\s+)?bo tri\b'
+            if (claim.kind=='legal_rule' and re.search(unmet_housing, normalized_claim)
+                    and not re.search(r'\bchua\s+(?:duoc\s+)?bo tri\b', source_body)):
+                structural_issues.append(f'Claim {index}: chưa được bố trí chỗ ở là tình huống người hỏi, không phải điều kiện phát sinh các nghĩa vụ khác trong nguồn; cần nêu đúng quy tắc và thứ tự thực hiện được nguồn chứng minh')
             living_amount=('ho tro on dinh doi song' in normalized_claim
                 and 'neu du dieu kien duoc boi thuong ve dat' in source_body
                 and bool(re.search(r'\b(?:30|70)\s*%|\b30\s*kg',normalized_claim)))

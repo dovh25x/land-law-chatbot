@@ -1,0 +1,82 @@
+{
+  "checked_at": "2026-10-20T04:17:02.756917+00:00",
+  "review_method": "Implementation-agent technical source inspection; user waived independent human review, no independent legal certification.",
+  "active_corpus_changed": false,
+  "indexed_new_documents": 0,
+  "embeddings_generated": 0,
+  "sources": [
+    {
+      "id": "hanoi-1132-2025-procedure",
+      "disposition": "reference_only_pending",
+      "evidence": [
+        "source-fetch-attempt-2.json",
+        "qd-1132-source-fetch.json"
+      ],
+      "findings": [
+        "Official publication page identifies document number/date and links the attachment.",
+        "All three attachment pages extracted and first/appendix pages visually inspected. Attachment header/signature date/number left blank.",
+        "Appendix is a procedure catalogue, not a complete required-paper checklist.",
+        "Current applicability requires amended complaint law and authority/transition checks; no operational receipt issued."
+      ]
+    },
+    {
+      "id": "hanoi-reception-calendar",
+      "disposition": "reference_only_pending",
+      "evidence": [
+        "source-fetch-attempt-1.json"
+      ],
+      "findings": [
+        "Page has reception entries for the observation date.",
+        "Footer contact belongs to the portal and cannot establish a particular filing office.",
+        "Date-specific calendar cannot be used as a general appointment promise."
+      ]
+    },
+    {
+      "id": "hanoi-reception-relocation-2026",
+      "disposition": "reference_only_pending",
+      "evidence": [
+        "source-fetch-attempt-2.json"
+      ],
+      "findings": [
+        "Official PDF fetched, extracted and visually inspected; header has no signed number/date.",
+        "Old publication URL returns HTTP200 after redirecting to an error/404 path. HTTP success is not source validation.",
+        "No independent proof of latest office jurisdiction/acceptance channels; not used to prescribe where to file."
+      ]
+    },
+    {
+      "id": "citizen-lienminh-reception-calendar",
+      "disposition": "not_promoted",
+      "evidence": [
+        "source-fetch-attempt-1.json"
+      ],
+      "findings": [
+        "Listed reception notices are from earlier months, with HĐND reception distinct from a complaint-handling office.",
+        "Portal footer cannot establish jurisdiction."
+      ]
+    },
+    {
+      "id": "citizen-first-complaint-commune",
+      "disposition": "unavailable_pending",
+      "evidence": [
+        "source-fetch-attempt-1.json"
+      ],
+      "findings": [
+        "Official detail endpoint returned503; search snippets are not an approved full source."
+      ]
+    },
+    {
+      "id": "legacy-coverage-gaps",
+      "disposition": "pending_unchanged",
+      "evidence": [
+        "legacy-gap-fetch-attempt-1.json"
+      ],
+      "findings": [
+        "Seven legacy documents remain outside indexed corpus.",
+        "Five metadata pages downloaded; no full legal body in those HTML pages. Two other endpoints returned403.",
+        "OCR sidecars show visible number/date/text errors; not mass-approved or relabeled reviewed."
+      ]
+    }
+  ],
+  "operational_receipts_issued": 0,
+  "freshness_receipts_issued": 0
+}

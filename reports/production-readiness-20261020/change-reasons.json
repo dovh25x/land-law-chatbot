@@ -1,0 +1,42 @@
+{
+  "recorded_at": "2026-10-20T04:17:49.385339+00:00",
+  "base_commit": "d58e3b486fc9ad66c936402b465f25e15a9ff8f5",
+  "changes": [
+    {
+      "component": "synthesis_prompt",
+      "reason": "Contradictory next_steps instructions plus negative user premise repeated as a legal trigger in actual N04; bounded prompt edit, verifier/model/budget unchanged.",
+      "evidence": [
+        "natural-attempt-1/",
+        "prompt2-evaluation/"
+      ]
+    },
+    {
+      "component": "source_role_and_actor_guards",
+      "status": "regression_reproduced_before_fix",
+      "reason": "Actual N02 prompt2 still overgeneralizes contract-land actor and says assistance only applies to eligible-for-compensation group while source has another branch.",
+      "evidence": [
+        "tests/fixtures/citizen-n02-contract-scope.json",
+        "/tmp/production-n02-contract-before.log"
+      ]
+    },
+    {
+      "component": "explicit_clause_actor_attribution",
+      "status": "regression_reproduced_before_fix",
+      "reason": "Actual prompt2 N05 attributes the provincial authority to clause 1 Article 104 although that actor appears in clause 2. Check only explicit authority attributions; preserve a valid cross-reference to costs in clause 1.",
+      "evidence": [
+        "tests/fixtures/citizen-n05-authority-clause.json",
+        "logs/production-n05-before.log"
+      ]
+    },
+    {
+      "component": "unmet_housing_premise_guard",
+      "status": "regression_reproduced_before_fix",
+      "reason": "Actual N04 turns the user premise of not being resettled into a statutory trigger for other duties. Guard requires the cited text to contain that negative condition; it preserves the positive source-proven completion-before-recovery rule.",
+      "evidence": [
+        "tests/fixtures/citizen-n04-negative-premise.json",
+        "logs/production-n04-before.log"
+      ]
+    }
+  ],
+  "scope": "Known failures retained. No case/gold/rubric edits and no transfer of prior answer reviews to changed configurations."
+}

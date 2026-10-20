@@ -1,0 +1,19 @@
+{"evaluation_progress": {"case_id": "N01", "mode": "agentic", "status": "answered", "elapsed_ms": 18071, "llm_calls": 2, "checkpoint_records": 1}}
+{"evaluation_provider_cooldown_seconds": 41.32}
+{"evaluation_provider_quota": {"scope": "TPM", "limit": 8000, "used": 3858, "requested": 4517}}
+{"evaluation_progress": {"case_id": "N02", "mode": "agentic", "status": "insufficient_evidence", "elapsed_ms": 15798, "llm_calls": 3, "checkpoint_records": 2}}
+{"evaluation_provider_cooldown_seconds": 57.11}
+{"evaluation_progress": {"case_id": "N03", "mode": "agentic", "status": "answered", "elapsed_ms": 12212, "llm_calls": 2, "checkpoint_records": 3}}
+{"evaluation_provider_cooldown_seconds": 47.36}
+{"evaluation_provider_format_error": "json_validate_failed"}
+{"evaluation_provider_quota": {"scope": "TPM", "limit": 8000, "used": 3872, "requested": 4320}}
+{"evaluation_provider_format_error": "json_validate_failed"}
+{"evaluation_progress": {"case_id": "N04", "mode": "agentic", "status": "error", "elapsed_ms": 15742, "llm_calls": 3, "checkpoint_records": 4}}
+{"evaluation_provider_cooldown_seconds": 54.49}
+{"evaluation_progress": {"case_id": "N05", "mode": "agentic", "status": "answered", "elapsed_ms": 8693, "llm_calls": 2, "checkpoint_records": 5}}
+{"evaluation_provider_cooldown_seconds": 42.15}
+{"evaluation_progress": {"case_id": "N06", "mode": "agentic", "status": "answered", "elapsed_ms": 9095, "llm_calls": 2, "checkpoint_records": 6}}
+{"evaluation_provider_cooldown_seconds": 41.75}
+{"evaluation_progress": {"case_id": "N07", "mode": "agentic", "status": "clarification_needed", "elapsed_ms": 195, "llm_calls": 0, "checkpoint_records": 7}}
+{"evaluation_progress": {"case_id": "N08", "mode": "agentic", "status": "insufficient_evidence", "elapsed_ms": 194, "llm_calls": 0, "checkpoint_records": 8}}
+{"split": "natural", "run_id": "corpus-a26bc99e541fbbe2-openai_gpt-oss-120b-natural-b068bb4e-c54fb062-c1-agentic", "results": [{"mode": "agentic", "completed": 8, "reviewed": 0, "llm_calls": 14, "limited_or_error": 1}]}

@@ -1,0 +1,92 @@
+{
+  "prepared_at": "2026-10-20T04:09:29.393790+00:00",
+  "destination": "https://api.groq.com/openai/v1/chat/completions",
+  "model": "openai/gpt-oss-120b",
+  "suites": {
+    "natural": {
+      "cases": 8,
+      "sha256": "b068bb4e717439938c96e459a63c9a1832b1990d88005cf6a768d9e9c0871e74",
+      "case_ids": [
+        "N01",
+        "N02",
+        "N03",
+        "N04",
+        "N05",
+        "N06",
+        "N07",
+        "N08"
+      ],
+      "payload_fields": [
+        "question",
+        "as_of",
+        "bounded_frozen_synthetic_history_if_present",
+        "selected_official_source_excerpts_and_metadata"
+      ]
+    },
+    "smoke": {
+      "cases": 20,
+      "sha256": "38aa8da29bf41a94b4cf8fd8a5ca6769232b87884aeed573c10f5586a09d7254",
+      "case_ids": [
+        "S01",
+        "S02",
+        "S03",
+        "S04",
+        "S05",
+        "S06",
+        "S07",
+        "S08",
+        "S09",
+        "S10",
+        "S11",
+        "S12",
+        "S13",
+        "S14",
+        "S15",
+        "S16",
+        "S17",
+        "S18",
+        "S19",
+        "S20"
+      ],
+      "payload_fields": [
+        "question",
+        "as_of",
+        "bounded_frozen_synthetic_history_if_present",
+        "selected_official_source_excerpts_and_metadata"
+      ]
+    },
+    "supplemental": {
+      "cases": 4,
+      "sha256": "e6bb5c9f7ba3a589237835b68d95e491ff2c16aad83683a8437f4a74e4120fea",
+      "case_ids": [
+        "X01",
+        "X02",
+        "X03",
+        "X04"
+      ],
+      "payload_fields": [
+        "question",
+        "as_of",
+        "bounded_frozen_synthetic_history_if_present",
+        "selected_official_source_excerpts_and_metadata"
+      ]
+    }
+  },
+  "total_cases": 32,
+  "per_turn_budget": {
+    "llm_requests_including_retries": 6,
+    "tools": 12,
+    "retrieval_rounds": 2,
+    "repairs": 1,
+    "deadline_seconds": 90
+  },
+  "retention": "All attempts and failed cases retained; no best-run selection.",
+  "not_in_payload": [
+    "real_user_conversations",
+    "session_bearer_tokens",
+    "database_credentials",
+    "environment_secrets"
+  ],
+  "storage": "Reuse the retained isolated evaluation PostgreSQL; never serving database.",
+  "status": "Awaiting explicit approval for smoke/supplemental egress after automatic-review rejection."
+}

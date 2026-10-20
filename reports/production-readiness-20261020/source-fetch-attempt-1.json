@@ -1,0 +1,39 @@
+{
+  "read_only_fetch": true,
+  "sources": [
+    {
+      "id": "citizen-first-complaint-commune",
+      "url": "https://thutuc.dichvucong.gov.vn/p/home/dvc-tthc-thu-tuc-hanh-chinh-chi-tiet.html?ma_thu_tuc=366083",
+      "checked_at": "2026-10-20T03:57:55.691301+00:00",
+      "legal_review_status": "pending",
+      "operational_approval": false,
+      "http_status": 503,
+      "final_url": "https://thutuc.dichvucong.gov.vn/p/home/dvc-tthc-thu-tuc-hanh-chinh-chi-tiet.html?ma_thu_tuc=366083"
+    },
+    {
+      "id": "citizen-hanoi-reception-calendar",
+      "url": "https://hanoi.gov.vn/lich-tiep-cong-dan",
+      "checked_at": "2026-10-20T03:57:55.692153+00:00",
+      "legal_review_status": "pending",
+      "operational_approval": false,
+      "http_status": 200,
+      "final_url": "https://hanoi.gov.vn/lich-tiep-cong-dan",
+      "raw_path": "data/raw/citizen-readiness-20261020/citizen-hanoi-reception-calendar.html",
+      "raw_sha256": "fa74e4e936dd27989883cc44b42a2f3a6cdc054f0cb4242409ef1db6e993948e",
+      "bytes": 83610
+    },
+    {
+      "id": "citizen-lienminh-reception-calendar",
+      "url": "https://lienminh.hanoi.gov.vn/lich-tiep-cong-dan",
+      "checked_at": "2026-10-20T03:57:55.692978+00:00",
+      "legal_review_status": "pending",
+      "operational_approval": false,
+      "http_status": 200,
+      "final_url": "https://lienminh.hanoi.gov.vn/lich-tiep-cong-dan",
+      "raw_path": "data/raw/citizen-readiness-20261020/citizen-lienminh-reception-calendar.html",
+      "raw_sha256": "20259d7c5bdd78a990e16c7c2558a5568fa1d3ce5d57bef8f9f217bd9909d2b5",
+      "bytes": 97263
+    }
+  ],
+  "scope": "Fetch/provenance only; HTTP success does not approve applicability or freshness."
+}

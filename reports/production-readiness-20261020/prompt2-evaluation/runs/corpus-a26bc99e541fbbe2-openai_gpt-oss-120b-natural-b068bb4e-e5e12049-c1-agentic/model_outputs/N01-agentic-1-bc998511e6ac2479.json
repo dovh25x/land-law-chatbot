@@ -1,0 +1,31 @@
+{
+  "scope": "Unverified structured model output for developer diagnosis; never delivered as a chatbot answer. No hidden reasoning.",
+  "schema": "Draft",
+  "case_mode": "N01-agentic",
+  "llm_calls": 1,
+  "output": {
+    "status": "answered",
+    "summary": "",
+    "claims": [
+      {
+        "kind": "legal_rule",
+        "text": "Khi Nhà nước thu hồi đất và phải di chuyển tài sản, Nhà nước bồi thường chi phí tháo dỡ, di chuyển, lắp đặt; trong trường hợp tài sản là hệ thống máy móc, dây chuyền sản xuất, còn được bồi thường thêm phần thiệt hại phát sinh khi tháo dỡ, vận chuyển, lắp đặt (Điều 104).",
+        "citation_ids": [
+          "C1"
+        ],
+        "section": "direct"
+      },
+      {
+        "kind": "legal_rule",
+        "text": "Nếu nhà xưởng (công trình gắn liền với đất) phải tháo dỡ hoặc phá dỡ khi thu hồi đất, chủ sở hữu được bồi thường bằng giá trị xây dựng mới của công trình có tiêu chuẩn kỹ thuật tương đương (Điều 102 khoản 1).",
+        "citation_ids": [
+          "C2"
+        ],
+        "section": "explanation"
+      }
+    ],
+    "missing_facts": [],
+    "next_steps": [],
+    "out_of_scope": false
+  }
+}

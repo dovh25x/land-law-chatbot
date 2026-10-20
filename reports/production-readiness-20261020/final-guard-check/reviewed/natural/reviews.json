@@ -1,0 +1,50 @@
+{
+  "N01": {
+    "answer_sha256": "af5e7e6a4262413233d7b0a6c97ed7ef16be1e657f5018b78a446ff2c9f6a286",
+    "verdict": "pass",
+    "note": "Phân biệt chi phí di chuyển và thiệt hại tháo dỡ/vận chuyển/lắp đặt máy móc; không bảo đảm mức tiền. Đối chiếu Điều 104 snapshot.",
+    "review_method": "AI technical rubric/source review; independent legal/user-research criteria waived by owner; not legal acceptance"
+  },
+  "N02": {
+    "answer_sha256": "6f1cbaa1e21e8f0f1b848675ecd20c82fc776a57693e99de60958b2ea0dfccf8",
+    "verdict": "fail",
+    "note": "Không trả lời được câu hỏi có căn cứ trong corpus; abstention giữ an toàn nhưng không đạt tác vụ.",
+    "review_method": "AI technical rubric/source review; independent legal/user-research criteria waived by owner; not legal acceptance"
+  },
+  "N03": {
+    "answer_sha256": "10ed59f2ca9054a9e1e0ef092eaea430e683265e04b668da2a32316cc6486309",
+    "verdict": "fail",
+    "note": "Không trả lời được câu hỏi có nguồn trong corpus; abstention giữ an toàn nhưng không đạt tác vụ.",
+    "review_method": "AI technical rubric/source review; independent legal/user-research criteria waived by owner; not legal acceptance"
+  },
+  "N05": {
+    "answer_sha256": "4c957c2837044587320f11bec57b38c21db865d5ac92d25064acde961d5f1fcc",
+    "verdict": "pass",
+    "note": "Nêu đúng UBND cấp tỉnh; citation toàn Điều 104 chứa khoản 2. Không bảo đảm mức tiền.",
+    "review_method": "AI technical rubric/source review; independent legal/user-research criteria waived by owner; not legal acceptance"
+  },
+  "N06": {
+    "answer_sha256": "9da22d0f6550e81ff6129234d57ae7368c1d912c5f4402b1d9eec73968f7fb3d",
+    "verdict": "pass",
+    "note": "Nêu QĐ40/2026 thay QĐ56/2024 và thời điểm từ snapshot; không kết luận áp dụng cho một hồ sơ cũ cụ thể. Không xác nhận độ mới của nguồn hôm nay.",
+    "review_method": "AI technical rubric/source review; independent legal/user-research criteria waived by owner; not legal acceptance"
+  },
+  "N07": {
+    "answer_sha256": "e79ed44890252217247e832af4112c91e88680760d51fe37676c3df83a10f189",
+    "verdict": "pass",
+    "note": "Hỏi ngày quyết định/phương án, không bảo đảm suất tái định cư và không yêu cầu số hồ sơ.",
+    "review_method": "AI technical rubric/source review; independent legal/user-research criteria waived by owner; not legal acceptance"
+  },
+  "N08": {
+    "answer_sha256": "b0793df8a43db9721b56fa2add07284cd292d18f408fba5e162c96cb26b5546d",
+    "verdict": "pass",
+    "note": "Không xác nhận văn bản/mức tiền giả; phân biệt thiếu trong corpus với không tồn tại.",
+    "review_method": "AI technical rubric/source review; independent legal/user-research criteria waived by owner; not legal acceptance"
+  },
+  "N04": {
+    "answer_sha256": "6e9cf1a89f7addd42f39148eae65758f2d958685a0accf9dff26c6a278addd22",
+    "verdict": "fail",
+    "note": "Không nêu điều kiện bố trí tái định cư trước thu hồi; abstention không đạt tác vụ.",
+    "review_method": "AI technical rubric/source review; independent legal/user-research criteria waived by owner; not legal acceptance"
+  }
+}

@@ -1,0 +1,221 @@
+{
+  "recorded_at": "2026-10-20T04:39:51.121512+00:00",
+  "origin": "executed",
+  "record": {
+    "case_id": "N06",
+    "mode": "agentic",
+    "answer_origin": "deterministic",
+    "evaluation_context": [],
+    "result": {
+      "status": "limited",
+      "publication_profile": "academic",
+      "quality_status": "academic_prototype",
+      "retrieval_mode": "hybrid",
+      "coverage_gaps": [
+        {
+          "document_id": "qd-10-2017-hanoi",
+          "document_number": "10/2017/QĐ-UBND",
+          "title": "Quy định bồi thường, hỗ trợ và tái định cư Hà Nội (lịch sử)",
+          "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=189167",
+          "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+        },
+        {
+          "document_id": "qd-30-2019-hanoi",
+          "document_number": "30/2019/QĐ-UBND",
+          "title": "Quy định và bảng giá các loại đất Hà Nội 2020–2024 (lịch sử)",
+          "url": "https://vanban.hanoi.gov.vn/chi-tiet-van-ban/quyet-dinh-so-30-2019-qd-ubnd-cua-ubnd-tp-ha-noi-ve-viec-ban-hanh-quy-dinh-va-bang-gia-cac-loai-dat-189067",
+          "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+        },
+        {
+          "document_id": "qd-20-2023-hanoi",
+          "document_number": "20/2023/QĐ-UBND",
+          "title": "Sửa đổi bảng giá đất Quyết định 30/2019",
+          "url": "https://vbpl.vn/hanoi/Pages/vbpq-toanvan.aspx?ItemID=164473",
+          "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+        },
+        {
+          "document_id": "nd-123-2024",
+          "document_number": "123/2024/NĐ-CP",
+          "title": "Xử phạt vi phạm hành chính lĩnh vực đất đai",
+          "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=211356",
+          "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+        },
+        {
+          "document_id": "ring4-nq106-2022",
+          "document_number": "106/NQ-CP",
+          "title": "Triển khai Nghị quyết 56/2022/QH15 Vành đai 4",
+          "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=206398",
+          "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+        },
+        {
+          "document_id": "nd-01-2017",
+          "document_number": "01/2017/NĐ-CP",
+          "title": "Nghị định 01/2017/NĐ-CP sửa đổi, bổ sung một số nghị định quy định chi tiết thi hành Luật đất đai",
+          "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=187962",
+          "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+        },
+        {
+          "document_id": "nd-148-2020",
+          "document_number": "148/2020/NĐ-CP",
+          "title": "Nghị định 148/2020/NĐ-CP sửa đổi, bổ sung một số nghị định quy định chi tiết thi hành Luật Đất đai",
+          "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=202022",
+          "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+        }
+      ],
+      "content": "Nhà cung cấp AI đang giới hạn request. Vui lòng thử lại sau 202 giây.",
+      "citations": [],
+      "verified_claims": [],
+      "answer_schema_version": 1,
+      "answer_sections": [],
+      "answer_notices": [],
+      "clarification": null,
+      "source_context": {},
+      "need_more_context": null,
+      "as_of": "2026-10-17",
+      "corpus_release": "corpus-a26bc99e541fbbe2",
+      "trace_id": "ddfef06a-e7f9-49c9-9691-a2aded7e6e7c",
+      "trace": [
+        {
+          "step": "routing",
+          "tool": "search_law",
+          "summary": "Chưa có điều khoản chỉ định; tìm chứng cứ từ câu hỏi gốc trước khi tổng hợp.",
+          "document_ids": [],
+          "elapsed_ms": 5
+        },
+        {
+          "step": "plan",
+          "tool": null,
+          "summary": "Đã chọn 1 công cụ; chế độ agentic.",
+          "document_ids": [],
+          "elapsed_ms": 5
+        },
+        {
+          "step": "tool",
+          "tool": "search_law",
+          "summary": "Thu được 8 đoạn chứng cứ.",
+          "document_ids": [
+            "luat-142-2025",
+            "luat-dat-dai-2024",
+            "nd-88-2024",
+            "qd-10-2026-hanoi",
+            "qd-40-2026-hanoi",
+            "qd-56-2024-hanoi"
+          ],
+          "elapsed_ms": 4069
+        },
+        {
+          "step": "tool",
+          "tool": "open_article",
+          "summary": "Đã mở văn bản có quan hệ pháp lý để đối chiếu phạm vi.",
+          "document_ids": [
+            "qd-56-2024-hanoi"
+          ],
+          "elapsed_ms": 4397
+        },
+        {
+          "step": "tool",
+          "tool": "open_article",
+          "summary": "Đã mở văn bản có quan hệ pháp lý để đối chiếu phạm vi.",
+          "document_ids": [
+            "qd-38-2025-hanoi"
+          ],
+          "elapsed_ms": 4722
+        },
+        {
+          "step": "tool",
+          "tool": "open_article",
+          "summary": "Đã mở văn bản có quan hệ pháp lý để đối chiếu phạm vi.",
+          "document_ids": [
+            "qd-10-2026-hanoi"
+          ],
+          "elapsed_ms": 5045
+        },
+        {
+          "step": "applicability",
+          "tool": "check_effectivity",
+          "summary": "Đã kiểm tra 4 quan hệ pháp lý theo thời điểm.",
+          "document_ids": [
+            "qd-40-2026-hanoi"
+          ],
+          "elapsed_ms": 5045
+        },
+        {
+          "step": "tool",
+          "tool": "open_article",
+          "summary": "Đã mở văn bản có quan hệ pháp lý để đối chiếu phạm vi.",
+          "document_ids": [
+            "qd-40-2026-hanoi"
+          ],
+          "elapsed_ms": 5373
+        },
+        {
+          "step": "tool",
+          "tool": "open_article",
+          "summary": "Đã mở văn bản có quan hệ pháp lý để đối chiếu phạm vi.",
+          "document_ids": [
+            "qd-40-2026-hanoi"
+          ],
+          "elapsed_ms": 5630
+        },
+        {
+          "step": "tool",
+          "tool": "open_article",
+          "summary": "Đã mở văn bản có quan hệ pháp lý để đối chiếu phạm vi.",
+          "document_ids": [
+            "qd-10-2026-hanoi"
+          ],
+          "elapsed_ms": 5892
+        },
+        {
+          "step": "tool",
+          "tool": "open_article",
+          "summary": "Đã mở văn bản có quan hệ pháp lý để đối chiếu phạm vi.",
+          "document_ids": [
+            "qd-38-2025-hanoi"
+          ],
+          "elapsed_ms": 6408
+        },
+        {
+          "step": "applicability",
+          "tool": "check_effectivity",
+          "summary": "Đã kiểm tra 4 quan hệ pháp lý theo thời điểm.",
+          "document_ids": [
+            "qd-56-2024-hanoi"
+          ],
+          "elapsed_ms": 6408
+        },
+        {
+          "step": "tool",
+          "tool": "open_article",
+          "summary": "Đã mở điều khoản nguồn của quan hệ sửa đổi/thay thế.",
+          "document_ids": [
+            "luat-dat-dai-2024"
+          ],
+          "elapsed_ms": 6676
+        },
+        {
+          "step": "applicability",
+          "tool": "check_effectivity",
+          "summary": "Đã kiểm tra 5 quan hệ pháp lý theo thời điểm.",
+          "document_ids": [
+            "luat-dat-dai-2024"
+          ],
+          "elapsed_ms": 6676
+        }
+      ],
+      "missing_facts": [],
+      "llm_calls": 1,
+      "embedding_calls": 1,
+      "tool_calls": 12,
+      "token_usage": 0,
+      "elapsed_ms": 9642,
+      "model": "openai/gpt-oss-120b",
+      "embedding_model": "multilingual-e5-small-onnx-q8-window-v1",
+      "mode": "agentic",
+      "support_level": "insufficient",
+      "retry_after": 202,
+      "retrieved_chunk_ids": [],
+      "evidence_chunk_ids": []
+    }
+  }
+}

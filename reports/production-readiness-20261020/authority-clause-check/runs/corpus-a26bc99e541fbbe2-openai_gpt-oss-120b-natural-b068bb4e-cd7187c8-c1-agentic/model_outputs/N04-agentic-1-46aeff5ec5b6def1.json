@@ -1,0 +1,49 @@
+{
+  "scope": "Unverified structured model output for developer diagnosis; never delivered as a chatbot answer. No hidden reasoning.",
+  "schema": "Draft",
+  "case_mode": "N04-agentic",
+  "llm_calls": 1,
+  "output": {
+    "status": "answered",
+    "summary": "",
+    "claims": [
+      {
+        "kind": "legal_rule",
+        "text": "Khi Nhà nước thu hồi đất và thực hiện tái định cư, nếu chưa bố trí chỗ ở mới cho người có đất, việc thu hồi phải đáp ứng các yêu cầu sau: 1) Bảo đảm nguyên tắc bồi thường, hỗ trợ, tái định cư phải dân chủ, khách quan, công bằng, công khai, minh bạch, kịp thời và đúng quy định của pháp luật (Điều 91, khoản 1); 2) Người có đất thu hồi phải được bồi thường bằng đất có cùng mục đích sử dụng hoặc bằng tiền theo giá đất tại thời điểm phê duyệt phương án (Điều 91, khoản 2); 3) Người bị thu hồi, chủ sở hữu tài sản phải được hỗ trợ để duy trì việc làm, thu nhập và ổn định đời sống (Điều 91, khoản 3‑4); 4) Khu tái định cư phải hoàn thiện hạ tầng kỹ thuật, xã hội, phù hợp với quy hoạch chi tiết và truyền thống văn hoá, và phải được công khai thông báo ít nhất 15 ngày tại UBND xã và nơi tái định cư (Điều 111, khoản 1).",
+        "citation_ids": [
+          "C1",
+          "C2",
+          "C3"
+        ],
+        "section": "direct"
+      },
+      {
+        "kind": "legal_rule",
+        "text": "Điều 91 quy định nguyên tắc chung và hình thức bồi thường khi thu hồi đất, nhấn mạnh việc bồi thường phải công bằng và kịp thời.",
+        "citation_ids": [
+          "C1"
+        ],
+        "section": "explanation"
+      },
+      {
+        "kind": "legal_rule",
+        "text": "Điều 91 (ngữ cảnh) nêu rõ trách nhiệm hỗ trợ người có đất thu hồi để duy trì thu nhập và ổn định đời sống, đồng thời yêu cầu UBND cấp tỉnh, huyện lập và thực hiện dự án tái định cư trước khi có quyết định thu hồi.",
+        "citation_ids": [
+          "C2"
+        ],
+        "section": "explanation"
+      },
+      {
+        "kind": "legal_rule",
+        "text": "Điều 111 quy định thủ tục thông báo và công khai về kế hoạch bố trí tái định cư, phải thông báo ít nhất 15 ngày tại UBND xã và nơi tái định cư.",
+        "citation_ids": [
+          "C3"
+        ],
+        "section": "explanation"
+      }
+    ],
+    "missing_facts": [],
+    "next_steps": [],
+    "out_of_scope": false
+  }
+}

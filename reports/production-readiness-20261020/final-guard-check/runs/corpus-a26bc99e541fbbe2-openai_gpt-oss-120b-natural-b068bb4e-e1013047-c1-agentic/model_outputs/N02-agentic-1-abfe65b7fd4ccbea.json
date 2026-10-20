@@ -1,0 +1,39 @@
+{
+  "scope": "Unverified structured model output for developer diagnosis; never delivered as a chatbot answer. No hidden reasoning.",
+  "schema": "Draft",
+  "case_mode": "N02-agentic",
+  "llm_calls": 1,
+  "output": {
+    "status": "answered",
+    "summary": "",
+    "claims": [
+      {
+        "kind": "legal_rule",
+        "text": "Hỗ trợ ổn định đời sống cho hộ gia đình, cá nhân đang sử dụng đất nông nghiệp khi Nhà nước thu hồi đất phụ thuộc vào (1) tỷ lệ phần trăm diện tích đất nông nghiệp bị thu hồi so với diện tích đang sử dụng (30‑70% hoặc trên 70%); (2) việc hộ có phải di chuyển chỗ ở hay không; (3) nếu phải di chuyển, địa bàn mới có điều kiện kinh tế‑xã hội khó khăn hay đặc biệt khó khăn; (4) diện tích đất nông nghiệp thu hồi được tính riêng cho từng dự án tại xã/phường/thị trấn nơi quyết định phê duyệt, không cộng dồn với các dự án trước; (5) mức hỗ trợ cho mỗi nhân khẩu là tiền tương đương 30 kg gạo trong 01 tháng theo giá trung bình địa phương. Thời gian hỗ trợ: • Thu hồi 30‑70%: 6 tháng (không di chuyển) hoặc 12 tháng (di chuyển); tối đa 24 tháng nếu di chuyển tới vùng khó khăn, 36 tháng nếu vùng đặc biệt khó khăn. • Thu hồi trên 70%: 12 tháng (không di chuyển) hoặc 24 tháng (di chuyển); tối đa 36 tháng nếu di chuyển tới vùng khó khăn, 48 tháng nếu vùng đặc biệt khó khăn. Trường hợp thu hồi dưới 30% hoặc không đủ điều kiện bồi thường đất, UBND cấp tỉnh quyết định mức, thời gian và định kỳ chi trả, nhưng không vượt quá mức quy định trên.",
+        "citation_ids": [
+          "C1"
+        ],
+        "section": "direct"
+      },
+      {
+        "kind": "legal_rule",
+        "text": "Điều 19 Nghị định 88/2024/NĐ‑CP quy định chi tiết các tiêu chí và mức hỗ trợ ổn định đời sống, trong đó nêu rõ các yếu tố ảnh hưởng đến thời gian và mức hỗ trợ (tỷ lệ thu hồi, việc di chuyển, điều kiện kinh tế‑xã hội của vùng mới, và cách tính diện tích thu hồi).",
+        "citation_ids": [
+          "C1"
+        ],
+        "section": "explanation"
+      },
+      {
+        "kind": "procedure",
+        "text": "Hộ gia đình cần: 1) Xác định tỷ lệ phần trăm diện tích đất nông nghiệp bị thu hồi; 2) Kiểm tra có phải di chuyển chỗ ở và địa bàn mới có điều kiện kinh tế‑xã hội như quy định; 3) Yêu cầu UBND cấp huyện/phường cung cấp quyết định phê duyệt phương án bồi thường, hỗ trợ, tái định cư; 4) Dựa trên các tiêu chí trên, yêu cầu tính toán mức hỗ trợ và thời gian hỗ trợ theo quy định; 5) Nếu thu hồi dưới 30% hoặc không đủ điều kiện bồi thường, đề nghị UBND cấp tỉnh quyết định mức hỗ trợ phù hợp, không vượt mức quy định.",
+        "citation_ids": [
+          "C1"
+        ],
+        "section": "actions"
+      }
+    ],
+    "missing_facts": [],
+    "next_steps": [],
+    "out_of_scope": false
+  }
+}

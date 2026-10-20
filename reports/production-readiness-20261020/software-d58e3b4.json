@@ -1,0 +1,37 @@
+{
+  "checked_at": "2026-10-20T04:18:26.321152+00:00",
+  "source_commit": "d58e3b486fc9ad66c936402b465f25e15a9ff8f5",
+  "checks": [
+    {
+      "name": "backend",
+      "exit_code": 0,
+      "log": "reports/production-readiness-20261020/logs/production-d58e3b4-backend.log",
+      "log_sha256": "2c43039def3f817697ef65cba51c8f809e3fd35b1a9fda6006f2721c5385f73f"
+    },
+    {
+      "name": "frontend_unit",
+      "exit_code": 0,
+      "log": "reports/production-readiness-20261020/logs/production-d58e3b4-frontend-unit.log",
+      "log_sha256": "8e5983dadb98e82acbf6744bffbb547b47237ab9e208559280dbfdd9458f67a1"
+    },
+    {
+      "name": "frontend_build",
+      "exit_code": 0,
+      "log": "reports/production-readiness-20261020/logs/production-d58e3b4-frontend-build.log",
+      "log_sha256": "096becdd5ffe0373daea66de8d6a8d1d1950743827dfb4e7651dc6ad17051792"
+    },
+    {
+      "name": "frontend_e2e",
+      "exit_code": 0,
+      "log": "reports/production-readiness-20261020/logs/production-d58e3b4-frontend-e2e.log",
+      "log_sha256": "c79f851a3375f57ba6908770ba10c99e9792821923f2f966b4e7e8bd7556ca37"
+    },
+    {
+      "name": "secrets",
+      "exit_code": 0,
+      "log": "reports/production-readiness-20261020/logs/production-d58e3b4-secrets.log",
+      "log_sha256": "766d75c21b58f1924ca7617ba55b3944d6d327b8f64a36ceba52c177e79340c7"
+    }
+  ],
+  "scope": "Source d58e3b4 before later contract-scope guard fix; retained historical software verification."
+}

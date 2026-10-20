@@ -1,0 +1,18 @@
+{
+  "checked_at": "2026-10-20T04:36:19.082504+00:00",
+  "authorized_suites": {
+    "smoke": 20,
+    "supplemental": 4,
+    "natural": 8
+  },
+  "additional_suites": {
+    "smoke": 20,
+    "supplemental": 4
+  },
+  "additional_egress": "authorized_by_user",
+  "bypassed": false,
+  "separate_from_legal_research_waiver": true,
+  "previous_rejection": "Automatic approval review rejected the expanded 32-case Groq run: explicit authorization covered the 8 natural cases only. The additional 24 cases require the pending user answer.",
+  "authorization": "Explicit user answer: Cho phép đánh giá cả 32 câu",
+  "reason": "Now authorized; retain prior approval-review history, benchmark attempts and real Groq limits."
+}

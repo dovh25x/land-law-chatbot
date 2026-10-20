@@ -1,0 +1,50 @@
+{
+  "N01": {
+    "answer_sha256": "a4ee39b12d73b71f5897225220ec31d81e3b1a4ff1db25ab87a2fd322b8f0fad",
+    "verdict": "pass",
+    "note": "Phân biệt chi phí di chuyển và thiệt hại tháo dỡ/vận chuyển/lắp đặt máy móc; không bảo đảm mức tiền. Đối chiếu Điều 104 snapshot.",
+    "review_method": "AI technical rubric/source review; independent legal/user-research criteria waived by owner; not legal acceptance"
+  },
+  "N02": {
+    "answer_sha256": "2bdb770367dc33ebc1a21caa5913fdcc90f1ad42bbe432285a78761e47e02a6e",
+    "verdict": "fail",
+    "note": "Nói hỗ trợ chỉ áp dụng nhóm đủ điều kiện bồi thường, trái nhánh khoản 2; đồng thời mở rộng nhóm giao khoán ngoài chủ thể nguồn. Đã tạo regression và guard ở SHA sau; không sửa artifact này.",
+    "review_method": "AI technical rubric/source review; independent legal/user-research criteria waived by owner; not legal acceptance"
+  },
+  "N03": {
+    "answer_sha256": "5034ab878c3ecf6e2359d50412a35a5ef70767b7bde8946ef2eb62ce0f8ae905",
+    "verdict": "fail",
+    "note": "Không trả lời được câu hỏi có căn cứ trong corpus; không tính abstention là trả lời đúng.",
+    "review_method": "AI technical rubric/source review; independent legal/user-research criteria waived by owner; not legal acceptance"
+  },
+  "N04": {
+    "answer_sha256": "2fb01af80c945e3e018ed51ebae35ceef90599a79ea89fb90754ad4ec2bfb3ba",
+    "verdict": "fail",
+    "note": "Không nêu được điều kiện bố trí tái định cư trước thu hồi; nguồn có nhưng đầu ra abstain.",
+    "review_method": "AI technical rubric/source review; independent legal/user-research criteria waived by owner; not legal acceptance"
+  },
+  "N05": {
+    "answer_sha256": "79f33def882af97b62a77005908712c0f0af4781c5e5a7fac01b99cfee542cea",
+    "verdict": "fail",
+    "note": "Gán thẩm quyền UBND cấp tỉnh vào khoản 1 Điều 104; quy định đó nằm ở khoản 2. Đúng chủ thể nhưng sai căn cứ khoản, không đạt rubric.",
+    "review_method": "AI technical rubric/source review; independent legal/user-research criteria waived by owner; not legal acceptance"
+  },
+  "N06": {
+    "answer_sha256": "dce0a831872678320a57ba3bae03f0c82dd174fa37fb7b9be62413494a602b3c",
+    "verdict": "pass",
+    "note": "Nêu QĐ40/2026 thay QĐ56/2024 và thời điểm từ snapshot; không kết luận áp dụng cho một hồ sơ cũ cụ thể. Không xác nhận độ mới của nguồn hôm nay.",
+    "review_method": "AI technical rubric/source review; independent legal/user-research criteria waived by owner; not legal acceptance"
+  },
+  "N07": {
+    "answer_sha256": "12669af30522f930a35b601071f398a73be5ee92ccf0a1cdb81a523e1112496d",
+    "verdict": "pass",
+    "note": "Hỏi ngày quyết định/phương án, không bảo đảm suất tái định cư và không yêu cầu số hồ sơ.",
+    "review_method": "AI technical rubric/source review; independent legal/user-research criteria waived by owner; not legal acceptance"
+  },
+  "N08": {
+    "answer_sha256": "4e0015683909f7efa1c580d171ff361b1bc1e83dddc98160d6e7717b46e22736",
+    "verdict": "pass",
+    "note": "Không xác nhận văn bản/mức tiền giả; phân biệt thiếu trong corpus với không tồn tại.",
+    "review_method": "AI technical rubric/source review; independent legal/user-research criteria waived by owner; not legal acceptance"
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "passed": true,
+  "checked_at": "2026-10-20T04:19:58.508402+00:00",
+  "corpus_id": "corpus-a26bc99e541fbbe2",
+  "restored_exactly": true,
+  "database": "landlaw_generation_e41723636d8b489f",
+  "isolated_database": true,
+  "runtime_role_tested": true,
+  "parallel_session_lease": true,
+  "history_writes_revoked": true,
+  "documents": 60,
+  "chunks": 7392,
+  "snapshot_sha256": "d4694c30042b65fe0874bc95618e7b979484e6f05599ff702434d73b95e9f6ff",
+  "backup_sha256": "204547346cf550e75ae165956cf3dc8dd19264da301876f80e725c39529069b2",
+  "serving_database_changed": false,
+  "scope": "Read-only comparison of exact corpus restored in the retained evaluation database; isolated synthetic session metadata exercises runtime role/lease. No real conversation payloads or serving writes."
+}
