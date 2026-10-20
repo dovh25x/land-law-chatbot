@@ -1,0 +1,33 @@
+{
+  "scope": "Unverified structured model output for developer diagnosis; never delivered as a chatbot answer. No hidden reasoning.",
+  "schema": "Draft",
+  "case_mode": "N04-agentic",
+  "llm_calls": 2,
+  "output": {
+    "status": "answered",
+    "summary": "",
+    "claims": [
+      {
+        "kind": "legal_rule",
+        "text": "Nếu chưa bố trí chỗ ở mới cho người có đất, Nhà nước không được quyết định thu hồi đất; việc thu hồi phải được thực hiện sau khi đã lập và phê duyệt phương án bồi thường, hỗ trợ, tái định cư và hoàn thành việc bố trí tái định cư, đồng thời phải tuân thủ các nguyên tắc bồi thường, hỗ trợ, tái định cư: dân chủ, khách quan, công bằng, công khai, minh bạch, kịp thời và đúng quy định của pháp luật.",
+        "citation_ids": [
+          "C2",
+          "C1"
+        ],
+        "section": "direct"
+      },
+      {
+        "kind": "legal_rule",
+        "text": "Điều 91 quy định các nguyên tắc bồi thường, hỗ trợ, tái định cư; Điều 91 khoản 6 quy định việc phê duyệt phương án bồi thường, hỗ trợ, tái định cư và việc bố trí tái định cư phải được hoàn thành trước khi có quyết định thu hồi đất.",
+        "citation_ids": [
+          "C1",
+          "C2"
+        ],
+        "section": "explanation"
+      }
+    ],
+    "missing_facts": [],
+    "next_steps": [],
+    "out_of_scope": false
+  }
+}

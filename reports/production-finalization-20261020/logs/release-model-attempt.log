@@ -1,0 +1,24 @@
+{"evaluation_provider_quota": {"scope": "TPM", "limit": 8000, "used": 6405, "requested": 3708}}
+{"evaluation_progress": {"case_id": "N03", "mode": "agentic", "status": "answered", "elapsed_ms": 44664, "llm_calls": 4, "checkpoint_records": 1}}
+{"evaluation_provider_cooldown_seconds": 51.74}
+{"evaluation_progress": {"case_id": "N01", "mode": "agentic", "status": "answered", "elapsed_ms": 12340, "llm_calls": 2, "checkpoint_records": 2}}
+{"evaluation_provider_cooldown_seconds": 40.66}
+{"evaluation_progress": {"case_id": "N02", "mode": "agentic", "status": "answered", "elapsed_ms": 17682, "llm_calls": 2, "checkpoint_records": 3}}
+{"evaluation_provider_cooldown_seconds": 57.12}
+{"evaluation_provider_quota": {"scope": "TPM", "limit": 8000, "used": 3300, "requested": 4722}}
+{"evaluation_progress": {"case_id": "N04", "mode": "agentic", "status": "insufficient_evidence", "elapsed_ms": 20610, "llm_calls": 3, "checkpoint_records": 4}}
+{"evaluation_provider_cooldown_seconds": 52.48}
+{"evaluation_progress": {"case_id": "N05", "mode": "agentic", "status": "answered", "elapsed_ms": 16254, "llm_calls": 2, "checkpoint_records": 5}}
+{"evaluation_provider_cooldown_seconds": 31.59}
+{"evaluation_progress": {"case_id": "N06", "mode": "agentic", "status": "answered", "elapsed_ms": 15970, "llm_calls": 2, "checkpoint_records": 6}}
+{"evaluation_provider_cooldown_seconds": 44.03}
+{"evaluation_progress": {"case_id": "N07", "mode": "agentic", "status": "clarification_needed", "elapsed_ms": 267, "llm_calls": 0, "checkpoint_records": 7}}
+{"evaluation_progress": {"case_id": "N08", "mode": "agentic", "status": "insufficient_evidence", "elapsed_ms": 261, "llm_calls": 0, "checkpoint_records": 8}}
+{"split": "natural", "stage": "all_pending", "results": [{"mode": "agentic", "completed": 8, "reviewed": 0, "llm_calls": 15, "limited_or_error": 0}], "cooldown_seconds": 0}
+{"evaluation_progress": {"case_id": "S01", "mode": "agentic", "status": "answered", "elapsed_ms": 6000, "llm_calls": 0, "checkpoint_records": 1}}
+{"evaluation_progress": {"case_id": "S02", "mode": "agentic", "status": "clarification_needed", "elapsed_ms": 3806, "llm_calls": 0, "checkpoint_records": 2}}
+{"evaluation_progress": {"case_id": "S03", "mode": "agentic", "status": "answered", "elapsed_ms": 5719, "llm_calls": 0, "checkpoint_records": 3}}
+{"evaluation_provider_quota": {"scope": "TPD", "limit": 200000, "used": 196956, "requested": 4675}}
+{"evaluation_progress": {"case_id": "S04", "mode": "agentic", "status": "limited", "elapsed_ms": 9405, "llm_calls": 1, "checkpoint_records": 4}}
+{"evaluation_deferred_provider_retry_after": 703.23}
+{"split": "smoke", "stage": "all_pending", "results": [{"mode": "agentic", "completed": 4, "reviewed": 0, "llm_calls": 1, "limited_or_error": 1}], "cooldown_seconds": 703}

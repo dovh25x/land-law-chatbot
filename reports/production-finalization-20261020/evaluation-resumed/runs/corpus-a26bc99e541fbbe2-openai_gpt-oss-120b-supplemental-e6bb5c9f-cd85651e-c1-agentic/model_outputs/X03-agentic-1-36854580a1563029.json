@@ -1,0 +1,40 @@
+{
+  "scope": "Unverified structured model output for developer diagnosis; never delivered as a chatbot answer. No hidden reasoning.",
+  "schema": "Draft",
+  "case_mode": "X03-agentic",
+  "llm_calls": 1,
+  "output": {
+    "status": "answered",
+    "summary": "",
+    "claims": [
+      {
+        "kind": "legal_rule",
+        "text": "Theo Điều 95 khoản 1 điểm a) của Luật Đất đai 2024, hộ gia đình, cá nhân đang sử dụng đất không phải là đất thuê trả tiền thuê đất hằng năm, dù chưa có Giấy chứng nhận quyền sử dụng đất (sổ đỏ), vẫn thuộc đối tượng được bồi thường về đất khi Nhà nước thu hồi đất vì mục đích quốc phòng, an ninh hoặc phát triển kinh tế - xã hội vì lợi ích quốc gia, công cộng.",
+        "citation_ids": [
+          "C1"
+        ],
+        "section": "direct"
+      },
+      {
+        "kind": "legal_rule",
+        "text": "Trong cùng Điều 95, các trường hợp khác được bồi thường về đất khi có một trong các giấy tờ về quyền sử dụng đất (ví dụ: giấy chứng nhận quyền sử dụng đất, giấy chứng nhận quyền sở hữu nhà ở và quyền sử dụng đất, quyết định giao đất, quyết định cho thuê đất, quyết định cho phép chuyển mục đích sử dụng đất) (C2‑a, C3‑b). Do đó, người chưa có sổ đỏ nhưng có bất kỳ giấy tờ nào nêu trên đều đáp ứng điều kiện được bồi thường.",
+        "citation_ids": [
+          "C2",
+          "C3"
+        ],
+        "section": "direct"
+      },
+      {
+        "kind": "legal_rule",
+        "text": "Điều 95 khoản 3 cho phép Chính phủ quy định thêm các trường hợp khác được bồi thường về đất; tuy nhiên, nếu không có quy định bổ sung, chỉ các đối tượng và điều kiện nêu trong các khoản a‑d (C1, C2, C3) mới được công nhận.",
+        "citation_ids": [
+          "C2"
+        ],
+        "section": "explanation"
+      }
+    ],
+    "missing_facts": [],
+    "next_steps": [],
+    "out_of_scope": false
+  }
+}

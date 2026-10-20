@@ -1,0 +1,19 @@
+Traceback (most recent call last):
+  File "/tmp/build_directory_candidate.py", line 27, in <module>
+    asyncio.run(main())
+    ~~~~~~~~~~~^^^^^^^^
+  File "/usr/lib/python3.14/asyncio/runners.py", line 204, in run
+    return runner.run(main)
+           ~~~~~~~~~~^^^^^^
+  File "/usr/lib/python3.14/asyncio/runners.py", line 127, in run
+    return self._loop.run_until_complete(task)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "/usr/lib/python3.14/asyncio/base_events.py", line 719, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+  File "/tmp/build_directory_candidate.py", line 21, in main
+    assert payload['documents'][:-1]==old['documents'];validate_corpus(payload)
+                                                       ~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/home/dovh25x/projects/land-law-chatbot/backend/landlaw/publication.py", line 36, in validate_corpus
+    raise ValueError('Invalid embedding contract')
+ValueError: Invalid embedding contract

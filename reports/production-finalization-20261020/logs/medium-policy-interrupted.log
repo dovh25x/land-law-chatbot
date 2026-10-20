@@ -1,0 +1,90 @@
+{"evaluation_provider_quota": {"scope": "TPM", "limit": 8000, "used": 6429, "requested": 3018}}
+Traceback (most recent call last):
+  File "/home/dovh25x/projects/land-law-chatbot/backend/landlaw/provider.py", line 155, in generate
+    result = await self._groq_generate(schema, body)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/dovh25x/projects/land-law-chatbot/backend/landlaw/provider.py", line 222, in _groq_generate
+    raise RateLimited(min(86400,max(1,delay)),source='provider')
+landlaw.store.RateLimited: provider quota exceeded; retry_after=11s
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/usr/lib/python3.14/asyncio/runners.py", line 127, in run
+    return self._loop.run_until_complete(task)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "/usr/lib/python3.14/asyncio/base_events.py", line 719, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+  File "/tmp/run_medium_policy.py", line 34, in main
+    await evaluate(s,store,provider,split,concurrency=1,case_ids=['N03'])
+  File "/home/dovh25x/projects/land-law-chatbot/backend/landlaw/evaluation.py", line 77, in evaluate
+    return await _evaluate(settings,store,provider,split,release_id,limit,concurrency,case_ids,modes)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/dovh25x/projects/land-law-chatbot/backend/landlaw/evaluation.py", line 204, in _evaluate
+    results=await asyncio.gather(*(execute(c,m) for c,m in pending[start:start+concurrency]))
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/dovh25x/projects/land-law-chatbot/backend/landlaw/evaluation.py", line 189, in execute
+    result = await agent.run(ChatRequest(session_id=session_id,message=case['question'],
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        project='ring4' if case.get('project')=='ring4' else None,history=case.get('history',[]),as_of=case.get('as_of') or metadata['as_of'],mode=mode),emit,release['id'])
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/dovh25x/projects/land-law-chatbot/backend/landlaw/agent.py", line 1695, in run
+    output = await self.graph.ainvoke(state, config={"recursion_limit": 16})
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/dovh25x/projects/land-law-chatbot/.venv/lib/python3.14/site-packages/langgraph/pregel/main.py", line 4155, in ainvoke
+    async for chunk in self.astream(
+    ...<30 lines>...
+            chunks.append(chunk)
+  File "/home/dovh25x/projects/land-law-chatbot/.venv/lib/python3.14/site-packages/langgraph/pregel/main.py", line 3505, in astream
+    async for _ in runner.atick(
+    ...<16 lines>...
+            yield o
+  File "/home/dovh25x/projects/land-law-chatbot/.venv/lib/python3.14/site-packages/langgraph/pregel/_runner.py", line 397, in atick
+    await arun_with_retry(
+    ...<15 lines>...
+    )
+  File "/home/dovh25x/projects/land-law-chatbot/.venv/lib/python3.14/site-packages/langgraph/pregel/_retry.py", line 744, in arun_with_retry
+    return await task.proc.ainvoke(task.input, config)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/dovh25x/projects/land-law-chatbot/.venv/lib/python3.14/site-packages/langgraph/_internal/_runnable.py", line 756, in ainvoke
+    input = await asyncio.create_task(
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^
+        step.ainvoke(input, config, **kwargs), context=context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/dovh25x/projects/land-law-chatbot/.venv/lib/python3.14/site-packages/langgraph/_internal/_runnable.py", line 522, in ainvoke
+    ret = await self.afunc(*args, **kwargs)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/dovh25x/projects/land-law-chatbot/backend/landlaw/agent.py", line 1460, in verify
+    checked = await self.provider.generate(Verification,
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<39 lines>...
+         "unresolved_relations": self.relevant_unresolved(state)}, state["budget"])
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/dovh25x/projects/land-law-chatbot/backend/landlaw/evaluation.py", line 116, in capture_structured_output
+    result=await generate(schema,instruction,payload,budget)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/run_medium_policy.py", line 27, in guarded
+    return await generate(*args,**kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/dovh25x/projects/land-law-chatbot/backend/landlaw/provider.py", line 161, in generate
+    await asyncio.sleep(exc.retry_after)
+  File "/usr/lib/python3.14/asyncio/tasks.py", line 702, in sleep
+    return await future
+           ^^^^^^^^^^^^
+asyncio.exceptions.CancelledError
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/tmp/run_medium_policy.py", line 42, in <module>
+    try:asyncio.run(main())
+        ~~~~~~~~~~~^^^^^^^^
+  File "/usr/lib/python3.14/asyncio/runners.py", line 204, in run
+    return runner.run(main)
+           ~~~~~~~~~~^^^^^^
+  File "/usr/lib/python3.14/asyncio/runners.py", line 132, in run
+    raise KeyboardInterrupt()
+KeyboardInterrupt

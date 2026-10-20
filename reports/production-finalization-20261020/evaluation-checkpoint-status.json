@@ -1,0 +1,29 @@
+{
+  "source_commit": "5a428bc73fb2327338585675bfb277a189cc6aa1",
+  "configuration_sha256": "e409d8ac39e2edf6cf9f039704fcd5cee7d377a583c787d004e4dd694c17ac02",
+  "expected": 32,
+  "executed": 23,
+  "pass": 20,
+  "partial": 1,
+  "fail": 2,
+  "not_run": 9,
+  "substantive_natural": {
+    "expected": 6,
+    "pass": 4,
+    "partial": 1,
+    "fail": 1,
+    "not_run": 0
+  },
+  "guard_scope": "Passing guard/source-fact cases do not certify substantive legal accuracy.",
+  "full_quality_gate_passed": false,
+  "citizen_v2_product_acceptance": false,
+  "automatic_background_evaluation": false,
+  "latest_review": "release-policy-evaluation/review-v2",
+  "unwaived_blockers": [
+    "coverage",
+    "source_freshness",
+    "generation:smoke",
+    "generation:supplemental",
+    "generation:natural"
+  ]
+}

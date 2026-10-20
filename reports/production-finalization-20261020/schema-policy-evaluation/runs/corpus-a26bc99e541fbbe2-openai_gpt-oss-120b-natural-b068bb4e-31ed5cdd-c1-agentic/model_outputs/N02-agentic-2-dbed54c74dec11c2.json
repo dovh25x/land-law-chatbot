@@ -1,0 +1,31 @@
+{
+  "scope": "Unverified structured model output for developer diagnosis; never delivered as a chatbot answer. No hidden reasoning.",
+  "schema": "Draft",
+  "case_mode": "N02-agentic",
+  "llm_calls": 2,
+  "output": {
+    "status": "answered",
+    "summary": "",
+    "claims": [
+      {
+        "kind": "legal_rule",
+        "text": "Hỗ trợ ổn định đời sống cho hộ gia đình, cá nhân đang sử dụng đất nông nghiệp chỉ áp dụng khi hộ gia đình, cá nhân **đủ điều kiện được bồi thường về đất**; trong trường hợp này mức hỗ trợ phụ thuộc vào (1) tỷ lệ phần trăm diện tích đất nông nghiệp bị thu hồi (từ 30 %‑70 % hoặc trên 70 %); (2) việc hộ phải di chuyển chỗ ở hay không; (3) nếu phải di chuyển, vùng nơi di chuyển có điều kiện kinh tế‑xã hội khó khăn hoặc đặc biệt khó khăn; (4) diện tích đất nông nghiệp thu hồi được tính trong phạm vi xã, phường, thị trấn nơi có đất thu hồi tại thời điểm quyết định phê duyệt phương án bồi thường, hỗ trợ, tái định cư; (5) mức hỗ trợ cho mỗi nhân khẩu là tiền tương đương 30 kg gạo trong 01 tháng theo giá trung bình tại thời điểm hỗ trợ của địa phương.",
+        "citation_ids": [
+          "C1"
+        ],
+        "section": "direct"
+      },
+      {
+        "kind": "legal_rule",
+        "text": "Nếu hộ gia đình, cá nhân **không đủ điều kiện bồi thường về đất** hoặc thu hồi dưới 30 % diện tích đất nông nghiệp đang sử dụng, Ủy ban nhân dân cấp tỉnh quyết định mức hỗ trợ, thời gian hỗ trợ và định kỳ chi trả phù hợp với từng trường hợp, nhưng mức hỗ trợ không được vượt quá mức quy định tại khoản 1 Điều 19 của Nghị định 88/2024/NĐ‑CP.",
+        "citation_ids": [
+          "C1"
+        ],
+        "section": "explanation"
+      }
+    ],
+    "missing_facts": [],
+    "next_steps": [],
+    "out_of_scope": false
+  }
+}

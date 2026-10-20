@@ -1,0 +1,44 @@
+{
+  "status": "awaiting_review",
+  "dataset_sha256": "e6bb5c9f7ba3a589237835b68d95e491ff2c16aad83683a8437f4a74e4120fea",
+  "generated_at": "2026-10-20T05:58:07.504346+00:00",
+  "cases": 4,
+  "acceptance_passed": false,
+  "results": [
+    {
+      "mode": "agentic",
+      "completed": 1,
+      "reviewed": 0,
+      "llm_calls": 0,
+      "limited_or_error": 0
+    }
+  ],
+  "run_id": "corpus-a26bc99e541fbbe2-openai_gpt-oss-120b-supplemental-e6bb5c9f-e409d8ac-c1-agentic",
+  "release": "corpus-a26bc99e541fbbe2",
+  "model": "openai/gpt-oss-120b",
+  "llm_provider": "groq",
+  "embedding_model": "multilingual-e5-small-onnx-q8-window-v1",
+  "split": "supplemental",
+  "corpus_embedded": true,
+  "publication_candidate": false,
+  "notes": [
+    "Technical regression evaluation; not independent legal certification."
+  ],
+  "as_of": "2026-10-20",
+  "configuration_sha256": "e409d8ac39e2edf6cf9f039704fcd5cee7d377a583c787d004e4dd694c17ac02",
+  "suite_sha256": "e6bb5c9f7ba3a589237835b68d95e491ff2c16aad83683a8437f4a74e4120fea",
+  "storage_backend": "postgresql",
+  "presentation_sha256": "6ce4606cb9990671c09ca166a7e8b184cb6c719533fee3bc664096af4f8fe28d",
+  "execution_modes": [
+    "agentic"
+  ],
+  "execution_concurrency": 1,
+  "attempt_history": {
+    "attempts": 1,
+    "retry_attempts": 0,
+    "limited_or_error_attempts": 0,
+    "scope": "Every new attempt is retained; legacy checkpoints imported as latest results only.",
+    "directory": "reports/production-finalization-20261020/release-policy-evaluation/runs/corpus-a26bc99e541fbbe2-openai_gpt-oss-120b-supplemental-e6bb5c9f-e409d8ac-c1-agentic/attempts"
+  },
+  "latency_scope": "CLI run, modes ['agentic'], concurrency 1; provider-reported cooldown between turns excluded. Public API single-user p95 measured separately."
+}

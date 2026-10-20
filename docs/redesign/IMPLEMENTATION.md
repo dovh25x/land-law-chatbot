@@ -12,6 +12,8 @@ Câu hỏi chung có chữ “tôi” vẫn có thể được giải thích mà
 
 Mọi hướng dẫn thực chất phải nằm trong claim trước verify. `Draft.next_steps` không còn được phát ra client. Cổng veto cả nhóm, ngân sách mỗi lượt, graph, model và embedding contract giữ nguyên. Không có bước paraphrase hoặc sửa điều kiện sau verify.
 
+Trước synthesis, runtime dùng chính policy nguồn để thu hẹp enum loại claim và section được phép sinh. Thiếu nguồn tác nghiệp đủ điều kiện thì schema không cho sinh procedure/contact/actions; kiểm tra sau sinh và veto vẫn bắt buộc. Đoạn quy định trực tiếp về thứ tự thực hiện được ưu tiên trong cùng nhóm bằng chứng khi người dùng hỏi việc cần bảo đảm trước một bước. Guard đối chiếu các điều kiện chủ thể nông nghiệp, bồi thường bằng tiền và phân biệt hoàn thành bố trí tái định cư với phê duyệt phương án; các guard này không thay thế kiểm tra ngữ nghĩa toàn bộ đáp án.
+
 ## Nguồn thủ tục và liên hệ
 
 Schema, ingest và catalogue nhận `official_procedure`/`official_directory`, metadata tác vụ, địa bàn, mã thủ tục và phụ thuộc. Danh bạ chỉ chứng minh thông tin liên hệ công khai; không chứng minh thẩm quyền nhận/giải quyết hoặc quyền lợi. Tin dự án không chứng minh checklist hay thủ tục.

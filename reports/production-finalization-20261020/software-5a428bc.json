@@ -1,0 +1,37 @@
+{
+  "source_commit": "5a428bc73fb2327338585675bfb277a189cc6aa1",
+  "checked_at": "2026-10-20T05:38:11.759280+00:00",
+  "checks": [
+    {
+      "name": "backend",
+      "exit_code": 0,
+      "log": "reports/production-finalization-20261020/logs/backend.log",
+      "log_sha256": "af6f2ec191fbfc6d56d667cbccb39dba14619bb56d4f75cb1272f1fe21205621"
+    },
+    {
+      "name": "secrets",
+      "exit_code": 0,
+      "log": "reports/production-finalization-20261020/logs/secrets.log",
+      "log_sha256": "766d75c21b58f1924ca7617ba55b3944d6d327b8f64a36ceba52c177e79340c7"
+    },
+    {
+      "name": "frontend_unit",
+      "exit_code": 0,
+      "log": "reports/production-finalization-20261020/logs/frontend_unit.log",
+      "log_sha256": "82e3c1198820b672a5b7698ee6022e4e10590df1965e4b9837a048632dcf3b8f"
+    },
+    {
+      "name": "frontend_build",
+      "exit_code": 0,
+      "log": "reports/production-finalization-20261020/logs/frontend_build.log",
+      "log_sha256": "0819b9561dfebd7eedd34f640d846cc11c3dfcb217e8763504c7169b8264c649"
+    },
+    {
+      "name": "frontend_e2e",
+      "exit_code": 0,
+      "log": "reports/production-finalization-20261020/logs/frontend_e2e.log",
+      "log_sha256": "74849f49628dc5a82241823a887beee3aa61d66d36e739a9f822f83aefccee89"
+    }
+  ],
+  "scope": "Local backend/secrets at this runtime; unchanged frontend source tested by unit/build/E2E. CI validates the pinned SHA separately."
+}

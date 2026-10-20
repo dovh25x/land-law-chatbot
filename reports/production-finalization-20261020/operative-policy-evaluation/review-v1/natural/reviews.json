@@ -1,0 +1,26 @@
+{
+  "N01": {
+    "answer_sha256": "a69b115ef17023d15dd9cb86c8c149d953e0731ddc8d38b9ba34dfc109049582",
+    "verdict": "pass",
+    "note": "Chi phí di chuyển và thiệt hại máy móc được giải thích đúng phạm vi Điều104; không thêm checklist hoặc số tiền.",
+    "review_method": "AI technical rubric/full source snapshot review; not independent legal certification"
+  },
+  "N02": {
+    "answer_sha256": "0839df2339d5744a0a97acae4066bd87c53e944114d6bd23f2b87759ed76569a",
+    "verdict": "fail",
+    "note": "Abstention do diễn giải chỉ áp dụng cho nhóm đủ điều kiện trong khi nguồn còn nhánh khác; chưa đạt tác vụ có nguồn.",
+    "review_method": "AI technical rubric/full source snapshot review; not independent legal certification"
+  },
+  "N03": {
+    "answer_sha256": "5668616b168399c7e50f99025823322947d82864fead84f068b1d2c9c9c91948",
+    "verdict": "fail",
+    "note": "Claim đã phát hành mất điều kiện đã được bồi thường bằng tiền trong ví dụ đối tượng khoản1 Điều109; dẫn khoản1 không cứu phần giải thích sai phạm vi.",
+    "review_method": "AI technical rubric/full source snapshot review; not independent legal certification"
+  },
+  "N04": {
+    "answer_sha256": "865e39ad2cdd06410d793f905ef28cd736697deb6ed3217396259d847f8b91dd",
+    "verdict": "fail",
+    "note": "Claim đã phát hành thay hoàn thành bố trí tái định cư bằng phê duyệt phương án bố trí; ghép nghĩa vụ hỗ trợ với tình huống chưa có chỗ ở mới không được nguồn xác lập.",
+    "review_method": "AI technical rubric/full source snapshot review; not independent legal certification"
+  }
+}

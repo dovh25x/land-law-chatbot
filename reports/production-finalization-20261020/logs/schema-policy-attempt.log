@@ -1,0 +1,40 @@
+{"evaluation_progress": {"case_id": "N01", "mode": "agentic", "status": "answered", "elapsed_ms": 15987, "llm_calls": 2, "checkpoint_records": 1}}
+{"evaluation_provider_cooldown_seconds": 37.74}
+{"evaluation_progress": {"case_id": "N02", "mode": "agentic", "status": "insufficient_evidence", "elapsed_ms": 13783, "llm_calls": 2, "checkpoint_records": 2}}
+{"evaluation_provider_cooldown_seconds": 56.19}
+{"evaluation_progress": {"case_id": "N03", "mode": "agentic", "status": "answered", "elapsed_ms": 13351, "llm_calls": 2, "checkpoint_records": 3}}
+{"evaluation_provider_cooldown_seconds": 44.09}
+{"evaluation_progress": {"case_id": "N04", "mode": "agentic", "status": "insufficient_evidence", "elapsed_ms": 12733, "llm_calls": 2, "checkpoint_records": 4}}
+{"evaluation_provider_cooldown_seconds": 55.55}
+Traceback (most recent call last):
+  File "/usr/lib/python3.14/asyncio/runners.py", line 127, in run
+    return self._loop.run_until_complete(task)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "/usr/lib/python3.14/asyncio/base_events.py", line 719, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+  File "/tmp/run_schema_policy.py", line 33, in main
+    report=await evaluate(s,store,provider,split,concurrency=1)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/dovh25x/projects/land-law-chatbot/backend/landlaw/evaluation.py", line 77, in evaluate
+    return await _evaluate(settings,store,provider,split,release_id,limit,concurrency,case_ids,modes)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/dovh25x/projects/land-law-chatbot/backend/landlaw/evaluation.py", line 203, in _evaluate
+    await asyncio.sleep(cooldown)
+  File "/usr/lib/python3.14/asyncio/tasks.py", line 702, in sleep
+    return await future
+           ^^^^^^^^^^^^
+asyncio.exceptions.CancelledError
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/tmp/run_schema_policy.py", line 40, in <module>
+    try:asyncio.run(main())
+        ~~~~~~~~~~~^^^^^^^^
+  File "/usr/lib/python3.14/asyncio/runners.py", line 204, in run
+    return runner.run(main)
+           ~~~~~~~~~~^^^^^^
+  File "/usr/lib/python3.14/asyncio/runners.py", line 132, in run
+    raise KeyboardInterrupt()
+KeyboardInterrupt

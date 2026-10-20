@@ -1,0 +1,42 @@
+{
+  "scope": "Unverified structured model output for developer diagnosis; never delivered as a chatbot answer. No hidden reasoning.",
+  "schema": "Draft",
+  "case_mode": "N01-agentic",
+  "llm_calls": 4,
+  "output": {
+    "status": "answered",
+    "summary": "",
+    "claims": [
+      {
+        "kind": "legal_rule",
+        "text": "Khi Nhà nước thu hồi đất và phải di chuyển tài sản, bao gồm nhà xưởng, máy móc, thiết bị, Nhà nước phải bồi thường (i) chi phí tháo dỡ, di chuyển, lắp đặt tài sản (Điều 104 khoản 1 Luật Đất đai 2024) và (ii) thiệt hại phát sinh do hư hại, mất mát khi tháo dỡ, vận chuyển, lắp đặt máy móc, dây chuyền sản xuất (Điều 104 khoản 1 Luật Đất đai 2024); nếu tài sản là nhà ở, công trình gắn liền với đất, bồi thường được tính theo giá trị xây dựng mới của tài sản có tiêu chuẩn kỹ thuật tương đương (Điều 102 khoản 1 Luật Đất đai 2024).",
+        "citation_ids": [
+          "C1",
+          "C2"
+        ],
+        "section": "direct"
+      },
+      {
+        "kind": "legal_rule",
+        "text": "Mức bồi thường chi phí tháo dỡ, di chuyển, lắp đặt được quy định bởi Ủy ban nhân dân cấp tỉnh theo khoản 1 Điều 104; mức bồi thường thiệt hại tài sản gắn liền với đất được quy định bởi Ủy ban nhân dân cấp tỉnh theo khoản 1 Điều 102 và phải phù hợp với giá thị trường, có thể điều chỉnh khi có biến động.",
+        "citation_ids": [
+          "C1",
+          "C2"
+        ],
+        "section": "explanation"
+      },
+      {
+        "kind": "procedure",
+        "text": "Doanh nghiệp cần nộp hồ sơ đề nghị bồi thường gồm: (i) giấy tờ chứng minh quyền sở hữu nhà xưởng và máy móc; (ii) báo cáo thiệt hại chi tiết (hư hại, mất mát) khi tháo dỡ; (iii) đề xuất mức bồi thường dựa trên quy định của UBND tỉnh; (iv) nộp hồ sơ cho cơ quan thu hồi đất (thường là UBND huyện) để được xem xét và quyết định bồi thường.",
+        "citation_ids": [
+          "C1",
+          "C2"
+        ],
+        "section": "actions"
+      }
+    ],
+    "missing_facts": [],
+    "next_steps": [],
+    "out_of_scope": false
+  }
+}

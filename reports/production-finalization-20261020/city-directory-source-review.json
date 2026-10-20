@@ -1,0 +1,77 @@
+{
+  "checked_at": "2026-10-20T05:48:15.156938+00:00",
+  "review_method": "AI technical full one-page PDF/publication/corroboration review; no independent legal certification",
+  "source": {
+    "id": "hanoi-reception-relocation-2026",
+    "title": "Địa điểm Trụ sở Tiếp công dân Thành phố Hà Nội",
+    "source_kind": "official_directory",
+    "url": "https://datafiles.hanoi.gov.vn/gov-hni/6974/VanBan/2026/1/26/Th%C3%B4ng%20b%C3%A1o%20chuy%E1%BB%83n%20tr%E1%BB%A5%20s%E1%BB%9F%20TCD%20TP.pdf",
+    "publication_url": "https://xuandinh.hanoi.gov.vn/van-ban-chi-dao-dieu-hanh/thong-bao-ve-viec-chuyen-tru-so-tiep-cong-dan-thanh-pho-va-tru-so-lam-viec-cua-ban-tiep-cong-dan-th-233519",
+    "metadata_url": "https://xuandinh.hanoi.gov.vn/van-ban-chi-dao-dieu-hanh/thong-bao-ve-viec-chuyen-tru-so-tiep-cong-dan-thanh-pho-va-tru-so-lam-viec-cua-ban-tiep-cong-dan-th-233519",
+    "attachment_urls": [
+      "https://datafiles.hanoi.gov.vn/gov-hni/6974/VanBan/2026/1/26/Th%C3%B4ng%20b%C3%A1o%20chuy%E1%BB%83n%20tr%E1%BB%A5%20s%E1%BB%9F%20TCD%20TP.pdf"
+    ],
+    "raw_paths": [
+      "data/raw/citizen-finalization-20261020/city-directory-refetched-v2.pdf"
+    ],
+    "raw_checksums": {
+      "data/raw/citizen-finalization-20261020/city-directory-refetched-v2.pdf": "4e3da283f05e23c8b89f25c76433f8640192737534c25bcdcab888d8f7bd916e"
+    },
+    "jurisdiction": "Hanoi",
+    "project": "ring4",
+    "issuer": "Văn phòng UBND thành phố Hà Nội",
+    "issued_on": "2026-01-26",
+    "effective_from": "2026-01-26",
+    "effective_to": null,
+    "document_number": null,
+    "topics": [
+      "liên hệ",
+      "tiếp công dân"
+    ],
+    "task_tags": [
+      "find_contact"
+    ],
+    "administrative_scope": "Trụ sở tiếp công dân cấp thành phố Hà Nội; không xác định thẩm quyền giải quyết hồ sơ cá nhân.",
+    "review_status": "verified",
+    "checked_at": "2026-10-20T05:48:15.156938+00:00",
+    "public_contacts_reviewed": true,
+    "contains_personal_data": false,
+    "source_review_notes": "AI technical source review of the entire one-page native PDF and official publication/corroboration, not independent legal certification. Address only: 349 phố Huế, phường Hai Bà Trưng, Hà Nội, from26/01/2026. No phone, opening hours, submission channel or deciding competence is proven. Blank attachment number/date means no document_number is asserted. Official names in institutional signature are not claimant data. A future activation still requires current operational receipt and model/retrieval checks.",
+    "operational_review_status": "pending",
+    "required_dependency_ids": []
+  },
+  "fetches": [
+    {
+      "url": "https://datafiles.hanoi.gov.vn/gov-hni/6974/VanBan/2026/1/26/Th%C3%B4ng%20b%C3%A1o%20chuy%E1%BB%83n%20tr%E1%BB%A5%20s%E1%BB%9F%20TCD%20TP.pdf",
+      "resolved_url": "https://datafiles.hanoi.gov.vn/gov-hni/6974/VanBan/2026/1/26/Th%C3%B4ng%20b%C3%A1o%20chuy%E1%BB%83n%20tr%E1%BB%A5%20s%E1%BB%9F%20TCD%20TP.pdf",
+      "status": 200,
+      "raw_path": "data/raw/citizen-finalization-20261020/city-directory-refetched-v2.pdf",
+      "sha256": "4e3da283f05e23c8b89f25c76433f8640192737534c25bcdcab888d8f7bd916e"
+    },
+    {
+      "url": "https://xuandinh.hanoi.gov.vn/van-ban-chi-dao-dieu-hanh/thong-bao-ve-viec-chuyen-tru-so-tiep-cong-dan-thanh-pho-va-tru-so-lam-viec-cua-ban-tiep-cong-dan-th-233519",
+      "resolved_url": "https://xuandinh.hanoi.gov.vn/van-ban-chi-dao-dieu-hanh/thong-bao-ve-viec-chuyen-tru-so-tiep-cong-dan-thanh-pho-va-tru-so-lam-viec-cua-ban-tiep-cong-dan-th-233519",
+      "status": 200,
+      "raw_path": "data/raw/citizen-finalization-20261020/city-directory-publication-v2.html",
+      "sha256": "bcc61a8809c66f64078076ca844a689c8c09d1b71cef958544f7372c795eeefc"
+    },
+    {
+      "url": "https://cmshn.hanoi.gov.vn/tin-tuc-su-kien-noi-bat/chu-tich-ubnd-thanh-pho-vu-dai-thang-tiep-cong-dan-dinh-ky-thang-4-2026-426042115193111.htm",
+      "resolved_url": "https://cmshn.hanoi.gov.vn/tin-tuc-su-kien-noi-bat/chu-tich-ubnd-thanh-pho-vu-dai-thang-tiep-cong-dan-dinh-ky-thang-4-2026-426042115193111.htm",
+      "status": 200,
+      "raw_path": "data/raw/citizen-finalization-20261020/city-directory-corroboration-v2.html",
+      "sha256": "a9f8ff6ed71a863035c9a9af6af66a9c6fc09e0f54ba0b5dd3490464aa96c35d"
+    }
+  ],
+  "parsed_chunks": 1,
+  "stage": "data/staging/citizen-directory-candidate-20261020",
+  "active_manifest_changed": false,
+  "active_corpus_changed": false,
+  "vectors_generated": 0,
+  "allowed_fact": "Public institutional address only, effective26/01/2026; do not assert the receiving/deciding office for a particular complaint.",
+  "remaining": [
+    "Current operational receipt at activation",
+    "Additive corpus candidate preserving existing vectors",
+    "Retrieval and model evaluation bound to candidate corpus before activation"
+  ]
+}

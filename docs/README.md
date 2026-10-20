@@ -14,7 +14,7 @@ Tài liệu mô tả phạm vi sản phẩm, thiết kế và cách vận hành 
 | Tích hợp phiên, chat và SSE | [API](API.md) |
 | Phát triển giao diện theo Figma | [Frontend](FRONTEND.md) |
 | Triển khai, xử lý sự cố và khôi phục | [Vận hành](OPERATIONS.md) |
-| Đối chiếu đợt phát hành cho người dân | [Bằng chứng phát hành](../reports/production-readiness-20261020/README.md) |
+| Đối chiếu đợt phát hành cho người dân | [Bằng chứng ban đầu](../reports/production-readiness-20261020/README.md) · [đợt hoàn thiện tiếp theo](../reports/production-finalization-20261020/README.md) |
 | Chạy và diễn giải đánh giá | [Đánh giá](EVALUATION.md) |
 | Hiểu các lựa chọn kiến trúc | [ADR](adr/README.md) |
 | Chỉnh sửa hoặc xuất lại sơ đồ | [Nguồn diagram](diagrams/README.md) |

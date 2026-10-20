@@ -1,0 +1,43 @@
+{"evaluation_progress": {"case_id": "N01", "mode": "agentic", "status": "answered", "elapsed_ms": 18051, "llm_calls": 2, "checkpoint_records": 1}}
+{"evaluation_provider_cooldown_seconds": 35.28}
+{"evaluation_progress": {"case_id": "N02", "mode": "agentic", "status": "insufficient_evidence", "elapsed_ms": 16680, "llm_calls": 2, "checkpoint_records": 2}}
+{"evaluation_provider_cooldown_seconds": 49.28}
+{"evaluation_progress": {"case_id": "N03", "mode": "agentic", "status": "answered", "elapsed_ms": 15258, "llm_calls": 2, "checkpoint_records": 3}}
+{"evaluation_provider_cooldown_seconds": 42.62}
+{"evaluation_progress": {"case_id": "N04", "mode": "agentic", "status": "answered", "elapsed_ms": 14765, "llm_calls": 2, "checkpoint_records": 4}}
+{"evaluation_provider_cooldown_seconds": 43.13}
+Traceback (most recent call last):
+  File "/usr/lib/python3.14/asyncio/runners.py", line 127, in run
+    return self._loop.run_until_complete(task)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "/usr/lib/python3.14/asyncio/base_events.py", line 719, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+  File "/tmp/run_operative_policy.py", line 33, in main
+    report=await evaluate(s,store,provider,split,concurrency=1)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/dovh25x/projects/land-law-chatbot/backend/landlaw/evaluation.py", line 77, in evaluate
+    return await _evaluate(settings,store,provider,split,release_id,limit,concurrency,case_ids,modes)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/dovh25x/projects/land-law-chatbot/backend/landlaw/evaluation.py", line 204, in _evaluate
+    results=await asyncio.gather(*(execute(c,m) for c,m in pending[start:start+concurrency]))
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/dovh25x/projects/land-law-chatbot/backend/landlaw/evaluation.py", line 186, in execute
+    await asyncio.to_thread(store.create_session,session_id,new_token())
+  File "/usr/lib/python3.14/asyncio/threads.py", line 25, in to_thread
+    return await loop.run_in_executor(None, func_call)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+asyncio.exceptions.CancelledError
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/tmp/run_operative_policy.py", line 40, in <module>
+    try:asyncio.run(main())
+        ~~~~~~~~~~~^^^^^^^^
+  File "/usr/lib/python3.14/asyncio/runners.py", line 204, in run
+    return runner.run(main)
+           ~~~~~~~~~~^^^^^^
+  File "/usr/lib/python3.14/asyncio/runners.py", line 132, in run
+    raise KeyboardInterrupt()
+KeyboardInterrupt

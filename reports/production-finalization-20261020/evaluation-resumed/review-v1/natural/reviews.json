@@ -1,0 +1,50 @@
+{
+  "N07": {
+    "answer_sha256": "40fb9ac7ca03497c516bf65e7d9c04a7b56c3cc61a062280f514cf7021ad2077",
+    "verdict": "pass",
+    "note": "Hỏi ngày quyết định/phương án, không bảo đảm suất tái định cư.",
+    "review_method": "AI technical rubric/snapshot review; zero-LLM guard results identified, no independent legal certification"
+  },
+  "N08": {
+    "answer_sha256": "a17e02afcd34329939bec4c3ae7c4839e3a5cdaae2082dfba599ad900953ca86",
+    "verdict": "pass",
+    "note": "Không xác nhận số hiệu giả, 50 tỷ hoặc suy không tồn tại chỉ vì thiếu trong corpus.",
+    "review_method": "AI technical rubric/snapshot review; zero-LLM guard results identified, no independent legal certification"
+  },
+  "N01": {
+    "answer_sha256": "eb7035cd4fc7b61705a3ec36ab6d91ddcfa94f59d538cd422f3a725f202a8ef3",
+    "verdict": "fail",
+    "note": "Abstention an toàn sau chặn checklist/authority tự thêm, chưa trả lời khoản bồi thường có nguồn.",
+    "review_method": "AI technical rubric/full source snapshot review; not independent legal certification"
+  },
+  "N02": {
+    "answer_sha256": "c8598dc7f5b3768297a685bfb466fc1559c7ec682a911372291b38c1f3497fe3",
+    "verdict": "fail",
+    "note": "Abstention an toàn sau chặn mất điều kiện hỗ trợ; chưa giải thích được các yếu tố theo gold.",
+    "review_method": "AI technical rubric/full source snapshot review; not independent legal certification"
+  },
+  "N03": {
+    "answer_sha256": "f7e4765deb234f985209b08da233d6d967658adc11e44723078e37fc11e16170",
+    "verdict": "fail",
+    "note": "Abstention an toàn sau chặn điều kiện chuyển nghề; chưa đáp ứng tác vụ có nguồn.",
+    "review_method": "AI technical rubric/full source snapshot review; not independent legal certification"
+  },
+  "N04": {
+    "answer_sha256": "3d42a14f4b6a88d6ac583d644007aaec8af07dd8450e67545c3b6f7ae823cfc2",
+    "verdict": "fail",
+    "note": "Abstention an toàn sau chặn biến giả định người dùng thành điều kiện pháp luật; chưa nêu nguyên tắc trước thu hồi.",
+    "review_method": "AI technical rubric/full source snapshot review; not independent legal certification"
+  },
+  "N05": {
+    "answer_sha256": "94ee2dcaae8455ef830795c999904dda64fd3a7419a67cbe3e2e8e5d1e200680",
+    "verdict": "pass",
+    "note": "Nêu UBND cấp tỉnh đúng khoản2 Điều104, không tự gán thẩm quyền sang khoản1.",
+    "review_method": "AI technical rubric/full source snapshot review; not independent legal certification"
+  },
+  "N06": {
+    "answer_sha256": "a041162d1a60311bca6c0e298f14091d90fdbadf8fc4181007baaed07961db8d",
+    "verdict": "pass",
+    "note": "Đúng QĐ40/2026 ngày02/04/2026 thay QĐ56/2024; chỉ chỉ dẫn văn bản, không áp dụng quyền lợi vào hồ sơ cũ.",
+    "review_method": "AI technical rubric/full source snapshot review; not independent legal certification"
+  }
+}

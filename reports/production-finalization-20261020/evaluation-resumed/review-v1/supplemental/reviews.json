@@ -1,0 +1,26 @@
+{
+  "X04": {
+    "answer_sha256": "9948677a6cd34c75e36da617d76de7e39d953b3bc777369c61405b4cb8b8c2ed",
+    "verdict": "pass",
+    "note": "Không xác nhận số hiệu giả hoặc mức 50 tỷ; nêu thiếu chứng cứ trong corpus và cần nguồn chính thức.",
+    "review_method": "AI technical rubric/snapshot review; zero-LLM guard results identified, no independent legal certification"
+  },
+  "X01": {
+    "answer_sha256": "ecf06b39114e7104fe44dec91cfda63e5a7082109ea52917d0e495296f08849f",
+    "verdict": "fail",
+    "note": "Abstention an toàn nhưng chưa đáp ứng tác vụ có căn cứ về chi phí di chuyển; không tính là trả lời đúng.",
+    "review_method": "AI technical rubric/full source snapshot review; not independent legal certification"
+  },
+  "X02": {
+    "answer_sha256": "541a0a20bd43680670a347b8ac0249cc77edb705b9bd00d8c3305b02ac660945",
+    "verdict": "fail",
+    "note": "Có đủ nhóm và phủ định tự động nhận nhưng mở rộng đối tượng Điều109: người có thu nhập ổn định từ sử dụng đất; mất điều kiện giao khoán, sản xuất nông nghiệp, không có đất và đã bồi thường bằng tiền. Claim được phát hành chứa diễn giải thiếu điều kiện.",
+    "review_method": "AI technical rubric/full source snapshot review; not independent legal certification"
+  },
+  "X03": {
+    "answer_sha256": "0ad73d6b1ce8cd6d9399b33215ddd4edd5b2560915b00f45aa9d8cd2c9f4467d",
+    "verdict": "fail",
+    "note": "Abstention an toàn nhưng không phân biệt được khoản1/khoản2 theo câu hỏi có nguồn.",
+    "review_method": "AI technical rubric/full source snapshot review; not independent legal certification"
+  }
+}

@@ -1,0 +1,55 @@
+{
+  "checked_at": "2026-10-20T05:51:38.492861+00:00",
+  "source_corpus_id": "corpus-a26bc99e541fbbe2",
+  "candidate_corpus_id": "corpus-a09539ac704c6591",
+  "source_snapshot_sha256": "d4694c30042b65fe0874bc95618e7b979484e6f05599ff702434d73b95e9f6ff",
+  "candidate_sha256": "5362e337be615e0530a42b0bacb1d23a0d80fec89c6bc446e8280b10b27b24ef",
+  "backup_sha256": "a434848b9e0c13470c070c5c509340e311aa48281785b70834fa5394d87cc266",
+  "documents": 61,
+  "preserved_existing_documents_exactly": 60,
+  "preserved_existing_vectors_exactly": 7392,
+  "new_vectors_generated": 1,
+  "embedding_attempts_including_failed_packaging": 2,
+  "embedding_contract": {
+    "provider": "local_onnx",
+    "model": "multilingual-e5-small-onnx-q8-window-v1",
+    "dimensions": 384,
+    "format_version": "v1",
+    "local_model_spec": {
+      "name": "multilingual-e5-small-onnx-q8-window-v1",
+      "dimensions": 384,
+      "onnx_revision": "761b726dd34fb83930e26aab4e9ac3899aa1fa78",
+      "tokenizer_revision": "614241f622f53c4eeff9890bdc4f31cfecc418b3",
+      "onnx_sha256": "f80102d3f2a1229f387d3c81909990d8945513e347b0eab049f7de3c6f98c193",
+      "tokenizer_sha256": "cfc8146abe2a0488e9e2a0c56de7952f7c11ab059eca145a0a727afce0db2865",
+      "preprocessing": "e5-prefix-each-window-sp-offset1-mask-mean-l2-window-mean-l2-v1",
+      "passage_max_tokens": 512,
+      "query_max_tokens": 128,
+      "overlap_tokens": 64
+    }
+  },
+  "generation_calls": 0,
+  "active_manifest_changed": false,
+  "serving_database_changed": false,
+  "publication_approved": false,
+  "coverage": {
+    "release": "corpus-a09539ac704c6591",
+    "documents": 61,
+    "legal": 55,
+    "verified_legal": 55,
+    "projects": {
+      "ring4": 6
+    },
+    "chunks": 7393,
+    "embedded": true,
+    "coverage_passed": true,
+    "scope_valid": true,
+    "missing_mandatory_sources": [],
+    "publication_ready": false,
+    "dependencies_complete": false,
+    "issues": [],
+    "checked_at": "2026-10-11T17:32:27Z"
+  },
+  "operational_activation_receipt_still_required": true,
+  "scope": "Additive offline candidate only. One fully reviewed public-address source; existing corpus bytes/vectors retained. No legal/quality acceptance or production activation."
+}

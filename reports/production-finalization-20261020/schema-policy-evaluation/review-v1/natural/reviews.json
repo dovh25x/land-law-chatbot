@@ -1,0 +1,26 @@
+{
+  "N01": {
+    "answer_sha256": "2e6c4d94eeec603e456d855a08e2d058928037cdf0d1625892c8691180f2fb15",
+    "verdict": "pass",
+    "note": "Chi phí di chuyển và thiệt hại máy móc được giải thích đúng phạm vi Điều104; không thêm checklist hoặc số tiền.",
+    "review_method": "AI technical rubric/full source snapshot review; not independent legal certification"
+  },
+  "N02": {
+    "answer_sha256": "f69eab4f5d69b75082ba2d4339f6ef7ae3e483e3f0f1024bd72a087b8905988f",
+    "verdict": "fail",
+    "note": "Abstention do diễn giải chỉ áp dụng cho nhóm đủ điều kiện trong khi nguồn còn nhánh khác; chưa đạt tác vụ có nguồn.",
+    "review_method": "AI technical rubric/full source snapshot review; not independent legal certification"
+  },
+  "N03": {
+    "answer_sha256": "0aba22ea3f6da31965abec5fa7e1a710dd621d4c5530fe6c5d6f08d0b1719040",
+    "verdict": "fail",
+    "note": "Claim đã phát hành mất điều kiện nguồn gốc sử dụng đất trong nhóm trực tiếp sản xuất nông nghiệp tại điểm a khoản1 Điều109. Cùng-model verifier đã bỏ lọt; không tính citation khớp là nội dung đúng.",
+    "review_method": "AI technical rubric/full source snapshot review; not independent legal certification"
+  },
+  "N04": {
+    "answer_sha256": "8aeec198577c5cedf2dec801a76d689b41c21a9f6c5f88d8c88f277b004f8b2b",
+    "verdict": "fail",
+    "note": "Abstention sau sửa vẫn lặp tiền đề chưa bố trí chỗ ở và kéo theo nguyên tắc khác; chưa phát quy tắc tích cực bố trí tái định cư trước quyết định.",
+    "review_method": "AI technical rubric/full source snapshot review; not independent legal certification"
+  }
+}

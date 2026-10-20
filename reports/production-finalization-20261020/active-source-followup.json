@@ -1,0 +1,26 @@
+{
+  "checked_at": "2026-10-20T05:51:42.888672+00:00",
+  "scope": "Technical download/parser diagnosis only, no freshness approval or serving mutation",
+  "results": [
+    {
+      "document_id": "nq-254-2025",
+      "url": "https://xaydungchinhsach.chinhphu.vn/toan-van-nghi-quyet-254-2025-qh15-quy-dinh-mot-so-co-che-chinh-sach-thao-go-kho-khan-vuong-mac-trong-to-chuc-thi-hanh-luat-dat-dai-119251225171010998.htm",
+      "approved_freshness": false,
+      "status": 200,
+      "resolved_url": "https://xaydungchinhsach.chinhphu.vn/toan-van-nghi-quyet-254-2025-qh15-quy-dinh-mot-so-co-che-chinh-sach-thao-go-kho-khan-vuong-mac-trong-to-chuc-thi-hanh-luat-dat-dai-119251225171010998.htm",
+      "raw_path": "data/raw/citizen-finalization-20261020/nq-254-2025-followup.html",
+      "sha256": "4c700971c2a76b11f2fec2b15bbb021071b543935aee14a7b5f4305e13fc8ccb",
+      "error_type": "Quarantine",
+      "diagnostic": "Metadata page is not legal full text; PDF attachment required"
+    },
+    {
+      "document_id": "qd-56-2024-hanoi",
+      "url": "https://vbpl.vn/hanoi/Pages/ivbpq-toanvan.aspx?ItemID=169992&Keyword=",
+      "approved_freshness": false,
+      "status": 403,
+      "resolved_url": "https://vbpl.vn/hanoi/Pages/ivbpq-toanvan.aspx?ItemID=169992&Keyword=",
+      "error_type": "HTTPStatusError",
+      "diagnostic": null
+    }
+  ]
+}

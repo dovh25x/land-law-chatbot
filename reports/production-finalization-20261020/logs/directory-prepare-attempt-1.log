@@ -1,0 +1,28 @@
+Traceback (most recent call last):
+  File "/tmp/prepare_city_directory.py", line 47, in <module>
+    asyncio.run(main())
+    ~~~~~~~~~~~^^^^^^^^
+  File "/usr/lib/python3.14/asyncio/runners.py", line 204, in run
+    return runner.run(main)
+           ~~~~~~~~~~^^^^^^
+  File "/usr/lib/python3.14/asyncio/runners.py", line 127, in run
+    return self._loop.run_until_complete(task)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "/usr/lib/python3.14/asyncio/base_events.py", line 719, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+  File "/tmp/prepare_city_directory.py", line 36, in main
+    doc=await collect_source(source,Settings(),client,offline=True,allow_ocr=False)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/dovh25x/projects/land-law-chatbot/backend/landlaw/ingest.py", line 380, in collect_source
+    doc = Document(id=source_id, title=source["title"], url=source["url"], publication_url=source.get("publication_url"),
+        source_kind=source["source_kind"], document_number=source.get("document_number"), issuer=source.get("issuer"),
+    ...<11 lines>...
+        checked_at=datetime.fromisoformat(source["checked_at"].replace("Z", "+00:00")) if offline else utcnow(), checksum=checksum,
+        chunks=chunks_for(source_id, pages, source.get('expected_article_count'),preserve_public_contacts=directory))
+  File "/home/dovh25x/projects/land-law-chatbot/.venv/lib/python3.14/site-packages/pydantic/main.py", line 280, in __init__
+    validated_self = self.__pydantic_validator__.validate_python(data, self_instance=self)
+pydantic_core._pydantic_core.ValidationError: 1 validation error for Document
+task_tags.0
+  Input should be 'orientation', 'explain_document', 'prepare_documents', 'understand_benefit', 'find_contact', 'disagreement' or 'explain_term' [type=literal_error, input_value='public_reception_contact', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.14/v/literal_error
