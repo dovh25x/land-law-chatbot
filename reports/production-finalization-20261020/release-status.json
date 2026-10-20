@@ -1,0 +1,109 @@
+{
+  "checked_at": "2026-10-20T11:10:45.225238+00:00",
+  "public_url": "https://hanoi-land-law.pages.dev",
+  "deployment_source_commit": "d2424ed5469df05d0994b56daa02d4765323ae83",
+  "runtime_tested_source_commit": "bddededf4b3ce8827095d4fba27c17ca4be1fb4f",
+  "configuration_sha256": "83f93f6482ed90765a62c39c818d5972e3560e2a2357efa21cd55f13be603b9e",
+  "corpus_id": "corpus-a26bc99e541fbbe2",
+  "application_deployed": true,
+  "publication_profile": "academic",
+  "quality_status": "academic_prototype",
+  "full_quality_gate_passed": false,
+  "citizen_v2_product_acceptance": false,
+  "quality_gate_setting_changed": false,
+  "allow_stale_generation_setting_changed": false,
+  "source_fresh": false,
+  "technical_verification": {
+    "exact_deployed_sha_and_fingerprint": true,
+    "ci": {
+      "backend": 311,
+      "frontend_unit": 14,
+      "frontend_e2e": 100,
+      "build": true,
+      "secret_scan": true,
+      "npm_audit_high": true
+    },
+    "docker_peak_rss_mib": 383.00390625,
+    "real_public_navigation_widths_px": [
+      1440,
+      390,
+      320
+    ],
+    "signed_ingress": true,
+    "server_history_read_write_privileges_revoked": true,
+    "negative_public_controls": true,
+    "real_turnstile_session_verified": false,
+    "public_chat_and_indexeddb_cycle_verified": false,
+    "public_llm_generation_checked": false,
+    "physical_device_tested": false
+  },
+  "groq_key": {
+    "new_key_stored_in_render_and_github": true,
+    "new_render_deployment_applies_stored_environment": true,
+    "authenticated_model_catalog_checked": true,
+    "live_public_inference_using_key_verified": false,
+    "free_provider_quota_still_applies": true
+  },
+  "current_fingerprint_evaluation": {
+    "expected": 32,
+    "executed": 21,
+    "pass": 19,
+    "fail": 2,
+    "partial": 0,
+    "not_run": 11,
+    "passing_zero_llm_guard_or_source_fact_cases": 16,
+    "fully_passed_llm_cases": [
+      "N01",
+      "N04",
+      "S04"
+    ],
+    "failed_task_case_ids": [
+      "S06"
+    ],
+    "provider_limited_case_ids": [
+      "X02"
+    ]
+  },
+  "unresolved": {
+    "full_quality_gates": [
+      "coverage",
+      "source_freshness",
+      "generation:smoke",
+      "generation:supplemental",
+      "generation:natural"
+    ],
+    "task_failure": "S06: safe abstention after model attributes paper conditions to the wrong clause.",
+    "provider": "X02 limited after format failure and actual Groq Free TPD; 11 current-fingerprint cases not run.",
+    "sources": "Seven coverage gaps and source freshness checks remain. Reproducing 58 downloads is not a legal-update review.",
+    "public_flow": "Managed Turnstile did not issue a real browser token; no bypass used. Public chat, reload/delete and live LLM are unverified.",
+    "citizen_v2": "48 scenarios and eight journeys remain draft/unfrozen, with no measured completion."
+  },
+  "waiver_scope": [
+    "independent legal reviewer",
+    "pre-release usability study"
+  ],
+  "corpus_candidate": {
+    "id": "corpus-a09539ac704c6591",
+    "documents": 61,
+    "chunks": 7393,
+    "production_activated": false,
+    "previous_7392_vectors_reembedded": false
+  },
+  "rollback": {
+    "previous_application_commit": "069d21e8fcdc73161e38f678c95805539c8813cd",
+    "previous_render_and_pages_deployments_retained": true,
+    "backup_release_deleted": false,
+    "database_dropped_or_serving_restored_over": false
+  },
+  "automatic_background_evaluation": false,
+  "evidence": {
+    "identity": "production-identity.json",
+    "software": "software-d2424ed.json",
+    "navigation": "live-navigation/navigation.json",
+    "turnstile": "live-turnstile.json",
+    "evaluation": "evaluation-checkpoint-status-final.json",
+    "full_readiness": "readiness-v2.json",
+    "rollback": "rollback-retained.json"
+  },
+  "scope": "Verified technical rollout to existing production endpoints under existing academic prototype profile. Full-quality production acceptance is not achieved; no score/gate waiver beyond two explicit human criteria."
+}

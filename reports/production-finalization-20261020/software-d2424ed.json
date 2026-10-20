@@ -1,0 +1,21 @@
+{
+  "checked_at": "2026-10-20T11:08:27.489036+00:00",
+  "runtime_tested_commit": "bddededf4b3ce8827095d4fba27c17ca4be1fb4f",
+  "deployment_commit": "d2424ed5469df05d0994b56daa02d4765323ae83",
+  "intervening_changes_reports_only": true,
+  "deployment_commit_itself_full_ci_passed": true,
+  "ci_url": "https://github.com/dovh25x/land-law-chatbot/actions/runs/39412230786",
+  "tests": {
+    "backend": 311,
+    "frontend_unit": 14,
+    "frontend_e2e": 100,
+    "build": true,
+    "secret_scan": true,
+    "npm_audit_high": true
+  },
+  "container": {
+    "peak_rss_mib": 383.00390625,
+    "limit_mib": 512
+  },
+  "legal_quality_acceptance": false
+}
