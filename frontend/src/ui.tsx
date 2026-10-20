@@ -4,6 +4,7 @@ import { getJSON, type Citation, type GenerationStatus, type LegalDocument, type
 
 export const sourceKinds: Record<string, string> = {
   legal: 'Văn bản pháp luật', project_decision: 'Hồ sơ dự án', official_news: 'Thông tin chính thức',
+  official_procedure: 'Thủ tục chính thức', official_directory: 'Đầu mối công khai',
 }
 export const formatDate = (value?: string) => value && !Number.isNaN(Date.parse(value))
   ? new Date(value).toLocaleDateString('vi-VN') : 'Chưa xác minh'
@@ -122,6 +123,7 @@ export function SourcePanel({ source, citations, onSelect, onClose }: {
     {!!citations.length && <nav className="source-picker" aria-label="Nguồn của đáp án"><h3>{citations.length} nguồn trong đáp án</h3>{citations.map((item, index) => <button key={item.id} aria-current={source?.id === item.id ? 'true' : undefined} onClick={() => onSelect(item)}><span className="citation-index">{index + 1}</span><span>{item.document_number || item.title}<small>{item.locator}</small></span></button>)}</nav>}
     {source ? <div ref={scrollRef} className="source-card">
       <h3 className="source-title">{source.title}</h3><p className="source-meta">{source.document_number || 'Chưa có số hiệu'}</p>
+      {source.source_kind && <p className="secondary-copy">{sourceKinds[source.source_kind] || 'Nguồn để đối chiếu'}</p>}
       {(document?.availability === 'reference_only' || ('availability' in source && source.availability === 'reference_only')) && <p className="data-note" role="note">Tài liệu gốc để bạn đối chiếu. Nội dung chưa nằm trong chỉ mục trả lời và không được dùng làm căn cứ cho kết luận AI.</p>}
       {citation ? <>
         <div className="source-excerpt"><h4>{citation.locator}</h4>{citation.page && <p className="secondary-copy">Trang nguồn: {citation.page}</p>}<blockquote>{citation.excerpt}</blockquote></div>

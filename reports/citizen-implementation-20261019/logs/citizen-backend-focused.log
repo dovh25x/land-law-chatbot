@@ -1,0 +1,67 @@
+.....F.................................................................. [ 43%]
+..........F..........F.................................................. [ 87%]
+....................                                                     [100%]
+=================================== FAILURES ===================================
+___ test_draft_suite_is_never_executable_and_custom_registry_requires_review ___
+
+tmp_path = PosixPath('/tmp/pytest-of-dovh25x/pytest-21/test_draft_suite_is_never_exec0')
+
+    def test_draft_suite_is_never_executable_and_custom_registry_requires_review(tmp_path):
+        from pathlib import Path
+        from landlaw.evaluation import frozen_dataset
+>       with pytest.raises(ValueError, match='draft|review|frozen'):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AssertionError: Regex pattern did not match.
+E         Expected regex: 'draft|review|frozen'
+E         Actual message: 'Supported splits: smoke, supplemental, natural'
+
+tests/test_citizen.py:64: AssertionError
+_ test_personal_entitlement_guarantee_asks_for_file_without_applying_expired_law[agentic] _
+
+store = <landlaw.store.Store object at 0x7e6c9e0f7890>
+settings = Settings(app_env='development', llm_provider='groq', groq_api_key=SecretStr('**********'), groq_model='openai/gpt-oss-...lement_guar0/data'), reports_dir=PosixPath('/tmp/pytest-of-dovh25x/pytest-21/test_personal_entitlement_guar0/reports'))
+mode = 'agentic'
+
+    @pytest.mark.parametrize('mode', ['agentic'])
+    async def test_personal_entitlement_guarantee_asks_for_file_without_applying_expired_law(store,settings,mode):
+        old=document(text='Điều 19. Hộ có đủ điều kiện được mua căn hộ tái định cư.')
+        old.effective_to=date(2026,4,2)
+        release(store,[old]);sid,_=session(store)
+        class NoModel(FakeProvider):
+            async def generate(self,*args):raise AssertionError('Public law cannot prove this household entitlement')
+        result=await Agent(store,NoModel(settings)).run(ChatRequest(session_id=sid,
+            message='Nhà của tôi chắc chắn được một căn tái định cư đúng không?',as_of=date(2026,10,12),mode=mode),noop)
+        assert result.status=='clarification_needed' and result.llm_calls==0
+        assert not result.citations and not result.verified_claims
+>       assert len(result.missing_facts)==4 and 'chưa thể khẳng định' in result.content
+E       AssertionError: assert (4 == 4 and 'chưa thể khẳng định' in 'Chưa thể khẳng định quyền lợi hoặc số tiền cho gia đình từ thông tin đang có. Cần bổ sung dữ kiện để xác định quy địn...ng hỏi không? Chỉ nhập ngày, không nhập số hồ sơ.\n\nThời điểm xem xét: 12/10/2026. Dữ liệu được kiểm tra: 2026-10-19.')
+E        +  where 4 = len(['Loại đất, tình trạng giấy tờ quyền sử dụng đất và nhà ở, chỉ cung cấp thông tin đã ẩn danh.', 'Ngày, căn cứ trong th... đất ở.', 'Vị trí xã/thôn và ranh thu hồi trong hồ sơ; thông tin tổng quan dự án chưa xác định quyền lợi của từng hộ.'])
+E        +    where ['Loại đất, tình trạng giấy tờ quyền sử dụng đất và nhà ở, chỉ cung cấp thông tin đã ẩn danh.', 'Ngày, căn cứ trong th... đất ở.', 'Vị trí xã/thôn và ranh thu hồi trong hồ sơ; thông tin tổng quan dự án chưa xác định quyền lợi của từng hộ.'] = ChatResult(status='clarification_needed', publication_profile='academic', quality_status='academic_prototype', retriev...dow-v1', mode='agentic', support_level='insufficient', retry_after=None, retrieved_chunk_ids=[], evidence_chunk_ids=[]).missing_facts
+E        +  and   'Chưa thể khẳng định quyền lợi hoặc số tiền cho gia đình từ thông tin đang có. Cần bổ sung dữ kiện để xác định quy địn...ng hỏi không? Chỉ nhập ngày, không nhập số hồ sơ.\n\nThời điểm xem xét: 12/10/2026. Dữ liệu được kiểm tra: 2026-10-19.' = ChatResult(status='clarification_needed', publication_profile='academic', quality_status='academic_prototype', retriev...dow-v1', mode='agentic', support_level='insufficient', retry_after=None, retrieved_chunk_ids=[], evidence_chunk_ids=[]).content
+
+tests/test_agent.py:939: AssertionError
+_ test_unknown_old_county_needs_finer_location_not_guessed_new_commune[agentic] _
+
+store = <landlaw.store.Store object at 0x7e6c9dfdfd90>
+settings = Settings(app_env='development', llm_provider='groq', groq_api_key=SecretStr('**********'), groq_model='openai/gpt-oss-...unty_needs_0/data'), reports_dir=PosixPath('/tmp/pytest-of-dovh25x/pytest-21/test_unknown_old_county_needs_0/reports'))
+mode = 'agentic'
+
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize('mode',['agentic'])
+    async def test_unknown_old_county_needs_finer_location_not_guessed_new_commune(store,settings,mode):
+        release(store);sid,_=session(store)
+        async def emit(event):pass
+        result=await Agent(store,FakeProvider(settings,failure=ProviderUnavailable('Must not be called'))).run(
+            ChatRequest(session_id=sid,message='Hồ sơ chỉ ghi huyện Tân Phú cũ, có thể tự đổi thành xã Tân Phú mới và xác định đất thuộc dự án không?',mode=mode),emit)
+        assert result.status=='clarification_needed' and result.llm_calls==0
+        assert any(t.tool=='normalize_place' for t in result.trace)
+>       assert 'Tên xã/phường' in result.content and 'chưa đủ' in result.content
+E       AssertionError: assert ('Tên xã/phường' in 'Tên huyện cũ chưa đủ để ánh xạ tới một xã/phường mới hoặc xác định một thửa đất thuộc dự án. Cần đối chiếu địa bàn ch...ng hỏi không? Chỉ nhập ngày, không nhập số hồ sơ.\n\nThời điểm xem xét: 19/10/2026. Dữ liệu được kiểm tra: 2026-10-19.')
+E        +  where 'Tên huyện cũ chưa đủ để ánh xạ tới một xã/phường mới hoặc xác định một thửa đất thuộc dự án. Cần đối chiếu địa bàn ch...ng hỏi không? Chỉ nhập ngày, không nhập số hồ sơ.\n\nThời điểm xem xét: 19/10/2026. Dữ liệu được kiểm tra: 2026-10-19.' = ChatResult(status='clarification_needed', publication_profile='academic', quality_status='academic_prototype', retriev...dow-v1', mode='agentic', support_level='insufficient', retry_after=None, retrieved_chunk_ids=[], evidence_chunk_ids=[]).content
+
+tests/test_agent.py:1018: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_citizen.py::test_draft_suite_is_never_executable_and_custom_registry_requires_review
+FAILED tests/test_agent.py::test_personal_entitlement_guarantee_asks_for_file_without_applying_expired_law[agentic]
+FAILED tests/test_agent.py::test_unknown_old_county_needs_finer_location_not_guessed_new_commune[agentic]
+3 failed, 161 passed in 14.64s

@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "status": "draft_not_frozen",
+  "execution_ready": false,
+  "created_at": "2026-10-19T08:05:09.808407+00:00",
+  "scope": "Development design artifacts; no model calls, no reviewed legal gold, no independent holdout.",
+  "not_compatible_with_current_benchmark_cli": true,
+  "source_requirement_definition": "docs/redesign/CORPUS.md",
+  "scenario_groups": {
+    "O": 8,
+    "D": 8,
+    "C": 8,
+    "K": 8,
+    "P": 8,
+    "T": 8
+  },
+  "artifacts": {
+    "scenarios.jsonl": {
+      "sha256": "e4f5a8e780bef7a53b745cad317276284e9a7c9949b755f0c9af77be6cb71752",
+      "cases": 48
+    },
+    "journeys.jsonl": {
+      "sha256": "5995d9a85739bfb6676e4c75006fcc3420008b6303342b3f7ed2d3925f0bdff5",
+      "cases": 8
+    }
+  },
+  "next_steps": [
+    "Review user needs",
+    "Bind snapshot and source spans",
+    "Annotate answerability and propositions",
+    "Legal/content review",
+    "Freeze version before prompt changes",
+    "Implement evaluator registry separately"
+  ]
+}

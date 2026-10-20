@@ -22,10 +22,10 @@ test('Figma typography, responsive composer and mobile navigation', async ({ pag
   await page.setViewportSize(info.project.name === 'mobile' ? { width: 390, height: 940 } : { width: 1440, height: 1024 })
   await page.goto('/')
   await page.evaluate(() => document.fonts.ready)
-  await expect(page.getByRole('heading', { name: /Bạn muốn tìm hiểu điều gì/ })).toBeVisible()
+  await expect(page.getByRole('heading', { name: /Bạn đang vướng việc gì/ })).toBeVisible()
   expect(await page.locator('body').evaluate(el => getComputedStyle(el).fontFamily)).toContain('Be Vietnam Pro')
   await expect(page.getByRole('button', { name: 'Gửi câu hỏi' })).toBeVisible()
-  await expect(page.locator('.topic-grid > button')).toHaveCount(3)
+  await expect(page.locator('.topic-grid > button')).toHaveCount(6)
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBeTruthy()
   await page.screenshot({ path: info.outputPath(`ui-figma-${info.project.name}.png`), fullPage: true })
   if (info.project.name === 'mobile') {

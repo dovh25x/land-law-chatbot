@@ -11,7 +11,7 @@ from pathlib import Path
 
 import psycopg
 from landlaw.config import Settings
-from landlaw.evaluation import configuration_fingerprint, dataset, evaluate
+from landlaw.evaluation import configuration_fingerprint, evaluate, frozen_dataset
 from landlaw.provider import GroqProvider, ProviderUnavailable
 from landlaw.security import utcnow
 from landlaw.store import Store
@@ -75,7 +75,7 @@ async def main(args):
             return
     with tempfile.TemporaryDirectory(prefix='landlaw-generation-candidate-') as folder, candidate_settings(args, folder) as settings:
         splits=args.split or ('smoke','supplemental','natural')
-        cases={split:{case['id'] for case in dataset(settings.data_dir/f'evaluation/{split}.jsonl')}
+        cases={split:{case['id'] for case in frozen_dataset(settings.data_dir,split)[0]}
                for split in splits}
         if args.case_id and not set(args.case_id)<=set().union(*cases.values()):
             raise ValueError('Unknown frozen case ID for the selected suites')
@@ -120,7 +120,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--backup', type=Path, required=True)
     parser.add_argument('--output', type=Path, required=True)
-    parser.add_argument('--split', action='append', choices=('smoke', 'supplemental', 'natural'))
+    parser.add_argument('--split', action='append', help='Legacy split or reviewed frozen suite from evaluation/registry.json')
     parser.add_argument('--resume', action='store_true')
     parser.add_argument('--postgres', action='store_true', help='Use and retain a newly created isolated PostgreSQL database; never the serving database')
     parser.add_argument('--case-id', action='append', help='Prioritize an existing frozen case without changing its full-suite denominator')

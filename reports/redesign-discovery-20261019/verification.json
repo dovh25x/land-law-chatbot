@@ -1,0 +1,114 @@
+{
+  "source_commit": "fefee293c446b98634051c5a5fa4200b6a1c704e",
+  "recorded_at": "2026-10-19T08:07:20.597829+00:00",
+  "scope": "Existing software baseline plus design artifact integrity; no implementation/model/production validation of proposed v2.",
+  "checks": [
+    {
+      "name": "backend_sandbox",
+      "command": ".venv/bin/python -m pytest -q",
+      "exit_code": 130,
+      "note": "Interrupted after hanging in sandbox; not passed",
+      "log": "reports/redesign-discovery-20261019/backend_sandbox.log",
+      "log_sha256": "5ec1f7e700f37c3d0b2981d04855fc34b94aaa15457b05ca571817442d228f81"
+    },
+    {
+      "name": "backend",
+      "command": ".venv/bin/python -m pytest -q",
+      "exit_code": 0,
+      "note": "259 passed; executed outside sandbox",
+      "log": "reports/redesign-discovery-20261019/backend.log",
+      "log_sha256": "69e8ee5d6361a55f2fdcaa9869be10d6f63b34ff14b7c6d001c2b1933e8f14f9"
+    },
+    {
+      "name": "frontend_unit",
+      "command": "npm --prefix frontend test",
+      "exit_code": 0,
+      "note": "10 passed",
+      "log": "reports/redesign-discovery-20261019/frontend_unit.log",
+      "log_sha256": "1c82ddf022b1db3b80a364692d66ea03a81bb7bf73372d9b197ee0007510f0ff"
+    },
+    {
+      "name": "frontend_build",
+      "command": "npm --prefix frontend run build",
+      "exit_code": 0,
+      "note": "TypeScript and Vite build passed",
+      "log": "reports/redesign-discovery-20261019/frontend_build.log",
+      "log_sha256": "0bae1a1b6b7d445a3b2505370db92d1ce6f9efa775aa56d3c95f5c05cd1dfc40"
+    },
+    {
+      "name": "frontend_e2e_sandbox",
+      "command": "npm --prefix frontend run test:e2e",
+      "exit_code": 1,
+      "note": "webServer could not start in sandbox; not passed",
+      "log": "reports/redesign-discovery-20261019/frontend_e2e_sandbox.log",
+      "log_sha256": "7b55cff204c52286581d4b8c0a88479ed57de35ec40af49ac4715caa7d1019cc"
+    },
+    {
+      "name": "frontend_e2e",
+      "command": "npm --prefix frontend run test:e2e",
+      "exit_code": 0,
+      "note": "88 passed; executed outside sandbox",
+      "log": "reports/redesign-discovery-20261019/frontend_e2e.log",
+      "log_sha256": "765692848420022202479f81b676153ffc962e6ccf2fd2157ebb09363fbc8217"
+    },
+    {
+      "name": "design_artifact_integrity",
+      "exit_code": 0,
+      "checks": [
+        "legacy_suites_freeze",
+        "48_unique_development_scenarios",
+        "8_unique_journey_scripts",
+        "source_requirement_references",
+        "draft_manifest_checksums",
+        "relative_links"
+      ],
+      "scope": "Structural verification, not legal gold annotation or model evaluation"
+    },
+    {
+      "name": "secrets",
+      "command": ".venv/bin/python scripts/check_secrets.py",
+      "exit_code": 0,
+      "log": "reports/redesign-discovery-20261019/secrets_final.log",
+      "log_sha256": "766d75c21b58f1924ca7617ba55b3944d6d327b8f64a36ceba52c177e79340c7"
+    },
+    {
+      "name": "runtime_source_preservation",
+      "exit_code": 0,
+      "compared_to_commit": "fefee293c446b98634051c5a5fa4200b6a1c704e",
+      "unchanged_entries": 115,
+      "excluded_changed_documentation": [
+        "README.md",
+        "docs/README.md"
+      ]
+    },
+    {
+      "name": "final_relative_links",
+      "exit_code": 0,
+      "markdown_files": 9
+    }
+  ],
+  "legacy_suites": {
+    "smoke": {
+      "suite_sha256": "38aa8da29bf41a94b4cf8fd8a5ca6769232b87884aeed573c10f5586a09d7254",
+      "freeze_sha256": "12f442e9fe09afab381037f484f563764ee88913293d3973cfafd808f24cdc37",
+      "cases": 20,
+      "freeze_matches": true
+    },
+    "supplemental": {
+      "suite_sha256": "e6bb5c9f7ba3a589237835b68d95e491ff2c16aad83683a8437f4a74e4120fea",
+      "freeze_sha256": "236640e34e13502d88e2f2be719bd40143cd39ccf37df3860beabee9b366164d",
+      "cases": 4,
+      "freeze_matches": true
+    },
+    "natural": {
+      "suite_sha256": "b068bb4e717439938c96e459a63c9a1832b1990d88005cf6a768d9e9c0871e74",
+      "freeze_sha256": "689d520a433ff43219cab353b172750ae0acdca198309a722bba35107e9661eb",
+      "cases": 8,
+      "freeze_matches": true
+    }
+  },
+  "model_calls": 0,
+  "database_mutations": false,
+  "corpus_or_runtime_changed": false,
+  "source_inventory_sha256": "4f503685f7a892c741637c437e264dff2b3cee4fb6c736f157ef11b272b6503a"
+}

@@ -40,7 +40,7 @@ Không bảo đảm mọi lượt dùng hết các bước hoặc hoàn tất re
 
 ![Cổng phát hành đáp án](diagrams/agent-publication-gate.svg)
 
-Sơ đồ cổng phát hành gộp kiểm tra verdict và phạm vi vào quyết định cuối; chú thích nêu chính sách nguồn quá hạn theo chế độ vận hành; nhánh retry/repair được trình bày ở graph phía trên. Nhánh không có claim có thể trả thông báo hoặc hỏi làm rõ bằng quy tắc. `answered` luôn cần ít nhất một claim. Các bước generic trong `next_steps` chỉ được hiển thị khi không có lỗi kiểm chứng, không yêu cầu thêm chứng cứ và không ngoài phạm vi; điều kiện hoặc thời hạn pháp lý phải nằm trong claim có nguồn. Summary do model sinh không được dùng để dựng phần trả lời.
+Sơ đồ cổng phát hành gộp kiểm tra verdict và phạm vi vào quyết định cuối; chú thích nêu chính sách nguồn quá hạn theo chế độ vận hành; nhánh retry/repair được trình bày ở graph phía trên. Nhánh không có claim có thể trả thông báo hoặc hỏi làm rõ bằng quy tắc. `answered` luôn cần ít nhất một claim. `Draft.next_steps` không còn được hiển thị; mọi bước thực chất, điều kiện hoặc thời hạn pháp lý phải nằm trong claim có nguồn trước verify. Câu hỏi làm rõ và thông báo giới hạn cố định được runtime dựng riêng theo schema v2. Summary do model sinh không được dùng để dựng phần trả lời.
 
 Với claim `applicability` dẫn văn bản tương lai, nội dung phải nói rõ chưa có hiệu lực trước khi được duyệt. Kiểm tra cấu trúc này chỉ nhận các cách diễn đạt phủ định đã quy định; nó không thay thế kiểm chứng ngữ nghĩa của toàn câu hoặc tự chứng minh ngày bắt đầu hiệu lực.
 

@@ -38,6 +38,12 @@ Retry truy xuất được ưu tiên trước repair. Tới `finish` không đ�
 
 Xem [phân tích và sơ đồ agent chi tiết](AGENT_FLOW.md) cho nhánh quy tắc không gọi LLM, điều kiện ngân sách, cổng phát hành và giới hạn của thiết kế.
 
+## Tương tác cho người dân
+
+`citizen.py` xử lý định hướng tên giấy, chọn một câu hỏi và kiểm tra vai trò/freshness nguồn ngay trong graph hiện có. Câu hỏi chỉ đọc tên giấy không sinh hướng dẫn pháp lý và không cần gọi model. Các nội dung thực chất, kể cả việc tiếp theo, phải nằm trong claim trước verify; `next_steps` tự do không được phát.
+
+Nguồn thủ tục/danh bạ vẫn đi qua store/retrieval hiện tại; action cần receipt tác nghiệp còn hạn, đúng checksum và đủ phụ thuộc. Nguồn thiếu hoặc chưa duyệt làm nhánh tương ứng nêu giới hạn. Không có pipeline hoặc bảng lưu hội thoại mới. [Chi tiết triển khai](redesign/IMPLEMENTATION.md) mô tả schema, source policy và phần chưa đủ điều kiện phát hành.
+
 ## Ngân sách và kiểm soát thực thi
 
 | Giới hạn mỗi lượt | Giá trị |

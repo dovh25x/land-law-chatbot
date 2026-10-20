@@ -1,0 +1,13 @@
+{
+  "schema_version": 1,
+  "status": "discovery_only_not_in_answer_corpus",
+  "discovered_on": "2026-10-19",
+  "candidates": [
+    {"id":"citizen-first-complaint-commune","url":"https://thutuc.dichvucong.gov.vn/p/home/dvc-tthc-thu-tuc-hanh-chinh-chi-tiet.html?ma_thu_tuc=366083","title":"Thủ tục giải quyết khiếu nại lần đầu tại cấp xã","proposed_kind":"official_procedure","source_requirements":["C04","C05","C11"],"review_status":"pending","blockers":["Verify publication version, Hanoi applicability and all amended legal dependencies","Review required papers, channels, starting events and exceptions against official originals","Download and bind raw bytes before ingest"]},
+    {"id":"citizen-hanoi-reception-calendar","url":"https://hanoi.gov.vn/lich-tiep-cong-dan","title":"Lịch tiếp công dân — Cổng thông tin điện tử Hà Nội","proposed_kind":"official_directory","source_requirements":["C07","C12"],"review_status":"pending","blockers":["A portal footer is not the receiving office for a particular complaint","Verify date, exact institution, jurisdiction and procedure before recommending a contact","Do not use an old calendar as a current appointment"]},
+    {"id":"citizen-lienminh-reception-calendar","url":"https://lienminh.hanoi.gov.vn/lich-tiep-cong-dan","title":"Lịch tiếp công dân — Trang thông tin xã Liên Minh","proposed_kind":"official_directory","source_requirements":["C06","C07","C12"],"review_status":"pending","blockers":["Verify current administrative scope and relation to the requested Ring4 task","Review institution/function and current channel separately from event reports","No personal contact details or case records may be indexed"]}
+  ],
+  "rejected_search_results": [
+    {"url":"https://dichvucong.gov.vn/p/home/dvc-chi-tiet-thu-tuc-nganh-doc.html?ma_thu_tuc=1.008288","reason":"Military complaint procedure; mention of Hanoi does not make it a Ring4 civilian procedure"}
+  ]
+}

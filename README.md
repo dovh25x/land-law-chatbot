@@ -4,8 +4,11 @@
 
 [Ứng dụng](https://hanoi-land-law.pages.dev) · [Tài liệu](docs/README.md) · [Kiến trúc](docs/ARCHITECTURE.md) · [Đánh giá](docs/EVALUATION.md)
 
+[Thiết kế lại cho người dân](docs/redesign/README.md) mô tả sản phẩm đích, kế hoạch corpus, chương trình đánh giá mới và lộ trình triển khai. Phần mã nguồn đã được cập nhật theo [trạng thái triển khai](docs/redesign/IMPLEMENTATION.md); trạng thái phát hành và kiểm tra nằm trong báo cáo có phiên bản.
+
 ## Khả năng và phạm vi
 
+- Bắt đầu theo tình huống đời thường; làm rõ tên giấy hoặc giai đoạn, có lựa chọn chưa biết.
 - Tra cứu quy định, điều kiện áp dụng, mốc hiệu lực và quan hệ sửa đổi hoặc thay thế văn bản.
 - Hỏi tiếp theo ngữ cảnh hội thoại; mở nguồn, điều khoản, trang và đoạn trích của câu trả lời.
 - Xem các bước thực thi quan sát được để đối chiếu quá trình tra cứu.

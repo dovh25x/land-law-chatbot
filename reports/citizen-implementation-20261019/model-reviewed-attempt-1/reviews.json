@@ -1,0 +1,20 @@
+{
+  "N01": {
+    "answer_sha256": "417affdc886393ffd7677ecaac40b0d9eabecd0f631b5d214d1d601c4d4d8340",
+    "verdict": "fail",
+    "note": "Không hoàn tất câu trả lời. Verifier phát hiện claim về máy móc trích Điều 102 thay nguồn Điều 104, rồi lượt repair gặp TPM. Không có kết luận chưa verify được phát; lỗi thực thi vẫn là fail tác vụ.",
+    "review_method": "Implementation-agent technical review of frozen rubric, actual source excerpts and execution trace; not independent legal certification."
+  },
+  "N02": {
+    "answer_sha256": "73f6210cc2666677d90c0986868807f58d8887964592df3bf1324001a051c915",
+    "verdict": "fail",
+    "note": "Runtime trả answered và citation khớp nguồn, nhưng diễn giải định mức thiếu điều kiện đủ điều kiện bồi thường về đất và đơn vị cho một nhân khẩu; có tham chiếu (a)-(e) không được định nghĩa. Regression tái hiện cho thấy verifier giả lập đồng ý vẫn để lọt. Cần veto trước phát; không sửa verdict thành pass sau khi sửa code.",
+    "review_method": "Implementation-agent technical review of frozen rubric, actual source excerpts and execution trace; not independent legal certification."
+  },
+  "N03": {
+    "answer_sha256": "1b22a18cb0065d5e3cdc554b5966fafc5b5f251549b886e51b5ccc72de9e337b",
+    "verdict": "fail",
+    "note": "Groq giới hạn TPD trước khi có generation hoàn tất. Giữ limited trong mẫu số; không đổi thành ca từ chối đúng.",
+    "review_method": "Implementation-agent technical review of frozen rubric, actual source excerpts and execution trace; not independent legal certification."
+  }
+}

@@ -8,6 +8,7 @@ Tài liệu mô tả phạm vi sản phẩm, thiết kế và cách vận hành 
 |---|---|
 | Cài đặt và chạy ứng dụng | [README](../README.md) |
 | Hiểu vấn đề, người dùng và phạm vi | [PRD](PRD.md) |
+| Đọc thiết kế đích cho người dân và lộ trình triển khai | [Thiết kế lại v2](redesign/README.md) · [trạng thái triển khai](redesign/IMPLEMENTATION.md) |
 | Đọc luồng xử lý và ranh giới tin cậy | [Kiến trúc](ARCHITECTURE.md) |
 | Phản biện thiết kế và xem agent flow | [Agent flow](AGENT_FLOW.md) |
 | Tích hợp phiên, chat và SSE | [API](API.md) |

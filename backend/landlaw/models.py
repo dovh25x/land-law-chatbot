@@ -6,6 +6,26 @@ from pydantic import BaseModel, Field, HttpUrl, model_validator
 
 ProjectID = Literal["ring4", "songhong", "olympic"]
 Status = Literal["answered", "clarification_needed", "insufficient_evidence", "limited", "error"]
+CitizenIntent = Literal['orientation', 'explain_document', 'prepare_documents', 'understand_benefit',
+                        'find_contact', 'disagreement', 'explain_term']
+
+
+class Interaction(BaseModel):
+    """Untrusted UI hints, never evidence or an entitlement decision."""
+    intent: CitizenIntent | None = None
+    stage: Literal['unknown', 'paper_received', 'inventory', 'proposal', 'moving', 'disagreement'] | None = None
+
+
+class Clarification(BaseModel):
+    fact: Literal['document_type', 'stage', 'place', 'date', 'land_type']
+    question: str = Field(min_length=1, max_length=400)
+    options: list[str] = Field(default_factory=list, max_length=3)
+    allow_unknown: bool = True
+
+
+class AnswerSection(BaseModel):
+    kind: Literal['direct', 'explanation', 'actions']
+    claim_indexes: list[int] = Field(min_length=1, max_length=10)
 
 
 class Chunk(BaseModel):
@@ -44,7 +64,7 @@ class Document(BaseModel):
     title: str
     url: HttpUrl
     publication_url: HttpUrl | None = None
-    source_kind: Literal["legal", "project_decision", "official_news"]
+    source_kind: Literal["legal", "project_decision", "official_news", "official_procedure", "official_directory"]
     document_number: str | None = None
     issuer: str | None = None
     jurisdiction: str = "Hanoi"
@@ -58,6 +78,12 @@ class Document(BaseModel):
     checked_at: datetime
     checksum: str
     source_review_notes: str = ''
+    task_tags: list[CitizenIntent] = Field(default_factory=list, max_length=7)
+    administrative_scope: str | None = Field(default=None, max_length=200)
+    procedure_id: str | None = Field(default=None, max_length=160)
+    required_dependency_ids: list[str] = Field(default_factory=list, max_length=20)
+    operational_reviewed_at: datetime | None = None
+    operational_review_status: Literal['pending', 'unchanged', 'changed', 'unavailable'] = 'pending'
     source_files: list[SourceFile] = Field(default_factory=list)
     source_pages: list[SourcePage] = Field(default_factory=list)
     chunks: list[Chunk] = Field(default_factory=list)
@@ -93,6 +119,7 @@ class Citation(BaseModel):
     checked_at: datetime
     applicability: str
     source_review_notes: str = ''
+    source_kind: str = 'legal'
     page: int | None = None
     source_url: str | None = None
 
@@ -126,6 +153,7 @@ class ChatRequest(BaseModel):
     mode: Literal["agentic"] = "agentic"
     request_id: UUID = Field(default_factory=uuid4)
     history: list[HistoryMessage] = Field(default_factory=list, max_length=8)
+    interaction: Interaction | None = None
 
     @model_validator(mode='after')
     def bounded_history(self):
@@ -140,10 +168,11 @@ class ChatRequest(BaseModel):
 
 
 class Claim(BaseModel):
-    kind: Literal['legal_rule','applicability','context'] = Field(default='legal_rule',
+    kind: Literal['legal_rule','applicability','context','procedure','contact'] = Field(default='legal_rule',
         description='applicability: dates, commencement, expiry or replacement only; legal_rule: rights, duties or conditions; context: project news only.')
     text: str = Field(min_length=1, max_length=3000)
     citation_ids: list[str] = Field(min_length=1, max_length=8)
+    section: Literal['direct', 'explanation', 'actions'] = 'direct'
 
 
 class Draft(BaseModel):
@@ -165,6 +194,13 @@ class ChatResult(BaseModel):
     content: str
     citations: list[Citation] = Field(default_factory=list)
     verified_claims: list[Claim] = Field(default_factory=list)
+    answer_schema_version: Literal[1, 2] = 1
+    answer_sections: list[AnswerSection] = Field(default_factory=list, max_length=3)
+    answer_notices: list[str] = Field(default_factory=list, max_length=5,
+        description='Fixed runtime limitations only; never model summary or procedural instructions.')
+    clarification: Clarification | None = None
+    source_context: dict = Field(default_factory=dict)
+    need_more_context: Literal['stage', 'date', 'place', 'source', 'document_type', 'land_type'] | None = None
     as_of: date
     corpus_release: str | None = None
     trace_id: str
@@ -182,3 +218,19 @@ class ChatResult(BaseModel):
     retry_after: int | None = None
     retrieved_chunk_ids: list[str] = Field(default_factory=list)
     evidence_chunk_ids: list[str] = Field(default_factory=list)
+
+    @model_validator(mode='after')
+    def valid_sections(self):
+        if self.answer_schema_version == 2:
+            indexes = [i for section in self.answer_sections for i in section.claim_indexes]
+            if (len(indexes) != len(set(indexes)) or set(indexes) != set(range(len(self.verified_claims)))
+                    or len({s.kind for s in self.answer_sections}) != len(self.answer_sections)):
+                raise ValueError('Answer sections must reference each verified claim exactly once')
+            if any(self.verified_claims[i].section!=section.kind for section in self.answer_sections for i in section.claim_indexes):
+                raise ValueError('Answer section differs from the verified claim section')
+            if self.status == 'answered' and not self.verified_claims:
+                raise ValueError('An answered result needs verified claims')
+            cited={citation.id for citation in self.citations}
+            if len(cited)!=len(self.citations) or any(set(claim.citation_ids)-cited for claim in self.verified_claims):
+                raise ValueError('Verified claim citations must exist uniquely in the result')
+        return self

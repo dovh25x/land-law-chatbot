@@ -178,7 +178,8 @@ def create_app(settings: Settings | None = None, store: Store | None = None, pro
         enabled=bool(release) and settings.generation_enabled and (fresh or settings.allow_stale_generation) and not delay
         return {'generation_available':enabled,'reason':'disabled' if not settings.generation_enabled else
             'source_stale' if not fresh and (not settings.allow_stale_generation or not release) else 'provider_limited' if delay else None,
-            'retry_after':delay or None,'corpus_release':(release or {}).get('id'), 'api_version':2,
+            'retry_after':delay or None,'corpus_release':(release or {}).get('id'), 'api_version':3,
+            'capabilities':{'citizen_answers':True,'answer_schema_version':2},
             'source_fresh':fresh,'warning':None if fresh else 'source_stale',
             'source_checked_at':(release or {}).get('checked_at')}
 
@@ -218,7 +219,8 @@ def create_app(settings: Settings | None = None, store: Store | None = None, pro
         runs = [{**run, 'matches_active_release': bool(active and run.get('release') == active),
                  'matches_active_configuration': run.get('configuration_sha256') == state['configuration']}
                 for run in archive.get('runs', [])]
-        preferred = next((r for r in runs if r['matches_active_release'] and r.get('complete')), None)
+        preferred = next((r for r in runs if r['matches_active_release'] and r['matches_active_configuration'] and r.get('complete')), None)
+        preferred = preferred or next((r for r in runs if r['matches_active_release'] and r.get('complete')), None)
         preferred = preferred or next((r for r in runs if r['matches_active_release']), None) or next(iter(runs), None)
         return {**report, **archive, 'runs': runs, 'default_run_id': preferred['id'] if preferred else None,
                 'evaluation_release':report.get('release'), 'active_release':active,

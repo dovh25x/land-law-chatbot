@@ -1,0 +1,136 @@
+{
+  "recorded_at": "2026-10-19T08:47:28.264770+00:00",
+  "checks": [
+    {
+      "name": "regression_before",
+      "log": "reports/citizen-implementation-20261019/logs/citizen-regression-before.log",
+      "log_sha256": "f7ad08fd599308b002d6185f7aef10607aaae53f35a9e1731825f49f882a7370",
+      "exit_code": 1,
+      "scope": "Historical attempt within this implementation; final checks are separately identified."
+    },
+    {
+      "name": "backend_focused_attempt_1",
+      "log": "reports/citizen-implementation-20261019/logs/citizen-backend-focused.log",
+      "log_sha256": "99f3ee0e903b938f4c37d422869fcc4deeb080f7bbb24a8e253a48100d2be381",
+      "exit_code": 1,
+      "scope": "Historical attempt within this implementation; final checks are separately identified."
+    },
+    {
+      "name": "backend_focused_attempt_2",
+      "log": "reports/citizen-implementation-20261019/logs/citizen-backend-focused-2.log",
+      "log_sha256": "6cc75d96f85a662285def4ce018767bc3c9a2cda993f1bbddc444206081a3459",
+      "exit_code": 0,
+      "scope": "Historical attempt within this implementation; final checks are separately identified."
+    },
+    {
+      "name": "backend_all_attempt_1",
+      "log": "reports/citizen-implementation-20261019/logs/citizen-backend-all-attempt-1.log",
+      "log_sha256": "b638c7229e02631b4dcc270751b885e87a3b511239f79e2895fc586086e0cc3d",
+      "exit_code": 0,
+      "scope": "Historical attempt within this implementation; final checks are separately identified."
+    },
+    {
+      "name": "frontend_build_attempt_1",
+      "log": "reports/citizen-implementation-20261019/logs/citizen-build-attempt-1.log",
+      "log_sha256": "2c9cbe48b40d91d9c995115891036648e71c80dac04e42488535cf9ad1b3fabc",
+      "exit_code": 0,
+      "scope": "Historical attempt within this implementation; final checks are separately identified."
+    },
+    {
+      "name": "frontend_unit_attempt_1",
+      "log": "reports/citizen-implementation-20261019/logs/citizen-unit-attempt-1.log",
+      "log_sha256": "eb4bfde887bc9b4bd38ccbdada4d572c58be4419169b0964eb9ed2b056bb65cc",
+      "exit_code": 0,
+      "scope": "Historical attempt within this implementation; final checks are separately identified."
+    },
+    {
+      "name": "frontend_e2e_attempt_1",
+      "log": "reports/citizen-implementation-20261019/logs/citizen-e2e-attempt-1.log",
+      "log_sha256": "f8fc9a50b6a2c2a9eb8fde03e767c72ce264f32fb8e9671a4af4334723e59052",
+      "exit_code": 1,
+      "scope": "Historical attempt within this implementation; final checks are separately identified."
+    },
+    {
+      "name": "backend_focused_bad_test_path",
+      "log": "reports/citizen-implementation-20261019/logs/citizen-focused-final.log",
+      "log_sha256": "bc6f9c1f9162a0a403d2ede46b1c40a894d22b6bc8cea73a085b42db704aac68",
+      "exit_code": 4,
+      "scope": "Historical attempt within this implementation; final checks are separately identified."
+    },
+    {
+      "name": "frontend_e2e_focused",
+      "log": "reports/citizen-implementation-20261019/logs/citizen-e2e-focused.log",
+      "log_sha256": "e9cf0f1e03599cb5eddbdb74f00db1e21841aee405eeadc4777898b3f1405004",
+      "exit_code": 0,
+      "scope": "Historical attempt within this implementation; final checks are separately identified."
+    },
+    {
+      "name": "backend_all_attempt_2",
+      "log": "reports/citizen-implementation-20261019/logs/citizen-backend-all-final.log",
+      "log_sha256": "4cbd88d5b8867358f187b9bc9ff032eeead7ede3884faa261af8eb28c9ad43cc",
+      "exit_code": 1,
+      "scope": "Historical attempt within this implementation; final checks are separately identified."
+    },
+    {
+      "name": "backend_all_attempt_3",
+      "log": "reports/citizen-implementation-20261019/logs/citizen-backend-all-final-2.log",
+      "log_sha256": "c703e6cb8ba48c0e44e1eb889ba13a1aedd0d0c1bfe1bf0553c51720c7453602",
+      "exit_code": 0,
+      "scope": "Historical attempt within this implementation; final checks are separately identified."
+    },
+    {
+      "name": "frontend_unit_attempt_2",
+      "log": "reports/citizen-implementation-20261019/logs/citizen-unit-final.log",
+      "log_sha256": "1adb359afc4d4a0693f109b9e06b011de4222820b7b7873161b0f4a43b9171cc",
+      "exit_code": 0,
+      "scope": "Historical attempt within this implementation; final checks are separately identified."
+    },
+    {
+      "name": "frontend_build_attempt_2",
+      "log": "reports/citizen-implementation-20261019/logs/citizen-build-final.log",
+      "log_sha256": "1aa6f3db82526a67334189c2a5d77b788876f7bba43d7c6943dbfd33acb1f9d7",
+      "exit_code": 0,
+      "scope": "Historical attempt within this implementation; final checks are separately identified."
+    },
+    {
+      "name": "frontend_e2e_attempt_2",
+      "log": "reports/citizen-implementation-20261019/logs/citizen-e2e-final.log",
+      "log_sha256": "61df72499c26fade2f43078851ce8355784825c3351b06e1d90420b45a6ab039",
+      "exit_code": 0,
+      "scope": "Historical attempt within this implementation; final checks are separately identified."
+    },
+    {
+      "name": "evaluation_focused",
+      "log": "reports/citizen-implementation-20261019/logs/citizen-evaluation-focused.log",
+      "log_sha256": "c75eb413cc20473aea1f7a881fbbf250c9694b70e8772529b649029be8ef83d0",
+      "exit_code": 0,
+      "scope": "Historical attempt within this implementation; final checks are separately identified."
+    },
+    {
+      "name": "backend",
+      "log": "reports/citizen-implementation-20261019/logs/citizen-backend-complete.log",
+      "log_sha256": "e03d4b46e0e2420311eebec57980a7a3a49c6cb88375709c88e69e77ab89877f",
+      "exit_code": 0,
+      "scope": "Historical attempt within this implementation; final checks are separately identified."
+    },
+    {
+      "name": "frontend_unit",
+      "log": "reports/citizen-implementation-20261019/logs/citizen-unit-complete.log",
+      "log_sha256": "7b8adaa5581d17be94ddb31600e01214e0b66a0be32fbe93fe5fa25d805abd7e",
+      "exit_code": 0,
+      "scope": "Historical attempt within this implementation; final checks are separately identified."
+    },
+    {
+      "name": "frontend_build",
+      "log": "reports/citizen-implementation-20261019/logs/citizen-build-complete.log",
+      "log_sha256": "22e4be6bee2c7963106befa08c4dbc7bc0e59df8f45f464aaf3586f1e8fe4f59",
+      "exit_code": 0,
+      "scope": "Historical attempt within this implementation; final checks are separately identified."
+    }
+  ],
+  "environment": {
+    "python": "3.14.4",
+    "node": "v24.21.0"
+  },
+  "note": "Backend before/after failures retained. A mistyped test file caused the focused invocation to collect no tests. First E2E found four regressions, corrected before full rerun. Final E2E and model evaluation recorded separately on completion."
+}

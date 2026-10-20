@@ -208,6 +208,20 @@ class Store:
     def consume(self, limits: list[tuple[str, int, int]]):
         return self.consume_weighted([(key,limit,window,1) for key,limit,window in limits])
 
+    def operational_review(self, doc, release_id):
+        """Latest receipt controls operational claims, including changes and unavailable sources."""
+        from datetime import datetime
+        rows=self.rows('SELECT receipt FROM source_reviews WHERE release_id=? AND document_id=? AND checksum=? '
+                       'ORDER BY checked_at DESC LIMIT 1',(release_id,doc.id,doc.checksum))
+        if not rows:
+            return doc
+        receipt=json.loads(rows[0]['receipt'])
+        reviewed=receipt.get('operational_review') or {}
+        explicit=all(reviewed.get(key) is True for key in
+                     ('source_role_checked','jurisdiction_checked','procedure_and_dependencies_checked'))
+        return doc.model_copy(update={'operational_review_status':receipt['status'] if explicit else 'pending',
+            'operational_reviewed_at':datetime.fromisoformat(receipt['checked_at'].replace('Z','+00:00')) if explicit else None})
+
     def record_usage(self, kind, units=1):
         """Count provider usage without imposing an application quota."""
         if units < 1:

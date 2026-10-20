@@ -1,0 +1,55 @@
+{
+  "recorded_at": "2026-10-19T08:54:40.436749+00:00",
+  "source_commit": null,
+  "base_commit": "fefee293c446b98634051c5a5fa4200b6a1c704e",
+  "source_manifest_sha256": "7d58435e8cf0bb4479cdd47a74622f25f6a7eb30ae4aaea470233976f7c6b106",
+  "checks": [
+    {
+      "name": "backend",
+      "command": ".venv/bin/python -m pytest -q",
+      "exit_code": 0,
+      "tests_passed": 275,
+      "log": "reports/citizen-implementation-20261019/logs/citizen-backend-post-model-fix.log",
+      "log_sha256": "c07f7cde9474c928a435f1a2b67870d02ec69aea42aba85dcc3a418783984861"
+    },
+    {
+      "name": "frontend_unit",
+      "command": "npm --prefix frontend test",
+      "exit_code": 0,
+      "tests_passed": 14,
+      "log": "reports/citizen-implementation-20261019/logs/citizen-unit-complete.log",
+      "log_sha256": "7b8adaa5581d17be94ddb31600e01214e0b66a0be32fbe93fe5fa25d805abd7e"
+    },
+    {
+      "name": "frontend_build",
+      "command": "npm --prefix frontend run build",
+      "exit_code": 0,
+      "tests_passed": null,
+      "log": "reports/citizen-implementation-20261019/logs/citizen-build-complete.log",
+      "log_sha256": "22e4be6bee2c7963106befa08c4dbc7bc0e59df8f45f464aaf3586f1e8fe4f59"
+    },
+    {
+      "name": "frontend_e2e",
+      "command": "npm --prefix frontend run test:e2e",
+      "exit_code": 0,
+      "tests_passed": 100,
+      "log": "reports/citizen-implementation-20261019/logs/citizen-e2e-isolated.log",
+      "log_sha256": "1ecaa6f770d9e3cc163084357c9c2bf07967930541f6fb2c8c6354fefda9770b"
+    },
+    {
+      "name": "secrets",
+      "command": ".venv/bin/python scripts/check_secrets.py",
+      "exit_code": 0,
+      "tests_passed": null,
+      "log": "reports/citizen-implementation-20261019/logs/citizen-secrets-handoff.log",
+      "log_sha256": "766d75c21b58f1924ca7617ba55b3944d6d327b8f64a36ceba52c177e79340c7"
+    }
+  ],
+  "passed": true,
+  "release_ready": false,
+  "environment": {
+    "python": "3.14.4",
+    "node": "v24.21.0"
+  },
+  "scope": "Software checks of current workspace components. Not a pinned-commit deploy receipt, model-quality approval, legal review or production verification."
+}

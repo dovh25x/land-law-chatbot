@@ -48,14 +48,23 @@ def preserve_attempt(folder,record,origin='executed'):
 
 
 def configuration_fingerprint(settings):
-    files = [Path(__file__).with_name(name) for name in ("agent.py", "provider.py", "embedding.py", "local_embedding.py", "store.py", "retrieval.py", "config.py", "publication.py", "models.py", "security.py", "api.py", "catalog.py")]
+    files = [Path(__file__).with_name(name) for name in ("agent.py", "provider.py", "embedding.py", "local_embedding.py", "store.py", "retrieval.py", "config.py", "publication.py", "models.py", "security.py", "api.py", "catalog.py", "citizen.py", "ops.py")]
     configuration = {"model": settings.generation_model, "llm_provider": settings.llm_provider, "embedding_model": settings.embedding_model,
                      "dimensions": settings.embedding_dimensions, 'embedding_provider':settings.embedding_provider,
                      "timeout_seconds": settings.turn_timeout_seconds,
                      "allow_stale_generation": settings.allow_stale_generation,
                      "storage_backend": "postgresql" if settings.database_url.get_secret_value() else "sqlite",
-                     "llm_budget": 6, "tool_budget": 12, "retrieval_rounds": 2}
+                     "llm_budget": 6, "tool_budget": 12, "retrieval_rounds": 2,
+                     "answer_schema_version":2,"operational_policy_version":1}
     return hashlib.sha256(json.dumps(configuration, sort_keys=True).encode()+b"".join(p.read_bytes() for p in files)).hexdigest()
+
+
+def presentation_fingerprint():
+    base=Path('frontend/src')
+    if not (base/'App.tsx').exists():return None
+    paths=sorted(p for p in base.rglob('*') if p.is_file() and p.suffix in {'.ts','.tsx','.css'} and '.test.' not in p.name)
+    identity={str(p.relative_to(base)):hashlib.sha256(p.read_bytes()).hexdigest() for p in paths}
+    return hashlib.sha256(json.dumps(identity,sort_keys=True).encode()).hexdigest()
 
 
 async def evaluate(settings, store, provider, split="smoke", release_id=None, limit=None, concurrency=1, case_ids=None, modes=("agentic",)):
@@ -69,12 +78,17 @@ async def evaluate(settings, store, provider, split="smoke", release_id=None, li
     release = store.release(release_id, metadata_only=True)
     if not release:
         raise ValueError("No corpus release to evaluate")
+    validate_suite_corpus(settings.data_dir,split,cases,store,release)
     configuration = configuration_fingerprint(settings)
     run_id = f"{release['id']}-{provider.settings.generation_model.replace('/', '_')}-{split}-{fingerprint[:8]}-{configuration[:8]}-c{concurrency}"
     run_id += '-agentic'
     records_path = settings.reports_dir / "runs" / run_id / "records.json"
     metadata_path = records_path.with_name("metadata.json")
     metadata = json.loads(metadata_path.read_text()) if metadata_path.exists() else {"as_of": str(local_date()), "configuration_sha256": configuration, "suite_sha256": fingerprint, "split": split, "storage_backend": "postgresql" if store.postgres else "sqlite"}
+    presentation=presentation_fingerprint()
+    if metadata_path.exists() and metadata.get('presentation_sha256')!=presentation:
+        raise ValueError('Presentation changed; use a new evaluation output directory')
+    metadata['presentation_sha256']=presentation
     json_write(metadata_path, metadata)
     records = json.loads(records_path.read_text()) if records_path.exists() else []
     attempts_path=records_path.parent/'attempts'
@@ -217,7 +231,42 @@ def public_report(report):
 
 def frozen_dataset(data_dir, split):
     if split not in {'smoke', 'supplemental', 'natural'}:
-        raise ValueError('Supported splits: smoke, supplemental, natural')
+        if not re.fullmatch(r'[a-z][a-z0-9-]{0,79}',split):
+            raise ValueError('Invalid frozen suite name')
+        registry_path=data_dir/'evaluation'/'registry.json'
+        registry=json.loads(registry_path.read_text()) if registry_path.exists() else {}
+        entry=registry.get('suites',{}).get(split)
+        if not entry or entry.get('executable') is not True:
+            raise ValueError('Suite is draft or has not been reviewed and frozen for execution')
+        if type(entry.get('cases')) is not int or not 1<=entry['cases']<=1000:
+            raise ValueError('Frozen suite needs a bounded positive case count')
+        base=(data_dir/'evaluation').resolve()
+        path=(base/entry['path']).resolve()
+        freeze_path=(base/entry['freeze_path']).resolve()
+        if not path.is_relative_to(base) or not freeze_path.is_relative_to(base):
+            raise ValueError('Frozen suite path outside evaluation directory')
+        freeze=json.loads(freeze_path.read_text())
+        fingerprint=hashlib.sha256(path.read_bytes()).hexdigest()
+        cases=dataset(path)
+        if (freeze.get('status')!='frozen' or freeze.get('annotation_status')!='reviewed'
+                or freeze.get('suite_sha256')!=fingerprint or freeze.get('cases')!=entry['cases']
+                or len(cases)!=entry['cases'] or not freeze.get('corpus_id')
+                or not freeze.get('review_method') or not freeze.get('reviewed_by_role')):
+            raise ValueError('Frozen suite annotation or identity is incomplete')
+        for case in cases:
+            if (case.get('split')!=split or case.get('review_status')!='reviewed'
+                    or not case.get('rubric') or not case.get('as_of')
+                    or not isinstance(case.get('question'),str) or not 1<=len(case['question'])<=4000
+                    or case.get('answerability') not in {'answerable','needs_user_fact','missing_source','out_of_scope','interaction_only'}):
+                raise ValueError('Frozen case contract is incomplete')
+            date.fromisoformat(case['as_of'])
+            if case['answerability']=='answerable' and (not case.get('gold_chunk_ids')
+                    or not case.get('required_propositions') or not case.get('required_evidence_groups')
+                    or case.get('legal_review_status')!='reviewed'):
+                raise ValueError('Answerable case needs reviewed legal propositions and evidence')
+            if case['answerability']=='answerable':
+                validate_evidence_annotation(case)
+        return cases,fingerprint
     path = data_dir / 'evaluation' / f'{split}.jsonl'
     freeze_path = path.with_name('freeze.json') if split == 'smoke' else path.with_suffix('.freeze.json')
     fingerprint = hashlib.sha256(path.read_bytes()).hexdigest()
@@ -262,12 +311,82 @@ def report_metrics(rows):
             'scope': 'Descriptive single-run statistics; no SLA or overall legal accuracy claim.'}
 
 
+def validate_evidence_annotation(case):
+    def strings(values):
+        return isinstance(values,list) and 1<=len(values)<=64 and all(isinstance(v,str) and v.strip() for v in values)
+    if not strings(case['gold_chunk_ids']) or not strings(case['required_propositions']):
+        raise ValueError('Gold and propositions must be nonempty bounded string lists')
+    groups=case['required_evidence_groups']
+    if not isinstance(groups,list) or not 1<=len(groups)<=16:
+        raise ValueError('Evidence groups must be a bounded list')
+    ids=[]
+    for group in groups:
+        if not isinstance(group,dict) or not isinstance(group.get('id'),str) or not group['id'].strip():
+            raise ValueError('Evidence group needs an ID')
+        alternatives=group.get('alternatives')
+        if not isinstance(alternatives,list) or not 1<=len(alternatives)<=16 or not all(strings(a) for a in alternatives):
+            raise ValueError('Evidence group needs alternatives of required chunk IDs')
+        ids.append(group['id'])
+    if len(ids)!=len(set(ids)):raise ValueError('Duplicate evidence group IDs')
+
+
+def evidence_group_coverage(chunk_ids,groups):
+    selected=set(chunk_ids)
+    matched=[g['id'] for g in groups if any(set(alternative)<=selected for alternative in g['alternatives'])]
+    return {'required_groups':len(groups),'matched_groups':len(matched),
+            'complete':bool(groups) and len(matched)==len(groups)}
+
+
+def citizen_metrics(rows, cases):
+    """Separate task denominators fixed before execution; absent cases remain visible."""
+    expected={case['id']:case for case in cases if case.get('answerability')}
+    if not expected:return None
+    observed={row['id']:row for row in rows}
+    groups={}
+    for answerability in ('answerable','needs_user_fact','missing_source','out_of_scope','interaction_only'):
+        ids=[key for key,case in expected.items() if case['answerability']==answerability]
+        counts={name:0 for name in ('pass','partial','fail','awaiting_review','not_run')}
+        false_abstention=0
+        for key in ids:
+            row=observed.get(key)
+            verdict=row.get('review','awaiting_review') if row else 'not_run'
+            if verdict not in counts:verdict='awaiting_review'
+            if answerability=='answerable' and verdict=='pass' and row.get('status')!='answered':verdict='fail'
+            counts[verdict]+=1
+            false_abstention+=bool(row and answerability=='answerable' and row.get('status') in {'clarification_needed','insufficient_evidence'})
+        groups[answerability]={'expected':len(ids),'counts':counts,'false_abstention':false_abstention}
+    eligible=[case for case in cases if case.get('answerability')=='answerable' and case.get('required_evidence_groups')]
+    citation_coverage=[]
+    for case in eligible:
+        row=observed.get(case['id'])
+        if row:
+            citation_coverage.append(evidence_group_coverage(
+                [c['id'] for c in row.get('answer',{}).get('citations',[])],case['required_evidence_groups']))
+    return {'groups':groups,'citation_evidence_coverage':{'eligible_cases':len(eligible),
+            'executed_cases':len(citation_coverage),'complete_cases':sum(c['complete'] for c in citation_coverage)},
+            'scope':'Fixed task groups; evidence-group presence does not prove entailment, legal accuracy or user comprehension.'}
+
+
+def validate_suite_corpus(data_dir,split,cases,store,release):
+    if split in {'smoke','supplemental','natural'}:return
+    registry=json.loads((data_dir/'evaluation/registry.json').read_text())
+    binding=json.loads((data_dir/'evaluation'/registry['suites'][split]['freeze_path']).read_text())
+    if binding['corpus_id']!=release['id']:
+        raise ValueError('Frozen suite corpus mismatch')
+    chunks={r['id'] for r in store.rows('SELECT id FROM chunks WHERE release_id=?',(release['id'],))}
+    required={cid for case in cases for group in case.get('required_evidence_groups',[])
+              for alternative in group['alternatives'] for cid in alternative}
+    if required-chunks or any(set(case.get('gold_chunk_ids',[]))-chunks for case in cases):
+        raise ValueError('Frozen gold missing from selected corpus')
+
+
 async def evaluate_retrieval(settings, store, provider, split='smoke'):
     """Read-only hybrid retrieval evaluation; no generation or session writes."""
     cases, fingerprint = frozen_dataset(settings.data_dir, split)
     release = await asyncio.to_thread(store.release, None, True)
     if not release:
         raise ValueError('No corpus release to evaluate')
+    validate_suite_corpus(settings.data_dir,split,cases,store,release)
     rows = []
     for case in cases:
         if not case.get('gold_chunk_ids'):
@@ -283,6 +402,8 @@ async def evaluate_retrieval(settings, store, provider, split='smoke'):
         rows.append({'id': case['id'], 'has_history': bool(case.get('history')), 'gold_chunk_ids': case['gold_chunk_ids'], 'retrieved_chunk_ids': ids,
                      'hit': bool(set(ids) & set(case['gold_chunk_ids'])), 'gold_recall_at_8':recall,
                      'elapsed_ms': round((time.monotonic() - started) * 1000)})
+        if case.get('required_evidence_groups'):
+            rows[-1]['evidence_group_coverage']=evidence_group_coverage(ids,case['required_evidence_groups'])
     report = {'checked_at': utcnow().isoformat(), 'split': split, 'suite_sha256': fingerprint,
               'release': release['id'], 'configuration_sha256': configuration_fingerprint(settings),
               'backend': 'postgresql' if store.postgres else 'sqlite', 'k': 8,
@@ -292,5 +413,9 @@ async def evaluate_retrieval(settings, store, provider, split='smoke'):
               'history_groups':{str(h):{'cases':len(g:=[r for r in rows if r['has_history']==h]),'gold_recall_at_8':statistics.mean(r['gold_recall_at_8'] for r in g) if g else None} for h in [False,True]},
               'generation_calls': 0, 'results': rows,
               'scope': 'Raw-question hybrid search including bounded source-replacement candidates; no history rewriting or agent tool calls. Any gold chunk in top 8 counts as a hit. Not legal answer accuracy.'}
+    grouped=[row for row in rows if 'evidence_group_coverage' in row]
+    if grouped:
+        report['complete_evidence_coverage']={'eligible_cases':len(grouped),
+            'complete_cases':sum(row['evidence_group_coverage']['complete'] for row in grouped)}
     json_write(settings.reports_dir / 'retrieval' / f'{split}.json', report)
     return report

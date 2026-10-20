@@ -3,14 +3,19 @@ export const BASE = (import.meta.env.VITE_API_BASE_URL || '').replace(/\/$/, '')
 export const BACKEND_CONFIGURED = !!BASE || import.meta.env.DEV || import.meta.env.VITE_SAME_ORIGIN_API === 'true'
 export type ProjectID = 'ring4'
 export interface Trace { step: string; tool?: string; summary: string; document_ids: string[]; elapsed_ms: number }
-export interface Citation { checksum?: string; id: string; document_id: string; title: string; document_number?: string; url: string; locator: string; excerpt: string; checked_at: string; applicability: string; source_review_notes?: string; page?: number; source_url?: string }
-export interface Result { status: string; content: string; citations: Citation[]; trace: Trace[]; trace_id: string; corpus_release?: string; model: string; embedding_model: string; mode: string; llm_calls: number; tool_calls: number; token_usage: number; elapsed_ms: number; as_of: string; support_level: string; retry_after?: number | null; missing_facts?: string[] }
+export interface Citation { checksum?: string; id: string; document_id: string; title: string; document_number?: string; url: string; locator: string; excerpt: string; checked_at: string; applicability: string; source_review_notes?: string; source_kind?: string; page?: number; source_url?: string }
+export interface VerifiedClaim { text: string; citation_ids: string[]; kind?: string; section?: 'direct'|'explanation'|'actions' }
+export interface AnswerSection { kind: 'direct'|'explanation'|'actions'; claim_indexes: number[] }
+export interface Clarification { fact: string; question: string; options: string[]; allow_unknown: boolean }
+export interface Result { status: string; content: string; citations: Citation[]; trace: Trace[]; trace_id: string; corpus_release?: string; model: string; embedding_model: string; mode: string; llm_calls: number; tool_calls: number; token_usage: number; elapsed_ms: number; as_of: string; support_level: string; retry_after?: number | null; missing_facts?: string[]; answer_schema_version?: number; verified_claims?: VerifiedClaim[]; answer_sections?: AnswerSection[]; answer_notices?:string[]; clarification?: Clarification|null; source_context?: {source_checked_at?:string|null;source_fresh?:boolean}; need_more_context?:string|null }
 export interface Session { session_id: string; token: string }
 export interface LegalDocument { checksum?: string; id: string; title: string; url: string; document_number?: string; source_kind: string; project?: ProjectID; checked_at: string; applicability_verified: boolean; effective_from?: string; effective_to?: string; source_review_notes?: string; availability?: 'reference_only'; attachment_urls?: string[]; source_files?: {url: string}[]; chunks?: { id: string; locator: string; text: string }[] }
 export interface Project { id: ProjectID; name: string; description: string; source_ids: string[]; questions: string[] }
 export interface Readiness { status: string; database?: boolean; llm_configured?: boolean; corpus_release?: string; checked_at?: string; publication_profile?: string; quality_status?: string; retrieval_mode?: string; coverage_gaps?: {document_id: string; title: string; reason: string}[] }
 
 export interface GenerationStatus {
+  api_version?: number
+  capabilities?: {citizen_answers?: boolean; answer_schema_version?: number}
   generation_available: boolean
   reason: 'disabled' | 'source_stale' | 'provider_limited' | null
   retry_after?: number | null

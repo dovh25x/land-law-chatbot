@@ -29,8 +29,10 @@ test('shows failed outcomes without hiding previous configurations and exports e
  expect(downloaded.sources).toHaveLength(63)
  expect(downloaded.runs.find((r:{id:string})=>r.id===probe.id).suites[0].counts.not_run).toBe(7)
 })
-test('record metrics appear first while current results, samples and failures remain available',async({page})=>{
+test('historical record metrics stay in an explicit archive while current results remain available',async({page})=>{
  const highlights=page.getByRole('region',{name:'Kết quả nổi bật đã ghi nhận'})
+ await expect(highlights).not.toBeVisible()
+ await page.getByText('Kỷ lục trong kho báo cáo lịch sử',{exact:true}).click()
  await expect(highlights.locator('[data-metric="smoke"] .eval-highlight-value')).toHaveText('95%')
  await expect(highlights.locator('[data-metric="smoke"]')).toContainText('19/20 ca đạt đủ tiêu chí')
  await expect(highlights.locator('[data-metric="smoke"]')).toContainText('Kết quả lịch sử · corpus khác')
@@ -42,7 +44,7 @@ test('record metrics appear first while current results, samples and failures re
  await expect(page.getByLabel('Lần đánh giá',{exact:true})).toHaveValue(full.id)
  await expect(page.locator('.stat-fail strong')).toHaveText('7')
  const first=await highlights.boundingBox(),details=await page.locator('#evaluation-run-details').boundingBox()
- expect(first!.y).toBeLessThan(details!.y)
+ expect(first!.y).toBeGreaterThan(details!.y)
  await page.getByRole('button',{name:'Xem toàn bộ kết quả và các ca chưa đạt'}).click()
  await expect(page.locator('#evaluation-run-details')).toBeInViewport()
 })
@@ -73,4 +75,21 @@ test('dashboard remains readable at 320px and supports both themes',async({page}
  if(await page.getByRole('button',{name:'Đóng menu điều hướng'}).isVisible())await page.keyboard.press('Escape')
  await page.screenshot({path:info.outputPath('evaluation-dark.png')})
  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBeTruthy()
+})
+
+test('citizen metrics keep answerable tasks separate from missing-source tasks',async({page})=>{
+ const counts={pass:0,partial:0,fail:1,awaiting_review:0,not_run:1}
+ const suite={split:'citizen-fixture',label:'Tác vụ fixture',expected:3,executed:2,
+  counts:{...counts,pass:1},metrics:{},cases:[],citizen_metrics:{groups:{
+   answerable:{expected:2,counts,false_abstention:1},
+   missing_source:{expected:1,counts:{pass:1,partial:0,fail:0,awaiting_review:0,not_run:0},false_abstention:0},
+  }}}
+ await page.route('**/api/v1/evaluations/latest',r=>r.fulfill({json:{status:'fixture',default_run_id:'citizen-fixture',runs:[{id:'citizen-fixture',suites:[suite],matches_active_release:true,matches_active_configuration:true}]}}))
+ await page.reload()
+ const menu=page.getByRole('button',{name:'Mở menu điều hướng'});if(await menu.isVisible())await menu.click()
+ await page.getByRole('button',{name:'Đánh giá hệ thống',exact:true}).click()
+ const tasks=page.getByLabel('Kết quả theo tác vụ đã khóa')
+ await expect(tasks).toContainText('Có đủ nguồn để trả lời: 0/2 đạt')
+ await expect(tasks).toContainText('1 ca từ chối dù kỳ vọng đủ nguồn')
+ await expect(tasks).toContainText('Thiếu nguồn: 1/1 đạt')
 })

@@ -1,0 +1,44 @@
+{
+  "status": "awaiting_review",
+  "dataset_sha256": "b068bb4e717439938c96e459a63c9a1832b1990d88005cf6a768d9e9c0871e74",
+  "generated_at": "2026-10-19T08:44:24.394432+00:00",
+  "cases": 8,
+  "acceptance_passed": false,
+  "results": [
+    {
+      "mode": "agentic",
+      "completed": 2,
+      "reviewed": 0,
+      "llm_calls": 0,
+      "limited_or_error": 0
+    }
+  ],
+  "run_id": "corpus-a26bc99e541fbbe2-openai_gpt-oss-120b-natural-b068bb4e-0aced71d-c1-agentic",
+  "release": "corpus-a26bc99e541fbbe2",
+  "model": "openai/gpt-oss-120b",
+  "llm_provider": "groq",
+  "embedding_model": "multilingual-e5-small-onnx-q8-window-v1",
+  "split": "natural",
+  "corpus_embedded": true,
+  "publication_candidate": false,
+  "notes": [
+    "Technical regression evaluation; not independent legal certification."
+  ],
+  "as_of": "2026-10-19",
+  "configuration_sha256": "0aced71dad731f1cc99fbaf22d39e148191ea69ee7b80f7450e4001f9d6f290b",
+  "suite_sha256": "b068bb4e717439938c96e459a63c9a1832b1990d88005cf6a768d9e9c0871e74",
+  "storage_backend": "sqlite",
+  "presentation_sha256": "6ce4606cb9990671c09ca166a7e8b184cb6c719533fee3bc664096af4f8fe28d",
+  "execution_modes": [
+    "agentic"
+  ],
+  "execution_concurrency": 1,
+  "attempt_history": {
+    "attempts": 2,
+    "retry_attempts": 0,
+    "limited_or_error_attempts": 0,
+    "scope": "Every new attempt is retained; legacy checkpoints imported as latest results only.",
+    "directory": "reports/citizen-implementation-20261019/offline-guards-attempt-2/runs/corpus-a26bc99e541fbbe2-openai_gpt-oss-120b-natural-b068bb4e-0aced71d-c1-agentic/attempts"
+  },
+  "latency_scope": "CLI run, modes ['agentic'], concurrency 1; provider-reported cooldown between turns excluded. Public API single-user p95 measured separately."
+}

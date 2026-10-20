@@ -18,6 +18,12 @@ JSONL và freeze/checksum nằm trong `data/evaluation/`. Giữ nguyên bộ đ�
 
 Mỗi ca chạy một lần trên cấu hình cuối. Chỉ chạy lại khi lỗi thực thi hoặc thay đổi liên quan; giữ mọi attempt và retry count. Không lựa chọn đáp án tốt nhất từ nhiều lượt.
 
+## Suite theo tác vụ người dân
+
+Registry tại `data/evaluation/registry.json` cho phép thêm suite đã review và freeze mà giữ nguyên ba suite cũ. `citizen-v2-draft` chưa executable. Suite mới cần corpus binding, checksum/count, annotation, answerability và gold/proposition/evidence groups được duyệt cho ca answerable. Cả generation và retrieval từ chối sai corpus hoặc gold vắng trong corpus.
+
+Evaluator ghi `presentation_sha256` riêng với runtime fingerprint; không resume trên giao diện đã thay đổi. Export nhận suite path đã khóa, lưu mẫu số đầy đủ và metrics theo answerability; false abstention không được cộng thành pass trên ca answerable. Public archive tách family suite mới, không gộp vào ba suite regression cũ. Điểm archive không đại diện chất lượng v2. [Thiết kế đánh giá](redesign/EVALUATION.md) và [tiến độ triển khai](redesign/IMPLEMENTATION.md) phân biệt phép đo đã có với legal review/usability còn cần thực hiện.
+
 ## Chỉ số
 
 | Chỉ số | Định nghĩa | Giới hạn diễn giải |
@@ -101,3 +107,16 @@ Chạy `.venv/bin/python scripts/build_public_evaluations.py` để tạo `repor
 Mặc định của dashboard là bộ đầy đủ gần nhất trên corpus đang phục vụ, không phải điểm cao nhất. Lần kiểm tra riêng mới hơn vẫn nằm trong lịch sử và selector. Source checksum và link GitHub ghim commit cho phép đối chiếu dữ liệu. Đính chính nhận xét là chú thích riêng, không sửa verdict hoặc artifact lịch sử. Các chỉ số retrieval và faithfulness giữ phạm vi, backend và fingerprint gốc, không tự chứng nhận deployment.
 
 Theo yêu cầu ưu tiên số liệu nổi bật trên giao diện, dashboard có phần kỷ lục trình bày riêng: tỷ lệ đạt bộ chính chỉ lấy suite đã chạy đủ và rà soát đủ; Recall@8 chỉ lấy phép đo có mẫu và đúng k=8; faithfulness phải có ca/mệnh đề đã chấm. Mỗi chỉ số lấy giá trị lớn nhất trong các bản ghi công khai, không chạy lại model để tìm điểm cao. Khi bằng điểm ưu tiên mẫu lớn hơn rồi thời điểm mới hơn (Recall ưu tiên cùng corpus trước thời điểm). Thẻ giữ nguyên provenance và phạm vi; không tạo điểm tổng hợp, không thay mặc định của bảng chi tiết hoặc bỏ các kết quả thấp khỏi archive.
+
+## Hợp đồng evidence groups của suite mới
+
+`required_propositions` là danh sách mệnh đề được reviewer duyệt. Mỗi phần tử của `required_evidence_groups` có `id` duy nhất và `alternatives`, mỗi alternative là danh sách chunk phải có đủ. Tất cả group đều bắt buộc; chỉ cần một alternative đầy đủ trong mỗi group. Ví dụ fixture:
+
+```json
+[
+  {"id":"authority","alternatives":[["law-a","procedure-b"],["reviewed-equivalent"]]},
+  {"id":"contact","alternatives":[["directory-c"]]}
+]
+```
+
+Không phải ID nguồn thực. Validator kiểm tra mọi chunk của mọi alternative tồn tại trong corpus đã bind. Retrieval báo complete-evidence riêng với Recall@8; exporter báo số ca có đủ group trong citation, giữ mẫu số answerable đã khóa. Có đủ group không chứng minh diễn giải đúng; vẫn cần review nội dung và điều kiện từng claim.

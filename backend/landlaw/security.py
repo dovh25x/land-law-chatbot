@@ -55,7 +55,7 @@ def official_url(url: str, publication_url: str | None = None) -> bool:
     host = (parsed.hostname or "").lower()
     if parsed.scheme != "https" or parsed.username or parsed.password or parsed.port not in (None, 443):
         return False
-    if host in {"vbpl.vn", "vbpl.moj.gov.vn", "vanban.chinhphu.vn", "congbao.chinhphu.vn",
+    if host in {"dichvucong.gov.vn", "thutuc.dichvucong.gov.vn", "vbpl.vn", "vbpl.moj.gov.vn", "vanban.chinhphu.vn", "congbao.chinhphu.vn",
                 "datafiles.chinhphu.vn", "xaydungchinhsach.chinhphu.vn", "baochinhphu.vn"}:
         return True
     if host == "hanoi.gov.vn" or host.endswith(".hanoi.gov.vn"):

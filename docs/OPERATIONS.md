@@ -22,6 +22,12 @@ Tên biến tham chiếu tại [`.env.example`](../.env.example). Không đưa g
 
 Migration `006_browser_history.sql` xóa payload hội thoại cũ và thu hồi quyền runtime trên các bảng đó. Không tạo backup hội thoại trước hoặc sau migration.
 
+## Nguồn hướng dẫn thủ tục và liên hệ
+
+Ngoài receipt nguồn hiện có, hướng dẫn tác nghiệp cần receipt `unchanged` khớp checksum, còn hạn bảy ngày và có `operational_review` với ba xác nhận boolean: `source_role_checked`, `jurisdiction_checked`, `procedure_and_dependencies_checked`. Chỉ ghi sau khi đã đọc/đối chiếu thực; evidence URL và relation review vẫn bắt buộc. Receipt mới nhất có trạng thái changed/unavailable hoặc thiếu xác nhận sẽ chặn action. Snapshot override không vượt cổng này.
+
+`official_directory` chỉ được giữ liên hệ công khai trong chunks khi manifest có `public_contacts_reviewed=true`, `contains_personal_data=false` sau rà soát thật. Không dùng cờ này cho danh sách hộ dân hoặc dữ liệu định danh. Thêm nguồn mới vẫn cần raw/provenance/dependency, kiểm tra ingest và release riêng. Worklist ở `data/source_candidates/` không thuộc active corpus. Xem [trạng thái triển khai](redesign/IMPLEMENTATION.md).
+
 ## Kiểm tra tình trạng
 
 ```bash

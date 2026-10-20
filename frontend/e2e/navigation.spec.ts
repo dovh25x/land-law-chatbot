@@ -13,7 +13,7 @@ test('responsive navigation honestly shows unpublished corpus and benchmark', as
   const errors: string[] = []
   page.on('pageerror', e => errors.push(e.message))
   await page.goto('/')
-  await expect(page.getByRole('heading', { name: /Bạn muốn tìm hiểu điều gì/ })).toBeVisible()
+  await expect(page.getByRole('heading', { name: /Bạn đang vướng việc gì/ })).toBeVisible()
   await expect(page.getByLabel('Câu hỏi pháp luật')).toBeVisible()
   await expect(page.getByLabel('Dự án', { exact: true })).toHaveCount(0)
   await expect(page.getByRole('button', { name: 'Gửi câu hỏi' })).toBeDisabled()
@@ -74,11 +74,10 @@ test('verified SSE answer opens source and trace with keyboard dismissal', async
 })
 
 
-test('answered composer is compact and does not cover the end of the answer', async ({page}) => {
+for(const width of [1440,390,320]) test(`answered composer is compact and does not cover the end of the answer at ${width}px`, async ({page}) => {
   await page.route('**/readyz', r=>r.fulfill({json:{status:'ready'}}))
   await page.route('**/api/v1/sessions',r=>r.fulfill({json:{session_id:'compact',token:'fixture'}}))
   await page.route('**/api/v1/chat',r=>r.fulfill({contentType:'text/event-stream',body:'event: result\ndata: '+JSON.stringify({trace_id:'compact',status:'answered',content:'Câu trả lời kiểm thử. '.repeat(100),citations:[],trace:[],tool_calls:1,elapsed_ms:50})+'\n\n'}))
-  for(const width of [1440,390,320]) {
     await page.setViewportSize({width,height:667})
     await page.goto('/')
     await page.getByLabel('Câu hỏi pháp luật').fill('Câu hỏi kiểm thử')
@@ -91,8 +90,6 @@ test('answered composer is compact and does not cover the end of the answer', as
     const end=await page.locator('.message.assistant .trace-link').last().boundingBox()
     expect(end!.y+end!.height).toBeLessThanOrEqual(composer!.y)
     expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBeTruthy()
-    await page.evaluate(()=>{sessionStorage.clear();return new Promise<void>((resolve,reject)=>{const r=indexedDB.deleteDatabase('landlaw-history');r.onsuccess=()=>resolve();r.onerror=()=>reject(r.error)})})
-  }
 })
 
 test('evaluation separates answer quality from refusals and labels absent citations', async ({ page }) => {

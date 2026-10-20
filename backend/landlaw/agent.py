@@ -9,7 +9,8 @@ from typing import Any, Literal, TypedDict
 from langgraph.graph import END, START, StateGraph
 from pydantic import BaseModel, Field
 
-from .models import ChatRequest, ChatResult, Citation, Claim, Document, Draft, Evidence, Relation, TraceEvent
+from .models import AnswerSection, ChatRequest, ChatResult, Citation, Claim, Document, Draft, Evidence, Relation, TraceEvent
+from .citizen import CitizenNeed, assess_need, clarification_for_missing, operational_claim, repeated_clarification, source_policy_issues
 from .provider import Budget, BudgetExceeded, GroqProvider, ProviderUnavailable
 from .security import local_date, normalize, redact, utcnow
 from .store import RateLimited, Store
@@ -51,6 +52,9 @@ class Verification(BaseModel):
 
 
 class State(TypedDict, total=False):
+    citizen_need: CitizenNeed
+    citizen_orientation: bool
+    contact_source_missing: bool
     unsupported_project: bool
     unsupported_references: list[str]
     request: ChatRequest
@@ -81,6 +85,12 @@ class State(TypedDict, total=False):
 def applicability(doc: Document, as_of: date, chunk=None):
     if doc.source_kind == "official_news":
         return "context"
+    if doc.source_kind in {'official_procedure','official_directory'}:
+        if (doc.operational_review_status!='unchanged' or not doc.operational_reviewed_at
+                or doc.operational_reviewed_at.tzinfo is None
+                or not utcnow()-timedelta(days=7)<=doc.operational_reviewed_at<=utcnow()):
+            return 'unverified'
+        return 'context'
     if not doc.applicability_verified:
         return "unverified"
     if chunk:
@@ -398,6 +408,10 @@ class Agent:
             state['unsupported_references']=sorted(literal_numbers-known_numbers)
             state['plan']=Plan()
             await self.event(state,'routing','Không có văn bản được viện dẫn đã kiểm chứng trong corpus; không xác nhận nội dung hoặc yêu cầu người dùng bổ sung luật giả định.')
+        elif state.get('citizen_need') and state['citizen_need'].orientation_only:
+            state['citizen_orientation']=True
+            state['plan']=Plan()
+            await self.event(state,'routing','Làm rõ tên giấy hoặc bước đang tìm hiểu; chưa đưa hướng dẫn pháp lý.')
         elif private_entitlement_check(request.message):
             tool='search_project' if request.project else 'search_law'
             state['plan']=Plan(tools=[ToolCall(name=tool,query=request.message[:1000])])
@@ -472,7 +486,7 @@ class Agent:
             state['plan'].missing_facts=public_missing_facts(state['plan'].missing_facts,state['release'])
         state['private_entitlement_check']=private_entitlement_check(request.message)
         personal=bool(re.search(r'\btoi\b',question)) or any(t in question for t in ('cua minh','nha minh','ho so nay','thua dat nay','bao nhieu tien','may can','chac chan'))
-        general=not personal and any(t in question for t in ('dieu kien','khac nhau','nhom','dong nghia','theo dieu','quy dinh','co luon','co nen','nhung buoc','nguyen tac','doi tuong','can kiem tra','phan biet','co phai','tu dong','co duoc'))
+        general=(not personal and any(t in question for t in ('dieu kien','khac nhau','nhom','dong nghia','theo dieu','quy dinh','co luon','co nen','nhung buoc','nguyen tac','doi tuong','can kiem tra','phan biet','co phai','tu dong','co duoc'))) or bool(state.get('citizen_need') and state['citizen_need'].general_question and not state['private_entitlement_check'])
         state['general_rule_question']=general
         if general:state['plan'].missing_facts=[]
         if state['private_entitlement_check']:
@@ -531,6 +545,8 @@ class Agent:
         return list(priority.values())[:8]
 
     async def tools(self, state):
+        if state.get('citizen_orientation'):
+            return state
         if state["plan"].out_of_scope or state.get('freshness_question') or state.get('unsupported_references') or not state["release"]:
             return state
         if state.get('private_entitlement_check'):
@@ -575,6 +591,8 @@ class Agent:
                 state["tool_notes"].append({"tool": call.name, "matches": matched[:6]})
                 await self.event(state, "tool", f"Tìm thấy {len(matched)} ánh xạ địa bàn có nguồn; thiếu ánh xạ thì cần hỏi lại.", call.name)
             for item in results:
+                if item.document.source_kind in {'official_procedure','official_directory'}:
+                    item.document=await asyncio.to_thread(self.store.operational_review,item.document,release_id)
                 item.applicability = applicability(item.document, state["as_of"],item.chunk)
                 found[item.chunk.id] = item
             await self.event(state, "tool", f"Thu được {len(results)} đoạn chứng cứ.", call.name,
@@ -683,6 +701,11 @@ class Agent:
                  "effective_to": str(e.document.effective_to),
                  "provision_validity": e.document.provision_validity,
                  'source_review_notes':e.document.source_review_notes,
+                 'administrative_scope':e.document.administrative_scope,
+                 'procedure_id':e.document.procedure_id,
+                 'operational_reviewed_at':str(e.document.operational_reviewed_at) if e.document.operational_reviewed_at else None,
+                 'operational_review_status':e.document.operational_review_status,
+                 'required_dependency_ids':e.document.required_dependency_ids,
                  "legal_relations": self.relation_context(e, state)} for e in state["evidence"]]
 
     @staticmethod
@@ -789,6 +812,9 @@ class Agent:
             metadata={key:item[key] for key in (
                 'document_id','title','document_number','kind','effective_from','effective_to',
                 'provision_validity','legal_relations','source_review_notes')}
+            if item['kind'] in {'official_procedure','official_directory'} or item['operational_reviewed_at']:
+                metadata.update({key:item[key] for key in ('administrative_scope','procedure_id',
+                    'operational_reviewed_at','operational_review_status','required_dependency_ids')})
             if self.provider.settings.llm_provider == 'groq':
                 fields=['source_id','target_id','type','source_locator','target_locators',
                         'target_locators_complete','source_effective_from','source_verified']
@@ -829,7 +855,9 @@ class Agent:
     async def synthesize(self, state):
         state['source_fact_id']=None
         state['source_fact_type']=None
-        if state["plan"].out_of_scope:
+        if state.get('citizen_orientation') and not state['plan'].out_of_scope:
+            state['draft']=Draft(status='clarification_needed')
+        elif state["plan"].out_of_scope:
             state["draft"] = Draft(status="insufficient_evidence", summary="Câu hỏi nằm ngoài phạm vi đất đai và quy hoạch Hà Nội.",out_of_scope=True)
         elif state.get('freshness_question') or state.get('unsupported_references'):
             state['draft']=Draft(status='insufficient_evidence')
@@ -842,6 +870,10 @@ class Agent:
             state['draft']=Draft(status='clarification_needed',
                 missing_facts=state['plan'].missing_facts,
                 next_steps=['Đối chiếu hồ sơ đã ẩn danh với văn bản áp dụng và điều khoản chuyển tiếp; chưa thể khẳng định suất tái định cư hoặc tiền bồi thường cho hộ cụ thể.'])
+        elif (state.get('citizen_need') and state['citizen_need'].intent=='find_contact'
+              and not any(e.document.source_kind in {'official_procedure','official_directory'} for e in state['evidence'])):
+            state['draft']=Draft(status='insufficient_evidence')
+            state['contact_source_missing']=True
         elif not state["evidence"]:
             state["draft"] = Draft(status="insufficient_evidence", summary="Chưa tìm được chứng cứ trong bộ dữ liệu đã công bố.",
                                    missing_facts=state["plan"].missing_facts)
@@ -884,48 +916,44 @@ class Agent:
                 for claim in previous_draft['claims']:
                     claim['citation_ids']=[aliases.get(key,key) for key in claim['citation_ids']]
             state["draft"] = await self.provider.generate(Draft,
-                "Answer the actual question in Vietnamese. Use ONE concise, independently qualified claim by default; "
-                "at most three for genuinely separate requested propositions. Put ALL legal content in claims; summary "
-                "is not displayed. citation_ids must be allowed C1/C2 aliases, never document IDs. "
-                "Prefer the source's exact operative wording. "
-                "For procedural safeguards, quote the operative sentence establishing the required ordering or "
-                "precondition before other general principles or neighboring benefit/publicity rules. "
-                "Each claim must itself retain its actor, land/asset scope, eligibility prerequisites, OR alternatives, "
-                "exceptions, consequence and applicable time. Do not rely "
-                "on a different claim for a missing condition. Cite every passage needed, including continuations. "
-                "Use the complete parent passage when a child omits conditions; a title/preamble proves no rule. "
-                "Only answer what was asked. Do not add unasked rates, durations, amounts, exhaustive actor lists or "
-                "neighboring benefits. Quantities needed to state an eligibility condition must retain their scope. "
-                "Do not turn a condition in the user's question into a new legal trigger in the source. "
-                "For document alternatives, retain the prerequisite 'trường hợp thuộc khoản ...' in the SAME claim; "
-                "explain the alternatives with OR, never AND. An actor category is not a qualifying document. "
-                "For assistance catalogues, distinguish the categories from eligibility: not every household "
-                "automatically receives every category. Preserve income, approval-date and exclusion conditions "
-                "when the operative source uses them to define an eligible actor. Do not invent conditions from "
-                "cross-references: explain them only with actual text, otherwise disclose the missing scope. "
-                "Preserve exact article/clause/point references, including the scope of partial amendments. Use "
-                "bullets for summary lists, not invented legal point letters or numbered clauses. Distinguish "
-                "Chủ tịch UBND from UBND and household compensation from implementation/coercion expenses. "
-                "current evidence supports current rules; historical requires a disclosed historical question or "
-                "operative transition; future supports only applicability saying NOT yet effective with the "
-                "source-proven commencement. provision_specific requires the actual clause dates. Issue dates "
-                "are not commencement. Replacement alone does not decide old files: include a next_step to check "
-                "recovery/approved-plan dates and transitions before applying a replacement to an old file. "
-                "No whole-act repeal inferred from a partial change. Respect source review notes, special policies "
-                "and unresolved dependencies. coverage_gaps and history are not legal evidence. "
-                "General rules need no invented private file. For personal rights ask for land type, papers and "
-                "recovery/approved-plan dates, never ask the citizen to provide law already available. Never "
-                "guarantee parcel/household rights or money from general project facts. official_news is context "
-                "only; planning-task approval does not establish approved plans or household recovery. "
-                "If the main proposition lacks proof, use insufficient_evidence rather than substituting a nearby "
-                "rule. next_steps are generic checks, never unchecked legal conditions. When identifying a "
-                "replacement regulation, include a generic next_step to check recovery/approved-plan dates and "
-                "transitions for an old file; do not infer its outcome. For questions about what support depends "
-                "on, summarize the eligible branches and determinants rather than volunteering amounts. "
-                "During repair, previous_issues indexes refer to previous_draft. Correct or remove each defective "
-                "claim and any dependent claim; retain the source-proven direct answer, with all qualifications. "
-                "Do not invent a different rule to replace a removed claim. The entire new draft is verified again. "
-                "Out-of-scope topics get no legal/medical advice.",
+                "Answer the actual question in plain Vietnamese. Start with the source-proven operative rule "
+                "that answers it, not adjacent principles. If the question asks what must happen before a step, "
+                "state that positive prerequisite directly. Never turn a user's negative assumption into a legal "
+                "trigger or repeat it as the premise of a different rule. Explain necessary terms within claims. "
+                "Use ONE concise, independently qualified claim by default, at most three for separate requested "
+                "propositions. Each must retain its own actor, land/asset scope, eligibility prerequisite, OR "
+                "alternatives, exceptions, consequence and applicable time. Do not depend on another claim. "
+                "Use the source's exact operative wording for material conditions, geographic scope, dates and "
+                "authority. In particular, where land is located is not where a decision was issued. "
+                "For a question about what support depends on, explain eligible branches and determinants; do "
+                "not volunteer rates, durations or amounts. When a quantity is necessary, retain its full unit, "
+                "recipient and limits. A support category is not automatic entitlement for all households. "
+                "Document alternatives remain OR with their source prerequisite in the SAME claim; an actor "
+                "category is not a qualifying paper. Preserve income, approval-date, contract and exclusion "
+                "conditions when they define the eligible actor. Never invent conditions from a cross-reference. "
+                "Use claim.section=direct for the answer, explanation for sourced explanation, actions for "
+                "practical steps. ALL factual text and every required paper, office, contact, fee, deadline or "
+                "practical instruction must be a cited claim before verification. Return summary='' and "
+                "next_steps=[]; neither is displayed. Use kind=procedure for procedural instructions, contact "
+                "for contact data. A directory proves only its public contact data, not competence; news proves "
+                "project context, not procedure, approved plans, parcel recovery or household rights. "
+                "Cite only allowed C1/C2 aliases. Include every necessary passage/continuation; prefer the parent "
+                "when a child lacks conditions. Titles, preambles, history and coverage_gaps are not proof. "
+                "Preserve article/clause/point references exactly. Use ordinary bullets, not invented legal "
+                "point labels. Distinguish Chủ tịch UBND from UBND, and household compensation from "
+                "implementation/coercion expenses. Never guarantee private rights, parcels or money. "
+                "Current evidence supports current rules; historical evidence needs a historical question or "
+                "operative transition. Future evidence only supports an applicability claim saying NOT yet "
+                "effective with its proven commencement. Issue date is not commencement. Check clause-specific "
+                "dates, amendments, source review notes, special policies and unresolved dependencies. Do not "
+                "infer whole-act repeal from a partial change or the outcome of an old file from replacement. "
+                "Any substantive check for an old file must itself be a sourced claim, never next_steps. "
+                "Ask only the single most useful missing fact; never identifying data, uploads, parcel numbers "
+                "or laws already available. A general explanation needs no private file merely because the "
+                "user says 'tôi'. If the requested rule lacks proof, return insufficient_evidence, not a nearby "
+                "rule. During repair, previous_issues refer to previous_draft: correct/remove each defect and "
+                "its dependent claims, keep the proven direct answer with all qualifications. Never invent a "
+                "replacement rule. The whole new draft will be verified again. Out-of-scope gets no advice.",
                 {"question": redact(state["request"].message), "as_of": str(state["as_of"]), "history": state["history"],
                  "missing_facts": state["plan"].missing_facts, "tool_results": state["tool_notes"], "evidence": contexts,
                  "documents":documents,
@@ -1050,6 +1078,10 @@ class Agent:
 
     async def verify(self, state):
         draft = state["draft"]
+        if not draft.claims:
+            state['verification']=Verification()
+            await self.event(state,'verification','Chỉ có thông báo giới hạn hoặc câu hỏi làm rõ; không phát hướng dẫn pháp lý chưa kiểm chứng.')
+            return state
         if state.get('freshness_question') or (state.get('place_clarification') and not draft.claims):
             state['verification']=Verification()
             await self.event(state,'verification','Chỉ giải thích giới hạn dữ liệu hoặc hỏi địa bàn còn thiếu; không kết luận quyền lợi hay phạm vi từng thửa.')
@@ -1109,6 +1141,14 @@ class Agent:
                                  'check_effectivity',[item.document.id,target['id']])
                 return state
         evidence = {e.chunk.id: e for e in state["evidence"]}
+        reviewed_docs={}
+        operational_ids={cid for claim in draft.claims if operational_claim(claim) for cid in claim.citation_ids}
+        for item in evidence.values():
+            if item.chunk.id not in operational_ids:continue
+            if item.document.id not in reviewed_docs:
+                reviewed_docs[item.document.id]=await asyncio.to_thread(self.store.operational_review,item.document,state['release']['id'])
+            item.document=reviewed_docs[item.document.id]
+            item.applicability=applicability(item.document,state['as_of'],item.chunk)
         repaired=[]
         for index,claim in enumerate(draft.claims):
             claim_dates=claim_effective_dates(claim.text,state['as_of'])
@@ -1132,6 +1172,8 @@ class Agent:
                              docs=sorted(set(repaired)))
         structural_issues = []
         for index, claim in enumerate(draft.claims):
+            structural_issues.extend(f'Claim {index}: {issue}' for issue in
+                source_policy_issues(claim, list(evidence.values()), state['as_of']))
             if any(i not in evidence for i in claim.citation_ids):
                 structural_issues.append(f"Claim {index}: ID trích dẫn không có trong chứng cứ")
             if all(i in evidence and (evidence[i].applicability=='unverified' or
@@ -1155,6 +1197,14 @@ class Agent:
                 structural_issues.append(f'Claim {index}: không biến điều kiện hợp đồng giao khoán của nhóm sử dụng đất cụ thể thành điều kiện chung nhận hỗ trợ')
             groups=('cong dong dan cu','to chuc ton giao','to chuc nuoc ngoai','to chuc kinh te','nguoi goc viet nam','doanh nghiep nha nuoc')
             source_body=normalize(' '.join(evidence[c].chunk.text for c in claim.citation_ids if c in evidence))
+            living_amount=('ho tro on dinh doi song' in normalized_claim
+                and 'neu du dieu kien duoc boi thuong ve dat' in source_body
+                and bool(re.search(r'\b(?:30|70)\s*%|\b30\s*kg',normalized_claim)))
+            if living_amount and not re.search(r'(?<!khong )(?<!chua )du dieu kien (?:duoc )?boi thuong ve dat',normalized_claim):
+                structural_issues.append(f'Claim {index}: mức hỗ trợ ổn định đời sống thiếu điều kiện đủ điều kiện bồi thường về đất; nhắc nhóm không đủ điều kiện không thay thế điều kiện của nhóm định mức')
+            if (living_amount and re.search(r'\b30\s*kg',normalized_claim) and 'mot nhan khau' in source_body
+                    and not re.search(r'\b(?:cho|moi|tung|tren) (?:mot )?(?:nhan khau|nguoi)\b',normalized_claim)):
+                structural_issues.append(f'Claim {index}: định mức gạo thiếu đơn vị cho một nhân khẩu trong nguồn')
             if ('nhan giao khoan' in normalized_claim and 'ho tro' in normalized_claim
                     and 'co hop dong giao khoan' in source_body and 'hop dong' not in normalized_claim):
                 structural_issues.append(f'Claim {index}: nhóm nhận giao khoán thiếu điều kiện hợp đồng trong đúng đoạn nguồn; không tự bổ sung sau kiểm chứng')
@@ -1350,6 +1400,10 @@ class Agent:
             model_context=[{k:v for k,v in item.items() if k!='text'} for item in model_context]
         model_spans=[{**item,'span_id':span_aliases[key],'citation_id':aliases[item['citation_id']]} for key,item in spans.items()]
         checked = await self.provider.generate(Verification,
+            "Verify all practical actions as claims: required versus optional documents, receiving versus deciding "
+            "office, jurisdiction, dates, fees, exceptions and starting events for deadlines. "
+            "Directory data does not prove competence; news does not establish a legal procedure. "
+            "Plain-language explanations must preserve the same conditions and alternatives as the source. "
             "Verify only stated claims against the actual question and as_of, not hypothetical cases. summary is "
             "intentionally absent and never an issue. Support a claim only if every cited passage proves its precise "
             "rule, actor, scope and applicability. A matching source span only proves provenance, not entailment. "
@@ -1434,6 +1488,10 @@ class Agent:
 
     async def finish(self, state):
         draft, check = state["draft"], state["verification"]
+        for index,claim in enumerate(draft.claims):
+            if operational_claim(claim):
+                check.issues.extend(f'Claim {index}: {issue}' for issue in
+                    source_policy_issues(claim,state['evidence'],state['as_of']))
         supported = set(check.supported_claim_indexes)
         claims = [c for i, c in enumerate(draft.claims) if i in supported]
         if len(claims) != len(draft.claims) or check.issues or check.needs_more_evidence:
@@ -1450,6 +1508,7 @@ class Agent:
                               locator=evidence[i].chunk.locator, excerpt=evidence[i].chunk.text,
                               checked_at=evidence[i].document.checked_at, applicability=evidence[i].applicability,
                               source_review_notes=evidence[i].document.source_review_notes,
+                              source_kind=evidence[i].document.source_kind,
                               page=evidence[i].chunk.page, source_url=citation_source_url(evidence[i])) for i in cited_ids]
         status = draft.status
         if len(claims) != len(draft.claims) or check.issues or check.needs_more_evidence:
@@ -1485,6 +1544,8 @@ class Agent:
                       'Giả định dữ liệu cũ trong câu hỏi không có nghĩa corpus thực tế đã quá hạn; mốc kiểm tra được ghi bên dưới.')
         if state.get('place_clarification'):
             content='Tên huyện cũ chưa đủ để ánh xạ tới một xã/phường mới hoặc xác định một thửa đất thuộc dự án. Cần đối chiếu địa bàn chi tiết và ranh giới/hồ sơ thu hồi.'
+        if state.get('contact_source_missing'):
+            content='Chưa có nguồn thủ tục hoặc danh bạ đã duyệt để chỉ đúng nơi liên hệ cho việc bạn đang hỏi. Bạn có thể mở thư viện nguồn; tôi chưa thể chỉ một nơi nộp, địa chỉ hoặc số điện thoại cụ thể.'
         if outside:
             content=('Hệ thống chỉ hỗ trợ Vành đai 4 tại Hà Nội; không có dữ liệu dự án khác.' if state.get('unsupported_project') else 'Câu hỏi nằm ngoài phạm vi pháp luật đất đai và quy hoạch Hà Nội.')
         if claims:
@@ -1495,19 +1556,44 @@ class Agent:
         if missing and status == "answered":
             status = "clarification_needed"
             content = content.replace("Đã đối chiếu các căn cứ dưới đây.", "Cần bổ sung dữ kiện để xác định quy định áp dụng cho hồ sơ cụ thể.", 1)
-        if missing:
-            content += "\n\nThông tin cần bổ sung:\n" + "\n".join(f"- {x}" for x in missing)
+        need=state.get('citizen_need')
+        notices=[]
+        clarification=(need.clarification if state.get('citizen_orientation') else clarification_for_missing(missing)) if not outside else None
+        if state.get('place_clarification') and not outside:
+            clarification=clarification_for_missing(['địa bàn'])
+        if clarification and repeated_clarification(clarification,state.get('history',[]),state['request'].message):
+            clarification=None
+            notices.append('Bạn có thể tìm lại thông tin trên giấy hoặc xem nguồn; không cần tiếp tục cung cấp khi bạn chưa rõ.')
+        if clarification:
+            content+='\n\n'+clarification.question
         historical_question = state['as_of'] < date(2026,4,2) and any(number in normalize(state['request'].message)
             for number in ('40/2026','56/2024'))
         if historical_question and any(g['document_id']=='qd-56-2024-hanoi' for g in (release or {}).get('coverage_gaps',[])):
-            content+='\n\nBộ dữ liệu chưa có toàn văn đạt kiểm tra của QĐ56/2024; chưa thể xác định đầy đủ quyền lợi hồ sơ lịch sử phụ thuộc văn bản này.'
-        if draft.next_steps and not check.issues and not check.needs_more_evidence and not outside:
-            content += "\n\nBước tiếp theo:\n" + "\n".join(f"- {x}" for x in draft.next_steps)
+            notices.append('Bộ dữ liệu chưa có toàn văn đạt kiểm tra của QĐ56/2024; chưa thể xác định đầy đủ quyền lợi hồ sơ lịch sử phụ thuộc văn bản này.')
+        if stale and claims:
+            notices.append('Nguồn chưa được kiểm tra lại trong bảy ngày; nội dung chỉ được đối chiếu với snapshot đang có.')
+        if notices:content+='\n\n'+'\n\n'.join(notices)
+        # No free-form next_steps survives outside the verified claims channel.
+        if state.get('private_entitlement_check') and not outside:
+            content='Từ thông tin đang có, chưa thể khẳng định quyền lợi hoặc số tiền cho gia đình. '+content
+        if state.get('citizen_orientation') and not outside:
+            status='clarification_needed'
+            content=('Bạn có thể đọc dòng tên trên giấy, không cần gửi ảnh hoặc thông tin cá nhân.'
+                if clarification else 'Bạn có thể tìm dòng tên ở đầu giấy. Nếu vẫn chưa rõ, hãy mở thư viện nguồn hoặc quay lại khi đọc được tên giấy; không cần gửi ảnh hoặc thông tin cá nhân.')
+            if clarification:content+='\n\n'+clarification.question
+            claims,citations=[],[]
         content += f"\n\nThời điểm xem xét: {state['as_of'].strftime('%d/%m/%Y')}."
         if release:
             content += f" Dữ liệu được kiểm tra: {release['checked_at'][:10]}."
         budget = state["budget"]
-        state["result"] = ChatResult(status=status, content=content, citations=citations, verified_claims=claims, as_of=state["as_of"],
+        sections=[AnswerSection(kind=kind,claim_indexes=[i for i,c in enumerate(claims) if c.section==kind])
+                  for kind in ('direct','explanation','actions') if any(c.section==kind for c in claims)]
+        state["result"] = ChatResult(status=status, content=content, citations=citations, verified_claims=claims,
+            answer_schema_version=2,answer_sections=sections,clarification=clarification,
+            answer_notices=notices,
+            need_more_context=clarification.fact if clarification else 'source' if status=='insufficient_evidence' and not outside else None,
+            source_context={'as_of':str(state['as_of']),'source_checked_at':(release or {}).get('checked_at'),
+                            'source_fresh':bool(release) and not stale,'roles':[] if not claims else sorted({evidence[i].document.source_kind for i in cited_ids if i in evidence})},as_of=state["as_of"],
             corpus_release=(release or {}).get("id"), trace_id=str(uuid.uuid4()), trace=state["trace"], missing_facts=missing,
             llm_calls=budget.llm_calls, tool_calls=budget.tool_calls, token_usage=budget.tokens,
             embedding_calls=budget.embedding_calls,
@@ -1525,9 +1611,10 @@ class Agent:
     async def run(self, request, emit, release_id=None):
         budget = Budget()
         state: State = {"request": request, "budget": budget, "emit": emit, "trace": [], "evidence": [], "rounds": 0, "tool_notes": [],
-                        "as_of": request.as_of or local_date(), "release": None, "history": [], 'repairs':0}
+                        "as_of": request.as_of or local_date(), "release": None, "history": [], 'repairs':0,
+                        'citizen_need':assess_need(request.message,[m.model_dump() for m in request.history])}
         try:
-            if not self.provider.configured:
+            if not self.provider.configured and not state['citizen_need'].orientation_only:
                 raise ProviderUnavailable("API key của provider được chọn chưa được cấu hình; không sinh câu trả lời giả")
             async with asyncio.timeout(self.provider.settings.turn_timeout_seconds):
                 state["release"] = await asyncio.to_thread(self.store.release, release_id, True)
@@ -1539,7 +1626,7 @@ class Agent:
                         'document_number':known[c.document_id].get('document_number'), 'locator':c.locator}
                         for c in item.citations if c.document_id in known]}
                     for item in request.history]
-                if (state['as_of'] >= local_date() and not self.provider.settings.allow_stale_generation
+                if (not state['citizen_need'].orientation_only and state['as_of'] >= local_date() and not self.provider.settings.allow_stale_generation
                         and not await asyncio.to_thread(self.store.source_fresh, state['release'] or {})):
                     state['result']=ChatResult(**public_status(state['release']),status='insufficient_evidence',
                         content='Nguồn đã quá bảy ngày chưa được kiểm tra lại; chưa thể xác nhận quy định hiện hành. Có thể xem snapshot trong thư viện nguồn.',

@@ -116,7 +116,7 @@ async def test_offline_guards_cannot_call_provider_or_clear_inherited_cooldown(t
     @contextmanager
     def chosen_settings(*_):yield settings
     monkeypatch.setattr(helper,'candidate_settings',chosen_settings)
-    monkeypatch.setattr(helper,'dataset',lambda _: [{'id':'SAFE'}])
+    monkeypatch.setattr(helper,'frozen_dataset',lambda *_: ([{'id':'SAFE'}],'fixture-freeze'))
     class Store:
         def __init__(self,*_):pass
         def restore(self,*_):pass

@@ -1,0 +1,9 @@
+{"evaluation_provider_quota": {"scope": "TPM", "limit": 8000, "used": 5629, "requested": 3872}}
+{"evaluation_progress": {"case_id": "N01", "mode": "agentic", "status": "limited", "elapsed_ms": 65555, "llm_calls": 3, "checkpoint_records": 1}}
+{"evaluation_provider_cooldown_seconds": 41.97}
+{"evaluation_progress": {"case_id": "N02", "mode": "agentic", "status": "answered", "elapsed_ms": 10651, "llm_calls": 2, "checkpoint_records": 2}}
+{"evaluation_provider_cooldown_seconds": 53.51}
+{"evaluation_provider_quota": {"scope": "TPD", "limit": 200000, "used": 198807, "requested": 3857}}
+{"evaluation_progress": {"case_id": "N03", "mode": "agentic", "status": "limited", "elapsed_ms": 11169, "llm_calls": 1, "checkpoint_records": 3}}
+{"evaluation_deferred_provider_retry_after": 1149.46}
+{"split": "natural", "run_id": "corpus-a26bc99e541fbbe2-openai_gpt-oss-120b-natural-b068bb4e-e55d2a3d-c1-agentic", "results": [{"mode": "agentic", "completed": 3, "reviewed": 0, "llm_calls": 6, "limited_or_error": 2}]}

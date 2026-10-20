@@ -9,7 +9,7 @@ import json
 from pathlib import Path
 
 from landlaw.config import Settings
-from landlaw.evaluation import configuration_fingerprint, dataset, report_metrics
+from landlaw.evaluation import configuration_fingerprint, dataset, report_metrics, citizen_metrics
 from landlaw.security import utcnow
 
 
@@ -66,9 +66,11 @@ def export(run_dir, output, release_path, suite_path=Path("data/evaluation/smoke
         'history_mode': 'Frozen displayed history where provided; real conversational HTTPS checks are separate.',
         'legal_acceptance': False, 'acceptance_passed': False, 'independent_legal_certification': False,
         'scope': 'Actual model calls using the local source configuration and frozen corpus via operator CLI; not a deployment verification or HTTP latency benchmark.',
-        'results': rows}
+        'results': rows,'split':metadata.get('split'),'expected_cases':len(cases)}
     report['review_methods'] = sorted({row['review_method'] for row in rows})
     report['metrics'] = report_metrics(rows)
+    report['citizen_metrics'] = citizen_metrics(rows,cases)
+    report['presentation_sha256'] = metadata.get('presentation_sha256')
     attempts = [json.loads(p.read_text()) for p in sorted((run_dir / 'attempts').glob('*.json'))]
     report['attempt_history'] = {'available_attempts': len(attempts),
         'limited_or_error_attempts': sum(a['record']['result']['status'] in {'limited', 'error'} for a in attempts),

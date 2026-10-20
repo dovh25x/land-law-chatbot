@@ -1,0 +1,29 @@
+
+> hanoi-land-law-web@0.1.0 test:e2e
+> playwright test --grep welcome remains reachable|publishes historical retrieval|paper clarification|structured content|invalid structured
+
+[WebServer] (node:69121) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 10 tests using 2 workers
+
+(node:69142) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:69143) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   2 [desktop] › e2e/evaluation.spec.ts:60:1 › publishes historical retrieval and faithfulness with scope and sample coverage (4.2s)
+  ✓   1 [desktop] › e2e/citizen.spec.ts:11:1 › paper clarification can be edited, has an unknown route and survives reload locally (4.6s)
+  ✓   4 [desktop] › e2e/citizen.spec.ts:36:1 › structured content uses verified claims and exact sources, never an unchecked content summary (2.5s)
+  ✓   3 [desktop] › e2e/redesign.spec.ts:228:1 › welcome remains reachable on short narrow screens (2.8s)
+(node:69409) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   5 [desktop] › e2e/citizen.spec.ts:51:1 › invalid structured references cannot expose content, sources or copy actions (1.5s)
+(node:69450) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   6 [mobile] › e2e/citizen.spec.ts:11:1 › paper clarification can be edited, has an unknown route and survives reload locally (4.2s)
+  ✓   7 [mobile] › e2e/evaluation.spec.ts:60:1 › publishes historical retrieval and faithfulness with scope and sample coverage (4.7s)
+  ✓   8 [mobile] › e2e/citizen.spec.ts:36:1 › structured content uses verified claims and exact sources, never an unchecked content summary (3.0s)
+  ✓  10 [mobile] › e2e/citizen.spec.ts:51:1 › invalid structured references cannot expose content, sources or copy actions (2.9s)
+  ✓   9 [mobile] › e2e/redesign.spec.ts:228:1 › welcome remains reachable on short narrow screens (4.2s)
+
+  10 passed (22.6s)

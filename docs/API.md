@@ -2,7 +2,7 @@
 
 ## Địa chỉ và phiên bản
 
-Client production gọi API cùng origin `https://hanoi-land-law.pages.dev`; Cloudflare Function chuyển tiếp tới backend. Các route giữ tiền tố `/api/v1/`. Trường `api_version: 2` trong status mô tả contract chat có client history và request ID, không phải tiền tố URL mới.
+Client production gọi API cùng origin `https://hanoi-land-law.pages.dev`; Cloudflare Function chuyển tiếp tới backend. Các route giữ tiền tố `/api/v1/`. Trường `api_version: 3` trong status mô tả contract chat có client history, request ID và projection đáp án cho người dân, không phải tiền tố URL mới.
 
 Trong development, Vite proxy tới FastAPI local và OpenAPI được bật tại `/docs`. Production không mở trang OpenAPI.
 
@@ -92,6 +92,16 @@ Kết quả gồm `content`, `citations`, `trace`, `trace_id`, corpus/model iden
 
 `citation.source_url` trỏ tới đúng trang PDF gốc (`#page=...`) khi có attachment được kiểm tra, hoặc tới ảnh trang gốc nếu nguồn công bố bằng ảnh. Client hiển thị liên kết “Mở trang nguồn gốc”; không suy định mọi URL này đều là PDF ký số. Không có ánh xạ xuất xứ chính xác thì trường này để trống.
 
+## Đáp án cấu trúc cho người dân
+
+Status cung cấp `capabilities.citizen_answers=true`, `answer_schema_version=2`. Những lượt lỗi hoặc nhánh compatibility có thể vẫn dùng schema 1. Client chọn renderer theo version của từng result; dữ liệu v2 lỗi không fallback sang prose tự do.
+
+`answer_sections` gồm tối đa ba nhóm `direct`, `explanation`, `actions`, chỉ tham chiếu index của `verified_claims`. Mỗi claim xuất hiện đúng một lần, section khớp claim và citation phải tồn tại trong cùng response. `answer_notices` chỉ chứa giới hạn cố định do runtime dựng, không phải summary/next_steps của model. `content` vẫn có để client cũ đọc cùng claim và giới hạn.
+
+`clarification` là một câu hỏi làm rõ, tối đa ba lựa chọn cùng `allow_unknown`; client điền câu trả lời để người dùng sửa và gửi. `need_more_context` chỉ rõ fact còn thiếu hoặc `source`. `source_context` ghi ngày xem xét/kiểm tra thật, freshness và vai trò nguồn; không chứng nhận quyền lợi. Citation có thêm `source_kind`; directory không chứng minh thẩm quyền.
+
+Request nhận optional `interaction` với intent/stage có enum và độ dài giới hạn. Runtime hiện suy nhu cầu từ message/history user, không lấy interaction làm chứng cứ hoặc tự xác nhận hồ sơ.
+
 ## Gửi trùng, hủy và mất kết nối
 
 Một phiên chỉ có một lượt đang chạy. Lease tự hết hạn khi worker không hoàn tất. Trong thời gian metadata còn được lưu, cùng `request_id` không được gọi LLM lần nữa, kể cả lượt trước đã lỗi. Request trùng hoặc phiên bận trả `409` và không cung cấp replay. Đây không phải cam kết chống trùng vĩnh viễn sau khi metadata đã được cleanup; client phải tạo UUID mới cho mỗi lượt mới.
@@ -120,6 +130,6 @@ Payload lỗi validation chỉ chứa vị trí và loại lỗi, không echo n�
 
 ## Công bố số liệu đánh giá
 
-`GET /api/v1/evaluations/latest` giữ các field summary cũ và bổ sung `runs`, `retrieval_runs`, `faithfulness_runs`, `sources`, `errata`, `default_run_id`. Mỗi run giữ corpus, model, backend, fingerprint, các suite và ca đã/chưa thực hiện; API gắn `matches_active_release`/`matches_active_configuration` theo deployment, không sửa identity artifact. Mặc định chọn bộ đầy đủ gần nhất của corpus đang phục vụ, sau đó mới tới lần chạy còn dở.
+`GET /api/v1/evaluations/latest` giữ các field summary cũ và bổ sung `runs`, `retrieval_runs`, `faithfulness_runs`, `sources`, `errata`, `default_run_id`. Mỗi run giữ corpus, model, backend, fingerprint, các suite và ca đã/chưa thực hiện; API gắn `matches_active_release`/`matches_active_configuration` theo deployment, không sửa identity artifact. Mặc định ưu tiên bộ đầy đủ khớp cả corpus và configuration, rồi mới cohort cùng corpus hoặc lần chạy còn dở.
 
 `reports/public-evaluations.json` là bản chiếu public được tạo ngoại tuyến từ artifact đã commit; `sources` giữ đường dẫn GitHub ghim revision và SHA-256. Chỉ chứa câu hỏi benchmark khóa, nhận xét và chỉ số; không trả payload đáp án, hội thoại, token phiên hoặc trace chi tiết. Download trên frontend dùng chính JSON đã nhận, không cần thêm endpoint server.

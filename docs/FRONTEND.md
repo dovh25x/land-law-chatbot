@@ -17,6 +17,8 @@ Các frame ban đầu được giữ nguyên để đối chiếu:
 | Thư viện văn bản | `7:8` |
 | Đánh giá hệ thống | `7:15` |
 
+[Handoff cho người dân](redesign/IMPLEMENTATION.md#handoff-giao-diện) bổ sung trang đầu và làm rõ tên giấy, sáng/tối, desktop/mobile trên cùng hệ thiết kế. Trang đầu hỏi “Bạn đang vướng việc gì?”, có sáu gợi ý; chọn chỉ điền ô nhập. `CitizenAnswer.tsx` render các claim đã kiểm chứng, nguồn tại đúng claim, một câu làm rõ và lựa chọn không rõ. `citizen.ts` kiểm tra projection và tạo nội dung sao chép tương ứng. Lịch sử schema cũ tiếp tục đọc được. Phiên bản v2 sai cấu trúc không hiển thị content thay thế.
+
 ## Nguyên tắc trải nghiệm
 
 Hội thoại là luồng chính, tham khảo cách sử dụng của ChatGPT nhưng giữ tên sản phẩm và tiếng Việt. Thư viện nguồn và đánh giá là điều hướng phụ. Không có lựa chọn model, retrieval mode, dự án, tài khoản, thanh toán hoặc upload hồ sơ.

@@ -7,7 +7,7 @@ import typer
 from pydantic import BaseModel, SecretStr
 
 from .config import Settings
-from .evaluation import evaluate, evaluate_retrieval, configuration_fingerprint
+from .evaluation import evaluate, evaluate_retrieval, configuration_fingerprint, frozen_dataset
 from .publication import validate_corpus
 from .ingest import build_corpus, coverage, json_write
 from .provider import Budget, GroqProvider
@@ -111,8 +111,10 @@ def ingest(offline: bool = False, embed: bool = False, ocr: bool = False, cached
 def benchmark(split: str = "smoke", release_id: str | None = None, limit: int | None = None,
               concurrency: int = typer.Option(1,min=1,max=2), case_ids: str | None = None, mode: str = "agentic"):
     """Run/resume a frozen agentic regression suite."""
-    if split not in {"smoke", "supplemental", "natural"}:
-        raise typer.BadParameter("Supported splits: smoke, supplemental, natural")
+    try:
+        frozen_dataset(Settings().data_dir,split)
+    except (ValueError,OSError) as exc:
+        raise typer.BadParameter(str(exc)) from None
     if mode != 'agentic':
         raise typer.BadParameter('Only agentic evaluation is supported')
     modes = ('agentic',)

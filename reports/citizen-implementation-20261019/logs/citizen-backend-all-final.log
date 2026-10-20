@@ -1,0 +1,77 @@
+........................................................................ [ 26%]
+........................................................................ [ 52%]
+........................................................................ [ 79%]
+....................................F...................                 [100%]
+=================================== FAILURES ===================================
+_____ test_offline_guards_cannot_call_provider_or_clear_inherited_cooldown _____
+
+tmp_path = PosixPath('/tmp/pytest-of-dovh25x/pytest-24/test_offline_guards_cannot_cal0')
+settings = Settings(app_env='development', llm_provider='groq', groq_api_key=SecretStr('**********'), groq_model='openai/gpt-oss-..._cannot_cal0/data'), reports_dir=PosixPath('/tmp/pytest-of-dovh25x/pytest-24/test_offline_guards_cannot_cal0/reports'))
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7c6efc592430>
+
+    async def test_offline_guards_cannot_call_provider_or_clear_inherited_cooldown(tmp_path,settings,monkeypatch):
+        from contextlib import contextmanager
+        from datetime import timedelta
+        from types import SimpleNamespace
+    
+        from landlaw.provider import ProviderUnavailable
+    
+        from scripts import evaluate_generation_candidate as helper
+        output=tmp_path/'output';output.mkdir()
+        cooldown=output/'operator-cooldown.json'
+        original=json.dumps({'not_before':(utcnow()+timedelta(hours=1)).isoformat()})
+        cooldown.write_text(original)
+        @contextmanager
+        def chosen_settings(*_):yield settings
+        monkeypatch.setattr(helper,'candidate_settings',chosen_settings)
+        monkeypatch.setattr(helper,'dataset',lambda _: [{'id':'SAFE'}])
+        class Store:
+            def __init__(self,*_):pass
+            def restore(self,*_):pass
+            def close(self):pass
+        class Provider:
+            def __init__(self,*_,**__):pass
+            async def generate(self,*_,**__):raise AssertionError('Network provider must not run')
+            async def close(self):pass
+        async def evaluate(_,store,provider,split,**kwargs):
+            assert kwargs['case_ids']==['SAFE']
+            with pytest.raises(ProviderUnavailable,match='disabled'):
+                await provider.generate()
+            return {'run_id':'fixture','results':[]}
+        monkeypatch.setattr(helper,'Store',Store);monkeypatch.setattr(helper,'GroqProvider',Provider)
+        monkeypatch.setattr(helper,'evaluate',evaluate)
+>       await helper.main(SimpleNamespace(output=output,resume=True,backup=tmp_path/'unused',
+            postgres=False,split=['smoke'],case_id=['SAFE'],no_generation=True))
+
+tests/test_release_readiness.py:135: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+scripts/evaluate_generation_candidate.py:78: in main
+    cases={split:{case['id'] for case in frozen_dataset(settings.data_dir,split)[0]}
+                                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend/landlaw/evaluation.py:268: in frozen_dataset
+    fingerprint = hashlib.sha256(path.read_bytes()).hexdigest()
+                                 ^^^^^^^^^^^^^^^^^
+/usr/lib/python3.14/pathlib/__init__.py:778: in read_bytes
+    with self.open(mode='rb', buffering=0) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/tmp/pytest-of-dovh25x/pytest-24/test_offline_guards_cannot_cal0/data/evaluation/smoke.jsonl')
+mode = 'rb', buffering = 0, encoding = None, errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed to by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+>       return io.open(self, mode, buffering, encoding, errors, newline)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/tmp/pytest-of-dovh25x/pytest-24/test_offline_guards_cannot_cal0/data/evaluation/smoke.jsonl'
+
+/usr/lib/python3.14/pathlib/__init__.py:772: FileNotFoundError
+=========================== short test summary info ============================
+FAILED tests/test_release_readiness.py::test_offline_guards_cannot_call_provider_or_clear_inherited_cooldown
+1 failed, 271 passed in 20.83s

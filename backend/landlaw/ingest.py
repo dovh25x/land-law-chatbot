@@ -164,7 +164,7 @@ def pdf_pages(content: bytes, allow_ocr=False):
     return pages
 
 
-def chunks_for(doc_id, pages, expected_article_count=None):
+def chunks_for(doc_id, pages, expected_article_count=None, preserve_public_contacts=False):
     chunks = []
     active_article = None
     appendix = False
@@ -173,7 +173,7 @@ def chunks_for(doc_id, pages, expected_article_count=None):
         raise Quarantine('Invalid reviewed article sequence')
     for page_index, (page, text) in enumerate(pages):
         # Reclassify old parse caches too: v4 marked any prose mentioning 'đơn giá'.
-        text = redact(text).replace(TABLE_MARKER + "\n", "").strip()
+        text = (text if preserve_public_contacts else redact(text)).replace(TABLE_MARKER + "\n", "").strip()
         if "�" in text and text.count("�") / max(len(text), 1) > 0.005:
             raise Quarantine("Encoding/OCR quality insufficient")
         appendix_heading = None if appendix else re.search(r'^\s*PHỤ LỤC\s*$', text, re.MULTILINE | re.IGNORECASE)
@@ -361,6 +361,9 @@ async def collect_source(source, settings, client, offline=False, allow_ocr=Fals
     # Public individual compensation schedules contain names/addresses. Do not publish without explicit review.
     if source.get("contains_personal_data") and source.get("anonymisation_reviewed") is not True:
         raise Quarantine("Individual records require anonymisation review")
+    directory=source['source_kind']=='official_directory'
+    if directory and (source.get('public_contacts_reviewed') is not True or source.get('contains_personal_data') is not False):
+        raise Quarantine('Directory needs explicit institutional-contact and personal-data review')
     checksum = hashlib.sha256(b"".join(contents)).hexdigest()
     source_pages = source.get('source_pages', [])
     page_indexes = set()
@@ -381,10 +384,14 @@ async def collect_source(source, settings, client, offline=False, allow_ocr=Fals
         applicability_verified=legal_verified,
         provision_validity=source.get("provision_validity", []),
         source_review_notes=source.get('source_review_notes', ''),
+        task_tags=source.get('task_tags',[]), administrative_scope=source.get('administrative_scope'),
+        procedure_id=source.get('procedure_id'),required_dependency_ids=source.get('required_dependency_ids',[]),
+        operational_reviewed_at=source.get('operational_reviewed_at'),
+        operational_review_status=source.get('operational_review_status','pending'),
         source_files=source_files,
         source_pages=source_pages,
         checked_at=datetime.fromisoformat(source["checked_at"].replace("Z", "+00:00")) if offline else utcnow(), checksum=checksum,
-        chunks=chunks_for(source_id, pages, source.get('expected_article_count')))
+        chunks=chunks_for(source_id, pages, source.get('expected_article_count'),preserve_public_contacts=directory))
     indexed_articles = source.get('index_articles')
     if indexed_articles is not None:
         if not indexed_articles or not all(isinstance(n,int) and n > 0 for n in indexed_articles):

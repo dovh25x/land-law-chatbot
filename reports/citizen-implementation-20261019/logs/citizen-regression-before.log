@@ -1,0 +1,59 @@
+FFFFFF                                                                   [100%]
+=================================== FAILURES ===================================
+_ test_receiving_an_unknown_paper_asks_one_question_without_requesting_private_data _
+
+    def test_receiving_an_unknown_paper_asks_one_question_without_requesting_private_data():
+>       from landlaw.citizen import assess_need
+E       ModuleNotFoundError: No module named 'landlaw.citizen'
+
+tests/test_citizen.py:11: ModuleNotFoundError
+_ test_user_corrections_override_old_paper_and_assistant_history_is_not_a_fact _
+
+    def test_user_corrections_override_old_paper_and_assistant_history_is_not_a_fact():
+>       from landlaw.citizen import assess_need
+E       ModuleNotFoundError: No module named 'landlaw.citizen'
+
+tests/test_citizen.py:20: ModuleNotFoundError
+_____ test_unknown_paper_has_a_way_out_and_a_definition_needs_no_case_file _____
+
+    def test_unknown_paper_has_a_way_out_and_a_definition_needs_no_case_file():
+>       from landlaw.citizen import assess_need
+E       ModuleNotFoundError: No module named 'landlaw.citizen'
+
+tests/test_citizen.py:30: ModuleNotFoundError
+_ test_contact_and_procedure_roles_cannot_be_approved_from_news_or_old_directory _
+
+    def test_contact_and_procedure_roles_cannot_be_approved_from_news_or_old_directory():
+>       from landlaw.citizen import source_policy_issues
+E       ModuleNotFoundError: No module named 'landlaw.citizen'
+
+tests/test_citizen.py:39: ModuleNotFoundError
+_______ test_structured_sections_cannot_hide_an_orphan_or_repeat_a_claim _______
+
+    def test_structured_sections_cannot_hide_an_orphan_or_repeat_a_claim():
+>       from landlaw.models import AnswerSection, ChatResult, Claim
+E       ImportError: cannot import name 'AnswerSection' from 'landlaw.models' (/home/dovh25x/projects/land-law-chatbot/backend/landlaw/models.py)
+
+tests/test_citizen.py:50: ImportError
+___ test_draft_suite_is_never_executable_and_custom_registry_requires_review ___
+
+tmp_path = PosixPath('/tmp/pytest-of-dovh25x/pytest-20/test_draft_suite_is_never_exec0')
+
+    def test_draft_suite_is_never_executable_and_custom_registry_requires_review(tmp_path):
+        from pathlib import Path
+        from landlaw.evaluation import frozen_dataset
+>       with pytest.raises(ValueError, match='draft|review|frozen'):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AssertionError: Regex pattern did not match.
+E         Expected regex: 'draft|review|frozen'
+E         Actual message: 'Supported splits: smoke, supplemental, natural'
+
+tests/test_citizen.py:64: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_citizen.py::test_receiving_an_unknown_paper_asks_one_question_without_requesting_private_data
+FAILED tests/test_citizen.py::test_user_corrections_override_old_paper_and_assistant_history_is_not_a_fact
+FAILED tests/test_citizen.py::test_unknown_paper_has_a_way_out_and_a_definition_needs_no_case_file
+FAILED tests/test_citizen.py::test_contact_and_procedure_roles_cannot_be_approved_from_news_or_old_directory
+FAILED tests/test_citizen.py::test_structured_sections_cannot_hide_an_orphan_or_repeat_a_claim
+FAILED tests/test_citizen.py::test_draft_suite_is_never_executable_and_custom_registry_requires_review
+6 failed in 0.66s

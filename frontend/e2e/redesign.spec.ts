@@ -228,7 +228,7 @@ test('trace exposes observed events without marking every step successful', asyn
 test('welcome remains reachable on short narrow screens', async ({ page }) => {
   for (const height of [667, 480]) {
     await page.setViewportSize({ width: 320, height }); await page.goto('/')
-    const heading = page.getByRole('heading', { name: 'Bạn muốn tìm hiểu điều gì?' })
+    const heading = page.getByRole('heading', { name: 'Bạn đang vướng việc gì?' })
     await expect(heading).toBeInViewport()
     const bounds = await heading.boundingBox()
     expect(bounds!.y).toBeGreaterThanOrEqual(64)

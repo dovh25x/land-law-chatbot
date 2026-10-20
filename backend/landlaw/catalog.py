@@ -13,7 +13,7 @@ def references(settings, indexed_ids):
     for source in json.loads(path.read_text()):
         if (source['id'] in indexed_ids or not re.fullmatch(r'[a-z0-9-]+', source['id'])
                 or source.get('project') not in (None, 'ring4')
-                or source.get('source_kind') not in ('legal', 'project_decision', 'official_news')
+                or source.get('source_kind') not in ('legal', 'project_decision', 'official_news','official_procedure','official_directory')
                 or (source.get('source_kind') != 'legal' and source.get('project') != 'ring4')
                 or (source.get('contains_personal_data') and not source.get('anonymisation_reviewed'))):
             continue

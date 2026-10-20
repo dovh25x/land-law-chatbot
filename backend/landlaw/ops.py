@@ -19,6 +19,12 @@ def record_source_review(store, receipt_path: Path):
         raise ValueError('Unknown source check status')
     if not receipt.get('relation_review') or not receipt.get('evidence_urls') or not all(official_url(url) for url in receipt['evidence_urls']):
         raise ValueError('Require source evidence URLs and explicit amendment/transition review')
+    if receipt.get('operational_review') is not None:
+        operational=receipt['operational_review']
+        if (not isinstance(operational,dict) or operational.get('source_role_checked') is not True
+                or operational.get('jurisdiction_checked') is not True
+                or operational.get('procedure_and_dependencies_checked') is not True):
+            raise ValueError('Operational review must explicitly cover source role, jurisdiction and dependencies')
     encoded=json.dumps(receipt,ensure_ascii=False,sort_keys=True)
     ident=hashlib.sha256(encoded.encode()).hexdigest()
     with store.transaction() as conn:

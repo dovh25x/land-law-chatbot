@@ -1,0 +1,34 @@
+{
+  "recorded_at": "2026-10-19T08:54:40.460768+00:00",
+  "suite": "natural",
+  "expected_cases": 8,
+  "executed_cases": 3,
+  "not_run_case_ids": [
+    "N04",
+    "N05",
+    "N06",
+    "N07",
+    "N08"
+  ],
+  "technical_reviews": {
+    "pass": 0,
+    "partial": 0,
+    "fail": 3
+  },
+  "execution_failures": [
+    "N01",
+    "N03"
+  ],
+  "source_qualification_failure": [
+    "N02"
+  ],
+  "model_configuration_sha256": "e55d2a3d2e59e9564d8cdad04c3d2575ecba4ebfe173876428e79a689b3e779e",
+  "matches_final_configuration": false,
+  "post_run_change": "N02 source-qualification veto added after reproduction; 275 backend tests pass. Real-model evaluation of this fix pending provider capacity.",
+  "provider_capacity": "TPM 8000 and TPD 200000 observed. Evaluation deferred on TPD; no quota bypass, new key or alternate model.",
+  "latest_current_model_evaluation_complete": false,
+  "legal_acceptance": false,
+  "release_ready": false,
+  "retained_attempts": "model-natural-attempt-1/",
+  "reviewed_report": "model-reviewed-attempt-1/evaluation.json"
+}
