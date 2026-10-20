@@ -282,6 +282,36 @@ async def test_actual_n05_authority_cannot_be_attributed_to_the_cost_clause(stor
         assert not state['result'].citations and text not in state['result'].content
 
 
+@pytest.mark.parametrize('case,qualified', [('N03',False),('N03',True),('X02',False),('X02',True)])
+async def test_actual_support_claims_cannot_broaden_agricultural_beneficiaries(store,settings,case,qualified):
+    import json
+    from datetime import date
+    from pathlib import Path
+    from conftest import release
+    from test_agent import FakeProvider, noop
+    from landlaw.agent import Agent, Plan, Verification
+    from landlaw.models import ChatRequest, Claim, Draft, Evidence
+    from landlaw.provider import Budget
+    fixture=next(row for row in json.loads(Path('tests/fixtures/citizen-agricultural-actor-loss.json').read_text()) if row['id']==case)
+    docs={}
+    evidence=[]
+    for source in fixture['sources']:
+        doc=docs.setdefault(source['document_id'],document().model_copy(update={'id':source['document_id'],'chunks':[]}))
+        chunk=document().chunks[0].model_copy(update={'id':source['id'],'document_id':doc.id,'text':source['excerpt'],'locator':source['locator']})
+        doc.chunks.append(chunk);evidence.append(Evidence(document=doc,chunk=chunk,applicability='current'))
+    payload=release(store,list(docs.values()))
+    claims=[Claim.model_validate(c) for c in fixture['claims']]
+    if qualified:
+        claims=[Claim(text='Hộ gia đình, cá nhân trực tiếp sản xuất nông nghiệp đang sử dụng đất nông nghiệp do được Nhà nước giao, khi Nhà nước thu hồi đất không có đất để bồi thường và đã được bồi thường bằng tiền, thuộc nhóm được hỗ trợ tại điểm a khoản 1 và khoản 2 Điều 109: hỗ trợ bằng hình thức đào tạo, chuyển đổi nghề và tìm kiếm việc làm.',
+            citation_ids=[e.chunk.id for e in evidence if e.chunk.locator.startswith('Điều 109')])]
+    state={'request':ChatRequest(session_id='00000000-0000-4000-8000-000000000000',message='Người trực tiếp làm nông bị thu hồi đất có được hỗ trợ chuyển nghề không?'),
+           'budget':Budget(),'release':payload,'as_of':date(2024,8,2),'plan':Plan(),'evidence':evidence,
+           'draft':Draft(status='answered',claims=claims),'trace':[],'emit':noop}
+    agent=Agent(store,FakeProvider(settings,verification=Verification(supported_claim_indexes=list(range(len(claims))))))
+    await agent.verify(state);await agent.finish(state)
+    assert bool(state['result'].verified_claims) is qualified
+
+
 @pytest.mark.parametrize('use_source_rule',[False,True])
 async def test_unmet_user_housing_premise_is_not_a_new_statutory_trigger(store,settings,use_source_rule):
     import json

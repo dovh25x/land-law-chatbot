@@ -772,6 +772,8 @@ class Agent:
             group_scores={}
             principle_groups=set()
             safeguard=any(term in question for term in ('bao dam','dam bao','nguyen tac'))
+            order_question=(any(term in question for term in ('truoc','chua'))
+                            and any(term in question for term in ('phai','can','bao dam','dam bao')))
             lexical_scores={}
             for item in candidates:
                 body=normalize(item['text'])
@@ -790,13 +792,14 @@ class Agent:
                 document_match=any(n in normalize(item.get('document_number') or '') for n in numbers)
                 operative=temporal and any(term in body for term in ('co hieu luc','thay the','bai bo'))
                 heading_overlap,overlap=lexical_scores[item['citation_id']]
+                prerequisite=order_question and bool(re.search(r'phai (?:duoc )?.{0,80}truoc khi',body))
                 timely=not temporal or item['applicability']!='future' or document_match
                 # RRF already ranks substantive evidence. Keep continuations
                 # with that article instead of letting keyword-dense benefits
                 # displace the governing principle in the bounded prompt.
                 key=(item['document_id'],item['locator'].split(' · ')[0])
                 group=group_order[key]
-                return (exact_article and (document_match or not numbers),timely,reference_matches,body_numbers,operative,document_match,item['applicability']=='current',key in principle_groups,group_scores[key],-group,heading_overlap,overlap)
+                return (exact_article and (document_match or not numbers),timely,reference_matches,body_numbers,operative,document_match,item['applicability']=='current',key in principle_groups,group_scores[key],-group,prerequisite,heading_overlap,overlap)
             candidates=sorted(candidates,key=relevant,reverse=True)
             named_docs={item['document_id'] for item in candidates if any(
                 n in normalize(item.get('document_number') or '') for n in numbers)}
@@ -945,50 +948,33 @@ class Agent:
                 for claim in previous_draft['claims']:
                     claim['citation_ids']=[aliases.get(key,key) for key in claim['citation_ids']]
             state["draft"] = await self.provider.generate(Draft,
-                "Answer the actual question in plain Vietnamese. Start with the source-proven operative rule "
-                "that answers it, not adjacent principles. If the question asks what must happen before a step, "
-                "state that positive prerequisite directly. Never turn a user's negative assumption into a legal "
-                "trigger or repeat it as the premise of a different rule. Explain necessary terms within claims. "
-                "Use ONE concise, independently qualified claim by default, at most three for separate requested "
-                "propositions. Each must retain its own actor, land/asset scope, eligibility prerequisite, OR "
-                "alternatives, exceptions, consequence and applicable time. Do not depend on another claim. "
-                "For complex eligibility, explain a named source branch with ALL its conditions and label that "
-                "limited scope, rather than merging different actors into one generic entitlement. Actor classes "
-                "are never alternative qualifying documents. Do not invent annexes. "
-                "Use the source's exact operative wording for material conditions, geographic scope, dates and "
-                "authority. In particular, where land is located is not where a decision was issued. "
-                "For a question about what support depends on, explain eligible branches and determinants; do "
-                "not volunteer rates, durations or amounts. When a quantity is necessary, retain its full unit, "
-                "recipient and limits. A support category is not automatic entitlement for all households. "
-                "Document alternatives remain OR with their source prerequisite in the SAME claim; an actor "
-                "category is not a qualifying paper. Preserve income, approval-date, contract and exclusion "
-                "conditions when they define the eligible actor. Never invent conditions from a cross-reference. "
-                "Use claim.section=direct for the answer, explanation for sourced explanation, actions for "
-                "practical steps. ALL factual text and every required paper, office, contact, fee, deadline or "
-                "practical instruction must be a cited claim before verification. Return summary='' and next_steps=[]; "
-                "neither is displayed. "
-                "Obey claim_policy: missing operational source approval prohibits procedural/contact claims "
-                "and actions. Never add an unasked filing checklist or an unasked authority/amount paragraph. "
-                "Use kind=procedure for procedural instructions, contact "
-                "for contact data. A directory proves only its public contact data, not competence; news proves "
-                "project context, not procedure, approved plans, parcel recovery or household rights. "
-                "Cite only allowed C1/C2 aliases. Include every necessary passage/continuation; prefer the parent "
-                "when a child lacks conditions. Titles, preambles, history and coverage_gaps are not proof. "
-                "Preserve article/clause/point references exactly. Use ordinary bullets, not invented legal "
-                "point labels. Distinguish Chủ tịch UBND from UBND, and household compensation from "
-                "implementation/coercion expenses. Never guarantee private rights, parcels or money. "
-                "Current evidence supports current rules; historical evidence needs a historical question or "
-                "operative transition. Future evidence only supports an applicability claim saying NOT yet "
-                "effective with its proven commencement. Issue date is not commencement. Check clause-specific "
-                "dates, amendments, source review notes, special policies and unresolved dependencies. Do not "
-                "infer whole-act repeal from a partial change or the outcome of an old file from replacement. "
-                "Any substantive check for an old file must itself be a sourced claim, never next_steps. "
-                "Ask only the single most useful missing fact; never identifying data, uploads, parcel numbers "
-                "or laws already available. A general explanation needs no private file merely because the "
-                "user says 'tôi'. If the requested rule lacks proof, return insufficient_evidence, not a nearby "
-                "rule. During repair, previous_issues refer to previous_draft: correct/remove each defect and "
-                "its dependent claims, keep the proven direct answer with all qualifications. Never invent a "
-                "replacement rule. The whole new draft will be verified again. Out-of-scope gets no advice.",
+                "Answer the question in plain Vietnamese using ONE self-contained, cited claim. Include a second "
+                "only for a separate proposition explicitly requested. No unasked checklist, authority, rate or "
+                "deadline. summary='' and next_steps=[] are unused. "
+                "First find the operative sentence that directly answers the question. For a prerequisite/order "
+                "question, lead with the source's positive 'must ... before ...' rule, not general principles. "
+                "Never make the user's negative assumption a legal trigger. "
+                "Copy material actor/eligibility wording from the source without shortening it; then explain "
+                "necessary terms. For a complex list, explain a clearly named branch and retain ALL its conditions "
+                "and exclusions. Do not merge branches. Preserve land origin, contract provider, income, timing, "
+                "no-land/cash-compensation requirements and geographic scope whenever present in that branch. "
+                "An actor category is not an alternative qualifying document. OR stays OR with its prerequisite. "
+                "A support category is not automatic entitlement. Never say 'only' unless the source excludes "
+                "other branches. For what support depends on, explain determinants without volunteering amounts. "
+                "Every claim must be independently supported by all necessary source continuations, using allowed "
+                "C aliases only. No dependence on other claims or history. Article/clause/point references must "
+                "be exact. Keep Chủ tịch UBND distinct from UBND. No invented annexes, papers, offices or rules. "
+                "Obey claim_policy. Practical instructions are procedure claims; contacts are contact claims. "
+                "They require approved operational sources; directories prove contact data, not competence. "
+                "News proves project context, never a household's rights or a procedure. No parcel or money "
+                "guarantees. Titles/preambles/coverage_gaps/history are not legal proof. "
+                "Respect as_of, source roles and amendment/transition metadata. Future evidence can only prove "
+                "not-yet-effective status with its exact commencement; issue date is not commencement. Do not "
+                "infer whole repeal from partial change or apply replacement mechanically to an old file. "
+                "If evidence is insufficient, say so; ask one non-identifying missing fact only if needed. A "
+                "general explanation needs no private file merely because the question says 'tôi'. "
+                "On repair, correct/remove every previous issue and dependent claim; retain the direct answer "
+                "with all material conditions. The entire revised draft is verified again. Out-of-scope: no advice.",
                 {"question": redact(state["request"].message), "as_of": str(state["as_of"]), "history": state["history"],
                  "missing_facts": state["plan"].missing_facts, "tool_results": state["tool_notes"], "evidence": contexts,
                  "documents":documents,
@@ -1233,6 +1219,22 @@ class Agent:
                 structural_issues.append(f'Claim {index}: không biến điều kiện hợp đồng giao khoán của nhóm sử dụng đất cụ thể thành điều kiện chung nhận hỗ trợ')
             groups=('cong dong dan cu','to chuc ton giao','to chuc nuoc ngoai','to chuc kinh te','nguoi goc viet nam','doanh nghiep nha nuoc')
             source_body=normalize(' '.join(evidence[c].chunk.text for c in claim.citation_ids if c in evidence))
+            agricultural_support=('ho tro' in normalized_claim and 'nong nghiep' in source_body)
+            if (agricultural_support and 'truc tiep san xuat nong nghiep' in normalized_claim
+                    and 'dang su dung dat nong nghiep do duoc nha nuoc giao' in source_body
+                    and not any(origin in normalized_claim for origin in
+                        ('nha nuoc giao','nhan chuyen nhuong','nhan thua ke','nhan tang cho','cong nhan quyen su dung dat'))):
+                structural_issues.append(f'Claim {index}: nhóm trực tiếp sản xuất nông nghiệp thiếu phạm vi nguồn gốc sử dụng đất trong nhánh được dẫn')
+            if (agricultural_support and any(group in normalized_claim for group in
+                    ('bao tro xa hoi','tro cap xa hoi','thuong binh','benh binh','gia dinh liet si'))
+                    and 'khong co dat de boi thuong va da duoc boi thuong bang tien' in source_body
+                    and not ('khong co dat de boi thuong' in normalized_claim
+                             and 'da duoc boi thuong bang tien' in normalized_claim)):
+                structural_issues.append(f'Claim {index}: nhóm chính sách xã hội thiếu điều kiện không có đất để bồi thường và đã được bồi thường bằng tiền')
+            if (agricultural_support and 'thu nhap on dinh tu' in normalized_claim
+                    and re.search(r'thu nhap on dinh tu (?:viec )?su dung dat',normalized_claim)
+                    and 'thu nhap on dinh tu san xuat nong nghiep tren dat do' in source_body):
+                structural_issues.append(f'Claim {index}: không mở rộng nguồn thu nhập từ sản xuất nông nghiệp trên đất giao khoán thành thu nhập từ mọi việc sử dụng đất')
             unmet_housing = r'\b(?:neu|khi|truong hop)\s+chua\s+(?:duoc\s+)?bo tri\b'
             if (claim.kind=='legal_rule' and re.search(unmet_housing, normalized_claim)
                     and not re.search(r'\bchua\s+(?:duoc\s+)?bo tri\b', source_body)):

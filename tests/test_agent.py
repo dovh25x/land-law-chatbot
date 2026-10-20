@@ -1509,3 +1509,20 @@ async def test_state_enterprise_cannot_replace_the_specific_contract_land_source
     await agent.verify(state)
     await agent.finish(state)
     assert bool(state['result'].verified_claims) is not broader_actor
+
+
+def test_order_question_prioritizes_operating_prerequisite_over_article_heading(store,settings):
+    from landlaw.models import Evidence
+    law=document(document_number='31/2024/QH15')
+    heading=law.chunks[0].model_copy(update={'id':'law-heading','locator':'Điều 91',
+        'text':'Điều 91. Nguyên tắc bồi thường, hỗ trợ, tái định cư khi Nhà nước thu hồi đất. 1. Việc bồi thường phải bảo đảm dân chủ, công khai, minh bạch.'})
+    operative=law.chunks[0].model_copy(update={'id':'law-prerequisite','locator':'Điều 91 · ngữ cảnh',
+        'text':'6. Việc phê duyệt phương án bồi thường, hỗ trợ, tái định cư và việc bố trí tái định cư phải được hoàn thành trước khi có quyết định thu hồi đất.'})
+    law.chunks=[heading,operative]
+    state={'request':ChatRequest(session_id='00000000-0000-0000-0000-000000000000',
+        message='Chưa được bố trí chỗ ở mới thì thu hồi đất ở cần bảo đảm gì?'),
+        'evidence':[Evidence(document=law,chunk=c) for c in law.chunks],
+        'release':{'documents':[law.model_dump(mode='json')],'relations':[]}}
+    passages,_=Agent(store,FakeProvider(settings)).prompt_context(state)
+    assert passages[0]['citation_id']=='law-prerequisite'
+    assert {p['citation_id'] for p in passages}=={'law-heading','law-prerequisite'}
