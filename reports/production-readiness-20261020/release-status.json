@@ -1,0 +1,45 @@
+{
+  "checked_at": "2026-10-20T04:54:44.179083+00:00",
+  "application_deployed": true,
+  "source_commit": "069d21e8fcdc73161e38f678c95805539c8813cd",
+  "public_url": "https://hanoi-land-law.pages.dev",
+  "publication_profile": "academic",
+  "quality_status": "academic_prototype",
+  "corpus_release": "corpus-a26bc99e541fbbe2",
+  "configuration_sha256": "cd85651ee61610a0a38df495c8c03cf60c494b4a71aad246b6c7a92d3cf878d2",
+  "render_deploy_id": "dep-dbbf4auq1p3s73cd4d10",
+  "pages_deploy_id": "66d937e2-18de-430c-bc51-5034deb63f83",
+  "ci_passed": true,
+  "live_identity_passed": true,
+  "live_navigation_passed": true,
+  "public_controls_passed": true,
+  "live_browser_turnstile_verified": false,
+  "live_public_llm_generation_verified": false,
+  "full_quality_gate_passed": false,
+  "citizen_v2_product_acceptance": false,
+  "evaluation_current": {
+    "expected": 32,
+    "executed": 17,
+    "pass": 16,
+    "fail": 1,
+    "not_run": 15,
+    "llm_calls": 2,
+    "successful_llm_generated_answers": 0,
+    "review_scope": "AI technical review. Passing current rows are zero-LLM guard/source-fact checks, not substantive natural model accuracy. One limited attempt retained."
+  },
+  "waived_by_owner": [
+    "independent_human_legal_review",
+    "pre_release_user_study"
+  ],
+  "remaining_limits": [
+    "Groq TPD200000 blocked completion of the same-fingerprint 32-case evaluation; checkpoint retained.",
+    "Real managed Turnstile did not issue a token to headless browser; no bypass.",
+    "No public LLM answer/follow-up/IndexedDB cycle verified on this deployed SHA.",
+    "New procedure/contact candidates remain reference_only; v2 draft questions/journeys remain unfrozen.",
+    "Active corpus source freshness and existing coverage gaps remain disclosed."
+  ],
+  "rollback_preserved": true,
+  "serving_corpus_changed": false,
+  "corpus_reembedded": false,
+  "automatic_background_evaluation": false
+}

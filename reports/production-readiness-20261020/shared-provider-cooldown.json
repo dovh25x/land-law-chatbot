@@ -1,0 +1,11 @@
+{
+  "checked_at": "2026-10-20T04:49:23.786504+00:00",
+  "source": "Actual Groq TPD429 in isolated evaluation; same Groq key verified by render-config-preflight.json",
+  "seconds_observed_remaining": 723,
+  "production_cooldown_before": "2026-10-19T07:20:59.086665+00:00",
+  "production_cooldown_until": "2026-10-20T05:01:25.741422+00:00",
+  "only_metadata_changed": "provider_cooldown_until",
+  "corpus_unchanged": true,
+  "usage_counters_unchanged": true,
+  "purpose": "Public status reports provider_limited honestly and avoids futile requests until the real Retry-After."
+}

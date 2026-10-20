@@ -1,0 +1,86 @@
+{
+  "S01": {
+    "answer_sha256": "141062d98a61bc0340a5b8d0d82c0d8d1c765ab69fd425682cd8b3d542bd1fa3",
+    "verdict": "pass",
+    "note": "Đối chiếu Điều 2 QĐ40: QĐ56 bị thay thế từ 02/04/2026, không suy quyền lợi hồ sơ. Nhánh source fact, không LLM.",
+    "review_method": "AI technical rubric/snapshot review; zero-LLM guard results identified, no independent legal certification"
+  },
+  "S02": {
+    "answer_sha256": "994a567b772bf2370cec6504686f14ec71eb6954f43419f7cd1157d90a41a380",
+    "verdict": "pass",
+    "note": "Nêu nguồn QĐ40 chưa hiệu lực ngày 01/03/2026 và ngày 02/04/2026; hỏi ngày quyết định/phương án để xét hồ sơ, không tính quyền lợi.",
+    "review_method": "AI technical rubric/snapshot review; zero-LLM guard results identified, no independent legal certification"
+  },
+  "S03": {
+    "answer_sha256": "a87b3aa6faff7e91a290272a5591b0ffa45fb2853a07ca38cd073982f15a87db",
+    "verdict": "pass",
+    "note": "Nêu đúng chỉ Điều 2 QĐ38 bị bãi bỏ; không kết luận toàn văn hết hiệu lực.",
+    "review_method": "AI technical rubric/snapshot review; zero-LLM guard results identified, no independent legal certification"
+  },
+  "S09": {
+    "answer_sha256": "5bb05cc72f44cdef49e613d8db2c115eedb55fe01f3e8d25c4d8bd11cc5ebcea",
+    "verdict": "pass",
+    "note": "Không bảo đảm căn tái định cư; hỏi ngày quyết định/phương án trước. missing_facts giữ các điều kiện loại đất/giấy tờ/di chuyển/ranh; chưa chứng nhận journey hỏi tiếp.",
+    "review_method": "AI technical rubric/snapshot review; zero-LLM guard results identified, no independent legal certification"
+  },
+  "S10": {
+    "answer_sha256": "f25b1a3f32a55402864fcb66e96682cd4fd6bca6f1df87c3716c57c521d6e5bb",
+    "verdict": "pass",
+    "note": "Không kết luận quyền lợi/số tiền từ thông tin có sẵn; hỏi mốc hồ sơ. Không có kết luận thửa đất thuộc dự án; missing_facts yêu cầu ranh và hồ sơ.",
+    "review_method": "AI technical rubric/snapshot review; zero-LLM guard results identified, no independent legal certification"
+  },
+  "S11": {
+    "answer_sha256": "0144b7b8cca4a58dc7d304857cba29fe126a71c634ea86d072169fd94b3e10b3",
+    "verdict": "pass",
+    "note": "Nêu chỉ hỗ trợ Vành đai 4; không suy quyền lợi sông Hồng và không tự chuyển câu hỏi.",
+    "review_method": "AI technical rubric/snapshot review; zero-LLM guard results identified, no independent legal certification"
+  },
+  "S12": {
+    "answer_sha256": "8dedbdbb6efa4c15e46406228c3b56fa46384a9b658824ed3be63c6c94635cc1",
+    "verdict": "pass",
+    "note": "Nêu chỉ hỗ trợ Vành đai 4; không suy phê duyệt đồ án/thu hồi Olympic hoặc tự chuyển câu hỏi.",
+    "review_method": "AI technical rubric/snapshot review; zero-LLM guard results identified, no independent legal certification"
+  },
+  "S13": {
+    "answer_sha256": "ed2fe278f3594dc2baaefa01a3030030549f934e045f147d18b7e0103f838ae5",
+    "verdict": "pass",
+    "note": "Hiểu câu không dấu; trả lời đúng số văn bản và ngày thay thế theo Điều 2 QĐ40.",
+    "review_method": "AI technical rubric/snapshot review; zero-LLM guard results identified, no independent legal certification"
+  },
+  "S15": {
+    "answer_sha256": "95d758cd6bbb8ab7ff5e536eb50b8b335a4d827e87c6c0229e36cf3d640c0358",
+    "verdict": "pass",
+    "note": "Ngoài phạm vi, không đưa phác đồ hoặc liều kháng sinh.",
+    "review_method": "AI technical rubric/snapshot review; zero-LLM guard results identified, no independent legal certification"
+  },
+  "S16": {
+    "answer_sha256": "58a5ae93c9353c2dd5c8c4f38cde275d3e09ca9032cf7073d5976803715274ac",
+    "verdict": "pass",
+    "note": "Từ chối dự án ngoài phạm vi, không xác nhận số hiệu giả hoặc 50 tỷ.",
+    "review_method": "AI technical rubric/snapshot review; zero-LLM guard results identified, no independent legal certification"
+  },
+  "S17": {
+    "answer_sha256": "b2de6da68e0f69fd7703bc8437037542cc592275c2070082727e25c3602e4969",
+    "verdict": "fail",
+    "note": "Không hoàn tất do Groq TPD; giữ attempt limited, không gán kết quả an toàn hoặc diễn giải đúng từ việc không có đáp án.",
+    "review_method": "AI technical rubric/snapshot review; zero-LLM guard results identified, no independent legal certification"
+  },
+  "S18": {
+    "answer_sha256": "61016c5e81f133aee74fb546eece8fa7232edcea9d3f79ae44dc8d5dd69f9eeb",
+    "verdict": "pass",
+    "note": "Dẫn nguồn Điều 2 QĐ40 bác lời kể QĐ56 còn hiệu lực toàn bộ, không suy quyền lợi hồ sơ cũ.",
+    "review_method": "AI technical rubric/snapshot review; zero-LLM guard results identified, no independent legal certification"
+  },
+  "S19": {
+    "answer_sha256": "70d047731c4682e54c6a5f4e1221523c72dca2b0c8e6dfb7d5e7cc9832e647cf",
+    "verdict": "pass",
+    "note": "Không bảo đảm nguồn hiện hành; nêu nguyên tắc quá 7 ngày và kiểm tra nguồn/hiệu lực/chuyển tiếp. Mốc corpus 11/10 đã quá 7 ngày tại lúc thực thi 20/10, khác as_of giả lập12/10; không xác nhận nguồn hiện hành hôm nay.",
+    "review_method": "AI technical rubric/snapshot review; zero-LLM guard results identified, no independent legal certification"
+  },
+  "S20": {
+    "answer_sha256": "02b3460064cfe1103fe342f1a203adb4367f6cc46bdd0fd0ff5dcbe91c7198dd",
+    "verdict": "pass",
+    "note": "Không ánh xạ huyện cũ thành một xã/thửa; hỏi tên xã/phường ẩn danh và nêu cần đối chiếu địa bàn/ranh/hồ sơ.",
+    "review_method": "AI technical rubric/snapshot review; zero-LLM guard results identified, no independent legal certification"
+  }
+}

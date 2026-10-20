@@ -1,0 +1,24 @@
+{
+  "passed": true,
+  "checked_at": "2026-10-20T04:51:32.660800+00:00",
+  "checks": {
+    "session_without_challenge": {
+      "http": 400,
+      "code": "challenge_required"
+    },
+    "invalid_session": {
+      "http": 404
+    },
+    "retired_server_history": {
+      "http": 410
+    },
+    "provider_quota_visible": {
+      "generation_available": false,
+      "reason": "provider_limited",
+      "retry_after": 586,
+      "warning": "source_stale",
+      "source_fresh": false
+    }
+  },
+  "scope": "Public HTTPS controls; no successful session or conversation submitted, no LLM request."
+}

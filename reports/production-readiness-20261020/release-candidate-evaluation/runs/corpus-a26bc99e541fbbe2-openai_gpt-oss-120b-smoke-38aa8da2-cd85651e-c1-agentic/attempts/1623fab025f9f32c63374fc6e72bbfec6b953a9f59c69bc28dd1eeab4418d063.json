@@ -1,0 +1,128 @@
+{
+  "recorded_at": "2026-10-20T04:46:16.040974+00:00",
+  "origin": "executed",
+  "record": {
+    "case_id": "S19",
+    "mode": "agentic",
+    "answer_origin": "deterministic",
+    "evaluation_context": [],
+    "execution_control": "Zero-generation guard check; provider.generate prohibited; inherited provider cooldown/counters unchanged. Only evaluator inter-turn model wait is inapplicable because no model request is permitted.",
+    "result": {
+      "status": "insufficient_evidence",
+      "publication_profile": "academic",
+      "quality_status": "academic_prototype",
+      "retrieval_mode": "hybrid",
+      "coverage_gaps": [
+        {
+          "document_id": "qd-10-2017-hanoi",
+          "document_number": "10/2017/QĐ-UBND",
+          "title": "Quy định bồi thường, hỗ trợ và tái định cư Hà Nội (lịch sử)",
+          "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=189167",
+          "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+        },
+        {
+          "document_id": "qd-30-2019-hanoi",
+          "document_number": "30/2019/QĐ-UBND",
+          "title": "Quy định và bảng giá các loại đất Hà Nội 2020–2024 (lịch sử)",
+          "url": "https://vanban.hanoi.gov.vn/chi-tiet-van-ban/quyet-dinh-so-30-2019-qd-ubnd-cua-ubnd-tp-ha-noi-ve-viec-ban-hanh-quy-dinh-va-bang-gia-cac-loai-dat-189067",
+          "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+        },
+        {
+          "document_id": "qd-20-2023-hanoi",
+          "document_number": "20/2023/QĐ-UBND",
+          "title": "Sửa đổi bảng giá đất Quyết định 30/2019",
+          "url": "https://vbpl.vn/hanoi/Pages/vbpq-toanvan.aspx?ItemID=164473",
+          "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+        },
+        {
+          "document_id": "nd-123-2024",
+          "document_number": "123/2024/NĐ-CP",
+          "title": "Xử phạt vi phạm hành chính lĩnh vực đất đai",
+          "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=211356",
+          "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+        },
+        {
+          "document_id": "ring4-nq106-2022",
+          "document_number": "106/NQ-CP",
+          "title": "Triển khai Nghị quyết 56/2022/QH15 Vành đai 4",
+          "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=206398",
+          "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+        },
+        {
+          "document_id": "nd-01-2017",
+          "document_number": "01/2017/NĐ-CP",
+          "title": "Nghị định 01/2017/NĐ-CP sửa đổi, bổ sung một số nghị định quy định chi tiết thi hành Luật đất đai",
+          "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=187962",
+          "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+        },
+        {
+          "document_id": "nd-148-2020",
+          "document_number": "148/2020/NĐ-CP",
+          "title": "Nghị định 148/2020/NĐ-CP sửa đổi, bổ sung một số nghị định quy định chi tiết thi hành Luật Đất đai",
+          "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=202022",
+          "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+        }
+      ],
+      "content": "Không thể bảo đảm tính hiện hành chỉ từ dữ liệu chưa được kiểm tra lại. Nếu quá bảy ngày chưa kiểm tra nguồn thành công, cần nêu giới hạn cập nhật và đối chiếu văn bản chính thức, mốc hiệu lực, sửa đổi và chuyển tiếp trước khi kết luận. Corpus thực tế đã quá bảy ngày chưa kiểm tra nguồn.\n\nThời điểm xem xét: 12/10/2026. Dữ liệu được kiểm tra: 2026-10-11.",
+      "citations": [],
+      "verified_claims": [],
+      "answer_schema_version": 2,
+      "answer_sections": [],
+      "answer_notices": [],
+      "clarification": null,
+      "source_context": {
+        "as_of": "2026-10-12",
+        "source_checked_at": "2026-10-11T17:32:27Z",
+        "source_fresh": false,
+        "roles": []
+      },
+      "need_more_context": "source",
+      "as_of": "2026-10-12",
+      "corpus_release": "corpus-a26bc99e541fbbe2",
+      "trace_id": "668b6c74-4ae0-447d-b504-fe667de9ce29",
+      "trace": [
+        {
+          "step": "routing",
+          "tool": null,
+          "summary": "Câu hỏi về mức cập nhật dữ liệu; đối chiếu metadata, không suy hiệu lực văn bản.",
+          "document_ids": [],
+          "elapsed_ms": 5
+        },
+        {
+          "step": "plan",
+          "tool": null,
+          "summary": "Đã chọn 0 công cụ; chế độ agentic.",
+          "document_ids": [],
+          "elapsed_ms": 5
+        },
+        {
+          "step": "synthesis",
+          "tool": null,
+          "summary": "Đã tạo bản trả lời; đang kiểm tra trước khi hiển thị.",
+          "document_ids": [],
+          "elapsed_ms": 7
+        },
+        {
+          "step": "verification",
+          "tool": null,
+          "summary": "Chỉ có thông báo giới hạn hoặc câu hỏi làm rõ; không phát hướng dẫn pháp lý chưa kiểm chứng.",
+          "document_ids": [],
+          "elapsed_ms": 7
+        }
+      ],
+      "missing_facts": [],
+      "llm_calls": 0,
+      "embedding_calls": 0,
+      "tool_calls": 0,
+      "token_usage": 0,
+      "elapsed_ms": 197,
+      "model": "openai/gpt-oss-120b",
+      "embedding_model": "multilingual-e5-small-onnx-q8-window-v1",
+      "mode": "agentic",
+      "support_level": "insufficient",
+      "retry_after": null,
+      "retrieved_chunk_ids": [],
+      "evidence_chunk_ids": []
+    }
+  }
+}
