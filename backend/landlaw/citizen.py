@@ -101,7 +101,7 @@ def repeated_clarification(question, history, message):
 
 def operational_claim(claim):
     return (claim.kind in {'procedure','contact'} or claim.section=='actions'
-        or bool(re.search(r'\b(?:phai nop|nop tai|gui den|dia chi lien he|so dien thoai|han cuoi|ho so gom)\b',normalize(claim.text))))
+        or bool(re.search(r'\b(?:phai nop|can nop|nen nop|hay nop|nop tai|gui den|dia chi lien he|so dien thoai|han cuoi|ho so gom)\b',normalize(claim.text))))
 
 
 def source_policy_issues(claim, evidence, as_of):

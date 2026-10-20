@@ -861,6 +861,25 @@ class Agent:
                            "scope_note": "Phạm vi từng điều khoản; không suy ra toàn văn bị bãi bỏ từ quan hệ sửa đổi/bãi bỏ một phần."})
         return result
 
+    async def synthesis_claim_policy(self,state):
+        reviewed={}
+        for item in state['evidence']:
+            if item.document.id not in reviewed:
+                reviewed[item.document.id]=await asyncio.to_thread(
+                    self.store.operational_review,item.document,state['release']['id'])
+            item.document=reviewed[item.document.id]
+        by_document={item.document.id:item for item in state['evidence']}
+        kinds=['legal_rule','applicability','context']
+        for kind in ('procedure','contact'):
+            for item in state['evidence']:
+                ids=[item.chunk.id]+[by_document[d].chunk.id for d in item.document.required_dependency_ids
+                                    if d in by_document and d!=item.document.id]
+                if len(ids)>8:continue
+                probe=Claim(kind=kind,text='Kiểm tra nguồn hướng dẫn tác nghiệp.',citation_ids=ids)
+                if not source_policy_issues(probe,state['evidence'],state['as_of']):
+                    kinds.append(kind);break
+        return {'kind':kinds,'section':['direct','explanation']+(['actions'] if len(kinds)>3 else [])}
+
     async def synthesize(self, state):
         state['source_fact_id']=None
         state['source_fact_type']=None
@@ -915,6 +934,7 @@ class Agent:
             state['source_fact_type']='replacement'
             state['draft']=Draft(status='answered',claims=[self.replacement_claim(item,target,state['as_of'])])
         else:
+            claim_policy=await self.synthesis_claim_policy(state)
             contexts,documents=self.prompt_context(state)
             aliases={item['citation_id']:f'C{index+1}' for index,item in enumerate(contexts)}
             contexts=[{**item,'citation_id':aliases[item['citation_id']],
@@ -932,6 +952,9 @@ class Agent:
                 "Use ONE concise, independently qualified claim by default, at most three for separate requested "
                 "propositions. Each must retain its own actor, land/asset scope, eligibility prerequisite, OR "
                 "alternatives, exceptions, consequence and applicable time. Do not depend on another claim. "
+                "For complex eligibility, explain a named source branch with ALL its conditions and label that "
+                "limited scope, rather than merging different actors into one generic entitlement. Actor classes "
+                "are never alternative qualifying documents. Do not invent annexes. "
                 "Use the source's exact operative wording for material conditions, geographic scope, dates and "
                 "authority. In particular, where land is located is not where a decision was issued. "
                 "For a question about what support depends on, explain eligible branches and determinants; do "
@@ -942,8 +965,11 @@ class Agent:
                 "conditions when they define the eligible actor. Never invent conditions from a cross-reference. "
                 "Use claim.section=direct for the answer, explanation for sourced explanation, actions for "
                 "practical steps. ALL factual text and every required paper, office, contact, fee, deadline or "
-                "practical instruction must be a cited claim before verification. Return summary='' and "
-                "next_steps=[]; neither is displayed. Use kind=procedure for procedural instructions, contact "
+                "practical instruction must be a cited claim before verification. Return summary='' and next_steps=[]; "
+                "neither is displayed. "
+                "Obey claim_policy: missing operational source approval prohibits procedural/contact claims "
+                "and actions. Never add an unasked filing checklist or an unasked authority/amount paragraph. "
+                "Use kind=procedure for procedural instructions, contact "
                 "for contact data. A directory proves only its public contact data, not competence; news proves "
                 "project context, not procedure, approved plans, parcel recovery or household rights. "
                 "Cite only allowed C1/C2 aliases. Include every necessary passage/continuation; prefer the parent "
@@ -967,6 +993,7 @@ class Agent:
                  "missing_facts": state["plan"].missing_facts, "tool_results": state["tool_notes"], "evidence": contexts,
                  "documents":documents,
                  'allowed_citation_ids':list(aliases.values()),
+                 'claim_policy':claim_policy,
                  "coverage_gaps": self.relevant_gaps(state),
                  'question_kind':'general_rule' if state.get('general_rule_question') else 'case_or_other',
                  "unresolved_relations": self.relevant_unresolved(state),
@@ -1292,6 +1319,12 @@ class Agent:
                 for clause in prerequisites:
                     if not re.search(rf'(?:thuoc|truong hop|doi tuong).{{0,80}}khoan {clause}\b|\bkhoan {clause}.{{0,80}}(?:truong hop|doi tuong|thuoc)',normalized_claim):
                         structural_issues.append(f'Claim {index}: các điều kiện thay thế chỉ áp dụng cho trường hợp thuộc khoản {clause}; cần nêu điều kiện về đối tượng trước khi kết luận')
+            listed_conditions=re.search(r'\bcac dieu kien(?: khac)? (?:nhu|bao gom|la)\b',normalized_claim)
+            if prerequisites and listed_conditions:
+                examples=normalized_claim[listed_conditions.end():].split('.',1)[0]
+                conditions=normalized_source.split('khi co',1)[-1]
+                if any(group in examples and group not in conditions for group in groups):
+                    structural_issues.append(f'Claim {index}: nhóm đối tượng không phải là điều kiện hoặc giấy tờ thay thế; cần tách đúng nhóm ở khoản được dẫn và các điều kiện của nhóm đó')
             if ('mot trong cac dieu kien' in normalized_source
                     and any(term in normalized_claim for term in ('con phai co', 'dong thoi phai co', 'tat ca cac dieu kien'))):
                 structural_issues.append(f'Claim {index}: nguồn quy định điều kiện thay thế, không chứng minh yêu cầu đồng thời các điều kiện')

@@ -313,3 +313,30 @@ async def test_unmet_user_housing_premise_is_not_a_new_statutory_trigger(store,s
     assert bool(state['result'].verified_claims) is use_source_rule
     if not use_source_rule:
         assert not state['result'].citations
+
+
+@pytest.mark.parametrize('variant,expected',[('actual',False),('actor_as_condition',False),('qualified_alternatives',True)])
+async def test_s06_actor_classes_cannot_be_alternative_qualifying_documents(store,settings,variant,expected):
+    import json
+    from datetime import date
+    from pathlib import Path
+    from conftest import release
+    from test_agent import FakeProvider, noop
+    from landlaw.agent import Agent, Plan, Verification
+    from landlaw.models import ChatRequest, Claim, Draft, Evidence
+    from landlaw.provider import Budget
+    fixture=json.loads(Path('tests/fixtures/citizen-s06-actor-condition.json').read_text())
+    doc=document().model_copy(update={'id':fixture['sources'][0]['document_id']})
+    doc.chunks=[doc.chunks[0].model_copy(update={'id':s['id'],'document_id':doc.id,'text':s['excerpt'],'locator':s['locator']}) for s in fixture['sources']]
+    payload=release(store,[doc])
+    text={
+      'actual':fixture['claim'],
+      'actor_as_condition':'Phải thuộc đối tượng tại khoản 1 Điều 95. Giấy chứng nhận không phải điều kiện duy nhất vì còn có các điều kiện khác như: có quyết định giao đất; thuộc trường hợp cộng đồng dân cư hoặc tổ chức tôn giáo.',
+      'qualified_alternatives':'Giấy chứng nhận không phải điều kiện duy nhất: các trường hợp thuộc khoản 1 Điều 95 được bồi thường về đất khi có một trong các điều kiện tại khoản 2 Điều 95, như có Giấy chứng nhận hoặc có quyết định giao đất của cơ quan nhà nước có thẩm quyền. Cộng đồng dân cư là nhóm đối tượng ở khoản 1 Điều 95, không phải một giấy tờ thay thế trong khoản 2 Điều 95.'}[variant]
+    state={'request':ChatRequest(session_id='00000000-0000-4000-8000-000000000000',message='Giấy chứng nhận có phải điều kiện duy nhất để được bồi thường về đất không?'),
+           'budget':Budget(),'release':payload,'as_of':date(2024,8,2),'plan':Plan(),
+           'evidence':[Evidence(document=doc,chunk=c,applicability='current') for c in doc.chunks],
+           'draft':Draft(status='answered',claims=[Claim(text=text,citation_ids=[c.id for c in doc.chunks])]),'trace':[],'emit':noop}
+    agent=Agent(store,FakeProvider(settings,verification=Verification(supported_claim_indexes=[0])))
+    await agent.verify(state);await agent.finish(state)
+    assert bool(state['result'].verified_claims) is expected

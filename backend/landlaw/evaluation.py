@@ -68,6 +68,19 @@ def presentation_fingerprint():
 
 
 async def evaluate(settings, store, provider, split="smoke", release_id=None, limit=None, concurrency=1, case_ids=None, modes=("agentic",)):
+    """Scope diagnostic hooks to one suite; preserve real capacity across suites."""
+    generate=provider.generate
+    client=getattr(provider,'client',None)
+    hooks=client.event_hooks.setdefault('response',[]) if client else None
+    previous_hooks=list(hooks) if hooks is not None else []
+    try:
+        return await _evaluate(settings,store,provider,split,release_id,limit,concurrency,case_ids,modes)
+    finally:
+        provider.generate=generate
+        if hooks is not None:hooks[:]=previous_hooks
+
+
+async def _evaluate(settings, store, provider, split="smoke", release_id=None, limit=None, concurrency=1, case_ids=None, modes=("agentic",)):
     if tuple(modes) != ('agentic',):
         raise ValueError('Only agentic evaluation is supported')
     if concurrency not in {1, 2}:
@@ -148,7 +161,12 @@ async def evaluate(settings, store, provider, split="smoke", release_id=None, li
         # Use only provider-reported free capacity, never an application quota.
         # Start the next benchmark turn after its token bucket recovers so
         # retry requests do not consume that turn's six-call workflow budget.
-        if remaining<min(7000,capacity*.85):provider_ready_at=max(provider_ready_at,time.monotonic()+seconds)
+        if remaining<min(7000,capacity*.85):
+            provider_ready_at=max(provider_ready_at,time.monotonic()+seconds)
+            # The closure disappears when a suite returns. Persist the actual
+            # header-derived wait in this isolated operator DB so the next
+            # suite/process cannot accidentally start with a depleted bucket.
+            await asyncio.to_thread(store.set_cooldown,math.ceil(seconds))
     if settings.llm_provider=='groq':
         provider.client.event_hooks.setdefault('response',[]).append(observe_provider_capacity)
     async def emit(_):
