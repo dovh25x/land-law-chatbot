@@ -25,6 +25,11 @@ class SimpleAnswer(BaseModel):
 
 GREETING = re.compile(r"^(xin chao|xin chào|chao|chào|hello|hi|cam on|cảm ơn|xin cam on|xin cảm ơn)[!.? ]*$", re.I)
 OUT_OF_SCOPE = re.compile(r"\b(thời tiết|thoi tiet|chứng khoán|chung khoan|nấu ăn|nau an|lập trình|lap trinh)\b", re.I)
+# Vietnamese follow-up openers that refer back to the previous question. Only an
+# explicit reference inherits context, so an unrelated new topic stays standalone.
+FOLLOW_UP = re.compile(
+    r"^(?:vậy|vậy thì|vậy nếu|thế|thế thì|thế nào|và|còn|như vậy|nếu vậy|trường hợp (?:đó|này)|"
+    r"cái (?:đó|này)|điều (?:đó|này)|vấn đề (?:đó|này)|thì sao)", re.I)
 SOURCE_MARKER = re.compile(r"[\[【]\s*S(\d+)\s*[\]】]", re.I)
 WORD = re.compile(r"[^\W\d_]{3,}", re.UNICODE)
 STOP_WORDS = {
@@ -110,6 +115,23 @@ def _citation_fallback(source_map: dict[str, Evidence]) -> str:
     return "\n\n".join(lines)
 
 
+def _retrieval_query(message: str, history) -> tuple[str, bool]:
+    """Resolve a short follow-up against the last user question for retrieval.
+
+    Generation still receives the literal question plus recent history; only the
+    retrieval/embedding query is expanded so a reference such as "vậy nếu chưa
+    có sổ đỏ?" keeps the legal subject. Never expands from a greeting or
+    out-of-scope turn, and never changes source, applicability or citation rules.
+    """
+    if not FOLLOW_UP.search(message.strip()):
+        return message, False
+    previous = next((item.content.strip() for item in reversed(list(history or []))
+                     if item.role == 'user'), '')
+    if not previous or GREETING.fullmatch(previous) or OUT_OF_SCOPE.search(previous):
+        return message, False
+    return f"{previous[:600]} — {message.strip()}", True
+
+
 class SimpleRAG:
     def __init__(self, store, provider):
         self.store, self.provider = store, provider
@@ -151,9 +173,10 @@ class SimpleRAG:
             )
         if not self.provider.configured:
             raise ProviderUnavailable("GROQ_API_KEY chưa được cấu hình; chưa thể sinh câu trả lời")
-        vector = await self.provider.embed(request.message, query=True, budget=budget, release=release)
+        retrieval_query, inherited = _retrieval_query(request.message, request.history)
+        vector = await self.provider.embed(retrieval_query, query=True, budget=budget, release=release)
         evidence = await asyncio.to_thread(
-            self.store.search, request.message, vector, request.project, (release or {}).get("id"),
+            self.store.search, retrieval_query, vector, request.project, (release or {}).get("id"),
             self.provider.settings.embedding_model, as_of
         )
         gate = await asyncio.to_thread(self.store.source_gate, (release or {}).get("id"))
@@ -174,6 +197,9 @@ class SimpleRAG:
         ][:5]
         trace.append(TraceEvent(step="retrieval", summary=f"Selected {len(evidence)} reviewed passages",
                                 document_ids=[item.document.id for item in evidence]))
+        if inherited:
+            trace.append(TraceEvent(step="retrieval_query",
+                                    summary="Follow-up reference resolved against the previous question for retrieval only"))
         if not evidence:
             return ChatResult(
                 **base,

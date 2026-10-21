@@ -7,7 +7,7 @@ from fastapi.testclient import TestClient
 from landlaw.api import create_app
 from landlaw.models import ChatRequest
 from landlaw.provider import ProviderUnavailable
-from landlaw.simple_rag import SimpleAnswer, SimpleRAG, _marker_ids
+from landlaw.simple_rag import SimpleAnswer, SimpleRAG, _marker_ids, _retrieval_query
 from landlaw.store import RateLimited
 from conftest import release, session
 
@@ -88,6 +88,81 @@ def test_followup_sends_short_history_to_model(store, settings):
     ))
     assert result.status == "answered"
     assert result.llm_calls == 1
+
+
+@pytest.mark.parametrize("message", [
+    "Vậy nếu nhà tôi chưa có sổ đỏ thì sao?",
+    "Trường hợp đó thì sao?",
+    "Vậy thì sao?",
+    "Còn đất nông nghiệp?",
+])
+def test_short_follow_ups_inherit_the_previous_question_for_retrieval(store, settings, message):
+    from conftest import document
+    release(store, [document(text="Nhà có giấy chứng nhận quyền sử dụng đất ở được bồi thường khi thu hồi đất để làm dự án Vành đai 4 Hà Nội; trường hợp chưa có giấy chứng nhận được xem xét theo hồ sơ hiện có.")])
+    sid, _ = session(store)
+    provider = SimpleProvider(settings)
+    seen = {}
+    original = provider.embed
+    async def capture(text, **kwargs):
+        seen['query'] = text
+        return await original(text, **kwargs)
+    provider.embed = capture
+    history = [
+        {"role": "user", "content": "Nhà tôi có sổ đỏ, bị thu hồi đất ở để làm Vành đai 4 Hà Nội thì có được bồi thường không?"},
+        {"role": "assistant", "content": "Cần xem xét điều kiện và giấy tờ theo hồ sơ."},
+    ]
+    result = asyncio.run(SimpleRAG(store, provider).run(
+        request(sid, message, history), lambda _: None, "r1"))
+    assert result.status == "answered"
+    assert "Vành đai 4" in seen['query'] and message.strip() in seen['query']
+    assert result.citations and result.citations[0].id == "law-1"
+
+
+def test_unrelated_topic_switch_does_not_inherit_previous_context(store, settings):
+    from conftest import document
+    release(store, [document(text="Hồ sơ cấp giấy chứng nhận lần đầu cho đất nông nghiệp gồm đơn và giấy tờ về thửa đất.")])
+    sid, _ = session(store)
+    provider = SimpleProvider(settings)
+    seen = {}
+    original = provider.embed
+    async def capture(text, **kwargs):
+        seen['query'] = text
+        return await original(text, **kwargs)
+    provider.embed = capture
+    history = [
+        {"role": "user", "content": "Nhà tôi có sổ đỏ, bị thu hồi đất ở để làm Vành đai 4 Hà Nội thì có được bồi thường không?"},
+        {"role": "assistant", "content": "Cần xem xét điều kiện và giấy tờ theo hồ sơ."},
+    ]
+    message = "Thủ tục cấp giấy chứng nhận lần đầu cho đất nông nghiệp gồm những giấy tờ nào?"
+    asyncio.run(SimpleRAG(store, provider).run(request(sid, message, history), lambda _: None, "r1"))
+    assert seen['query'] == message
+
+
+def test_follow_up_without_supporting_sources_keeps_insufficient_evidence(store, settings, monkeypatch):
+    release(store)
+    monkeypatch.setattr(store, 'search', lambda *args, **kwargs: [])
+    sid, _ = session(store)
+    provider = SimpleProvider(settings)
+    history = [
+        {"role": "user", "content": "Nhà tôi có sổ đỏ, bị thu hồi đất ở để làm Vành đai 4 Hà Nội thì có được bồi thường không?"},
+        {"role": "assistant", "content": "Cần xem xét điều kiện và giấy tờ theo hồ sơ."},
+    ]
+    result = asyncio.run(SimpleRAG(store, provider).run(
+        request(sid, "Còn đất nông nghiệp?", history), lambda _: None, "r1"))
+    assert result.status == "insufficient_evidence"
+    assert provider.calls == 0
+
+
+def test_retrieval_query_helper_is_deterministic():
+    from types import SimpleNamespace as M
+    history = [M(role="user", content="Nhà tôi có sổ đỏ, bị thu hồi đất ở làm Vành đai 4 Hà Nội."),
+               M(role="assistant", content="Cần xem xét hồ sơ.")]
+    assert _retrieval_query("Vậy nếu chưa có sổ đỏ thì sao?", history)[1] is True
+    assert _retrieval_query("Còn đất nông nghiệp?", history)[1] is True
+    assert _retrieval_query("Điều kiện tái định cư là gì?", history) == ("Điều kiện tái định cư là gì?", False)
+    assert _retrieval_query("Vậy thì sao?", []) == ("Vậy thì sao?", False)
+    greeting = [M(role="user", content="Xin chào"), M(role="assistant", content="Chào bạn.")]
+    assert _retrieval_query("Vậy thì sao?", greeting)[1] is False
 
 
 def test_exact_amount_without_facts_can_be_qualified(store, settings):

@@ -66,10 +66,31 @@ export async function responseError(response: Response): Promise<APIError> {
   return new APIError(message + wait, code, seconds)
 }
 
-export async function getJSON<T>(path: string, signal?: AbortSignal): Promise<T> {
-  const res = await fetch(BASE + path, { signal })
-  if (!res.ok) throw new Error('Dịch vụ chưa sẵn sàng. Backend có thể đang khởi động; hãy thử lại sau khoảng một phút.')
-  return res.json()
+export async function getJSON<T>(path: string, signal?: AbortSignal, timeoutMs = 10000): Promise<T> {
+  const controller = new AbortController()
+  let timedOut = false
+  const abort = () => controller.abort()
+  signal?.addEventListener('abort', abort, { once: true })
+  const timer = setTimeout(() => { timedOut = true; controller.abort() }, timeoutMs)
+  try {
+    let res: Response
+    try {
+      res = await fetch(BASE + path, { signal: controller.signal })
+    } catch (error) {
+      if (signal?.aborted) throw error
+      if (timedOut) throw new APIError('Máy chủ phản hồi quá chậm. Hệ thống sẽ tự thử lại.', 'timeout')
+      if (typeof navigator !== 'undefined' && navigator.onLine === false) {
+        throw new APIError('Thiết bị đang ngoại tuyến. Hệ thống sẽ tự thử lại khi có mạng.', 'offline')
+      }
+      throw new APIError('Không kết nối được dịch vụ. Hệ thống sẽ tự thử lại.', 'network')
+    }
+    if (!res.ok) throw await responseError(res)
+    try { return await res.json() as T }
+    catch { throw new APIError('Phản hồi cấu hình không đọc được. Hệ thống sẽ tự thử lại.', 'bad_response') }
+  } finally {
+    clearTimeout(timer)
+    signal?.removeEventListener('abort', abort)
+  }
 }
 
 export async function getSession(turnstileToken?:string): Promise<Session> {
