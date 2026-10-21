@@ -305,9 +305,11 @@ class Store:
                 continue
         return states
 
-    def source_gate_status(self, release):
+    def source_gate_status(self, release, as_of=None):
         from datetime import date
+        from .security import local_date
         import hashlib
+        target = as_of or local_date()
         policy = self.source_gate((release or {}).get('id'))
         if policy is None:
             return None
@@ -320,7 +322,7 @@ class Store:
             try:
                 for scope in json.loads(rows[0]['receipt']).get('verified_scope', []):
                     passages = [(doc_id, cid, checksum) for cid, checksum in scope['chunk_checksums'].items()]
-                    states = self.scoped_source_reviews(release, passages, date.fromisoformat(scope['as_of_from']))
+                    states = self.scoped_source_reviews(release, passages, target)
                     approved.update(key for key, status in states.items() if status == 'fresh')
             except (ValueError, TypeError, KeyError, AttributeError):
                 continue

@@ -137,6 +137,16 @@ def test_status_and_startup_do_not_hide_reviewed_subset(store, settings, tmp_pat
     assert ops_status(store)['needs_attention'] is False
 
 
+def test_gate_status_counts_only_passages_valid_today(store, tmp_path):
+    doc = document(); payload = release(store, [doc])
+    install_gate(store, payload, doc, tmp_path,
+                 start=local_date()-timedelta(days=2), end=local_date()-timedelta(days=1))
+    status = store.source_gate_status(payload)
+    assert status['eligible_passages'] == 0 and status['usable'] is False
+    historical = store.source_gate_status(payload, as_of=local_date()-timedelta(days=2))
+    assert historical['eligible_passages'] == 1 and historical['usable'] is True
+
+
 @pytest.mark.parametrize('mutation', ['checksum', 'document', 'empty', 'dates'])
 def test_receipt_import_rejects_invalid_scope(store, tmp_path, mutation):
     doc = document(); payload = release(store, [doc, document('other')])
