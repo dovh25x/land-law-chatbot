@@ -7,7 +7,7 @@ const send = async (page:Page, text:string) => { await page.getByLabel('CÃ¢u há»
 test.beforeEach(async({page}) => {
   await page.route('**/readyz', r=>r.fulfill({json:{status:'ready',database:true}}))
   await page.route('**/api/v1/status', r=>r.fulfill({json:{generation_available:true,reason:null}}))
-  await page.route('**/api/v1/documents',r=>r.fulfill({json:{documents:[law],references:[reference]}}))
+  await page.route('**/api/v1/documents**',r=>r.fulfill({json:{documents:[law],references:[reference]}}))
   await page.route('**/api/v1/documents/reference-product',r=>r.fulfill({json:{document:{...reference,chunks:[]},relations:[]}}))
   await page.route('**/api/v1/evaluations/latest',r=>r.fulfill({json:{status:'not_run'}}))
   await page.route('**/api/v1/sessions',r=>r.fulfill({status:201,json:{session_id:'fixture',token:'fixture-token'}}))
