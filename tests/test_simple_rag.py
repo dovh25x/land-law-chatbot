@@ -143,3 +143,19 @@ def test_chat_endpoint_routes_simple_rag_mode(store, settings):
     assert "event: result" in response.text
     assert '"status": "answered"' in response.text
     assert provider.calls == 1
+
+
+def test_configured_simple_mode_routes_default_request(store, settings):
+    release(store)
+    sid, token = session(store)
+    provider = SimpleProvider(settings)
+    configured = settings.model_copy(update={"execution_mode": "simple_rag"})
+    with TestClient(create_app(configured, store, provider)) as client:
+        response = client.post(
+            "/api/v1/chat",
+            headers={"Authorization": f"Bearer {token}"},
+            json={"session_id": sid, "message": "Điều kiện bồi thường là gì?"},
+        )
+    assert response.status_code == 200
+    assert '"status": "answered"' in response.text
+    assert provider.calls == 1

@@ -10,11 +10,12 @@ import uuid
 from datetime import date, timedelta
 from pathlib import Path
 
-from .agent import Agent
 from .ingest import json_write
 from .models import ChatRequest
 from .request_budget import BudgetExceeded
 from .security import local_date, new_token, utcnow
+
+Agent = None
 
 
 def dataset(path: Path):
@@ -112,7 +113,10 @@ async def _evaluate(settings, store, provider, split="smoke", release_id=None, l
     attempts_path=records_path.parent/'attempts'
     for record in records:
         preserve_attempt(attempts_path,record,'imported_latest_checkpoint')
-    agent = Agent(store, provider)
+    agent_class = Agent
+    if agent_class is None:
+        from .agent import Agent as agent_class
+    agent = agent_class(store, provider)
     case_label=contextvars.ContextVar('evaluation_case',default=None)
     generate=provider.generate
     generated_cases = set()

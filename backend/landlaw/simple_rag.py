@@ -9,13 +9,13 @@ import uuid
 
 from pydantic import BaseModel, Field
 
-from .agent import applicability, citation_source_url
 from .models import AnswerSection, ChatResult, Citation, Claim, Evidence, TraceEvent
 from .provider import Budget, ProviderUnavailable
 from .store import RateLimited
 from .request_budget import BudgetExceeded
 from .security import local_date, redact
 from .publication import public_status
+from .source_policy import applicability, citation_source_url
 
 
 class SimpleAnswer(BaseModel):
@@ -88,11 +88,6 @@ class SimpleRAG:
             )
         if not self.provider.configured:
             raise ProviderUnavailable("GROQ_API_KEY chưa được cấu hình; chưa thể sinh câu trả lời")
-        if release and as_of >= local_date() and not await asyncio.to_thread(self.store.source_fresh, release):
-            return ChatResult(**base, status="insufficient_evidence",
-                content="Snapshot nguồn đã quá thời hạn kiểm tra lại; tôi chưa thể khẳng định đây là quy định hiện hành. Bạn có thể xem các đoạn nguồn đang lưu hoặc thử lại sau khi corpus được rà soát.",
-                trace=[TraceEvent(step="source_policy", summary="Current-law generation blocked by expired freshness evidence")],
-                elapsed_ms=int((time.monotonic() - started) * 1000))
         vector = await self.provider.embed(request.message, query=True, budget=budget, release=release)
         evidence = await asyncio.to_thread(
             self.store.search, request.message, vector, request.project, (release or {}).get("id"),
