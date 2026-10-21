@@ -1,0 +1,37 @@
+{
+  "completed_at": "2026-10-20T16:53:15.533658+00:00",
+  "protected_phase1_runtime_tests_corpus_and_frozen_suites_unchanged": true,
+  "changed_protected_paths": [],
+  "head": "117e7bd2c4a320c3d02256dfdabf858180b47dbf",
+  "working_tree_dirty": true,
+  "runtime_sqlite_sha256": "2dab4dde69323ce35e9732748df40ce15c371d6380d694137a65faf05eccc179",
+  "runtime_postgresql_sha256": "c5008efb7d44adb552371982cdc122b08f7bc3d5656cb8d2ba8362f56f743bda",
+  "presentation_sha256": "6ce4606cb9990671c09ca166a7e8b184cb6c719533fee3bc664096af4f8fe28d",
+  "judge_implementation_sha256": "8f575b9832d21d444a9a0fb4f393431d11aeca2973b36c5309a076ad693cef52",
+  "requirements_lock_sha256": "37aedda9732dc6023837746e6829a5f873724b5c5c53856e06adc95318cf668e",
+  "model_calls_this_phase": 0,
+  "production_database_mutations": 0,
+  "cloud_mutations": 0,
+  "commit_push_deploy": false,
+  "tests": {
+    "python314_backend": {
+      "passed": 403,
+      "failed": 0
+    },
+    "python312_backend": {
+      "passed": 403,
+      "failed": 0
+    },
+    "frontend_unit": {
+      "passed": 14
+    },
+    "frontend_e2e_local_fixtures": {
+      "passed": 100
+    },
+    "frontend_build": "passed"
+  },
+  "runtime_version_primary": "3.14.4",
+  "elapsed_minutes": 30.28,
+  "secret_scan": "passed",
+  "git_diff_check": "passed"
+}

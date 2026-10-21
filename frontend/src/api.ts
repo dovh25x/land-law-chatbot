@@ -9,11 +9,13 @@ export interface AnswerSection { kind: 'direct'|'explanation'|'actions'; claim_i
 export interface Clarification { fact: string; question: string; options: string[]; allow_unknown: boolean }
 export interface Result { status: string; content: string; citations: Citation[]; trace: Trace[]; trace_id: string; corpus_release?: string; model: string; embedding_model: string; mode: string; llm_calls: number; tool_calls: number; token_usage: number; elapsed_ms: number; as_of: string; support_level: string; retry_after?: number | null; missing_facts?: string[]; answer_schema_version?: number; verified_claims?: VerifiedClaim[]; answer_sections?: AnswerSection[]; answer_notices?:string[]; clarification?: Clarification|null; source_context?: {source_checked_at?:string|null;source_fresh?:boolean}; need_more_context?:string|null }
 export interface Session { session_id: string; token: string }
-export interface LegalDocument { checksum?: string; id: string; title: string; url: string; document_number?: string; source_kind: string; project?: ProjectID; checked_at: string; applicability_verified: boolean; effective_from?: string; effective_to?: string; source_review_notes?: string; availability?: 'reference_only'; attachment_urls?: string[]; source_files?: {url: string}[]; chunks?: { id: string; locator: string; text: string }[] }
+export interface LegalDocument { checksum?: string; id: string; title: string; url: string; document_number?: string; source_kind: string; project?: ProjectID; checked_at: string; applicability_verified: boolean; effective_from?: string; effective_to?: string; source_review_notes?: string; availability?: 'reference_only'; attachment_urls?: string[]; source_files?: {url: string}[]; source_lookup_only?: boolean; review_as_of?: string; verified_passage_count?: number; whole_document_verified?: boolean; chunks?: { id: string; locator: string; text: string }[] }
 export interface Project { id: ProjectID; name: string; description: string; source_ids: string[]; questions: string[] }
 export interface Readiness { status: string; database?: boolean; llm_configured?: boolean; corpus_release?: string; checked_at?: string; publication_profile?: string; quality_status?: string; retrieval_mode?: string; coverage_gaps?: {document_id: string; title: string; reason: string}[] }
 
 export interface GenerationStatus {
+  source_lookup_only?: boolean
+  source_lookup_as_of?: string
   api_version?: number
   capabilities?: {citizen_answers?: boolean; answer_schema_version?: number}
   generation_available: boolean

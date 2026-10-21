@@ -1,0 +1,48 @@
+{
+  "status": "FAIL",
+  "checks": {
+    "restored_corpus_without_receipts_fails_closed": true,
+    "all_receipt_chunks_match_actual_snapshot": true,
+    "reviewed_current_passages_admitted": true,
+    "reviewed_history_passages_admitted": true,
+    "no_implicit_next_day_extension": false,
+    "no_implicit_deadline_extension": false,
+    "historical_only_article104_not_current": true
+  },
+  "checked_at": "2026-10-21T09:42:44.101582+00:00",
+  "storage_backend": "private SQLite",
+  "corpus_id": "corpus-1afca764aa6692e0",
+  "eligible_passages_union": {
+    "mode": "scoped_receipts",
+    "policy_sha256": "dfe58f8376d4d4d978ace0483ba45a70e60eafa473285ffbe5a6a2a8e7f72dd4",
+    "eligible_passages": 74,
+    "usable": true,
+    "whole_corpus_verified": false
+  },
+  "scope_date_state_counts": {
+    "2024-08-02": {
+      "fresh": 25,
+      "unknown": 49
+    },
+    "2026-10-21": {
+      "unknown": 31,
+      "fresh": 43
+    },
+    "2026-10-22": {
+      "unknown": 73,
+      "fresh": 1
+    },
+    "2026-10-23": {
+      "unknown": 73,
+      "fresh": 1
+    }
+  },
+  "actual_passages_checked": 74,
+  "missing_or_mismatching_receipt_chunks": [],
+  "unreviewed_current_article104": {
+    "luat-dat-dai-2024:luat-dat-dai-2024-104-1-0": "unknown"
+  },
+  "external_requests": 0,
+  "production_database_touched": false,
+  "scope": "Exact chunk/date/source receipt admission only, not generated answers, semantic citation accuracy, model inference or legal review renewal."
+}

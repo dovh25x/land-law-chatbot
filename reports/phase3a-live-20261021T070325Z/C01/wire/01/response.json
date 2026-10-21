@@ -1,0 +1,68 @@
+{
+  "status_code": 200,
+  "schema": "Draft",
+  "body": {
+    "id": "chatcmpl-f50ab666-d7d8-49ef-b5de-c049970b0830",
+    "object": "chat.completion",
+    "created": 1792566826,
+    "model": "openai/gpt-oss-120b",
+    "usage": {
+      "queue_time": 0.402093764,
+      "prompt_tokens": 3474,
+      "prompt_time": 0.181201763,
+      "completion_tokens": 1355,
+      "completion_time": 2.798574681,
+      "total_tokens": 4829,
+      "total_time": 2.979776444,
+      "completion_tokens_details": {
+        "reasoning_tokens": 1027
+      }
+    },
+    "system_fingerprint": "fp_bb691ea66b",
+    "choices": [
+      {
+        "index": 0,
+        "finish_reason": "stop",
+        "message": {
+          "role": "assistant",
+          "content": "{\"status\":\"answered\",\"claims\":[{\"kind\":\"legal_rule\",\"section\":\"direct\",\"text\":\"Theo Điều 95 Luật Đất đai 2024, hộ gia đình, cá nhân đang sử dụng đất không phải là đất thuê trả tiền thuê đất hằng năm và có Giấy chứng nhận quyền sử dụng đất (hoặc quyết định giao đất) được bồi thường khi Nhà nước thu hồi đất vì mục đích quốc phòng, an ninh, phát triển kinh tế‑xã hội vì lợi ích quốc gia, công cộng, trừ các trường hợp được liệt kê tại khoản 10 Điều 3 Nghị quyết 254/2025 (không áp dụng). Khi đủ điều kiện này, theo Điều 98 và Điều 111, hộ gia đình được bồi thường bằng (i) giao đất ở hoặc nhà ở tại khu tái định cư hoặc địa điểm khác phù hợp; (ii) trả tiền; (iii) giao đất có mục đích sử dụng khác; (iv) trong trường hợp không đủ diện tích, có thể hỗ trợ giao đất có thu tiền sử dụng hoặc bán, cho thuê, cho thuê mua nhà ở. Quyết định 40/2026/UBND, Điều 21, cho phép bồi thường bằng bán căn hộ chung cư tái định cư hoặc giao đất ở tái định cư nếu quỹ đất đủ.\",\"citation_ids\":[\"C1\",\"C2\",\"C4\",\"C5\",\"C7\"]}],\"missing_facts\":[],\"next_steps\":[],\"out_of_scope\":false}"
+        }
+      }
+    ]
+  },
+  "raw_body_sha256": "134e2c89ecab6e5424bc67e921fcedb88c656bf0de3ae45d52cc6dfa9db91da9",
+  "hidden_reasoning_not_persisted": true,
+  "latency_ms": 3756,
+  "headers": {
+    "x-ratelimit-limit-requests": "1000",
+    "x-ratelimit-limit-tokens": "8000",
+    "x-ratelimit-remaining-requests": "999",
+    "x-ratelimit-remaining-tokens": "4155",
+    "x-ratelimit-reset-requests": "1m26.4s",
+    "x-ratelimit-reset-tokens": "28.837s",
+    "x-request-id": "req_01m5emy29reqwrn8kt5248vetp"
+  },
+  "reservation_tokens": 21964,
+  "usage": {
+    "queue_time": 0.402093764,
+    "prompt_tokens": 3474,
+    "prompt_time": 0.181201763,
+    "completion_tokens": 1355,
+    "completion_time": 2.798574681,
+    "total_tokens": 4829,
+    "total_time": 2.979776444,
+    "completion_tokens_details": {
+      "reasoning_tokens": 1027
+    }
+  },
+  "budget_after": {
+    "wire_requests": 1,
+    "per_case_requests": {
+      "C01": 1
+    },
+    "tokens_observed": 4829,
+    "tokens_charged_including_unknown": 4829,
+    "unknown_usage_requests": 0,
+    "hard_token_cap": 60000
+  }
+}

@@ -1,0 +1,86 @@
+{
+  "scope": "Integrity and scope binding only; not semantic Citation Accuracy or model quality. Includes one labelled synthetic fixture.",
+  "results": [
+    {
+      "case_id": "S01",
+      "kind": "deterministic",
+      "citation_id": "qd-40-2026-hanoi-0-2-0",
+      "document_id": "qd-40-2026-hanoi",
+      "document_checksum": "c29db72a649d0cf5376917ef391562e82b31f2d79a2682f686c261867d42843a",
+      "chunk_checksum": "2a4a827f49c41d93cbbac4057f8992fe49e94e7894d88dd19c790a34feb7eb81",
+      "source_url": "https://datafiles.hanoi.gov.vn/gov-hni/6249/VanBanCongBao/2026/5/29/QDPQ-40-2026_signed.pdf#page=1",
+      "attachment_checksum": "c29db72a649d0cf5376917ef391562e82b31f2d79a2682f686c261867d42843a",
+      "checks": {
+        "excerpt": true,
+        "locator": true,
+        "url": true,
+        "document_number": true,
+        "page": true,
+        "scope_approved": true,
+        "source_attachment": true
+      },
+      "passed": true
+    },
+    {
+      "case_id": "S02",
+      "kind": "deterministic",
+      "citation_id": "qd-40-2026-hanoi-0-2-0",
+      "document_id": "qd-40-2026-hanoi",
+      "document_checksum": "c29db72a649d0cf5376917ef391562e82b31f2d79a2682f686c261867d42843a",
+      "chunk_checksum": "2a4a827f49c41d93cbbac4057f8992fe49e94e7894d88dd19c790a34feb7eb81",
+      "source_url": "https://datafiles.hanoi.gov.vn/gov-hni/6249/VanBanCongBao/2026/5/29/QDPQ-40-2026_signed.pdf#page=1",
+      "attachment_checksum": "c29db72a649d0cf5376917ef391562e82b31f2d79a2682f686c261867d42843a",
+      "checks": {
+        "excerpt": true,
+        "locator": true,
+        "url": true,
+        "document_number": true,
+        "page": true,
+        "scope_approved": true,
+        "source_attachment": true
+      },
+      "passed": true
+    },
+    {
+      "case_id": "S03",
+      "kind": "deterministic",
+      "citation_id": "qd-10-2026-hanoi-4-1-0",
+      "document_id": "qd-10-2026-hanoi",
+      "document_checksum": "6867e333fe16a6d32a5079c77ac54fc084a2fc74a30070ab1a881c86c9edaad4",
+      "chunk_checksum": "5c4f3f24fc8f8a2ac227c8365d2873c95486eb17eb004e0d85c4a16670745540",
+      "source_url": "https://datafiles.hanoi.gov.vn/gov-hni/6249/VanBanCongBao/2026/4/17/QDPQ-10-2026_signed.pdf#page=5",
+      "attachment_checksum": "6867e333fe16a6d32a5079c77ac54fc084a2fc74a30070ab1a881c86c9edaad4",
+      "checks": {
+        "excerpt": true,
+        "locator": true,
+        "url": true,
+        "document_number": true,
+        "page": true,
+        "scope_approved": true,
+        "source_attachment": true
+      },
+      "passed": true
+    },
+    {
+      "case_id": "N01-SYNTHESIS-FIXTURE",
+      "kind": "synthetic_synthesis_not_model_evaluation",
+      "citation_id": "luat-dat-dai-2024-104-1-0",
+      "document_id": "luat-dat-dai-2024",
+      "document_checksum": "40a857fb53b42d1f085955c295115c2066ce4a10fd5e964b90653614736db81e",
+      "chunk_checksum": "5cbeb374f268d37de94b63ee4b67b2b837ea156ac9a0d83cd54047668a9bc0fb",
+      "source_url": "https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/9/31-2024-qh15_2.pdf#page=12",
+      "attachment_checksum": "651797458d2399fd70cd5b4d3edb3845d223540fa34d82f826718c248aca619e",
+      "checks": {
+        "excerpt": true,
+        "locator": true,
+        "url": true,
+        "document_number": true,
+        "page": true,
+        "scope_approved": true,
+        "source_attachment": true
+      },
+      "passed": true
+    }
+  ],
+  "all_passed": true
+}

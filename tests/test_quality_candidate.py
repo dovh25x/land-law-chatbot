@@ -1,3 +1,4 @@
+from conftest import supplied_synthesis_fixture
 import json
 from datetime import date
 from pathlib import Path
@@ -32,5 +33,5 @@ async def test_damage_compensation_retains_the_source_causal_event(store,setting
  state={'request':ChatRequest(session_id='00000000-0000-4000-8000-000000000000',message='Máy móc tháo ra bị hư hại khi phải di dời do thu hồi đất, có khoản bồi thường nào?'),
  'budget':Budget(),'release':payload,'as_of':date(2024,8,2),'plan':Plan(),'evidence':[Evidence(document=doc,chunk=doc.chunks[0],applicability='current')],
  'draft':Draft(status='answered',claims=[Claim(text=text,citation_ids=[doc.chunks[0].id])]),'trace':[],'emit':noop}
- agent=Agent(store,FakeProvider(settings,verification=Verification(supported_claim_indexes=[0])));await agent.verify(state);await agent.finish(state)
+ agent=Agent(store,FakeProvider(settings,verification=Verification(supported_claim_indexes=[0])));supplied_synthesis_fixture(state);await agent.verify(state);await agent.finish(state)
  assert bool(state['result'].verified_claims) is qualified

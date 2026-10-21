@@ -230,5 +230,13 @@ def review_source(receipt: Path):
     finally:store.close()
 
 
+@app.command('activate-source-gate')
+def activate_source_gate(policy: Path):
+    from .ops import activate_source_gate as activate
+    store=Store(Settings().for_operator())
+    try:typer.echo(json.dumps(activate(store,policy),ensure_ascii=False))
+    finally:store.close()
+
+
 if __name__ == "__main__":
     app()

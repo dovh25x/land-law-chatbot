@@ -1,0 +1,59 @@
+Traceback (most recent call last):
+  File "/home/dovh25x/projects/land-law-chatbot/scripts/verify_source_gate_candidate.py", line 146, in <module>
+    asyncio.run(run(parser.parse_args()))
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/asyncio/runners.py", line 204, in run
+    return runner.run(main)
+           ~~~~~~~~~~^^^^^^
+  File "/usr/lib/python3.14/asyncio/runners.py", line 127, in run
+    return self._loop.run_until_complete(task)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "/usr/lib/python3.14/asyncio/base_events.py", line 719, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+  File "/home/dovh25x/projects/land-law-chatbot/scripts/verify_source_gate_candidate.py", line 105, in run
+    await execute(ident, row['question'], row['as_of'], history=row.get('history'))
+  File "/home/dovh25x/projects/land-law-chatbot/scripts/verify_source_gate_candidate.py", line 94, in execute
+    result = await agent.run(ChatRequest(session_id='0'*36, message=question,
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        as_of=date.fromisoformat(as_of), history=history or []), emit)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/dovh25x/projects/land-law-chatbot/backend/landlaw/agent.py", line 1863, in run
+    output = await self.graph.ainvoke(state, config={"recursion_limit": 16})
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/dovh25x/projects/land-law-chatbot/.venv/lib/python3.14/site-packages/langgraph/pregel/main.py", line 4155, in ainvoke
+    async for chunk in self.astream(
+    ...<30 lines>...
+            chunks.append(chunk)
+  File "/home/dovh25x/projects/land-law-chatbot/.venv/lib/python3.14/site-packages/langgraph/pregel/main.py", line 3505, in astream
+    async for _ in runner.atick(
+    ...<16 lines>...
+            yield o
+  File "/home/dovh25x/projects/land-law-chatbot/.venv/lib/python3.14/site-packages/langgraph/pregel/_runner.py", line 397, in atick
+    await arun_with_retry(
+    ...<15 lines>...
+    )
+  File "/home/dovh25x/projects/land-law-chatbot/.venv/lib/python3.14/site-packages/langgraph/pregel/_retry.py", line 744, in arun_with_retry
+    return await task.proc.ainvoke(task.input, config)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/dovh25x/projects/land-law-chatbot/.venv/lib/python3.14/site-packages/langgraph/_internal/_runnable.py", line 756, in ainvoke
+    input = await asyncio.create_task(
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^
+        step.ainvoke(input, config, **kwargs), context=context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/dovh25x/projects/land-law-chatbot/.venv/lib/python3.14/site-packages/langgraph/_internal/_runnable.py", line 522, in ainvoke
+    ret = await self.afunc(*args, **kwargs)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/dovh25x/projects/land-law-chatbot/backend/landlaw/agent.py", line 668, in tools
+    results = await self.search(state, call.query or state["request"].message, state["request"].project)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/dovh25x/projects/land-law-chatbot/backend/landlaw/agent.py", line 610, in search
+    vector = await self.provider.embed(query, query=True,budget=state['budget'],release=state['release'])
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/dovh25x/projects/land-law-chatbot/scripts/verify_source_gate_candidate.py", line 36, in embed
+    return (await asyncio.to_thread(self.encoder.embed_many, [text], title, query))[0]
+                                    ^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Encoder' object has no attribute 'embed_many'
+During task with name 'tools' and id 'cdbfe42a-424f-ecc9-cabf-ab7d279d06d4'

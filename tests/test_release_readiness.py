@@ -114,9 +114,10 @@ async def test_offline_guards_cannot_call_provider_or_clear_inherited_cooldown(t
     original=json.dumps({'not_before':(utcnow()+timedelta(hours=1)).isoformat()})
     cooldown.write_text(original)
     @contextmanager
-    def chosen_settings(*_):yield settings
+    def chosen_settings(*_):yield settings.model_copy(update={'reports_dir':output})
     monkeypatch.setattr(helper,'candidate_settings',chosen_settings)
     monkeypatch.setattr(helper,'frozen_dataset',lambda *_: ([{'id':'SAFE'}],'fixture-freeze'))
+    monkeypatch.setattr(helper,'lock_source_policy',lambda *_: {'source_gate_sha256':None,'receipt_files_sha256':{}})
     class Store:
         def __init__(self,*_):pass
         def restore(self,*_):pass
@@ -129,9 +130,12 @@ async def test_offline_guards_cannot_call_provider_or_clear_inherited_cooldown(t
         assert kwargs['case_ids']==['SAFE']
         with pytest.raises(ProviderUnavailable,match='disabled'):
             await provider.generate()
+        metadata=output/'runs/fixture/metadata.json'
+        metadata.parent.mkdir(parents=True)
+        metadata.write_text('{}')
         return {'run_id':'fixture','results':[]}
     monkeypatch.setattr(helper,'Store',Store);monkeypatch.setattr(helper,'GroqProvider',Provider)
     monkeypatch.setattr(helper,'evaluate',evaluate)
     await helper.main(SimpleNamespace(output=output,resume=True,backup=tmp_path/'unused',
-        postgres=False,split=['smoke'],case_id=['SAFE'],no_generation=True))
+        postgres=False,split=['smoke'],case_id=['SAFE'],no_generation=True,source_receipt=[],source_gate=None))
     assert cooldown.read_text()==original

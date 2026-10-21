@@ -1,0 +1,31 @@
+{
+  "checked_at": "2026-10-20T17:57:33.193888+00:00",
+  "started_at": "2026-10-20T17:00:32+00:00",
+  "elapsed_minutes": 57.02,
+  "checks": {
+    "head_unchanged": true,
+    "diff_check": true,
+    "package_source_tree_matches": true,
+    "corpus_asset_matches_restore": true,
+    "snapshot_matches": true,
+    "frozen_suites_unchanged": true,
+    "receipts_unchanged": true,
+    "policy_hash_matches_runtime": true,
+    "runtime_matches_all_final_local_checks": true,
+    "pilot_plan_locked_before_measurement": true,
+    "current_positive_control": true,
+    "current_missing_scope_refuses": true,
+    "restore_exact_fail_closed_and_reopen": true,
+    "no_external_model_calls": true,
+    "helper_final_policy_bound": true,
+    "helper_actual_generation_zero": true,
+    "prior_evidence_protected": true,
+    "corpus_models_config_protected": true,
+    "source_bundle_exact": true,
+    "source_bundle_hash": true,
+    "rc_checksums": true
+  },
+  "all_passed": true,
+  "release_ready": false,
+  "scope": "Artifact consistency and protected inputs only; not legal completeness, model accuracy, PostgreSQL or public E2E certification."
+}

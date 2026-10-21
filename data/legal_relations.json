@@ -624,9 +624,31 @@
     "locator": "Điều 16 khoản 3 điểm g",
     "source_locator": "Điều 16 khoản 3 điểm g",
     "source_url": "https://congbao.chinhphu.vn/van-ban/nghi-dinh-so-49-2026-nd-cp-468908.htm",
-    "explanation": "Bãi bỏ một số khoản/điểm/gạch đầu dòng và Phụ lục IV theo điểm g1,g2; ánh xạ gạch đầu dòng chi tiết chưa đầy đủ, không coi cả Điều 6/7 hết hiệu lực.",
-    "target_locators": [],
-    "target_locators_complete": false
+    "explanation": "Đã đối chiếu toàn bộ điểm g1/g2 khoản3 Điều16 NĐ49, Công báo trang25–26. Liệt kê đầy đủ các khoản/điểm/gạch đầu dòng và Phụ lục IV hết hiệu lực. Trong khoản2 Điều7 chỉ gạch đầu dòng thứ1 và thứ7 điểm a bị bãi bỏ; gạch đầu dòng thứ5 đổi địa bàn cấp xã vẫn được đối chiếu với bản hợp nhất53. Verifier hiện chỉ phân biệt tới khoản nên claim dẫn khoản2 vẫn phải cite đúng NĐ49, không nới guard.",
+    "target_locators": [
+      "Khoản 12 Điều 1",
+      "Khoản 1 Điều 3",
+      "Khoản 3 Điều 4",
+      "Khoản 4 Điều 4",
+      "Khoản 7 Điều 4",
+      "Khoản 8 Điều 4",
+      "Khoản 11 Điều 4",
+      "Khoản 13 Điều 4",
+      "Khoản 15 Điều 4",
+      "Điểm b khoản 9 Điều 4",
+      "Khoản 1 Điều 6",
+      "Khoản 2 Điều 6",
+      "Khoản 3 Điều 6",
+      "Khoản 5 Điều 6",
+      "Điểm a và điểm b khoản 4 Điều 6",
+      "Gạch đầu dòng thứ 1 điểm a khoản 2 Điều 7",
+      "Gạch đầu dòng thứ 7 điểm a khoản 2 Điều 7",
+      "Điểm a khoản 4 Điều 7",
+      "Gạch đầu dòng thứ 4, 6, 8, 11 và 12 điểm a khoản 3 Điều 7",
+      "Khoản 6 Điều 7",
+      "Phụ lục IV"
+    ],
+    "target_locators_complete": true
   },
   {
     "source_id": "nd-49-2026",
@@ -1530,5 +1552,109 @@
     "target_locators_complete": true,
     "source_url": "https://vanban.chinhphu.vn/?classid=1&docid=205909&pageid=27160",
     "explanation": "Điều 1 sửa khoản 2 Điều 26; giữ dẫn chiếu Điều 7 và điều kiện giao đất ở, không sửa toàn bộ QĐ10. Hiệu lực 16/05/2022; QĐ20 bị QĐ27/2024 bãi bỏ từ 20/04/2024."
+  },
+  {
+    "source_id": "qd-40-2026-hanoi",
+    "target_id": "luat-dat-dai-2024",
+    "type": "guides",
+    "locator": "Điều 17 của Quy định kèm theo Quyết định 40/2026",
+    "source_locator": "Điều 17",
+    "target_locators": [
+      "Điều 108"
+    ],
+    "target_locators_complete": true,
+    "source_url": "https://datafiles.hanoi.gov.vn/gov-hni/6249/VanBanCongBao/2026/5/29/QDPQ-40-2026_signed.pdf",
+    "explanation": "Quy định hỗ trợ ổn định đời sống là triển khai nhóm hỗ trợ tại điểm a khoản1 Điều108; không thay danh mục chung bằng riêng một khoản hỗ trợ."
+  },
+  {
+    "source_id": "qd-40-2026-hanoi",
+    "target_id": "nd-49-2026",
+    "type": "guides",
+    "locator": "Điều 17 của Quy định kèm theo Quyết định 40/2026",
+    "source_locator": "Điều 17",
+    "target_locators": [
+      "Khoản 6 Điều 11"
+    ],
+    "target_locators_complete": true,
+    "source_url": "https://datafiles.hanoi.gov.vn/gov-hni/6249/VanBanCongBao/2026/5/29/QDPQ-40-2026_signed.pdf",
+    "explanation": "Tiêu đề Điều17 Quy định dẫn trực tiếp khoản6 Điều11 NĐ49 bổ sung khoản3 Điều19 NĐ88, giữ khung tối thiểu."
+  },
+  {
+    "source_id": "qd-40-2026-hanoi",
+    "target_id": "luat-dat-dai-2024",
+    "type": "guides",
+    "locator": "Điều 21 của Quy định kèm theo Quyết định 40/2026",
+    "source_locator": "Điều 21",
+    "target_locators": [
+      "Khoản 4 Điều 111"
+    ],
+    "target_locators_complete": true,
+    "source_url": "https://datafiles.hanoi.gov.vn/gov-hni/6249/VanBanCongBao/2026/5/29/QDPQ-40-2026_signed.pdf",
+    "explanation": "Tiêu đề Điều21 Quy định dẫn trực tiếp khoản4 Điều111 Luật Đất đai; giữ đầy đủ chủ thể, điều kiện bồi thường và nhánh nhiều hộ. Không suy mọi người có đất thu hồi đều được một suất."
+  },
+  {
+    "source_id": "qd-40-2026-hanoi",
+    "target_id": "nd-88-2024",
+    "type": "guides",
+    "locator": "Điều 21 của Quy định kèm theo Quyết định 40/2026",
+    "source_locator": "Điều 21",
+    "target_locators": [
+      "Điều 11"
+    ],
+    "target_locators_complete": true,
+    "source_url": "https://datafiles.hanoi.gov.vn/gov-hni/6249/VanBanCongBao/2026/5/29/QDPQ-40-2026_signed.pdf",
+    "explanation": "Điều21 Quy định về hình thức tái định cư cho nhóm đất ở đủ điều kiện phải đọc cùng nhánh điều kiện tại khoản2 Điều11 NĐ88, không thay điều kiện quốc gia bằng hình thức địa phương."
+  },
+  {
+    "source_id": "qd-40-2026-hanoi",
+    "target_id": "nd-226-2025",
+    "type": "guides",
+    "locator": "Điều 21 của Quy định kèm theo Quyết định 40/2026",
+    "source_locator": "Điều 21",
+    "target_locators": [
+      "Khoản 2 Điều 7"
+    ],
+    "target_locators_complete": true,
+    "source_url": "https://datafiles.hanoi.gov.vn/gov-hni/6249/VanBanCongBao/2026/5/29/QDPQ-40-2026_signed.pdf",
+    "explanation": "Đọc cùng điểm a khoản2 Điều7 NĐ226: địa bàn ở điểm a/b khoản2 Điều11 NĐ88 đổi thành cấp xã. Đây là liên kết đối chiếu căn cứ áp dụng, không phải QĐ40 sửa đổi NĐ226."
+  },
+  {
+    "source_id": "qd-40-2026-hanoi",
+    "target_id": "luat-dat-dai-2024",
+    "type": "guides",
+    "locator": "Điều 21 của Quy định kèm theo Quyết định 40/2026",
+    "source_locator": "Điều 21",
+    "target_locators": [
+      "Điều 98"
+    ],
+    "target_locators_complete": true,
+    "source_url": "https://datafiles.hanoi.gov.vn/gov-hni/6249/VanBanCongBao/2026/5/29/QDPQ-40-2026_signed.pdf",
+    "explanation": "Liên kết căn cứ thực chất: hình thức bồi thường đất ở tại Điều21 Quy định triển khai khoản4 Điều111 Luật Đất đai và nhánh Điều11 NĐ88 (quy định chi tiết Điều98 Luật Đất đai). Đọc Điều98 để phân biệt các hình thức bồi thường đất ở; đây là quan hệ hướng dẫn/đối chiếu, không phải sửa đổi Điều98."
+  },
+  {
+    "source_id": "qd-40-2026-hanoi",
+    "target_id": "nq-254-2025",
+    "type": "guides",
+    "locator": "Điều 21 của Quy định kèm theo Quyết định 40/2026",
+    "source_locator": "Điều 21",
+    "target_locators": [
+      "Khoản 10 Điều 3"
+    ],
+    "target_locators_complete": true,
+    "source_url": "https://datafiles.hanoi.gov.vn/gov-hni/6249/VanBanCongBao/2026/5/29/QDPQ-40-2026_signed.pdf",
+    "explanation": "Điều kiện được bồi thường của nhóm Điều21 phải đọc cùng các trường hợp không được bồi thường ở khoản10 Điều3 NQ254. Đây là liên kết đối chiếu điều kiện loại trừ, không phải QĐ40 sửa đổi NQ254."
+  },
+  {
+    "source_id": "qd-40-2026-hanoi",
+    "target_id": "nd-49-2026",
+    "type": "guides",
+    "locator": "Điều 21 của Quy định kèm theo Quyết định 40/2026",
+    "source_locator": "Điều 21",
+    "target_locators": [
+      "Khoản 3 Điều 16"
+    ],
+    "target_locators_complete": true,
+    "source_url": "https://datafiles.hanoi.gov.vn/gov-hni/6249/VanBanCongBao/2026/5/29/QDPQ-40-2026_signed.pdf",
+    "explanation": "Khi đối chiếu Điều21 với thay đổi địa bàn tại Điều7(2a) NĐ226, phải đối chiếu Điều16(3g) NĐ49 bãi bỏ một số gạch đầu dòng. Không suy toàn khoản2 hoặc toàn Điều7 NĐ226 còn áp dụng nguyên trạng."
   }
 ]

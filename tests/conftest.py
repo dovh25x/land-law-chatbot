@@ -47,3 +47,17 @@ def session(repo):
     sid, token = str(uuid.uuid4()), new_token()
     repo.create_session(sid, token)
     return sid, token
+
+
+def supplied_synthesis_fixture(state):
+    """Declare source exposure for isolated verifier probes, without inference.
+
+    This is never called by Agent.run or the payload-capture acceptance harness.
+    A manually constructed draft must state its simulated input explicitly.
+    """
+    if 'synthesis_sources' in state:
+        return state  # Never replace an actual captured model input.
+    state['synthesis_sources']={e.chunk.id:{'document_id':e.document.id,'text':e.chunk.text,
+        'citation_id':e.chunk.id,'locator':e.chunk.locator} for e in state['evidence']}
+    state['admitted_source_ids']={e.chunk.id for e in state['evidence']}
+    return state

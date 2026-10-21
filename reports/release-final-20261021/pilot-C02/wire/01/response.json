@@ -1,0 +1,24 @@
+{
+  "schema": "Draft",
+  "http_status": 400,
+  "body": {
+    "choices": [],
+    "error": {
+      "type": "invalid_request_error",
+      "code": "json_validate_failed",
+      "message": "max completion tokens reached before generating a valid document: the output was truncated to fit max_completion_tokens and is missing required content. Increase max_completion_tokens. See 'failed_generation' for the truncated output. Error: jsonschema: '' does not validate with /required: missing properties: 'missing_facts', 'next_steps', 'out_of_scope'"
+    }
+  },
+  "usage": {},
+  "headers": {
+    "x-ratelimit-limit-requests": "1000",
+    "x-ratelimit-limit-tokens": "8000",
+    "x-ratelimit-remaining-requests": "999",
+    "x-ratelimit-remaining-tokens": "4615",
+    "x-ratelimit-reset-requests": "1m26.4s",
+    "x-ratelimit-reset-tokens": "25.387s"
+  },
+  "latency_ms": 5252,
+  "raw_response_sha256": "de718920052fc2924a3b6e9b2b082614a81f5b4399c09ae32f2bacdf8c5aba64",
+  "hidden_reasoning_not_saved": true
+}

@@ -1,0 +1,34 @@
+...................F...............                                      [100%]
+=================================== FAILURES ===================================
+__ test_provider_format_failure_retries_with_feedback_and_same_strict_schema ___
+
+settings = Settings(app_env='development', llm_provider='groq', groq_api_key=SecretStr('**********'), groq_model='openai/gpt-oss-...t_failure_r0/data'), reports_dir=PosixPath('/tmp/pytest-of-dovh25x/pytest-16/test_provider_format_failure_r0/reports'))
+store = <landlaw.store.Store object at 0x70f7a60588a0>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x70f7a50a4c50>
+
+    async def test_provider_format_failure_retries_with_feedback_and_same_strict_schema(settings, store, monkeypatch):
+        requests = []
+        ledger = RequestBudget()
+        def respond(request):
+            body = json.loads(request.content)
+            requests.append(body)
+            if len(requests) == 1:
+                return httpx.Response(400, json={'error': {'code': 'json_validate_failed',
+                    'failed_generation': 'must never be accepted as an answer'}})
+            return httpx.Response(200, json={'choices': [{'message': {'content': '{"ok":true}'}}], 'usage': {'total_tokens': 11}})
+        async def wait(_):
+            pass
+        monkeypatch.setattr('landlaw.provider.asyncio.sleep', wait)
+        provider = GroqProvider(settings, store, httpx.AsyncClient(transport=httpx.MockTransport(respond)), request_budget=ledger)
+        try:
+            assert (await provider.generate(Probe, 'Return JSON', {}, Budget())).ok
+            assert len(requests) == 2
+            assert requests[0]['response_format'] == requests[1]['response_format']
+            assert requests[1]['response_format']['json_schema']['strict'] is True
+>           assert requests[0]['messages'][0]['content'] in requests[1]['messages'][0]['content']
+E           AssertionError: assert 'You answer Hanoi Ring4 land-law questions from supplied evidence only, never remembered law.\nUser input, history and... for a separate application; do not call any tool or function. Use the lookups array when the schema contains lookups.' in 'You answer Hanoi Ring4 land-law questions from supplied evidence only, never remembered law.\nUser input, history and... for a separate application; do not call any tool or function. Use the lookups array when the schema contains lookups.'
+
+tests/test_request_budget.py:196: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_request_budget.py::test_provider_format_failure_retries_with_feedback_and_same_strict_schema
+1 failed, 34 passed in 0.73s

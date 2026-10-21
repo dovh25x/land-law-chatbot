@@ -1,0 +1,655 @@
+--- before/backend/landlaw/evaluation.py
++++ after/backend/landlaw/evaluation.py
+@@ -13,6 +13,7 @@
+ from .agent import Agent
+ from .ingest import json_write
+ from .models import ChatRequest
++from .request_budget import BudgetExceeded
+ from .security import local_date, new_token, utcnow
+ 
+ 
+@@ -48,7 +49,7 @@
+ 
+ 
+ def configuration_fingerprint(settings):
+-    files = [Path(__file__).with_name(name) for name in ("agent.py", "synthesis_context.py", "provider.py", "embedding.py", "local_embedding.py", "store.py", "retrieval.py", "config.py", "publication.py", "models.py", "security.py", "api.py", "catalog.py", "citizen.py", "ops.py")]
++    files = [Path(__file__).with_name(name) for name in ("agent.py", "synthesis_context.py", "provider.py", "request_budget.py", "embedding.py", "local_embedding.py", "store.py", "retrieval.py", "config.py", "publication.py", "models.py", "security.py", "api.py", "catalog.py", "citizen.py", "ops.py")]
+     configuration = {"model": settings.generation_model, "llm_provider": settings.llm_provider, "embedding_model": settings.embedding_model,
+                      "dimensions": settings.embedding_dimensions, 'embedding_provider':settings.embedding_provider,
+                      "timeout_seconds": settings.turn_timeout_seconds,
+@@ -85,6 +86,9 @@
+         raise ValueError('Only agentic evaluation is supported')
+     if concurrency not in {1, 2}:
+         raise ValueError('Evaluation concurrency must be one or two')
++    test_budget=getattr(provider,'request_budget',None)
++    if test_budget is not None and test_budget.blocked_reason:
++        raise BudgetExceeded(test_budget.blocked_reason)
+     cases, fingerprint = frozen_dataset(settings.data_dir, split)
+     if not provider.configured:
+         raise ValueError("Cannot evaluate without the selected provider API key")
+@@ -213,6 +217,9 @@
+         # Keep transient/budget failures in the denominator and continue the
+         # remaining locked cases; never rerun the failed case in this pass.
+         # Long provider cooldown is handled before starting the next case.
++        test_budget=getattr(provider,'request_budget',None)
++        if test_budget is not None and test_budget.blocked_reason:
++            break  # A hard test cap stops the suite, not just the current turn.
+     review_path = settings.data_dir / f'evaluation/{split}-reviews.json'
+     report = summarise(records, cases, fingerprint, json.loads(review_path.read_text()) if review_path.exists() else {})
+     report.update({"run_id": run_id, "release": release["id"], "model": provider.settings.generation_model,
+--- before/backend/landlaw/provider.py
++++ after/backend/landlaw/provider.py
+@@ -12,16 +12,13 @@
+ from .security import utcnow
+ from .store import RateLimited, Store
+ from .embedding import contract
++from .request_budget import BudgetExceeded
+ 
+ 
+ class ProviderUnavailable(Exception):
+     def __init__(self, message, retryable=False, retry_after=None, format_failure=False):
+         self.retryable, self.retry_after, self.format_failure = retryable, retry_after, format_failure
+         super().__init__(message)
+-
+-
+-class BudgetExceeded(Exception):
+-    pass
+ 
+ 
+ @dataclass
+@@ -110,11 +107,12 @@
+ 
+ 
+ class GroqProvider:
+-    def __init__(self, settings: Settings, store: Store, client: httpx.AsyncClient | None = None, *, usage_scope='operator'):
++    def __init__(self, settings: Settings, store: Store, client: httpx.AsyncClient | None = None, *, usage_scope='operator', request_budget=None):
+         self.settings, self.store = settings, store
+         if usage_scope not in {'public', 'operator'}:
+             raise ValueError('Invalid trusted usage scope')
+         self.usage_scope = usage_scope
++        self.request_budget = request_budget
+         self.client = client or httpx.AsyncClient(timeout=25, limits=httpx.Limits(max_connections=8))
+         contract(settings)
+         from .local_embedding import LocalE5
+@@ -161,6 +159,14 @@
+                 await asyncio.sleep(exc.retry_after)
+                 continue
+             except ProviderUnavailable as exc:
++                if exc.format_failure:
++                    schema_failures += 1
++                    if schema_failures >= 2:
++                        raise
++                    # Provider HTTP400 format failures receive the same bounded
++                    # format feedback as local validation; never accept its
++                    # failed_generation or weaken the schema to salvage output.
++                    body['systemInstruction']['parts'][0]['text'] += '\nLượt trước không khớp schema. Trả duy nhất JSON đúng responseJsonSchema; dùng đúng kiểu trường và giá trị enum, không có markdown.'
+                 if not exc.retryable or attempt == attempts-1:
+                     raise
+                 await asyncio.sleep(exc.retry_after or 2 ** attempt)
+@@ -211,11 +217,19 @@
+             # Keep routing cheap; legal synthesis and verification need the
+             # model's normal reasoning level. Call/token/time caps stay fixed.
+             request['reasoning_effort']='medium' if schema.__name__ in {'Draft','Verification'} else 'low'
++        reservation = self.request_budget.reserve(request) if self.request_budget is not None else None
+         try:
+             response=await self.client.post('https://api.groq.com/openai/v1/chat/completions',
+                 headers={'Authorization':'Bearer '+self.settings.groq_api_key.get_secret_value()},json=request)
+         except httpx.HTTPError:
++            if reservation is not None:
++                self.request_budget.settle(reservation, {})
+             raise ProviderUnavailable('Không kết nối được Groq',retryable=True) from None
++        try:result=response.json()
++        except ValueError:result=None
++        if reservation is not None:
++            self.request_budget.settle(reservation,result.get('usage',{}) if isinstance(result,dict) else {},
++                                       status_code=response.status_code,headers=response.headers)
+         if response.status_code==429:
+             try:delay=math.ceil(float(response.headers.get('retry-after','60')))
+             except (ValueError,TypeError):delay=60
+@@ -223,19 +237,26 @@
+         if response.status_code==413:
+             raise ProviderUnavailable('Ngữ cảnh vượt dung lượng request của Groq Free. Hãy tách câu hỏi để đối chiếu từng vấn đề.')
+         if response.status_code==400:
+-            try:code=response.json().get('error',{}).get('code')
+-            except ValueError:code=None
++            error=result.get('error') if isinstance(result,dict) else None
++            code=error.get('code') if isinstance(error,dict) else None
+             if code in {'tool_use_failed','json_validate_failed'}:
++                await self.record_usage('provider-format:'+code)
+                 raise ProviderUnavailable('Groq chưa trả kết quả đúng định dạng.',retryable=True,format_failure=True)
+         if response.status_code>=400:
+             raise ProviderUnavailable(f'Groq trả HTTP {response.status_code}',retryable=response.status_code>=500)
+-        result=response.json()
+-        cached=result.get('usage',{}).get('prompt_tokens_details',{}).get('cached_tokens',0)
++        if not isinstance(result,dict):
++            raise ProviderUnavailable('Groq không trả JSON object hợp lệ.',retryable=True,format_failure=True)
++        usage=result.get('usage')
++        usage=usage if isinstance(usage,dict) else {}
++        details=usage.get('prompt_tokens_details')
++        cached=details.get('cached_tokens',0) if isinstance(details,dict) else 0
+         if type(cached)==int and cached>0:
+             await self.record_usage('groq-cached-tokens',cached)
+         try:content=result['choices'][0]['message']['content']
+         except (KeyError,IndexError,TypeError):
+-            raise ProviderUnavailable('Groq không trả kết quả đúng schema') from None
++            raise ProviderUnavailable('Groq không trả kết quả đúng schema',retryable=True,format_failure=True) from None
++        if not isinstance(content,str):
++            raise ProviderUnavailable('Groq không trả nội dung JSON dạng text.',retryable=True,format_failure=True)
+         if schema.__name__=='Plan':
+             try:
+                 decoded=json.loads(content)
+@@ -243,8 +264,12 @@
+                     decoded['tools']=decoded.pop('lookups')
+                     content=json.dumps(decoded,ensure_ascii=False)
+             except (ValueError,TypeError):pass
++        tokens=usage.get('total_tokens')
++        if type(tokens) is not int or tokens<0:
++            await self.record_usage('llm-usage-unknown')
++            tokens=0  # Confirmed usage only; operator ledger retains unknown reservation.
+         return {'candidates':[{'content':{'parts':[{'text':content}]}}],
+-                'usageMetadata':{'totalTokenCount':result.get('usage',{}).get('total_tokens',0)}}
++                'usageMetadata':{'totalTokenCount':tokens}}
+ 
+ 
+     @staticmethod
+--- before/scripts/evaluate_generation_candidate.py
++++ after/scripts/evaluate_generation_candidate.py
+@@ -13,7 +13,8 @@
+ import psycopg
+ from landlaw.config import Settings
+ from landlaw.evaluation import configuration_fingerprint, evaluate, frozen_dataset
+-from landlaw.provider import GroqProvider, ProviderUnavailable
++from landlaw.provider import GroqProvider, ProviderUnavailable, BudgetExceeded
++from landlaw.request_budget import RequestBudget
+ from landlaw.security import utcnow
+ from landlaw.ops import record_source_review, activate_source_gate
+ from landlaw.store import Store
+@@ -106,8 +107,17 @@
+         if args.case_id and not set(args.case_id)<=set().union(*cases.values()):
+             raise ValueError('Unknown frozen case ID for the selected suites')
+         fingerprint = lock_configuration(settings, args.output)
++        ledger_path=args.output/'request-budget.json'
++        if (not args.no_generation and not ledger_path.exists()
++                and list((args.output/'runs').glob('*/records.json'))):
++            raise ValueError('Historical run has no request budget ledger; use a new output')
++        request_budget=None if args.no_generation else RequestBudget(
++            max_tokens=args.max_total_tokens,max_requests=args.max_requests,path=ledger_path,identity=fingerprint)
++        if request_budget is not None and request_budget.blocked_reason:
++            print(json.dumps({'test_budget_exhausted':request_budget.summary(),'generation_calls':0}))
++            return
+         store = Store(settings)
+-        provider = GroqProvider(settings, store, usage_scope='operator')
++        provider = GroqProvider(settings, store, usage_scope='operator',request_budget=request_budget)
+         generate = provider.generate
+         async def frozen_generate(*positional, **keyword):
+             if args.no_generation:
+@@ -150,6 +160,8 @@
+                 }, indent=2)+'\n')
+                 if remaining > 60:
+                     break
++                if request_budget is not None and request_budget.blocked_reason:
++                    break
+         finally:
+             await provider.close()
+             store.close()
+@@ -164,13 +176,17 @@
+     parser.add_argument('--postgres', action='store_true', help='Use and retain a newly created isolated PostgreSQL database; never the serving database')
+     parser.add_argument('--case-id', action='append', help='Prioritize an existing frozen case without changing its full-suite denominator')
+     parser.add_argument('--no-generation', action='store_true', help='Enforce zero provider calls for explicitly selected deterministic cases')
++    parser.add_argument('--max-total-tokens', type=int, default=60000,
++                        help='Hard operator-test budget including conservative unknown usage, persisted across resume')
++    parser.add_argument('--max-requests', type=int, default=18,
++                        help='Total network attempts including retries, persisted across resume')
+     parser.add_argument('--source-receipt', type=Path, action='append', default=[],
+                         help='Import a checksum-bound source receipt into the isolated database')
+     parser.add_argument('--source-gate', type=Path, help='Activate the reviewed candidate source policy locally')
+     args = parser.parse_args()
+     try:
+         asyncio.run(main(args))
+-    except (ValueError, OSError, RuntimeError, sqlite3.Error, psycopg.Error, ProviderUnavailable) as error:
++    except (ValueError, OSError, RuntimeError, sqlite3.Error, psycopg.Error, ProviderUnavailable, BudgetExceeded) as error:
+         # Validation/driver errors may include environment values; do not echo them.
+         print(json.dumps({'passed': False, 'error_type': type(error).__name__}))
+         raise SystemExit(1) from None
+--- /dev/null
++++ after/backend/landlaw/request_budget.py
+@@ -0,0 +1,111 @@
++"""Durable operator-test accounting; provider quota remains an independent limit.
++
++No prompts, credentials, answers or provider error bodies are retained here.
++There is no verified local GPT-OSS tokenizer. Reservations therefore keep the
++conservative UTF-8 byte bound and framing allowance, never an E5 token estimate.
++"""
++import json
++from pathlib import Path
++
++
++class BudgetExceeded(Exception):
++    pass
++
++
++class TestBudgetExceeded(BudgetExceeded):
++    pass
++
++
++class RequestBudget:
++    def __init__(self, *, max_tokens=60000, max_requests=18, path=None, identity=None):
++        if type(max_tokens) is not int or type(max_requests) is not int or min(max_tokens, max_requests) <= 0:
++            raise ValueError('Positive integer test limits required')
++        self.path = Path(path) if path is not None else None
++        self.identity = identity
++        self.max_tokens, self.max_requests = max_tokens, max_requests
++        self.entries, self.blocked_reason = [], None
++        if self.path is not None and self.path.exists():
++            prior = json.loads(self.path.read_text())
++            if (prior['max_tokens'], prior['max_requests'], prior['identity']) != (max_tokens, max_requests, identity):
++                raise ValueError('Test budget identity/limits changed; preserve the prior run')
++            self.entries, self.blocked_reason = prior['entries'], prior['blocked_reason']
++            self.summary()  # Reject malformed accounting rather than resetting it.
++        elif self.path is not None:
++            self.persist()  # A valid zero-request run must also be resumable.
++
++    def summary(self):
++        confirmed = estimated = reserved = 0
++        for index, entry in enumerate(self.entries):
++            if entry['id'] != index or type(entry['reservation']) is not int or entry['reservation'] <= 0:
++                raise ValueError('Invalid persisted reservation')
++            if entry['state'] == 'confirmed':
++                usage = entry['confirmed_usage']
++                if type(usage) is not int or usage < 0:
++                    raise ValueError('Invalid confirmed usage')
++                confirmed += usage
++            elif entry['state'] == 'estimated':
++                estimated += entry['reservation']
++            elif entry['state'] == 'reserved':
++                reserved += entry['reservation']
++            else:
++                raise ValueError('Invalid persisted budget state')
++        return {'confirmed_usage': confirmed, 'estimated_usage': estimated,
++                'estimated_usage_kind': 'upper_bound_for_requests_without_provider_usage',
++                'reserved_budget': reserved,
++                'remaining_test_budget': self.max_tokens - confirmed - estimated - reserved,
++                'requests_reserved': len(self.entries), 'max_tokens': self.max_tokens,
++                'max_requests': self.max_requests, 'blocked_reason': self.blocked_reason,
++                'provider_quota_is_separate': True}
++
++    def persist(self):
++        if self.path is not None:
++            self.path.parent.mkdir(parents=True, exist_ok=True)
++            target = self.path.with_suffix(self.path.suffix + '.pending')
++            target.write_text(json.dumps({'version': 1, 'identity': self.identity,
++                'max_tokens': self.max_tokens, 'max_requests': self.max_requests,
++                'blocked_reason': self.blocked_reason, 'entries': self.entries,
++                'summary': self.summary()}, indent=2) + '\n')
++            target.replace(self.path)
++
++    def reserve(self, request):
++        if self.blocked_reason:
++            raise TestBudgetExceeded(self.blocked_reason)
++        maximum = request.get('max_completion_tokens')
++        if type(maximum) is not int or maximum <= 0:
++            raise ValueError('Explicit positive max_completion_tokens required')
++        wire_bytes = len(json.dumps(request, ensure_ascii=False, allow_nan=False, separators=(',', ':')).encode())
++        upper_bound = wire_bytes + 4096 + maximum
++        remaining = self.summary()['remaining_test_budget']
++        if len(self.entries) >= self.max_requests or upper_bound > remaining:
++            self.blocked_reason = 'test_request_cap' if len(self.entries) >= self.max_requests else 'test_token_cap'
++            self.persist()
++            raise TestBudgetExceeded(self.blocked_reason)
++        ident = len(self.entries)
++        self.entries.append({'id': ident, 'state': 'reserved', 'wire_bytes': wire_bytes,
++            'max_completion_tokens': maximum, 'framing_allowance': 4096,
++            'reservation': upper_bound, 'confirmed_usage': None})
++        self.persist()  # Before network I/O; a crash/resume never frees this reservation.
++        return ident
++
++    def settle(self, ident, usage, *, status_code=None, headers=None):
++        entry = self.entries[ident]
++        if entry['state'] != 'reserved':
++            raise ValueError('Request budget already settled')
++        reported = usage.get('total_tokens') if isinstance(usage, dict) else None
++        entry['http_status'] = status_code
++        allowed = {'retry-after', 'x-ratelimit-limit-tokens', 'x-ratelimit-remaining-tokens',
++                   'x-ratelimit-reset-tokens', 'x-ratelimit-limit-requests',
++                   'x-ratelimit-remaining-requests', 'x-ratelimit-reset-requests'}
++        # Numeric/duration headers only, never arbitrary messages or account IDs.
++        entry['provider_rate_limits'] = {key.lower(): value for key, value in (headers or {}).items()
++            if key.lower() in allowed and len(value) <= 64
++            and all(c in '0123456789. smhd' for c in value)}
++        if type(reported) is int and reported >= 0:
++            entry.update(state='confirmed', confirmed_usage=reported)
++            if reported > entry['reservation']:
++                self.blocked_reason = 'provider_usage_exceeded_reservation'
++                self.persist()
++                raise TestBudgetExceeded(self.blocked_reason)
++        else:
++            entry['state'] = 'estimated'  # Includes 429/400; no assumption of free rejected requests.
++        self.persist()
+--- /dev/null
++++ after/tests/test_request_budget.py
+@@ -0,0 +1,325 @@
++"""Offline transport and accounting regressions; no legal pilot case or API."""
++import json
++
++import httpx
++import pytest
++from landlaw.provider import Budget, BudgetExceeded, GroqProvider, ProviderUnavailable
++from landlaw.request_budget import RequestBudget
++from landlaw.store import RateLimited
++from pydantic import BaseModel, Field
++
++
++class Probe(BaseModel):
++    ok: bool
++
++
++def wire(maximum=2048, text='public synthetic input'):
++    return {'messages': [{'role': 'user', 'content': text}], 'max_completion_tokens': maximum}
++
++
++def test_request_specific_reservation_and_usage_fields():
++    ledger = RequestBudget()
++    ident = ledger.reserve(wire())
++    before = ledger.summary()
++    assert before['confirmed_usage'] == before['estimated_usage'] == 0
++    assert before['reserved_budget'] == len(json.dumps(wire(), ensure_ascii=False, separators=(',', ':')).encode()) + 4096 + 2048
++    ledger.settle(ident, {'total_tokens': 100}, status_code=200)
++    assert ledger.summary()['confirmed_usage'] == 100
++    assert ledger.summary()['remaining_test_budget'] == 59900
++    assert ledger.summary()['reserved_budget'] == 0
++    larger = RequestBudget()
++    larger.reserve(wire(maximum=4096, text='public' * 100))
++    assert larger.summary()['reserved_budget'] > before['reserved_budget']
++
++
++@pytest.mark.parametrize('status', [200, 400, 429, 500, None])
++def test_unknown_usage_is_not_freed_even_for_rejected_request(status):
++    ledger = RequestBudget()
++    ident = ledger.reserve(wire())
++    reserved = ledger.summary()['reserved_budget']
++    ledger.settle(ident, {}, status_code=status)
++    assert ledger.summary()['confirmed_usage'] == ledger.summary()['reserved_budget'] == 0
++    assert ledger.summary()['estimated_usage'] == reserved
++    assert ledger.summary()['remaining_test_budget'] == 60000 - reserved
++
++
++@pytest.mark.parametrize('reported', [-1, True, '4', None])
++def test_invalid_usage_is_unknown_not_a_refund(reported):
++    ledger = RequestBudget()
++    ident = ledger.reserve(wire())
++    ledger.settle(ident, {'total_tokens': reported})
++    assert ledger.summary()['estimated_usage'] > 0
++    assert ledger.summary()['confirmed_usage'] == 0
++
++
++def test_crash_and_resume_keep_pending_reservation_and_limits(tmp_path):
++    path = tmp_path / 'request-budget.json'
++    original = RequestBudget(path=path, identity='locked')
++    original.reserve(wire())
++    resumed = RequestBudget(path=path, identity='locked')
++    assert resumed.summary() == original.summary()
++    assert resumed.summary()['reserved_budget'] > 0
++    with pytest.raises(ValueError, match='identity/limits changed'):
++        RequestBudget(path=path, identity='changed')
++
++
++def test_zero_request_run_has_a_durable_resumable_ledger(tmp_path):
++    path = tmp_path / 'request-budget.json'
++    ledger = RequestBudget(path=path, identity='zero-request-run')
++    assert path.is_file()
++    assert RequestBudget(path=path, identity='zero-request-run').summary() == ledger.summary()
++    assert ledger.summary()['requests_reserved'] == 0
++
++
++def test_block_before_reserve_is_durable_and_does_not_spend(tmp_path):
++    path = tmp_path / 'request-budget.json'
++    ledger = RequestBudget(max_tokens=1, path=path)
++    with pytest.raises(BudgetExceeded, match='test_token_cap'):
++        ledger.reserve(wire())
++    assert ledger.summary()['requests_reserved'] == 0
++    assert ledger.summary()['remaining_test_budget'] == 1
++    restored = RequestBudget(max_tokens=1, path=path)
++    with pytest.raises(BudgetExceeded, match='test_token_cap'):
++        restored.reserve(wire())
++
++
++def test_total_request_cap_and_double_settlement():
++    ledger = RequestBudget(max_requests=1)
++    ident = ledger.reserve(wire())
++    ledger.settle(ident, {'total_tokens': 0})
++    with pytest.raises(ValueError, match='already settled'):
++        ledger.settle(ident, {'total_tokens': 1})
++    with pytest.raises(BudgetExceeded, match='test_request_cap'):
++        ledger.reserve(wire())
++
++
++def test_provider_reports_over_bound_blocks_future_requests():
++    ledger = RequestBudget()
++    ident = ledger.reserve(wire())
++    upper = ledger.summary()['reserved_budget']
++    with pytest.raises(BudgetExceeded, match='exceeded_reservation'):
++        ledger.settle(ident, {'total_tokens': upper + 1})
++    assert ledger.summary()['confirmed_usage'] == upper + 1
++    with pytest.raises(BudgetExceeded):
++        ledger.reserve(wire())
++
++
++def test_provider_quota_headers_separate_from_accounting():
++    ledger = RequestBudget()
++    ident = ledger.reserve(wire())
++    ledger.settle(ident, {}, status_code=429, headers={
++        'retry-after': '4', 'x-ratelimit-limit-tokens': '8000',
++        'x-ratelimit-remaining-tokens': '3746', 'x-ratelimit-reset-tokens': '31.904s',
++        'authorization': 'Never persist', 'x-ratelimit-limit-requests': 'not numeric private message'})
++    assert ledger.entries[0]['provider_rate_limits'] == {
++        'retry-after': '4', 'x-ratelimit-limit-tokens': '8000',
++        'x-ratelimit-remaining-tokens': '3746', 'x-ratelimit-reset-tokens': '31.904s'}
++    assert ledger.summary()['remaining_test_budget'] > 3746
++
++
++async def test_transport_is_not_called_when_test_budget_blocks(settings, store):
++    requests = []
++    def respond(request):
++        requests.append(request)
++        return httpx.Response(200)
++    ledger = RequestBudget(max_tokens=1)
++    provider = GroqProvider(settings, store, httpx.AsyncClient(transport=httpx.MockTransport(respond)), request_budget=ledger)
++    try:
++        with pytest.raises(BudgetExceeded):
++            await provider.generate(Probe, 'Return JSON', {}, Budget())
++        assert requests == []
++    finally:
++        await provider.close()
++
++
++async def test_success_refunds_only_confirmed_usage(settings, store):
++    ledger = RequestBudget()
++    provider = GroqProvider(settings, store, httpx.AsyncClient(transport=httpx.MockTransport(lambda _: httpx.Response(
++        200, json={'choices': [{'message': {'content': '{"ok":true}'}}], 'usage': {'total_tokens': 17}}))), request_budget=ledger)
++    budget = Budget()
++    try:
++        assert (await provider.generate(Probe, 'Return JSON', {}, budget)).ok
++        assert ledger.summary()['confirmed_usage'] == budget.tokens == 17
++        assert ledger.summary()['reserved_budget'] == ledger.summary()['estimated_usage'] == 0
++    finally:
++        await provider.close()
++
++
++async def test_429_retry_is_single_scheduled_retry_with_unknown_charge(settings, store, monkeypatch):
++    requests, sleeps = [], []
++    ledger = RequestBudget()
++    def respond(request):
++        requests.append(json.loads(request.content))
++        if len(requests) == 1:
++            return httpx.Response(429, headers={'retry-after': '3.39'}, json={'error': {'code': 'rate_limit_exceeded'}})
++        return httpx.Response(200, json={'choices': [{'message': {'content': '{"ok":true}'}}], 'usage': {'total_tokens': 20}})
++    async def wait(seconds):
++        sleeps.append(seconds)
++    monkeypatch.setattr('landlaw.provider.asyncio.sleep', wait)
++    provider = GroqProvider(settings, store, httpx.AsyncClient(transport=httpx.MockTransport(respond)), request_budget=ledger)
++    budget = Budget()
++    try:
++        assert (await provider.generate(Probe, 'Return JSON', {}, budget)).ok
++        assert sleeps == [4] and len(requests) == budget.llm_calls == 2
++        assert requests[0] == requests[1]
++        assert ledger.summary()['confirmed_usage'] == 20
++        assert ledger.summary()['estimated_usage'] == ledger.entries[0]['reservation']
++        assert store.cooldown() > 0  # A fake sleep never clears a real shared cooldown.
++    finally:
++        await provider.close()
++
++
++async def test_long_cooldown_stops_after_one_request(settings, store):
++    ledger = RequestBudget()
++    provider = GroqProvider(settings, store, httpx.AsyncClient(transport=httpx.MockTransport(lambda _: httpx.Response(
++        429, headers={'retry-after': '3600'}, json={'error': {'code': 'rate_limit_exceeded'}}))), request_budget=ledger)
++    try:
++        with pytest.raises(RateLimited):
++            await provider.generate(Probe, 'Return JSON', {}, Budget())
++        assert len(ledger.entries) == 1 and ledger.summary()['estimated_usage'] > 0
++    finally:
++        await provider.close()
++
++
++async def test_provider_format_failure_retries_with_feedback_and_same_strict_schema(settings, store, monkeypatch):
++    requests = []
++    ledger = RequestBudget()
++    def respond(request):
++        body = json.loads(request.content)
++        requests.append(body)
++        if len(requests) == 1:
++            return httpx.Response(400, json={'error': {'code': 'json_validate_failed',
++                'failed_generation': 'must never be accepted as an answer'}})
++        return httpx.Response(200, json={'choices': [{'message': {'content': '{"ok":true}'}}], 'usage': {'total_tokens': 11}})
++    async def wait(_):
++        pass
++    monkeypatch.setattr('landlaw.provider.asyncio.sleep', wait)
++    provider = GroqProvider(settings, store, httpx.AsyncClient(transport=httpx.MockTransport(respond)), request_budget=ledger)
++    try:
++        assert (await provider.generate(Probe, 'Return JSON', {}, Budget())).ok
++        assert len(requests) == 2
++        assert requests[0]['response_format'] == requests[1]['response_format']
++        assert requests[1]['response_format']['json_schema']['strict'] is True
++        correction = '\nLượt trước không khớp schema. Trả duy nhất JSON đúng responseJsonSchema; dùng đúng kiểu trường và giá trị enum, không có markdown.'
++        assert requests[1]['messages'][0]['content'].replace(correction, '') == requests[0]['messages'][0]['content']
++        assert ledger.summary()['estimated_usage'] > 0 and ledger.summary()['confirmed_usage'] == 11
++    finally:
++        await provider.close()
++
++
++@pytest.mark.parametrize('kind', ['provider_error', 'outer_json', 'null_content', 'local_json', 'local_schema'])
++async def test_format_failures_are_bounded_and_never_salvaged(settings, store, monkeypatch, kind):
++    class Bounded(BaseModel):
++        value: int = Field(ge=1, le=2)
++    calls = []
++    ledger = RequestBudget()
++    def respond(request):
++        calls.append(request)
++        if kind == 'provider_error':
++            return httpx.Response(400, json={'error': {'code': 'json_validate_failed'}})
++        if kind == 'outer_json':
++            return httpx.Response(200, text='not JSON')
++        content = {'null_content': None, 'local_json': '{broken', 'local_schema': '{"value":99}'}[kind]
++        return httpx.Response(200, json={'choices': [{'message': {'content': content}}], 'usage': {'total_tokens': 3}})
++    async def wait(_):
++        pass
++    monkeypatch.setattr('landlaw.provider.asyncio.sleep', wait)
++    provider = GroqProvider(settings, store, httpx.AsyncClient(transport=httpx.MockTransport(respond)), request_budget=ledger)
++    try:
++        with pytest.raises(ProviderUnavailable) as error:
++            await provider.generate(Bounded, 'Return JSON', {}, Budget())
++        assert error.value.format_failure is True and len(calls) == 2
++        assert ledger.summary()['reserved_budget'] == 0
++    finally:
++        await provider.close()
++
++
++async def test_transport_failure_retains_estimate_and_stops_at_test_cap(settings, store, monkeypatch):
++    calls = []
++    ledger = RequestBudget(max_requests=1)
++    def respond(request):
++        calls.append(request)
++        raise httpx.ConnectError('synthetic failure')
++    async def wait(_):
++        pass
++    monkeypatch.setattr('landlaw.provider.asyncio.sleep', wait)
++    provider = GroqProvider(settings, store, httpx.AsyncClient(transport=httpx.MockTransport(respond)), request_budget=ledger)
++    try:
++        with pytest.raises(BudgetExceeded):
++            await provider.generate(Probe, 'Return JSON', {}, Budget())
++        assert len(calls) == 1
++        assert ledger.summary()['estimated_usage'] > 0
++    finally:
++        await provider.close()
++
++
++async def test_persistence_error_prevents_network_io(settings, store, monkeypatch):
++    calls = []
++    ledger = RequestBudget()
++    def fail_write():
++        raise OSError('synthetic persistence failure')
++    monkeypatch.setattr(ledger, 'persist', fail_write)
++    def respond(request):
++        calls.append(request)
++        return httpx.Response(200)
++    provider = GroqProvider(settings, store, httpx.AsyncClient(transport=httpx.MockTransport(respond)), request_budget=ledger)
++    try:
++        with pytest.raises(OSError):
++            await provider.generate(Probe, 'Return JSON', {}, Budget())
++        assert calls == []
++    finally:
++        await provider.close()
++
++
++async def test_operator_suite_stops_after_hard_cap_and_keeps_denominator(settings, store, tmp_path, monkeypatch):
++    from datetime import date
++    from types import SimpleNamespace
++
++    from conftest import release
++    from landlaw import evaluation
++    from landlaw.models import ChatResult
++    release(store)
++    settings = settings.model_copy(update={'reports_dir': tmp_path / 'reports'})
++    rows = [{'id': ident, 'question': ident, 'as_of': '2024-08-02', 'rubric': []}
++            for ident in ('BUDGET_FIRST', 'MUST_NOT_START')]
++    monkeypatch.setattr(evaluation, 'frozen_dataset', lambda *_: (rows, 'fixture-suite'))
++    monkeypatch.setattr(evaluation, 'validate_suite_corpus', lambda *_: None)
++    ledger = RequestBudget(max_tokens=1)
++    async def generate(*args):
++        raise AssertionError('No model call in evaluation-stop fixture')
++    client = httpx.AsyncClient(transport=httpx.MockTransport(lambda _: pytest.fail('No HTTP expected')))
++    provider = SimpleNamespace(settings=settings, configured=True, client=client, generate=generate, request_budget=ledger)
++    seen = []
++    class FakeAgent:
++        def __init__(self, *args):
++            pass
++        async def run(self, request, emit, release_id):
++            seen.append(request.message)
++            with pytest.raises(BudgetExceeded):
++                ledger.reserve(wire())
++            return ChatResult(status='limited', content='Test cap reached', as_of=date(2024, 8, 2),
++                trace_id='fixture', model=settings.generation_model, embedding_model=settings.embedding_model,
++                mode='agentic', corpus_release=release_id)
++    monkeypatch.setattr(evaluation, 'Agent', FakeAgent)
++    try:
++        result = await evaluation.evaluate(settings, store, provider)
++        assert seen == ['BUDGET_FIRST']
++        assert result['cases'] == 2
++        assert result['acceptance_passed'] is False
++    finally:
++        await client.aclose()
++
++
++async def test_resumed_blocked_evaluation_never_starts_a_case(settings, store, monkeypatch):
++    from types import SimpleNamespace
++
++    from landlaw import evaluation
++    ledger = RequestBudget(max_tokens=1)
++    with pytest.raises(BudgetExceeded):
++        ledger.reserve(wire())
++    provider = SimpleNamespace(generate=None, request_budget=ledger)
++    def must_not_start(*args):
++        pytest.fail('A blocked budget must stop before reading/running the suite')
++    monkeypatch.setattr(evaluation, 'frozen_dataset', must_not_start)
++    with pytest.raises(BudgetExceeded):
++        await evaluation.evaluate(settings, store, provider)

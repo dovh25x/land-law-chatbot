@@ -1,0 +1,140 @@
+{
+  "checked_at": "2026-10-20T17:28:54.552226+00:00",
+  "pilot_plan_sha256": "e2d78e073cd77de59eb2d31bf59d8a64e4bc1cbd190e4acf42961b97a82e773f",
+  "pilot_case_ids": [
+    "S01",
+    "S04",
+    "X01",
+    "N02",
+    "N07",
+    "N08"
+  ],
+  "eligible_cases": 4,
+  "storage_backend": "isolated_sqlite",
+  "configuration_sha256": "08a59d33cc34147b886a06cc3e78f72e49bbfc563ed790a1997e1d2838f88c4c",
+  "corpus_id": "corpus-a26bc99e541fbbe2",
+  "source_gate": {
+    "mode": "scoped_receipts",
+    "policy_sha256": "85b8f30e25f020e35a92004da4c3c81c1b6142ff41f780bbe44f08adf9bda752",
+    "eligible_passages": 38,
+    "usable": true,
+    "whole_corpus_verified": false
+  },
+  "gold_recall_at_5": 1.0,
+  "external_llm_requests": 0,
+  "results": [
+    {
+      "id": "S01",
+      "question": "Quyết định 56/2024/QĐ-UBND Hà Nội còn hiệu lực ngày 12/10/2026 không? Văn bản nào thay thế?",
+      "as_of": "2026-10-12",
+      "gold_chunk_ids": [
+        "qd-40-2026-hanoi-0-2-0"
+      ],
+      "retrieved_chunk_ids": [
+        "qd-40-2026-hanoi-0-2-0",
+        "qd-40-2026-hanoi-2-2-0",
+        "qd-56-2024-hanoi-0-2-0",
+        "qd-56-2024-hanoi-0-0-0",
+        "qd-56-2024-hanoi-0-1-0",
+        "qd-56-2024-hanoi-0-5-0",
+        "qd-56-2024-hanoi-0-10-0",
+        "qd-56-2024-hanoi-0-11-0"
+      ],
+      "gold_recall_at_5": 1.0,
+      "gold_recall_at_8": 1.0,
+      "top5_source_gate": {
+        "qd-40-2026-hanoi:qd-40-2026-hanoi-0-2-0": "fresh",
+        "qd-40-2026-hanoi:qd-40-2026-hanoi-2-2-0": "unknown",
+        "qd-56-2024-hanoi:qd-56-2024-hanoi-0-2-0": "unknown",
+        "qd-56-2024-hanoi:qd-56-2024-hanoi-0-0-0": "unknown",
+        "qd-56-2024-hanoi:qd-56-2024-hanoi-0-1-0": "unknown"
+      },
+      "elapsed_ms": 9627
+    },
+    {
+      "id": "S04",
+      "question": "Theo Điều 31 Nghị định 88/2024/NĐ-CP, nếu đã có quyết định thu hồi và phương án bồi thường được phê duyệt trước ngày Nghị định có hiệu lực nhưng chưa thực hiện, có phải làm lại toàn bộ phương án không?",
+      "as_of": "2024-08-02",
+      "gold_chunk_ids": [
+        "nd-88-2024-0-31-0"
+      ],
+      "retrieved_chunk_ids": [
+        "nd-88-2024-0-31-0",
+        "nd-88-2024-0-31-1",
+        "nd-88-2024-0-3-3",
+        "nd-88-2024-0-10-0",
+        "nd-88-2024-0-3-0",
+        "nd-88-2024-0-28-0",
+        "nd-88-2024-0-33-0",
+        "nd-88-2024-0-13-2"
+      ],
+      "gold_recall_at_5": 1.0,
+      "gold_recall_at_8": 1.0,
+      "top5_source_gate": {
+        "nd-88-2024:nd-88-2024-0-31-0": "fresh",
+        "nd-88-2024:nd-88-2024-0-31-1": "fresh",
+        "nd-88-2024:nd-88-2024-0-3-3": "unknown",
+        "nd-88-2024:nd-88-2024-0-10-0": "unknown",
+        "nd-88-2024:nd-88-2024-0-3-0": "unknown"
+      },
+      "elapsed_ms": 8084
+    },
+    {
+      "id": "X01",
+      "question": "Khi chuyển nhà vì Nhà nước thu hồi đất, những khoản chi phí di chuyển tài sản nào được xem xét bồi thường?",
+      "as_of": "2024-08-02",
+      "gold_chunk_ids": [
+        "luat-dat-dai-2024-104-1-0"
+      ],
+      "retrieved_chunk_ids": [
+        "luat-dat-dai-2024-104-1-0",
+        "nd-88-2024-0-25-1",
+        "luat-nha-o-2023-100-1-0",
+        "nd-103-2024-66-0-0",
+        "luat-dat-dai-2024-97-0-0",
+        "luat-quy-hoach-2017-45-0-0",
+        "nd-88-2024-0-17-0",
+        "nd-88-2024-0-17-1"
+      ],
+      "gold_recall_at_5": 1.0,
+      "gold_recall_at_8": 1.0,
+      "top5_source_gate": {
+        "luat-dat-dai-2024:luat-dat-dai-2024-104-1-0": "fresh",
+        "nd-88-2024:nd-88-2024-0-25-1": "unknown",
+        "luat-nha-o-2023:luat-nha-o-2023-100-1-0": "unknown",
+        "nd-103-2024:nd-103-2024-66-0-0": "unknown",
+        "luat-dat-dai-2024:luat-dat-dai-2024-97-0-0": "unknown"
+      },
+      "elapsed_ms": 10752
+    },
+    {
+      "id": "N02",
+      "question": "Gia đình bị thu hồi đất nông nghiệp thì hỗ trợ ổn định đời sống phụ thuộc những gì?",
+      "as_of": "2024-08-02",
+      "gold_chunk_ids": [
+        "nd-88-2024-0-19-0"
+      ],
+      "retrieved_chunk_ids": [
+        "nd-88-2024-0-19-0",
+        "luat-dat-dai-2024-107-1-0",
+        "nd-88-2024-0-19-1",
+        "nd-88-2024-0-20-0",
+        "nd-88-2024-0-20-1",
+        "luat-dat-dai-2024-107-1-1",
+        "qd-40-2026-hanoi-9-1-0",
+        "nd-103-2024-10-0-0"
+      ],
+      "gold_recall_at_5": 1.0,
+      "gold_recall_at_8": 1.0,
+      "top5_source_gate": {
+        "nd-88-2024:nd-88-2024-0-19-0": "fresh",
+        "luat-dat-dai-2024:luat-dat-dai-2024-107-1-0": "fresh",
+        "nd-88-2024:nd-88-2024-0-19-1": "fresh",
+        "nd-88-2024:nd-88-2024-0-20-0": "unknown",
+        "nd-88-2024:nd-88-2024-0-20-1": "unknown"
+      },
+      "elapsed_ms": 7268
+    }
+  ],
+  "scope": "Raw-question E5/hybrid top5 over four fixed pilot gold-bearing cases. No history rewrite or agent expansion. Diagnostic only, not full-suite or PostgreSQL/model evaluation; no claim of final pilot pass."
+}

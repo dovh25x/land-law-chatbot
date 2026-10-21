@@ -1,0 +1,692 @@
+{
+  "storage_backend": "isolated_sqlite",
+  "corpus_id": "corpus-1afca764aa6692e0",
+  "corpus_sha256": "7ce7956ae35c7006b5bfd7d10d516fa9e8e47fe2f073e471ceecbb34b412d317",
+  "runtime_fingerprint": "80512d4e04f0d6f9d47423a844c6efbe2f067dec4bd029663f8658e3a68065da",
+  "suite_sha256": {
+    "smoke": "38aa8da29bf41a94b4cf8fd8a5ca6769232b87884aeed573c10f5586a09d7254",
+    "supplemental": "e6bb5c9f7ba3a589237835b68d95e491ff2c16aad83683a8437f4a74e4120fea",
+    "natural": "b068bb4e717439938c96e459a63c9a1832b1990d88005cf6a768d9e9c0871e74"
+  },
+  "eligible_cases": 19,
+  "gold_label_denominator": 21,
+  "gold_hits_at_5": 20,
+  "macro_recall_at_5": 0.9736842105263158,
+  "micro_recall_at_5": 0.9523809523809523,
+  "review_admitted_macro_recall_at_5": 0.9736842105263158,
+  "by_split": {
+    "smoke": {
+      "cases": 10,
+      "macro_recall_at_5": 1.0
+    },
+    "supplemental": {
+      "cases": 3,
+      "macro_recall_at_5": 1.0
+    },
+    "natural": {
+      "cases": 6,
+      "macro_recall_at_5": 0.9166666666666666
+    }
+  },
+  "excluded_cases": [
+    {
+      "id": "S06",
+      "reason": "Excluded before execution by explicit user instruction"
+    },
+    {
+      "id": "S09",
+      "reason": "No positive gold chunk labels; not a recall denominator"
+    },
+    {
+      "id": "S10",
+      "reason": "No positive gold chunk labels; not a recall denominator"
+    },
+    {
+      "id": "S11",
+      "reason": "No positive gold chunk labels; not a recall denominator"
+    },
+    {
+      "id": "S12",
+      "reason": "No positive gold chunk labels; not a recall denominator"
+    },
+    {
+      "id": "S15",
+      "reason": "No positive gold chunk labels; not a recall denominator"
+    },
+    {
+      "id": "S16",
+      "reason": "No positive gold chunk labels; not a recall denominator"
+    },
+    {
+      "id": "S17",
+      "reason": "No positive gold chunk labels; not a recall denominator"
+    },
+    {
+      "id": "S19",
+      "reason": "No positive gold chunk labels; not a recall denominator"
+    },
+    {
+      "id": "S20",
+      "reason": "No positive gold chunk labels; not a recall denominator"
+    },
+    {
+      "id": "X04",
+      "reason": "No positive gold chunk labels; not a recall denominator"
+    },
+    {
+      "id": "N07",
+      "reason": "No positive gold chunk labels; not a recall denominator"
+    },
+    {
+      "id": "N08",
+      "reason": "No positive gold chunk labels; not a recall denominator"
+    }
+  ],
+  "rows": [
+    {
+      "id": "S01",
+      "split": "smoke",
+      "as_of": "2026-10-12",
+      "gold_chunk_ids": [
+        "qd-40-2026-hanoi-0-2-0"
+      ],
+      "top5_chunk_ids": [
+        "qd-40-2026-hanoi-0-2-0",
+        "qd-40-2026-hanoi-2-2-0",
+        "qd-56-2024-hanoi-0-2-0",
+        "qd-56-2024-hanoi-0-0-0",
+        "qd-56-2024-hanoi-0-1-0"
+      ],
+      "gold_hits": 1,
+      "gold_count": 1,
+      "recall_at_5": 1.0,
+      "review_admitted_top5_chunk_ids": [
+        "qd-40-2026-hanoi-0-2-0"
+      ],
+      "review_admitted_recall_at_5": 1.0,
+      "source_review_states": {
+        "qd-40-2026-hanoi:qd-40-2026-hanoi-0-2-0": "fresh",
+        "qd-40-2026-hanoi:qd-40-2026-hanoi-2-2-0": "unknown",
+        "qd-56-2024-hanoi:qd-56-2024-hanoi-0-2-0": "unknown",
+        "qd-56-2024-hanoi:qd-56-2024-hanoi-0-0-0": "unknown",
+        "qd-56-2024-hanoi:qd-56-2024-hanoi-0-1-0": "unknown"
+      },
+      "elapsed_ms": 7838
+    },
+    {
+      "id": "S02",
+      "split": "smoke",
+      "as_of": "2026-03-01",
+      "gold_chunk_ids": [
+        "qd-40-2026-hanoi-0-2-0"
+      ],
+      "top5_chunk_ids": [
+        "qd-40-2026-hanoi-0-2-0",
+        "qd-40-2026-hanoi-10-0-0",
+        "qd-40-2026-hanoi-0-0-0",
+        "qd-40-2026-hanoi-0-1-0",
+        "qd-40-2026-hanoi-9-1-1"
+      ],
+      "gold_hits": 1,
+      "gold_count": 1,
+      "recall_at_5": 1.0,
+      "review_admitted_top5_chunk_ids": [
+        "qd-40-2026-hanoi-0-2-0"
+      ],
+      "review_admitted_recall_at_5": 1.0,
+      "source_review_states": {
+        "qd-40-2026-hanoi:qd-40-2026-hanoi-0-2-0": "fresh",
+        "qd-40-2026-hanoi:qd-40-2026-hanoi-10-0-0": "unknown",
+        "qd-40-2026-hanoi:qd-40-2026-hanoi-0-0-0": "unknown",
+        "qd-40-2026-hanoi:qd-40-2026-hanoi-0-1-0": "unknown",
+        "qd-40-2026-hanoi:qd-40-2026-hanoi-9-1-1": "unknown"
+      },
+      "elapsed_ms": 5110
+    },
+    {
+      "id": "S03",
+      "split": "smoke",
+      "as_of": "2026-01-20",
+      "gold_chunk_ids": [
+        "qd-10-2026-hanoi-4-1-0"
+      ],
+      "top5_chunk_ids": [
+        "qd-10-2026-hanoi-4-1-0",
+        "qd-10-2026-hanoi-4-2-0",
+        "qd-10-2026-hanoi-0-0-0",
+        "qd-10-2026-hanoi-1-0-0",
+        "qd-10-2026-hanoi-0-1-0"
+      ],
+      "gold_hits": 1,
+      "gold_count": 1,
+      "recall_at_5": 1.0,
+      "review_admitted_top5_chunk_ids": [
+        "qd-10-2026-hanoi-4-1-0",
+        "qd-10-2026-hanoi-4-2-0"
+      ],
+      "review_admitted_recall_at_5": 1.0,
+      "source_review_states": {
+        "qd-10-2026-hanoi:qd-10-2026-hanoi-4-1-0": "fresh",
+        "qd-10-2026-hanoi:qd-10-2026-hanoi-4-2-0": "fresh",
+        "qd-10-2026-hanoi:qd-10-2026-hanoi-0-0-0": "unknown",
+        "qd-10-2026-hanoi:qd-10-2026-hanoi-1-0-0": "unknown",
+        "qd-10-2026-hanoi:qd-10-2026-hanoi-0-1-0": "unknown"
+      },
+      "elapsed_ms": 4915
+    },
+    {
+      "id": "S04",
+      "split": "smoke",
+      "as_of": "2024-08-02",
+      "gold_chunk_ids": [
+        "nd-88-2024-0-31-0"
+      ],
+      "top5_chunk_ids": [
+        "nd-88-2024-0-31-0",
+        "nd-88-2024-0-31-1",
+        "nd-88-2024-0-30-0",
+        "nd-88-2024-0-3-3",
+        "nd-88-2024-0-10-0"
+      ],
+      "gold_hits": 1,
+      "gold_count": 1,
+      "recall_at_5": 1.0,
+      "review_admitted_top5_chunk_ids": [
+        "nd-88-2024-0-31-0",
+        "nd-88-2024-0-31-1",
+        "nd-88-2024-0-30-0"
+      ],
+      "review_admitted_recall_at_5": 1.0,
+      "source_review_states": {
+        "nd-88-2024:nd-88-2024-0-31-0": "fresh",
+        "nd-88-2024:nd-88-2024-0-31-1": "fresh",
+        "nd-88-2024:nd-88-2024-0-30-0": "fresh",
+        "nd-88-2024:nd-88-2024-0-3-3": "unknown",
+        "nd-88-2024:nd-88-2024-0-10-0": "unknown"
+      },
+      "elapsed_ms": 7266
+    },
+    {
+      "id": "S05",
+      "split": "smoke",
+      "as_of": "2025-07-02",
+      "gold_chunk_ids": [
+        "nd-151-2025-2-2-0"
+      ],
+      "top5_chunk_ids": [
+        "nd-151-2025-2-2-0",
+        "nd-151-2025-3-0-0",
+        "nd-151-2025-4-0-0",
+        "nd-151-2025-5-0-0",
+        "nd-151-2025-4-0-1"
+      ],
+      "gold_hits": 1,
+      "gold_count": 1,
+      "recall_at_5": 1.0,
+      "review_admitted_top5_chunk_ids": [
+        "nd-151-2025-2-2-0",
+        "nd-151-2025-3-0-0",
+        "nd-151-2025-4-0-0",
+        "nd-151-2025-5-0-0",
+        "nd-151-2025-4-0-1"
+      ],
+      "review_admitted_recall_at_5": 1.0,
+      "source_review_states": {
+        "nd-151-2025:nd-151-2025-2-2-0": "fresh",
+        "nd-151-2025:nd-151-2025-3-0-0": "fresh",
+        "nd-151-2025:nd-151-2025-4-0-0": "fresh",
+        "nd-151-2025:nd-151-2025-5-0-0": "fresh",
+        "nd-151-2025:nd-151-2025-4-0-1": "fresh"
+      },
+      "elapsed_ms": 8124
+    },
+    {
+      "id": "S07",
+      "split": "smoke",
+      "as_of": "2024-08-02",
+      "gold_chunk_ids": [
+        "luat-dat-dai-2024-104-1-0"
+      ],
+      "top5_chunk_ids": [
+        "luat-dat-dai-2024-104-1-0",
+        "luat-dat-dai-2024-244-1-0",
+        "luat-dat-dai-2024-245-0-0",
+        "luat-dat-dai-2024-214-1-1",
+        "luat-dat-dai-2024-239-1-0"
+      ],
+      "gold_hits": 1,
+      "gold_count": 1,
+      "recall_at_5": 1.0,
+      "review_admitted_top5_chunk_ids": [
+        "luat-dat-dai-2024-104-1-0"
+      ],
+      "review_admitted_recall_at_5": 1.0,
+      "source_review_states": {
+        "luat-dat-dai-2024:luat-dat-dai-2024-104-1-0": "fresh",
+        "luat-dat-dai-2024:luat-dat-dai-2024-244-1-0": "unknown",
+        "luat-dat-dai-2024:luat-dat-dai-2024-245-0-0": "unknown",
+        "luat-dat-dai-2024:luat-dat-dai-2024-214-1-1": "unknown",
+        "luat-dat-dai-2024:luat-dat-dai-2024-239-1-0": "unknown"
+      },
+      "elapsed_ms": 7881
+    },
+    {
+      "id": "S08",
+      "split": "smoke",
+      "as_of": "2024-08-02",
+      "gold_chunk_ids": [
+        "luat-dat-dai-2024-106-1-0"
+      ],
+      "top5_chunk_ids": [
+        "luat-dat-dai-2024-106-1-0",
+        "luat-dat-dai-2024-93-1-0",
+        "luat-dat-dai-2024-94-0-0",
+        "luat-dat-dai-2024-107-1-0",
+        "luat-dat-dai-2024-107-1-1"
+      ],
+      "gold_hits": 1,
+      "gold_count": 1,
+      "recall_at_5": 1.0,
+      "review_admitted_top5_chunk_ids": [
+        "luat-dat-dai-2024-106-1-0",
+        "luat-dat-dai-2024-93-1-0",
+        "luat-dat-dai-2024-94-0-0",
+        "luat-dat-dai-2024-107-1-0",
+        "luat-dat-dai-2024-107-1-1"
+      ],
+      "review_admitted_recall_at_5": 1.0,
+      "source_review_states": {
+        "luat-dat-dai-2024:luat-dat-dai-2024-106-1-0": "fresh",
+        "luat-dat-dai-2024:luat-dat-dai-2024-93-1-0": "fresh",
+        "luat-dat-dai-2024:luat-dat-dai-2024-94-0-0": "fresh",
+        "luat-dat-dai-2024:luat-dat-dai-2024-107-1-0": "fresh",
+        "luat-dat-dai-2024:luat-dat-dai-2024-107-1-1": "fresh"
+      },
+      "elapsed_ms": 7985
+    },
+    {
+      "id": "S13",
+      "split": "smoke",
+      "as_of": "2026-10-12",
+      "gold_chunk_ids": [
+        "qd-40-2026-hanoi-0-2-0"
+      ],
+      "top5_chunk_ids": [
+        "qd-40-2026-hanoi-0-2-0",
+        "qd-40-2026-hanoi-2-2-0",
+        "qd-56-2024-hanoi-0-0-0",
+        "qd-56-2024-hanoi-0-2-0",
+        "qd-56-2024-hanoi-0-1-0"
+      ],
+      "gold_hits": 1,
+      "gold_count": 1,
+      "recall_at_5": 1.0,
+      "review_admitted_top5_chunk_ids": [
+        "qd-40-2026-hanoi-0-2-0"
+      ],
+      "review_admitted_recall_at_5": 1.0,
+      "source_review_states": {
+        "qd-40-2026-hanoi:qd-40-2026-hanoi-0-2-0": "fresh",
+        "qd-40-2026-hanoi:qd-40-2026-hanoi-2-2-0": "unknown",
+        "qd-56-2024-hanoi:qd-56-2024-hanoi-0-0-0": "unknown",
+        "qd-56-2024-hanoi:qd-56-2024-hanoi-0-2-0": "unknown",
+        "qd-56-2024-hanoi:qd-56-2024-hanoi-0-1-0": "unknown"
+      },
+      "elapsed_ms": 7780
+    },
+    {
+      "id": "S14",
+      "split": "smoke",
+      "as_of": "2026-10-12",
+      "gold_chunk_ids": [
+        "qd-40-2026-hanoi-0-2-0"
+      ],
+      "top5_chunk_ids": [
+        "qd-40-2026-hanoi-0-2-0",
+        "nd-124-2020-43-0-0",
+        "nd-124-2020-42-0-0",
+        "nd-226-2025-33-0-0",
+        "luat-84-2025-39-0-0"
+      ],
+      "gold_hits": 1,
+      "gold_count": 1,
+      "recall_at_5": 1.0,
+      "review_admitted_top5_chunk_ids": [
+        "qd-40-2026-hanoi-0-2-0"
+      ],
+      "review_admitted_recall_at_5": 1.0,
+      "source_review_states": {
+        "qd-40-2026-hanoi:qd-40-2026-hanoi-0-2-0": "fresh",
+        "nd-124-2020:nd-124-2020-43-0-0": "unknown",
+        "nd-124-2020:nd-124-2020-42-0-0": "unknown",
+        "nd-226-2025:nd-226-2025-33-0-0": "unknown",
+        "luat-84-2025:luat-84-2025-39-0-0": "unknown"
+      },
+      "elapsed_ms": 7571
+    },
+    {
+      "id": "S18",
+      "split": "smoke",
+      "as_of": "2026-10-12",
+      "gold_chunk_ids": [
+        "qd-40-2026-hanoi-0-2-0"
+      ],
+      "top5_chunk_ids": [
+        "qd-40-2026-hanoi-0-2-0",
+        "qd-40-2026-hanoi-2-2-0",
+        "qd-40-2026-hanoi-10-0-0",
+        "qd-40-2026-hanoi-13-1-0",
+        "qd-40-2026-hanoi-0-0-0"
+      ],
+      "gold_hits": 1,
+      "gold_count": 1,
+      "recall_at_5": 1.0,
+      "review_admitted_top5_chunk_ids": [
+        "qd-40-2026-hanoi-0-2-0"
+      ],
+      "review_admitted_recall_at_5": 1.0,
+      "source_review_states": {
+        "qd-40-2026-hanoi:qd-40-2026-hanoi-0-2-0": "fresh",
+        "qd-40-2026-hanoi:qd-40-2026-hanoi-2-2-0": "unknown",
+        "qd-40-2026-hanoi:qd-40-2026-hanoi-10-0-0": "unknown",
+        "qd-40-2026-hanoi:qd-40-2026-hanoi-13-1-0": "unknown",
+        "qd-40-2026-hanoi:qd-40-2026-hanoi-0-0-0": "unknown"
+      },
+      "elapsed_ms": 6971
+    },
+    {
+      "id": "X01",
+      "split": "supplemental",
+      "as_of": "2024-08-02",
+      "gold_chunk_ids": [
+        "luat-dat-dai-2024-104-1-0"
+      ],
+      "top5_chunk_ids": [
+        "luat-dat-dai-2024-104-1-0",
+        "nd-88-2024-0-25-1",
+        "luat-nha-o-2023-100-1-0",
+        "nd-103-2024-66-0-0",
+        "luat-dat-dai-2024-97-0-0"
+      ],
+      "gold_hits": 1,
+      "gold_count": 1,
+      "recall_at_5": 1.0,
+      "review_admitted_top5_chunk_ids": [
+        "luat-dat-dai-2024-104-1-0"
+      ],
+      "review_admitted_recall_at_5": 1.0,
+      "source_review_states": {
+        "luat-dat-dai-2024:luat-dat-dai-2024-104-1-0": "fresh",
+        "nd-88-2024:nd-88-2024-0-25-1": "unknown",
+        "luat-nha-o-2023:luat-nha-o-2023-100-1-0": "unknown",
+        "nd-103-2024:nd-103-2024-66-0-0": "unknown",
+        "luat-dat-dai-2024:luat-dat-dai-2024-97-0-0": "unknown"
+      },
+      "elapsed_ms": 6292
+    },
+    {
+      "id": "X02",
+      "split": "supplemental",
+      "as_of": "2024-08-02",
+      "gold_chunk_ids": [
+        "luat-dat-dai-2024-106-1-0"
+      ],
+      "top5_chunk_ids": [
+        "luat-dat-dai-2024-107-1-0",
+        "luat-dat-dai-2024-106-1-0",
+        "luat-dat-dai-2024-107-1-1",
+        "nd-88-2024-0-19-0",
+        "nd-88-2024-0-19-1"
+      ],
+      "gold_hits": 1,
+      "gold_count": 1,
+      "recall_at_5": 1.0,
+      "review_admitted_top5_chunk_ids": [
+        "luat-dat-dai-2024-107-1-0",
+        "luat-dat-dai-2024-106-1-0",
+        "luat-dat-dai-2024-107-1-1",
+        "nd-88-2024-0-19-0",
+        "nd-88-2024-0-19-1"
+      ],
+      "review_admitted_recall_at_5": 1.0,
+      "source_review_states": {
+        "luat-dat-dai-2024:luat-dat-dai-2024-107-1-0": "fresh",
+        "luat-dat-dai-2024:luat-dat-dai-2024-106-1-0": "fresh",
+        "luat-dat-dai-2024:luat-dat-dai-2024-107-1-1": "fresh",
+        "nd-88-2024:nd-88-2024-0-19-0": "fresh",
+        "nd-88-2024:nd-88-2024-0-19-1": "fresh"
+      },
+      "elapsed_ms": 6207
+    },
+    {
+      "id": "X03",
+      "split": "supplemental",
+      "as_of": "2024-08-02",
+      "gold_chunk_ids": [
+        "luat-dat-dai-2024-98-0-1",
+        "luat-dat-dai-2024-99-0-0"
+      ],
+      "top5_chunk_ids": [
+        "luat-dat-dai-2024-98-0-1",
+        "luat-dat-dai-2024-99-0-0",
+        "luat-dat-dai-2024-97-1-0",
+        "luat-dat-dai-2024-98-0-0",
+        "luat-dat-dai-2024-102-1-0"
+      ],
+      "gold_hits": 2,
+      "gold_count": 2,
+      "recall_at_5": 1.0,
+      "review_admitted_top5_chunk_ids": [
+        "luat-dat-dai-2024-98-0-1",
+        "luat-dat-dai-2024-99-0-0",
+        "luat-dat-dai-2024-97-1-0",
+        "luat-dat-dai-2024-98-0-0"
+      ],
+      "review_admitted_recall_at_5": 1.0,
+      "source_review_states": {
+        "luat-dat-dai-2024:luat-dat-dai-2024-98-0-1": "fresh",
+        "luat-dat-dai-2024:luat-dat-dai-2024-99-0-0": "fresh",
+        "luat-dat-dai-2024:luat-dat-dai-2024-97-1-0": "fresh",
+        "luat-dat-dai-2024:luat-dat-dai-2024-98-0-0": "fresh",
+        "luat-dat-dai-2024:luat-dat-dai-2024-102-1-0": "unknown"
+      },
+      "elapsed_ms": 6844
+    },
+    {
+      "id": "N01",
+      "split": "natural",
+      "as_of": "2024-08-02",
+      "gold_chunk_ids": [
+        "luat-dat-dai-2024-104-1-0"
+      ],
+      "top5_chunk_ids": [
+        "luat-dat-dai-2024-104-1-0",
+        "nd-88-2024-0-31-0",
+        "luat-dat-dai-2024-93-1-0",
+        "luat-dat-dai-2024-103-1-0",
+        "luat-dat-dai-2024-102-2-0"
+      ],
+      "gold_hits": 1,
+      "gold_count": 1,
+      "recall_at_5": 1.0,
+      "review_admitted_top5_chunk_ids": [
+        "luat-dat-dai-2024-104-1-0",
+        "nd-88-2024-0-31-0",
+        "luat-dat-dai-2024-93-1-0"
+      ],
+      "review_admitted_recall_at_5": 1.0,
+      "source_review_states": {
+        "luat-dat-dai-2024:luat-dat-dai-2024-104-1-0": "fresh",
+        "nd-88-2024:nd-88-2024-0-31-0": "fresh",
+        "luat-dat-dai-2024:luat-dat-dai-2024-93-1-0": "fresh",
+        "luat-dat-dai-2024:luat-dat-dai-2024-103-1-0": "unknown",
+        "luat-dat-dai-2024:luat-dat-dai-2024-102-2-0": "unknown"
+      },
+      "elapsed_ms": 6223
+    },
+    {
+      "id": "N02",
+      "split": "natural",
+      "as_of": "2024-08-02",
+      "gold_chunk_ids": [
+        "nd-88-2024-0-19-0"
+      ],
+      "top5_chunk_ids": [
+        "nd-88-2024-0-19-0",
+        "luat-dat-dai-2024-107-1-0",
+        "nd-88-2024-0-19-1",
+        "luat-dat-dai-2024-107-1-1",
+        "nd-88-2024-0-20-0"
+      ],
+      "gold_hits": 1,
+      "gold_count": 1,
+      "recall_at_5": 1.0,
+      "review_admitted_top5_chunk_ids": [
+        "nd-88-2024-0-19-0",
+        "luat-dat-dai-2024-107-1-0",
+        "nd-88-2024-0-19-1",
+        "luat-dat-dai-2024-107-1-1"
+      ],
+      "review_admitted_recall_at_5": 1.0,
+      "source_review_states": {
+        "nd-88-2024:nd-88-2024-0-19-0": "fresh",
+        "luat-dat-dai-2024:luat-dat-dai-2024-107-1-0": "fresh",
+        "nd-88-2024:nd-88-2024-0-19-1": "fresh",
+        "luat-dat-dai-2024:luat-dat-dai-2024-107-1-1": "fresh",
+        "nd-88-2024:nd-88-2024-0-20-0": "unknown"
+      },
+      "elapsed_ms": 6180
+    },
+    {
+      "id": "N03",
+      "split": "natural",
+      "as_of": "2024-08-02",
+      "gold_chunk_ids": [
+        "luat-dat-dai-2024-107-1-0",
+        "luat-dat-dai-2024-107-1-parent"
+      ],
+      "top5_chunk_ids": [
+        "luat-dat-dai-2024-107-1-1",
+        "luat-dat-dai-2024-107-1-0",
+        "nd-88-2024-0-19-0",
+        "luat-dat-dai-2024-108-0-0",
+        "nd-88-2024-0-19-1"
+      ],
+      "gold_hits": 1,
+      "gold_count": 2,
+      "recall_at_5": 0.5,
+      "review_admitted_top5_chunk_ids": [
+        "luat-dat-dai-2024-107-1-1",
+        "luat-dat-dai-2024-107-1-0",
+        "nd-88-2024-0-19-0",
+        "luat-dat-dai-2024-108-0-0",
+        "nd-88-2024-0-19-1"
+      ],
+      "review_admitted_recall_at_5": 0.5,
+      "source_review_states": {
+        "luat-dat-dai-2024:luat-dat-dai-2024-107-1-1": "fresh",
+        "luat-dat-dai-2024:luat-dat-dai-2024-107-1-0": "fresh",
+        "nd-88-2024:nd-88-2024-0-19-0": "fresh",
+        "luat-dat-dai-2024:luat-dat-dai-2024-108-0-0": "fresh",
+        "nd-88-2024:nd-88-2024-0-19-1": "fresh"
+      },
+      "elapsed_ms": 5865
+    },
+    {
+      "id": "N04",
+      "split": "natural",
+      "as_of": "2024-08-02",
+      "gold_chunk_ids": [
+        "luat-dat-dai-2024-94-0-0"
+      ],
+      "top5_chunk_ids": [
+        "luat-dat-dai-2024-93-1-0",
+        "luat-dat-dai-2024-94-0-0",
+        "nd-88-2024-0-31-1",
+        "nd-88-2024-0-31-0",
+        "luat-dat-dai-2024-109-1-0"
+      ],
+      "gold_hits": 1,
+      "gold_count": 1,
+      "recall_at_5": 1.0,
+      "review_admitted_top5_chunk_ids": [
+        "luat-dat-dai-2024-93-1-0",
+        "luat-dat-dai-2024-94-0-0",
+        "nd-88-2024-0-31-1",
+        "nd-88-2024-0-31-0"
+      ],
+      "review_admitted_recall_at_5": 1.0,
+      "source_review_states": {
+        "luat-dat-dai-2024:luat-dat-dai-2024-93-1-0": "fresh",
+        "luat-dat-dai-2024:luat-dat-dai-2024-94-0-0": "fresh",
+        "nd-88-2024:nd-88-2024-0-31-1": "fresh",
+        "nd-88-2024:nd-88-2024-0-31-0": "fresh",
+        "luat-dat-dai-2024:luat-dat-dai-2024-109-1-0": "unknown"
+      },
+      "elapsed_ms": 5993
+    },
+    {
+      "id": "N05",
+      "split": "natural",
+      "as_of": "2024-08-02",
+      "gold_chunk_ids": [
+        "luat-dat-dai-2024-104-1-0"
+      ],
+      "top5_chunk_ids": [
+        "luat-dat-dai-2024-104-1-0",
+        "nd-88-2024-0-31-0",
+        "nd-88-2024-0-25-1",
+        "luat-dat-dai-2024-96-0-1",
+        "nd-88-2024-0-27-2"
+      ],
+      "gold_hits": 1,
+      "gold_count": 1,
+      "recall_at_5": 1.0,
+      "review_admitted_top5_chunk_ids": [
+        "luat-dat-dai-2024-104-1-0",
+        "nd-88-2024-0-31-0"
+      ],
+      "review_admitted_recall_at_5": 1.0,
+      "source_review_states": {
+        "luat-dat-dai-2024:luat-dat-dai-2024-104-1-0": "fresh",
+        "nd-88-2024:nd-88-2024-0-31-0": "fresh",
+        "nd-88-2024:nd-88-2024-0-25-1": "unknown",
+        "luat-dat-dai-2024:luat-dat-dai-2024-96-0-1": "unknown",
+        "nd-88-2024:nd-88-2024-0-27-2": "unknown"
+      },
+      "elapsed_ms": 6462
+    },
+    {
+      "id": "N06",
+      "split": "natural",
+      "as_of": "2026-10-17",
+      "gold_chunk_ids": [
+        "qd-40-2026-hanoi-0-2-0"
+      ],
+      "top5_chunk_ids": [
+        "qd-40-2026-hanoi-0-2-0",
+        "qd-40-2026-hanoi-2-2-0",
+        "qd-10-2026-hanoi-0-0-0",
+        "qd-56-2024-hanoi-0-2-0",
+        "qd-71-2024-hanoi-0-0-0"
+      ],
+      "gold_hits": 1,
+      "gold_count": 1,
+      "recall_at_5": 1.0,
+      "review_admitted_top5_chunk_ids": [
+        "qd-40-2026-hanoi-0-2-0"
+      ],
+      "review_admitted_recall_at_5": 1.0,
+      "source_review_states": {
+        "qd-40-2026-hanoi:qd-40-2026-hanoi-0-2-0": "fresh",
+        "qd-40-2026-hanoi:qd-40-2026-hanoi-2-2-0": "unknown",
+        "qd-10-2026-hanoi:qd-10-2026-hanoi-0-0-0": "unknown",
+        "qd-56-2024-hanoi:qd-56-2024-hanoi-0-2-0": "unknown",
+        "qd-71-2024-hanoi:qd-71-2024-hanoi-0-0-0": "unknown"
+      },
+      "elapsed_ms": 6204
+    }
+  ],
+  "external_llm_requests": 0,
+  "scope": "Raw-question E5/hybrid search including existing replacement candidates. No question rewriting, generation, judge or agent tool expansion. Exact frozen chunk-ID recall; related parent/child IDs do not count as the labelled chunk. Reviewed admission is a separate diagnostic over the same original top5, without refilling. Dates are each case date; this is not current-law answer accuracy or PostgreSQL performance."
+}

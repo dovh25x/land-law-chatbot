@@ -186,24 +186,148 @@ class Store:
             raise RateLimited(86400, source='public_token_threshold')
         self.consume([(f'public:llm:{now.date()}', self.settings.public_daily_llm_limit, 86400)])
 
-    def source_fresh(self, release, document_ids=None):
+    def source_review_states(self, release, document_ids=None):
+        """Review freshness is independent of legal effectivity at the question date.
+
+        Only an otherwise reviewed snapshot can become stale. Changed receipts
+        remain adverse until superseded for this checksum; unavailable, missing
+        or invalid metadata is unknown, never a stale-snapshot permission.
+        """
         from datetime import datetime
-        cutoff=utcnow()-timedelta(days=7)
-        docs=release.get('documents', [])
-        if document_ids is not None:
-            docs=[d for d in docs if d['id'] in document_ids]
-        if not docs:
-            return False
-        for doc in docs:
-            stamp=min(filter(None,[doc.get('checked_at'),release.get('checked_at')]),default=None)
-            reviews=self.rows("SELECT checked_at,status FROM source_reviews WHERE release_id=? AND document_id=? AND checksum=? ORDER BY checked_at DESC LIMIT 1", (release['id'],doc['id'],doc['checksum']))
+        now = utcnow()
+        docs = {d['id']: d for d in release.get('documents', [])}
+        selected = docs.keys() if document_ids is None else sorted(document_ids)
+        states = {}
+        def checked_time(value):
+            try:
+                stamp = datetime.fromisoformat(value.replace('Z', '+00:00'))
+                return stamp if stamp.tzinfo is not None and stamp <= now else None
+            except (ValueError, AttributeError, TypeError):
+                return None
+        for ident in selected:
+            states[ident] = 'unknown'
+            doc = docs.get(ident)
+            if not doc or not doc.get('checksum') or not release.get('id'):
+                continue
+            reviews=self.rows("SELECT checked_at,status,receipt FROM source_reviews WHERE release_id=? AND document_id=? AND checksum=? ORDER BY checked_at DESC LIMIT 1", (release['id'],doc['id'],doc['checksum']))
             if reviews:
-                if reviews[0]['status']!='unchanged':
-                    return False
-                stamp=reviews[0]['checked_at']
-            if not stamp or datetime.fromisoformat(stamp.replace('Z','+00:00')) < cutoff:
-                return False
-        return True
+                status = reviews[0]['status']
+                if status == 'changed':
+                    states[ident] = 'changed'
+                    continue
+                if status != 'unchanged':
+                    continue
+                try:
+                    scoped = 'verified_scope' in json.loads(reviews[0]['receipt'])
+                except (ValueError, TypeError):
+                    continue
+                if scoped:
+                    # Reviewing selected passages never certifies the whole act.
+                    states[ident] = 'stale'
+                    continue
+                stamp = checked_time(reviews[0]['checked_at'])
+            else:
+                times = [checked_time(doc.get('checked_at')), checked_time(release.get('checked_at'))]
+                stamp = min(times) if all(times) else None
+            if stamp is not None:
+                states[ident] = 'fresh' if stamp >= now-timedelta(days=7) else 'stale'
+        return states
+
+    def source_fresh(self, release, document_ids=None):
+        states = self.source_review_states(release, document_ids)
+        return bool(states) and all(status == 'fresh' for status in states.values())
+
+    def source_gate(self, release_id):
+        value = self.state(f'source_gate:{release_id}')
+        if value is None:
+            return None
+        try:
+            policy = json.loads(value)
+            valid = (isinstance(policy, dict) and policy.get('version') == 1
+                     and policy.get('release_id') == release_id
+                     and isinstance(policy.get('receipts'), dict) and bool(policy['receipts'])
+                     and all(isinstance(key, str) and isinstance(ident, str)
+                             and re.fullmatch(r'[0-9a-f]{64}', ident)
+                             for key, ident in policy['receipts'].items()))
+            return policy if valid else {'invalid': True}
+        except (ValueError, TypeError):
+            return {'invalid': True}
+
+    def scoped_source_reviews(self, release, passages, as_of):
+        """Strict candidate gate: pinned recent receipts, exact chunks and dates.
+
+        Missing receipts after a corpus-only restore fail closed. Snapshot
+        permission never overrides this gate, including historical questions.
+        """
+        from datetime import date, datetime
+        import hashlib
+        policy = self.source_gate((release or {}).get('id')) or {}
+        docs = {d['id']: d for d in (release or {}).get('documents', [])}
+        states = {}
+        review_cache = {}
+        for doc_id, chunk_id, checksum in passages:
+            key = f'{doc_id}:{chunk_id}'
+            states[key] = 'unknown'
+            doc = docs.get(doc_id)
+            if policy.get('version') != 1 or not doc:
+                continue
+            if doc_id not in review_cache:
+                review_cache[doc_id] = self.rows('SELECT id,status,checked_at,receipt FROM source_reviews WHERE release_id=? '
+                    'AND document_id=? AND checksum=? ORDER BY checked_at DESC LIMIT 1',
+                    (release['id'], doc_id, doc['checksum']))
+            rows = review_cache[doc_id]
+            if not rows:
+                continue
+            row = rows[0]
+            if row['status'] == 'changed':
+                states[key] = 'changed'
+                continue
+            if row['status'] != 'unchanged' or row['id'] != policy.get('receipts', {}).get(doc_id):
+                continue
+            try:
+                receipt = json.loads(row['receipt'])
+                canonical = json.dumps(receipt, ensure_ascii=False, sort_keys=True)
+                if hashlib.sha256(canonical.encode()).hexdigest() != row['id']:
+                    continue
+                stamp = datetime.fromisoformat(row['checked_at'].replace('Z', '+00:00'))
+                if stamp.tzinfo is None or stamp > utcnow():
+                    continue
+                if stamp < utcnow()-timedelta(days=7):
+                    states[key] = 'stale'
+                    continue
+                for scope in receipt.get('verified_scope', []):
+                    if (scope['chunk_checksums'].get(chunk_id) == checksum
+                            and date.fromisoformat(scope['as_of_from']) <= as_of
+                            and as_of < date.fromisoformat(scope['as_of_to'])):
+                        states[key] = 'fresh'
+                        break
+            except (ValueError, TypeError, KeyError, AttributeError):
+                continue
+        return states
+
+    def source_gate_status(self, release):
+        from datetime import date
+        import hashlib
+        policy = self.source_gate((release or {}).get('id'))
+        if policy is None:
+            return None
+        approved = set()
+        for doc_id, ident in (policy.get('receipts') or {}).items():
+            rows = self.rows('SELECT receipt FROM source_reviews WHERE id=? AND release_id=?',
+                             (ident, (release or {}).get('id')))
+            if not rows:
+                continue
+            try:
+                for scope in json.loads(rows[0]['receipt']).get('verified_scope', []):
+                    passages = [(doc_id, cid, checksum) for cid, checksum in scope['chunk_checksums'].items()]
+                    states = self.scoped_source_reviews(release, passages, date.fromisoformat(scope['as_of_from']))
+                    approved.update(key for key, status in states.items() if status == 'fresh')
+            except (ValueError, TypeError, KeyError, AttributeError):
+                continue
+        return {'mode': 'scoped_receipts',
+                'policy_sha256': hashlib.sha256(json.dumps(policy, ensure_ascii=False, sort_keys=True).encode()).hexdigest(),
+                'eligible_passages': len(approved), 'usable': bool(approved),
+                'whole_corpus_verified': False}
 
     def consume(self, limits: list[tuple[str, int, int]]):
         return self.consume_weighted([(key,limit,window,1) for key,limit,window in limits])
@@ -597,13 +721,20 @@ class Store:
             if as_of and doc.id not in exact_docs and not temporal:
                 if (doc.effective_to and as_of>=doc.effective_to) or (doc.effective_from and as_of<doc.effective_from):
                     scores[chunk_id] *= .35
+        reviewed = {}
+        if as_of and self.source_gate(release_id) is not None:
+            # Reuse the active legal review, without changing candidate generation
+            # or admission rules. Stale hits must not crowd out reviewed evidence.
+            reviewed = self.scoped_source_reviews(self.release(release_id, True),
+                [(r['document_id'], r['id'], r['checksum']) for r in rows_by_id.values()], as_of)
         return [Evidence(chunk=self._chunk(rows_by_id[i]), document=docs[rows_by_id[i]["document_id"]], score=scores[i])
-                for i in sorted(scores, key=lambda i: (-scores[i], i))[:8]]
+                for i in sorted(scores, key=lambda i: (
+                    reviewed.get(rows_by_id[i]['document_id']+':'+i) != 'fresh', -scores[i], i))[:8]]
 
     def backup(self, target: Path, include_sessions=False):
         # Only corpus/config; deliberately exclude session tokens and personal messages.
         payload = {"format": 1, "releases": self.rows("SELECT * FROM releases"),
-                   "state": self.rows("SELECT * FROM app_state WHERE key IN ('active_release','previous_release') OR key LIKE 'publication:%'")}
+                   "state": self.rows("SELECT * FROM app_state WHERE key IN ('active_release','previous_release') OR key LIKE 'publication:%' OR key LIKE 'source_gate:%'")}
         if include_sessions:
             raise ValueError('Conversation backups are disabled; browser-owned history only')
         content = json.dumps(payload, ensure_ascii=False).encode()

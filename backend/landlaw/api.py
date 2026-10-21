@@ -8,7 +8,7 @@ import hashlib
 import hmac
 import sys
 import httpx
-from datetime import datetime, timedelta
+from datetime import date, datetime, timedelta
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, HTTPException, Query, Request
@@ -111,6 +111,53 @@ def create_app(settings: Settings | None = None, store: Store | None = None, pro
         except RateLimited as exc:
             raise HTTPException(429, "Đã đạt giới hạn lượt dùng", headers={"Retry-After": str(exc.retry_after)})
 
+    def reviewed_documents(as_of, document_id=None, locator=None):
+        """Expose exact reviewed excerpts, never load the whole embedded corpus.
+
+        Receipt IDs only nominate candidates. The existing scoped gate still
+        checks latest review, pinned receipt, checksum, freshness and date.
+        """
+        repo = state['store']
+        release = repo.release(None, True)
+        policy = repo.source_gate((release or {}).get('id')) or {}
+        if policy.get('version') != 1:
+            return []
+        passages = {}
+        try:
+            for ident, receipt_id in policy['receipts'].items():
+                if document_id and ident != document_id:
+                    continue
+                rows = repo.rows('SELECT receipt FROM source_reviews WHERE id=? AND release_id=? AND document_id=?',
+                                 (receipt_id, release['id'], ident))
+                for row in rows:
+                    for scope in json.loads(row['receipt']).get('verified_scope', []):
+                        if date.fromisoformat(scope['as_of_from']) <= as_of < date.fromisoformat(scope['as_of_to']):
+                            for cid, checksum in scope['chunk_checksums'].items():
+                                passages[(ident, cid, checksum)] = None
+                                if len(passages) > 256:
+                                    return []  # Bounded public read; malformed/oversized policy fails closed.
+        except (ValueError, TypeError, KeyError, AttributeError):
+            return []
+        reviews = repo.scoped_source_reviews(release, list(passages), as_of)
+        grouped = {}
+        for ident, cid, checksum in passages:
+            if reviews.get(ident+':'+cid) != 'fresh':
+                continue
+            chunk = repo.chunk(cid, release['id'])
+            if (not chunk or chunk.document_id != ident or chunk.checksum != checksum
+                    or digest(chunk.text) != checksum or (locator and chunk.locator != locator)):
+                continue
+            grouped.setdefault(ident, []).append(chunk.model_dump(mode='json'))
+        result = []
+        for doc in (release or {}).get('documents', []):
+            if doc['id'] not in grouped:
+                continue
+            result.append({**doc, 'chunks': grouped[doc['id']], 'applicability_verified': False,
+                'source_review_notes': 'Chỉ các đoạn hiển thị được review trong phạm vi ngày đã chọn; không xác minh toàn văn hoặc quyền lợi cá nhân.',
+                'source_lookup_only': True, 'review_as_of': str(as_of),
+                'verified_passage_count': len(grouped[doc['id']]), 'whole_document_verified': False})
+        return result
+
     @app.get("/healthz")
     async def health():
         return {"status": "ok", "version": "0.1.0"}
@@ -123,12 +170,16 @@ def create_app(settings: Settings | None = None, store: Store | None = None, pro
         except Exception:
             return JSONResponse({"status": "not_ready", "database": False, "reason": "database_unavailable"}, status_code=503)
         configured = state["provider"].configured
-        data = {"status": "ready" if configured and release else "not_ready", "database": True,
+        ready = bool(release) and (configured or settings.source_lookup_only)
+        data = {"status": "ready" if ready else "not_ready", "database": True,
                 "llm_configured": configured, "corpus_release": (release or {}).get("id"),
                 "checked_at": (release or {}).get("checked_at"), "storage": "postgresql" if state["store"].postgres else "sqlite-development"}
         publication = await asyncio.to_thread(state['store'].publication)
         data.update(public_status(release, publication))
-        return JSONResponse(data, status_code=200 if configured and release else 503)
+        data['configuration_sha256'] = state['configuration']
+        data['source_gate'] = await asyncio.to_thread(state['store'].source_gate_status, release)
+        data['source_lookup_only'] = settings.source_lookup_only
+        return JSONResponse(data, status_code=200 if ready else 503)
 
     @app.post("/api/v1/sessions", status_code=201)
     async def session(request: Request):
@@ -174,24 +225,40 @@ def create_app(settings: Settings | None = None, store: Store | None = None, pro
     async def status():
         release=await asyncio.to_thread(state['store'].release,None,True)
         fresh=bool(release) and await asyncio.to_thread(state['store'].source_fresh,release)
+        gate=await asyncio.to_thread(state['store'].source_gate_status,release)
         delay=await asyncio.to_thread(state['store'].cooldown)
-        enabled=bool(release) and settings.generation_enabled and (fresh or settings.allow_stale_generation) and not delay
+        sources_available=gate['usable'] if gate is not None else (fresh or settings.allow_stale_generation)
+        enabled=bool(release) and settings.generation_enabled and not settings.source_lookup_only and sources_available and not delay
         return {'generation_available':enabled,'reason':'disabled' if not settings.generation_enabled else
-            'source_stale' if not fresh and (not settings.allow_stale_generation or not release) else 'provider_limited' if delay else None,
+            'source_stale' if not sources_available or not release else 'provider_limited' if delay else None,
             'retry_after':delay or None,'corpus_release':(release or {}).get('id'), 'api_version':3,
-            'capabilities':{'citizen_answers':True,'answer_schema_version':2},
+            'capabilities':{'citizen_answers':not settings.source_lookup_only,'answer_schema_version':2},
+            'source_lookup_only':settings.source_lookup_only,'source_lookup_as_of':str(local_date()),
             'source_fresh':fresh,'warning':None if fresh else 'source_stale',
+            'source_gate':gate,
             'source_checked_at':(release or {}).get('checked_at')}
 
     @app.get("/api/v1/documents")
-    async def documents():
+    async def documents(as_of: date | None = None):
+        if settings.source_lookup_only:
+            reviewed = await asyncio.to_thread(reviewed_documents, as_of or local_date())
+            return {'documents': [{k:v for k,v in doc.items() if k != 'chunks'} for doc in reviewed],
+                    'references': [], 'source_lookup_only': True, 'as_of': str(as_of or local_date()),
+                    'verified_passage_count': sum(doc['verified_passage_count'] for doc in reviewed),
+                    'whole_corpus_verified': False}
         docs = await asyncio.to_thread(state["store"].documents)
         from .catalog import references
         extra = await asyncio.to_thread(references, settings, {d.id for d in docs})
         return {"documents": [d.model_dump(mode="json", exclude={"chunks"}) for d in docs], 'references': extra}
 
     @app.get("/api/v1/documents/{document_id}")
-    async def document(document_id: str, locator: str | None = Query(default=None,max_length=200)):
+    async def document(document_id: str, locator: str | None = Query(default=None,max_length=200), as_of: date | None = None):
+        if settings.source_lookup_only:
+            reviewed = await asyncio.to_thread(reviewed_documents, as_of or local_date(), document_id, locator)
+            if not reviewed:
+                raise HTTPException(404, 'Chưa có đoạn nguồn được xác minh cho văn bản và thời điểm này')
+            return {'document': reviewed[0], 'relations': [], 'source_lookup_only': True,
+                    'as_of': str(as_of or local_date()), 'whole_document_verified': False}
         doc = await asyncio.to_thread(state["store"].open_document, document_id, None, locator)
         if not doc:
             from .catalog import references
@@ -233,7 +300,7 @@ def create_app(settings: Settings | None = None, store: Store | None = None, pro
         await authenticated(request, body.session_id)
         if settings.app_env=='production' and 'request_id' not in body.model_fields_set:
             raise HTTPException(426, {'code':'client_upgrade_required'})
-        if not settings.generation_enabled:
+        if settings.source_lookup_only or not settings.generation_enabled:
             raise HTTPException(503, {'code':'generation_disabled'})
         now, ip = utcnow(), identity(request)
         await reserve([(f"minute:{kind}:{who}:{now.strftime('%Y-%m-%dT%H:%M')}", 3, 60)

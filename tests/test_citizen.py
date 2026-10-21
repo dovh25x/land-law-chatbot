@@ -1,3 +1,4 @@
+from conftest import supplied_synthesis_fixture
 """Citizen interaction and publication boundaries, independent of model approval."""
 from datetime import timedelta
 
@@ -71,11 +72,12 @@ def test_draft_suite_is_never_executable_and_custom_registry_requires_review(tmp
 def test_recent_directory_proves_public_contact_but_not_a_receiving_authority():
     from landlaw.citizen import source_policy_issues
     from landlaw.models import Claim, Evidence
+    from landlaw.security import local_date
     directory=document().model_copy(update={'source_kind':'official_directory',
         'operational_reviewed_at':utcnow(),'operational_review_status':'unchanged'})
     evidence=[Evidence(document=directory,chunk=directory.chunks[0])]
     contact=Claim(kind='contact',text='Số điện thoại công khai của cơ quan là số được ghi trong đoạn nguồn.',citation_ids=[directory.chunks[0].id])
-    assert source_policy_issues(contact,evidence,utcnow().date())==[]
+    assert source_policy_issues(contact,evidence,local_date())==[]
     assert source_policy_issues(contact.model_copy(update={'text':'Nộp hồ sơ tại cơ quan này.'}),evidence,utcnow().date())
     assert source_policy_issues(contact.model_copy(update={'kind':'legal_rule','text':'Hồ sơ gồm các giấy bắt buộc.'}),evidence,utcnow().date())
     assert source_policy_issues(contact.model_copy(update={'kind':'context','text':'Cơ quan này nhận hồ sơ.'}),evidence,utcnow().date())
@@ -221,7 +223,7 @@ async def test_actual_n02_omissions_are_blocked_even_if_the_model_approves(store
            'evidence':[Evidence(document=doc,chunk=doc.chunks[0],applicability='current')],
            'draft':draft,'trace':[],'emit':noop}
     agent=Agent(store,FakeProvider(settings,verification=Verification(supported_claim_indexes=[0])))
-    await agent.verify(state)
+    supplied_synthesis_fixture(state);await agent.verify(state)
     await agent.finish(state)
     assert bool(state['result'].verified_claims) is qualified
     if not qualified:
@@ -250,7 +252,7 @@ async def test_n02_contract_paraphrase_cannot_lose_source_actor_scope(store,sett
            'evidence':[Evidence(document=doc,chunk=doc.chunks[0],applicability='current')],
            'draft':draft,'trace':[],'emit':noop}
     agent=Agent(store,FakeProvider(settings,verification=Verification(supported_claim_indexes=[0])))
-    await agent.verify(state);await agent.finish(state)
+    supplied_synthesis_fixture(state);await agent.verify(state);await agent.finish(state)
     assert not state['result'].verified_claims and not state['result'].citations
 
 
@@ -276,7 +278,7 @@ async def test_actual_n05_authority_cannot_be_attributed_to_the_cost_clause(stor
            'draft':Draft(status='answered',claims=[Claim(text=text,citation_ids=[doc.chunks[0].id])]),
            'trace':[],'emit':noop}
     agent=Agent(store,FakeProvider(settings,verification=Verification(supported_claim_indexes=[0])))
-    await agent.verify(state);await agent.finish(state)
+    supplied_synthesis_fixture(state);await agent.verify(state);await agent.finish(state)
     assert bool(state['result'].verified_claims) is expected
     if not expected:
         assert not state['result'].citations and text not in state['result'].content
@@ -308,7 +310,7 @@ async def test_actual_support_claims_cannot_broaden_agricultural_beneficiaries(s
            'budget':Budget(),'release':payload,'as_of':date(2024,8,2),'plan':Plan(),'evidence':evidence,
            'draft':Draft(status='answered',claims=claims),'trace':[],'emit':noop}
     agent=Agent(store,FakeProvider(settings,verification=Verification(supported_claim_indexes=list(range(len(claims))))))
-    await agent.verify(state);await agent.finish(state)
+    supplied_synthesis_fixture(state);await agent.verify(state);await agent.finish(state)
     assert bool(state['result'].verified_claims) is qualified
 
 
@@ -339,7 +341,7 @@ async def test_unmet_user_housing_premise_is_not_a_new_statutory_trigger(store,s
            'draft':Draft(status='answered',claims=[Claim(text=text,citation_ids=[c.id for c in doc.chunks])]),
            'trace':[],'emit':noop}
     agent=Agent(store,FakeProvider(settings,verification=Verification(supported_claim_indexes=[0])))
-    await agent.verify(state);await agent.finish(state)
+    supplied_synthesis_fixture(state);await agent.verify(state);await agent.finish(state)
     assert bool(state['result'].verified_claims) is (variant=='source_rule')
     if variant!='source_rule':
         assert not state['result'].citations
@@ -368,7 +370,7 @@ async def test_s06_actor_classes_cannot_be_alternative_qualifying_documents(stor
            'evidence':[Evidence(document=doc,chunk=c,applicability='current') for c in doc.chunks],
            'draft':Draft(status='answered',claims=[Claim(text=text,citation_ids=[c.id for c in doc.chunks])]),'trace':[],'emit':noop}
     agent=Agent(store,FakeProvider(settings,verification=Verification(supported_claim_indexes=[0])))
-    await agent.verify(state);await agent.finish(state)
+    supplied_synthesis_fixture(state);await agent.verify(state);await agent.finish(state)
     assert bool(state['result'].verified_claims) is expected
 
 
@@ -388,5 +390,5 @@ async def test_delayed_payment_keeps_the_decision_time_legal_basis(store,setting
     state={'request':ChatRequest(session_id='00000000-0000-4000-8000-000000000000',message='Phương án đã được duyệt trước hiệu lực Nghị định88/2024 nhưng chưa thực hiện thì xử lý thế nào?'),
         'budget':Budget(),'release':payload,'as_of':date(2024,8,2),'plan':Plan(),'evidence':[Evidence(document=doc,chunk=doc.chunks[0],applicability='current')],
         'draft':Draft(status='answered',claims=[Claim(text=text,citation_ids=[doc.chunks[0].id])]),'trace':[],'emit':noop}
-    agent=Agent(store,FakeProvider(settings,verification=Verification(supported_claim_indexes=[0])));await agent.verify(state);await agent.finish(state)
+    agent=Agent(store,FakeProvider(settings,verification=Verification(supported_claim_indexes=[0])));supplied_synthesis_fixture(state);await agent.verify(state);await agent.finish(state)
     assert bool(state['result'].verified_claims) is (not current_law), state['verification'].issues

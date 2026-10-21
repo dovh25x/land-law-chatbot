@@ -1,0 +1,219 @@
+I001 [*] Import block is un-sorted or un-formatted
+  --> reports/final-submission/2026-10-21/image_probe.py:2:1
+   |
+ 1 |   """Read-only packaging/identity checks in the serving image; network disabled."""
+ 2 | / import hashlib
+ 3 | | import json
+ 4 | | import os
+ 5 | | import platform
+ 6 | | import subprocess
+ 7 | | from pathlib import Path
+ 8 | |
+ 9 | | from pydantic import SecretStr
+10 | |
+11 | | from landlaw.config import Settings
+12 | | from landlaw.evaluation import configuration_fingerprint
+13 | | from landlaw.local_embedding import MODEL
+   | |_________________________________________^
+help: Organize imports
+   |
+8  |
+   - from pydantic import SecretStr
+   -
+9  | from landlaw.config import Settings
+10 | from landlaw.evaluation import configuration_fingerprint
+11 | from landlaw.local_embedding import MODEL
+   -
+12 + from pydantic import SecretStr
+13 |
+   |
+
+PLW1510 `subprocess.run` without explicit `check` argument
+  --> reports/final-submission/2026-10-21/image_probe.py:34:9
+   |
+32 |     assert actual == expected
+33 |     model_files[name] = actual
+34 | check = subprocess.run(['python', '-m', 'pip', 'check'], capture_output=True, text=True)
+   |         ^^^^^^^^^^^^^^
+35 | assert check.returncode == 0
+36 | assert os.geteuid() == 10001
+   |
+help: Add explicit `check=False`
+   |
+33 |     model_files[name] = actual
+   - check = subprocess.run(['python', '-m', 'pip', 'check'], capture_output=True, text=True)
+34 + check = subprocess.run(['python', '-m', 'pip', 'check'], check=False, capture_output=True, text=True)
+35 | assert check.returncode == 0
+   |
+note: This suggestion may be incorrect or produce invalid syntax. It requires manual review and cannot be applied automatically
+
+I001 [*] Import block is un-sorted or un-formatted
+  --> reports/final-submission/2026-10-21/postgres_preflight.py:7:1
+   |
+ 5 |   landlaw-phase4-pg-20261021 container and its loopback published port.
+ 6 |   """
+ 7 | / import argparse
+ 8 | | import hashlib
+ 9 | | import json
+10 | | import uuid
+11 | | from concurrent.futures import ThreadPoolExecutor
+12 | | from datetime import datetime, timezone
+13 | | from pathlib import Path
+14 | |
+15 | | import psycopg
+16 | | from psycopg import sql
+17 | | from pydantic import SecretStr
+18 | |
+19 | | from landlaw.config import Settings
+20 | | from landlaw.evaluation import configuration_fingerprint
+21 | | from landlaw.ops import activate_source_gate, record_source_review
+22 | | from landlaw.security import new_token
+23 | | from landlaw.store import Store
+   | |_______________________________^
+24 |
+25 |   ROOT = Path(__file__).resolve().parents[3]
+   |
+help: Organize imports
+   |
+15 | import psycopg
+   - from psycopg import sql
+   - from pydantic import SecretStr
+   -
+16 | from landlaw.config import Settings
+--------------------------------------------------------------------------------
+20 | from landlaw.store import Store
+21 + from psycopg import sql
+22 + from pydantic import SecretStr
+23 |
+   |
+
+UP017 [*] Use `datetime.UTC` alias
+  --> reports/final-submission/2026-10-21/postgres_preflight.py:37:28
+   |
+35 |     if output.exists():
+36 |         raise ValueError('Preserve previous preflight evidence')
+37 |     started = datetime.now(timezone.utc).isoformat()
+   |                            ^^^^^^^^^^^^
+38 |     # These are local trust-auth DSNs, not credentials or .env values.
+39 |     def dsn(name, user='postgres'):
+   |
+help: Convert to `datetime.UTC` alias
+   |
+11 | from concurrent.futures import ThreadPoolExecutor
+   - from datetime import datetime, timezone
+12 + from datetime import datetime, timezone, UTC
+13 | from pathlib import Path
+--------------------------------------------------------------------------------
+36 |         raise ValueError('Preserve previous preflight evidence')
+   -     started = datetime.now(timezone.utc).isoformat()
+37 +     started = datetime.now(UTC).isoformat()
+38 |     # These are local trust-auth DSNs, not credentials or .env values.
+   |
+
+UP017 [*] Use `datetime.UTC` alias
+   --> reports/final-submission/2026-10-21/postgres_preflight.py:110:42
+    |
+108 |         # No embeddings or model generation are needed for the round-trip check.
+109 |         result = {'status': 'PASS', 'started_at': started,
+110 |             'completed_at': datetime.now(timezone.utc).isoformat(),
+    |                                          ^^^^^^^^^^^^
+111 |             'storage_backend': 'isolated_docker_postgresql', 'container': 'landlaw-phase4-pg-20261021',
+112 |             'loopback_only': True, 'databases_retained': ['landlaw_phase4','landlaw_phase4_restore'],
+    |
+help: Convert to `datetime.UTC` alias
+    |
+11  | from concurrent.futures import ThreadPoolExecutor
+    - from datetime import datetime, timezone
+12  + from datetime import datetime, timezone, UTC
+13  | from pathlib import Path
+--------------------------------------------------------------------------------
+109 |         result = {'status': 'PASS', 'started_at': started,
+    -             'completed_at': datetime.now(timezone.utc).isoformat(),
+110 +             'completed_at': datetime.now(UTC).isoformat(),
+111 |             'storage_backend': 'isolated_docker_postgresql', 'container': 'landlaw-phase4-pg-20261021',
+    |
+
+I001 [*] Import block is un-sorted or un-formatted
+  --> reports/final-submission/2026-10-21/verify_submission.py:6:1
+   |
+ 4 |   freeze manifest and the evidence-link index; it does not commit or deploy.
+ 5 |   """
+ 6 | / import argparse
+ 7 | | import hashlib
+ 8 | | import json
+ 9 | | import re
+10 | | import subprocess
+11 | | from datetime import datetime, timezone
+12 | | from pathlib import Path
+13 | | from urllib.parse import unquote, urlsplit
+14 | |
+15 | | from markdown_it import MarkdownIt
+16 | | from pydantic import SecretStr
+17 | |
+18 | | from landlaw.config import Settings
+19 | | from landlaw.evaluation import configuration_fingerprint
+   | |________________________________________________________^
+20 |
+21 |   HERE = Path(__file__).resolve().parent
+   |
+help: Organize imports
+   |
+14 |
+   - from markdown_it import MarkdownIt
+   - from pydantic import SecretStr
+   -
+15 | from landlaw.config import Settings
+16 | from landlaw.evaluation import configuration_fingerprint
+17 + from markdown_it import MarkdownIt
+18 + from pydantic import SecretStr
+19 |
+   |
+
+UP017 [*] Use `datetime.UTC` alias
+  --> reports/final-submission/2026-10-21/verify_submission.py:83:76
+   |
+81 |         'SUBMISSION_CHECKLIST.md','EVIDENCE_INDEX.md','CODE_FREEZE.md']
+82 |     if prepare:
+83 |         manifest = {'format': 1, 'phase': '4', 'prepared_at': datetime.now(timezone.utc).isoformat(),
+   |                                                                            ^^^^^^^^^^^^
+84 |             'base_git_head': head, 'candidate_commit': None, 'working_tree_dirty': True,
+85 |             'source_tree_sha256': components['source_tree'], 'source_files_sha256': files,
+   |
+help: Convert to `datetime.UTC` alias
+   |
+10 | import subprocess
+   - from datetime import datetime, timezone
+11 + from datetime import datetime, timezone, UTC
+12 | from pathlib import Path
+--------------------------------------------------------------------------------
+82 |     if prepare:
+   -         manifest = {'format': 1, 'phase': '4', 'prepared_at': datetime.now(timezone.utc).isoformat(),
+83 +         manifest = {'format': 1, 'phase': '4', 'prepared_at': datetime.now(UTC).isoformat(),
+84 |             'base_git_head': head, 'candidate_commit': None, 'working_tree_dirty': True,
+   |
+
+UP017 [*] Use `datetime.UTC` alias
+   --> reports/final-submission/2026-10-21/verify_submission.py:171:36
+    |
+169 |     checks['lock_hashes_match'] = all(sha(ROOT/n) == value for n, value in manifest['locks'].items())
+170 |     output = {'status': 'PASS' if all(checks.values()) else 'FAIL',
+171 |         'checked_at': datetime.now(timezone.utc).isoformat(), 'checks': checks,
+    |                                    ^^^^^^^^^^^^
+172 |         'source_files_checked': len(files), 'historical_report_files_checked': len(baseline['historical_reports']),
+173 |         'historical_changed': historical_changed, 'core_delta': changes,
+    |
+help: Convert to `datetime.UTC` alias
+    |
+10  | import subprocess
+    - from datetime import datetime, timezone
+11  + from datetime import datetime, timezone, UTC
+12  | from pathlib import Path
+--------------------------------------------------------------------------------
+170 |     output = {'status': 'PASS' if all(checks.values()) else 'FAIL',
+    -         'checked_at': datetime.now(timezone.utc).isoformat(), 'checks': checks,
+171 +         'checked_at': datetime.now(UTC).isoformat(), 'checks': checks,
+172 |         'source_files_checked': len(files), 'historical_report_files_checked': len(baseline['historical_reports']),
+    |
+
+Found 8 errors.
+[*] 7 fixable with `--fix`.

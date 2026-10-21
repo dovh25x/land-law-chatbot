@@ -1,0 +1,149 @@
+{
+  "checked_at": "2026-10-20T18:58:37.697179+00:00",
+  "current_source_admission_before": [
+    false,
+    false,
+    false
+  ],
+  "current_source_admission_after": [
+    true,
+    true,
+    true
+  ],
+  "source_admission_is_not_retrieval_or_model_pass": true,
+  "current_fixture_acceptance": {
+    "passed": 2,
+    "answerable_cases": 3,
+    "false_abstentions": 1,
+    "failed_ids": [
+      "C01"
+    ]
+  },
+  "negative_controls_passed": 3,
+  "historical_controls_passed": 6,
+  "external_llm_requests": 0,
+  "model_pass": null,
+  "unchanged_question_and_expected_answer_definitions": true,
+  "cases": [
+    {
+      "id": "C01",
+      "expected_status": "answered",
+      "actual_status": "insufficient_evidence",
+      "status_matches": false,
+      "required_articles_reviewed": false,
+      "citation_integrity": true,
+      "citation_count": 0,
+      "elapsed_ms_local_fixture_only": 24575
+    },
+    {
+      "id": "C02",
+      "expected_status": "answered",
+      "actual_status": "answered",
+      "status_matches": true,
+      "required_articles_reviewed": true,
+      "citation_integrity": true,
+      "citation_count": 2,
+      "elapsed_ms_local_fixture_only": 546
+    },
+    {
+      "id": "C03",
+      "expected_status": "answered",
+      "actual_status": "answered",
+      "status_matches": true,
+      "required_articles_reviewed": true,
+      "citation_integrity": true,
+      "citation_count": 5,
+      "elapsed_ms_local_fixture_only": 866
+    },
+    {
+      "id": "C04-MISSING-FACTS",
+      "expected_status": "clarification_needed",
+      "actual_status": "clarification_needed",
+      "status_matches": true,
+      "required_articles_reviewed": true,
+      "citation_integrity": true,
+      "citation_count": 0,
+      "elapsed_ms_local_fixture_only": 283
+    },
+    {
+      "id": "C05-OUTSIDE",
+      "expected_status": "insufficient_evidence",
+      "actual_status": "insufficient_evidence",
+      "status_matches": true,
+      "required_articles_reviewed": true,
+      "citation_integrity": true,
+      "citation_count": 0,
+      "elapsed_ms_local_fixture_only": 200
+    },
+    {
+      "id": "C06-UNREVIEWED",
+      "expected_status": "insufficient_evidence",
+      "actual_status": "insufficient_evidence",
+      "status_matches": true,
+      "required_articles_reviewed": true,
+      "citation_integrity": true,
+      "citation_count": 0,
+      "elapsed_ms_local_fixture_only": 10850
+    },
+    {
+      "id": "S01",
+      "expected_status": "answered",
+      "actual_status": "answered",
+      "status_matches": true,
+      "required_articles_reviewed": true,
+      "citation_integrity": true,
+      "citation_count": 1,
+      "elapsed_ms_local_fixture_only": 8831
+    },
+    {
+      "id": "S02",
+      "expected_status": "clarification_needed",
+      "actual_status": "clarification_needed",
+      "status_matches": true,
+      "required_articles_reviewed": true,
+      "citation_integrity": true,
+      "citation_count": 1,
+      "elapsed_ms_local_fixture_only": 6045
+    },
+    {
+      "id": "S03",
+      "expected_status": "answered",
+      "actual_status": "answered",
+      "status_matches": true,
+      "required_articles_reviewed": true,
+      "citation_integrity": true,
+      "citation_count": 1,
+      "elapsed_ms_local_fixture_only": 6207
+    },
+    {
+      "id": "N07",
+      "expected_status": "clarification_needed",
+      "actual_status": "clarification_needed",
+      "status_matches": true,
+      "required_articles_reviewed": true,
+      "citation_integrity": true,
+      "citation_count": 0,
+      "elapsed_ms_local_fixture_only": 100
+    },
+    {
+      "id": "N08",
+      "expected_status": "insufficient_evidence",
+      "actual_status": "insufficient_evidence",
+      "status_matches": true,
+      "required_articles_reviewed": true,
+      "citation_integrity": true,
+      "citation_count": 0,
+      "elapsed_ms_local_fixture_only": 93
+    },
+    {
+      "id": "N01-HISTORICAL-FIXTURE",
+      "expected_status": "answered",
+      "actual_status": "answered",
+      "status_matches": true,
+      "required_articles_reviewed": true,
+      "citation_integrity": true,
+      "citation_count": 1,
+      "elapsed_ms_local_fixture_only": 6410
+    }
+  ]
+}

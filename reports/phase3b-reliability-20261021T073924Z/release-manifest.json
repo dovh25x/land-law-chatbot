@@ -1,0 +1,171 @@
+{
+  "format": 1,
+  "phase": "3B",
+  "prepared_at": "2026-10-21T08:17:17.777953+00:00",
+  "decision_new_model_pilot_with_existing_allocation": "NOT_READY",
+  "runtime_offline_preflight": "PARTIAL_LEGACY_FIXTURE_FAILURES_AND_NO_POSTGRESQL",
+  "deployment_decision": "NOT_READY",
+  "candidate_commit": null,
+  "git_head": "117e7bd2c4a320c3d02256dfdabf858180b47dbf",
+  "working_tree_dirty": true,
+  "source_tree_sha256": "4a7a61b0c3d464bd142ab8887cbaca377f449c66609ef653088a3023734e5a66",
+  "candidate_identity_components": {
+    "source_tree": "4a7a61b0c3d464bd142ab8887cbaca377f449c66609ef653088a3023734e5a66",
+    "runtime_sqlite": "1697d9dec78b8625398e53999b609e3ce57258666c2e3566a8321385abe8886d",
+    "runtime_pg_planned_only": "2229a1b298052e51b80d1d46530ca9a5ba580f5bc1b04be90cecdf0e15190c6d",
+    "corpus_payload": "7ce7956ae35c7006b5bfd7d10d516fa9e8e47fe2f073e471ceecbb34b412d317",
+    "source_policy": "dfe58f8376d4d4d978ace0483ba45a70e60eafa473285ffbe5a6a2a8e7f72dd4",
+    "receipt_bundle": "2503821f9d45a19da505d7ddb1bfdd2d876e20ebf00140ab6bd1a458e66dfa2d",
+    "evaluation_suites": {
+      "data/evaluation/smoke.jsonl": "38aa8da29bf41a94b4cf8fd8a5ca6769232b87884aeed573c10f5586a09d7254",
+      "data/evaluation/supplemental.jsonl": "e6bb5c9f7ba3a589237835b68d95e491ff2c16aad83683a8437f4a74e4120fea",
+      "data/evaluation/natural.jsonl": "b068bb4e717439938c96e459a63c9a1832b1990d88005cf6a768d9e9c0871e74"
+    }
+  },
+  "candidate_identity_sha256": "58302e9117ccc44c926a71a20dc06eb088e9f45ef64f98b65654d2b716bb3e61",
+  "runtime": {
+    "sqlite_fingerprint_verified": "1697d9dec78b8625398e53999b609e3ce57258666c2e3566a8321385abe8886d",
+    "postgresql_fingerprint_planned_only": "2229a1b298052e51b80d1d46530ca9a5ba580f5bc1b04be90cecdf0e15190c6d",
+    "llm_model": "openai/gpt-oss-120b",
+    "llm_provider": "groq",
+    "embedding_contract": {
+      "provider": "local_onnx",
+      "model": "multilingual-e5-small-onnx-q8-window-v1",
+      "dimensions": 384,
+      "format_version": "v1",
+      "local_model_spec": {
+        "name": "multilingual-e5-small-onnx-q8-window-v1",
+        "dimensions": 384,
+        "onnx_revision": "761b726dd34fb83930e26aab4e9ac3899aa1fa78",
+        "tokenizer_revision": "614241f622f53c4eeff9890bdc4f31cfecc418b3",
+        "onnx_sha256": "f80102d3f2a1229f387d3c81909990d8945513e347b0eab049f7de3c6f98c193",
+        "tokenizer_sha256": "cfc8146abe2a0488e9e2a0c56de7952f7c11ab059eca145a0a727afce0db2865",
+        "preprocessing": "e5-prefix-each-window-sp-offset1-mask-mean-l2-window-mean-l2-v1",
+        "passage_max_tokens": 512,
+        "query_max_tokens": 128,
+        "overlap_tokens": 64
+      }
+    },
+    "allow_stale_generation": false,
+    "max_requests_per_turn": 6,
+    "max_tools": 12,
+    "retrieval_rounds": 2,
+    "repairs": 1,
+    "turn_seconds": 90,
+    "max_completion_tokens": 2048,
+    "format_failures_per_generate_max": 2
+  },
+  "corpus": {
+    "id": "corpus-1afca764aa6692e0",
+    "path": "data/staging/phase2c-current/release-v5.json",
+    "payload_sha256": "7ce7956ae35c7006b5bfd7d10d516fa9e8e47fe2f073e471ceecbb34b412d317",
+    "modified_in_phase2d": false,
+    "modified_in_phase3b": false
+  },
+  "source_policy": {
+    "path": "reports/phase2c-current-20261021/source-gate-final.json",
+    "canonical_sha256": "dfe58f8376d4d4d978ace0483ba45a70e60eafa473285ffbe5a6a2a8e7f72dd4",
+    "scope_date": "2026-10-21",
+    "receipts_modified": false,
+    "modified_in_phase3b": false
+  },
+  "source_receipts_sha256": {
+    "reports/phase2c-current-20261021/receipts-final/luat-43-2024.json": "b5666c635289fb5a1117130eba9721c23f3f4b9cb6eed9886baf706a5d331c7e",
+    "reports/phase2c-current-20261021/receipts-final/luat-dat-dai-2024.json": "934f2c49725a0ea83562f264c99cedd3598a2fc540033c1a2870667d7311b235",
+    "reports/phase2c-current-20261021/receipts-final/luat-thu-do-2026.json": "d45a2204b7d207020cabda7aadb64fb82393b62720aac3d954fba711a33d49c8",
+    "reports/phase2c-current-20261021/receipts-final/nd-151-2025.json": "6609933111c19821167212640e177a5d1480e7e9b5de5e66765b642752a43c0c",
+    "reports/phase2c-current-20261021/receipts-final/nd-226-2025.json": "390e718e117c134aa9d524253603ea95de01d84dd7ddee18872a85dbfbe57d8f",
+    "reports/phase2c-current-20261021/receipts-final/nd-49-2026.json": "4707323849dfdfbea1d8b8e05359def0d33f6328eca3aec5696a96a1d815d626",
+    "reports/phase2c-current-20261021/receipts-final/nd-88-2024.json": "1e59dc3ecf636e9297801c19b1fb13efe56ae5cd785e95db4240540a3f04dda3",
+    "reports/phase2c-current-20261021/receipts-final/nq-254-2025.json": "5f7991a42bcd3fd95e34367e282ff94be74e91469d42dd7c2396aaf0277e7053",
+    "reports/phase2c-current-20261021/receipts-final/qd-10-2026-hanoi.json": "5a5aaa4e26a1a0181c12635453f7a8b9a8575105e29c2034dd9fe0474662e1e8",
+    "reports/phase2c-current-20261021/receipts-final/qd-40-2026-hanoi.json": "f48719cf7609d889d3f71013c4580175f459bb326315a873179065f3a8e63ce5",
+    "reports/phase2c-current-20261021/receipts-final/qd-56-2024-hanoi-unavailable.json": "f4d79a19d66b65e8375b65ff714683cf56dbed8363ceb816f9afbccc73ebd116"
+  },
+  "receipt_bundle_sha256": "2503821f9d45a19da505d7ddb1bfdd2d876e20ebf00140ab6bd1a458e66dfa2d",
+  "evaluation_suites": {
+    "data/evaluation/smoke.jsonl": "38aa8da29bf41a94b4cf8fd8a5ca6769232b87884aeed573c10f5586a09d7254",
+    "data/evaluation/supplemental.jsonl": "e6bb5c9f7ba3a589237835b68d95e491ff2c16aad83683a8437f4a74e4120fea",
+    "data/evaluation/natural.jsonl": "b068bb4e717439938c96e459a63c9a1832b1990d88005cf6a768d9e9c0871e74"
+  },
+  "prior_manifest_sha256": "bdb5a5bc5cad62e7ab990153d3789f416b0d4be24b7450fe94ee59d72d7f7403",
+  "checks": {
+    "backend_passed": 516,
+    "new_accounting_and_reliability_regressions": 30,
+    "frontend_unit_passed": 14,
+    "frontend_build": "PASS",
+    "playwright_fixture_passed": 100,
+    "postgresql": "NOT_RUN_NO_LOCAL_SERVICE_REMOTE_NOT_TOUCHED",
+    "health_status": 200,
+    "offline_ready_status": 503,
+    "offline_ready503_reason": "Empty API key intentional; no real provider connectivity test",
+    "source_gate_usable": true,
+    "whole_corpus_verified": false,
+    "positive_source_quote_fixture": "PASS_NOT_MODEL",
+    "legacy_coverage_fixture_status_matches": 9,
+    "legacy_coverage_fixture_cases": 11,
+    "legacy_coverage_fixture_failures": [
+      "C02",
+      "C03"
+    ],
+    "context_complete": {
+      "C02": {
+        "required_units": 3,
+        "wire_context_chars": 5070,
+        "complete": true
+      },
+      "C03": {
+        "required_units": 7,
+        "wire_context_chars": 6981,
+        "complete": true
+      }
+    },
+    "local_backup_restore": {
+      "exact_documents": true,
+      "missing_receipts_fail_closed": true,
+      "receipts_reapplied_usable": true
+    },
+    "retrieval": {
+      "storage_backend": "isolated_sqlite",
+      "eligible_cases": 19,
+      "gold_label_denominator": 21,
+      "gold_hits_at_5": 20,
+      "macro_recall_at_5": 0.9736842105263158,
+      "micro_recall_at_5": 0.9523809523809523
+    },
+    "external_model_requests_this_phase": 0,
+    "S06": "FAIL_UNCHANGED"
+  },
+  "existing_test_allocation": {
+    "phase3a_allocation_hard_cap": 60000,
+    "before_proposed_request": {
+      "confirmed_usage": 4829,
+      "estimated_usage": 47330,
+      "estimated_usage_kind": "upper_bound_for_requests_without_provider_usage",
+      "reserved_budget": 0,
+      "remaining_test_budget": 7841,
+      "requests_reserved": 3,
+      "max_tokens": 60000,
+      "max_requests": 18,
+      "blocked_reason": null,
+      "provider_quota_is_separate": true
+    },
+    "proposed_case": "C02",
+    "proposed_initial_request_wire_bytes": 13644,
+    "required_reservation": 19788,
+    "would_exceed_original_allocation": true,
+    "request_allowed_under_carried_budget": false,
+    "new_external_model_requests": 0,
+    "new_confirmed_usage": 0,
+    "runtime_fingerprint_for_proposed_request": "1697d9dec78b8625398e53999b609e3ce57258666c2e3566a8321385abe8886d",
+    "scope": "Read saved receipts; no case execution, model, HTTP, corpus mutation or quota query. No new 60000-token allocation is implied by a new report/output directory. Unknown reservations remain charged; a smaller reservation requires a proven tokenizer/framing bound."
+  },
+  "limitations": [
+    "No legal prompt/verifier/source/corpus changes; answer quality is unmeasured on final runtime.",
+    "No proven smaller GPT-OSS token upper bound; conservative byte/framing reservations retained.",
+    "No automatic new allocation or refund of prior errors missing provider usage.",
+    "Legacy C02/C03 fixtures still rejected for citations outside actual synthesis snapshot; gold/fixtures unchanged.",
+    "No PostgreSQL integration, public E2E or deployed-fingerprint verification.",
+    "Current legal scope is 2026-10-21; no receipt extended to 2026-10-23."
+  ]
+}

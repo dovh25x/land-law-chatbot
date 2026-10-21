@@ -38,11 +38,15 @@ Evaluator ghi `presentation_sha256` riêng với runtime fingerprint; không res
 
 Chỉ tính ca có gold. Dùng query gốc, ghi rõ SQLite/PostgreSQL và tách nhóm phụ thuộc history. Không trộn search standalone với evidence được tìm sau agent routing, mở điều khoản hoặc mở rộng quan hệ pháp lý. Không gọi generation cho phép đo này.
 
+Nếu học phần yêu cầu Recall@5, tính thêm `|top_5 ∩ gold| / |gold|` từ thứ tự hits của cùng phép đo và macro-average trên các ca có gold; giữ Recall@8 riêng. Không đổi tên điểm @8 thành @5, không sửa gold để khớp parent chunk, và không suy điểm mới từ corpus/backend/fingerprint khác. Citation accuracy theo quan hệ chứng minh và answer correctness cần review nội dung riêng; citation integrity chỉ kiểm tra xuất xứ. Sidecar phân loại answerability phải gắn checksum suite và được review trước khi dùng, không sửa bộ câu hỏi đã khóa.
+
 ### Faithfulness mẫu
 
 Implementation tham khảo định nghĩa faithfulness của Ragas, nhưng không chạy framework hoặc thêm dependency Ragas. Tám ca cố định là S04, S05, S06, S07, S08, S14, X01 và X03.
 
 Judge đọc đáp án cuối cùng cùng context thực tế, tự tách claim và chấm trong một request; không dùng verdict runtime verifier làm điểm. Mỗi ca tối đa một retry khi lỗi thực thi hoặc định dạng. Không có claim ghi “không áp dụng”; judge lỗi ghi chưa chấm và không thay mẫu khác.
+
+Script judge dùng SQLite tạm riêng, xóa cả hai database URL khỏi cấu hình kết nối trước khi tạo store; không dùng database của operator để ghi usage/cooldown. Cấu hình và phiên bản judge được ghi riêng với fingerprint của đáp án được đánh giá. Đặt output trong thư mục có `operator-cooldown.json` thực tế của đợt generation, hoặc sao chép nguyên receipt cooldown mới nhất trước khi chạy; script giữ cooldown quan sát được qua các database tạm. Không reset receipt để né giới hạn nhà cung cấp. Việc sửa isolation không biến báo cáo judge cũ thành bằng chứng cho implementation mới.
 
 Báo cáo công bố số ca có điểm, số claim, ca không áp dụng/lỗi, model judge và fingerprint. Judge dùng cùng model với hệ thống nên không độc lập. Giữ verdict gốc, kể cả khi reviewer nhận thấy hạn chế trong cách judge tách claim; không chấm lại chỉ để tăng điểm.
 
@@ -57,6 +61,8 @@ Tách các nhóm trả lời nội dung, hỏi làm rõ, thiếu chứng cứ/ng
 ## Chạy đánh giá
 
 Cấu hình database đích trước khi chạy. CLI operator có thể ưu tiên `ADMIN_DATABASE_URL`; dùng database đánh giá riêng và không seed fixture history vào database.
+
+Ưu tiên `scripts/evaluate_generation_candidate.py` khi chuẩn bị một đợt mới: mặc định script dùng SQLite tạm và xóa cả hai URL kết nối. CLI `benchmark` bên dưới không tự tạo database cách ly; không chạy nó với `.env` đang trỏ serving. Chế độ PostgreSQL riêng của helper vẫn tạo tài nguyên cloud và cần được duyệt trước. Không coi scope usage `operator` là cơ chế cách ly database.
 
 ```bash
 .venv/bin/land-law benchmark --split smoke --mode agentic --concurrency 1
@@ -120,3 +126,11 @@ Theo yêu cầu ưu tiên số liệu nổi bật trên giao diện, dashboard c
 ```
 
 Không phải ID nguồn thực. Validator kiểm tra mọi chunk của mọi alternative tồn tại trong corpus đã bind. Retrieval báo complete-evidence riêng với Recall@8; exporter báo số ca có đủ group trong citation, giữ mẫu số answerable đã khóa. Có đủ group không chứng minh diễn giải đúng; vẫn cần review nội dung và điều kiện từng claim.
+
+## Evaluation trên source gate giới hạn
+
+Helper `scripts/evaluate_generation_candidate.py` nhận nhiều `--source-receipt <path>` và một `--source-gate <policy>`. Chỉ nhập vào database thử nghiệm của helper, sau restore và trước evaluation. Corpus backup không chứa receipt; thiếu receipt của scoped policy phải dừng trước model. `source-policy-lock.json` bind backup, hash policy và bytes từng receipt; thay source cohort hoặc resume artifact cũ chưa có binding cần thư mục output mới. Metadata run giữ binding này cùng runtime fingerprint. Không trộn cohort chỉ vì corpus ID và model giống nhau.
+
+`--no-generation` dùng cho các case guard đã chọn rõ; wrapper chặn mọi generate trước HTTP và giữ cooldown. `scripts/verify_source_gate_candidate.py` kiểm tra source gate bằng SQLite riêng và E5 local; phần synthesis fixture được ghi nhãn, không tính vào kết quả model. Diagnostic Recall@5 tính trên top5 có thứ tự của chính phép retrieval đã ghi lại, với mẫu số gold cố định; không đổi tên Recall@8 thành Recall@5.
+
+Pilot là các case đầu tiên của evaluation đầy đủ trên cùng cấu hình đã khóa. Khóa case IDs trước khi xem kết quả, giữ attempt fail và không chạy lại để chọn điểm. Với case answerable đã có đủ nguồn, từ chối vẫn là false abstention và không đạt Answer Correctness. Báo Answerable Coverage, False Abstention Rate, trạng thái chưa chạy và thiếu review riêng; không tính refusal không có claim là faithfulness bằng1. SQLite, PostgreSQL và public HTTP phải có cohort/latency riêng.

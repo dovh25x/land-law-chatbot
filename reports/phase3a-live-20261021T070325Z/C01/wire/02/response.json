@@ -1,0 +1,37 @@
+{
+  "status_code": 429,
+  "schema": "Draft",
+  "body": {
+    "choices": [],
+    "error": {
+      "type": "tokens",
+      "code": "rate_limit_exceeded",
+      "message": "Rate limit reached for model `openai/gpt-oss-120b` in organization `org_01m4tvv7eaesr8cvt7pbbbw5x8` service tier `on_demand` on tokens per minute (TPM): Limit 8000, Used 4254, Requested 4198. Please try again in 3.39s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing"
+    }
+  },
+  "raw_body_sha256": "82d373a35f147bbf52078c8cca799a3e950df8c30c00cc214f37e41ccd74e98d",
+  "hidden_reasoning_not_persisted": true,
+  "latency_ms": 148,
+  "headers": {
+    "retry-after": "4",
+    "x-ratelimit-limit-requests": "1000",
+    "x-ratelimit-limit-tokens": "8000",
+    "x-ratelimit-remaining-requests": "999",
+    "x-ratelimit-remaining-tokens": "3746",
+    "x-ratelimit-reset-requests": "1m26.4s",
+    "x-ratelimit-reset-tokens": "31.904s",
+    "x-request-id": "req_01m5emy6h2evxrp5m5a3jyznyf"
+  },
+  "reservation_tokens": 23665,
+  "usage": {},
+  "budget_after": {
+    "wire_requests": 2,
+    "per_case_requests": {
+      "C01": 2
+    },
+    "tokens_observed": 4829,
+    "tokens_charged_including_unknown": 28494,
+    "unknown_usage_requests": 1,
+    "hard_token_cap": 60000
+  }
+}

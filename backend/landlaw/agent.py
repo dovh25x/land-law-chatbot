@@ -15,6 +15,7 @@ from .provider import Budget, BudgetExceeded, GroqProvider, ProviderUnavailable
 from .security import local_date, normalize, redact, utcnow
 from .store import RateLimited, Store
 from .publication import public_status
+from .synthesis_context import pack_context
 
 
 class ToolCall(BaseModel):
@@ -55,6 +56,7 @@ class State(TypedDict, total=False):
     citizen_need: CitizenNeed
     citizen_orientation: bool
     contact_source_missing: bool
+    source_scope_missing: bool
     unsupported_project: bool
     unsupported_references: list[str]
     request: ChatRequest
@@ -80,6 +82,12 @@ class State(TypedDict, total=False):
     place_clarification: bool
     general_rule_question: bool
     opened_relations: set
+    admitted_source_ids: set
+    synthesis_sources: dict
+    synthesis_diagnostics: dict
+    synthesis_origin: str
+    retrieval_diagnostics: dict
+    source_admission_states: dict
 
 
 def applicability(doc: Document, as_of: date, chunk=None):
@@ -136,6 +144,13 @@ def citation_source_url(item):
 
 def relation_may_affect(relation, doc_id, passages):
     """Skip only a verified complete amendment scope outside retrieved articles."""
+    if relation.type == 'guides' and relation.source_id == doc_id:
+        scope = [relation.source_locator]
+        articles = {n.lower() for locator in scope if locator
+                    for n in re.findall(r'Điều\s+(\d+[a-z]?)', locator, re.IGNORECASE)}
+        if articles:
+            return any(p.document.id == doc_id and any(re.search(
+                rf'^Điều {n}(?:\s|$)', p.chunk.locator, re.IGNORECASE) for n in articles) for p in passages)
     if (relation.target_id != doc_id or relation.type not in {'amends', 'repeals'}
             or not relation.target_locators_complete):
         return True
@@ -290,6 +305,52 @@ def public_missing_facts(facts,release):
             and any(number and number in normalize(fact) for number in known))))
 
 
+def place_mapping_question(question):
+    """Recognize administrative units as words, not inside chuyển/xác/của."""
+    text = normalize(question)
+    return (all(re.search(rf'\b{word}\b', text) for word in ('huyen', 'cu', 'xa'))
+            and any(re.search(rf'\b{phrase}\b', text) for phrase in ('doi', 'moi', 'dia ban')))
+
+
+def article_reference_for_document(question, document_number):
+    """Bind a nearby article to its named act, ahead of earlier cross-references."""
+    text = normalize(question)
+    number = normalize(document_number or '')
+    bound = re.search(r'\bdieu\s+(\d+[a-z]?)\b(?:(?!\bdieu\b).){0,100}'
+                      + re.escape(number), text) if number else None
+    return bound or re.search(r'\bdieu\s+(\d+[a-z]?)\b', text)
+
+
+def document_numbers_in_question(question):
+    """A question date such as21/10/2026 is not act10/2026."""
+    return set(re.findall(r'(?<![\d/])\d{1,6}/(?:19|20)\d{2}(?!/\d)', normalize(question)))
+
+
+def diverse_related_context(primary, secondary, parent_ids, reviewed):
+    """Retain parents, then unseen articles before repeated article fragments.
+
+    Admission and the evidence cap are unchanged. Prioritize within each review
+    tier so an unreviewed parent cannot displace reviewed operative evidence.
+    """
+    key = lambda e: (e.document.id, e.chunk.locator.split(' · ')[0])
+    seen = {key(e) for e in primary}
+    result = []
+    for fresh in (True, False):
+        tier = [e for e in secondary if
+                (reviewed.get(e.document.id+':'+e.chunk.id) == 'fresh') == fresh]
+        parents = [e for e in tier if e.chunk.id in parent_ids]
+        result.extend(parents)
+        seen.update(key(e) for e in parents)
+        first, repeated = [], []
+        for e in tier:
+            if e.chunk.id in parent_ids:
+                continue
+            (repeated if key(e) in seen else first).append(e)
+            seen.add(key(e))
+        result.extend(first + repeated)
+    return result
+
+
 def private_entitlement_check(question):
     """A personal guarantee needs file evidence, not a law-search result.
 
@@ -318,7 +379,97 @@ def source_spans(evidence):
 
 def model_passage_text(text):
     """Expose legal list boundaries using whitespace only; citations stay raw."""
-    return re.sub(r'\s+(?=(?:\d{1,2}\.\s|[a-zđ]\)\s))', '\n', text)
+    def boundary(match):
+        # An article heading such as "Điều 95." is not clause 95.
+        return match[0] if re.search(r'\bĐiều$', text[:match.start()], re.I) else '\n'
+    return re.sub(r'\s+(?=(?:\d{1,2}\.\s|[a-zđ]\)\s))', boundary, text)
+
+
+def source_clause_spans(text):
+    """Offsets of explicit numbered paragraphs in the presented source text.
+
+    Cross-references do not start paragraphs. Unnumbered continuation prefixes
+    remain unlabelled; this metadata does not infer their owner or applicability.
+    """
+    starts = [match for match in re.finditer(r'(?m)^[ \t]*(\d{1,2})\.\s+', text)
+              if not re.search(r'\bĐiều\s*$', text[:match.start(1)], re.I)]
+    return [{'number': match[1], 'start': match.start(1),
+             'end': starts[index+1].start(1) if index+1 < len(starts) else len(text)}
+            for index, match in enumerate(starts)]
+
+
+def synthesis_passage(passage):
+    text = model_passage_text(passage['text'])
+    return {**passage, 'text': text, 'clause_spans': source_clause_spans(text)}
+
+
+def synthesis_passages(passages):
+    """Link literal subject cross-references, without inferring missing scope.
+
+    Only an explicitly numbered paragraph beginning with a referenced group
+    creates a dependency. Citation hints point to supplied text in the same
+    document; they neither reconstruct continuations nor certify entailment.
+    """
+    presented = [synthesis_passage(passage) for passage in passages]
+    def article(passage):
+        match = re.match(r'^dieu (\d+[a-z]?)(?:\s|$)', normalize(passage['locator']))
+        return match[1] if match else None
+    act = r'(?:bo luat|luat|nghi dinh|nghi quyet|quyet dinh|thong tu)'
+    pattern = (r'^\d+\.\s+(?:cac\s+)?(?:truong hop|doi tuong)\s+'
+               r'(?:quy dinh tai|tai|thuoc)\s+(?:khoan\s+(\d+)\s+)?dieu\s+(nay|\d+[a-z]?)\b')
+    for passage in presented:
+        dependencies = []
+        for span in passage['clause_spans']:
+            body = normalize(passage['text'][span['start']:span['end']])
+            reference = re.match(pattern, body)
+            if not reference:
+                continue
+            tail = body[reference.end():]
+            # Never bind an external act's Article N to this document's N.
+            if (re.match(r'\s+(?:cua\b|'+act+r'\b)', tail)
+                    and not re.match(r'\s+(?:cua\s+)?'+act+r'\s+nay\b', tail)):
+                continue
+            target_article = article(passage) if reference[2] == 'nay' else reference[2]
+            if target_article is None:
+                continue
+            targets = [item['citation_id'] for item in presented
+                       if item['document_id'] == passage['document_id'] and article(item) == target_article
+                       and (reference[1] is None or any(s['number'] == reference[1] for s in item['clause_spans']))]
+            dependencies.append({'owner_clause': span['number'], 'source_span': [span['start'], span['end']],
+                                 'target_article': target_article, 'target_clause': reference[1],
+                                 'scope_citation_ids': targets})
+        if dependencies:
+            passage['scope_dependencies'] = dependencies
+    return presented
+
+
+def cumulative_alternative_requirement(text):
+    """Detect required conjunctions without treating a scoped choice as AND.
+
+    A local 'must have one of ...' is an OR requirement added to the actor
+    prerequisite. Other cumulative phrases, including those elsewhere in the
+    same claim, remain blocking. Semantic/citation checks still run afterwards.
+    """
+    if re.search(r'\btat ca cac dieu kien\b|\bphai (?:co|dap ung|thoa man) (?:ca|day du)\b'
+                 r'|\b(?:dap ung|thoa man) (?:dong thoi|tat ca|day du)\b', text):
+        return True
+    requirements = r'\b(?:con phai co|dong thoi (?:phai )?(?:co|dap ung|thoa man))\b'
+    choice = r'\s+(?:it nhat )?mot trong (?:cac|nhung) (?:dieu kien|giay to)\b'
+    for match in re.finditer(requirements, text):
+        before = text[:match.start()]
+        if not re.match(choice, text[match.end():]) or re.search(r'\b(?:khong|chua)\s*$', before):
+            return True
+        surrounding = before + ' ' + text[match.end():]
+        if re.search(r'\b(?:(?:phai|can) (?:co|dap ung|thoa man)|bat buoc|co ca)\b', surrounding):
+            return True  # Another required document/choice cannot become an actor prerequisite.
+        # Requiring an alternative IN ADDITION TO another alternative is still
+        # AND. Only a group prerequisite or 'ngoài ra' is a safe local exception.
+        additions = list(re.finditer(r'\b(?:ngoai|ben canh)\s+', before))
+        if additions:
+            prefix = before[additions[-1].end():]
+            if not re.match(r'(?:ra\b|(?:(?:viec|dieu kien ve)\s+)?(?:thuoc|doi tuong|truong hop)\b)', prefix):
+                return True
+    return False
 
 
 def resolve_places(aliases, query, as_of):
@@ -374,7 +525,7 @@ class Agent:
             if len(cited)==1 and next(iter(cited)) in known:
                 number=known[next(iter(cited))].get('document_number')
                 if number:contextual_query=f'{number}: {request.message}'
-        literal_numbers=set(re.findall(r'(?<![\d/])\d{1,6}/(?:19|20)\d{2}(?!/\d)',question))
+        literal_numbers=document_numbers_in_question(question)
         known_numbers={'/'.join(normalize(d.get('document_number') or '').split('/')[:2])
                        for d in (state['release'] or {}).get('documents',[])}
         direct_effectivity=(1<=len(literal_numbers)<=2 and literal_numbers<=known_numbers
@@ -394,12 +545,14 @@ class Agent:
             law_match=bool(year and title.startswith('luat ') and 'sua doi' not in title
                 and re.search(r'\b'+re.escape(re.sub(r'\s+\d{4}$','',title))+r'(?:\s+nam)?\s+'+year[1]+r'\b',question))
             if (number and number in question) or law_match:named.append(doc['id'])
+        if len(named) == 1:
+            named_doc = next(doc for doc in state['release']['documents'] if doc['id'] == named[0])
+            article = article_reference_for_document(question, named_doc.get('document_number'))
         legal_topic=any(term in question for term in ('thu hoi','boi thuong','tai dinh cu','quy hoach','dat dai','khieu nai','quyen su dung dat','ho tro'))
         unrelated=any(term in question for term in ('phac do dieu tri','lieu khang sinh','chan doan benh','ly hon','luat hoa ky','luat hoa ki'))
         freshness=('du lieu' in question and any(t in question for t in ('chatbot','kiem tra nguon'))
                    and any(t in question for t in ('bao dam','cap nhat','qua han')))
-        place_question=('huyen' in question and 'cu' in question and 'xa' in question
-                        and any(t in question for t in ('doi','moi','dia ban')))
+        place_question=place_mapping_question(question)
         unsupported_project = request.project in {'songhong','olympic'} or any(
             name in question for name in ('song hong','olympic'))
         if unsupported_project:
@@ -526,11 +679,12 @@ class Agent:
         # An explicitly requested missing historical document can still have a
         # verified replacement. Open that operative clause before generic hits.
         release = state['release'] or {}
+        numbers = document_numbers_in_question(query)
         requested = {g['document_id'] for g in release.get('coverage_gaps', [])
-                   if normalize(g.get('document_number', '')).split('/qd')[0] in normalize(query)
+                   if '/'.join(normalize(g.get('document_number', '')).split('/')[:2]) in numbers
                    and g.get('document_number')}
         requested.update(d['id'] for d in release.get('documents',[]) if d.get('document_number')
-            and normalize(d['document_number']).split('/qd')[0] in normalize(query))
+            and '/'.join(normalize(d['document_number']).split('/')[:2]) in numbers)
         priority = {}
         catalogue={d['id']:d for d in release.get('documents',[])}
         for relation in release.get('relations', []) + release.get('unresolved_relations', []):
@@ -634,6 +788,7 @@ class Agent:
             relations.sort(key=lambda relation: (
                 starts_by_question(relation.source_id),
                 relation.type in wanted_types,
+                relation.type == 'guides',
                 relation.source_id in requested_docs,
                 relation.target_id == doc_id,
                 catalogue.get(relation.source_id, {}).get('effective_from') or ''), reverse=True)
@@ -676,7 +831,7 @@ class Agent:
                 doc = await asyncio.to_thread(self.store.open_document, related_id, release_id, locator,relation_query)
                 if doc:
                     for chunk in relation_chunks(doc, locator):
-                        if related_id==relation.source_id:operative_ids.add(chunk.id)
+                        if related_id==relation.source_id or relation.type=='guides':operative_ids.add(chunk.id)
                         found.setdefault(chunk.id, Evidence(chunk=chunk, document=doc,
                                                            applicability=applicability(doc, state["as_of"],chunk)))
                     await self.event(state, 'tool', 'Đã mở văn bản có quan hệ pháp lý để đối chiếu phạm vi.',
@@ -696,9 +851,17 @@ class Agent:
         # Relationship expansion can fill every secondary slot before parents
         # are appended. Keep the complete context of primary hits before extra
         # relation passages; unrepresented amendments still veto claims later.
-        secondary=sorted(candidates[8:],key=lambda item:(item.chunk.id in parent_ids,
-                                                       item.chunk.id in operative_ids),reverse=True)
+        reviewed = {}
+        if await asyncio.to_thread(self.store.source_gate, release_id) is not None:
+            reviewed = await asyncio.to_thread(self.store.scoped_source_reviews, state['release'],
+                [(e.document.id, e.chunk.id, e.chunk.checksum) for e in candidates], state['as_of'])
+        secondary=sorted(candidates[8:],key=lambda item:(
+            reviewed.get(item.document.id+':'+item.chunk.id) == 'fresh',
+            item.chunk.id in parent_ids, item.chunk.id in operative_ids),reverse=True)
+        secondary=diverse_related_context(candidates[:8],secondary,parent_ids,reviewed)
         state["evidence"] = candidates[:8]+secondary[:8]
+        retained={e.chunk.id for e in state['evidence']}
+        state['retrieval_diagnostics']={e.chunk.id:('retained' if e.chunk.id in retained else 'evidence_cap') for e in candidates}
         state["rounds"] += 1
         return state
 
@@ -734,21 +897,24 @@ class Agent:
                 if {r['source_id'],r['target_id']} & selected]
 
     def prompt_context(self,state,selected_ids=None):
-        """Send each document's legal relationships once, preserving every passage.
-
-        Repeating a long amendment graph for each chunk can overflow a free
-        model's context and distract from the actual operative text.
-        """
+        """Pack admitted source views; keep verification bound to frozen exposure."""
         passages,documents=[],{}
         candidates=self.context(state)
+        retrieved_ids={item['citation_id'] for item in candidates}
+        if selected_ids is not None and 'synthesis_sources' in state:
+            selected_ids=set(selected_ids)&state['synthesis_sources'].keys()
+        if selected_ids is None and 'admitted_source_ids' in state:
+            candidates=[item for item in candidates if item['citation_id'] in state['admitted_source_ids']]
         if self.provider.settings.llm_provider == 'groq' and selected_ids is None:
             # A parent is an existing, verbatim source passage, not a summary.
             # Prefer it to contained children only when it can enter the bounded
             # prompt. Never change citation IDs/text during verification.
-            parents={e.chunk.id:e for e in state['evidence'] if e.chunk.id.endswith('-parent')}
+            eligible={item['citation_id'] for item in candidates}
+            parents={e.chunk.id:e for e in state['evidence'] if e.chunk.id in eligible and e.chunk.id.endswith('-parent')}
             by_id={item['citation_id']:item for item in candidates}
             covered={}
             for evidence in state['evidence']:
+                if evidence.chunk.id not in eligible:continue
                 parent=parents.get(evidence.chunk.parent_id)
                 if (parent and parent.document.id==evidence.document.id
                         and parent.chunk.locator.split(' · ')[0]==evidence.chunk.locator.split(' · ')[0]
@@ -832,6 +998,21 @@ class Agent:
                 exact_ids={item['citation_id'] for item in exact_references}
                 candidates=[item for item in candidates if item['citation_id'] in exact_ids
                             or item['document_id'] in related]
+        if self.provider.settings.llm_provider == 'groq' and selected_ids is None:
+            question=state['request'].message if state.get('request') else ''
+            passages,documents,reasons=pack_context(candidates,question,synthesis_passages,
+                                                    model_passage_text,source_clause_spans,state.get('as_of'))
+            for ident in retrieved_ids:
+                if ident not in reasons:
+                    reasons[ident]=('not_admitted' if 'admitted_source_ids' in state
+                        and ident not in state['admitted_source_ids'] else 'parent_or_relevance_selection')
+            state['synthesis_diagnostics']={'retrieved_sources':sorted(retrieved_ids),
+                'admitted_sources':sorted(state.get('admitted_source_ids',retrieved_ids)),
+                'synthesis_sources':[p['citation_id'] for p in passages],
+                'selection_reasons':reasons,
+                'source_states':state.get('source_admission_states',{}),
+                'missing_legal_dependencies':self.missing_synthesis_dependencies(state,passages)}
+            return passages,documents
         for item in candidates:
             if selected_ids is not None and item['citation_id'] not in selected_ids:
                 continue
@@ -851,17 +1032,37 @@ class Agent:
             documents.setdefault(document_id,metadata)
             passage={key:item[key] for key in (
                 'citation_id','document_id','page','locator','text','applicability')}
-            if self.provider.settings.llm_provider == 'groq' and selected_ids is None:
-                # Select whole passages rather than truncating clauses. Retrieval
-                # still retains eight primary hits and related evidence in trace.
-                projected_docs={k:v for k,v in documents.items()
-                                if k in {p['document_id'] for p in passages} | {document_id}}
-                context_limit=7000
-                if len(json.dumps([passages+[passage],list(projected_docs.values())],ensure_ascii=False))>context_limit:
-                    if not any(p['document_id']==document_id for p in passages):documents.pop(document_id,None)
-                    continue
+            if selected_ids is not None and 'synthesis_sources' in state:
+                passage['text']=state['synthesis_sources'][passage['citation_id']]['text']
             passages.append(passage)
         return passages,list(documents.values())
+
+    def missing_synthesis_dependencies(self,state,passages):
+        shown_ids={p['citation_id'] for p in passages}
+        selected=[e for e in state['evidence'] if e.chunk.id in shown_ids]
+        missing=[]
+        for item in selected:
+            if item.applicability!='current':continue
+            for relation in self.relation_context(item,state):
+                if relation['target_id']!=item.document.id or relation['type'] not in {'amends','repeals'}:
+                    continue
+                starts=relation.get('source_effective_from')
+                if not starts or starts>str(state.get('as_of','')):continue
+                affected=[n for loc in relation.get('target_locators',[]) for n in re.findall(r'Điều\s+(\d+[a-z]?)',loc,re.I)]
+                if relation.get('target_locators_complete') and affected and not any(
+                        re.match(rf'^Điều {n}(?:\s|$)',item.chunk.locator,re.I) for n in affected):continue
+                source=relation['source_id']
+                locators=re.findall(r'Điều\s+(\d+[a-z]?)',relation.get('source_locator') or '',re.I)
+                matches=[p for p in passages if p['document_id']==source and (not locators or any(
+                    re.match(rf'^Điều {n}(?:\s|$)',p['locator'],re.I) for n in locators))]
+                if matches:continue
+                candidates=[e for e in state['evidence'] if e.document.id==source]
+                reason=('not_retrieved' if not candidates else 'not_admitted' if not any(
+                    e.chunk.id in state.get('admitted_source_ids',set()) for e in candidates) else 'context_budget_or_selection')
+                value={'target_citation_id':item.chunk.id,'source_document_id':source,
+                    'source_locator':relation.get('source_locator'),'type':relation['type'],'reason':reason}
+                if value not in missing:missing.append(value)
+        return missing
 
     def relation_context(self, evidence, state):
         docs = {d["id"]: d for d in (state["release"] or {}).get("documents", [])}
@@ -901,6 +1102,24 @@ class Agent:
     async def synthesize(self, state):
         state['source_fact_id']=None
         state['source_fact_type']=None
+        gate = await asyncio.to_thread(self.store.source_gate, (state['release'] or {}).get('id'))
+        if gate is not None and state['evidence']:
+            passages = [(e.document.id, e.chunk.id, e.chunk.checksum) for e in state['evidence']]
+            reviews = await asyncio.to_thread(self.store.scoped_source_reviews,
+                                              state['release'], passages, state['as_of'])
+            state['source_scope_missing'] = not any(status == 'fresh' for status in reviews.values())
+            state['admitted_source_ids']={e.chunk.id for e in state['evidence']
+                if reviews.get(e.document.id+':'+e.chunk.id)=='fresh'}
+            state['source_admission_states']={e.chunk.id:reviews.get(e.document.id+':'+e.chunk.id,'unknown') for e in state['evidence']}
+        elif state['evidence']:
+            reviews=await asyncio.to_thread(self.store.source_review_states,state['release'] or {},
+                {e.document.id for e in state['evidence']})
+            snapshot=self.provider.settings.allow_stale_generation or state['as_of']<local_date()
+            state['admitted_source_ids']={e.chunk.id for e in state['evidence']
+                if reviews.get(e.document.id)=='fresh' or (reviews.get(e.document.id)=='stale' and snapshot)}
+            state['source_admission_states']={e.chunk.id:reviews.get(e.document.id,'unknown') for e in state['evidence']}
+        state['synthesis_sources']={}
+        state['synthesis_origin']='none'
         if state.get('citizen_orientation') and not state['plan'].out_of_scope:
             state['draft']=Draft(status='clarification_needed')
         elif state["plan"].out_of_scope:
@@ -923,6 +1142,8 @@ class Agent:
         elif not state["evidence"]:
             state["draft"] = Draft(status="insufficient_evidence", summary="Chưa tìm được chứng cứ trong bộ dữ liệu đã công bố.",
                                    missing_facts=state["plan"].missing_facts)
+        elif state.get('source_scope_missing'):
+            state['draft'] = Draft(status='insufficient_evidence')
         elif (future:=self.future_commencement(state)) is not None:
             # The source proves commencement, not every historical case's
             # transition. State only that verified date and ask for case facts.
@@ -954,9 +1175,13 @@ class Agent:
         else:
             claim_policy=await self.synthesis_claim_policy(state)
             contexts,documents=self.prompt_context(state)
+            if not contexts:
+                state['draft']=Draft(status='insufficient_evidence')
+                return state
             aliases={item['citation_id']:f'C{index+1}' for index,item in enumerate(contexts)}
-            contexts=[{**item,'citation_id':aliases[item['citation_id']],
-                       'text':model_passage_text(item['text'])} for item in contexts]
+            state['synthesis_sources']={item['citation_id']:item for item in synthesis_passages(contexts)}
+            state['synthesis_origin']='model'
+            contexts=synthesis_passages([{**item,'citation_id':aliases[item['citation_id']]} for item in contexts])
             previous_draft=None
             if state.get('repairs') and state.get('draft'):
                 previous_draft=state['draft'].model_dump()
@@ -977,7 +1202,16 @@ class Agent:
                 "A support category is not automatic entitlement. Never say 'only' unless the source excludes "
                 "other branches. For what support depends on, explain determinants without volunteering amounts. "
                 "Every claim must be independently supported by all necessary source continuations, using allowed "
-                "C aliases only. No dependence on other claims or history. Article/clause/point references must "
+                "C aliases only. clause_spans mark explicit numbered source paragraphs by start/end offsets in text. "
+                "Attribute a rule to its owning paragraph number, never to an internal 'khoản' cross-reference. "
+                "Unlabelled prefixes are continuations with no inferred paragraph number. "
+                "scope_dependencies expose literal subject cross-references: the owning paragraph's conditions "
+                "apply to the referenced group, not to everyone. Read the source_span and the target paragraph "
+                "at scope_citation_ids together. These IDs are lookup hints, not approval or proof of complete scope. "
+                "Retain that group prerequisite AND its OR/AND conditions in the same self-contained claim, "
+                "citing the necessary passages. If target text is missing, never invent its actors or drop the "
+                "restriction; state the evidence limit when a complete explanation cannot be supported. "
+                "No dependence on other claims or history. Article/clause/point references must "
                 "be exact. Keep Chủ tịch UBND distinct from UBND. No invented annexes, papers, offices or rules. "
                 "Obey claim_policy. Practical instructions are procedure claims; contacts are contact claims. "
                 "They require approved operational sources; directories prove contact data, not competence. "
@@ -1005,6 +1239,11 @@ class Agent:
             actual={value:key for key,value in aliases.items()}
             state['draft'].claims=[claim.model_copy(update={'citation_ids':[actual.get(key,key) for key in claim.citation_ids]})
                                    for claim in state['draft'].claims]
+        if state.get('source_fact_id'):
+            used=state['source_fact_id']
+            state['synthesis_sources']={item['citation_id']:item for item in self.context(state)
+                if item['citation_id']==used and used in state.get('admitted_source_ids',set())}
+            state['synthesis_origin']='server_source_rule'
         await self.event(state, "synthesis", "Đã tạo bản trả lời; đang kiểm tra trước khi hiển thị.")
         return state
 
@@ -1113,11 +1352,42 @@ class Agent:
             f'{item.document.document_number} thay thế văn bản này từ ngày {item.document.effective_from.strftime("%d/%m/%Y")}.',
             citation_ids=[item.chunk.id])
 
+    @staticmethod
+    def synthesis_citation_issues(state, claims):
+        # Direct unit-level verifier probes may omit a synthesis stage. Every
+        # real run initializes this ledger; each synthesis/repair replaces it.
+        if 'synthesis_sources' not in state:
+            return []
+        evidence={e.chunk.id:e for e in state['evidence']}
+        shown=state['synthesis_sources']
+        issues=[]
+        for index,claim in enumerate(claims):
+            for ident in claim.citation_ids:
+                source=shown.get(ident)
+                item=evidence.get(ident)
+                if (not source or not item or ident not in state.get('admitted_source_ids',set())
+                        or source['document_id']!=item.document.id
+                        or not quote_matches(source['text'],item.chunk.text)):
+                    issues.append(f'Claim {index}: citation không có nội dung nguồn hợp lệ trong synthesis context: {ident}')
+
+        return issues
+
     async def verify(self, state):
         draft = state["draft"]
         if not draft.claims:
             state['verification']=Verification()
             await self.event(state,'verification','Chỉ có thông báo giới hạn hoặc câu hỏi làm rõ; không phát hướng dẫn pháp lý chưa kiểm chứng.')
+            return state
+        exposure_issues=self.synthesis_citation_issues(state,draft.claims)
+        if exposure_issues and all(cid in {e.chunk.id for e in state['evidence']}
+                for claim in draft.claims for cid in claim.citation_ids):
+            state['verification']=Verification(issues=exposure_issues)
+            await self.event(state,'verification','Trích dẫn chưa được cung cấp trong synthesis; không phát hành claim.')
+            return state
+        _, review_issues = await self.claim_source_reviews(state, draft.claims)
+        if review_issues:
+            state['verification'] = Verification(issues=review_issues)
+            await self.event(state, 'verification', 'Nguồn đã thay đổi hoặc chưa đủ điều kiện rà soát; không duyệt kết luận từ nguồn này.')
             return state
         if state.get('freshness_question') or (state.get('place_clarification') and not draft.claims):
             state['verification']=Verification()
@@ -1197,6 +1467,7 @@ class Agent:
             if len(doc_ids)!=1:
                 continue
             candidates=[e for e in evidence.values() if e.document.id in doc_ids
+                        and ('synthesis_sources' not in state or e.chunk.id in state['synthesis_sources'])
                         and claim_dates<=source_effective_dates(e.chunk.text)
                         and claim_source_dates(claim.text,state['as_of'])<=dates_in(e.chunk.text)]
             if candidates:
@@ -1207,7 +1478,7 @@ class Agent:
         if repaired:
             await self.event(state,'verification','Đã chọn đúng đoạn quy định ngày hiệu lực trong cùng văn bản trước khi đối chiếu nội dung.',
                              docs=sorted(set(repaired)))
-        structural_issues = []
+        structural_issues = list(exposure_issues)
         for index, claim in enumerate(draft.claims):
             structural_issues.extend(f'Claim {index}: {issue}' for issue in
                 source_policy_issues(claim, list(evidence.values()), state['as_of']))
@@ -1359,7 +1630,7 @@ class Agent:
                 if any(group in examples and group not in conditions for group in groups):
                     structural_issues.append(f'Claim {index}: nhóm đối tượng không phải là điều kiện hoặc giấy tờ thay thế; cần tách đúng nhóm ở khoản được dẫn và các điều kiện của nhóm đó')
             if ('mot trong cac dieu kien' in normalized_source
-                    and any(term in normalized_claim for term in ('con phai co', 'dong thoi phai co', 'tat ca cac dieu kien'))):
+                    and cumulative_alternative_requirement(normalized_claim)):
                 structural_issues.append(f'Claim {index}: nguồn quy định điều kiện thay thế, không chứng minh yêu cầu đồng thời các điều kiện')
             structural_issues.extend(f'Claim {index}: {issue}' for issue in clause_attribution_issues(claim, list(evidence.values())))
             for clause,article in re.findall(r'\bkhoan\s+(\d+)\s+dieu\s+(\d+[a-z]?)\b',normalized_claim):
@@ -1472,8 +1743,14 @@ class Agent:
             return state
         cited_ids={citation_id for claim in draft.claims for citation_id in claim.citation_ids}
         selected=[item for item in state['evidence'] if item.chunk.id in cited_ids]
+        if 'synthesis_sources' in state:
+            selected=[item.model_copy(update={'chunk':item.chunk.model_copy(update={
+                'text':state['synthesis_sources'][item.chunk.id]['text']})}) for item in selected]
         spans=source_spans(selected)
         verification_context,documents=self.prompt_context(state,cited_ids)
+        if 'synthesis_sources' in state:
+            verification_context=[{**item,'text':state['synthesis_sources'][item['citation_id']]['text']}
+                                  for item in verification_context]
         aliases={item['citation_id']:f'C{index+1}' for index,item in enumerate(verification_context)}
         actual={value:key for key,value in aliases.items()}
         span_aliases={key:f'S{index+1}' for index,key in enumerate(spans)}
@@ -1542,7 +1819,9 @@ class Agent:
         checked.issues = structural_issues + checked.issues
         for index,claim in enumerate(draft.claims):
             proven = {q.citation_id for q in checked.supporting_quotes if q.claim_index==index
-                and q.citation_id in evidence and quote_matches(q.quote,evidence[q.citation_id].chunk.text)}
+                and q.citation_id in evidence and quote_matches(q.quote,evidence[q.citation_id].chunk.text)
+                and ('synthesis_sources' not in state or quote_matches(q.quote,
+                    state['synthesis_sources'].get(q.citation_id,{}).get('text','')))}
             if set(claim.citation_ids)-proven:
                 checked.issues.append(f'Claim {index}: thiếu trích đoạn nguyên văn chứng minh tại đúng citation_id')
                 structural_issues.append(f'Claim {index}: thiếu chứng cứ trích dẫn trực tiếp')
@@ -1575,8 +1854,47 @@ class Agent:
         await self.event(state,'repair','Đang sửa một lần theo các lỗi kiểm chứng trên cùng chứng cứ.')
         return state
 
+    async def claim_source_reviews(self, state, claims):
+        evidence = {e.chunk.id: e for e in state['evidence']}
+        doc_ids = {evidence[cid].document.id for claim in claims for cid in claim.citation_ids if cid in evidence}
+        gate = await asyncio.to_thread(self.store.source_gate, (state['release'] or {}).get('id'))
+        if gate is not None:
+            passages = [(evidence[cid].document.id, cid, evidence[cid].chunk.checksum)
+                        for claim in claims for cid in claim.citation_ids if cid in evidence]
+            reviews = await asyncio.to_thread(self.store.scoped_source_reviews,
+                                              state['release'] or {}, passages, state['as_of'])
+            issues = [f'Passage {ident}: {status}; ngoài phạm vi nguồn đã xác minh của candidate'
+                      for ident, status in reviews.items() if status != 'fresh']
+            return reviews, issues
+        reviews = await asyncio.to_thread(self.store.source_review_states, state['release'] or {},
+                                          doc_ids if claims else None)
+        snapshot_allowed = self.provider.settings.allow_stale_generation or state['as_of'] < local_date()
+        issues = [f'Nguồn {ident}: trạng thái rà soát {status} không cho phép phát hành kết luận'
+                  for ident, status in reviews.items()
+                  if status != 'fresh' and not (status == 'stale' and snapshot_allowed)]
+        return reviews, issues
+
     async def finish(self, state):
         draft, check = state["draft"], state["verification"]
+        if draft.claims and 'synthesis_sources' not in state:
+            check.issues.append('Thiếu ledger nguồn thực sự cung cấp cho synthesis; không phát hành claim.')
+        check.issues.extend(self.synthesis_citation_issues(state,draft.claims))
+        if 'synthesis_sources' in state:
+            by_id={e.chunk.id:e for e in state['evidence']}
+            proven=set()
+            for index in check.supported_claim_indexes:
+                if not 0<=index<len(draft.claims):continue
+                claim=draft.claims[index]
+                supports={q.citation_id for q in check.supporting_quotes
+                    if q.claim_index==index and q.citation_id in by_id
+                    and q.citation_id in state['synthesis_sources']
+                    and quote_matches(q.quote,by_id[q.citation_id].chunk.text)
+                    and quote_matches(q.quote,state['synthesis_sources'][q.citation_id]['text'])}
+                if set(claim.citation_ids)-supports:
+                    check.issues.append(f'Claim {index}: thiếu chứng cứ được verify trong nội dung synthesis thực tế')
+                else:proven.update(claim.citation_ids)
+            state.setdefault('synthesis_diagnostics',{})['verified_citations']=([] if check.issues or check.needs_more_evidence else sorted(proven))
+
         for index,claim in enumerate(draft.claims):
             if operational_claim(claim):
                 check.issues.extend(f'Claim {index}: {issue}' for issue in
@@ -1605,11 +1923,10 @@ class Agent:
         if status == "answered" and not claims:
             status = "insufficient_evidence"
         release = state["release"]
-        stale = False
-        if release:
-            checked_at = datetime.fromisoformat(release["checked_at"].replace("Z", "+00:00"))
-            stale = not await asyncio.to_thread(self.store.source_fresh, release, {evidence[i].document.id for c in claims for i in c.citation_ids} if claims else None)
-        if stale and state["as_of"] >= local_date() and not self.provider.settings.allow_stale_generation:
+        reviews, review_issues = await self.claim_source_reviews(state, claims)
+        stale = bool(release) and (not reviews or any(status != 'fresh' for status in reviews.values()))
+        review_blocked = bool(claims) and bool(review_issues)
+        if review_blocked:
             status = "insufficient_evidence"
             claims, citations = [], []
         outside=state['plan'].out_of_scope or draft.out_of_scope
@@ -1623,7 +1940,12 @@ class Agent:
                  "insufficient_evidence": "Chưa có đủ chứng cứ đã xác minh để kết luận đầy đủ."}[status]
         if stale and state["as_of"] >= local_date() and not self.provider.settings.allow_stale_generation:
             intro = "Bộ dữ liệu đã quá bảy ngày chưa được kiểm tra nguồn; chưa thể xác nhận quy định hiện hành."
+        if review_blocked and any(value in {'changed', 'unknown'} for value in reviews.values()):
+            intro = 'Nguồn đã thay đổi hoặc chưa xác định được trạng thái rà soát; chưa thể phát hành kết luận dựa trên nguồn này.'
         content = intro
+        if state.get('source_scope_missing'):
+            content = ('Các đoạn nguồn tìm được hoặc thời điểm đang hỏi chưa nằm trong phạm vi đã xác minh của phiên bản này. '
+                       'Chưa thể xác nhận quy định áp dụng; cần đối chiếu thêm nguồn chính thức và quan hệ sửa đổi, chuyển tiếp.')
         if state.get('unsupported_references'):
             content='Chưa có văn bản mang số '+', '.join(state['unsupported_references'])+' đã được kiểm chứng trong corpus. Chưa thể xác nhận nội dung, mức tiền hoặc quyền lợi được viện dẫn; cần đối chiếu nguồn văn bản chính thức. Không suy ra văn bản có hay không tồn tại chỉ từ việc thiếu trong corpus.'
         if state.get('freshness_question'):
@@ -1693,6 +2015,7 @@ class Agent:
             evidence_chunk_ids=[e.chunk.id for e in state["evidence"]])
         publication = await asyncio.to_thread(self.store.publication, (release or {}).get('id'))
         state['result'] = state['result'].model_copy(update=public_status(release, publication))
+        state.setdefault('synthesis_diagnostics',{})['released_citations']=[c.id for c in state['result'].citations]
         if state.get('retrieval_degraded'):
             state['result']=state['result'].model_copy(update={'retrieval_mode':'lexical_fallback'})
         return state
@@ -1701,7 +2024,8 @@ class Agent:
         budget = Budget()
         state: State = {"request": request, "budget": budget, "emit": emit, "trace": [], "evidence": [], "rounds": 0, "tool_notes": [],
                         "as_of": request.as_of or local_date(), "release": None, "history": [], 'repairs':0,
-                        'citizen_need':assess_need(request.message,[m.model_dump() for m in request.history])}
+                        'citizen_need':assess_need(request.message,[m.model_dump() for m in request.history]),
+                        'synthesis_sources':{},'admitted_source_ids':set()}
         try:
             if not self.provider.configured and not state['citizen_need'].orientation_only:
                 raise ProviderUnavailable("API key của provider được chọn chưa được cấu hình; không sinh câu trả lời giả")
@@ -1715,7 +2039,8 @@ class Agent:
                         'document_number':known[c.document_id].get('document_number'), 'locator':c.locator}
                         for c in item.citations if c.document_id in known]}
                     for item in request.history]
-                if (not state['citizen_need'].orientation_only and state['as_of'] >= local_date() and not self.provider.settings.allow_stale_generation
+                gate = await asyncio.to_thread(self.store.source_gate, (state['release'] or {}).get('id'))
+                if (gate is None and not state['citizen_need'].orientation_only and state['as_of'] >= local_date() and not self.provider.settings.allow_stale_generation
                         and not await asyncio.to_thread(self.store.source_fresh, state['release'] or {})):
                     state['result']=ChatResult(**public_status(state['release']),status='insufficient_evidence',
                         content='Nguồn đã quá bảy ngày chưa được kiểm tra lại; chưa thể xác nhận quy định hiện hành. Có thể xem snapshot trong thư viện nguồn.',

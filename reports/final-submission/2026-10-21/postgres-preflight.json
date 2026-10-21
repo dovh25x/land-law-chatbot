@@ -1,0 +1,55 @@
+{
+  "status": "PASS",
+  "started_at": "2026-10-21T08:58:13.415114+00:00",
+  "completed_at": "2026-10-21T08:59:35.109089+00:00",
+  "storage_backend": "isolated_docker_postgresql",
+  "container": "landlaw-phase4-pg-20261021",
+  "loopback_only": true,
+  "databases_retained": [
+    "landlaw_phase4",
+    "landlaw_phase4_restore"
+  ],
+  "version": "PostgreSQL 16.15 (Debian 16.15-1.pgdg12+2) on x86_64-pc-linux-gnu, compiled by gcc (Debian 12.2.0-14+deb12u1) 12.2.0, 64-bit",
+  "extensions": [
+    {
+      "extname": "unaccent",
+      "extversion": "1.1"
+    },
+    {
+      "extname": "vector",
+      "extversion": "0.8.7"
+    }
+  ],
+  "runtime_fingerprint": "2229a1b298052e51b80d1d46530ca9a5ba580f5bc1b04be90cecdf0e15190c6d",
+  "corpus_id": "corpus-1afca764aa6692e0",
+  "documents": 60,
+  "chunks": 7396,
+  "migrations_sha256": {
+    "migrations/001_initial.sql": "245c279b86e8f9cf718159c676ce924928f3b1a90337b69de6470087c175024a",
+    "migrations/002_session_cache.sql": "1b51f868f396d6ce8aae1b3e5a9e968dd6c8850869f3354415cc2fef2fe1e1c7",
+    "migrations/003_release_metadata.sql": "bafb7e018438bf234dc72ac6f145cc9e92a958a7dbb7c4af592091af973bc370",
+    "migrations/004_embedding_dimensions.sql": "fe3b9d4cb67bdd9a5b9f1763dc78b70cf062d518961730f42ff2b62fde8c4d5d",
+    "migrations/005_local_e5_dimensions.sql": "0735696fc3cd8351c484cba42fd84e42f58459fd85e26275ab929f3a36f0f515",
+    "migrations/006_browser_history.sql": "6e77e271c08712967f8d70e69582c329b30bf2b4d1f4ed947c557d5985434b3c"
+  },
+  "runtime_role_tested": true,
+  "session_authentication": true,
+  "concurrent_session_lease": true,
+  "runtime_insert_privileges": {
+    "messages": false,
+    "traces": false,
+    "answer_cache": false,
+    "releases": false,
+    "source_reviews": false
+  },
+  "server_conversation_rows": 0,
+  "backup_document_roundtrip_exact": true,
+  "restore_without_receipts_fail_closed": true,
+  "restore_receipts_reapplied_usable": true,
+  "source_gate_usable": true,
+  "backup_file": "reports/final-submission/2026-10-21/local-postgres-corpus-backup.json",
+  "backup_sha256": "0281735e470bc3da7011967597e790d9a729ebcafed6cfe7f872bb65463d9c9a",
+  "external_llm_requests": 0,
+  "production_database_touched": false,
+  "scope": "Fresh local PG16/pgvector, migrations 001-006, restored candidate and receipts. Not Supabase/cloud, not model inference, not a 19-case retrieval benchmark or full pytest run."
+}

@@ -1,0 +1,5 @@
+# Verification tools only; the serving image is unchanged and identified separately.
+FROM landlaw:phase4-20261021
+USER root
+RUN apt-get update && apt-get install -y --no-install-recommends git && rm -rf /var/lib/apt/lists/*
+USER app

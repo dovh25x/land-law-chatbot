@@ -1,0 +1,72 @@
+{
+  "base_corpus_id": "corpus-a26bc99e541fbbe2",
+  "candidate_corpus_id": "corpus-8628ef54000ecc8f",
+  "base_payload_sha256": "d4694c30042b65fe0874bc95618e7b979484e6f05599ff702434d73b95e9f6ff",
+  "candidate_payload_sha256": "7aab820c5bbde964a2e8c7ab4c2e730c7327efd6b6a0f531ada6000868559914",
+  "existing_chunks_and_vectors_unchanged": true,
+  "added_chunks": [
+    {
+      "chunk_id": "luat-dat-dai-2024-110-scope-4",
+      "document_id": "luat-dat-dai-2024",
+      "document_checksum": "40a857fb53b42d1f085955c295115c2066ce4a10fd5e964b90653614736db81e",
+      "locator": "Điều 111",
+      "source_segments": [
+        {
+          "chunk_id": "luat-dat-dai-2024-110-0-parent",
+          "source_checksum": "70b456504415a17bd3c64a50f126509d53267a56c03e69ee69c9fad0cdb13901",
+          "page": 18,
+          "start": 1257,
+          "end": 2135,
+          "slice_sha256": "eab98e779ffc5e8ccb75e14e1979694deb9bc847fa5a6452bfac3fdba332de09"
+        }
+      ],
+      "text_sha256": "eab98e779ffc5e8ccb75e14e1979694deb9bc847fa5a6452bfac3fdba332de09",
+      "transformation": "Exact source slices joined by newline; no added legal wording."
+    },
+    {
+      "chunk_id": "nd-226-2025-15-scope-2-4",
+      "document_id": "nd-226-2025",
+      "document_checksum": "a5ffd2aa04a7571ea1c7a238888a6fd968273ad9ff2b19d46358f9c787069bf2",
+      "locator": "Điều 2",
+      "source_segments": [
+        {
+          "chunk_id": "nd-226-2025-15-0-parent",
+          "source_checksum": "fafd931c9f666b70fefd2e64ea92952ae012428fb44d07cd0b6ec0c1547c6f0d",
+          "page": 16,
+          "start": 268,
+          "end": 740,
+          "slice_sha256": "e24f3aebfc534e8fbaaa60c3b6d96755918b22a96081ebf5f466a698b0c0d103"
+        }
+      ],
+      "text_sha256": "e24f3aebfc534e8fbaaa60c3b6d96755918b22a96081ebf5f466a698b0c0d103",
+      "transformation": "Exact source slices joined by newline; no added legal wording."
+    },
+    {
+      "chunk_id": "nd-226-2025-33-scope-7-2a",
+      "document_id": "nd-226-2025",
+      "document_checksum": "a5ffd2aa04a7571ea1c7a238888a6fd968273ad9ff2b19d46358f9c787069bf2",
+      "locator": "Điều 7",
+      "source_segments": [
+        {
+          "chunk_id": "nd-226-2025-33-0-parent",
+          "source_checksum": "58847a7078f4f8d4b600fb1164d6c24ee59d03db95ba2fe827d29c7e771c6574",
+          "page": 34,
+          "start": 1287,
+          "end": 1836,
+          "slice_sha256": "2ea5d7d4c417ba74a373a718acc4a95a7e5cf5f8200ed5abbe295807c899d03a"
+        },
+        {
+          "chunk_id": "nd-226-2025-34-0-parent",
+          "source_checksum": "57ea2882214fb0a788a17bfd1be53d99606e34d8d9051acb17b14662a550a36f",
+          "page": 35,
+          "start": 42,
+          "end": 706,
+          "slice_sha256": "0d3d0aa68103e3add15efb7661646549c130f3d5d5a76c1e84f921b9707b5681"
+        }
+      ],
+      "text_sha256": "55db39e9d6096361f96b0d80ba39c4912d86f11c6a2ad4220d1055736ae56991",
+      "transformation": "Exact source slices joined by newline; no added legal wording."
+    }
+  ],
+  "external_llm_requests": 0
+}

@@ -3,10 +3,13 @@ import argparse
 import asyncio
 import hashlib
 import json
+import math
 import re
+import tempfile
 import time
+from datetime import datetime, timedelta
 from pathlib import Path
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, SecretStr
 from landlaw.config import Settings
 from landlaw.provider import GroqProvider, Budget
 from landlaw.store import Store
@@ -25,7 +28,24 @@ class Judgment(BaseModel):
     claims: list[JudgedClaim] = Field(max_length=30)
 
 async def main(paths,output):
-    settings=Settings().for_operator();store=Store(settings);provider=GroqProvider(settings,store,usage_scope='operator')
+    # Judge requests need local usage/cooldown metadata, never the serving DB.
+    # Clear BOTH URLs after loading settings; operator credentials must not
+    # silently turn a local evaluation into production writes.
+    with tempfile.TemporaryDirectory(prefix='landlaw-faithfulness-') as folder:
+        settings=Settings().model_copy(update={
+            'database_url':SecretStr(''),'admin_database_url':SecretStr(''),
+            'sqlite_path':str(Path(folder)/'judge.db')})
+        await evaluate(paths,output,settings,output.parent/'operator-cooldown.json')
+
+
+async def evaluate(paths,output,settings,cooldown_path):
+    store=Store(settings);provider=GroqProvider(settings,store,usage_scope='operator')
+    if cooldown_path.exists():
+        not_before=datetime.fromisoformat(json.loads(cooldown_path.read_text())['not_before'])
+        if not_before.tzinfo is None:
+            raise ValueError('Cooldown receipt needs a timezone-aware timestamp')
+        delay=(not_before-utcnow()).total_seconds()
+        if delay>0:store.set_cooldown(math.ceil(delay))
     ready_at=0.0
     async def observe_capacity(response):
         nonlocal ready_at
@@ -40,6 +60,8 @@ async def main(paths,output):
         if response.status_code==429:
             try:ready_at=max(ready_at,time.monotonic()+float(response.headers.get('retry-after','60')))
             except ValueError:pass
+        if ready_at>time.monotonic():
+            await asyncio.to_thread(store.set_cooldown,math.ceil(ready_at-time.monotonic()))
     provider.client.event_hooks.setdefault('response',[]).append(observe_capacity)
     records={}
     evaluation_configuration=None
@@ -88,11 +110,22 @@ async def main(paths,output):
             output.parent.mkdir(parents=True,exist_ok=True)
             write(output,rows,settings,evaluation_configuration)
         write(output,rows,settings,evaluation_configuration)
-    finally:await provider.close();store.close()
+    finally:
+        # Retain actual provider capacity across disposable judge databases.
+        remaining=store.cooldown()
+        if remaining>0:
+            not_before=utcnow()+timedelta(seconds=remaining)
+            previous=(datetime.fromisoformat(json.loads(cooldown_path.read_text())['not_before'])
+                      if cooldown_path.exists() else None)
+            if previous is None or not_before>previous:
+                cooldown_path.parent.mkdir(parents=True,exist_ok=True)
+                cooldown_path.write_text(json.dumps({'not_before':not_before.isoformat(),
+                    'source':'Observed operator/provider cooldown; never an application quota'},indent=2)+'\n')
+        await provider.close();store.close()
 
 def write(path,rows,settings,evaluation_configuration):
     scored=[r for r in rows if r.get('status')=='scored'];total=sum(r['total_claims'] for r in scored)
-    value={'checked_at':utcnow().isoformat(),'configuration_sha256':evaluation_configuration,'judge_implementation_sha256':hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),'judge_model':settings.generation_model,'sample_case_ids':list(SAMPLE),'scored_cases':len(scored),'expected_cases':8,'sampled_faithfulness':sum(r['supported_claims'] for r in scored)/total if total else None,'total_judged_claims':total,'results':rows,'scope':'Custom sampled claim support metric inspired by Ragas faithfulness; same-model offline judge, not independent legal certification. No overall quality score. Missing/failed judgments and abstentions are visible, never replaced.'}
+    value={'checked_at':utcnow().isoformat(),'configuration_sha256':evaluation_configuration,'judge_implementation_sha256':hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),'judge_configuration_sha256':configuration_fingerprint(settings),'judge_storage_backend':'isolated_sqlite','judge_model':settings.generation_model,'sample_case_ids':list(SAMPLE),'scored_cases':len(scored),'expected_cases':8,'sampled_faithfulness':sum(r['supported_claims'] for r in scored)/total if total else None,'total_judged_claims':total,'results':rows,'scope':'Custom sampled claim support metric inspired by Ragas faithfulness; same-model offline judge, not independent legal certification. No overall quality score. Missing/failed judgments and abstentions are visible, never replaced.'}
     path.write_text(json.dumps(value,ensure_ascii=False,indent=2)+'\n')
 
 if __name__=='__main__':

@@ -1,0 +1,11 @@
+Traceback (most recent call last):
+  File "/home/dovh25x/projects/land-law-chatbot/reports/release-final-20261021/restore_rollback_local.py", line 57, in <module>
+    main(parser.parse_args().port)
+    ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/dovh25x/projects/land-law-chatbot/reports/release-final-20261021/restore_rollback_local.py", line 25, in main
+    with psycopg.connect(control,autocommit=True) as connection:
+         ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/dovh25x/projects/land-law-chatbot/.venv/lib/python3.14/site-packages/psycopg/connection.py", line 126, in connect
+    raise last_ex.with_traceback(None)
+psycopg.OperationalError: connection failed: connection to server at "127.0.0.1", port 60426 failed: Connection refused
+	Is the server running on that host and accepting TCP/IP connections?

@@ -1,0 +1,167 @@
+............F................................F.....................F.FFF [ 31%]
+........................................................................ [ 63%]
+........................................................................ [ 94%]
+............                                                             [100%]
+=================================== FAILURES ===================================
+_____ test_prompt_keeps_passages_and_deduplicates_document_legal_metadata ______
+
+store = <landlaw.store.Store object at 0x75bea173fce0>
+settings = Settings(app_env='development', llm_provider='groq', groq_api_key=SecretStr('**********'), groq_model='openai/gpt-oss-...passages_and0/data'), reports_dir=PosixPath('/tmp/pytest-of-dovh25x/pytest-4/test_prompt_keeps_passages_and0/reports'))
+
+    def test_prompt_keeps_passages_and_deduplicates_document_legal_metadata(store,settings):
+        from landlaw.models import Evidence
+        law=document()
+        relation={'source_id':'amendment','target_id':'law','type':'amends','target_locators':['Điều 1']}
+        second=law.chunks[0].model_copy(update={'id':'law-2','text':'Đoạn chứng cứ thứ hai.'})
+        state={'evidence':[Evidence(chunk=law.chunks[0],document=law),Evidence(chunk=second,document=law)],
+            'release':{'documents':[law.model_dump(mode='json')],'relations':[relation]}}
+        agent=Agent(store,FakeProvider(settings))
+        passages,documents=agent.prompt_context(state)
+        assert [p['citation_id'] for p in passages]==['law-1','law-2']
+        assert passages[1]['text']==second.text and len(documents)==1
+>       assert dict(zip(documents[0]['legal_relation_fields'],documents[0]['legal_relations'][0]))['target_locators']==['Điều 1']
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'legal_relation_fields'
+
+tests/test_agent.py:233: KeyError
+_______ test_retry_prioritizes_new_evidence_over_a_full_previous_context _______
+
+store = <landlaw.store.Store object at 0x75bea0141c70>
+settings = Settings(app_env='development', llm_provider='groq', groq_api_key=SecretStr('**********'), groq_model='openai/gpt-oss-...izes_new_evi0/data'), reports_dir=PosixPath('/tmp/pytest-of-dovh25x/pytest-4/test_retry_prioritizes_new_evi0/reports'))
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x75bea0523000>
+
+    async def test_retry_prioritizes_new_evidence_over_a_full_previous_context(store,settings,monkeypatch):
+        from landlaw.models import Evidence
+        from landlaw.agent import SupportingQuote
+        docs=[document(f'old-{i}') for i in range(24)]+[document('new')]
+        release(store,docs)
+        sid,_=session(store)
+        def search(query,*args):
+            selected=[docs[-1]] if query=='new' else docs[int(query)*8:(int(query)+1)*8]
+            return [Evidence(chunk=d.chunks[0],document=d) for d in selected]
+        monkeypatch.setattr(store,'search',search)
+        class Fresh(FakeProvider):
+            async def generate(self,schema,instruction,payload,budget):
+                budget.llm()
+                if schema is Plan:
+                    return Plan(tools=[ToolCall(name='search_law',query=str(i)) for i in range(3)])
+                if schema is Draft:
+                    return Draft(status='answered',summary='Kết quả',claims=[Claim(text='Điều kiện được kiểm tra theo hồ sơ.',citation_ids=['new-1'])])
+                if any(e['document_id']=='new' for e in payload['evidence']):
+                    citation=next(e['citation_id'] for e in payload['evidence'] if e['document_id']=='new')
+                    return Verification(supported_claim_indexes=[0],supporting_quotes=[SupportingQuote(
+                        claim_index=0,citation_id=citation,quote=docs[-1].chunks[0].text)])
+                return Verification(needs_more_evidence=True,followup_query='new',issues=['Cần chứng cứ mới'])
+        result=await Agent(store,Fresh(settings)).run(ChatRequest(session_id=sid,message='Điều 95 về bồi thường'),noop)
+>       assert result.status=='answered' and result.citations[0].id=='new-1'
+E       AssertionError: assert ('insufficient_evidence' == 'answered'
+E         
+E         - answered
+E         + insufficient_evidence)
+
+tests/test_agent.py:636: AssertionError
+_ test_legal_relation_prose_cannot_crowd_required_statutory_passages_out_of_prompt _
+
+store = <landlaw.store.Store object at 0x75bea0289950>
+settings = Settings(app_env='development', llm_provider='groq', groq_api_key=SecretStr('**********'), groq_model='openai/gpt-oss-...n_prose_cann0/data'), reports_dir=PosixPath('/tmp/pytest-of-dovh25x/pytest-4/test_legal_relation_prose_cann0/reports'))
+
+    def test_legal_relation_prose_cannot_crowd_required_statutory_passages_out_of_prompt(store,settings):
+        from landlaw.models import Evidence
+        law=document(text='Điều 95. Khoản 1 xác định đối tượng. Khoản 2 có giấy chứng nhận hoặc các giấy tờ khác.')
+        other=law.chunks[0].model_copy(update={'id':'law-2','text':'Điều 95. Có quyết định giao đất hoặc giấy tờ nhận chuyển nhượng hợp pháp.'})
+        relations=[{'source_id':f'guide-{i}','target_id':law.id,'type':'guides','source_locator':'Điều 3',
+            'target_locators':['Điều 95'],'target_locators_complete':True,'source_url':str(law.url),
+            'explanation':'Bối cảnh dài không thay thế căn cứ. '*150} for i in range(12)]
+        state={'evidence':[Evidence(chunk=law.chunks[0],document=law),Evidence(chunk=other,document=law)],
+            'release':{'documents':[law.model_dump(mode='json')],'relations':relations}}
+        agent=Agent(store,FakeProvider(settings.model_copy(update={'llm_provider':'groq'})))
+        passages,documents=agent.prompt_context(state)
+        assert {p['citation_id'] for p in passages}=={'law-1','law-2'}
+>       fields=documents[0]['legal_relation_fields'];rows=documents[0]['legal_relations']
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'legal_relation_fields'
+
+tests/test_agent.py:846: KeyError
+____ test_clause_attribution_cannot_use_another_numbered_clause[2-answered] ____
+
+store = <landlaw.store.Store object at 0x75bea028a990>
+settings = Settings(app_env='development', llm_provider='groq', groq_api_key=SecretStr('**********'), groq_model='openai/gpt-oss-...ution_cannot1/data'), reports_dir=PosixPath('/tmp/pytest-of-dovh25x/pytest-4/test_clause_attribution_cannot1/reports'))
+clause = '2', expected = 'answered'
+
+    @pytest.mark.parametrize('clause,expected', [('1','insufficient_evidence'),('2','answered')])
+    async def test_clause_attribution_cannot_use_another_numbered_clause(store,settings,clause,expected):
+        source=('Điều 95. Điều kiện được bồi thường về đất. '
+            '2. Các trường hợp quy định tại khoản 1 Điều này được bồi thường về đất khi có một trong các điều kiện sau đây: '
+            'a) Có Giấy chứng nhận quyền sử dụng đất; b) Có quyết định giao đất của cơ quan nhà nước có thẩm quyền;')
+        doc=document(text=source)
+        doc.chunks[0].locator='Điều 95'
+        release(store,[doc]);sid,_=session(store)
+        draft=Draft(status='answered',claims=[Claim(text=f'Các trường hợp phải thuộc khoản 1 Điều này. Quyết định giao đất là điều kiện được quy định trong khoản {clause} Điều 95.',citation_ids=['law-1'])])
+        result=await Agent(store,FakeProvider(settings,draft=draft)).run(ChatRequest(session_id=sid,
+            message='Giấy chứng nhận có phải điều kiện duy nhất theo Điều 95 không?',mode='agentic'),noop)
+>       assert result.status==expected
+E       AssertionError: assert 'insufficient_evidence' == 'answered'
+E         
+E         - answered
+E         + insufficient_evidence
+
+tests/test_agent.py:863: AssertionError
+_______ test_alternative_conditions_preserve_eligibility_prerequisite[] ________
+
+store = <landlaw.store.Store object at 0x75bea02a3b10>
+settings = Settings(app_env='development', llm_provider='groq', groq_api_key=SecretStr('**********'), groq_model='openai/gpt-oss-...onditions_pr0/data'), reports_dir=PosixPath('/tmp/pytest-of-dovh25x/pytest-4/test_alternative_conditions_pr0/reports'))
+qualification = ''
+
+    @pytest.mark.parametrize('qualification', ['', 'Các trường hợp phải thuộc đối tượng quy định tại khoản 1 Điều này. '])
+    async def test_alternative_conditions_preserve_eligibility_prerequisite(store,settings,qualification):
+        source=('Điều 95. Điều kiện được bồi thường về đất. '
+            '2. Các trường hợp quy định tại khoản 1 Điều này được bồi thường về đất khi có một trong các điều kiện sau đây: '
+            'a) Có Giấy chứng nhận quyền sử dụng đất; b) Có quyết định giao đất của cơ quan nhà nước có thẩm quyền;')
+        release(store,[document(text=source)]);sid,_=session(store)
+        draft=Draft(status='answered',claims=[Claim(text=qualification+
+            'Giấy chứng nhận không phải là điều kiện duy nhất để được bồi thường về đất.',citation_ids=['law-1'])])
+        result=await Agent(store,FakeProvider(settings,draft=draft)).run(ChatRequest(session_id=sid,
+            message='Giấy chứng nhận có phải điều kiện duy nhất không?',mode='agentic'),noop)
+        assert result.status == ('answered' if qualification else 'insufficient_evidence')
+        if qualification:
+            assert 'khoản 1' in result.verified_claims[0].text
+        else:
+            assert not result.verified_claims
+            assert 'Lưu ý điều kiện áp dụng' not in result.content
+            assert draft.claims[0].text.endswith('được bồi thường về đất.')
+>           assert any('cần nêu điều kiện về đối tượng' in e.summary for e in result.trace)
+E           assert False
+E            +  where False = any(<generator object test_alternative_conditions_preserve_eligibility_prerequisite.<locals>.<genexpr> at 0x75bea02c7e00>)
+
+tests/test_agent.py:883: AssertionError
+_ test_alternative_conditions_preserve_eligibility_prerequisite[C\xe1c tr\u01b0\u1eddng h\u1ee3p ph\u1ea3i thu\u1ed9c \u0111\u1ed1i t\u01b0\u1ee3ng quy \u0111\u1ecbnh t\u1ea1i kho\u1ea3n 1 \u0110i\u1ec1u n\xe0y. ] _
+
+store = <landlaw.store.Store object at 0x75bea02a2170>
+settings = Settings(app_env='development', llm_provider='groq', groq_api_key=SecretStr('**********'), groq_model='openai/gpt-oss-...onditions_pr1/data'), reports_dir=PosixPath('/tmp/pytest-of-dovh25x/pytest-4/test_alternative_conditions_pr1/reports'))
+qualification = 'Các trường hợp phải thuộc đối tượng quy định tại khoản 1 Điều này. '
+
+    @pytest.mark.parametrize('qualification', ['', 'Các trường hợp phải thuộc đối tượng quy định tại khoản 1 Điều này. '])
+    async def test_alternative_conditions_preserve_eligibility_prerequisite(store,settings,qualification):
+        source=('Điều 95. Điều kiện được bồi thường về đất. '
+            '2. Các trường hợp quy định tại khoản 1 Điều này được bồi thường về đất khi có một trong các điều kiện sau đây: '
+            'a) Có Giấy chứng nhận quyền sử dụng đất; b) Có quyết định giao đất của cơ quan nhà nước có thẩm quyền;')
+        release(store,[document(text=source)]);sid,_=session(store)
+        draft=Draft(status='answered',claims=[Claim(text=qualification+
+            'Giấy chứng nhận không phải là điều kiện duy nhất để được bồi thường về đất.',citation_ids=['law-1'])])
+        result=await Agent(store,FakeProvider(settings,draft=draft)).run(ChatRequest(session_id=sid,
+            message='Giấy chứng nhận có phải điều kiện duy nhất không?',mode='agentic'),noop)
+>       assert result.status == ('answered' if qualification else 'insufficient_evidence')
+E       AssertionError: assert 'insufficient_evidence' == 'answered'
+E         
+E         - answered
+E         + insufficient_evidence
+
+tests/test_agent.py:876: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_agent.py::test_prompt_keeps_passages_and_deduplicates_document_legal_metadata
+FAILED tests/test_agent.py::test_retry_prioritizes_new_evidence_over_a_full_previous_context
+FAILED tests/test_agent.py::test_legal_relation_prose_cannot_crowd_required_statutory_passages_out_of_prompt
+FAILED tests/test_agent.py::test_clause_attribution_cannot_use_another_numbered_clause[2-answered]
+FAILED tests/test_agent.py::test_alternative_conditions_preserve_eligibility_prerequisite[]
+FAILED tests/test_agent.py::test_alternative_conditions_preserve_eligibility_prerequisite[C\xe1c tr\u01b0\u1eddng h\u1ee3p ph\u1ea3i thu\u1ed9c \u0111\u1ed1i t\u01b0\u1ee3ng quy \u0111\u1ecbnh t\u1ea1i kho\u1ea3n 1 \u0110i\u1ec1u n\xe0y. ]
+6 failed, 222 passed in 29.79s

@@ -1,0 +1,17 @@
+{
+  "case_ids": [
+    "S06"
+  ],
+  "split": "smoke",
+  "as_of": "2024-08-02",
+  "question": "Theo Điều 95 Luật Đất đai 2024, giấy chứng nhận có phải là điều kiện duy nhất để được bồi thường về đất không?",
+  "storage_backend": "isolated temporary sqlite",
+  "max_api_requests_including_retries": 6,
+  "max_turn_seconds": 90,
+  "inherited_cooldown": {
+    "not_before": "2026-10-20T10:46:58.719985+00:00",
+    "source": "Actual provider cooldown, retained without reset; minimum request wait does not guarantee whole-turn capacity."
+  },
+  "automatic_case_rerun": false,
+  "observers": "Public request JSON (no headers), numeric usage, retrieved legal passages and exact verifier verdict; inputs and return values unchanged."
+}

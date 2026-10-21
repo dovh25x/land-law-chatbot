@@ -1,0 +1,57 @@
+{
+  "checked_at": "2026-10-20T17:38:25.806053+00:00",
+  "storage_backend": "isolated_sqlite",
+  "real_provider_class_constructed": true,
+  "external_transport_disabled": true,
+  "outbound_requests": [],
+  "llm_generation_calls": 0,
+  "sqlite_configuration_sha256": "8d4e3ce8a31e5b6dc7e960ffbcd970a199499e12bd7a18a62affdff68378fe79",
+  "postgresql_configuration_sha256_planned_only": "932e279a731beef773beaa75b0f20395c270a7c59f4c56acbd64ae5ac68fd0e7",
+  "model": "openai/gpt-oss-120b",
+  "embedding_model": "multilingual-e5-small-onnx-q8-window-v1",
+  "rows": [
+    {
+      "path": "/healthz",
+      "status": 200,
+      "metadata": {
+        "status": "ok"
+      }
+    },
+    {
+      "path": "/readyz",
+      "status": 200,
+      "metadata": {
+        "status": "ready",
+        "database": true,
+        "storage": "sqlite-development",
+        "llm_configured": true,
+        "corpus_release": "corpus-a26bc99e541fbbe2",
+        "source_gate": {
+          "mode": "scoped_receipts",
+          "policy_sha256": "e4ce2a3b06e97b76af3d779013d8e238dac07fa4c1b0c8c0ef181dae436edff3",
+          "eligible_passages": 38,
+          "usable": true,
+          "whole_corpus_verified": false
+        },
+        "configuration_sha256": "8d4e3ce8a31e5b6dc7e960ffbcd970a199499e12bd7a18a62affdff68378fe79"
+      }
+    },
+    {
+      "path": "/api/v1/status",
+      "status": 200,
+      "metadata": {
+        "corpus_release": "corpus-a26bc99e541fbbe2",
+        "source_gate": {
+          "mode": "scoped_receipts",
+          "policy_sha256": "e4ce2a3b06e97b76af3d779013d8e238dac07fa4c1b0c8c0ef181dae436edff3",
+          "eligible_passages": 38,
+          "usable": true,
+          "whole_corpus_verified": false
+        },
+        "source_fresh": false,
+        "generation_available": true
+      }
+    }
+  ],
+  "scope": "Local API startup with the configured provider identity and an HTTP transport that rejects every external call. Not Groq connectivity, container image or PostgreSQL verification."
+}

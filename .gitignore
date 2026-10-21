@@ -23,6 +23,16 @@ reports/.resume-*.lock
 *.tsbuildinfo
 reports/ui-*.png
 reports/ingest-progress.json
+reports/phase2b-*/**/corpus-with-source-gate.json
 .wrangler/
 models/
 data/*.db*
+# Corpus backups are delivered as checksummed release assets, not source commits.
+reports/phase3b-*/local-corpus-backup.json
+reports/final-submission/**/local-postgres-corpus-backup.json
+reports/**/*.db*
+reports/**/*.sqlite*
+reports/submission-20261021/*.pdf
+reports/submission-20261021/*.pptx
+reports/submission-20261021/*.png
+reports/release-final-20261021/*.png

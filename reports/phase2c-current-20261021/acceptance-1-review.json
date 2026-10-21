@@ -1,0 +1,12 @@
+{
+  "attempt_folder": "acceptance-1",
+  "classification": "failed_initial_offline_diagnostic_not_a_valid_final_runtime_cohort",
+  "findings": [
+    "C01/C02 falsely routed to place normalization by substring huyen inside chuyen, cu inside cua/cu the, xa inside xac.",
+    "C03 accepted its local-rule fixture but lacked national eligibility/dependency contexts; do not count complete legal answer acceptance.",
+    "C06 required a planner fixture not supplied by the initial harness; RuntimeError was a harness limitation, not a measured Groq/system result.",
+    "Routing code was patched after case records completed but before backup/report completion; the report fingerprint may reflect the patched code. This run is not evidence for a fixed final runtime. Subsequent runs lock all backend files."
+  ],
+  "external_llm_requests": 0,
+  "retained_without_rewriting_attempts": true
+}

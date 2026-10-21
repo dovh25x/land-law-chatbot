@@ -1,0 +1,61 @@
+{
+  "status": "proposed_before_measurement_not_model_run",
+  "created_at": "2026-10-20T17:27:15.676099+00:00",
+  "case_ids": [
+    "S01",
+    "S04",
+    "X01",
+    "N02",
+    "N07",
+    "N08"
+  ],
+  "suite_sha256": {
+    "smoke": "38aa8da29bf41a94b4cf8fd8a5ca6769232b87884aeed573c10f5586a09d7254",
+    "supplemental": "e6bb5c9f7ba3a589237835b68d95e491ff2c16aad83683a8437f4a74e4120fea",
+    "natural": "b068bb4e717439938c96e459a63c9a1832b1990d88005cf6a768d9e9c0871e74"
+  },
+  "rationale": {
+    "S01": "Hà Nội: replacement fact, current-dated question",
+    "S04": "Historical transition: acquisition decision and already-approved plan",
+    "X01": "Citizen-language asset moving costs and causal damage limits",
+    "N02": "Agricultural living support with scope and branch prerequisites",
+    "N07": "Private entitlement cannot be guaranteed",
+    "N08": "Missing/fabricated source number"
+  },
+  "answerable_ids_proposed": [
+    "S01",
+    "S04",
+    "X01",
+    "N02"
+  ],
+  "generation_required_ids": [
+    "S04",
+    "X01",
+    "N02"
+  ],
+  "no_generation_ids": [
+    "S01",
+    "N07",
+    "N08"
+  ],
+  "judge_fixed_sample_intersection": [
+    "S04",
+    "X01"
+  ],
+  "budget": {
+    "external_requests_this_phase": 0,
+    "planned_generation_max": 18,
+    "planned_judge_max": 4,
+    "planned_total_max": 22,
+    "generation_token_allocation": 32000,
+    "judge_token_allocation": 8000,
+    "total_token_allocation": 40000,
+    "full_evaluation_generation_token_allocation": 150000,
+    "full_evaluation_judge_token_allocation": 40000,
+    "pilot_is_included_in_full_budget": true,
+    "allocation_is_not_observed_usage_or_guaranteed_hard_cap": true
+  },
+  "no_s06_request": true,
+  "gold_edited": false,
+  "selection_changed_after_metrics": false
+}

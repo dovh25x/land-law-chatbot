@@ -43,6 +43,16 @@ curl --fail https://hanoi-land-law.pages.dev/api/v1/status
 
 Không dùng riêng HTTP status mở stream để đếm lượt chat thành công. Theo dõi sự kiện cuối `turn_finished`/`turn_failed` và `result.status`; metadata trạng thái transport có thể khác kết quả trả lời nội dung.
 
+## Candidate có phạm vi nguồn đã duyệt
+
+Receipt có thể giới hạn `verified_scope` theo `chunk_checksums` và khoảng ngày hỏi `[as_of_from, as_of_to)`. Phải review nội dung, chủ thể, điều kiện và quan hệ sửa đổi/chuyển tiếp thực sự trước khi ghi receipt; kiểm tra HTTP hoặc hash chỉ là bằng chứng về bản tải. Receipt giới hạn không làm toàn văn được đánh dấu fresh.
+
+Operator nhập receipt bằng `land-law review-source <receipt.json>`, rồi kích hoạt tập receipt đã ghim bằng `land-law activate-source-gate <policy.json>`. Policy có `version: 1`, `release_id` và mapping `receipts` từ document ID sang SHA256 canonical receipt. Luôn xác nhận database đích trước hai lệnh này. Tài khoản runtime chỉ đọc policy và receipt.
+
+Khi policy tồn tại, từng citation phải khớp đoạn, checksum, ngày hỏi và receipt mới nhất còn hạn. Snapshot override và ngày hỏi lịch sử không vượt cổng này. Receipt changed/unavailable, receipt mới chưa ghim, policy lỗi hoặc thiếu receipt đều chặn claim. Verify và finish kiểm tra lại; không có đoạn đủ điều kiện thì không gọi synthesis. Phần corpus không được dùng trong claim không khiến toàn bộ câu hỏi bị chặn.
+
+Backup corpus giữ policy nhưng không chứa bảng receipt. Sau restore, policy thiếu receipt giữ trạng thái fail-closed; nhập lại bộ receipt đã review còn hạn trước khi mở generation. Phát hành policy và receipt như các artifact có checksum đi cùng corpus asset. Không xóa policy để làm restore hoặc health check đạt. `/readyz`, `/api/v1/status` và `ops-status` công khai hash policy cùng số đoạn đủ điều kiện; `usable` không chứng nhận độ đúng câu trả lời, coverage hiện hành hay chất lượng model.
+
 ## Ingress và chống lạm dụng
 
 Cloudflare ký method, path, query, timestamp, IP và SHA256 body bằng HMAC. Backend production kiểm tra chữ ký cùng cửa sổ 60 giây, không tin IP do client tự khai báo. API chỉ được gọi qua Pages; truy cập trực tiếp Render phải bị từ chối.
@@ -65,6 +75,17 @@ API dùng scope `public`; CLI/dev entrypoint tin cậy dùng `operator`, ghi usa
 ## Rà soát nguồn và freshness
 
 Ở chế độ mặc định, nguồn quá bảy ngày hoặc receipt cho biết `changed`/`unavailable` chặn generation. Runtime hiện kiểm tra freshness của corpus một cách bảo thủ; một nguồn cần rà soát có thể ảnh hưởng toàn bộ chat, dù thư viện vẫn truy cập được.
+
+`source_review_states()` phân biệt trạng thái rà soát với hiệu lực pháp lý tại ngày hỏi:
+
+| Trạng thái | Ý nghĩa và hành vi |
+|---|---|
+| `fresh` | Metadata/receipt hợp lệ, đúng checksum, timestamp có timezone và chưa quá bảy ngày; vẫn phải kiểm tra hiệu lực, phạm vi, sửa đổi và citation của từng claim. |
+| `stale` | Snapshot từng được rà soát nhưng đã quá hạn, chưa có receipt bất lợi mới; chỉ được tham khảo theo ngoại lệ snapshot đã cấu hình hoặc câu hỏi lịch sử, vẫn qua verify và finish. |
+| `changed` | Receipt mới nhất cho checksum xác nhận thay đổi; không được snapshot override hoặc ngày hỏi lịch sử vượt cổng. |
+| `unknown` | Receipt `unavailable`, timestamp/metadata không hợp lệ hoặc không xác định được nguồn; không được phát claim phụ thuộc nguồn đó. |
+
+HTTP 200 và checksum không đổi chỉ chứng minh truy cập/toàn vẹn, không tự chứng minh văn bản còn hiệu lực. Văn bản hết hiệu lực nhưng được lưu đúng vai trò lịch sử không tự trở thành receipt `changed` mới. Receipt phải ghi rõ điều đã đối chiếu và phần chưa xác minh; không ghi `unchanged` chỉ để gia hạn timestamp. Biên bản đề xuất trong `reports/` chưa có tác dụng với runtime cho đến khi được người vận hành duyệt và ghi vào database đích đã xác nhận.
 
 Quy trình rà soát:
 

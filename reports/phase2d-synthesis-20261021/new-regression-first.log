@@ -1,0 +1,65 @@
+...F................FF                                                   [100%]
+=================================== FAILURES ===================================
+_____ test_numbered_projection_keeps_condition_and_its_explicit_exception ______
+
+    def test_numbered_projection_keeps_condition_and_its_explicit_exception():
+        raw=('Điều 8. Hỗ trợ. 1. Việc không liên quan. '
+             '2. Hộ cần di chuyển được hỗ trợ, trừ trường hợp tại khoản 3 Điều này. '
+             '3. Hộ đã được bố trí chỗ ở không nhận hỗ trợ này. '
+             '4. Chủ đầu tư có nghĩa vụ báo cáo.')
+        item=context_item(document(text=raw))
+        view=paragraph_view(item,'hộ cần di chuyển hỗ trợ',model_passage_text,source_clause_spans,{'2'})
+        assert '2. Hộ cần' in view['text'] and '3. Hộ đã' in view['text']
+        assert '4. Chủ' not in view['text']
+>       assert quote_matches(view['text'],raw)
+E       AssertionError: assert False
+E        +  where False = quote_matches('Điều 8. Hỗ trợ.\n[…]\n2. Hộ cần di chuyển được hỗ trợ, trừ trường hợp tại khoản 3 Điều này.\n3. Hộ đã được bố trí chỗ ở không nhận hỗ trợ này.', 'Điều 8. Hỗ trợ. 1. Việc không liên quan. 2. Hộ cần di chuyển được hỗ trợ, trừ trường hợp tại khoản 3 Điều này. 3. Hộ đã được bố trí chỗ ở không nhận hỗ trợ này. 4. Chủ đầu tư có nghĩa vụ báo cáo.')
+
+tests/test_synthesis_integrity.py:58: AssertionError
+________ test_other_article_amendment_does_not_get_dependency_priority _________
+
+    def test_other_article_amendment_does_not_get_dependency_priority():
+        base=context_item(document('base',text='Điều 1. Quy định đang hỏi.'))
+        unrelated=context_item(document('modifier',text='Sửa đổi Điều 77, không phải điều đang hỏi.'))
+        unrelated['legal_relations']=[{'source_id':'modifier','target_id':'base','type':'amends',
+            'source_locator':'Điều 1','target_locators':['Điều 77'],'target_locators_complete':True}]
+        noise=[context_item(document(f'extra-{i}',text='Nội dung khác. '*90)) for i in range(10)]
+        passages,docs,reasons=pack([base,*noise,unrelated])
+>       assert reasons[unrelated['citation_id']]=='context_budget'
+E       AssertionError: assert 'included_whole' == 'context_budget'
+E         
+E         - context_budget
+E         + included_whole
+
+tests/test_synthesis_integrity.py:243: AssertionError
+_ test_legal_relation_prose_cannot_crowd_required_statutory_passages_out_of_prompt _
+
+store = <landlaw.store.Store object at 0x7f1fdd346a80>
+settings = Settings(app_env='development', llm_provider='groq', groq_api_key=SecretStr('**********'), groq_model='openai/gpt-oss-...n_prose_cann0/data'), reports_dir=PosixPath('/tmp/pytest-of-dovh25x/pytest-6/test_legal_relation_prose_cann0/reports'))
+
+    def test_legal_relation_prose_cannot_crowd_required_statutory_passages_out_of_prompt(store,settings):
+        from landlaw.models import Evidence
+        law=document(text='Điều 95. Khoản 1 xác định đối tượng. Khoản 2 có giấy chứng nhận hoặc các giấy tờ khác.')
+        other=law.chunks[0].model_copy(update={'id':'law-2','text':'Điều 95. Có quyết định giao đất hoặc giấy tờ nhận chuyển nhượng hợp pháp.'})
+        relations=[{'source_id':f'guide-{i}','target_id':law.id,'type':'guides','source_locator':'Điều 3',
+            'target_locators':['Điều 95'],'target_locators_complete':True,'source_url':str(law.url),
+            'explanation':'Bối cảnh dài không thay thế căn cứ. '*150} for i in range(12)]
+        state={'evidence':[Evidence(chunk=law.chunks[0],document=law),Evidence(chunk=other,document=law)],
+            'release':{'documents':[law.model_dump(mode='json')],'relations':relations}}
+        agent=Agent(store,FakeProvider(settings.model_copy(update={'llm_provider':'groq'})))
+        passages,documents=agent.prompt_context(state)
+        assert {p['citation_id'] for p in passages}=={'law-1','law-2'}
+        fields=documents[0]['legal_relation_fields'];rows=documents[0]['legal_relations']
+        assert len(rows)==12 and 'target_locators_complete' in fields
+>       assert rows[0][fields.index('target_locators')]==['Điều 95']
+E       AssertionError: assert [] == ['Điều 95']
+E         
+E         Right contains one more item: 'Điều 95'
+E         Use -v to get more diff
+
+tests/test_agent.py:848: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_synthesis_integrity.py::test_numbered_projection_keeps_condition_and_its_explicit_exception
+FAILED tests/test_synthesis_integrity.py::test_other_article_amendment_does_not_get_dependency_priority
+FAILED tests/test_agent.py::test_legal_relation_prose_cannot_crowd_required_statutory_passages_out_of_prompt
+3 failed, 19 passed in 3.37s

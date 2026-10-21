@@ -1,0 +1,20 @@
+PLW1510 `subprocess.run` without explicit `check` argument
+  --> reports/final-submission/2026-10-21/image_probe.py:32:9
+   |
+30 |     assert actual == expected
+31 |     model_files[name] = actual
+32 | check = subprocess.run(['python', '-m', 'pip', 'check'], capture_output=True, text=True)
+   |         ^^^^^^^^^^^^^^
+33 | assert check.returncode == 0
+34 | assert os.geteuid() == 10001
+   |
+help: Add explicit `check=False`
+   |
+31 |     model_files[name] = actual
+   - check = subprocess.run(['python', '-m', 'pip', 'check'], capture_output=True, text=True)
+32 + check = subprocess.run(['python', '-m', 'pip', 'check'], check=False, capture_output=True, text=True)
+33 | assert check.returncode == 0
+   |
+note: This suggestion may be incorrect or produce invalid syntax. It requires manual review and cannot be applied automatically
+
+Found 12 errors (11 fixed, 1 remaining).

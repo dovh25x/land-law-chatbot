@@ -1,0 +1,132 @@
+{
+  "format": 1,
+  "phase": "2D",
+  "prepared_at": "2026-10-21T06:21:00.067883+00:00",
+  "timebox_started_at": "2026-10-21T05:29:13+00:00",
+  "timezone": "Asia/Ho_Chi_Minh",
+  "phase_2d_status": "PASS_DETERMINISTIC_CONTEXT_AND_CITATION_INTEGRITY",
+  "model_pilot_decision": "READY_PENDING_EXPLICIT_APPROVAL",
+  "deployment_decision": "NOT_READY",
+  "git": {
+    "base_commit": "117e7bd2c4a320c3d02256dfdabf858180b47dbf",
+    "candidate_commit": null,
+    "working_tree_dirty": true,
+    "source_tree_sha256": "57adb766b39010c3290232899c1e301efd722bf5c1dd5cc1f3a7afc55939c05b"
+  },
+  "candidate_identity_components": {
+    "source_tree": "57adb766b39010c3290232899c1e301efd722bf5c1dd5cc1f3a7afc55939c05b",
+    "runtime_sqlite": "37d2fb54ca0ce64d852190df32e7bea80920fd7fce99a7a7624a157185e953a7",
+    "runtime_pg_planned": "baa9d1c348f46f6e2df803857e7079d0288065f2cb7bb6264f0ec530da7aa007",
+    "corpus_payload": "7ce7956ae35c7006b5bfd7d10d516fa9e8e47fe2f073e471ceecbb34b412d317",
+    "source_policy": "dfe58f8376d4d4d978ace0483ba45a70e60eafa473285ffbe5a6a2a8e7f72dd4",
+    "evaluation_suites": {
+      "data/evaluation/smoke.jsonl": "38aa8da29bf41a94b4cf8fd8a5ca6769232b87884aeed573c10f5586a09d7254",
+      "data/evaluation/supplemental.jsonl": "e6bb5c9f7ba3a589237835b68d95e491ff2c16aad83683a8437f4a74e4120fea",
+      "data/evaluation/natural.jsonl": "b068bb4e717439938c96e459a63c9a1832b1990d88005cf6a768d9e9c0871e74"
+    }
+  },
+  "candidate_identity_sha256": "b90108a76ec7309e81b0e5940fa0027d5a1788485d212de8177f6e37812d897c",
+  "runtime": {
+    "sqlite_fingerprint_verified": "37d2fb54ca0ce64d852190df32e7bea80920fd7fce99a7a7624a157185e953a7",
+    "postgresql_fingerprint_planned_only": "baa9d1c348f46f6e2df803857e7079d0288065f2cb7bb6264f0ec530da7aa007",
+    "python_tested": "3.14.4",
+    "model": "openai/gpt-oss-120b",
+    "embedding_contract": {
+      "provider": "local_onnx",
+      "model": "multilingual-e5-small-onnx-q8-window-v1",
+      "dimensions": 384,
+      "format_version": "v1",
+      "local_model_spec": {
+        "name": "multilingual-e5-small-onnx-q8-window-v1",
+        "dimensions": 384,
+        "onnx_revision": "761b726dd34fb83930e26aab4e9ac3899aa1fa78",
+        "tokenizer_revision": "614241f622f53c4eeff9890bdc4f31cfecc418b3",
+        "onnx_sha256": "f80102d3f2a1229f387d3c81909990d8945513e347b0eab049f7de3c6f98c193",
+        "tokenizer_sha256": "cfc8146abe2a0488e9e2a0c56de7952f7c11ab059eca145a0a727afce0db2865",
+        "preprocessing": "e5-prefix-each-window-sp-offset1-mask-mean-l2-window-mean-l2-v1",
+        "passage_max_tokens": 512,
+        "query_max_tokens": 128,
+        "overlap_tokens": 64
+      }
+    }
+  },
+  "corpus": {
+    "id": "corpus-1afca764aa6692e0",
+    "path": "data/staging/phase2c-current/release-v5.json",
+    "payload_sha256": "7ce7956ae35c7006b5bfd7d10d516fa9e8e47fe2f073e471ceecbb34b412d317",
+    "modified_in_phase2d": false
+  },
+  "source_policy": {
+    "path": "reports/phase2c-current-20261021/source-gate-final.json",
+    "canonical_sha256": "dfe58f8376d4d4d978ace0483ba45a70e60eafa473285ffbe5a6a2a8e7f72dd4",
+    "scope_date": "2026-10-21",
+    "receipts_modified": false
+  },
+  "evaluation_suites": {
+    "data/evaluation/smoke.jsonl": "38aa8da29bf41a94b4cf8fd8a5ca6769232b87884aeed573c10f5586a09d7254",
+    "data/evaluation/supplemental.jsonl": "e6bb5c9f7ba3a589237835b68d95e491ff2c16aad83683a8437f4a74e4120fea",
+    "data/evaluation/natural.jsonl": "b068bb4e717439938c96e459a63c9a1832b1990d88005cf6a768d9e9c0871e74"
+  },
+  "context_budget": {
+    "serialized_evidence_and_document_chars": 7000,
+    "serialization": "Actual Groq compact JSON with C aliases, including clause/scope metadata",
+    "llm_requests_per_turn_including_retries": 6,
+    "tools": 12,
+    "retrieval_rounds": 2,
+    "repairs": 1,
+    "turn_seconds": 90
+  },
+  "checks": {
+    "backend": {
+      "passed": 486,
+      "log": "reports/phase2d-synthesis-20261021/backend-locked.log"
+    },
+    "new_regressions": {
+      "passed": 25,
+      "log": "reports/phase2d-synthesis-20261021/backend-locked.log"
+    },
+    "actual_synthesis_source_completeness": {
+      "passed": 3,
+      "total": 3,
+      "model_pass": null,
+      "wire_context_chars": {
+        "C01": 6697,
+        "C02": 5070,
+        "C03": 6981
+      }
+    },
+    "historical_deterministic_controls": {
+      "passed": 5,
+      "total": 5
+    },
+    "secrets_scan": "PASS",
+    "git_diff_check": "PASS",
+    "frontend": "NOT_RERUN_UNCHANGED",
+    "postgresql": "NOT_TESTED_NO_LOCAL_SERVER",
+    "public_e2e": "NOT_TESTED",
+    "groq_requests": 0,
+    "judge_requests": 0
+  },
+  "model_quality": {
+    "answer_correctness": null,
+    "faithfulness": null,
+    "citation_accuracy_semantic": null,
+    "model_latency": null,
+    "answerable_coverage": null,
+    "false_abstention_rate": null,
+    "S06": "FAIL_PREVIOUS_ATTEMPT_UNCHANGED"
+  },
+  "deployment_blockers": [
+    "Model pilot/semantic review not run",
+    "PostgreSQL candidate not verified",
+    "Deployed SHA/corpus/policy/fingerprint not matched to this uncommitted candidate",
+    "Public ingress/SSE/citation E2E not verified",
+    "Current source scopes limited to 2026-10-21"
+  ],
+  "commit_performed": false,
+  "push_performed": false,
+  "deployment_performed": false,
+  "production_database_modified": false,
+  "full_pipeline_answer_acceptance_established": false,
+  "synthesis_input_integrity_established": true
+}

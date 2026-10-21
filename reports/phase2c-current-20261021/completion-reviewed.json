@@ -1,0 +1,18 @@
+{
+  "checked_at": "2026-10-20T19:26:39.911147+00:00",
+  "elapsed_minutes": 83.62,
+  "status": "NOT_READY",
+  "source_tree_and_head_unchanged": true,
+  "raw_fixture_outputs_preserved": true,
+  "source_admission_cases": 3,
+  "structural_fixture_passes": 3,
+  "synthesis_source_basis_complete_including_parent_equivalence": {
+    "numerator": 1,
+    "denominator": 3
+  },
+  "full_pipeline_acceptance_established": false,
+  "model_pass": null,
+  "external_llm_requests": 0,
+  "authoritative_manifest": "reports/phase2c-current-20261021/release-manifest-reviewed.json",
+  "supersedes_conclusion_only": "Earlier3/3fixture statement is structural only; C01/C03 have missing synthesis sources. No attempt output was rewritten."
+}

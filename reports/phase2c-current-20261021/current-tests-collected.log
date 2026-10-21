@@ -1,0 +1,26 @@
+tests/test_current_legal_candidate.py::test_scope_extracts_complete_clause_without_changed_neighbor
+tests/test_current_legal_candidate.py::test_amending_actor_scope_and_member_rule_are_separate
+tests/test_current_legal_candidate.py::test_every_word_is_bound_to_source_slices_and_checksums
+tests/test_current_legal_candidate.py::test_only_four_local_vectors_added_and_base_is_immutable
+tests/test_current_legal_candidate.py::test_excerpts_resolve_to_exact_attachment_and_physical_page
+tests/test_current_legal_candidate.py::test_legal_questions_do_not_match_administrative_substrings[H\u1ed9 c\xf3 gi\u1ea5y ch\u1ee9ng nh\u1eadn, ch\u01b0a c\xf3 ph\u01b0\u01a1ng \xe1n \u0111\u01b0\u1ee3c duy\u1ec7t tr\u01b0\u1edbc c\xe1c m\u1ed1c chuy\u1ec3n ti\u1ebfp. C\u1ea7n \u0111\u1ed1i chi\u1ebfu \u0111i\u1ec1u ki\u1ec7n b\u1ed3i th\u01b0\u1eddng, kh\xf4ng x\xe1c nh\u1eadn quy\u1ec1n l\u1ee3i h\u1ed9 c\u1ee5 th\u1ec3.]
+tests/test_current_legal_candidate.py::test_legal_questions_do_not_match_administrative_substrings[H\u1ed9 \u0111\u1ee7 \u0111i\u1ec1u ki\u1ec7n b\u1ed3i th\u01b0\u1eddng, thu h\u1ed3i \u0111\u1ea5t trong c\xf9ng x\xe3, kh\xf4ng ph\u1ea3i di chuy\u1ec3n ch\u1ed7 \u1edf: h\u1ed7 tr\u1ee3 \u1ed5n \u0111\u1ecbnh \u0111\u1eddi s\u1ed1ng th\u1ebf n\xe0o?]
+tests/test_current_legal_candidate.py::test_legal_questions_do_not_match_administrative_substrings[Chuy\u1ec3n nh\xe0 sau thu h\u1ed3i \u0111\u1ea5t, ch\u01b0a x\xe1c \u0111\u1ecbnh ch\xednh s\xe1ch c\u1ee7a d\u1ef1 \xe1n m\u1edbi.]
+tests/test_current_legal_candidate.py::test_legal_questions_do_not_match_administrative_substrings[X\xe1c nh\u1eadn \u0111i\u1ec1u ki\u1ec7n b\u1ed3i th\u01b0\u1eddng trong ph\u01b0\u01a1ng \xe1n c\u1ee7a h\u1ed9 gia \u0111\xecnh.]
+tests/test_current_legal_candidate.py::test_actual_old_district_mapping_requests_still_match[Huy\u1ec7n \u0110an Ph\u01b0\u1ee3ng c\u0169 nay thu\u1ed9c x\xe3 m\u1edbi n\xe0o?]
+tests/test_current_legal_candidate.py::test_actual_old_district_mapping_requests_still_match[\u0110\u1ecba b\xe0n huy\u1ec7n c\u0169 \u0111\xe3 \u0111\u1ed5i th\xe0nh x\xe3 n\xe0o?]
+tests/test_current_legal_candidate.py::test_actual_old_district_mapping_requests_still_match[T\xean huy\u1ec7n c\u0169 v\xe0 x\xe3 m\u1edbi c\xf3 \xe1nh x\u1ea1 ra sao?]
+tests/test_current_legal_candidate.py::test_guidance_scope_keeps_only_the_retrieved_source_article
+tests/test_current_legal_candidate.py::test_reviewed_candidates_do_not_get_crowded_out_by_stale_hits
+tests/test_current_legal_candidate.py::test_article_binds_to_its_own_named_document[\u0110\u1ee7 \u0111i\u1ec1u ki\u1ec7n t\u1ea1i \u0110i\u1ec1u 5 c\u1ee7a lu\u1eadt chung; \u0110i\u1ec1u 17 Quy \u0111\u1ecbnh k\xe8m Quy\u1ebft \u0111\u1ecbnh 123/2026/Q\u0110-UBND quy \u0111\u1ecbnh th\u1ebf n\xe0o?-123/2026/Q\u0110-UBND-17]
+tests/test_current_legal_candidate.py::test_article_binds_to_its_own_named_document[\u0110i\u1ec1u 7 c\u1ee7a lu\u1eadt chung c\xf3 \u0111i\u1ec1u ki\u1ec7n kh\xe1c. Xin gi\u1ea3i th\xedch \u0110i\u1ec1u 22 Ngh\u1ecb \u0111\u1ecbnh 456/2025/N\u0110-CP.-456/2025/N\u0110-CP-22]
+tests/test_current_legal_candidate.py::test_article_binds_to_its_own_named_document[\u0110i\u1ec1u 8 c\u1ee7a Lu\u1eadt m\u1eabu quy \u0111\u1ecbnh th\u1ebf n\xe0o?-789/2024/QH15-8]
+tests/test_current_legal_candidate.py::test_calendar_dates_never_request_an_unrelated_replacement[Ng\xe0y 21/10/2026, \u0111i\u1ec1u ki\u1ec7n b\u1ed3i th\u01b0\u1eddng th\u1ebf n\xe0o?-expected0]
+tests/test_current_legal_candidate.py::test_calendar_dates_never_request_an_unrelated_replacement[Ng\xe0y 02/04/2026 v\xe0 01/07/2025 c\xf3 thay \u0111\u1ed5i kh\xf4ng?-expected1]
+tests/test_current_legal_candidate.py::test_calendar_dates_never_request_an_unrelated_replacement[Theo Quy\u1ebft \u0111\u1ecbnh 10/2026/Q\u0110-UBND ng\xe0y 18/01/2026?-expected2]
+tests/test_current_legal_candidate.py::test_calendar_dates_never_request_an_unrelated_replacement[Lu\u1eadt 31/2024/QH15 v\xe0 Ngh\u1ecb quy\u1ebft 254/2025/QH15 \xe1p d\u1ee5ng ng\xe0y 21/10/2026?-expected3]
+tests/test_current_legal_candidate.py::test_repeal_excerpt_retains_trigger_and_all_repealed_226_parts
+tests/test_current_legal_candidate.py::test_related_context_retains_parents_and_different_governing_articles
+tests/test_current_legal_candidate.py::test_unreviewed_parent_cannot_displace_reviewed_article
+
+24 tests collected in 0.43s

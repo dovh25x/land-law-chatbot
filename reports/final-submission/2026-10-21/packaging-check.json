@@ -1,0 +1,18 @@
+{
+  "status": "PASS_STATIC_AND_IMAGE_PROBE",
+  "runtime_behavior_changed": false,
+  "docker_build": "PASS_LOCAL",
+  "excluded_paths": [
+    "reports/final-submission/",
+    "reports/phase3b-*/local-corpus-backup.json"
+  ],
+  "retained_on_disk": true,
+  "duplicate_backup_bytes": 39289402,
+  "api_runtime_report_inputs": [
+    "reports/latest.json",
+    "reports/public-evaluations.json"
+  ],
+  "excluded_paths_referenced_by_public_archive": false,
+  "method": "Static API path review plus actual serving-image probe; excluded backups remain on disk and required public report inputs are present.",
+  "image_evidence": "docker-preflight.json"
+}

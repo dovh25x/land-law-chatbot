@@ -10,6 +10,7 @@ data/checkpoints
 data/backups
 data/local.db*
 reports/runs
+reports/phase2b-*/**/corpus-with-source-gate.json
 reports/ui-*.png
 .wrangler
 __pycache__
@@ -18,3 +19,8 @@ models
 tests
 dist
 data/demo
+# Retain academic evidence locally without copying it into the serving image.
+reports/final-submission/
+reports/phase3b-*/local-corpus-backup.json
+reports/release-final-20261021/
+reports/submission-20261021/

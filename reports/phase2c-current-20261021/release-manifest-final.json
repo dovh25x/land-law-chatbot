@@ -1,0 +1,242 @@
+{
+  "format": 1,
+  "phase": "2C",
+  "prepared_at": "2026-10-20T19:07:50.149528+00:00",
+  "timebox_started_at": "2026-10-20T18:03:03+00:00",
+  "timezone": "Asia/Ho_Chi_Minh",
+  "status": "NOT_READY",
+  "git": {
+    "base_sha": "117e7bd2c4a320c3d02256dfdabf858180b47dbf",
+    "candidate_commit_sha": null,
+    "working_tree_dirty": true,
+    "source_tree_sha256": "ab889c7ff597e6c94f388d794a956a7eac902ee9bf83e21d203a62f8581aedc6",
+    "package_manifest": "dist/phase2c-current-20261021-context-pack/manifest.json"
+  },
+  "runtime": {
+    "sqlite_configuration_sha256_verified": "ed02cf6e05ab6826bf0270e5af3e2394583c9f97c11c61d8b86aa9faeae7de5a",
+    "postgresql_configuration_sha256_planned_only": "495ed76c2d2e9915b7656d6f16d36b8bff457fd6c31b34cb68e040797c313692",
+    "model": "openai/gpt-oss-120b",
+    "embedding": "multilingual-e5-small-onnx-q8-window-v1",
+    "dimensions": 384,
+    "embedding_contract": {
+      "provider": "local_onnx",
+      "model": "multilingual-e5-small-onnx-q8-window-v1",
+      "dimensions": 384,
+      "format_version": "v1",
+      "local_model_spec": {
+        "name": "multilingual-e5-small-onnx-q8-window-v1",
+        "dimensions": 384,
+        "onnx_revision": "761b726dd34fb83930e26aab4e9ac3899aa1fa78",
+        "tokenizer_revision": "614241f622f53c4eeff9890bdc4f31cfecc418b3",
+        "onnx_sha256": "f80102d3f2a1229f387d3c81909990d8945513e347b0eab049f7de3c6f98c193",
+        "tokenizer_sha256": "cfc8146abe2a0488e9e2a0c56de7952f7c11ab059eca145a0a727afce0db2865",
+        "preprocessing": "e5-prefix-each-window-sp-offset1-mask-mean-l2-window-mean-l2-v1",
+        "passage_max_tokens": 512,
+        "query_max_tokens": 128,
+        "overlap_tokens": 64
+      }
+    },
+    "provider_changed": false
+  },
+  "corpus": {
+    "id": "corpus-1afca764aa6692e0",
+    "base_id": "corpus-a26bc99e541fbbe2",
+    "documents": 60,
+    "chunks": 7396,
+    "new_source_bound_chunks": 4,
+    "existing_vectors_unchanged": true,
+    "payload_path": "data/staging/phase2c-current/release-v5.json",
+    "payload_sha256": "7ce7956ae35c7006b5bfd7d10d516fa9e8e47fe2f073e471ceecbb34b412d317",
+    "backup_path": "dist/phase2c-current-20261021-context-pack/corpus-backup.json",
+    "backup_sha256": "a18c2b8e9563397f752f94479efc5db56091d98d986b7d1e760c1f525a619e49",
+    "backup_bytes": 39289402,
+    "local_restore": {
+      "exact_documents": true,
+      "missing_receipts_fail_closed": true,
+      "receipts_reapplied_usable": true
+    }
+  },
+  "source_policy": {
+    "path": "reports/phase2c-current-20261021/source-gate-final.json",
+    "canonical_sha256": "dfe58f8376d4d4d978ace0483ba45a70e60eafa473285ffbe5a6a2a8e7f72dd4",
+    "reviewed_unique_passages_all_intervals": 74,
+    "reviewed_current_passages_2026_10_21": 43,
+    "current_substantive_as_of_from": "2026-10-21",
+    "current_substantive_as_of_to_exclusive": "2026-10-22",
+    "whole_corpus_state_counts": {
+      "stale": 59,
+      "unknown": 1
+    },
+    "whole_corpus_verified": false,
+    "receipts": [
+      {
+        "path": "reports/phase2c-current-20261021/receipts-final/luat-43-2024.json",
+        "file_sha256": "b5666c635289fb5a1117130eba9721c23f3f4b9cb6eed9886baf706a5d331c7e",
+        "receipt_sha256": "da95b452cc1946b6871b885cedbda25aef8b06f9e22c2d2ffec8692ffecd0565",
+        "document_id": "luat-43-2024",
+        "status": "unchanged"
+      },
+      {
+        "path": "reports/phase2c-current-20261021/receipts-final/luat-dat-dai-2024.json",
+        "file_sha256": "934f2c49725a0ea83562f264c99cedd3598a2fc540033c1a2870667d7311b235",
+        "receipt_sha256": "27229c319ac7ed0902c96285bc991ab538f067e217b111f5a34d451ea2197f1f",
+        "document_id": "luat-dat-dai-2024",
+        "status": "unchanged"
+      },
+      {
+        "path": "reports/phase2c-current-20261021/receipts-final/luat-thu-do-2026.json",
+        "file_sha256": "d45a2204b7d207020cabda7aadb64fb82393b62720aac3d954fba711a33d49c8",
+        "receipt_sha256": "94e56afeaebff09de3afd6535176ff09141f9188587270a0f67de8b3ce83607a",
+        "document_id": "luat-thu-do-2026",
+        "status": "unchanged"
+      },
+      {
+        "path": "reports/phase2c-current-20261021/receipts-final/nd-151-2025.json",
+        "file_sha256": "6609933111c19821167212640e177a5d1480e7e9b5de5e66765b642752a43c0c",
+        "receipt_sha256": "57da6721584d1a120d14dd30c9283f9cce7c02892c827f9aa5a65d2833b428f5",
+        "document_id": "nd-151-2025",
+        "status": "unchanged"
+      },
+      {
+        "path": "reports/phase2c-current-20261021/receipts-final/nd-226-2025.json",
+        "file_sha256": "390e718e117c134aa9d524253603ea95de01d84dd7ddee18872a85dbfbe57d8f",
+        "receipt_sha256": "58f05d54eda0f39111d0a65dc732f7f05b29cd9bb552f84b8fa14c1f4ccdaad6",
+        "document_id": "nd-226-2025",
+        "status": "unchanged"
+      },
+      {
+        "path": "reports/phase2c-current-20261021/receipts-final/nd-49-2026.json",
+        "file_sha256": "4707323849dfdfbea1d8b8e05359def0d33f6328eca3aec5696a96a1d815d626",
+        "receipt_sha256": "9e4dff5dba1027b96d6db986ff11580223774ca66e162635e20e169f0e7eb348",
+        "document_id": "nd-49-2026",
+        "status": "unchanged"
+      },
+      {
+        "path": "reports/phase2c-current-20261021/receipts-final/nd-88-2024.json",
+        "file_sha256": "1e59dc3ecf636e9297801c19b1fb13efe56ae5cd785e95db4240540a3f04dda3",
+        "receipt_sha256": "3b9cfc7f8528d4b24b28076ae2ea0ecc594cdc757647b2e3090ea7f90ff6324e",
+        "document_id": "nd-88-2024",
+        "status": "unchanged"
+      },
+      {
+        "path": "reports/phase2c-current-20261021/receipts-final/nq-254-2025.json",
+        "file_sha256": "5f7991a42bcd3fd95e34367e282ff94be74e91469d42dd7c2396aaf0277e7053",
+        "receipt_sha256": "06b2298b91c4372e56ccc185c7e1d4573d92ece49a8393dc92234aa8b3f1c73c",
+        "document_id": "nq-254-2025",
+        "status": "unchanged"
+      },
+      {
+        "path": "reports/phase2c-current-20261021/receipts-final/qd-10-2026-hanoi.json",
+        "file_sha256": "5a5aaa4e26a1a0181c12635453f7a8b9a8575105e29c2034dd9fe0474662e1e8",
+        "receipt_sha256": "792006ce16276b24abb012912a78f89ad6e267dea57f6c44469b421101dd1e8b",
+        "document_id": "qd-10-2026-hanoi",
+        "status": "unchanged"
+      },
+      {
+        "path": "reports/phase2c-current-20261021/receipts-final/qd-40-2026-hanoi.json",
+        "file_sha256": "f48719cf7609d889d3f71013c4580175f459bb326315a873179065f3a8e63ce5",
+        "receipt_sha256": "77a7971c7fce1cff7cb3beccef807fa06e0de571dfd88d07941f74546dd70bca",
+        "document_id": "qd-40-2026-hanoi",
+        "status": "unchanged"
+      },
+      {
+        "path": "reports/phase2c-current-20261021/receipts-final/qd-56-2024-hanoi-unavailable.json",
+        "file_sha256": "f4d79a19d66b65e8375b65ff714683cf56dbed8363ceb816f9afbccc73ebd116",
+        "receipt_sha256": "ad019a34939936142cb4a2e039b8ecb4f8c995eca82514243fc9a6277cafe860",
+        "document_id": "qd-56-2024-hanoi",
+        "status": "unavailable"
+      }
+    ],
+    "bundle_path": "dist/phase2c-current-20261021-context-pack/source-reviews-final.zip",
+    "bundle_sha256": "e4568afec1d63d8cfcd5639974bbed6d3ad22371bb5bf1ada17f052ef0cdccb8"
+  },
+  "evaluation": {
+    "frozen_suites_sha256": {
+      "data/evaluation/smoke.jsonl": "38aa8da29bf41a94b4cf8fd8a5ca6769232b87884aeed573c10f5586a09d7254",
+      "data/evaluation/supplemental.jsonl": "e6bb5c9f7ba3a589237835b68d95e491ff2c16aad83683a8437f4a74e4120fea",
+      "data/evaluation/natural.jsonl": "b068bb4e717439938c96e459a63c9a1832b1990d88005cf6a768d9e9c0871e74"
+    },
+    "current_acceptance_cases_sha256": "6c50748d49d5e9261b81211a756ffcf8a83203f34c46c5edcc6bd0fdf275be81",
+    "current_fixture_answerable_coverage": {
+      "numerator": 3,
+      "denominator": 3
+    },
+    "current_fixture_false_abstention_rate": {
+      "numerator": 0,
+      "denominator": 3
+    },
+    "model_evaluated": false,
+    "external_llm_requests": 0,
+    "ragas_faithfulness": null,
+    "model_faithfulness": null,
+    "model_citation_accuracy": null,
+    "model_answer_correctness": null,
+    "model_latency": null,
+    "fixed_pilot_retrieval": {
+      "case_ids": [
+        "S01",
+        "S04",
+        "X01",
+        "N02"
+      ],
+      "n": 4,
+      "recall_at_5": 1.0,
+      "storage_backend": "isolated_sqlite",
+      "report": "reports/phase2c-current-20261021/pilot-retrieval-context-pack.json"
+    },
+    "s06_status": "Prior real-model FAIL retained unchanged; no new model attempt; not transplanted as a score for this candidate."
+  },
+  "checks": {
+    "backend_python_3_14_4": "461 passed",
+    "backend_python_3_12_15": "461 passed",
+    "new_current_regressions": "24 cases passed within full461 suite",
+    "frontend_tests": "14 passed",
+    "frontend_build": "passed",
+    "playwright_local_mocked": "100 passed",
+    "secrets_scan": "passed",
+    "git_diff_check": "passed",
+    "sqlite_startup_http": [
+      200,
+      200,
+      200
+    ],
+    "sqlite_restore_exact": true,
+    "missing_receipts_fail_closed": true,
+    "model_pilot_run": false,
+    "postgresql_verified": false,
+    "public_e2e_verified": false,
+    "container_build_verified_this_phase": false
+  },
+  "migrations_sha256": {
+    "migrations/001_initial.sql": "245c279b86e8f9cf718159c676ce924928f3b1a90337b69de6470087c175024a",
+    "migrations/002_session_cache.sql": "1b51f868f396d6ce8aae1b3e5a9e968dd6c8850869f3354415cc2fef2fe1e1c7",
+    "migrations/003_release_metadata.sql": "bafb7e018438bf234dc72ac6f145cc9e92a958a7dbb7c4af592091af973bc370",
+    "migrations/004_embedding_dimensions.sql": "fe3b9d4cb67bdd9a5b9f1763dc78b70cf062d518961730f42ff2b62fde8c4d5d",
+    "migrations/005_local_e5_dimensions.sql": "0735696fc3cd8351c484cba42fd84e42f58459fd85e26275ab929f3a36f0f515",
+    "migrations/006_browser_history.sql": "6e77e271c08712967f8d70e69582c329b30bf2b4d1f4ed947c557d5985434b3c"
+  },
+  "blocking_conditions": [
+    "Real-model pilot, semantic citation/correctness/faithfulness and cloud latency not evaluated for this candidate.",
+    "PostgreSQL migration/runtime-role/restore/retrieval/capacity and public signed-ingress E2E not verified.",
+    "No candidate commit SHA, push or deployment; serving fingerprint not verified against candidate.",
+    "Current substantive scope authorizes only as_of21Oct; later-day current operation requires a genuine new source review."
+  ],
+  "assets_published": false,
+  "production_database_modified": false,
+  "deployment_performed": false,
+  "approval_required_before_commit_push_deploy_or_model": true,
+  "candidate_identity_components": {
+    "source_tree": "ab889c7ff597e6c94f388d794a956a7eac902ee9bf83e21d203a62f8581aedc6",
+    "runtime_sqlite": "ed02cf6e05ab6826bf0270e5af3e2394583c9f97c11c61d8b86aa9faeae7de5a",
+    "runtime_pg_planned": "495ed76c2d2e9915b7656d6f16d36b8bff457fd6c31b34cb68e040797c313692",
+    "corpus_payload": "7ce7956ae35c7006b5bfd7d10d516fa9e8e47fe2f073e471ceecbb34b412d317",
+    "source_policy": "dfe58f8376d4d4d978ace0483ba45a70e60eafa473285ffbe5a6a2a8e7f72dd4",
+    "evaluation_suites": {
+      "data/evaluation/smoke.jsonl": "38aa8da29bf41a94b4cf8fd8a5ca6769232b87884aeed573c10f5586a09d7254",
+      "data/evaluation/supplemental.jsonl": "e6bb5c9f7ba3a589237835b68d95e491ff2c16aad83683a8437f4a74e4120fea",
+      "data/evaluation/natural.jsonl": "b068bb4e717439938c96e459a63c9a1832b1990d88005cf6a768d9e9c0871e74"
+    }
+  },
+  "candidate_identity_sha256": "7a93c43e5098e35f7658888a9e3084147be37c21edec1351c3e380ab9191d0f9",
+  "source_coverage_ready_for_pilot": true
+}

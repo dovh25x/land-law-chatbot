@@ -1,0 +1,25 @@
+{
+  "status_code": 200,
+  "usage": {
+    "queue_time": 0.510647546,
+    "prompt_tokens": 3146,
+    "prompt_time": 0.194453483,
+    "completion_tokens": 1354,
+    "completion_time": 2.858775329,
+    "total_tokens": 4500,
+    "total_time": 3.053228812,
+    "completion_tokens_details": {
+      "reasoning_tokens": 1097
+    }
+  },
+  "retry_after": null,
+  "rate_limits": {
+    "x-ratelimit-limit-requests": "1000",
+    "x-ratelimit-limit-tokens": "8000",
+    "x-ratelimit-remaining-requests": "998",
+    "x-ratelimit-remaining-tokens": "1084",
+    "x-ratelimit-reset-requests": "2m52.8s",
+    "x-ratelimit-reset-tokens": "51.87s"
+  },
+  "schema": "Draft"
+}

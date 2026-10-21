@@ -1,0 +1,609 @@
+{
+  "reviewed_at": "2026-10-21T07:17:34.674437+00:00",
+  "phase": "3A",
+  "decision_release_validation": "NOT_READY",
+  "cases": [
+    {
+      "id": "C01",
+      "result": "INCOMPLETE",
+      "attempt_started": true,
+      "stop_reason": "pilot_token_cap",
+      "wire_requests": 3,
+      "elapsed_ms": 34858,
+      "final_status": "limited",
+      "released_claims": [],
+      "released_citations": [],
+      "requests": [
+        {
+          "ordinal": 1,
+          "schema": "Draft",
+          "status_code": 200,
+          "request_sha256": "4f3dbbb1fe30249f6e24179003245303c47d7a1ca5b0fef9798226b174d4681c",
+          "response_sha256": "31d3b72e2da4e44111a63cebf7e4ace16b68c6fba793512827c6d8d6897c5e7b",
+          "request_saved_at_utc": "2026-10-21T07:13:33.487310+00:00",
+          "system_prompt_sha256": "0c0b5ec58a2c22c7f396494daa30e120446c9bfd80b24258cf88713e92348d89",
+          "wire_context_chars": 6697,
+          "retrieved_candidates": 36,
+          "retained_count": 16,
+          "admitted_count": 14,
+          "synthesis_count": 8,
+          "aliases_to_source_ids": {
+            "C1": "luat-dat-dai-2024-97-1-0",
+            "C2": "luat-dat-dai-2024-98-0-parent",
+            "C3": "nq-254-2025-2-0-1",
+            "C4": "luat-dat-dai-2024-100-2-0",
+            "C5": "luat-dat-dai-2024-110-scope-4",
+            "C6": "luat-dat-dai-2024-106-1-0",
+            "C7": "qd-40-2026-hanoi-12-1-0",
+            "C8": "qd-40-2026-hanoi-13-0-0"
+          },
+          "required_evidence_checks": [
+            {
+              "source_id": "luat-dat-dai-2024-97-1-0",
+              "document_id": "luat-dat-dai-2024",
+              "locator": "Điều 95",
+              "paragraph": null,
+              "source_checksum": "53e6eda2fbb12c613fabe0591479ee219f8ce707b501493e8ddfff0085601434",
+              "text_sha256": "53e6eda2fbb12c613fabe0591479ee219f8ce707b501493e8ddfff0085601434",
+              "present": true,
+              "wire_aliases": [
+                "C1"
+              ]
+            },
+            {
+              "source_id": "luat-dat-dai-2024-98-0-parent",
+              "document_id": "luat-dat-dai-2024",
+              "locator": "Điều 95",
+              "paragraph": "2",
+              "source_checksum": "83221d1235702559821fef63245562c0334ef2d051954a86e553c9c8424ff1fc",
+              "text_sha256": "270e079ed7df71703fddb4c045b23ef74ca51a7e4031c6860a3a564737ecce5e",
+              "present": true,
+              "wire_aliases": [
+                "C2"
+              ]
+            },
+            {
+              "source_id": "luat-dat-dai-2024-100-2-0",
+              "document_id": "luat-dat-dai-2024",
+              "locator": "Điều 98",
+              "paragraph": "1",
+              "source_checksum": "38a12ff6b771d2d1ce516bfb363daf6be9405a5027ee5099dee80285b85b3ed5",
+              "text_sha256": "e84a28d91f8139dc6fc416c3beff672a682c414483c6581fde5633aa93f9fde0",
+              "present": true,
+              "wire_aliases": [
+                "C4"
+              ]
+            },
+            {
+              "source_id": "nq-254-2025-2-0-1",
+              "document_id": "nq-254-2025",
+              "locator": "Điều 3",
+              "paragraph": "10",
+              "source_checksum": "9f08a08c0b910e86e612c211962dc3a0c743f3f36ff57bd11ee8d8f67220fa76",
+              "text_sha256": "1b5c3512b303b265c265f3d16518fc4c4bd3a07f5cafa43d56f8c389a0212214",
+              "present": true,
+              "wire_aliases": [
+                "C3"
+              ]
+            }
+          ],
+          "all_required_evidence_present": true,
+          "draft_citations_all_in_synthesis": true,
+          "usage": {
+            "queue_time": 0.402093764,
+            "prompt_tokens": 3474,
+            "prompt_time": 0.181201763,
+            "completion_tokens": 1355,
+            "completion_time": 2.798574681,
+            "total_tokens": 4829,
+            "total_time": 2.979776444,
+            "completion_tokens_details": {
+              "reasoning_tokens": 1027
+            }
+          },
+          "latency_ms": 3756,
+          "rate_limit_headers": {
+            "x-ratelimit-limit-requests": "1000",
+            "x-ratelimit-limit-tokens": "8000",
+            "x-ratelimit-remaining-requests": "999",
+            "x-ratelimit-remaining-tokens": "4155",
+            "x-ratelimit-reset-requests": "1m26.4s",
+            "x-ratelimit-reset-tokens": "28.837s",
+            "x-request-id": "req_01m5emy29reqwrn8kt5248vetp"
+          },
+          "reservation_tokens": 21964,
+          "sources": [
+            {
+              "alias": "C1",
+              "source_id": "luat-dat-dai-2024-97-1-0",
+              "document_id": "luat-dat-dai-2024",
+              "locator": "Điều 95",
+              "document_number": "31/2024/QH15",
+              "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=211189",
+              "text_sha256": "04910d6f8cd18fd6780c23f6a3541ad29451eadf615537f4238ba91cf0f5f770"
+            },
+            {
+              "alias": "C2",
+              "source_id": "luat-dat-dai-2024-98-0-parent",
+              "document_id": "luat-dat-dai-2024",
+              "locator": "Điều 95 · ngữ cảnh",
+              "document_number": "31/2024/QH15",
+              "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=211189",
+              "text_sha256": "270e079ed7df71703fddb4c045b23ef74ca51a7e4031c6860a3a564737ecce5e"
+            },
+            {
+              "alias": "C3",
+              "source_id": "nq-254-2025-2-0-1",
+              "document_id": "nq-254-2025",
+              "locator": "Điều 3",
+              "document_number": "254/2025/QH15",
+              "url": "https://xaydungchinhsach.chinhphu.vn/toan-van-nghi-quyet-254-2025-qh15-quy-dinh-mot-so-co-che-chinh-sach-thao-go-kho-khan-vuong-mac-trong-to-chuc-thi-hanh-luat-dat-dai-119251225171010998.htm",
+              "text_sha256": "1b5c3512b303b265c265f3d16518fc4c4bd3a07f5cafa43d56f8c389a0212214"
+            },
+            {
+              "alias": "C4",
+              "source_id": "luat-dat-dai-2024-100-2-0",
+              "document_id": "luat-dat-dai-2024",
+              "locator": "Điều 98",
+              "document_number": "31/2024/QH15",
+              "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=211189",
+              "text_sha256": "c5d85111a678aba716fbb02906f23101ac7955aa74c4a6ec22d10e0e61bd6853"
+            },
+            {
+              "alias": "C5",
+              "source_id": "luat-dat-dai-2024-110-scope-4",
+              "document_id": "luat-dat-dai-2024",
+              "locator": "Điều 111",
+              "document_number": "31/2024/QH15",
+              "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=211189",
+              "text_sha256": "eab98e779ffc5e8ccb75e14e1979694deb9bc847fa5a6452bfac3fdba332de09"
+            },
+            {
+              "alias": "C6",
+              "source_id": "luat-dat-dai-2024-106-1-0",
+              "document_id": "luat-dat-dai-2024",
+              "locator": "Điều 108",
+              "document_number": "31/2024/QH15",
+              "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=211189",
+              "text_sha256": "f37f0def0ba6baed299385325e8d15ad6c559a463da014caec21d9f0ca6502a6"
+            },
+            {
+              "alias": "C7",
+              "source_id": "qd-40-2026-hanoi-12-1-0",
+              "document_id": "qd-40-2026-hanoi",
+              "locator": "Điều 21",
+              "document_number": "40/2026/QĐ-UBND",
+              "url": "https://congbao.hanoi.gov.vn/Default.aspx?p_attribute=5335&pageid=45002",
+              "text_sha256": "1c6df130da2156cb8fefcd3e418e16a0a9aee3dde062e910978fc769c534efdf"
+            },
+            {
+              "alias": "C8",
+              "source_id": "qd-40-2026-hanoi-13-0-0",
+              "document_id": "qd-40-2026-hanoi",
+              "locator": "Điều 21",
+              "document_number": "40/2026/QĐ-UBND",
+              "url": "https://congbao.hanoi.gov.vn/Default.aspx?p_attribute=5335&pageid=45002",
+              "text_sha256": "cc19334f1d8fc8a8a579f455f651cb0ff4683f8bd1343d8f4e6456ff51b8c55c"
+            }
+          ]
+        },
+        {
+          "ordinal": 2,
+          "schema": "Draft",
+          "status_code": 429,
+          "request_sha256": "2b5f0f513e76c0d8c70cd35af366863c598b3e307991140009728f144bfc2be0",
+          "response_sha256": "add2f31438a0d0adeac25ee4b086fd1c9c8029eb25f39b272f6585926cf1c954",
+          "request_saved_at_utc": "2026-10-21T07:13:37.955182+00:00",
+          "system_prompt_sha256": "0c0b5ec58a2c22c7f396494daa30e120446c9bfd80b24258cf88713e92348d89",
+          "wire_context_chars": 6697,
+          "retrieved_candidates": 36,
+          "retained_count": 16,
+          "admitted_count": 14,
+          "synthesis_count": 8,
+          "aliases_to_source_ids": {
+            "C1": "luat-dat-dai-2024-97-1-0",
+            "C2": "luat-dat-dai-2024-98-0-parent",
+            "C3": "nq-254-2025-2-0-1",
+            "C4": "luat-dat-dai-2024-100-2-0",
+            "C5": "luat-dat-dai-2024-110-scope-4",
+            "C6": "luat-dat-dai-2024-106-1-0",
+            "C7": "qd-40-2026-hanoi-12-1-0",
+            "C8": "qd-40-2026-hanoi-13-0-0"
+          },
+          "required_evidence_checks": [
+            {
+              "source_id": "luat-dat-dai-2024-97-1-0",
+              "document_id": "luat-dat-dai-2024",
+              "locator": "Điều 95",
+              "paragraph": null,
+              "source_checksum": "53e6eda2fbb12c613fabe0591479ee219f8ce707b501493e8ddfff0085601434",
+              "text_sha256": "53e6eda2fbb12c613fabe0591479ee219f8ce707b501493e8ddfff0085601434",
+              "present": true,
+              "wire_aliases": [
+                "C1"
+              ]
+            },
+            {
+              "source_id": "luat-dat-dai-2024-98-0-parent",
+              "document_id": "luat-dat-dai-2024",
+              "locator": "Điều 95",
+              "paragraph": "2",
+              "source_checksum": "83221d1235702559821fef63245562c0334ef2d051954a86e553c9c8424ff1fc",
+              "text_sha256": "270e079ed7df71703fddb4c045b23ef74ca51a7e4031c6860a3a564737ecce5e",
+              "present": true,
+              "wire_aliases": [
+                "C2"
+              ]
+            },
+            {
+              "source_id": "luat-dat-dai-2024-100-2-0",
+              "document_id": "luat-dat-dai-2024",
+              "locator": "Điều 98",
+              "paragraph": "1",
+              "source_checksum": "38a12ff6b771d2d1ce516bfb363daf6be9405a5027ee5099dee80285b85b3ed5",
+              "text_sha256": "e84a28d91f8139dc6fc416c3beff672a682c414483c6581fde5633aa93f9fde0",
+              "present": true,
+              "wire_aliases": [
+                "C4"
+              ]
+            },
+            {
+              "source_id": "nq-254-2025-2-0-1",
+              "document_id": "nq-254-2025",
+              "locator": "Điều 3",
+              "paragraph": "10",
+              "source_checksum": "9f08a08c0b910e86e612c211962dc3a0c743f3f36ff57bd11ee8d8f67220fa76",
+              "text_sha256": "1b5c3512b303b265c265f3d16518fc4c4bd3a07f5cafa43d56f8c389a0212214",
+              "present": true,
+              "wire_aliases": [
+                "C3"
+              ]
+            }
+          ],
+          "all_required_evidence_present": true,
+          "draft_citations_all_in_synthesis": null,
+          "usage": {},
+          "latency_ms": 148,
+          "rate_limit_headers": {
+            "retry-after": "4",
+            "x-ratelimit-limit-requests": "1000",
+            "x-ratelimit-limit-tokens": "8000",
+            "x-ratelimit-remaining-requests": "999",
+            "x-ratelimit-remaining-tokens": "3746",
+            "x-ratelimit-reset-requests": "1m26.4s",
+            "x-ratelimit-reset-tokens": "31.904s",
+            "x-request-id": "req_01m5emy6h2evxrp5m5a3jyznyf"
+          },
+          "reservation_tokens": 23665,
+          "sources": [
+            {
+              "alias": "C1",
+              "source_id": "luat-dat-dai-2024-97-1-0",
+              "document_id": "luat-dat-dai-2024",
+              "locator": "Điều 95",
+              "document_number": "31/2024/QH15",
+              "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=211189",
+              "text_sha256": "04910d6f8cd18fd6780c23f6a3541ad29451eadf615537f4238ba91cf0f5f770"
+            },
+            {
+              "alias": "C2",
+              "source_id": "luat-dat-dai-2024-98-0-parent",
+              "document_id": "luat-dat-dai-2024",
+              "locator": "Điều 95 · ngữ cảnh",
+              "document_number": "31/2024/QH15",
+              "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=211189",
+              "text_sha256": "270e079ed7df71703fddb4c045b23ef74ca51a7e4031c6860a3a564737ecce5e"
+            },
+            {
+              "alias": "C3",
+              "source_id": "nq-254-2025-2-0-1",
+              "document_id": "nq-254-2025",
+              "locator": "Điều 3",
+              "document_number": "254/2025/QH15",
+              "url": "https://xaydungchinhsach.chinhphu.vn/toan-van-nghi-quyet-254-2025-qh15-quy-dinh-mot-so-co-che-chinh-sach-thao-go-kho-khan-vuong-mac-trong-to-chuc-thi-hanh-luat-dat-dai-119251225171010998.htm",
+              "text_sha256": "1b5c3512b303b265c265f3d16518fc4c4bd3a07f5cafa43d56f8c389a0212214"
+            },
+            {
+              "alias": "C4",
+              "source_id": "luat-dat-dai-2024-100-2-0",
+              "document_id": "luat-dat-dai-2024",
+              "locator": "Điều 98",
+              "document_number": "31/2024/QH15",
+              "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=211189",
+              "text_sha256": "c5d85111a678aba716fbb02906f23101ac7955aa74c4a6ec22d10e0e61bd6853"
+            },
+            {
+              "alias": "C5",
+              "source_id": "luat-dat-dai-2024-110-scope-4",
+              "document_id": "luat-dat-dai-2024",
+              "locator": "Điều 111",
+              "document_number": "31/2024/QH15",
+              "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=211189",
+              "text_sha256": "eab98e779ffc5e8ccb75e14e1979694deb9bc847fa5a6452bfac3fdba332de09"
+            },
+            {
+              "alias": "C6",
+              "source_id": "luat-dat-dai-2024-106-1-0",
+              "document_id": "luat-dat-dai-2024",
+              "locator": "Điều 108",
+              "document_number": "31/2024/QH15",
+              "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=211189",
+              "text_sha256": "f37f0def0ba6baed299385325e8d15ad6c559a463da014caec21d9f0ca6502a6"
+            },
+            {
+              "alias": "C7",
+              "source_id": "qd-40-2026-hanoi-12-1-0",
+              "document_id": "qd-40-2026-hanoi",
+              "locator": "Điều 21",
+              "document_number": "40/2026/QĐ-UBND",
+              "url": "https://congbao.hanoi.gov.vn/Default.aspx?p_attribute=5335&pageid=45002",
+              "text_sha256": "1c6df130da2156cb8fefcd3e418e16a0a9aee3dde062e910978fc769c534efdf"
+            },
+            {
+              "alias": "C8",
+              "source_id": "qd-40-2026-hanoi-13-0-0",
+              "document_id": "qd-40-2026-hanoi",
+              "locator": "Điều 21",
+              "document_number": "40/2026/QĐ-UBND",
+              "url": "https://congbao.hanoi.gov.vn/Default.aspx?p_attribute=5335&pageid=45002",
+              "text_sha256": "cc19334f1d8fc8a8a579f455f651cb0ff4683f8bd1343d8f4e6456ff51b8c55c"
+            }
+          ]
+        },
+        {
+          "ordinal": 3,
+          "schema": "Draft",
+          "status_code": 400,
+          "request_sha256": "2b5f0f513e76c0d8c70cd35af366863c598b3e307991140009728f144bfc2be0",
+          "response_sha256": "73869e8a1060641ca7f41babc391c7abb6187d8b456678e8d05666d5af440862",
+          "request_saved_at_utc": "2026-10-21T07:13:42.600522+00:00",
+          "system_prompt_sha256": "0c0b5ec58a2c22c7f396494daa30e120446c9bfd80b24258cf88713e92348d89",
+          "wire_context_chars": 6697,
+          "retrieved_candidates": 36,
+          "retained_count": 16,
+          "admitted_count": 14,
+          "synthesis_count": 8,
+          "aliases_to_source_ids": {
+            "C1": "luat-dat-dai-2024-97-1-0",
+            "C2": "luat-dat-dai-2024-98-0-parent",
+            "C3": "nq-254-2025-2-0-1",
+            "C4": "luat-dat-dai-2024-100-2-0",
+            "C5": "luat-dat-dai-2024-110-scope-4",
+            "C6": "luat-dat-dai-2024-106-1-0",
+            "C7": "qd-40-2026-hanoi-12-1-0",
+            "C8": "qd-40-2026-hanoi-13-0-0"
+          },
+          "required_evidence_checks": [
+            {
+              "source_id": "luat-dat-dai-2024-97-1-0",
+              "document_id": "luat-dat-dai-2024",
+              "locator": "Điều 95",
+              "paragraph": null,
+              "source_checksum": "53e6eda2fbb12c613fabe0591479ee219f8ce707b501493e8ddfff0085601434",
+              "text_sha256": "53e6eda2fbb12c613fabe0591479ee219f8ce707b501493e8ddfff0085601434",
+              "present": true,
+              "wire_aliases": [
+                "C1"
+              ]
+            },
+            {
+              "source_id": "luat-dat-dai-2024-98-0-parent",
+              "document_id": "luat-dat-dai-2024",
+              "locator": "Điều 95",
+              "paragraph": "2",
+              "source_checksum": "83221d1235702559821fef63245562c0334ef2d051954a86e553c9c8424ff1fc",
+              "text_sha256": "270e079ed7df71703fddb4c045b23ef74ca51a7e4031c6860a3a564737ecce5e",
+              "present": true,
+              "wire_aliases": [
+                "C2"
+              ]
+            },
+            {
+              "source_id": "luat-dat-dai-2024-100-2-0",
+              "document_id": "luat-dat-dai-2024",
+              "locator": "Điều 98",
+              "paragraph": "1",
+              "source_checksum": "38a12ff6b771d2d1ce516bfb363daf6be9405a5027ee5099dee80285b85b3ed5",
+              "text_sha256": "e84a28d91f8139dc6fc416c3beff672a682c414483c6581fde5633aa93f9fde0",
+              "present": true,
+              "wire_aliases": [
+                "C4"
+              ]
+            },
+            {
+              "source_id": "nq-254-2025-2-0-1",
+              "document_id": "nq-254-2025",
+              "locator": "Điều 3",
+              "paragraph": "10",
+              "source_checksum": "9f08a08c0b910e86e612c211962dc3a0c743f3f36ff57bd11ee8d8f67220fa76",
+              "text_sha256": "1b5c3512b303b265c265f3d16518fc4c4bd3a07f5cafa43d56f8c389a0212214",
+              "present": true,
+              "wire_aliases": [
+                "C3"
+              ]
+            }
+          ],
+          "all_required_evidence_present": true,
+          "draft_citations_all_in_synthesis": null,
+          "usage": {},
+          "latency_ms": 4941,
+          "rate_limit_headers": {
+            "x-ratelimit-limit-requests": "1000",
+            "x-ratelimit-limit-tokens": "8000",
+            "x-ratelimit-remaining-requests": "998",
+            "x-ratelimit-remaining-tokens": "189",
+            "x-ratelimit-reset-requests": "2m52.8s",
+            "x-ratelimit-reset-tokens": "58.582s",
+            "x-request-id": "req_01m5emyb22e5qsa2fp0dzy4x42"
+          },
+          "reservation_tokens": 23665,
+          "sources": [
+            {
+              "alias": "C1",
+              "source_id": "luat-dat-dai-2024-97-1-0",
+              "document_id": "luat-dat-dai-2024",
+              "locator": "Điều 95",
+              "document_number": "31/2024/QH15",
+              "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=211189",
+              "text_sha256": "04910d6f8cd18fd6780c23f6a3541ad29451eadf615537f4238ba91cf0f5f770"
+            },
+            {
+              "alias": "C2",
+              "source_id": "luat-dat-dai-2024-98-0-parent",
+              "document_id": "luat-dat-dai-2024",
+              "locator": "Điều 95 · ngữ cảnh",
+              "document_number": "31/2024/QH15",
+              "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=211189",
+              "text_sha256": "270e079ed7df71703fddb4c045b23ef74ca51a7e4031c6860a3a564737ecce5e"
+            },
+            {
+              "alias": "C3",
+              "source_id": "nq-254-2025-2-0-1",
+              "document_id": "nq-254-2025",
+              "locator": "Điều 3",
+              "document_number": "254/2025/QH15",
+              "url": "https://xaydungchinhsach.chinhphu.vn/toan-van-nghi-quyet-254-2025-qh15-quy-dinh-mot-so-co-che-chinh-sach-thao-go-kho-khan-vuong-mac-trong-to-chuc-thi-hanh-luat-dat-dai-119251225171010998.htm",
+              "text_sha256": "1b5c3512b303b265c265f3d16518fc4c4bd3a07f5cafa43d56f8c389a0212214"
+            },
+            {
+              "alias": "C4",
+              "source_id": "luat-dat-dai-2024-100-2-0",
+              "document_id": "luat-dat-dai-2024",
+              "locator": "Điều 98",
+              "document_number": "31/2024/QH15",
+              "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=211189",
+              "text_sha256": "c5d85111a678aba716fbb02906f23101ac7955aa74c4a6ec22d10e0e61bd6853"
+            },
+            {
+              "alias": "C5",
+              "source_id": "luat-dat-dai-2024-110-scope-4",
+              "document_id": "luat-dat-dai-2024",
+              "locator": "Điều 111",
+              "document_number": "31/2024/QH15",
+              "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=211189",
+              "text_sha256": "eab98e779ffc5e8ccb75e14e1979694deb9bc847fa5a6452bfac3fdba332de09"
+            },
+            {
+              "alias": "C6",
+              "source_id": "luat-dat-dai-2024-106-1-0",
+              "document_id": "luat-dat-dai-2024",
+              "locator": "Điều 108",
+              "document_number": "31/2024/QH15",
+              "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=211189",
+              "text_sha256": "f37f0def0ba6baed299385325e8d15ad6c559a463da014caec21d9f0ca6502a6"
+            },
+            {
+              "alias": "C7",
+              "source_id": "qd-40-2026-hanoi-12-1-0",
+              "document_id": "qd-40-2026-hanoi",
+              "locator": "Điều 21",
+              "document_number": "40/2026/QĐ-UBND",
+              "url": "https://congbao.hanoi.gov.vn/Default.aspx?p_attribute=5335&pageid=45002",
+              "text_sha256": "1c6df130da2156cb8fefcd3e418e16a0a9aee3dde062e910978fc769c534efdf"
+            },
+            {
+              "alias": "C8",
+              "source_id": "qd-40-2026-hanoi-13-0-0",
+              "document_id": "qd-40-2026-hanoi",
+              "locator": "Điều 21",
+              "document_number": "40/2026/QĐ-UBND",
+              "url": "https://congbao.hanoi.gov.vn/Default.aspx?p_attribute=5335&pageid=45002",
+              "text_sha256": "cc19334f1d8fc8a8a579f455f651cb0ff4683f8bd1343d8f4e6456ff51b8c55c"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "C02",
+      "result": "INCOMPLETE",
+      "attempt_started": false,
+      "stop_reason": "not_started_after_prior_operational_stop",
+      "wire_requests": 0,
+      "elapsed_ms": null,
+      "final_status": null,
+      "released_claims": [],
+      "released_citations": [],
+      "requests": []
+    },
+    {
+      "id": "C03",
+      "result": "INCOMPLETE",
+      "attempt_started": false,
+      "stop_reason": "not_started_after_prior_operational_stop",
+      "wire_requests": 0,
+      "elapsed_ms": null,
+      "final_status": null,
+      "released_claims": [],
+      "released_citations": [],
+      "requests": []
+    }
+  ],
+  "budget": {
+    "wire_requests": 3,
+    "per_case_requests": {
+      "C01": 3
+    },
+    "tokens_observed": 4829,
+    "tokens_charged_including_unknown": 52159,
+    "unknown_usage_requests": 2,
+    "hard_token_cap": 60000
+  },
+  "blocked_next_request_reservation": 23665,
+  "would_charge_if_sent": 75824,
+  "429_retry_after_seconds": 4,
+  "observed_minimum_retry_wait_seconds": 4.497,
+  "budget_accounting_note": "4829 tokens are provider-reported. 52159 is a conservative bound including two full reservations for responses without usage, not measured consumption. A fourth request was blocked before network I/O. Runtime llm_calls=4 includes that blocked call; actual HTTP requests=3.",
+  "C01_content_review": {
+    "initial_draft": "FAIL_NOT_RELEASABLE",
+    "official_reference": "../phase2c-current-20261021/LEGAL_REVIEW.md",
+    "citation_defect": "Names NQ254/2025:3(10) but omits source C3 from claim citation_ids.",
+    "scope_defects": [
+      "Describes the insufficient-area support branch of Article111(4) without its material multi-generation/multiple-couple/shared-land and household-separation prerequisites.",
+      "Extends the QD40 Article21(1) ward apartment/land-fund formulation without retaining the ward subject or distinct commune branch."
+    ],
+    "OR_AND": "The first draft uses non-annual-lease actor prerequisite AND certificate (OR land-allocation decision). No clear OR-to-AND collapse was observed there; this does not establish full answer correctness.",
+    "structural_verifier": "Rejected 0/1 supported. One issue requires explicit clause1 linkage wording, although the draft already names household/individual and non-annual lease. That issue alone does not prove a substantive subject error; the regex requires clause-number framing. Independent citation/scope defects remain. No F03 optimization performed.",
+    "repair_result": "UNKNOWN; HTTP429 then HTTP400 json_validate_failed, further retry blocked.",
+    "abstention_classification": "Operational budget interruption on an answerable case, not correct safe abstention. False Abstention Rate not computed for incomplete executions."
+  },
+  "limitations": [
+    "C02 and C03 never started after the first operational stop. Their 5070/6981-char contexts are Phase2D deterministic evidence only, not live-model captures in Phase3A.",
+    "No model Verification API request completed; the initial verdict is the existing structural verifier.",
+    "Visible successful response content is preserved; hidden reasoning is excluded. HTTP400 failed_generation payload is not preserved, only error metadata and full-body SHA256; the repair cannot be assessed or reconstructed.",
+    "Only SQLite was used; PostgreSQL, cloud deployment and public E2E remain unverified here.",
+    "Scoped legal review is fixed to 2026-10-21; it does not certify current law on 2026-10-23."
+  ],
+  "identity": {
+    "head": "117e7bd2c4a320c3d02256dfdabf858180b47dbf",
+    "source_tree_sha256": "57adb766b39010c3290232899c1e301efd722bf5c1dd5cc1f3a7afc55939c05b",
+    "candidate_identity": "b90108a76ec7309e81b0e5940fa0027d5a1788485d212de8177f6e37812d897c",
+    "runtime_fingerprint": "37d2fb54ca0ce64d852190df32e7bea80920fd7fce99a7a7624a157185e953a7",
+    "corpus_id": "corpus-1afca764aa6692e0",
+    "corpus_sha256": "7ce7956ae35c7006b5bfd7d10d516fa9e8e47fe2f073e471ceecbb34b412d317",
+    "model": "openai/gpt-oss-120b",
+    "embedding": "multilingual-e5-small-onnx-q8-window-v1",
+    "dimensions": 384
+  },
+  "preservation": {
+    "head_unchanged": true,
+    "199_source_files_unchanged": true,
+    "locked_inputs_unchanged": true,
+    "existing_working_tree_status_unchanged": true,
+    "only_new_phase3a_artifacts": true,
+    "production_database_touched": false,
+    "S06": "FAIL_UNCHANGED",
+    "commit_push_deploy": false,
+    "full_evaluation": false,
+    "extra_judge": false
+  },
+  "offline_tests": {
+    "command": ".venv/bin/python -m pytest -q reports/phase3a-live-20261021T070325Z/test_pilot_runner.py",
+    "passed": 8,
+    "failed": 0
+  },
+  "prior_backend_tests": {
+    "passed": 486,
+    "source": "Phase2D report only; not rerun in Phase3A"
+  }
+}

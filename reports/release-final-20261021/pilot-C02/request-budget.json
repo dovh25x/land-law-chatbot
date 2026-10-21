@@ -1,0 +1,39 @@
+{
+  "version": 1,
+  "identity": "1697d9dec78b8625398e53999b609e3ce57258666c2e3566a8321385abe8886d",
+  "max_tokens": 25000,
+  "max_requests": 6,
+  "blocked_reason": "test_token_cap",
+  "entries": [
+    {
+      "id": 0,
+      "state": "estimated",
+      "wire_bytes": 13644,
+      "max_completion_tokens": 2048,
+      "framing_allowance": 4096,
+      "reservation": 19788,
+      "confirmed_usage": null,
+      "http_status": 400,
+      "provider_rate_limits": {
+        "x-ratelimit-limit-requests": "1000",
+        "x-ratelimit-limit-tokens": "8000",
+        "x-ratelimit-remaining-requests": "999",
+        "x-ratelimit-remaining-tokens": "4615",
+        "x-ratelimit-reset-requests": "1m26.4s",
+        "x-ratelimit-reset-tokens": "25.387s"
+      }
+    }
+  ],
+  "summary": {
+    "confirmed_usage": 0,
+    "estimated_usage": 19788,
+    "estimated_usage_kind": "upper_bound_for_requests_without_provider_usage",
+    "reserved_budget": 0,
+    "remaining_test_budget": 5212,
+    "requests_reserved": 1,
+    "max_tokens": 25000,
+    "max_requests": 6,
+    "blocked_reason": "test_token_cap",
+    "provider_quota_is_separate": true
+  }
+}

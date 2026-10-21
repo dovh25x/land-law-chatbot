@@ -1,0 +1,76 @@
+{
+  "as_of": "2026-10-21",
+  "scope": "Unmodified frozen questions/dates, deterministic historical controls only; no model answer fixture.",
+  "cases": [
+    {
+      "id": "S01",
+      "split": "smoke",
+      "question": "Quyết định 56/2024/QĐ-UBND Hà Nội còn hiệu lực ngày 12/10/2026 không? Văn bản nào thay thế?",
+      "as_of": "2026-10-12",
+      "critical": true,
+      "ground_truth_status": "source_checked",
+      "gold_chunk_ids": [
+        "qd-40-2026-hanoi-0-2-0"
+      ],
+      "rubric": [
+        "Dẫn Điều 2 QĐ40/2026: thay thế QĐ56 từ 02/04/2026.",
+        "Không suy quyền lợi hồ sơ cụ thể từ việc văn bản bị thay thế; kiểm tra thời điểm và chuyển tiếp."
+      ],
+      "source_review": "Đã đối chiếu toàn văn Công báo QĐ40/2026, Điều 2."
+    },
+    {
+      "id": "S02",
+      "split": "smoke",
+      "question": "Hồ sơ của tôi xét ngày 01/03/2026: có áp dụng ngay Quyết định 40/2026/QĐ-UBND Hà Nội để tính quyền lợi không?",
+      "as_of": "2026-03-01",
+      "critical": true,
+      "ground_truth_status": "source_checked",
+      "gold_chunk_ids": [
+        "qd-40-2026-hanoi-0-2-0"
+      ],
+      "rubric": [
+        "QĐ40 chưa có hiệu lực tại thời điểm hỏi, không dùng cho quyền lợi ngày 01/03.",
+        "Toàn văn lịch sử QĐ56 có trong corpus; cần ngày quyết định, phương án, hồ sơ và các sửa đổi để kết luận quyền lợi. Không tính tiền."
+      ],
+      "source_review": "Điều 2 QĐ40 xác định ngày hiệu lực 02/04/2026. Toàn văn QĐ56 lịch sử đã được đối chiếu bản hiển thị chính thức VBPL, có giới hạn snapshot lưu cache."
+    },
+    {
+      "id": "S03",
+      "split": "smoke",
+      "question": "Ngày 20/01/2026, Quyết định 10/2026/QĐ-UBND đã bãi bỏ toàn bộ Quyết định 38/2025/QĐ-UBND Hà Nội hay chỉ một phần?",
+      "as_of": "2026-01-20",
+      "critical": true,
+      "ground_truth_status": "source_checked",
+      "gold_chunk_ids": [
+        "qd-10-2026-hanoi-4-1-0"
+      ],
+      "rubric": [
+        "Chỉ Điều 2 QĐ38 bị bãi bỏ theo Điều 2 QĐ10, không kết luận toàn QĐ38 hết hiệu lực.",
+        "Phân biệt mốc thay thế toàn bộ 02/04/2026 bằng QĐ40 nếu đề cập."
+      ],
+      "source_review": "Quan hệ bãi bỏ một phần đã đối chiếu Điều 2 QĐ10/2026; đã xác nhận locator và chunk trước chạy."
+    },
+    {
+      "id": "N07",
+      "split": "natural",
+      "question": "Nhà tôi ở gần Vành đai 4, hãy xác nhận chắc chắn tôi được một suất tái định cư.",
+      "as_of": "2026-10-17",
+      "gold_chunk_ids": [],
+      "rubric": [
+        "Hỏi hồ sơ/thời điểm cần thiết hoặc nêu chưa đủ chứng cứ; không bảo đảm quyền lợi."
+      ],
+      "source_review": "Đối chiếu locator và toàn văn snapshot trước sửa runtime; gold là đoạn cần thiết, không phải danh mục mọi đoạn liên quan."
+    },
+    {
+      "id": "N08",
+      "split": "natural",
+      "question": "Nghị định 999999/2026/NĐ-CP cho mọi hộ Vành đai 4 nhận 50 tỷ đồng phải không?",
+      "as_of": "2026-10-17",
+      "gold_chunk_ids": [],
+      "rubric": [
+        "Không xác nhận văn bản giả hoặc mức 50 tỷ; nêu thiếu căn cứ."
+      ],
+      "source_review": "Đối chiếu locator và toàn văn snapshot trước sửa runtime; gold là đoạn cần thiết, không phải danh mục mọi đoạn liên quan."
+    }
+  ]
+}

@@ -1,0 +1,75 @@
+{
+  "reviewed_at": "2026-10-20T16:12:48.602226+00:00",
+  "case_id": "S06",
+  "as_of": "2024-08-02",
+  "verdict": "fail",
+  "acceptance_passed": false,
+  "independent_legal_certification": false,
+  "answer_sha256": "1d0930a5afb0d61507339100dfc0092a9ba5a48cea67a4c3a8d1b3c9f10edb37",
+  "configuration_sha256": "2dab4dde69323ce35e9732748df40ce15c371d6380d694137a65faf05eccc179",
+  "suite_sha256": "38aa8da29bf41a94b4cf8fd8a5ca6769232b87884aeed573c10f5586a09d7254",
+  "corpus_release": "corpus-a26bc99e541fbbe2",
+  "storage_backend": "isolated temporary sqlite",
+  "observed": {
+    "attempts": 1,
+    "api_requests": 2,
+    "http_status_codes": [
+      200,
+      200
+    ],
+    "request_schemas": [
+      "Draft",
+      "Draft"
+    ],
+    "prompt_tokens": 6115,
+    "completion_tokens": 1989,
+    "total_tokens": 8104,
+    "elapsed_ms": 5815,
+    "tool_calls": 2,
+    "embedding_calls": 0,
+    "final_status": "insufficient_evidence",
+    "published_claims": 0,
+    "published_citations": 0
+  },
+  "official_source": {
+    "url": "https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/9/31-2024-qh15_2.pdf",
+    "provision": "Luật 31/2024/QH15, Điều 95 khoản 1 điểm a và khoản 2 điểm a/b",
+    "pdf_pages": [
+      5,
+      6,
+      7
+    ]
+  },
+  "criteria": {
+    "first_draft": "Không giữ phạm vi đối tượng khoản 1.",
+    "repair_actor_scope": "Có nêu nhánh hộ gia đình/cá nhân và loại trừ đất thuê trả tiền hằng năm, gắn khoản 1.",
+    "repair_dependency": "Có gắn điều kiện khoản 2 với nhóm đối tượng vừa nêu; không chuyển danh sách giấy tờ vào khoản 1.",
+    "repair_or_and": "Dùng một trong và hoặc; không có lỗi OR/AND được verifier ghi nhận.",
+    "citation_and_verifier_acceptance": "Không đạt: structural guard từ chối cả hai draft; chưa gọi LLM verifier, không có citations được phát hành."
+  },
+  "structural_guard_diagnosis": {
+    "source_file": "backend/landlaw/agent.py",
+    "rule": "prerequisites actor-scope lexical match with .{0,80}",
+    "repair_clause_reference_offset": 5,
+    "repair_actor_label_offset": 126,
+    "chars_between_reference_end_and_actor_label": 114,
+    "finding": "Repair có diễn đạt phạm vi bằng nội dung thực chất nhưng không khớp mẫu chữ gần khoản 1. Đây là dấu hiệu false positive của structural guard, không phải bằng chứng repair tiếp tục bỏ hoàn toàn đối tượng. Chưa được semantic/citation verifier chấp nhận nên không pass."
+  },
+  "verification_files": [
+    "verification/01.json",
+    "verification/02.json"
+  ],
+  "citation_integrity": "Not applicable to published citations: none; unverified draft IDs do not count as verified citations.",
+  "f03_optimization_stopped": true,
+  "no_further_f03_patch_or_attempt": true,
+  "limitations": [
+    "Một ca SQLite không chứng minh PostgreSQL/cloud hoặc chất lượng toàn suite.",
+    "As_of 2024-08-02 không xác minh các quy định Hà Nội hiện hành năm 2026.",
+    "Raw repair có cải thiện nhưng không được công bố như một câu trả lời đã xác minh."
+  ],
+  "phase2_proposal_only": [
+    "Kiểm soát nguồn: đối chiếu nguồn chính thức và hiệu lực/sửa đổi của corpus Vành đai 4; lập receipt theo checksum và trạng thái fresh/stale/changed/unknown; ghi rõ phần không đủ chứng cứ.",
+    "Xác minh deployment: kiểm tra SHA/fingerprint và corpus đang phục vụ; signed ingress/CORS/rate limits; cold start, timeout/quota; persistence, backup/restore ở DB riêng và rollback. Mọi thay đổi/phát hành cần phê duyệt.",
+    "Chuẩn bị evaluation: khóa cấu hình cuối, kiểm tra suite 20+4+8, tách kết quả SQLite/PostgreSQL; định nghĩa mẫu số và review checksum cho Recall@5, RAGAS Faithfulness, Citation Accuracy, Answer Correctness, latency; dự toán quota trước thực thi. Giữ S06 fail như hạn chế đã biết, không rerun để tối ưu F03."
+  ]
+}

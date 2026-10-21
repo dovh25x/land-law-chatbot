@@ -1,0 +1,80 @@
+{
+  "phase": "4",
+  "started_at": "2026-10-21T08:30:05+00:00",
+  "completed_at": "2026-10-21T09:29:18.056731+00:00",
+  "elapsed_minutes": 59.22,
+  "timebox_minutes": 120,
+  "status": "FINAL_SUBMISSION_DRAFT_PREPARED_FOR_REVIEW",
+  "deployment_decision": "NOT_READY",
+  "candidate_identity_sha256": "c9314fbd167dc888f4fb2b2c4334dfa44cda06db7827c2ab92e7166a59d35c4c",
+  "source_tree_sha256": "4994047d9cdfd629e9534186dd91d0aee9b628d282e3a54b4930726941b2bb86",
+  "base_git_head": "117e7bd2c4a320c3d02256dfdabf858180b47dbf",
+  "candidate_commit": null,
+  "documents": [
+    "CODE_FREEZE.md",
+    "DEMO_SCRIPT.md",
+    "EVALUATION_SUMMARY.md",
+    "EVIDENCE_INDEX.md",
+    "FINAL_PROJECT_REPORT.md",
+    "KNOWN_LIMITATIONS.md",
+    "README.md",
+    "RELEASE_CHECKLIST.md",
+    "SLIDE_OUTLINE.md",
+    "SUBMISSION_CHECKLIST.md"
+  ],
+  "runtime_changes_this_phase": false,
+  "core_packaging_change": [
+    ".dockerignore"
+  ],
+  "reused_tests": {
+    "python314_backend": 516,
+    "frontend_unit": 14,
+    "frontend_build": "PASS",
+    "playwright_local_fixture": 100
+  },
+  "new_tests": {
+    "python312_testtools_backend": 516,
+    "python312_serving_image_initial": {
+      "passed": 513,
+      "failed": 3,
+      "classification": "missing Git and excluded notebook, retained log; resolved only in separate testtools environment"
+    },
+    "image_build_and_probe": "PASS_LOCAL",
+    "memory_peak_rss_mib": 382.6640625,
+    "memory_hard_cap_mib": 512,
+    "postgresql_migration_role_restore": "PASS_ISOLATED_LOCAL_ONLY"
+  },
+  "software_test_counts_are_not_additive": true,
+  "validation": "PASS",
+  "source_files_checked": 201,
+  "historical_reports_preserved": 2906,
+  "external_model_requests": 0,
+  "new_test_allocation": false,
+  "production_database_touched": false,
+  "commit_push_deploy_performed": false,
+  "postgres_container_retained_and_stopped": true,
+  "canonical_model_statuses": {
+    "S06_historical": "FAIL",
+    "C01_phase3a": "INCOMPLETE",
+    "C02_phase3a": "NOT_RUN",
+    "C03_phase3a": "NOT_RUN",
+    "final_runtime_model_inference": "NOT_RUN"
+  },
+  "remaining_minimum_academic_effort_hours": [
+    5.5,
+    9
+  ],
+  "additional_cloud_effort_hours_if_unblocked": [
+    4,
+    8
+  ],
+  "scope_notes": [
+    "Blank academic/cover information by user instruction; no syllabus/rubric certification.",
+    "Markdown draft and slide outline, not exported PDF/DOCX/PPTX.",
+    "No final-runtime model correctness/faithfulness/citation accuracy/coverage/public latency measured.",
+    "No cloud PG/CI/registry push/public E2E verification.",
+    "First link-validation failed only because its receipt did not exist yet; retained validation-prepare.log.",
+    "Concurrent secret-scan output temporarily changed indexed log; retained validation-final.log and then validated sequentially with validation-sealed.log.",
+    "Only formatting/import/UTC/check=False cleanup in Phase4 harnesses after execution; pre-cleanup source hashes retained in harness-style-before.json."
+  ]
+}

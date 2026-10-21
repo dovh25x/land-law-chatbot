@@ -24,7 +24,7 @@ def prepare(source, output, receipt_path=Path('reports/release-preparation.json'
     active = next((r['value'] for r in payload['state'] if r['key'] == 'active_release'), None)
     if not active:
         raise ValueError('Backup requires an active release')
-    if any(r['key'] not in {'active_release', 'previous_release'} and not r['key'].startswith('publication:')
+    if any(r['key'] not in {'active_release', 'previous_release'} and not r['key'].startswith(('publication:', 'source_gate:'))
            for r in payload['state']):
         raise ValueError('Unexpected application state in public backup')
     values = dotenv_values('.env')

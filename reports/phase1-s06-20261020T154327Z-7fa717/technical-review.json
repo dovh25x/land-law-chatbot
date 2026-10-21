@@ -1,0 +1,92 @@
+{
+  "reviewed_at": "2026-10-20T15:45:46.684142+00:00",
+  "case_id": "S06",
+  "as_of": "2024-08-02",
+  "verdict": "fail",
+  "answer_sha256": "744cb01261b057198fb5c0ca67d1e683d77119082d7c38f0e4395fb244e37256",
+  "acceptance_passed": false,
+  "independent_legal_certification": false,
+  "run_directory": "reports/phase1-s06-20261020T154327Z-7fa717/runs/corpus-a26bc99e541fbbe2-openai_gpt-oss-120b-smoke-38aa8da2-4bae32ad-c1-agentic",
+  "runtime_configuration_sha256": "4bae32ade64cc02359381fc214c91a14f1b623c8f0a00235cbe70109da47a98b",
+  "corpus_release": "corpus-a26bc99e541fbbe2",
+  "storage_backend": "isolated temporary sqlite",
+  "actual": {
+    "attempts": 1,
+    "api_requests": 2,
+    "draft_requests": 2,
+    "llm_verifier_requests": 0,
+    "http_status_codes": [
+      200,
+      200
+    ],
+    "prompt_tokens": 5805,
+    "completion_tokens": 2201,
+    "total_tokens": 8006,
+    "elapsed_ms": 6431,
+    "tool_calls": 2,
+    "embedding_calls": 0,
+    "retrieved_passages": 4,
+    "sent_passages_per_request": 3,
+    "final_status": "insufficient_evidence",
+    "published_claims": 0,
+    "published_citations": 0
+  },
+  "official_source": {
+    "url": "https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/9/31-2024-qh15_2.pdf",
+    "landing_url": "https://vanban.chinhphu.vn/?pageid=27160&docid=211189",
+    "provision": "Điều 95 khoản 1, khoản 2 Luật 31/2024/QH15",
+    "pdf_pages": [
+      5,
+      6,
+      7
+    ],
+    "printed_cong_bao_pages": [
+      6,
+      7,
+      8
+    ]
+  },
+  "source_comparison": [
+    "Khoản 1 xác định nhóm đối tượng/trường hợp và giới hạn của từng nhóm, trong phạm vi mục đích thu hồi nêu ở Điều 95.",
+    "Khoản 2 áp dụng cho các trường hợp ở khoản 1; giấy chứng nhận là một trong các điều kiện thay thế, không phải điều kiện duy nhất.",
+    "Draft đầu liệt kê ví dụ thiếu một số điều kiện và không nêu phạm vi khoản 1. Repair liệt kê a–đ nhưng tiếp tục bỏ phạm vi khoản 1.",
+    "Lượt này không lặp lại phép gán tường minh danh sách giấy tờ cho khoản 1; việc không nêu số khoản không chứng minh model hiểu đúng khoản 1/khoản 2."
+  ],
+  "root_cause_observed": "Synthesis bỏ prerequisite về đối tượng dù retrieved/prompt context đã có đủ phần liên quan. Structural verifier chặn trước bước LLM verifier; repair không khắc phục prerequisite.",
+  "secondary_guard_observation": {
+    "code": "backend/landlaw/agent.py:1390",
+    "finding": "Cụm còn phải có một trong bị matcher con phai co gắn nhãn đồng thời. Câu thực tế vẫn dùng lựa chọn; không coi thông báo guard này là bằng chứng model đổi OR thành AND. Lỗi prerequisite độc lập vẫn đủ để chặn."
+  },
+  "citation_integrity": {
+    "published_citations": "not_applicable_no_citations",
+    "retrieved_passage_checksums": [
+      {
+        "chunk_id": "luat-dat-dai-2024-97-1-0",
+        "checksum_matches": true
+      },
+      {
+        "chunk_id": "luat-dat-dai-2024-99-0-0",
+        "checksum_matches": true
+      },
+      {
+        "chunk_id": "luat-dat-dai-2024-98-0-0",
+        "checksum_matches": true
+      },
+      {
+        "chunk_id": "luat-dat-dai-2024-98-0-parent",
+        "checksum_matches": true
+      }
+    ],
+    "entailment": "not_approved; no claim passed verification"
+  },
+  "limitations": [
+    "Một ca local SQLite, không đánh giá PostgreSQL/cloud hoặc toàn suite.",
+    "Không có kết quả RAGAS/Recall@5/Answer Correctness benchmark từ lượt này.",
+    "Không phải thẩm định pháp lý độc lập."
+  ],
+  "next_step_proposal_only": [
+    "Tiếp tục F03 trong Phase 1: nghiên cứu trình bày các continuation đúng thứ tự và làm nổi prerequisite theo nguồn trước synthesis; không hardcode S06.",
+    "Bổ sung regression tổng quát cho việc giữ đối tượng/điều kiện qua các khoản. Xem xét riêng false positive OR/AND bằng ca dương và ca âm; giữ citation verification.",
+    "Chỉ sửa hoặc chạy model lại sau phê duyệt mới; chưa chuyển Phase 2."
+  ]
+}

@@ -1,0 +1,469 @@
+{
+  "python_observed": "3.14.4",
+  "node_observed": "v24.21.0",
+  "npm_observed": "11.19.0",
+  "intended_deploy_python": "3.12",
+  "intended_deploy_node": "24",
+  "lock_files": {
+    "requirements.lock": "37aedda9732dc6023837746e6829a5f873724b5c5c53856e06adc95318cf668e",
+    "frontend/package-lock.json": "ab5ffa4313ff37c9b675b07eeee80960ea42fd27e7613a1bee3e2b49fc2b291e",
+    "pyproject.toml": "d7c0016936c7b8e12eaf46b5e9ecc02ea74c3a1c345b0a543d41d71abba7de4c",
+    "frontend/package.json": "6ec9e5a1076debaa7c3dc3a1cfa003fef246dafdc74d8e0c81ee717e6e653524",
+    "Dockerfile": "8b54c294c1a8938140887eb110caed2c9d257b18ecc13123f0a40299aee20127",
+    ".dockerignore": "fe32adcb716a8d714c8e7c9722ea9c0b2540b4c77e2b995071dfb3d1c00a692d",
+    ".github/workflows/ci.yml": "c0e81146072a7f19ffdb6c6f7aabe44c8f991a444fd37fe0f2afdc1ab62e67de",
+    ".github/workflows/deploy.yml": "3aa62ec11e1523ccffd6069a46b8ee2c3e926f268283f93ef8c71b172f6d2730"
+  },
+  "python_locked_packages": [
+    {
+      "name": "annotated-doc",
+      "locked": "0.0.5",
+      "installed": "0.0.5",
+      "matches": true
+    },
+    {
+      "name": "annotated-types",
+      "locked": "0.8.0",
+      "installed": "0.8.0",
+      "matches": true
+    },
+    {
+      "name": "anyio",
+      "locked": "4.15.1",
+      "installed": "4.15.1",
+      "matches": true
+    },
+    {
+      "name": "beautifulsoup4",
+      "locked": "4.15.0",
+      "installed": "4.15.0",
+      "matches": true
+    },
+    {
+      "name": "certifi",
+      "locked": "2026.7.22",
+      "installed": "2026.7.22",
+      "matches": true
+    },
+    {
+      "name": "cffi",
+      "locked": "2.1.1",
+      "installed": "2.1.1",
+      "matches": true
+    },
+    {
+      "name": "charset-normalizer",
+      "locked": "3.5.2",
+      "installed": "3.5.2",
+      "matches": true
+    },
+    {
+      "name": "click",
+      "locked": "8.5.0",
+      "installed": "8.5.0",
+      "matches": true
+    },
+    {
+      "name": "cryptography",
+      "locked": "50.0.2",
+      "installed": "50.0.2",
+      "matches": true
+    },
+    {
+      "name": "distro",
+      "locked": "1.9.0",
+      "installed": "1.9.0",
+      "matches": true
+    },
+    {
+      "name": "fastapi",
+      "locked": "0.143.0",
+      "installed": "0.143.0",
+      "matches": true
+    },
+    {
+      "name": "h11",
+      "locked": "0.16.0",
+      "installed": "0.16.0",
+      "matches": true
+    },
+    {
+      "name": "httpcore",
+      "locked": "1.0.9",
+      "installed": "1.0.9",
+      "matches": true
+    },
+    {
+      "name": "httpcore2",
+      "locked": "2.13.1",
+      "installed": "2.13.1",
+      "matches": true
+    },
+    {
+      "name": "httpx",
+      "locked": "0.28.1",
+      "installed": "0.28.1",
+      "matches": true
+    },
+    {
+      "name": "httpx2",
+      "locked": "2.13.1",
+      "installed": "2.13.1",
+      "matches": true
+    },
+    {
+      "name": "idna",
+      "locked": "3.20",
+      "installed": "3.20",
+      "matches": true
+    },
+    {
+      "name": "iniconfig",
+      "locked": "2.3.1",
+      "installed": "2.3.1",
+      "matches": true
+    },
+    {
+      "name": "jsonpatch",
+      "locked": "1.35",
+      "installed": "1.35",
+      "matches": true
+    },
+    {
+      "name": "jsonpointer",
+      "locked": "3.2.1",
+      "installed": "3.2.1",
+      "matches": true
+    },
+    {
+      "name": "langchain-core",
+      "locked": "1.6.9",
+      "installed": "1.6.9",
+      "matches": true
+    },
+    {
+      "name": "langchain-protocol",
+      "locked": "0.0.19",
+      "installed": "0.0.19",
+      "matches": true
+    },
+    {
+      "name": "langgraph",
+      "locked": "1.2.14",
+      "installed": "1.2.14",
+      "matches": true
+    },
+    {
+      "name": "langgraph-checkpoint",
+      "locked": "4.2.0",
+      "installed": "4.2.0",
+      "matches": true
+    },
+    {
+      "name": "langgraph-prebuilt",
+      "locked": "1.1.0",
+      "installed": "1.1.0",
+      "matches": true
+    },
+    {
+      "name": "langgraph-sdk",
+      "locked": "0.4.6",
+      "installed": "0.4.6",
+      "matches": true
+    },
+    {
+      "name": "langsmith",
+      "locked": "0.14.7",
+      "installed": "0.14.7",
+      "matches": true
+    },
+    {
+      "name": "markdown-it-py",
+      "locked": "4.2.0",
+      "installed": "4.2.0",
+      "matches": true
+    },
+    {
+      "name": "mdurl",
+      "locked": "0.1.2",
+      "installed": "0.1.2",
+      "matches": true
+    },
+    {
+      "name": "opentelemetry-api",
+      "locked": "1.45.1",
+      "installed": "1.45.1",
+      "matches": true
+    },
+    {
+      "name": "orjson",
+      "locked": "3.13.0",
+      "installed": "3.13.0",
+      "matches": true
+    },
+    {
+      "name": "ormsgpack",
+      "locked": "1.12.2",
+      "installed": "1.12.2",
+      "matches": true
+    },
+    {
+      "name": "packaging",
+      "locked": "26.3",
+      "installed": "26.3",
+      "matches": true
+    },
+    {
+      "name": "pluggy",
+      "locked": "1.6.0",
+      "installed": "1.6.0",
+      "matches": true
+    },
+    {
+      "name": "psycopg",
+      "locked": "3.3.6",
+      "installed": "3.3.6",
+      "matches": true
+    },
+    {
+      "name": "psycopg-binary",
+      "locked": "3.3.6",
+      "installed": "3.3.6",
+      "matches": true
+    },
+    {
+      "name": "psycopg-pool",
+      "locked": "3.3.3",
+      "installed": "3.3.3",
+      "matches": true
+    },
+    {
+      "name": "pycparser",
+      "locked": "3.11",
+      "installed": "3.11",
+      "matches": true
+    },
+    {
+      "name": "pydantic",
+      "locked": "2.14.0",
+      "installed": "2.14.0",
+      "matches": true
+    },
+    {
+      "name": "pydantic-settings",
+      "locked": "2.15.0",
+      "installed": "2.15.0",
+      "matches": true
+    },
+    {
+      "name": "pydantic_core",
+      "locked": "2.50.0",
+      "installed": "2.50.0",
+      "matches": true
+    },
+    {
+      "name": "Pygments",
+      "locked": "2.21.0",
+      "installed": "2.21.0",
+      "matches": true
+    },
+    {
+      "name": "pypdf",
+      "locked": "6.20.0",
+      "installed": "6.20.0",
+      "matches": true
+    },
+    {
+      "name": "pytest",
+      "locked": "9.1.1",
+      "installed": "9.1.1",
+      "matches": true
+    },
+    {
+      "name": "pytest-asyncio",
+      "locked": "1.4.0",
+      "installed": "1.4.0",
+      "matches": true
+    },
+    {
+      "name": "python-dotenv",
+      "locked": "1.2.4",
+      "installed": "1.2.4",
+      "matches": true
+    },
+    {
+      "name": "PyYAML",
+      "locked": "6.0.3",
+      "installed": "6.0.3",
+      "matches": true
+    },
+    {
+      "name": "requests",
+      "locked": "2.34.2",
+      "installed": "2.34.2",
+      "matches": true
+    },
+    {
+      "name": "requests-toolbelt",
+      "locked": "1.0.0",
+      "installed": "1.0.0",
+      "matches": true
+    },
+    {
+      "name": "respx",
+      "locked": "0.23.1",
+      "installed": "0.23.1",
+      "matches": true
+    },
+    {
+      "name": "rich",
+      "locked": "15.0.0",
+      "installed": "15.0.0",
+      "matches": true
+    },
+    {
+      "name": "ruff",
+      "locked": "0.17.0",
+      "installed": "0.17.0",
+      "matches": true
+    },
+    {
+      "name": "shellingham",
+      "locked": "1.5.4",
+      "installed": "1.5.4",
+      "matches": true
+    },
+    {
+      "name": "sniffio",
+      "locked": "1.3.1",
+      "installed": "1.3.1",
+      "matches": true
+    },
+    {
+      "name": "soupsieve",
+      "locked": "3.0.1",
+      "installed": "3.0.1",
+      "matches": true
+    },
+    {
+      "name": "starlette",
+      "locked": "1.7.0",
+      "installed": "1.7.0",
+      "matches": true
+    },
+    {
+      "name": "tenacity",
+      "locked": "9.2.1",
+      "installed": "9.2.1",
+      "matches": true
+    },
+    {
+      "name": "truststore",
+      "locked": "0.10.4",
+      "installed": "0.10.4",
+      "matches": true
+    },
+    {
+      "name": "typer",
+      "locked": "0.27.3",
+      "installed": "0.27.3",
+      "matches": true
+    },
+    {
+      "name": "typing-inspection",
+      "locked": "0.4.4",
+      "installed": "0.4.4",
+      "matches": true
+    },
+    {
+      "name": "typing_extensions",
+      "locked": "4.16.0",
+      "installed": "4.16.0",
+      "matches": true
+    },
+    {
+      "name": "urllib3",
+      "locked": "2.8.0",
+      "installed": "2.8.0",
+      "matches": true
+    },
+    {
+      "name": "uuid_utils",
+      "locked": "0.17.1",
+      "installed": "0.17.1",
+      "matches": true
+    },
+    {
+      "name": "uvicorn",
+      "locked": "0.54.0",
+      "installed": "0.54.0",
+      "matches": true
+    },
+    {
+      "name": "websockets",
+      "locked": "16.1.1",
+      "installed": "16.1.1",
+      "matches": true
+    },
+    {
+      "name": "xxhash",
+      "locked": "4.0.1",
+      "installed": "4.0.1",
+      "matches": true
+    },
+    {
+      "name": "zstandard",
+      "locked": "0.25.0",
+      "installed": "0.25.0",
+      "matches": true
+    },
+    {
+      "name": "numpy",
+      "locked": "2.5.4",
+      "installed": "2.5.4",
+      "matches": true
+    },
+    {
+      "name": "onnxruntime",
+      "locked": "1.31.0",
+      "installed": "1.31.0",
+      "matches": true
+    },
+    {
+      "name": "sentencepiece",
+      "locked": "0.2.2",
+      "installed": "0.2.2",
+      "matches": true
+    },
+    {
+      "name": "protobuf",
+      "locked": "7.36.2",
+      "installed": "7.36.2",
+      "matches": true
+    },
+    {
+      "name": "flatbuffers",
+      "locked": "25.12.19",
+      "installed": "25.12.19",
+      "matches": true
+    }
+  ],
+  "python_lock_matches_installed": true,
+  "npm_lockfile_version": 3,
+  "npm_manifest_matches_lock_root": true,
+  "clean_install_performed": false,
+  "image_build_performed": true,
+  "model_contract_changed": false,
+  "baseline_lock_files": {
+    "requirements.lock": "37aedda9732dc6023837746e6829a5f873724b5c5c53856e06adc95318cf668e",
+    "frontend/package-lock.json": "ab5ffa4313ff37c9b675b07eeee80960ea42fd27e7613a1bee3e2b49fc2b291e",
+    "pyproject.toml": "d7c0016936c7b8e12eaf46b5e9ecc02ea74c3a1c345b0a543d41d71abba7de4c",
+    "frontend/package.json": "6ec9e5a1076debaa7c3dc3a1cfa003fef246dafdc74d8e0c81ee717e6e653524",
+    "Dockerfile": "8b54c294c1a8938140887eb110caed2c9d257b18ecc13123f0a40299aee20127",
+    ".dockerignore": "fde63af899cc24f1ff0090fdd20f9adadd6077765dd5bc0033bb45f692ce0185",
+    ".github/workflows/ci.yml": "c0e81146072a7f19ffdb6c6f7aabe44c8f991a444fd37fe0f2afdc1ab62e67de",
+    ".github/workflows/deploy.yml": "3aa62ec11e1523ccffd6069a46b8ee2c3e926f268283f93ef8c71b172f6d2730"
+  },
+  "image_evidence": "docker-preflight.json",
+  "clean_install_scope": "No clean host/npm install; serving Docker build performed pip install from the unchanged lock."
+}

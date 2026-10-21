@@ -1,0 +1,58 @@
+........................................................................ [ 16%]
+........................................................................ [ 33%]
+.............................................F.......................... [ 49%]
+.........F.............................................................. [ 66%]
+........................................................................ [ 82%]
+........................................................................ [ 99%]
+..                                                                       [100%]
+=================================== FAILURES ===================================
+__ test_recent_directory_proves_public_contact_but_not_a_receiving_authority ___
+
+    def test_recent_directory_proves_public_contact_but_not_a_receiving_authority():
+        from landlaw.citizen import source_policy_issues
+        from landlaw.models import Claim, Evidence
+        directory=document().model_copy(update={'source_kind':'official_directory',
+            'operational_reviewed_at':utcnow(),'operational_review_status':'unchanged'})
+        evidence=[Evidence(document=directory,chunk=directory.chunks[0])]
+        contact=Claim(kind='contact',text='Số điện thoại công khai của cơ quan là số được ghi trong đoạn nguồn.',citation_ids=[directory.chunks[0].id])
+>       assert source_policy_issues(contact,evidence,utcnow().date())==[]
+E       AssertionError: assert ['Danh bạ hiệ...ặc tương lai'] == []
+E         
+E         Left contains one more item: 'Danh bạ hiện tại không chứng minh kênh liên hệ trong quá khứ hoặc tương lai'
+E         Use -v to get more diff
+
+tests/test_citizen.py:78: AssertionError
+_ test_generation_roles_follow_the_actual_source_review[official_directory-unchanged-1-expected2] _
+
+store = <landlaw.store.Store object at 0x762814ea6ad0>
+settings = Settings(app_env='development', llm_provider='groq', groq_api_key=SecretStr('**********'), groq_model='openai/gpt-oss-...es_follow_t2/data'), reports_dir=PosixPath('/tmp/pytest-of-dovh25x/pytest-24/test_generation_roles_follow_t2/reports'))
+kind = 'official_directory', status = 'unchanged', days = 1
+expected = ['contact']
+
+    @pytest.mark.parametrize('kind,status,days,expected',[
+        ('legal','pending',0,[]),('legal','unchanged',1,['procedure']),
+        ('official_directory','unchanged',1,['contact']),
+        ('official_directory','unchanged',8,[]),('legal','changed',1,[])])
+    async def test_generation_roles_follow_the_actual_source_review(store,settings,kind,status,days,expected):
+        from datetime import timedelta
+        from conftest import document,release
+        from test_agent import FakeProvider
+        from landlaw.agent import Agent
+        from landlaw.models import Evidence
+        from landlaw.security import utcnow
+        doc=document().model_copy(update={'source_kind':kind,'operational_review_status':status,
+            'operational_reviewed_at':utcnow()-timedelta(days=days)})
+        payload=release(store,[doc])
+        policy=await Agent(store,FakeProvider(settings)).synthesis_claim_policy({
+            'release':payload,'as_of':utcnow().date(),'evidence':[Evidence(document=doc,chunk=doc.chunks[0])]})
+>       assert policy['kind']==['legal_rule','applicability','context']+expected
+E       AssertionError: assert ['legal_rule'...y', 'context'] == ['legal_rule'...t', 'contact']
+E         
+E         Right contains one more item: 'contact'
+E         Use -v to get more diff
+
+tests/test_claim_encoding.py:48: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_citizen.py::test_recent_directory_proves_public_contact_but_not_a_receiving_authority
+FAILED tests/test_claim_encoding.py::test_generation_roles_follow_the_actual_source_review[official_directory-unchanged-1-expected2]
+2 failed, 432 passed in 49.12s

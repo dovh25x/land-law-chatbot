@@ -1,0 +1,109 @@
+{
+  "status": "PASS_REVIEW",
+  "checked_at": "2026-10-21T09:50:37.883734+00:00",
+  "case_status": "INCOMPLETE",
+  "checks": {
+    "one_attempt_one_wire_request": true,
+    "within_time_and_request_caps": true,
+    "exact_locked_question_no_history": true,
+    "actual_wire_required_context_complete": true,
+    "wire_snapshot_text_exact": true,
+    "all_synthesis_sources_admitted": true,
+    "all_synthesis_sources_fresh_for_case_date": true,
+    "no_gold_or_whole_corpus_in_payload": true,
+    "no_configured_secret_detected": true,
+    "no_published_claims_or_citations": true,
+    "verifier_not_reached": true,
+    "budget_reservation_matches_wire": true,
+    "unknown_usage_not_refunded_or_reported_confirmed": true,
+    "next_request_impossible_under_existing_minimum_allowance": true,
+    "no_429_in_actual_response": true,
+    "correct_incomplete_classification": true
+  },
+  "runtime_fingerprint": "1697d9dec78b8625398e53999b609e3ce57258666c2e3566a8321385abe8886d",
+  "context": {
+    "required": [
+      {
+        "document_id": "luat-dat-dai-2024",
+        "locator": "Điều 108",
+        "present": true
+      },
+      {
+        "document_id": "qd-40-2026-hanoi",
+        "locator": "Điều 17",
+        "present": true
+      },
+      {
+        "document_id": "nd-49-2026",
+        "locator": "Điều 11",
+        "present": true
+      }
+    ],
+    "retrieved_retained_sources": 16,
+    "admitted_sources": 9,
+    "synthesis_sources": 5,
+    "serialized_evidence_documents_chars": 5070,
+    "freshness": {
+      "qd-40-2026-hanoi:qd-40-2026-hanoi-9-1-parent": "fresh",
+      "qd-40-2026-hanoi:qd-40-2026-hanoi-10-0-0": "fresh",
+      "luat-dat-dai-2024:luat-dat-dai-2024-106-1-0": "fresh",
+      "nd-49-2026:nd-49-2026-11-0-parent": "fresh",
+      "nd-49-2026:nd-49-2026-12-0-0": "fresh"
+    }
+  },
+  "provider_error": {
+    "type": "invalid_request_error",
+    "code": "json_validate_failed",
+    "message": "max completion tokens reached before generating a valid document: the output was truncated to fit max_completion_tokens and is missing required content. Increase max_completion_tokens. See 'failed_generation' for the truncated output. Error: jsonschema: '' does not validate with /required: missing properties: 'missing_facts', 'next_steps', 'out_of_scope'"
+  },
+  "http_status": 400,
+  "wire_latency_ms": 5252,
+  "attempt_latency_ms": 6951,
+  "budget": {
+    "confirmed_usage": 0,
+    "estimated_usage": 19788,
+    "estimated_usage_kind": "upper_bound_for_requests_without_provider_usage",
+    "reserved_budget": 0,
+    "remaining_test_budget": 5212,
+    "requests_reserved": 1,
+    "max_tokens": 25000,
+    "max_requests": 6,
+    "blocked_reason": "test_token_cap",
+    "provider_quota_is_separate": true
+  },
+  "provider_headers": {
+    "x-ratelimit-limit-requests": "1000",
+    "x-ratelimit-limit-tokens": "8000",
+    "x-ratelimit-remaining-requests": "999",
+    "x-ratelimit-remaining-tokens": "4615",
+    "x-ratelimit-reset-requests": "1m26.4s",
+    "x-ratelimit-reset-tokens": "25.387s"
+  },
+  "confirmed_root_cause": "Provider HTTP400 json_validate_failed explicitly reports2048-token completion truncation and missing required Draft JSON properties; usage absent. Conservative unknown-usage hold19788 leaves5212; the next request is blocked internally before network. Not a429, app-parser error or verified legal-answer failure.",
+  "unknowns": [
+    "Actual provider token usage for rejected generation",
+    "Truncated failed_generation was not saved, so no legal correctness verdict can be assigned",
+    "Live account RPD/TPD/RPM headroom is not established by these limited response headers"
+  ],
+  "quality_metrics": {
+    "answer_correctness": "NOT_MEASURED",
+    "semantic_citation_accuracy": "NOT_MEASURED",
+    "faithfulness": "NOT_MEASURED",
+    "false_abstention": "NOT_SCORED_OPERATIONALLY_INCOMPLETE"
+  },
+  "initial_pilot_preflight_limit": "First reservation fit25000; absent live quota query did not certify provider headroom or the ability to complete a retry/verify request.",
+  "secrets_detected_files": [],
+  "artifact_sha256": {
+    "reports/release-final-20261021/pilot-C02/LIVE_STARTED.json": "6c27c8829843c2d2a3b3fe346f5d3318123c8d93820595866c7d91309b3fd5a3",
+    "reports/release-final-20261021/pilot-C02/attempt.json": "e1bd4dfd8666504d5e6b859233f834c91de21897a54cf95973f55b282c27ce64",
+    "reports/release-final-20261021/pilot-C02/operator-cooldown.json": "d663e2e50d1f52a25ed926f07ac049993e64d39bbd750010674dfbe1500d5ee7",
+    "reports/release-final-20261021/pilot-C02/preflight.json": "71c5b2bd79a8aba37a90ed5116559764e96afe7352bc168e8635d495223dcf99",
+    "reports/release-final-20261021/pilot-C02/request-budget.json": "c870f0fa58b0da73d494373189efcaec3b869365affd015f38ec49cba163cfa9",
+    "reports/release-final-20261021/pilot-C02/wire/01/request.json": "a4ac677e3b944e79c2568ea6ac90293a65399b6ef514b9792cfcfc97ffa3867d",
+    "reports/release-final-20261021/pilot-C02/wire/01/response.json": "bdb6b8f60f0a2016af15a6a7f06b452bdba49e011bce2bbcd5f918559adb5472",
+    "reports/release-final-20261021/pilot-C02/wire/01/sources.json": "7c091b82d21097de6be908fd440960b4c9909855f7aaa113bee465dc93292a7e"
+  },
+  "external_requests_by_QA": 0,
+  "production_database_touched_by_QA": false,
+  "historical_attempts_changed_by_QA": false
+}

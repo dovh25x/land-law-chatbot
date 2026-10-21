@@ -12,16 +12,13 @@ from .models import Draft
 from .security import utcnow
 from .store import RateLimited, Store
 from .embedding import contract
+from .request_budget import BudgetExceeded
 
 
 class ProviderUnavailable(Exception):
     def __init__(self, message, retryable=False, retry_after=None, format_failure=False):
         self.retryable, self.retry_after, self.format_failure = retryable, retry_after, format_failure
         super().__init__(message)
-
-
-class BudgetExceeded(Exception):
-    pass
 
 
 @dataclass
@@ -110,11 +107,12 @@ def validate_claim_policy(candidate, policy):
 
 
 class GroqProvider:
-    def __init__(self, settings: Settings, store: Store, client: httpx.AsyncClient | None = None, *, usage_scope='operator'):
+    def __init__(self, settings: Settings, store: Store, client: httpx.AsyncClient | None = None, *, usage_scope='operator', request_budget=None):
         self.settings, self.store = settings, store
         if usage_scope not in {'public', 'operator'}:
             raise ValueError('Invalid trusted usage scope')
         self.usage_scope = usage_scope
+        self.request_budget = request_budget
         self.client = client or httpx.AsyncClient(timeout=25, limits=httpx.Limits(max_connections=8))
         contract(settings)
         from .local_embedding import LocalE5
@@ -161,6 +159,14 @@ class GroqProvider:
                 await asyncio.sleep(exc.retry_after)
                 continue
             except ProviderUnavailable as exc:
+                if exc.format_failure:
+                    schema_failures += 1
+                    if schema_failures >= 2:
+                        raise
+                    # Provider HTTP400 format failures receive the same bounded
+                    # format feedback as local validation; never accept its
+                    # failed_generation or weaken the schema to salvage output.
+                    body['systemInstruction']['parts'][0]['text'] += '\nLượt trước không khớp schema. Trả duy nhất JSON đúng responseJsonSchema; dùng đúng kiểu trường và giá trị enum, không có markdown.'
                 if not exc.retryable or attempt == attempts-1:
                     raise
                 await asyncio.sleep(exc.retry_after or 2 ** attempt)
@@ -211,11 +217,19 @@ class GroqProvider:
             # Keep routing cheap; legal synthesis and verification need the
             # model's normal reasoning level. Call/token/time caps stay fixed.
             request['reasoning_effort']='medium' if schema.__name__ in {'Draft','Verification'} else 'low'
+        reservation = self.request_budget.reserve(request) if self.request_budget is not None else None
         try:
             response=await self.client.post('https://api.groq.com/openai/v1/chat/completions',
                 headers={'Authorization':'Bearer '+self.settings.groq_api_key.get_secret_value()},json=request)
         except httpx.HTTPError:
+            if reservation is not None:
+                self.request_budget.settle(reservation, {})
             raise ProviderUnavailable('Không kết nối được Groq',retryable=True) from None
+        try:result=response.json()
+        except ValueError:result=None
+        if reservation is not None:
+            self.request_budget.settle(reservation,result.get('usage',{}) if isinstance(result,dict) else {},
+                                       status_code=response.status_code,headers=response.headers)
         if response.status_code==429:
             try:delay=math.ceil(float(response.headers.get('retry-after','60')))
             except (ValueError,TypeError):delay=60
@@ -223,19 +237,26 @@ class GroqProvider:
         if response.status_code==413:
             raise ProviderUnavailable('Ngữ cảnh vượt dung lượng request của Groq Free. Hãy tách câu hỏi để đối chiếu từng vấn đề.')
         if response.status_code==400:
-            try:code=response.json().get('error',{}).get('code')
-            except ValueError:code=None
+            error=result.get('error') if isinstance(result,dict) else None
+            code=error.get('code') if isinstance(error,dict) else None
             if code in {'tool_use_failed','json_validate_failed'}:
+                await self.record_usage('provider-format:'+code)
                 raise ProviderUnavailable('Groq chưa trả kết quả đúng định dạng.',retryable=True,format_failure=True)
         if response.status_code>=400:
             raise ProviderUnavailable(f'Groq trả HTTP {response.status_code}',retryable=response.status_code>=500)
-        result=response.json()
-        cached=result.get('usage',{}).get('prompt_tokens_details',{}).get('cached_tokens',0)
+        if not isinstance(result,dict):
+            raise ProviderUnavailable('Groq không trả JSON object hợp lệ.',retryable=True,format_failure=True)
+        usage=result.get('usage')
+        usage=usage if isinstance(usage,dict) else {}
+        details=usage.get('prompt_tokens_details')
+        cached=details.get('cached_tokens',0) if isinstance(details,dict) else 0
         if type(cached)==int and cached>0:
             await self.record_usage('groq-cached-tokens',cached)
         try:content=result['choices'][0]['message']['content']
         except (KeyError,IndexError,TypeError):
-            raise ProviderUnavailable('Groq không trả kết quả đúng schema') from None
+            raise ProviderUnavailable('Groq không trả kết quả đúng schema',retryable=True,format_failure=True) from None
+        if not isinstance(content,str):
+            raise ProviderUnavailable('Groq không trả nội dung JSON dạng text.',retryable=True,format_failure=True)
         if schema.__name__=='Plan':
             try:
                 decoded=json.loads(content)
@@ -243,8 +264,12 @@ class GroqProvider:
                     decoded['tools']=decoded.pop('lookups')
                     content=json.dumps(decoded,ensure_ascii=False)
             except (ValueError,TypeError):pass
+        tokens=usage.get('total_tokens')
+        if type(tokens) is not int or tokens<0:
+            await self.record_usage('llm-usage-unknown')
+            tokens=0  # Confirmed usage only; operator ledger retains unknown reservation.
         return {'candidates':[{'content':{'parts':[{'text':content}]}}],
-                'usageMetadata':{'totalTokenCount':result.get('usage',{}).get('total_tokens',0)}}
+                'usageMetadata':{'totalTokenCount':tokens}}
 
 
     @staticmethod

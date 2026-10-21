@@ -1,0 +1,36 @@
+{
+  "status_code": 400,
+  "schema": "Draft",
+  "body": {
+    "choices": [],
+    "error": {
+      "type": "invalid_request_error",
+      "code": "json_validate_failed",
+      "message": "Failed to generate JSON. Please adjust your prompt. See 'failed_generation' for more details."
+    }
+  },
+  "raw_body_sha256": "88e9fd71f1978521a988ec599161b1bb110d05f5de889c7a23af6287f821422f",
+  "hidden_reasoning_not_persisted": true,
+  "latency_ms": 4941,
+  "headers": {
+    "x-ratelimit-limit-requests": "1000",
+    "x-ratelimit-limit-tokens": "8000",
+    "x-ratelimit-remaining-requests": "998",
+    "x-ratelimit-remaining-tokens": "189",
+    "x-ratelimit-reset-requests": "2m52.8s",
+    "x-ratelimit-reset-tokens": "58.582s",
+    "x-request-id": "req_01m5emyb22e5qsa2fp0dzy4x42"
+  },
+  "reservation_tokens": 23665,
+  "usage": {},
+  "budget_after": {
+    "wire_requests": 3,
+    "per_case_requests": {
+      "C01": 3
+    },
+    "tokens_observed": 4829,
+    "tokens_charged_including_unknown": 52159,
+    "unknown_usage_requests": 2,
+    "hard_token_cap": 60000
+  }
+}

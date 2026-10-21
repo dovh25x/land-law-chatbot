@@ -7,7 +7,7 @@ from landlaw.models import ChatRequest, Claim, Draft
 from landlaw.provider import Budget, BudgetExceeded, ProviderUnavailable
 from landlaw.security import utcnow
 from landlaw.store import RateLimited
-from conftest import document, release, session
+from conftest import document, release, session, supplied_synthesis_fixture
 
 
 def test_pdf_citation_maps_global_chunk_index_to_exact_attachment_and_physical_page():
@@ -1317,6 +1317,7 @@ async def test_assistance_catalogue_cannot_be_repaired_by_a_post_verification_di
              'evidence':[Evidence(chunk=doc.chunks[0], document=doc, applicability='current')],
              'draft':draft, 'trace':[], 'emit':noop}
     agent = Agent(store, FakeProvider(settings, draft=draft))
+    supplied_synthesis_fixture(state)
     await agent.verify(state)
     assert bool(state['verification'].supported_claim_indexes) == approved
     await agent.finish(state)
@@ -1332,14 +1333,16 @@ async def test_farming_actor_cannot_lose_income_and_approval_date_conditions(sto
             'có thu nhập từ sản xuất nông nghiệp trên đất đó tại thời điểm phê duyệt phương án '
             'bồi thường và không thuộc trường hợp người hưởng lương hưu.')
     law=document(text=source);law.chunks[0].locator='Điều 12'
+    payload=release(store,[law])
     text='Cá nhân trực tiếp sản xuất nông nghiệp được hỗ trợ'
     text+=(' khi có thu nhập từ sản xuất nông nghiệp trên đất đó tại thời điểm phê duyệt phương án '
            'bồi thường và không thuộc trường hợp người hưởng lương hưu.' if qualified else ' nếu không hưởng lương hưu.')
     state={'request':ChatRequest(session_id='0'*32,message='Ai được hỗ trợ?'),
-        'release':{'documents':[law.model_dump(mode='json')],'relations':[]},
+        'release':payload,
         'draft':Draft(status='answered',claims=[Claim(text=text,citation_ids=['law-1'])]),
         'evidence':[Evidence(chunk=law.chunks[0],document=law,applicability='current')],
         'as_of':date(2024,8,2),'budget':Budget(),'trace':[],'emit':noop,'history':[]}
+    supplied_synthesis_fixture(state)
     await Agent(store,FakeProvider(settings)).verify(state)
     assert bool(state['verification'].supported_claim_indexes) is qualified
 
@@ -1350,16 +1353,18 @@ async def test_alternative_document_claim_must_carry_its_own_actor_prerequisite(
     source=('Điều 12. Điều kiện. 2. Các trường hợp quy định tại khoản 1 Điều này được bồi thường '
             'khi có một trong các điều kiện sau: a) Có giấy chứng nhận; b) Có quyết định giao đất.')
     law=document(text=source);law.chunks[0].locator='Điều 12'
+    payload=release(store,[law])
     text='Được bồi thường khi có giấy chứng nhận hoặc có quyết định giao đất.'
     if independent:text='Trường hợp thuộc khoản 1 Điều này '+text[0].lower()+text[1:]
     state={'request':ChatRequest(session_id='0'*32,message='Giấy chứng nhận có phải điều kiện duy nhất?'),
-        'release':{'documents':[law.model_dump(mode='json')],'relations':[]},
+        'release':payload,
         'draft':Draft(status='answered',claims=[
             Claim(text='Đối tượng phải thuộc khoản 1 Điều này.',citation_ids=['law-1']),
             Claim(text=text,citation_ids=['law-1'])]),
         'evidence':[Evidence(chunk=law.chunks[0],document=law,applicability='current')],
         'as_of':date(2024,8,2),'budget':Budget(),'trace':[],'emit':noop,'history':[]}
     provider=FakeProvider(settings,verification=Verification(supported_claim_indexes=[0,1]))
+    supplied_synthesis_fixture(state)
     await Agent(store,provider).verify(state)
     assert bool(state['verification'].supported_claim_indexes) is independent
 
@@ -1458,6 +1463,7 @@ async def test_contract_land_support_cannot_omit_the_sources_contract_requiremen
              'evidence':[Evidence(chunk=doc.chunks[0], document=doc, applicability='current')],
              'draft':draft, 'trace':[], 'emit':noop}
     agent = Agent(store, FakeProvider(settings))
+    supplied_synthesis_fixture(state)
     await agent.verify(state)
     await agent.finish(state)
     assert bool(state['result'].verified_claims) is qualified
@@ -1483,6 +1489,7 @@ async def test_legal_rule_reference_to_another_claim_is_not_independent_proof(st
              'evidence':[Evidence(chunk=c, document=doc, applicability='current') for c in doc.chunks],
              'draft':draft, 'trace':[], 'emit':noop}
     agent = Agent(store, FakeProvider(settings, verification=Verification(supported_claim_indexes=[0,1])))
+    supplied_synthesis_fixture(state)
     await agent.verify(state)
     await agent.finish(state)
     assert bool(state['result'].verified_claims) is independent
@@ -1506,6 +1513,7 @@ async def test_state_enterprise_cannot_replace_the_specific_contract_land_source
              'evidence':[Evidence(chunk=doc.chunks[0], document=doc, applicability='current')],
              'draft':draft, 'trace':[], 'emit':noop}
     agent = Agent(store, FakeProvider(settings))
+    supplied_synthesis_fixture(state)
     await agent.verify(state)
     await agent.finish(state)
     assert bool(state['result'].verified_claims) is not broader_actor

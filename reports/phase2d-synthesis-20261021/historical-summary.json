@@ -1,0 +1,38 @@
+{
+  "input_report_sha256": "770a4c02cd537e4ab268006ab64d5739d88259204b54f1c5a623c001de3ae406",
+  "scope": "Existing deterministic source rules/clarification/refusal only; no answer fixture.",
+  "passed": true,
+  "model_pass": null,
+  "cases": [
+    {
+      "id": "S01",
+      "expected": "answered",
+      "actual": "answered",
+      "origin": "server_source_rule"
+    },
+    {
+      "id": "S02",
+      "expected": "clarification_needed",
+      "actual": "clarification_needed",
+      "origin": "server_source_rule"
+    },
+    {
+      "id": "S03",
+      "expected": "answered",
+      "actual": "answered",
+      "origin": "server_source_rule"
+    },
+    {
+      "id": "N07",
+      "expected": "clarification_needed",
+      "actual": "clarification_needed",
+      "origin": "none"
+    },
+    {
+      "id": "N08",
+      "expected": "insufficient_evidence",
+      "actual": "insufficient_evidence",
+      "origin": "none"
+    }
+  ]
+}

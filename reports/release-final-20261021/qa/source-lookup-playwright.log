@@ -1,0 +1,13 @@
+
+> hanoi-land-law-web@0.1.0 test:e2e
+> playwright test source-lookup.spec.ts
+
+
+Running 4 tests using 2 workers
+
+  ✓  1 [desktop] › e2e/source-lookup.spec.ts:24:1 › source-only mode disables chat and displays date-pinned reviewed excerpts (4.8s)
+  ✓  2 [mobile] › e2e/source-lookup.spec.ts:24:1 › source-only mode disables chat and displays date-pinned reviewed excerpts (4.9s)
+  ✓  4 [mobile] › e2e/source-lookup.spec.ts:45:1 › retains local history but never treats saved citations as reviewed current evidence (4.0s)
+  ✓  3 [desktop] › e2e/source-lookup.spec.ts:45:1 › retains local history but never treats saved citations as reviewed current evidence (4.2s)
+
+  4 passed (14.3s)

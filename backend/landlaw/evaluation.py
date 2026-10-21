@@ -13,6 +13,7 @@ from pathlib import Path
 from .agent import Agent
 from .ingest import json_write
 from .models import ChatRequest
+from .request_budget import BudgetExceeded
 from .security import local_date, new_token, utcnow
 
 
@@ -48,11 +49,12 @@ def preserve_attempt(folder,record,origin='executed'):
 
 
 def configuration_fingerprint(settings):
-    files = [Path(__file__).with_name(name) for name in ("agent.py", "provider.py", "embedding.py", "local_embedding.py", "store.py", "retrieval.py", "config.py", "publication.py", "models.py", "security.py", "api.py", "catalog.py", "citizen.py", "ops.py")]
+    files = [Path(__file__).with_name(name) for name in ("agent.py", "synthesis_context.py", "provider.py", "request_budget.py", "embedding.py", "local_embedding.py", "store.py", "retrieval.py", "config.py", "publication.py", "models.py", "security.py", "api.py", "catalog.py", "citizen.py", "ops.py")]
     configuration = {"model": settings.generation_model, "llm_provider": settings.llm_provider, "embedding_model": settings.embedding_model,
                      "dimensions": settings.embedding_dimensions, 'embedding_provider':settings.embedding_provider,
                      "timeout_seconds": settings.turn_timeout_seconds,
                      "allow_stale_generation": settings.allow_stale_generation,
+                     "source_lookup_only": settings.source_lookup_only,
                      "storage_backend": "postgresql" if settings.database_url.get_secret_value() else "sqlite",
                      "llm_budget": 6, "tool_budget": 12, "retrieval_rounds": 2,
                      "answer_schema_version":2,"operational_policy_version":1}
@@ -85,6 +87,9 @@ async def _evaluate(settings, store, provider, split="smoke", release_id=None, l
         raise ValueError('Only agentic evaluation is supported')
     if concurrency not in {1, 2}:
         raise ValueError('Evaluation concurrency must be one or two')
+    test_budget=getattr(provider,'request_budget',None)
+    if test_budget is not None and test_budget.blocked_reason:
+        raise BudgetExceeded(test_budget.blocked_reason)
     cases, fingerprint = frozen_dataset(settings.data_dir, split)
     if not provider.configured:
         raise ValueError("Cannot evaluate without the selected provider API key")
@@ -213,6 +218,9 @@ async def _evaluate(settings, store, provider, split="smoke", release_id=None, l
         # Keep transient/budget failures in the denominator and continue the
         # remaining locked cases; never rerun the failed case in this pass.
         # Long provider cooldown is handled before starting the next case.
+        test_budget=getattr(provider,'request_budget',None)
+        if test_budget is not None and test_budget.blocked_reason:
+            break  # A hard test cap stops the suite, not just the current turn.
     review_path = settings.data_dir / f'evaluation/{split}-reviews.json'
     report = summarise(records, cases, fingerprint, json.loads(review_path.read_text()) if review_path.exists() else {})
     report.update({"run_id": run_id, "release": release["id"], "model": provider.settings.generation_model,

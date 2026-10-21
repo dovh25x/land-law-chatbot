@@ -1,0 +1,82 @@
+{
+  "case_id": "C02",
+  "runtime_fingerprint": "1697d9dec78b8625398e53999b609e3ce57258666c2e3566a8321385abe8886d",
+  "corpus_id": "corpus-1afca764aa6692e0",
+  "corpus_sha256": "7ce7956ae35c7006b5bfd7d10d516fa9e8e47fe2f073e471ceecbb34b412d317",
+  "input_sha256": {
+    "data/staging/phase2c-current/release-v5.json": "7ce7956ae35c7006b5bfd7d10d516fa9e8e47fe2f073e471ceecbb34b412d317",
+    "reports/phase2c-current-20261021/acceptance-cases-final.json": "6c50748d49d5e9261b81211a756ffcf8a83203f34c46c5edcc6bd0fdf275be81",
+    "reports/phase2c-current-20261021/source-gate-final.json": "273233a728eb067429a4d397eddfe54172727a3430b0148c4c2840b0211df584",
+    "reports/phase2c-current-20261021/receipts-final/luat-43-2024.json": "b5666c635289fb5a1117130eba9721c23f3f4b9cb6eed9886baf706a5d331c7e",
+    "reports/phase2c-current-20261021/receipts-final/luat-dat-dai-2024.json": "934f2c49725a0ea83562f264c99cedd3598a2fc540033c1a2870667d7311b235",
+    "reports/phase2c-current-20261021/receipts-final/luat-thu-do-2026.json": "d45a2204b7d207020cabda7aadb64fb82393b62720aac3d954fba711a33d49c8",
+    "reports/phase2c-current-20261021/receipts-final/nd-151-2025.json": "6609933111c19821167212640e177a5d1480e7e9b5de5e66765b642752a43c0c",
+    "reports/phase2c-current-20261021/receipts-final/nd-226-2025.json": "390e718e117c134aa9d524253603ea95de01d84dd7ddee18872a85dbfbe57d8f",
+    "reports/phase2c-current-20261021/receipts-final/nd-49-2026.json": "4707323849dfdfbea1d8b8e05359def0d33f6328eca3aec5696a96a1d815d626",
+    "reports/phase2c-current-20261021/receipts-final/nd-88-2024.json": "1e59dc3ecf636e9297801c19b1fb13efe56ae5cd785e95db4240540a3f04dda3",
+    "reports/phase2c-current-20261021/receipts-final/nq-254-2025.json": "5f7991a42bcd3fd95e34367e282ff94be74e91469d42dd7c2396aaf0277e7053",
+    "reports/phase2c-current-20261021/receipts-final/qd-10-2026-hanoi.json": "5a5aaa4e26a1a0181c12635453f7a8b9a8575105e29c2034dd9fe0474662e1e8",
+    "reports/phase2c-current-20261021/receipts-final/qd-40-2026-hanoi.json": "f48719cf7609d889d3f71013c4580175f459bb326315a873179065f3a8e63ce5",
+    "reports/phase2c-current-20261021/receipts-final/qd-56-2024-hanoi-unavailable.json": "f4d79a19d66b65e8375b65ff714683cf56dbed8363ceb816f9afbccc73ebd116",
+    "backend/landlaw/__init__.py": "4b147aa291df62cb1cb3c15378685a0ca7bba9f5b3d557d75d7e439742139aeb",
+    "backend/landlaw/agent.py": "83dc9ed5c95f06af27410bfbda8c4f09c5bca460544a90dc518c09d23a891054",
+    "backend/landlaw/api.py": "df185ee56c35e0d168eab54c7d341c8f2bedff06579da03de14dbb9a8327c44c",
+    "backend/landlaw/catalog.py": "c3726064efed5cfaf0a4001bc1bfa2ee27bd9a929c3fe838a7a9967ae20b9d55",
+    "backend/landlaw/citizen.py": "d438e99453cbcfce93fa33e296e746a18a2a99a7660729364e607340616bce33",
+    "backend/landlaw/cli.py": "404e051c846d35aeeaffbdb83064908634376df54fdf57a61b122001764611e6",
+    "backend/landlaw/config.py": "5c59c32a7caa60b2ffef48c9f2206d5321a203e2df88ddc5961b88a0a41731b6",
+    "backend/landlaw/embedding.py": "fb4c2bdff5a0a9b95a4471cc0151365e6ac17df4edafd28fa1bb944fc0e44d37",
+    "backend/landlaw/evaluation.py": "f4fa05edc2773fe0686751ad704f4564f8acd616d3f6b20567110199653b6a52",
+    "backend/landlaw/ingest.py": "5584933ee58dff528805f285dff980b3552dffe664321142b4542fb0b76a5fa0",
+    "backend/landlaw/local_embedding.py": "1eb8f720050cdc720377467694c91538f9767e236044654cf96d70c00e94b493",
+    "backend/landlaw/models.py": "cde6d684c43d7a5ed6327748191fbed7f8060e6a7f5e4c87833f1b1a1f686cdc",
+    "backend/landlaw/ops.py": "c951f656d7f86295ef0dd3ff2868edb84ab8461f424674b05aed1c29503164b6",
+    "backend/landlaw/provider.py": "4a9f9c528f5fb57bb27d1689375e31edf333a8d8be5a571d41e5f31b58c21982",
+    "backend/landlaw/publication.py": "439134d22b76663f27314c6542116123fdf34385ef1a6732de6436fe30b8405c",
+    "backend/landlaw/request_budget.py": "4cad894de6469127824db887955790815a20d69d2ef45bdf993e20f3ba01f952",
+    "backend/landlaw/retrieval.py": "3b178b134f5a152d0ea122140fc5d0ffb7a3a375546e8d2da18fa7a18262f7d4",
+    "backend/landlaw/security.py": "55263a1adbb8d8d73a52b330df557d188326425382bc5dfc7b028a2f7916a00d",
+    "backend/landlaw/store.py": "6c9e2506fd4843e03703ba3c7d084854733b9ef2e48848801846f4c178c523d9",
+    "backend/landlaw/synthesis_context.py": "4dfe1bf71b0333a10c1468b0551e0f06b5db753d0164d9a99caba594c4740576",
+    "data/legal_relations.json": "f971bea290c89d3b3c8911b36cdc1ef210b18f212e2f5874dee90bbc92d82f82",
+    "reports/release-final-20261021/pilot_c02.py": "740cbc28887042d47734fa8304e577411cea04582c33de6ad4b3e3b85291b348"
+  },
+  "as_of": "2026-10-21",
+  "required_context": [
+    {
+      "document_id": "luat-dat-dai-2024",
+      "locator": "Điều 108",
+      "present": true
+    },
+    {
+      "document_id": "qd-40-2026-hanoi",
+      "locator": "Điều 17",
+      "present": true
+    },
+    {
+      "document_id": "nd-49-2026",
+      "locator": "Điều 11",
+      "present": true
+    }
+  ],
+  "initial_reservation": 19788,
+  "hard_token_cap": 25000,
+  "max_network_requests": 6,
+  "max_seconds": 90,
+  "active_cooldowns": [],
+  "historical_provider_headers": {
+    "x-ratelimit-limit-requests": "1000",
+    "x-ratelimit-limit-tokens": "8000",
+    "x-ratelimit-remaining-requests": "998",
+    "x-ratelimit-remaining-tokens": "189",
+    "x-ratelimit-reset-requests": "2m52.8s",
+    "x-ratelimit-reset-tokens": "58.582s",
+    "x-request-id": "req_01m5emyb22e5qsa2fp0dzy4x42"
+  },
+  "historical_headers_are_not_live_quota": true,
+  "provider_live_remaining_RPM_TPM_TPD": "UNKNOWN_NO_SEPARATE_QUOTA_QUERY",
+  "billing_basis": "User explicitly confirmed configured Groq account is Free/no billing on 2026-10-21",
+  "policy": "One independent allocation authorized by current request. Stop on HTTP429; no extra judge/tuning/retry attempt.",
+  "phase3a_ledger_reset": false,
+  "external_requests_during_preflight": 0
+}

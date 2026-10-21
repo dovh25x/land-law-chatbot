@@ -1,0 +1,127 @@
+{
+  "checked_at": "2026-10-20T18:51:37.598478+00:00",
+  "external_llm_requests": 0,
+  "scope": "Source admission comparison, not before/after model performance; local API startup is not PostgreSQL or public E2E.",
+  "before_source_admission": [
+    {
+      "id": "C01",
+      "citation_source_states": {
+        "luat-dat-dai-2024:luat-dat-dai-2024-97-1-0": "unknown",
+        "luat-dat-dai-2024:luat-dat-dai-2024-98-0-parent": "unknown",
+        "nq-254-2025:nq-254-2025-2-0-1": "unknown",
+        "luat-dat-dai-2024:luat-dat-dai-2024-100-2-0": "unknown"
+      },
+      "all_required_citations_admitted": false
+    },
+    {
+      "id": "C02",
+      "citation_source_states": {
+        "luat-dat-dai-2024:luat-dat-dai-2024-106-1-0": "unknown",
+        "qd-40-2026-hanoi:qd-40-2026-hanoi-9-1-0": "unknown"
+      },
+      "all_required_citations_admitted": false
+    },
+    {
+      "id": "C03",
+      "citation_source_states": {
+        "nd-88-2024:nd-88-2024-0-11-0": "unknown",
+        "nd-226-2025:nd-226-2025-34-scope-7-2a-5": "unknown",
+        "nd-49-2026:nd-49-2026-23-scope-16-3g": "unknown",
+        "qd-40-2026-hanoi:qd-40-2026-hanoi-12-1-0": "unknown",
+        "qd-40-2026-hanoi:qd-40-2026-hanoi-13-0-0": "unknown"
+      },
+      "all_required_citations_admitted": false
+    }
+  ],
+  "restore_without_receipts_usable": false,
+  "after_source_admission": [
+    {
+      "id": "C01",
+      "citation_source_states": {
+        "luat-dat-dai-2024:luat-dat-dai-2024-97-1-0": "fresh",
+        "luat-dat-dai-2024:luat-dat-dai-2024-98-0-parent": "fresh",
+        "nq-254-2025:nq-254-2025-2-0-1": "fresh",
+        "luat-dat-dai-2024:luat-dat-dai-2024-100-2-0": "fresh"
+      },
+      "all_required_citations_admitted": true
+    },
+    {
+      "id": "C02",
+      "citation_source_states": {
+        "luat-dat-dai-2024:luat-dat-dai-2024-106-1-0": "fresh",
+        "qd-40-2026-hanoi:qd-40-2026-hanoi-9-1-0": "fresh"
+      },
+      "all_required_citations_admitted": true
+    },
+    {
+      "id": "C03",
+      "citation_source_states": {
+        "nd-88-2024:nd-88-2024-0-11-0": "fresh",
+        "nd-226-2025:nd-226-2025-34-scope-7-2a-5": "fresh",
+        "nd-49-2026:nd-49-2026-23-scope-16-3g": "fresh",
+        "qd-40-2026-hanoi:qd-40-2026-hanoi-12-1-0": "fresh",
+        "qd-40-2026-hanoi:qd-40-2026-hanoi-13-0-0": "fresh"
+      },
+      "all_required_citations_admitted": true
+    }
+  ],
+  "storage_backend": "isolated_sqlite",
+  "corpus_id": "corpus-1afca764aa6692e0",
+  "source_gate": {
+    "mode": "scoped_receipts",
+    "policy_sha256": "dfe58f8376d4d4d978ace0483ba45a70e60eafa473285ffbe5a6a2a8e7f72dd4",
+    "eligible_passages": 74,
+    "usable": true,
+    "whole_corpus_verified": false
+  },
+  "startup": [
+    {
+      "path": "/healthz",
+      "status": 200,
+      "metadata": {
+        "status": "ok"
+      }
+    },
+    {
+      "path": "/readyz",
+      "status": 200,
+      "metadata": {
+        "status": "ready",
+        "database": true,
+        "storage": "sqlite-development",
+        "llm_configured": true,
+        "corpus_release": "corpus-1afca764aa6692e0",
+        "source_gate": {
+          "mode": "scoped_receipts",
+          "policy_sha256": "dfe58f8376d4d4d978ace0483ba45a70e60eafa473285ffbe5a6a2a8e7f72dd4",
+          "eligible_passages": 74,
+          "usable": true,
+          "whole_corpus_verified": false
+        },
+        "configuration_sha256": "5da43ae6f45c9a9c20c3fe2e15ead5de64ab419322b254218c9736ba832d307c"
+      }
+    },
+    {
+      "path": "/api/v1/status",
+      "status": 200,
+      "metadata": {
+        "corpus_release": "corpus-1afca764aa6692e0",
+        "source_gate": {
+          "mode": "scoped_receipts",
+          "policy_sha256": "dfe58f8376d4d4d978ace0483ba45a70e60eafa473285ffbe5a6a2a8e7f72dd4",
+          "eligible_passages": 74,
+          "usable": true,
+          "whole_corpus_verified": false
+        },
+        "source_fresh": false,
+        "generation_available": true
+      }
+    }
+  ],
+  "outbound_requests": [],
+  "real_provider_constructed": true,
+  "sqlite_configuration_sha256": "5da43ae6f45c9a9c20c3fe2e15ead5de64ab419322b254218c9736ba832d307c",
+  "postgresql_configuration_sha256_planned_only": "ff33e7801bca880aa54028d17c502416a22b00fed77b4962f606d841bd0db74c",
+  "model": "openai/gpt-oss-120b",
+  "embedding": "multilingual-e5-small-onnx-q8-window-v1"
+}

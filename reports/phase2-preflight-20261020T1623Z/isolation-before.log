@@ -1,0 +1,146 @@
+FF                                                                       [100%]
+=================================== FAILURES ===================================
+_ test_faithfulness_uses_disposable_sqlite_even_with_serving_credentials[False] _
+
+tmp_path = PosixPath('/tmp/pytest-of-dovh25x/pytest-17/test_faithfulness_uses_disposa0')
+settings = Settings(app_env='development', llm_provider='groq', groq_api_key=SecretStr('**********'), groq_model='openai/gpt-oss-...ses_disposa0/data'), reports_dir=PosixPath('/tmp/pytest-of-dovh25x/pytest-17/test_faithfulness_uses_disposa0/reports'))
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x73cefef223f0>
+owner_configured = False
+
+    @pytest.mark.parametrize('owner_configured', [False, True])
+    async def test_faithfulness_uses_disposable_sqlite_even_with_serving_credentials(
+            tmp_path, settings, monkeypatch, owner_configured):
+        dangerous = settings.model_copy(update={
+            'database_url': SecretStr('postgresql://serving-do-not-connect'),
+            'admin_database_url': SecretStr('postgresql://owner-do-not-connect' if owner_configured else '')})
+        monkeypatch.setattr(evaluation, 'Settings', lambda: dangerous)
+        opened = []
+        instances = []
+    
+        def guarded_store(selected):
+            assert not selected.database_url.get_secret_value()
+            assert not selected.admin_database_url.get_secret_value()
+            assert selected.sqlite_path != dangerous.sqlite_path
+            opened.append(Path(selected.sqlite_path))
+            return Store(selected)
+    
+        class FakeJudge:
+            def __init__(self, selected, store, *, usage_scope):
+                assert usage_scope == 'operator'
+                assert selected.generation_model == settings.generation_model
+                self.client = SimpleNamespace(event_hooks={})
+                self.closed = False
+                instances.append(self)
+    
+            async def generate(self, schema, instruction, payload, budget, **kwargs):
+                budget.llm()
+                return schema(claims=[evaluation.JudgedClaim(
+                    statement='Nội dung giả lập được nguồn hỗ trợ.', supported=True,
+                    evidence_ids=['C1'], reason='Fixture kiểm tra isolation, không chấm luật thật.')])
+    
+            async def close(self):
+                self.closed = True
+    
+        monkeypatch.setattr(evaluation, 'Store', guarded_store)
+        monkeypatch.setattr(evaluation, 'GroqProvider', FakeJudge)
+        run = tmp_path/'run'
+        run.mkdir()
+        (run/'metadata.json').write_text(json.dumps({'configuration_sha256':'evaluated-configuration'}))
+        (run/'records.json').write_text(json.dumps([{
+            'case_id':'S07', 'evaluation_context':[{'citation_id':'C1','text':'Nguồn giả lập công khai.'}],
+            'result':{'corpus_release':'fixture','model':settings.generation_model,
+                      'status':'answered','content':'Nội dung giả lập được nguồn hỗ trợ.'}}]))
+        output = tmp_path/'faithfulness.json'
+>       await evaluation.main([run], output)
+
+tests/test_faithfulness_isolation.py:57: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+scripts/evaluate_faithfulness.py:28: in main
+    settings=Settings().for_operator();store=Store(settings);provider=GroqProvider(settings,store,usage_scope='operator')
+                                             ^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+selected = Settings(app_env='development', llm_provider='groq', groq_api_key=SecretStr('**********'), groq_model='openai/gpt-oss-...ses_disposa0/data'), reports_dir=PosixPath('/tmp/pytest-of-dovh25x/pytest-17/test_faithfulness_uses_disposa0/reports'))
+
+    def guarded_store(selected):
+>       assert not selected.database_url.get_secret_value()
+E       AssertionError: assert not 'postgresql://serving-do-not-connect'
+E        +  where 'postgresql://serving-do-not-connect' = get_secret_value()
+E        +    where get_secret_value = SecretStr('**********').get_secret_value
+E        +      where SecretStr('**********') = Settings(app_env='development', llm_provider='groq', groq_api_key=SecretStr('**********'), groq_model='openai/gpt-oss-...ses_disposa0/data'), reports_dir=PosixPath('/tmp/pytest-of-dovh25x/pytest-17/test_faithfulness_uses_disposa0/reports')).database_url
+
+tests/test_faithfulness_isolation.py:24: AssertionError
+_ test_faithfulness_uses_disposable_sqlite_even_with_serving_credentials[True] _
+
+tmp_path = PosixPath('/tmp/pytest-of-dovh25x/pytest-17/test_faithfulness_uses_disposa1')
+settings = Settings(app_env='development', llm_provider='groq', groq_api_key=SecretStr('**********'), groq_model='openai/gpt-oss-...ses_disposa1/data'), reports_dir=PosixPath('/tmp/pytest-of-dovh25x/pytest-17/test_faithfulness_uses_disposa1/reports'))
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x73cefef52210>
+owner_configured = True
+
+    @pytest.mark.parametrize('owner_configured', [False, True])
+    async def test_faithfulness_uses_disposable_sqlite_even_with_serving_credentials(
+            tmp_path, settings, monkeypatch, owner_configured):
+        dangerous = settings.model_copy(update={
+            'database_url': SecretStr('postgresql://serving-do-not-connect'),
+            'admin_database_url': SecretStr('postgresql://owner-do-not-connect' if owner_configured else '')})
+        monkeypatch.setattr(evaluation, 'Settings', lambda: dangerous)
+        opened = []
+        instances = []
+    
+        def guarded_store(selected):
+            assert not selected.database_url.get_secret_value()
+            assert not selected.admin_database_url.get_secret_value()
+            assert selected.sqlite_path != dangerous.sqlite_path
+            opened.append(Path(selected.sqlite_path))
+            return Store(selected)
+    
+        class FakeJudge:
+            def __init__(self, selected, store, *, usage_scope):
+                assert usage_scope == 'operator'
+                assert selected.generation_model == settings.generation_model
+                self.client = SimpleNamespace(event_hooks={})
+                self.closed = False
+                instances.append(self)
+    
+            async def generate(self, schema, instruction, payload, budget, **kwargs):
+                budget.llm()
+                return schema(claims=[evaluation.JudgedClaim(
+                    statement='Nội dung giả lập được nguồn hỗ trợ.', supported=True,
+                    evidence_ids=['C1'], reason='Fixture kiểm tra isolation, không chấm luật thật.')])
+    
+            async def close(self):
+                self.closed = True
+    
+        monkeypatch.setattr(evaluation, 'Store', guarded_store)
+        monkeypatch.setattr(evaluation, 'GroqProvider', FakeJudge)
+        run = tmp_path/'run'
+        run.mkdir()
+        (run/'metadata.json').write_text(json.dumps({'configuration_sha256':'evaluated-configuration'}))
+        (run/'records.json').write_text(json.dumps([{
+            'case_id':'S07', 'evaluation_context':[{'citation_id':'C1','text':'Nguồn giả lập công khai.'}],
+            'result':{'corpus_release':'fixture','model':settings.generation_model,
+                      'status':'answered','content':'Nội dung giả lập được nguồn hỗ trợ.'}}]))
+        output = tmp_path/'faithfulness.json'
+>       await evaluation.main([run], output)
+
+tests/test_faithfulness_isolation.py:57: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+scripts/evaluate_faithfulness.py:28: in main
+    settings=Settings().for_operator();store=Store(settings);provider=GroqProvider(settings,store,usage_scope='operator')
+                                             ^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+selected = Settings(app_env='development', llm_provider='groq', groq_api_key=SecretStr('**********'), groq_model='openai/gpt-oss-...ses_disposa1/data'), reports_dir=PosixPath('/tmp/pytest-of-dovh25x/pytest-17/test_faithfulness_uses_disposa1/reports'))
+
+    def guarded_store(selected):
+>       assert not selected.database_url.get_secret_value()
+E       AssertionError: assert not 'postgresql://owner-do-not-connect'
+E        +  where 'postgresql://owner-do-not-connect' = get_secret_value()
+E        +    where get_secret_value = SecretStr('**********').get_secret_value
+E        +      where SecretStr('**********') = Settings(app_env='development', llm_provider='groq', groq_api_key=SecretStr('**********'), groq_model='openai/gpt-oss-...ses_disposa1/data'), reports_dir=PosixPath('/tmp/pytest-of-dovh25x/pytest-17/test_faithfulness_uses_disposa1/reports')).database_url
+
+tests/test_faithfulness_isolation.py:24: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_faithfulness_isolation.py::test_faithfulness_uses_disposable_sqlite_even_with_serving_credentials[False]
+FAILED tests/test_faithfulness_isolation.py::test_faithfulness_uses_disposable_sqlite_even_with_serving_credentials[True]
+2 failed in 1.40s

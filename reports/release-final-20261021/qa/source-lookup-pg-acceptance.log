@@ -1,0 +1,17 @@
+{"request_id": "577a15a5-45b7-4298-9828-c26ba08bdeff", "method": "GET", "status": 200, "elapsed_ms": 178}
+{"request_id": "766338dc-91a3-4fe8-ae2c-0236fcd1b2d6", "method": "GET", "status": 200, "elapsed_ms": 30}
+{"request_id": "e8ff2899-c859-451c-ac36-e13f4bbbe9ec", "method": "GET", "status": 200, "elapsed_ms": 14}
+{"request_id": "783465d2-7bc8-4b2b-b3c5-1db1e9688c8c", "method": "GET", "status": 200, "elapsed_ms": 11}
+{"request_id": "6a99361b-49ef-4980-a2cc-28a460c9ca13", "method": "GET", "status": 200, "elapsed_ms": 21}
+{"request_id": "4c357a6e-507a-4d85-9761-9dc641a1dfc9", "method": "GET", "status": 200, "elapsed_ms": 20}
+{"request_id": "a790b9e8-eae6-49e1-b522-2cb81b8282d1", "method": "GET", "status": 200, "elapsed_ms": 13}
+{"request_id": "b1278d09-75b8-4b72-8473-2db246a093d8", "method": "GET", "status": 200, "elapsed_ms": 29}
+{"request_id": "0fe32f5a-dd36-46bb-a565-beebc8d16245", "method": "GET", "status": 200, "elapsed_ms": 20}
+{"request_id": "9986cc08-4a1b-479b-b69d-aebf6e1e44dd", "method": "GET", "status": 200, "elapsed_ms": 9}
+{"request_id": "a93bbab8-51a2-4638-be0b-c5c59edc8f3c", "method": "GET", "status": 200, "elapsed_ms": 75}
+{"request_id": "44769fc9-83e5-4078-b099-1a3a3c04cb3e", "method": "GET", "status": 200, "elapsed_ms": 31}
+{"request_id": "788cd3fc-4073-46e5-9015-d552faa224d0", "method": "GET", "status": 200, "elapsed_ms": 13}
+{"request_id": "9e51dbbf-a7c7-4d3c-b8d9-fc07f285adc6", "method": "GET", "status": 200, "elapsed_ms": 20}
+{"request_id": "6751a27f-489f-4092-a8d2-248689730d22", "method": "GET", "status": 200, "elapsed_ms": 138}
+{"request_id": "ee1676c3-4a09-48c1-976a-fe7006f0689b", "method": "GET", "status": 200, "elapsed_ms": 71}
+{"status": "PASS", "checked_at": "2026-10-21T10:08:05.768535+00:00", "storage_backend": "isolated Docker PostgreSQL", "database": "landlaw_phase4_restore", "runtime_role": "landlaw_phase4_runtime", "role_flags": {"rolsuper": false, "rolbypassrls": false}, "insert_privileges": {"messages": false, "traces": false, "answer_cache": false, "releases": false, "source_reviews": false}, "database_counts_before_after_equal": true, "database_counts": {"documents": 60, "chunks": 7396, "source_reviews": 11}, "application_sql_select_only": true, "application_select_queries": 413, "http_methods_executed": ["GET"], "runtime_fingerprint": "8ee1cd63c2ef531bc603848ce3d5b11334322e368d14c10fc73a81d339d51464", "corpus_id": "corpus-1afca764aa6692e0", "external_llm_requests": 0, "provider_generate_calls": 0, "cloud_database_touched": false, "migrations_or_restore_performed": false, "scope": "Read-only current fallback API on pre-existing local PG16 candidate DB and least-privilege runtime role. Not cloud/public E2E, Turnstile, model inference, legal review renewal or a PG retrieval benchmark."}

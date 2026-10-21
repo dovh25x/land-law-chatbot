@@ -1,0 +1,2892 @@
+{
+  "id": "C01",
+  "attempt_started": true,
+  "operational_status": "INCOMPLETE",
+  "reason": "pilot_token_cap",
+  "answer": {
+    "status": "limited",
+    "publication_profile": "academic",
+    "quality_status": "academic_prototype",
+    "retrieval_mode": "hybrid",
+    "coverage_gaps": [
+      {
+        "document_id": "qd-10-2017-hanoi",
+        "document_number": "10/2017/QĐ-UBND",
+        "title": "Quy định bồi thường, hỗ trợ và tái định cư Hà Nội (lịch sử)",
+        "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=189167",
+        "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+      },
+      {
+        "document_id": "qd-30-2019-hanoi",
+        "document_number": "30/2019/QĐ-UBND",
+        "title": "Quy định và bảng giá các loại đất Hà Nội 2020–2024 (lịch sử)",
+        "url": "https://vanban.hanoi.gov.vn/chi-tiet-van-ban/quyet-dinh-so-30-2019-qd-ubnd-cua-ubnd-tp-ha-noi-ve-viec-ban-hanh-quy-dinh-va-bang-gia-cac-loai-dat-189067",
+        "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+      },
+      {
+        "document_id": "qd-20-2023-hanoi",
+        "document_number": "20/2023/QĐ-UBND",
+        "title": "Sửa đổi bảng giá đất Quyết định 30/2019",
+        "url": "https://vbpl.vn/hanoi/Pages/vbpq-toanvan.aspx?ItemID=164473",
+        "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+      },
+      {
+        "document_id": "nd-123-2024",
+        "document_number": "123/2024/NĐ-CP",
+        "title": "Xử phạt vi phạm hành chính lĩnh vực đất đai",
+        "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=211356",
+        "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+      },
+      {
+        "document_id": "ring4-nq106-2022",
+        "document_number": "106/NQ-CP",
+        "title": "Triển khai Nghị quyết 56/2022/QH15 Vành đai 4",
+        "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=206398",
+        "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+      },
+      {
+        "document_id": "nd-01-2017",
+        "document_number": "01/2017/NĐ-CP",
+        "title": "Nghị định 01/2017/NĐ-CP sửa đổi, bổ sung một số nghị định quy định chi tiết thi hành Luật đất đai",
+        "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=187962",
+        "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+      },
+      {
+        "document_id": "nd-148-2020",
+        "document_number": "148/2020/NĐ-CP",
+        "title": "Nghị định 148/2020/NĐ-CP sửa đổi, bổ sung một số nghị định quy định chi tiết thi hành Luật Đất đai",
+        "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=202022",
+        "reason": "Chưa có toàn văn và metadata đạt kiểm tra; không dùng làm căn cứ."
+      }
+    ],
+    "content": "Lượt hỏi đã đạt giới hạn thực thi. Hãy tách câu hỏi hoặc thử lại.",
+    "citations": [],
+    "verified_claims": [],
+    "answer_schema_version": 1,
+    "answer_sections": [],
+    "answer_notices": [],
+    "clarification": null,
+    "source_context": {},
+    "need_more_context": null,
+    "as_of": "2026-10-21",
+    "corpus_release": "corpus-1afca764aa6692e0",
+    "trace_id": "538ccad4-2010-42c9-a154-fccc5a0c6bfc",
+    "trace": [
+      {
+        "step": "routing",
+        "tool": "search_law",
+        "summary": "Chưa có điều khoản chỉ định; tìm chứng cứ từ câu hỏi gốc trước khi tổng hợp.",
+        "document_ids": [],
+        "elapsed_ms": 21
+      },
+      {
+        "step": "plan",
+        "tool": null,
+        "summary": "Đã chọn 1 công cụ; chế độ agentic.",
+        "document_ids": [],
+        "elapsed_ms": 22
+      },
+      {
+        "step": "tool",
+        "tool": "search_law",
+        "summary": "Thu được 8 đoạn chứng cứ.",
+        "document_ids": [
+          "luat-dat-dai-2013",
+          "luat-dat-dai-2024",
+          "qd-40-2026-hanoi",
+          "qd-56-2024-hanoi"
+        ],
+        "elapsed_ms": 17290
+      },
+      {
+        "step": "tool",
+        "tool": "open_article",
+        "summary": "Đã mở văn bản có quan hệ pháp lý để đối chiếu phạm vi.",
+        "document_ids": [
+          "luat-dat-dai-2024"
+        ],
+        "elapsed_ms": 17331
+      },
+      {
+        "step": "tool",
+        "tool": "open_article",
+        "summary": "Đã mở văn bản có quan hệ pháp lý để đối chiếu phạm vi.",
+        "document_ids": [
+          "nd-49-2026"
+        ],
+        "elapsed_ms": 17365
+      },
+      {
+        "step": "tool",
+        "tool": "open_article",
+        "summary": "Đã mở văn bản có quan hệ pháp lý để đối chiếu phạm vi.",
+        "document_ids": [
+          "luat-dat-dai-2024"
+        ],
+        "elapsed_ms": 17389
+      },
+      {
+        "step": "tool",
+        "tool": "open_article",
+        "summary": "Đã mở văn bản có quan hệ pháp lý để đối chiếu phạm vi.",
+        "document_ids": [
+          "nd-88-2024"
+        ],
+        "elapsed_ms": 17412
+      },
+      {
+        "step": "tool",
+        "tool": "open_article",
+        "summary": "Đã mở văn bản có quan hệ pháp lý để đối chiếu phạm vi.",
+        "document_ids": [
+          "nd-226-2025"
+        ],
+        "elapsed_ms": 17442
+      },
+      {
+        "step": "tool",
+        "tool": "open_article",
+        "summary": "Đã mở văn bản có quan hệ pháp lý để đối chiếu phạm vi.",
+        "document_ids": [
+          "luat-dat-dai-2024"
+        ],
+        "elapsed_ms": 17466
+      },
+      {
+        "step": "tool",
+        "tool": "open_article",
+        "summary": "Đã mở văn bản có quan hệ pháp lý để đối chiếu phạm vi.",
+        "document_ids": [
+          "nq-254-2025"
+        ],
+        "elapsed_ms": 17509
+      },
+      {
+        "step": "tool",
+        "tool": "open_article",
+        "summary": "Đã mở văn bản có quan hệ pháp lý để đối chiếu phạm vi.",
+        "document_ids": [
+          "nd-49-2026"
+        ],
+        "elapsed_ms": 17535
+      },
+      {
+        "step": "tool",
+        "tool": "open_article",
+        "summary": "Đã mở văn bản có quan hệ pháp lý để đối chiếu phạm vi.",
+        "document_ids": [
+          "qd-56-2024-hanoi"
+        ],
+        "elapsed_ms": 17556
+      },
+      {
+        "step": "tool",
+        "tool": "open_article",
+        "summary": "Đã mở văn bản có quan hệ pháp lý để đối chiếu phạm vi.",
+        "document_ids": [
+          "qd-38-2025-hanoi"
+        ],
+        "elapsed_ms": 17571
+      },
+      {
+        "step": "applicability",
+        "tool": "check_effectivity",
+        "summary": "Đã kiểm tra 12 quan hệ pháp lý theo thời điểm.",
+        "document_ids": [
+          "qd-40-2026-hanoi"
+        ],
+        "elapsed_ms": 17571
+      },
+      {
+        "step": "synthesis",
+        "tool": null,
+        "summary": "Đã tạo bản trả lời; đang kiểm tra trước khi hiển thị.",
+        "document_ids": [],
+        "elapsed_ms": 21964
+      },
+      {
+        "step": "verification",
+        "tool": null,
+        "summary": "0/1 kết luận được phát hành; lỗi phạm vi/điều kiện đã xác định, không gọi model để phê duyệt lại. Claim 0: các điều kiện thay thế chỉ áp dụng cho trường hợp thuộc khoản 1; cần nêu điều kiện về đối tượng trước khi kết luận; Claim 0: số văn bản trong kết luận không được đoạn dẫn hoặc metadata nguồn chứng minh",
+        "document_ids": [],
+        "elapsed_ms": 22091
+      },
+      {
+        "step": "repair",
+        "tool": null,
+        "summary": "Đang sửa một lần theo các lỗi kiểm chứng trên cùng chứng cứ.",
+        "document_ids": [],
+        "elapsed_ms": 22093
+      }
+    ],
+    "missing_facts": [],
+    "llm_calls": 4,
+    "embedding_calls": 1,
+    "tool_calls": 12,
+    "token_usage": 4829,
+    "elapsed_ms": 34824,
+    "model": "openai/gpt-oss-120b",
+    "embedding_model": "multilingual-e5-small-onnx-q8-window-v1",
+    "mode": "agentic",
+    "support_level": "insufficient",
+    "retry_after": null,
+    "retrieved_chunk_ids": [],
+    "evidence_chunk_ids": []
+  },
+  "elapsed_ms": 34858,
+  "wire_requests": 3,
+  "events": [
+    {
+      "step": "routing",
+      "tool": "search_law",
+      "summary": "Chưa có điều khoản chỉ định; tìm chứng cứ từ câu hỏi gốc trước khi tổng hợp.",
+      "document_ids": [],
+      "elapsed_ms": 21
+    },
+    {
+      "step": "plan",
+      "tool": null,
+      "summary": "Đã chọn 1 công cụ; chế độ agentic.",
+      "document_ids": [],
+      "elapsed_ms": 22
+    },
+    {
+      "step": "tool",
+      "tool": "search_law",
+      "summary": "Thu được 8 đoạn chứng cứ.",
+      "document_ids": [
+        "luat-dat-dai-2013",
+        "luat-dat-dai-2024",
+        "qd-40-2026-hanoi",
+        "qd-56-2024-hanoi"
+      ],
+      "elapsed_ms": 17290
+    },
+    {
+      "step": "tool",
+      "tool": "open_article",
+      "summary": "Đã mở văn bản có quan hệ pháp lý để đối chiếu phạm vi.",
+      "document_ids": [
+        "luat-dat-dai-2024"
+      ],
+      "elapsed_ms": 17331
+    },
+    {
+      "step": "tool",
+      "tool": "open_article",
+      "summary": "Đã mở văn bản có quan hệ pháp lý để đối chiếu phạm vi.",
+      "document_ids": [
+        "nd-49-2026"
+      ],
+      "elapsed_ms": 17365
+    },
+    {
+      "step": "tool",
+      "tool": "open_article",
+      "summary": "Đã mở văn bản có quan hệ pháp lý để đối chiếu phạm vi.",
+      "document_ids": [
+        "luat-dat-dai-2024"
+      ],
+      "elapsed_ms": 17389
+    },
+    {
+      "step": "tool",
+      "tool": "open_article",
+      "summary": "Đã mở văn bản có quan hệ pháp lý để đối chiếu phạm vi.",
+      "document_ids": [
+        "nd-88-2024"
+      ],
+      "elapsed_ms": 17412
+    },
+    {
+      "step": "tool",
+      "tool": "open_article",
+      "summary": "Đã mở văn bản có quan hệ pháp lý để đối chiếu phạm vi.",
+      "document_ids": [
+        "nd-226-2025"
+      ],
+      "elapsed_ms": 17442
+    },
+    {
+      "step": "tool",
+      "tool": "open_article",
+      "summary": "Đã mở văn bản có quan hệ pháp lý để đối chiếu phạm vi.",
+      "document_ids": [
+        "luat-dat-dai-2024"
+      ],
+      "elapsed_ms": 17466
+    },
+    {
+      "step": "tool",
+      "tool": "open_article",
+      "summary": "Đã mở văn bản có quan hệ pháp lý để đối chiếu phạm vi.",
+      "document_ids": [
+        "nq-254-2025"
+      ],
+      "elapsed_ms": 17509
+    },
+    {
+      "step": "tool",
+      "tool": "open_article",
+      "summary": "Đã mở văn bản có quan hệ pháp lý để đối chiếu phạm vi.",
+      "document_ids": [
+        "nd-49-2026"
+      ],
+      "elapsed_ms": 17535
+    },
+    {
+      "step": "tool",
+      "tool": "open_article",
+      "summary": "Đã mở văn bản có quan hệ pháp lý để đối chiếu phạm vi.",
+      "document_ids": [
+        "qd-56-2024-hanoi"
+      ],
+      "elapsed_ms": 17556
+    },
+    {
+      "step": "tool",
+      "tool": "open_article",
+      "summary": "Đã mở văn bản có quan hệ pháp lý để đối chiếu phạm vi.",
+      "document_ids": [
+        "qd-38-2025-hanoi"
+      ],
+      "elapsed_ms": 17571
+    },
+    {
+      "step": "applicability",
+      "tool": "check_effectivity",
+      "summary": "Đã kiểm tra 12 quan hệ pháp lý theo thời điểm.",
+      "document_ids": [
+        "qd-40-2026-hanoi"
+      ],
+      "elapsed_ms": 17571
+    },
+    {
+      "step": "synthesis",
+      "tool": null,
+      "summary": "Đã tạo bản trả lời; đang kiểm tra trước khi hiển thị.",
+      "document_ids": [],
+      "elapsed_ms": 21964
+    },
+    {
+      "step": "verification",
+      "tool": null,
+      "summary": "0/1 kết luận được phát hành; lỗi phạm vi/điều kiện đã xác định, không gọi model để phê duyệt lại. Claim 0: các điều kiện thay thế chỉ áp dụng cho trường hợp thuộc khoản 1; cần nêu điều kiện về đối tượng trước khi kết luận; Claim 0: số văn bản trong kết luận không được đoạn dẫn hoặc metadata nguồn chứng minh",
+      "document_ids": [],
+      "elapsed_ms": 22091
+    },
+    {
+      "step": "repair",
+      "tool": null,
+      "summary": "Đang sửa một lần theo các lỗi kiểm chứng trên cùng chứng cứ.",
+      "document_ids": [],
+      "elapsed_ms": 22093
+    }
+  ],
+  "retrieval_rounds": [
+    {
+      "round": 1,
+      "all_candidates": {
+        "qd-40-2026-hanoi-12-1-0": "retained",
+        "qd-40-2026-hanoi-13-0-0": "retained",
+        "luat-dat-dai-2024-98-0-1": "retained",
+        "luat-dat-dai-2024-97-1-0": "retained",
+        "luat-dat-dai-2024-110-scope-4": "retained",
+        "qd-40-2026-hanoi-9-1-0": "retained",
+        "luat-dat-dai-2013-40-2-0": "retained",
+        "qd-56-2024-hanoi-0-22-0": "retained",
+        "luat-dat-dai-2024-106-1-0": "retained",
+        "nd-49-2026-11-0-1": "retained",
+        "nd-49-2026-11-0-0": "evidence_cap",
+        "nd-49-2026-12-0-0": "evidence_cap",
+        "luat-dat-dai-2024-110-0-0": "evidence_cap",
+        "luat-dat-dai-2024-111-0-0": "evidence_cap",
+        "nd-88-2024-0-11-0": "retained",
+        "nd-88-2024-0-11-1": "evidence_cap",
+        "nd-226-2025-34-0-0": "evidence_cap",
+        "nd-226-2025-33-0-0": "evidence_cap",
+        "nd-226-2025-34-scope-7-2a-5": "retained",
+        "luat-dat-dai-2024-100-2-0": "retained",
+        "nq-254-2025-2-0-1": "retained",
+        "nq-254-2025-3-0-1": "evidence_cap",
+        "nq-254-2025-1-0-1": "evidence_cap",
+        "nd-49-2026-23-2-0": "evidence_cap",
+        "nd-49-2026-23-scope-16-3g": "evidence_cap",
+        "nd-49-2026-25-0-0": "evidence_cap",
+        "qd-56-2024-hanoi-0-0-0": "evidence_cap",
+        "qd-56-2024-hanoi-0-1-0": "evidence_cap",
+        "qd-56-2024-hanoi-0-10-0": "evidence_cap",
+        "qd-38-2025-hanoi-0-0-0": "evidence_cap",
+        "qd-38-2025-hanoi-0-0-1": "evidence_cap",
+        "qd-38-2025-hanoi-0-1-0": "evidence_cap",
+        "luat-dat-dai-2024-98-0-parent": "retained",
+        "qd-40-2026-hanoi-9-1-parent": "retained",
+        "luat-dat-dai-2013-40-2-parent": "evidence_cap",
+        "qd-56-2024-hanoi-0-22-parent": "evidence_cap"
+      },
+      "retained_context": [
+        {
+          "citation_id": "qd-40-2026-hanoi-12-1-0",
+          "document_id": "qd-40-2026-hanoi",
+          "title": "Quy định một số nội dung bồi thường, hỗ trợ, tái định cư Hà Nội",
+          "document_number": "40/2026/QĐ-UBND",
+          "page": 13,
+          "kind": "legal",
+          "locator": "Điều 21",
+          "text": "Điều 21. Tái định cư đối với hộ gia đình, cá nhân, người gốc Việt Nam định cư ở nước ngoài đang sử dụng đất ở, đang sở hữu nhà ở gắn liền với quyền sử dụng đất trên địa bàn Thành phố khi Nhà nước thu hồi đất ở đủ điều kiện được bồi thường về đất (thực hiện khoản 4 Điều 111 Luật Đất đai) 1. Đối với các phường: Thực hiện bồi thường bằng bán căn hộ chung cư tái định cư. Trường hợp có nhu cầu bồi thường bằng đất mà quỹ đất tái định cư trên địa bàn phường đảm bảo quy mô, diện tích tái định cư cho dự án thì Ủy ban nhân dân phường thực hiện bồi thường bằng giao đất ở tái định cư theo quy định; trường hợp quỹ đất tái định cư trên địa bàn phường không đảm bảo đủ diện tích bồi thường mà có nhu cầu tái định cư trên địa bàn các xã khác thì Ủy ban nhân dân Thành phố xem xét từng dự án cụ thể. Việc bồi thường bằng giao đất tái định cư thực hiện theo khoản 2 Điều này.",
+          "applicability": "current",
+          "effective_from": "2026-04-02",
+          "effective_to": "None",
+          "provision_validity": [],
+          "source_review_notes": "",
+          "administrative_scope": null,
+          "procedure_id": null,
+          "operational_reviewed_at": null,
+          "operational_review_status": "pending",
+          "required_dependency_ids": [],
+          "legal_relations": [
+            {
+              "source_id": "qd-40-2026-hanoi",
+              "target_id": "qd-56-2024-hanoi",
+              "type": "replaces",
+              "locator": "Điều 2 của Quyết định 40/2026",
+              "source_locator": null,
+              "target_locators": [],
+              "target_locators_complete": false,
+              "explanation": "QĐ 40/2026 thay thế toàn bộ từ 02/04/2026; giữ văn bản cũ cho tra cứu lịch sử và kiểm tra chuyển tiếp.",
+              "source_effective_from": "2026-04-02",
+              "source_verified": true,
+              "scope_note": "Phạm vi từng điều khoản; không suy ra toàn văn bị bãi bỏ từ quan hệ sửa đổi/bãi bỏ một phần."
+            },
+            {
+              "source_id": "qd-40-2026-hanoi",
+              "target_id": "qd-38-2025-hanoi",
+              "type": "replaces",
+              "locator": "Điều 2 của Quyết định 40/2026",
+              "source_locator": null,
+              "target_locators": [],
+              "target_locators_complete": false,
+              "explanation": "QĐ 40/2026 thay thế toàn bộ từ 02/04/2026; giữ văn bản cũ cho tra cứu lịch sử và kiểm tra chuyển tiếp.",
+              "source_effective_from": "2026-04-02",
+              "source_verified": true,
+              "scope_note": "Phạm vi từng điều khoản; không suy ra toàn văn bị bãi bỏ từ quan hệ sửa đổi/bãi bỏ một phần."
+            },
+            {
+              "source_id": "qd-40-2026-hanoi",
+              "target_id": "qd-10-2026-hanoi",
+              "type": "replaces",
+              "locator": "Điều 2 của Quyết định 40/2026",
+              "source_locator": null,
+              "target_locators": [],
+              "target_locators_complete": false,
+              "explanation": "QĐ 40/2026 thay thế toàn bộ từ 02/04/2026; giữ văn bản cũ cho tra cứu lịch sử và kiểm tra chuyển tiếp.",
+              "source_effective_from": "2026-04-02",
+              "source_verified": true,
+              "scope_note": "Phạm vi từng điều khoản; không suy ra toàn văn bị bãi bỏ từ quan hệ sửa đổi/bãi bỏ một phần."
+            },
+            {
+              "source_id": "qd-40-2026-hanoi",
+              "target_id": "qd-56-2024-hanoi",
+              "type": "transition",
+              "locator": "Điều 29 của Quy định kèm theo Quyết định 40/2026",
+              "source_locator": null,
+              "target_locators": [],
+              "target_locators_complete": false,
+              "explanation": "Dự án đã được chấp thuận chính sách hỗ trợ khác hợp pháp: UBND cấp xã phê duyệt theo chính sách đã chấp thuận. Trường hợp đang thực hiện thu hồi/bồi thường tiếp tục theo thẩm quyền được phân cấp mới. Không suy ra mọi hồ sơ cũ dùng toàn bộ QĐ 56.",
+              "source_effective_from": "2026-04-02",
+              "source_verified": true,
+              "scope_note": "Phạm vi từng điều khoản; không suy ra toàn văn bị bãi bỏ từ quan hệ sửa đổi/bãi bỏ một phần."
+            },
+            {
+              "source_id": "qd-40-2026-hanoi",
+              "target_id": "luat-dat-dai-2024",
+              "type": "guides",
+              "locator": "Điều 17 của Quy định kèm theo Quyết định 40/2026",
+              "source_locator": "Điều 17",
+              "target_locators": [
+                "Điều 108"
+              ],
+              "target_locators_complete": true,
+              "explanation": "Quy định hỗ trợ ổn định đời sống là triển khai nhóm hỗ trợ tại điểm a khoản1 Điều108; không thay danh mục chung bằng riêng một khoản hỗ trợ.",
+              "source_effective_from": "2026-04-02",
+              "source_verified": true,
+              "scope_note": "Phạm vi từng điều khoản; không suy ra toàn văn bị bãi bỏ từ quan hệ sửa đổi/bãi bỏ một phần."
+            },
+            {
+              "source_id": "qd-40-2026-hanoi",
+              "target_id": "nd-49-2026",
+              "type": "guides",
+              "locator": "Điều 17 của Quy định kèm theo Quyết định 40/2026",
+              "source_locator": "Điều 17",
+              "target_locators": [
+                "Khoản 6 Điều 11"
+              ],
+              "target_locators_complete": true,
+              "explanation": "Tiêu đề Điều17 Quy định dẫn trực tiếp khoản6 Điều11 NĐ49 bổ sung khoản3 Điều19 NĐ88, giữ khung tối thiểu.",
+              "source_effective_from": "2026-04-02",
+              "source_verified": true,
+              "scope_note": "Phạm vi từng điều khoản; không suy ra toàn văn bị bãi bỏ từ quan hệ sửa đổi/bãi bỏ một phần."
+            },
+            {
+              "source_id": "qd-40-2026-hanoi",
+              "target_id": "luat-dat-dai-2024",
+              "type": "guides",
+              "locator": "Điều 21 của Quy định kèm theo Quyết định 40/2026",
+              "source_locator": "Điều 21",
+              "target_locators": [
+                "Khoản 4 Điều 111"
+              ],
+              "target_locators_complete": true,
+              "explanation": "Tiêu đề Điều21 Quy định dẫn trực tiếp khoản4 Điều111 Luật Đất đai; giữ đầy đủ chủ thể, điều kiện bồi thường và nhánh nhiều hộ. Không suy mọi người có đất thu hồi đều được một suất.",
+              "source_effective_from": "2026-04-02",
+              "source_verified": true,
+              "scope_note": "Phạm vi từng điều khoản; không suy ra toàn văn bị bãi bỏ từ quan hệ sửa đổi/bãi bỏ một phần."
+            },
+            {
+              "source_id": "qd-40-2026-hanoi",
+              "target_id": "nd-88-2024",
+              "type": "guides",
+              "locator": "Điều 21 của Quy định kèm theo Quyết định 40/2026",
+              "source_locator": "Điều 21",
+              "target_locators": [
+                "Điều 11"
+              ],
+              "target_locators_complete": true,
+              "explanation": "Điều21 Quy định về hình thức tái định cư cho nhóm đất ở đủ điều kiện phải đọc cùng nhánh điều kiện tại khoản2 Điều11 NĐ88, không thay điều kiện quốc gia bằng hình thức địa phương.",
+              "source_effective_from": "2026-04-02",
+              "source_verified": true,
+              "scope_note": "Phạm vi từng điều khoản; không suy ra toàn văn bị bãi bỏ từ quan hệ sửa đổi/bãi bỏ một phần."
+            },
+            {
+              "source_id": "qd-40-2026-hanoi",
+              "target_id": "nd-226-2025",
+              "type": "guides",
+              "locator": "Điều 21 của Quy định kèm theo Quyết định 40/2026",
+              "source_locator": "Điều 21",
+              "target_locators": [
+                "Khoản 2 Điều 7"
+              ],
+              "target_locators_complete": true,
+              "explanation": "Đọc cùng điểm a khoản2 Điều7 NĐ226: địa bàn ở điểm a/b khoản2 Điều11 NĐ88 đổi thành cấp xã. Đây là liên kết đối chiếu căn cứ áp dụng, không phải QĐ40 sửa đổi NĐ226.",
+              "source_effective_from": "2026-04-02",
+              "source_verified": true,
+              "scope_note": "Phạm vi từng điều khoản; không suy ra toàn văn bị bãi bỏ từ quan hệ sửa đổi/bãi bỏ một phần."
+            },
+            {
+              "source_id": "qd-40-2026-hanoi",
+              "target_id": "luat-dat-dai-2024",
+              "type": "guides",
+              "locator": "Điều 21 của Quy định kèm theo Quyết định 40/2026",
+              "source_locator": "Điều 21",
+              "target_locators": [
+                "Điều 98"
+              ],
+              "target_locators_complete": true,
+              "explanation": "Liên kết căn cứ thực chất: hình thức bồi thường đất ở tại Điều21 Quy định triển khai khoản4 Điều111 Luật Đất đai và nhánh Điều11 NĐ88 (quy định chi tiết Điều98 Luật Đất đai). Đọc Điều98 để phân biệt các hình thức bồi thường đất ở; đây là quan hệ hướng dẫn/đối chiếu, không phải sửa đổi Điều98.",
+              "source_effective_from": "2026-04-02",
+              "source_verified": true,
+              "scope_note": "Phạm vi từng điều khoản; không suy ra toàn văn bị bãi bỏ từ quan hệ sửa đổi/bãi bỏ một phần."
+            },
+            {
+              "source_id": "qd-40-2026-hanoi",
+              "target_id": "nq-254-2025",
+              "type": "guides",
+              "locator": "Điều 21 của Quy định kèm theo Quyết định 40/2026",
+              "source_locator": "Điều 21",
+              "target_locators": [
+                "Khoản 10 Điều 3"
+              ],
+              "target_locators_complete": true,
+              "explanation": "Điều kiện được bồi thường của nhóm Điều21 phải đọc cùng các trường hợp không được bồi thường ở khoản10 Điều3 NQ254. Đây là liên kết đối chiếu điều kiện loại trừ, không phải QĐ40 sửa đổi NQ254.",
+              "source_effective_from": "2026-04-02",
+              "source_verified": true,
+              "scope_note": "Phạm vi từng điều khoản; không suy ra toàn văn bị bãi bỏ từ quan hệ sửa đổi/bãi bỏ một phần."
+            },
+            {
+              "source_id": "qd-40-2026-hanoi",
+              "target_id": "nd-49-2026",
+              "type": "guides",
+              "locator": "Điều 21 của Quy định kèm theo Quyết định 40/2026",
+              "source_locator": "Điều 21",
+              "target_locators": [
+                "Khoản 3 Điều 16"
+              ],
+              "target_locators_complete": true,
+              "explanation": "Khi đối chiếu Điều21 với thay đổi địa bàn tại Điều7(2a) NĐ226, phải đối chiếu Điều16(3g) NĐ49 bãi bỏ một số gạch đầu dòng. Không suy toàn khoản2 hoặc toàn Điều7 NĐ226 còn áp dụng nguyên trạng.",
+              "source_effective_from": "2026-04-02",
+              "source_verified": true,
+              "scope_note": "Phạm vi từng điều khoản; không suy ra toàn văn bị bãi bỏ từ quan hệ sửa đổi/bãi bỏ một phần."
+            }
+          ]
+        },
+        {
+          "citation_id": "qd-40-2026-hanoi-13-0-0",
+          "document_id": "qd-40-2026-hanoi",
+          "title": "Quy định một số nội dung bồi thường, hỗ trợ, tái định cư Hà Nội",
+          "document_number": "40/2026/QĐ-UBND",
+          "page": 14,
+          "kind": "legal",
+          "locator": "Điều 21",
+          "text": "CÔNG BÁO HÀ NỘI/Số 132/Ngày 09 -4-2026 19 2. Đối với các xã thì thực hiện bồi thường bằng giao đất ở tái định cư. Diện tích đất ở được bồi thường bằng diện tích đất ở bị thu hồi (trường hợp thửa đất thuộc ranh giới thu hồi từ 2 dự án trở lên, diện tích đất ở được bồi thường bằng tổng diện tích đất thu hồi của các dự án) nhưng không nhỏ hơn suất tái định cư tối thiểu quy định tại khoản 1 Điều 22 của Quy định này và không vượt quá hạn mức giao đất ở mới tối đa tại địa phương, trừ trường hợp quy định tại khoản 3 Điều này . 3. Đối với trường hợp trong hộ gia đình có nhiều thế hệ hoặc có nhiều cặp vợ chồng cùng chung sống trên một thửa đất ở bị thu hồi theo khoản 1, khoản 2 Điều này nếu đủ điều kiện để tách thành từng hộ gia đình riêng theo quy định của pháp luật về cư trú hoặc có nhiều hộ gia đình có chung quyền sử dụng 01 thửa đất ở bị thu hồi thì từng hộ gia đình được mua 01 căn hộ tái định cư hoặc giao 01 suất đất ở tái định cư. Trường hợp tổng diện tích căn hộ tái định cư hoặc đất ở tái định cư mà vượt quá diện tích đất ở bị thu hồi thì được xem xét bán căn hộ có diện tích nhỏ nhất của quỹ nhà tái định cư bố trí cho dự án hoặc bằng hạn mức giao đất ở tối thiểu tại địa phương. 4. Ủy ban nhân dân Thành phố khuyến khích các nhà đầu tư không sử dụng vốn Ngân sách Nhà nước hỗ trợ kinh phí xây dựng nhà ở tái định cư cho các hộ gia đình, cá nhân bị thu hồi đất (không được khấu trừ vào tiền sử dụng đất, tiền thuê đất phải nộp).",
+          "applicability": "current",
+          "effective_from": "2026-04-02",
+          "effective_to": "None",
+          "provision_validity": [],
+          "source_review_notes": "",
+          "administrative_scope": null,
+          "procedure_id": null,
+          "operational_reviewed_at": null,
+          "operational_review_status": "pending",
+          "required_dependency_ids": [],
+          "legal_relations": [
+            {
+              "source_id": "qd-40-2026-hanoi",
+              "target_id": "qd-56-2024-hanoi",
+              "type": "replaces",
+              "locator": "Điều 2 của Quyết định 40/2026",
+              "source_locator": null,
+              "target_locators": [],
+              "target_locators_complete": false,
+              "explanation": "QĐ 40/2026 thay thế toàn bộ từ 02/04/2026; giữ văn bản cũ cho tra cứu lịch sử và kiểm tra chuyển tiếp.",
+              "source_effective_from": "2026-04-02",
+              "source_verified": true,
+              "scope_note": "Phạm vi từng điều khoản; không suy ra toàn văn bị bãi bỏ từ quan hệ sửa đổi/bãi bỏ một phần."
+            },
+            {
+              "source_id": "qd-40-2026-hanoi",
+              "target_id": "qd-38-2025-hanoi",
+              "type": "replaces",
+              "locator": "Điều 2 của Quyết định 40/2026",
+              "source_locator": null,
+              "target_locators": [],
+              "target_locators_complete": false,
+              "explanation": "QĐ 40/2026 thay thế toàn bộ từ 02/04/2026; giữ văn bản cũ cho tra cứu lịch sử và kiểm tra chuyển tiếp.",
+              "source_effective_from": "2026-04-02",
+              "source_verified": true,
+              "scope_note": "Phạm vi từng điều khoản; không suy ra toàn văn bị bãi bỏ từ quan hệ sửa đổi/bãi bỏ một phần."
+            },
+            {
+              "source_id": "qd-40-2026-hanoi",
+              "target_id": "qd-10-2026-hanoi",
+              "type": "replaces",
+              "locator": "Điều 2 của Quyết định 40/2026",
+              "source_locator": null,
+              "target_locators": [],
+              "target_locators_complete": false,
+              "explanation": "QĐ 40/2026 thay thế toàn bộ từ 02/04/2026; giữ văn bản cũ cho tra cứu lịch sử và kiểm tra chuyển tiếp.",
+              "source_effective_from": "2026-04-02",
+              "source_verified": true,
+              "scope_note": "Phạm vi từng điều khoản; không suy ra toàn văn bị bãi bỏ từ quan hệ sửa đổi/bãi bỏ một phần."
+            },
+            {
+              "source_id": "qd-40-2026-hanoi",
+              "target_id": "qd-56-2024-hanoi",
+              "type": "transition",
+              "locator": "Điều 29 của Quy định kèm theo Quyết định 40/2026",
+              "source_locator": null,
+              "target_locators": [],
+              "target_locators_complete": false,
+              "explanation": "Dự án đã được chấp thuận chính sách hỗ trợ khác hợp pháp: UBND cấp xã phê duyệt theo chính sách đã chấp thuận. Trường hợp đang thực hiện thu hồi/bồi thường tiếp tục theo thẩm quyền được phân cấp mới. Không suy ra mọi hồ sơ cũ dùng toàn bộ QĐ 56.",
+              "source_effective_from": "2026-04-02",
+              "source_verified": true,
+              "scope_note": "Phạm vi từng điều khoản; không suy ra toàn văn bị bãi bỏ từ quan hệ sửa đổi/bãi bỏ một phần."
+            },
+            {
+              "source_id": "qd-40-2026-hanoi",
+              "target_id": "luat-dat-dai-2024",
+              "type": "guides",
+              "locator": "Điều 17 của Quy định kèm theo Quyết định 40/2026",
+              "source_locator": "Điều 17",
+              "target_locators": [
+                "Điều 108"
+              ],
+              "target_locators_complete": true,
+              "explanation": "Quy định hỗ trợ ổn định đời sống là triển khai nhóm hỗ trợ tại điểm a khoản1 Điều108; không thay danh mục chung bằng riêng một khoản hỗ trợ.",
+              "source_effective_from": "2026-04-02",
+              "source_verified": true,
+              "scope_note": "Phạm vi từng điều khoản; không suy ra toàn văn bị bãi bỏ từ quan hệ sửa đổi/bãi bỏ một phần."
+            },
+            {
+              "source_id": "qd-40-2026-hanoi",
+              "target_id": "nd-49-2026",
+              "type": "guides",
+              "locator": "Điều 17 của Quy định kèm theo Quyết định 40/2026",
+              "source_locator": "Điều 17",
+              "target_locators": [
+                "Khoản 6 Điều 11"
+              ],
+              "target_locators_complete": true,
+              "explanation": "Tiêu đề Điều17 Quy định dẫn trực tiếp khoản6 Điều11 NĐ49 bổ sung khoản3 Điều19 NĐ88, giữ khung tối thiểu.",
+              "source_effective_from": "2026-04-02",
+              "source_verified": true,
+              "scope_note": "Phạm vi từng điều khoản; không suy ra toàn văn bị bãi bỏ từ quan hệ sửa đổi/bãi bỏ một phần."
+            },
+            {
+              "source_id": "qd-40-2026-hanoi",
+              "target_id": "luat-dat-dai-2024",
+              "type": "guides",
+              "locator": "Điều 21 của Quy định kèm theo Quyết định 40/2026",
+              "source_locator": "Điều 21",
+              "target_locators": [
+                "Khoản 4 Điều 111"
+              ],
+              "target_locators_complete": true,
+              "explanation": "Tiêu đề Điều21 Quy định dẫn trực tiếp khoản4 Điều111 Luật Đất đai; giữ đầy đủ chủ thể, điều kiện bồi thường và nhánh nhiều hộ. Không suy mọi người có đất thu hồi đều được một suất.",
+              "source_effective_from": "2026-04-02",
+              "source_verified": true,
+              "scope_note": "Phạm vi từng điều khoản; không suy ra toàn văn bị bãi bỏ từ quan hệ sửa đổi/bãi bỏ một phần."
+            },
+            {
+              "source_id": "qd-40-2026-hanoi",
+              "target_id": "nd-88-2024",
+              "type": "guides",
+              "locator": "Điều 21 của Quy định kèm theo Quyết định 40/2026",
+              "source_locator": "Điều 21",
+              "target_locators": [
+                "Điều 11"
+              ],
+              "target_locators_complete": true,
+              "explanation": "Điều21 Quy định về hình thức tái định cư cho nhóm đất ở đủ điều kiện phải đọc cùng nhánh điều kiện tại khoản2 Điều11 NĐ88, không thay điều kiện quốc gia bằng hình thức địa phương.",
+              "source_effective_from": "2026-04-02",
+              "source_verified": true,
+              "scope_note": "Phạm vi từng điều khoản; không suy ra toàn văn bị bãi bỏ từ quan hệ sửa đổi/bãi bỏ một phần."
+            },
+            {
+              "source_id": "qd-40-2026-hanoi",
+              "target_id": "nd-226-2025",
+              "type": "guides",
+              "locator": "Điều 21 của Quy định kèm theo Quyết định 40/2026",
+              "source_locator": "Điều 21",
+              "target_locators": [
+                "Khoản 2 Điều 7"
+              ],
+              "target_locators_complete": true,
+              "explanation": "Đọc cùng điểm a khoản2 Điều7 NĐ226: địa bàn ở điểm a/b khoản2 Điều11 NĐ88 đổi thành cấp xã. Đây là liên kết đối chiếu căn cứ áp dụng, không phải QĐ40 sửa đổi NĐ226.",
+              "source_effective_from": "2026-04-02",
+              "source_verified": true,
+              "scope_note": "Phạm vi từng điều khoản; không suy ra toàn văn bị bãi bỏ từ quan hệ sửa đổi/bãi bỏ một phần."
+            },
+            {
+              "source_id": "qd-40-2026-hanoi",
+              "target_id": "luat-dat-dai-2024",
+              "type": "guides",
+              "locator": "Điều 21 của Quy định kèm theo Quyết định 40/2026",
+              "source_locator": "Điều 21",
+              "target_locators": [
+                "Điều 98"
+              ],
+              "target_locators_complete": true,
+              "explanation": "Liên kết căn cứ thực chất: hình thức bồi thường đất ở tại Điều21 Quy định triển khai khoản4 Điều111 Luật Đất đai và nhánh Điều11 NĐ88 (quy định chi tiết Điều98 Luật Đất đai). Đọc Điều98 để phân biệt các hình thức bồi thường đất ở; đây là quan hệ hướng dẫn/đối chiếu, không phải sửa đổi Điều98.",
+              "source_effective_from": "2026-04-02",
+              "source_verified": true,
+              "scope_note": "Phạm vi từng điều khoản; không suy ra toàn văn bị bãi bỏ từ quan hệ sửa đổi/bãi bỏ một phần."
+            },
+            {
+              "source_id": "qd-40-2026-hanoi",
+              "target_id": "nq-254-2025",
+              "type": "guides",
+              "locator": "Điều 21 của Quy định kèm theo Quyết định 40/2026",
+              "source_locator": "Điều 21",
+              "target_locators": [
+                "Khoản 10 Điều 3"
+              ],
+              "target_locators_complete": true,
+              "explanation": "Điều kiện được bồi thường của nhóm Điều21 phải đọc cùng các trường hợp không được bồi thường ở khoản10 Điều3 NQ254. Đây là liên kết đối chiếu điều kiện loại trừ, không phải QĐ40 sửa đổi NQ254.",
+              "source_effective_from": "2026-04-02",
+              "source_verified": true,
+              "scope_note": "Phạm vi từng điều khoản; không suy ra toàn văn bị bãi bỏ từ quan hệ sửa đổi/bãi bỏ một phần."
+            },
+            {
+              "source_id": "qd-40-2026-hanoi",
+              "target_id": "nd-49-2026",
+              "type": "guides",
+              "locator": "Điều 21 của Quy định kèm theo Quyết định 40/2026",
+              "source_locator": "Điều 21",
+              "target_locators": [
+                "Khoản 3 Điều 16"
+              ],
+              "target_locators_complete": true,
+              "explanation": "Khi đối chiếu Điều21 với thay đổi địa bàn tại Điều7(2a) NĐ226, phải đối chiếu Điều16(3g) NĐ49 bãi bỏ một số gạch đầu dòng. Không suy toàn khoản2 hoặc toàn Điều7 NĐ226 còn áp dụng nguyên trạng.",
+              "source_effective_from": "2026-04-02",
+              "source_verified": true,
+              "scope_note": "Phạm vi từng điều khoản; không suy ra toàn văn bị bãi bỏ từ quan hệ sửa đổi/bãi bỏ một phần."
+            }
+          ]
+        },
+        {
+          "citation_id": "luat-dat-dai-2024-98-0-1",
+          "document_id": "luat-dat-dai-2024",
+          "title": "Luật Đất đai",
+          "document_number": "31/2024/QH15",
+          "page": 6,
+          "kind": "legal",
+          "locator": "Điều 95",
+          "text": "tư nước ngoài được Nhà nước giao đất có thu tiền sử dụng đất để thực hiện dự án đầu tư xây dựng nhà ở để bán hoặc để bán kết hợp cho thuê; cho thuê đất trả tiền thuê đất một lần cho cả thời gian thuê. 2. Các trường hợp quy định tại khoản 1 Điều này được bồi thường về đất khi có một trong các điều kiện sau đây: a) Có Giấy chứng nhận quyền sử dụng đất hoặc Giấy chứng nhận quyền sở hữu nhà ở và quyền sử dụng đất ở hoặc Giấy chứng nhận quyền sử dụng đất, quyền sở hữu nhà ở và tài sản khác gắn liền với đất hoặc Giấy chứng nhận quyền sử dụng đất, quyền sở hữu tài sản gắn liền với đất; b) Có quyết định giao đất hoặc quyết định cho thuê đất hoặc quyết định cho phép chuyển mục đích sử dụng đất của cơ quan nhà nước có thẩm quyền;",
+          "applicability": "current",
+          "effective_from": "2024-08-01",
+          "effective_to": "None",
+          "provision_validity": [
+            {
+              "locator": "Điều 190",
+              "effective_from": "2024-04-01",
+              "effective_to": null,
+              "source_url": "https://vanban.chinhphu.vn/?pageid=27160&docid=211189",
+              "note": "Điều 252 khoản 2 Luật Đất đai quy định mốc riêng cho Điều 190 và Điều 248; không suy hiệu lực toàn văn."
+            },
+            {
+              "locator": "Điều 248",
+              "effective_from": "2024-04-01",
+              "effective_to": null,
+              "source_url": "https://vanban.chinhphu.vn/?pageid=27160&docid=211189",
+              "note": "Điều 252 khoản 2 Luật Đất đai quy định mốc riêng cho Điều 190 và Điều 248; không suy hiệu lực toàn văn."
+            }
+          ],
+          "source_review_notes": "",
+          "administrative_scope": null,
+          "procedure_id": null,
+          "operational_reviewed_at": null,
+          "operational_review_status": "pending",
+          "required_dependency_ids": [],
+          "legal_relations": [
+            {
+              "source_id": "nq-254-2025",
+              "target_id": "luat-dat-dai-2024",
+              "type": "overrides",
+              "locator": "Điều 3; Điều 5–11; Điều 13 khoản 3",
+              "source_locator": "Điều 3; Điều 13",
+              "target_locators": [],
+              "target_locators_complete": false,
+              "explanation": "Điều 13 khoản 3: ưu tiên Nghị quyết khi cùng vấn đề có quy định khác luật, có ngoại lệ chính sách thí điểm địa phương do HĐND tỉnh lựa chọn. Đây là cơ chế áp dụng khác quy định luật, không phải thao tác sửa văn bản làm hết hiệu lực toàn bộ Luật Đất đai. Phải đọc Điều 3/5/7 về giá đất, thời hạn thông báo/công khai, tài sản, hỗ trợ và Điều 3 khoản 13 về hồ sơ cũ; không tự dùng nguyên quy định gốc nếu có khác biệt. Ánh xạ điều khoản luật chịu tác động chưa đầy đủ.",
+              "source_effective_from": "2026-01-01",
+              "source_verified": true,
+              "scope_note": "Phạm vi từng điều khoản; không suy ra toàn văn bị bãi bỏ từ quan hệ sửa đổi/bãi bỏ một phần."
+            },
+            {
+              "source_id": "nq-254-2025",
+              "target_id": "luat-dat-dai-2024",
+              "type": "transition",
+              "locator": "Điều 3 khoản 13; Điều 7 khoản 4–7",
+              "source_locator": "Điều 3; Điều 7",
+              "target_locators": [],
+              "target_locators_complete": false,
+              "explanation": "Đã có quyết định thu hồi/phê duyệt phương án, mới có phê duyệt phương án, chưa phê duyệt hoặc dự án phê duyệt một phần có cơ chế khác nhau. Điều 7 có ngoại lệ căn cứ giá và giai đoạn chưa đủ căn cứ. Cần kiểm tra ngày và hồ sơ cụ thể.",
+              "source_effective_from": "2026-01-01",
+              "source_verified": true,
+              "scope_note": "Phạm vi từng điều khoản; không suy ra toàn văn bị bãi bỏ từ quan hệ sửa đổi/bãi bỏ một phần."
+            },
+            {
+              "source_id": "nq-258-2025",
+              "target_id": "luat-dat-dai-2024",
+              "type": "overrides",
+              "locator": "Điều 7; Điều 12 khoản 2–3",
+              "source_locator": "Điều 7; Điều 12",
+              "target_locators": [],
+              "target_locators_complete": false,
+              "explanation": "Cơ chế đặc thù chỉ trong phạm vi Điều 1; Điều 7 khoản 4 quy định HĐND quyết định tiêu chí/mức bồi thường, hỗ trợ, tái định cư theo loại dự án. Điều 12 có ưu tiên áp dụng có điều kiện, không bãi bỏ toàn bộ Luật Đất đai. Phải đối chiếu chính sách HĐND cụ thể và chuyển tiếp Luật Thủ đô 2026.",
+              "source_effective_from": "2025-12-12",
+              "source_verified": true,
+              "scope_note": "Phạm vi từng điều khoản; không suy ra toàn văn bị bãi bỏ từ quan hệ sửa đổi/bãi bỏ một phần."
+            },
+            {
+              "source_id": "luat-dat-dai-2024",
+              "target_id": "luat-dat-dai-2013",
+              "type": "replaces",
+              "locator": "Điều 252 khoản 4",
+              "source_locator": "Điều 252 khoản 4",
+              "target_locators": [],
+              "target_locators_complete": true,
+              "explanation": "Hết hiệu lực chung khi Luật31 bắt đầu có hiệu lực, đọc mốc01/08/2024 theo Luật43 và chuyển tiếp; không xóa lịch sử.",
+              "source_effective_from": "2024-08-01",
+              "source_verified": true,
+              "scope_note": "Phạm vi từng điều khoản; không suy ra toàn văn bị bãi bỏ từ quan hệ sửa đổi/bãi bỏ một phần."
+            },
+            {
+              "source_id": "luat-dat-dai-2024",
+              "target_id": "luat-dat-dai-2013",
+              "type": "transition",
+              "locator": "Điều 254;Điều 255;Điều 260",
+              "source_locator": "Điều 254;Điều 255;Điều 260",
+              "target_locators": [],
+              "target_locators_complete": true,
+              "explanation": "Áp dụng lịch sử phải đọc quy định chuyển tiếp và ngày quyết định/phương án; không mặc định toàn bộ hồ sơ cũ dùng quy định hiện nay.",
+              "source_effective_from": "2024-08-01",
+              "source_verified": true,
+              "scope_note": "Phạm vi từng điều khoản; không suy ra toàn văn bị bãi bỏ từ quan hệ sửa đổi/bãi bỏ một phần."
+            },
+            {
+              "source_id": "qd-40-2026-hanoi",
+              "target_id": "luat-dat-dai-2024",
+              "type": "guides",
+              "locator": "Điều 17 của Quy định kèm theo Quyết định 40/2026",
+              "source_locator": "Điều 17",
+              "target_locators": [
+                "Điều 108"
+              ],
+              "target_locators_complete": true,
+              "explanation": "Quy định hỗ trợ ổn định đời sống là triển khai nhóm hỗ trợ tại điểm a khoản1 Điều108; không thay danh mục chung bằng riêng một khoản hỗ trợ.",
+              "source_effective_from": "2026-04-02",
+              "source_verified": true,
+              "scope_note": "Phạm vi từng điều khoản; không suy ra toàn văn bị bãi bỏ từ quan hệ sửa đổi/bãi bỏ một phần."
+            },
+            {
+              "source_id": "qd-40-2026-hanoi",
+              "target_id": "luat-dat-dai-2024",
+              "type": "guides",
+              "locator": "Điều 21 của Quy định kèm theo Quyết định 40/2026",
+              "source_locator": "Điều 21",
+              "target_locators": [
+                "Khoản 4 Điều 111"
+              ],
+              "target_locators_complete": true,
+              "explanation": "Tiêu đề Điều21 Quy định dẫn trực tiếp khoản4 Điều111 Luật Đất đai; giữ đầy đủ chủ thể, điều kiện bồi thường và nhánh nhiều hộ. Không suy mọi người có đất thu hồi đều được một suất.",
+              "source_effective_from": "2026-04-02",
+              "source_verified": true,
+              "scope_note": "Phạm vi từng điều khoản; không suy ra toàn văn bị bãi bỏ từ quan hệ sửa đổi/bãi bỏ một phần."
+            },
+            {
+              "source_id": "qd-40-2026-hanoi",
+              "target_id": "luat-dat-dai-2024",
+              "type": "guides",
+              "locator": "Điều 21 của Quy định kèm theo Quyết định 40/2026",
+              "source_locator": "Điều 21",
+              "target_locators": [
+                "Điều 98"
+              ],
+              "target_locators_complete": true,
+              "explanation": "Liên kết căn cứ thực chất: hình thức bồi thường đất ở tại Điều21 Quy định triển khai khoản4 Điều111 Luật Đất đai và nhánh Điều11 NĐ88 (quy định chi tiết Điều98 Luật Đất đai). Đọc Điều98 để phân biệt các hình thức bồi thường đất ở; đây là quan hệ hướng dẫn/đối chiếu, không phải sửa đổi Điều98.",
+              "source_effective_from": "2026-04-02",
+              "source_verified": true,
+              "scope_note": "Phạm vi từng điều khoản; không suy ra toàn văn bị bãi bỏ từ quan hệ sửa đổi/bãi bỏ một phần."
+            }
+          ]
+        },
+        {
+          "citation_id": "luat-dat-dai-2024-97-1-0",
+          "document_id": "luat-dat-dai-2024",
+          "title": "Luật Đất đai",
+          "document_number": "31/2024/QH15",
+          "page": 5,
+          "kind": "legal",
+          "locator": "Điều 95",
+          "text": "Điều 95. Điều kiện được bồi thường về đất khi Nhà nước thu hồi đất vì mục đích quốc phòng, an ninh; phát triển kinh tế - xã hội vì lợi ích quốc gia, công cộng 1. Các trường hợp được bồi thường về đất khi Nhà nước thu hồi đất vì mục đích quốc phòng, an ninh; phát triển kinh tế - xã hội vì lợi ích quốc gia, công cộng bao gồm: a) Hộ gia đình, cá nhân đang sử dụng đất không phải là đất thuê trả tiền thuê đất hằng năm;",
+          "applicability": "current",
+          "effective_from": "2024-08-01",
+          "effective_to": "None",
+          "provision_validity": [
+            {
+              "locator": "Điều 190",
+              "effective_from": "2024-04-01",
+              "effective_to": null,
+              "source_url": "https://vanban.chinhphu.vn/?pageid=27160&docid=211189",
+              "note": "Điều 252 khoản 2 Luật Đất đai quy định mốc riêng cho Điều 190 và Điều 248; không suy hiệu lực toàn văn."
+            },
+            {
+              "locator": "Điều 248",
+              "effective_from": "2024-04-01",
+              "effective_to": null,
+              "source_url": "https://vanban.chinhphu.vn/?pageid=27160&docid=211189",
+              "note": "Điều 252 khoản 2 Luật Đất đai quy định mốc riêng cho Điều 190 và Điều 248; không suy hiệu lực toàn văn."
+            }
+          ],
+          "source_review_notes": "",
+          "administrative_scope": null,
+          "procedure_id": null,
+          "operational_reviewed_at": null,
+          "operational_review_status": "pending",
+          "required_dependency_ids": [],
+          "legal_relations": [
+            {
+              "source_id": "nq-254-2025",
+              "target_id": "luat-dat-dai-2024",
+              "type": "overrides",
+              "locator": "Điều 3; Điều 5–11; Điều 13 khoản 3",
+              "source_locator": "Điều 3; Điều 13",
+              "target_locators": [],
+              "target_locators_complete": false,
+              "explanation": "Điều 13 khoản 3: ưu tiên Nghị quyết khi cùng vấn đề có quy định khác luật, có ngoại lệ chính sách thí điểm địa phương do HĐND tỉnh lựa chọn. Đây là cơ chế áp dụng khác quy định luật, không phải thao tác sửa văn bản làm hết hiệu lực toàn bộ Luật Đất đai. Phải đọc Điều 3/5/7 về giá đất, thời hạn thông báo/công khai, tài sản, hỗ trợ và Điều 3 khoản 13 về hồ sơ cũ; không tự dùng nguyên quy định gốc nếu có khác biệt. Ánh xạ điều khoản luật chịu tác động chưa đầy đủ.",
+              "source_effective_from": "2026-01-01",
+              "source_verified": true,
+              "scope_note": "Phạm vi từng điều khoản; không suy ra toàn văn bị bãi bỏ từ quan hệ sửa đổi/bãi bỏ một phần."
+            },
+            {
+              "source_id": "nq-254-2025",
+              "target_id": "luat-dat-dai-2024",
+              "type": "transition",
+              "locator": "Điều 3 khoản 13; Điều 7 khoản 4–7",
+              "source_locator": "Điều 3; Điều 7",
+              "target_locators": [],
+              "target_locators_complete": false,
+              "explanation": "Đã có quyết định thu hồi/phê duyệt phương án, mới có phê duyệt phương án, chưa phê duyệt hoặc dự án phê duyệt một phần có cơ chế khác nhau. Điều 7 có ngoại lệ căn cứ giá và giai đoạn chưa đủ căn cứ. Cần kiểm tra ngày và hồ sơ cụ thể.",
+              "source_effective_from": "2026-01-01",
+              "source_verified": true,
+              "scope_note": "Phạm vi từng điều khoản; không suy ra toàn văn bị bãi bỏ từ quan hệ sửa đổi/bãi bỏ một phần."
+            },
+            {
+              "source_id": "nq-258-2025",
+              "target_id": "luat-dat-dai-2024",
+              "type": "overrides",
+              "locator": "Điều 7; Điều 12 khoản 2–3",
+              "source_locator": "Điều 7; Điều 12",
+              "target_locators": [],
+              "target_locators_complete": false,
+              "explanation": "Cơ chế đặc thù chỉ trong phạm vi Điều 1; Điều 7 khoản 4 quy định HĐND quyết định tiêu chí/mức bồi thường, hỗ trợ, tái định cư theo loại dự án. Điều 12 có ưu tiên áp dụng có điều kiện, không bãi bỏ toàn bộ Luật Đất đai. Phải đối chiếu chính sách HĐND cụ thể và chuyển tiếp Luật Thủ đô 2026.",
+              "source_effective_from": "2025-12-12",
+              "source_verified": true,
+              "scope_note": "Phạm vi từng điều khoản; không suy ra toàn văn bị bãi bỏ từ quan hệ sửa đổi/bãi bỏ một phần."
+            },
+            {
+              "source_id": "luat-dat-dai-2024",
+              "target_id": "luat-dat-dai-2013",
+              "type": "replaces",
+              "locator": "Điều 252 khoản 4",
+              "source_locator": "Điều 252 khoản 4",
+              "target_locators": [],
+              "target_locators_complete": true,
+              "explanation": "Hết hiệu lực chung khi Luật31 bắt đầu có hiệu lực, đọc mốc01/08/2024 theo Luật43 và chuyển tiếp; không xóa lịch sử.",
+              "source_effective_from": "2024-08-01",
+              "source_verified": true,
+              "scope_note": "Phạm vi từng điều khoản; không suy ra toàn văn bị bãi bỏ từ quan hệ sửa đổi/bãi bỏ một phần."
+            },
+            {
+              "source_id": "luat-dat-dai-2024",
+              "target_id": "luat-dat-dai-2013",
+              "type": "transition",
+              "locator": "Điều 254;Điều 255;Điều 260",
+              "source_locator": "Điều 254;Điều 255;Điều 260",
+              "target_locators": [],
+              "target_locators_complete": true,
+              "explanation": "Áp dụng lịch sử phải đọc quy định chuyển tiếp và ngày quyết định/phương án; không mặc định toàn bộ hồ sơ cũ dùng quy định hiện nay.",
+              "source_effective_from": "2024-08-01",
+              "source_verified": true,
+              "scope_note": "Phạm vi từng điều khoản; không suy ra toàn văn bị bãi bỏ từ quan hệ sửa đổi/bãi bỏ một phần."
+            },
+            {
+              "source_id": "qd-40-2026-hanoi",
+              "target_id": "luat-dat-dai-2024",
+              "type": "guides",
+              "locator": "Điều 17 của Quy định kèm theo Quyết định 40/2026",
+              "source_locator": "Điều 17",
+              "target_locators": [
+                "Điều 108"
+              ],
+              "target_locators_complete": true,
+              "explanation": "Quy định hỗ trợ ổn định đời sống là triển khai nhóm hỗ trợ tại điểm a khoản1 Điều108; không thay danh mục chung bằng riêng một khoản hỗ trợ.",
+              "source_effective_from": "2026-04-02",
+              "source_verified": true,
+              "scope_note": "Phạm vi từng điều khoản; không suy ra toàn văn bị bãi bỏ từ quan hệ sửa đổi/bãi bỏ một phần."
+            },
+            {
+              "source_id": "qd-40-2026-hanoi",
+              "target_id": "luat-dat-dai-2024",
+              "type": "guides",
+              "locator": "Điều 21 của Quy định kèm theo Quyết định 40/2026",
+              "source_locator": "Điều 21",
+              "target_locators": [
+                "Khoản 4 Điều 111"
+              ],
+              "target_locators_complete": true,
+              "explanation": "Tiêu đề Điều21 Quy định dẫn trực tiếp khoản4 Điều111 Luật Đất đai; giữ đầy đủ chủ thể, điều kiện bồi thường và nhánh nhiều hộ. Không suy mọi người có đất thu hồi đều được một suất.",
+              "source_effective_from": "2026-04-02",
+              "source_verified": true,
+              "scope_note": "Phạm vi từng điều khoản; không suy ra toàn văn bị bãi bỏ từ quan hệ sửa đổi/bãi bỏ một phần."
+            },
+            {
+              "source_id": "qd-40-2026-hanoi",
+              "target_id": "luat-dat-dai-2024",
+              "type": "guides",
+              "locator": "Điều 21 của Quy định kèm theo Quyết định 40/2026",
+              "source_locator": "Điều 21",
+              "target_locators": [
+                "Điều 98"
+              ],
+              "target_locators_complete": true,
+              "explanation": "Liên kết căn cứ thực chất: hình thức bồi thường đất ở tại Điều21 Quy định triển khai khoản4 Điều111 Luật Đất đai và nhánh Điều11 NĐ88 (quy định chi tiết Điều98 Luật Đất đai). Đọc Điều98 để phân biệt các hình thức bồi thường đất ở; đây là quan hệ hướng dẫn/đối chiếu, không phải sửa đổi Điều98.",
+              "source_effective_from": "2026-04-02",
+              "source_verified": true,
+              "scope_note": "Phạm vi từng điều khoản; không suy ra toàn văn bị bãi bỏ từ quan hệ sửa đổi/bãi bỏ một phần."
+            }
+          ]
+        },
+        {
+          "citation_id": "luat-dat-dai-2024-110-scope-4",
+          "document_id": "luat-dat-dai-2024",
+          "title": "Luật Đất đai",
+          "document_number": "31/2024/QH15",
+          "page": 18,
+          "kind": "legal",
+          "locator": "Điều 111",
+          "text": "4. Hộ gia đình, cá nhân có đất ở, người gốc Việt Nam định cư ở nước ngoài, tổ chức kinh tế đang sử dụng đất ở, đang sở hữu nhà ở gắn liền với quyền sử dụng đất tại Việt Nam khi Nhà nước thu hồi đất, nếu có đủ điều kiện được bồi thường về đất ở theo quy định tại Điều 95 của Luật này thì được bồi thường bằng giao đất ở hoặc nhà ở tại khu tái định cư hoặc tại địa điểm khác phù hợp. Trường hợp trong hộ gia đình có nhiều thế hệ hoặc có nhiều cặp vợ chồng cùng chung sống trên một thửa đất ở bị thu hồi nếu đủ điều kiện để tách thành từng hộ gia đình riêng theo quy định của pháp luật về cư trú hoặc có nhiều hộ gia đình có chung quyền sử dụng 01 thửa đất ở bị thu hồi mà diện tích đất ở được bồi thường không đủ để giao riêng cho từng hộ gia đình thì được xem xét hỗ trợ để giao đất ở có thu tiền sử dụng đất hoặc bán, cho thuê, cho thuê mua nhà ở cho các hộ gia đình còn thiếu.",
+          "applicability": "current",
+          "effective_from": "2024-08-01",
+          "effective_to": "None",
+          "provision_validity": [
+            {
+              "locator": "Điều 190",
+              "effective_from": "2024-04-01",
+              "effective_to": null,
+              "source_url": "https://vanban.chinhphu.vn/?pageid=27160&docid=211189",
+              "note": "Điều 252 khoản 2 Luật Đất đai quy định mốc riêng cho Điều 190 và Điều 248; không suy hiệu lực toàn văn."
+            },
+            {
+              "locator": "Điều 248",
+              "effective_from": "2024-04-01",
+              "effective_to": null,
+              "source_url": "https://vanban.chinhphu.vn/?pageid=27160&docid=211189",
+              "note": "Điều 252 khoản 2 Luật Đất đai quy định mốc riêng cho Điều 190 và Điều 248; không suy hiệu lực toàn văn."
+            }
+          ],
+          "source_review_notes": "",
+          "administrative_scope": null,
+          "procedure_id": null,
+          "operational_reviewed_at": null,
+          "operational_review_status": "pending",
+          "required_dependency_ids": [],
+          "legal_relations": [
+            {
+              "source_id": "nq-254-2025",
+              "target_id": "luat-dat-dai-2024",
+              "type": "overrides",
+              "locator": "Điều 3; Điều 5–11; Điều 13 khoản 3",
+              "source_locator": "Điều 3; Điều 13",
+              "target_locators": [],
+              "target_locators_complete": false,
+              "explanation": "Điều 13 khoản 3: ưu tiên Nghị quyết khi cùng vấn đề có quy định khác luật, có ngoại lệ chính sách thí điểm địa phương do HĐND tỉnh lựa chọn. Đây là cơ chế áp dụng khác quy định luật, không phải thao tác sửa văn bản làm hết hiệu lực toàn bộ Luật Đất đai. Phải đọc Điều 3/5/7 về giá đất, thời hạn thông báo/công khai, tài sản, hỗ trợ và Điều 3 khoản 13 về hồ sơ cũ; không tự dùng nguyên quy định gốc nếu có khác biệt. Ánh xạ điều khoản luật chịu tác động chưa đầy đủ.",
+              "source_effective_from": "2026-01-01",
+              "source_verified": true,
+              "scope_note": "Phạm vi từng điều khoản; không suy ra toàn văn bị bãi bỏ từ quan hệ sửa đổi/bãi bỏ một phần."
+            },
+            {
+              "source_id": "nq-254-2025",
+              "target_id": "luat-dat-dai-2024",
+              "type": "transition",
+              "locator": "Điều 3 khoản 13; Điều 7 khoản 4–7",
+              "source_locator": "Điều 3; Điều 7",
+              "target_locators": [],
+              "target_locators_complete": false,
+              "explanation": "Đã có quyết định thu hồi/phê duyệt phương án, mới có phê duyệt phương án, chưa phê duyệt hoặc dự án phê duyệt một phần có cơ chế khác nhau. Điều 7 có ngoại lệ căn cứ giá và giai đoạn chưa đủ căn cứ. Cần kiểm tra ngày và hồ sơ cụ thể.",
+              "source_effective_from": "2026-01-01",
+              "source_verified": true,
+              "scope_note": "Phạm vi từng điều khoản; không suy ra toàn văn bị bãi bỏ từ quan hệ sửa đổi/bãi bỏ một phần."
+            },
+            {
+              "source_id": "nq-258-2025",
+              "target_id": "luat-dat-dai-2024",
+              "type": "overrides",
+              "locator": "Điều 7; Điều 12 khoản 2–3",
+              "source_locator": "Điều 7; Điều 12",
+              "target_locators": [],
+              "target_locators_complete": false,
+              "explanation": "Cơ chế đặc thù chỉ trong phạm vi Điều 1; Điều 7 khoản 4 quy định HĐND quyết định tiêu chí/mức bồi thường, hỗ trợ, tái định cư theo loại dự án. Điều 12 có ưu tiên áp dụng có điều kiện, không bãi bỏ toàn bộ Luật Đất đai. Phải đối chiếu chính sách HĐND cụ thể và chuyển tiếp Luật Thủ đô 2026.",
+              "source_effective_from": "2025-12-12",
+              "source_verified": true,
+              "scope_note": "Phạm vi từng điều khoản; không suy ra toàn văn bị bãi bỏ từ quan hệ sửa đổi/bãi bỏ một phần."
+            },
+            {
+              "source_id": "luat-dat-dai-2024",
+              "target_id": "luat-dat-dai-2013",
+              "type": "replaces",
+              "locator": "Điều 252 khoản 4",
+              "source_locator": "Điều 252 khoản 4",
+              "target_locators": [],
+              "target_locators_complete": true,
+              "explanation": "Hết hiệu lực chung khi Luật31 bắt đầu có hiệu lực, đọc mốc01/08/2024 theo Luật43 và chuyển tiếp; không xóa lịch sử.",
+              "source_effective_from": "2024-08-01",
+              "source_verified": true,
+              "scope_note": "Phạm vi từng điều khoản; không suy ra toàn văn bị bãi bỏ từ quan hệ sửa đổi/bãi bỏ một phần."
+            },
+            {
+              "source_id": "luat-dat-dai-2024",
+              "target_id": "luat-dat-dai-2013",
+              "type": "transition",
+              "locator": "Điều 254;Điều 255;Điều 260",
+              "source_locator": "Điều 254;Điều 255;Điều 260",
+              "target_locators": [],
+              "target_locators_complete": true,
+              "explanation": "Áp dụng lịch sử phải đọc quy định chuyển tiếp và ngày quyết định/phương án; không mặc định toàn bộ hồ sơ cũ dùng quy định hiện nay.",
+              "source_effective_from": "2024-08-01",
+              "source_verified": true,
+              "scope_note": "Phạm vi từng điều khoản; không suy ra toàn văn bị bãi bỏ từ quan hệ sửa đổi/bãi bỏ một phần."
+            },
+            {
+              "source_id": "qd-40-2026-hanoi",
+              "target_id": "luat-dat-dai-2024",
+              "type": "guides",
+              "locator": "Điều 17 của Quy định kèm theo Quyết định 40/2026",
+              "source_locator": "Điều 17",
+              "target_locators": [
+                "Điều 108"
+              ],
+              "target_locators_complete": true,
+              "explanation": "Quy định hỗ trợ ổn định đời sống là triển khai nhóm hỗ trợ tại điểm a khoản1 Điều108; không thay danh mục chung bằng riêng một khoản hỗ trợ.",
+              "source_effective_from": "2026-04-02",
+              "source_verified": true,
+              "scope_note": "Phạm vi từng điều khoản; không suy ra toàn văn bị bãi bỏ từ quan hệ sửa đổi/bãi bỏ một phần."
+            },
+            {
+              "source_id": "qd-40-2026-hanoi",
+              "target_id": "luat-dat-dai-2024",
+              "type": "guides",
+              "locator": "Điều 21 của Quy định kèm theo Quyết định 40/2026",
+              "source_locator": "Điều 21",
+              "target_locators": [
+                "Khoản 4 Điều 111"
+              ],
+              "target_locators_complete": true,
+              "explanation": "Tiêu đề Điều21 Quy định dẫn trực tiếp khoản4 Điều111 Luật Đất đai; giữ đầy đủ chủ thể, điều kiện bồi thường và nhánh nhiều hộ. Không suy mọi người có đất thu hồi đều được một suất.",
+              "source_effective_from": "2026-04-02",
+              "source_verified": true,
+              "scope_note": "Phạm vi từng điều khoản; không suy ra toàn văn bị bãi bỏ từ quan hệ sửa đổi/bãi bỏ một phần."
+            },
+            {
+              "source_id": "qd-40-2026-hanoi",
+              "target_id": "luat-dat-dai-2024",
+              "type": "guides",
+              "locator": "Điều 21 của Quy định kèm theo Quyết định 40/2026",
+              "source_locator": "Điều 21",
+              "target_locators": [
+                "Điều 98"
+              ],
+              "target_locators_complete": true,
+              "explanation": "Liên kết căn cứ thực chất: hình thức bồi thường đất ở tại Điều21 Quy định triển khai khoản4 Điều111 Luật Đất đai và nhánh Điều11 NĐ88 (quy định chi tiết Điều98 Luật Đất đai). Đọc Điều98 để phân biệt các hình thức bồi thường đất ở; đây là quan hệ hướng dẫn/đối chiếu, không phải sửa đổi Điều98.",
+              "source_effective_from": "2026-04-02",
+              "source_verified": true,
+              "scope_note": "Phạm vi từng điều khoản; không suy ra toàn văn bị bãi bỏ từ quan hệ sửa đổi/bãi bỏ một phần."
+            }
+          ]
+        },
+        {
+          "citation_id": "qd-40-2026-hanoi-9-1-0",
+          "document_id": "qd-40-2026-hanoi",
+          "title": "Quy định một số nội dung bồi thường, hỗ trợ, tái định cư Hà Nội",
+          "document_number": "40/2026/QĐ-UBND",
+          "page": 10,
+          "kind": "legal",
+          "locator": "Điều 17",
+          "text": "Điều 17. Hỗ trợ ổn định đời sống khi Nhà nước thu hồi đất (Thực hiện khoản 6 Điều 11 Nghị định số 49/2026/NĐ -CP ngày 31/01/2026 của Chính phủ) 1. Hộ gia đình, cá nhân đang sử dụng đất nông nghiệp nếu đủ điều kiện được bồi thường về đất thì được hỗ trợ ổn định đời sống như sau: a) Thu hồi từ 30% đến 70% diện tích đất nông nghiệp đang sử dụng thì được hỗ trợ trong thời gian 6 tháng nếu không phải di chuyển chỗ ở và trong thời gian 12 tháng nếu phải di chuyển chỗ ở; trường hợp phải di chuyển đến vùng có điều kiện kinh tế - xã hội khó khăn hoặc có điều kiện kinh tế - xã hội đặc biệt khó khăn thì thời gian hỗ trợ tối đa là 24 tháng. Đối với trường hợp thu hồi trên 70% diện tích đất nông nghiệp đang sử dụng thì được hỗ trợ trong thời gian 12 tháng nếu không phải di chuyển chỗ ở và trong thời gian 24 tháng nếu phải di chuyển chỗ ở; trường hợp phải di chuyển đến vùng có điều kiện kinh tế - xã hội khó khăn hoặc có điều kiện kinh tế - xã hội đặc biệt khó khăn thì thời gian hỗ trợ tối đa là 36 tháng; b) Diện tích đất nông nghiệp thu hồi để tính hỗ trợ ổn định đời sống quy định tại điểm a khoản này là diện tích trong phạm vi xã, phường nơi có đất thu hồi tại thời điểm có quyết định phê duyệt phương án bồi thường, hỗ trợ, tái định cư và được xác định theo từng dự án phải thu hồi đất của Ủy ban nhân dân cấp có thẩm quyền, không cộng dồn diện tích đất nông nghiệp thu hồi của các dự án thu hồi đất trước đó; c) Mức hỗ trợ cho một nhân khẩu quy",
+          "applicability": "current",
+          "effective_from": "2026-04-02",
+          "effective_to": "None",
+          "provision_validity": [],
+          "source_review_notes": "",
+          "administrative_scope": null,
+          "procedure_id": null,
+          "operational_reviewed_at": null,
+          "operational_review_status": "pending",
+          "required_dependency_ids": [],
+          "legal_relations": [
+            {
+              "source_id": "qd-40-2026-hanoi",
+              "target_id": "qd-56-2024-hanoi",
+              "type": "replaces",
+              "locator": "Điều 2 của Quyết định 40/2026",
+              "source_locator": null,
+              "target_locators": [],
+              "target_locators_complete": false,
+              "explanation": "QĐ 40/2026 thay thế toàn bộ từ 02/04/2026; giữ văn bản cũ cho tra cứu lịch sử và kiểm tra chuyển tiếp.",
+              "source_effective_from": "2026-04-02",
+              "source_verified": true,
+              "scope_note": "Phạm vi từng điều khoản; không suy ra toàn văn bị bãi bỏ từ quan hệ sửa đổi/bãi bỏ một phần."
+            },
+            {
+              "source_id": "qd-40-2026-hanoi",
+              "target_id": "qd-38-2025-hanoi",
+              "type": "replaces",
+              "locator": "Điều 2 của Quyết định 40/2026",
+              "source_locator": null,
+              "target_locators": [],
+              "target_locators_complete": false,
+              "explanation": "QĐ 40/2026 thay thế toàn bộ từ 02/04/2026; giữ văn bản cũ cho tra cứu lịch sử và kiểm tra chuyển tiếp.",
+              "source_effective_from": "2026-04-02",
+              "source_verified": true,
+              "scope_note": "Phạm vi từng điều khoản; không suy ra toàn văn bị bãi bỏ từ quan hệ sửa đổi/bãi bỏ một phần."
+            },
+            {
+              "source_id": "qd-40-2026-hanoi",
+              "target_id": "qd-10-2026-hanoi",
+              "type": "replaces",
+              "locator": "Điều 2 của Quyết định 40/2026",
+              "source_locator": null,
+              "target_locators": [],
+              "target_locators_complete": false,
+              "explanation": "QĐ 40/2026 thay thế toàn bộ từ 02/04/2026; giữ văn bản cũ cho tra cứu lịch sử và kiểm tra chuyển tiếp.",
+              "source_effective_from": "2026-04-02",
+              "source_verified": true,
+              "scope_note": "Phạm vi từng điều khoản; không suy ra toàn văn bị bãi bỏ từ quan hệ sửa đổi/bãi bỏ một phần."
+            },
+            {
+              "source_id": "qd-40-2026-hanoi",
+              "target_id": "qd-56-2024-hanoi",
+              "type": "transition",
+              "locator": "Điều 29 của Quy định kèm theo Quyết định 40/2026",
+              "source_locator": null,
+              "target_locators": [],
+              "target_locators_complete": false,
+              "explanation": "Dự án đã được chấp thuận chính sách hỗ trợ khác hợp pháp: UBND cấp xã phê duyệt theo chính sách đã chấp thuận. Trường hợp đang thực hiện thu hồi/bồi thường tiếp tục theo thẩm quyền được phân cấp mới. Không suy ra mọi hồ sơ cũ dùng toàn bộ QĐ 56.",
+              "source_effective_from": "2026-04-02",
+              "source_verified": true,
+              "scope_note": "Phạm vi từng điều khoản; không suy ra toàn văn bị bãi bỏ từ quan hệ sửa đổi/bãi bỏ một phần."
+            },
+            {
+              "source_id": "qd-40-2026-hanoi",
+              "target_id": "luat-dat-dai-2024",
+              "type": "guides",
+              "locator": "Điều 17 của Quy định kèm theo Quyết định 40/2026",
+              "source_locator": "Điều 17",
+              "target_locators": [
+                "Điều 108"
+              ],
+              "target_locators_complete": true,
+              "explanation": "Quy định hỗ trợ ổn định đời sống là triển khai nhóm hỗ trợ tại điểm a khoản1 Điều108; không thay danh mục chung bằng riêng một khoản hỗ trợ.",
+              "source_effective_from": "2026-04-02",
+              "source_verified": true,
+              "scope_note": "Phạm vi từng điều khoản; không suy ra toàn văn bị bãi bỏ từ quan hệ sửa đổi/bãi bỏ một phần."
+            },
+            {
+              "source_id": "qd-40-2026-hanoi",
+              "target_id": "nd-49-2026",
+              "type": "guides",
+              "locator": "Điều 17 của Quy định kèm theo Quyết định 40/2026",
+              "source_locator": "Điều 17",
+              "target_locators": [
+                "Khoản 6 Điều 11"
+              ],
+              "target_locators_complete": true,
+              "explanation": "Tiêu đề Điều17 Quy định dẫn trực tiếp khoản6 Điều11 NĐ49 bổ sung khoản3 Điều19 NĐ88, giữ khung tối thiểu.",
+              "source_effective_from": "2026-04-02",
+              "source_verified": true,
+              "scope_note": "Phạm vi từng điều khoản; không suy ra toàn văn bị bãi bỏ từ quan hệ sửa đổi/bãi bỏ một phần."
+            },
+            {
+              "source_id": "qd-40-2026-hanoi",
+              "target_id": "luat-dat-dai-2024",
+              "type": "guides",
+              "locator": "Điều 21 của Quy định kèm theo Quyết định 40/2026",
+              "source_locator": "Điều 21",
+              "target_locators": [
+                "Khoản 4 Điều 111"
+              ],
+              "target_locators_complete": true,
+              "explanation": "Tiêu đề Điều21 Quy định dẫn trực tiếp khoản4 Điều111 Luật Đất đai; giữ đầy đủ chủ thể, điều kiện bồi thường và nhánh nhiều hộ. Không suy mọi người có đất thu hồi đều được một suất.",
+              "source_effective_from": "2026-04-02",
+              "source_verified": true,
+              "scope_note": "Phạm vi từng điều khoản; không suy ra toàn văn bị bãi bỏ từ quan hệ sửa đổi/bãi bỏ một phần."
+            },
+            {
+              "source_id": "qd-40-2026-hanoi",
+              "target_id": "nd-88-2024",
+              "type": "guides",
+              "locator": "Điều 21 của Quy định kèm theo Quyết định 40/2026",
+              "source_locator": "Điều 21",
+              "target_locators": [
+                "Điều 11"
+              ],
+              "target_locators_complete": true,
+              "explanation": "Điều21 Quy định về hình thức tái định cư cho nhóm đất ở đủ điều kiện phải đọc cùng nhánh điều kiện tại khoản2 Điều11 NĐ88, không thay điều kiện quốc gia bằng hình thức địa phương.",
+              "source_effective_from": "2026-04-02",
+              "source_verified": true,
+              "scope_note": "Phạm vi từng điều khoản; không suy ra toàn văn bị bãi bỏ từ quan hệ sửa đổi/bãi bỏ một phần."
+            },
+            {
+              "source_id": "qd-40-2026-hanoi",
+              "target_id": "nd-226-2025",
+              "type": "guides",
+              "locator": "Điều 21 của Quy định kèm theo Quyết định 40/2026",
+              "source_locator": "Điều 21",
+              "target_locators": [
+                "Khoản 2 Điều 7"
+              ],
+              "target_locators_complete": true,
+              "explanation": "Đọc cùng điểm a khoản2 Điều7 NĐ226: địa bàn ở điểm a/b khoản2 Điều11 NĐ88 đổi thành cấp xã. Đây là liên kết đối chiếu căn cứ áp dụng, không phải QĐ40 sửa đổi NĐ226.",
+              "source_effective_from": "2026-04-02",
+              "source_verified": true,
+              "scope_note": "Phạm vi từng điều khoản; không suy ra toàn văn bị bãi bỏ từ quan hệ sửa đổi/bãi bỏ một phần."
+            },
+            {
+              "source_id": "qd-40-2026-hanoi",
+              "target_id": "luat-dat-dai-2024",
+              "type": "guides",
+              "locator": "Điều 21 của Quy định kèm theo Quyết định 40/2026",
+              "source_locator": "Điều 21",
+              "target_locators": [
+                "Điều 98"
+              ],
+              "target_locators_complete": true,
+              "explanation": "Liên kết căn cứ thực chất: hình thức bồi thường đất ở tại Điều21 Quy định triển khai khoản4 Điều111 Luật Đất đai và nhánh Điều11 NĐ88 (quy định chi tiết Điều98 Luật Đất đai). Đọc Điều98 để phân biệt các hình thức bồi thường đất ở; đây là quan hệ hướng dẫn/đối chiếu, không phải sửa đổi Điều98.",
+              "source_effective_from": "2026-04-02",
+              "source_verified": true,
+              "scope_note": "Phạm vi từng điều khoản; không suy ra toàn văn bị bãi bỏ từ quan hệ sửa đổi/bãi bỏ một phần."
+            },
+            {
+              "source_id": "qd-40-2026-hanoi",
+              "target_id": "nq-254-2025",
+              "type": "guides",
+              "locator": "Điều 21 của Quy định kèm theo Quyết định 40/2026",
+              "source_locator": "Điều 21",
+              "target_locators": [
+                "Khoản 10 Điều 3"
+              ],
+              "target_locators_complete": true,
+              "explanation": "Điều kiện được bồi thường của nhóm Điều21 phải đọc cùng các trường hợp không được bồi thường ở khoản10 Điều3 NQ254. Đây là liên kết đối chiếu điều kiện loại trừ, không phải QĐ40 sửa đổi NQ254.",
+              "source_effective_from": "2026-04-02",
+              "source_verified": true,
+              "scope_note": "Phạm vi từng điều khoản; không suy ra toàn văn bị bãi bỏ từ quan hệ sửa đổi/bãi bỏ một phần."
+            },
+            {
+              "source_id": "qd-40-2026-hanoi",
+              "target_id": "nd-49-2026",
+              "type": "guides",
+              "locator": "Điều 21 của Quy định kèm theo Quyết định 40/2026",
+              "source_locator": "Điều 21",
+              "target_locators": [
+                "Khoản 3 Điều 16"
+              ],
+              "target_locators_complete": true,
+              "explanation": "Khi đối chiếu Điều21 với thay đổi địa bàn tại Điều7(2a) NĐ226, phải đối chiếu Điều16(3g) NĐ49 bãi bỏ một số gạch đầu dòng. Không suy toàn khoản2 hoặc toàn Điều7 NĐ226 còn áp dụng nguyên trạng.",
+              "source_effective_from": "2026-04-02",
+              "source_verified": true,
+              "scope_note": "Phạm vi từng điều khoản; không suy ra toàn văn bị bãi bỏ từ quan hệ sửa đổi/bãi bỏ một phần."
+            }
+          ]
+        },
+        {
+          "citation_id": "luat-dat-dai-2013-40-2-0",
+          "document_id": "luat-dat-dai-2013",
+          "title": "Luật số 45/2013/QH13 luật Đất đai.",
+          "document_number": "45/2013/QH13",
+          "page": 41,
+          "kind": "legal",
+          "locator": "Điều 75",
+          "text": "Điều 75. Điều kiện được bồi thường về đất khi Nhà nước thu hồi đất vì mục đích quốc phòng, an ninh; phát triển kinh tế - xã hội vì lợi ích quốc gia, công cộng 1. Hộ gia đình, cá nhân đang sử dụng đất không phải là đất thuê trả tiền thuê đất hàng năm, có Giấy chứng nhận quyền sử dụng đất, Giấy chứng nhận quyền sở hữu nhà ở và quyền sử dụng đất ở, Giấy chứng nhận quyền sử dụng đất, quyền sở hữu nhà ở và tài sản khác gắn liền với đất (sau đây gọi chung là Giấy chứng nhận) hoặc có đủ điều kiện để được cấp Giấy chứng nhận quyền sử dụng đất, quyền sở hữu nhà ở và tài sản khác gắn liền với đất theo quy định của Luật này mà chưa được cấp, trừ trường hợp quy định tại khoản 2 Điều 77 của Luật này; người Việt Nam định cư ở nước ngoài thuộc đối tượng được sở hữu nhà ở gắn liền với quyền sử dụng đất ở tại Việt Nam mà có Giấy chứng nhận hoặc có đủ điều kiện được cấp Giấy chứng nhận quyền sử dụng đất, quyền sở hữu nhà ở và tài sản khác gắn liền với đất theo quy định của Luật này mà chưa được cấp. 2. Cộng đồng dân cư, cơ sở tôn giáo, tín ngưỡng đang sử dụng đất mà không phải là đất do Nhà nước giao, cho thuê và có Giấy chứng nhận hoặc có đủ điều kiện để được cấp Giấy chứng nhận quyền sử dụng đất, quyền sở hữu nhà ở và tài sản khác gắn liền với đất theo quy định của Luật này mà chưa được cấp. 3. Người Việt Nam định cư ở nước ngoài được Nhà nước giao đất có thu tiền sử dụng đất, cho thuê đất trả tiền thuê đất một lần cho cả thời gian thuê;",
+          "applicability": "historical",
+          "effective_from": "2014-07-01",
+          "effective_to": "2024-08-01",
+          "provision_validity": [],
+          "source_review_notes": "Bản gốc lịch sử; đã đối chiếu Điều 6 Luật 35/2018 sửa Chương IV (Điều 35–51), khoản 1 Điều 151 và khoản 1 Điều 21. Điều 74,75,82,83,85,86,93,210,211 được rà soát về thu hồi/bồi thường; mốc hết hiệu lực chung theo Điều 252 khoản 4 Luật 31 cùng Luật 43/2024. Không coi bản gốc là bản hợp nhất cho mọi điều khoản; đọc văn bản sửa đổi và chuyển tiếp tương ứng. Chưa thẩm định pháp lý độc lập.",
+          "administrative_scope": null,
+          "procedure_id": null,
+          "operational_reviewed_at": null,
+          "operational_review_status": "pending",
+          "required_dependency_ids": [],
+          "legal_relations": [
+            {
+              "source_id": "luat-dat-dai-2024",
+              "target_id": "luat-dat-dai-2013",
+              "type": "replaces",
+              "locator": "Điều 252 khoản 4",
+              "source_locator": "Điều 252 khoản 4",
+              "target_locators": [],
+              "target_locators_complete": true,
+              "explanation": "Hết hiệu lực chung khi Luật31 bắt đầu có hiệu lực, đọc mốc01/08/2024 theo Luật43 và chuyển tiếp; không xóa lịch sử.",
+              "source_effective_from": "2024-08-01",
+              "source_verified": true,
+              "scope_note": "Phạm vi từng điều khoản; không suy ra toàn văn bị bãi bỏ từ quan hệ sửa đổi/bãi bỏ một phần."
+            },
+            {
+              "source_id": "luat-dat-dai-2024",
+              "target_id": "luat-dat-dai-2013",
+              "type": "transition",
+              "locator": "Điều 254;Điều 255;Điều 260",
+              "source_locator": "Điều 254;Điều 255;Điều 260",
+              "target_locators": [],
+              "target_locators_complete": true,
+              "explanation": "Áp dụng lịch sử phải đọc quy định chuyển tiếp và ngày quyết định/phương án; không mặc định toàn bộ hồ sơ cũ dùng quy định hiện nay.",
+              "source_effective_from": "2024-08-01",
+              "source_verified": true,
+              "scope_note": "Phạm vi từng điều khoản; không suy ra toàn văn bị bãi bỏ từ quan hệ sửa đổi/bãi bỏ một phần."
+            }
+          ]
+        },
+        {
+          "citation_id": "qd-56-2024-hanoi-0-22-0",
+          "document_id": "qd-56-2024-hanoi",
+          "title": "Quy định một số nội dung bồi thường, hỗ trợ, tái định cư Hà Nội (lịch sử)",
+          "document_number": "56/2024/QĐ-UBND",
+          "page": null,
+          "kind": "legal",
+          "locator": "Điều 19",
+          "text": "Điều 19. Tái định cư đối với hộ gia đình, cá nhân, người gốc Việt Nam định cư ở nước ngoài đang sử dụng đất ở, đang sở hữu nhà ở gắn liền với quyền sử dụng đất trên địa bàn Thành phố khi Nhà nước thu hồi đất ở đủ điều kiện được bồi thường về đất (thực hiện khoản 4 Điều 111 Luật Đất đai) 1. Đối với các quận: Thực hiện bồi thường bằng bán căn hộ chung cư tái định cư. Trường hợp có nhu cầu bồi thường bằng đất mà quỹ đất tái định cư trên địa bàn quận đảm bảo quy mô, diện tích tái định cư cho dự án thì Ủy ban nhân dân quận thực hiện bồi thường bằng giao đất ở tái định cư theo quy định; trường hợp quỹ đất tái định cư trên địa bàn quận không đảm bảo đủ diện tích bồi thường mà có nhu cầu tái định cư trên địa bàn các huyện khác thì Ủy ban nhân dân Thành phố xem xét từng dự án cụ thể. Việc bồi thường bằng giao đất tái định cư thực hiện theo khoản 2 Điều này. 2. Đối với các huyện, thị xã Sơn Tây thì thực hiện bồi thường bằng giao đất ở tái định cư. Diện tích đất ở được bồi thường bằng diện tích đất ở bị thu hồi nhưng không nhỏ hơn suất tái định cư tối thiểu quy định tại khoản 1 Điều 20 của Quy định này và không vượt quá hạn mức giao đất ở mới tối đa tại địa phương, trừ trường hợp quy định tại khoản 3 Điều này. 3. Đối với trường hợp trong hộ gia đình có nhiều thế hệ hoặc có nhiều cặp vợ chồng cùng chung sống trên một thửa đất ở bị thu hồi theo khoản 1, khoản 2 Điều này nếu đủ điều kiện để tách thành từng hộ gia đình riêng theo",
+          "applicability": "historical",
+          "effective_from": "2024-09-20",
+          "effective_to": "2026-04-02",
+          "provision_validity": [],
+          "source_review_notes": "Toàn văn được lấy qua snapshot VBPL đã lưu cache khoảng năm tháng trước; ngày kiểm tra là ngày đối chiếu snapshot, không chứng nhận nguồn đã được crawl mới. Giữ để tra cứu lịch sử; QĐ40 thay thế từ 02/04/2026. Chưa thẩm định pháp lý độc lập.",
+          "administrative_scope": null,
+          "procedure_id": null,
+          "operational_reviewed_at": null,
+          "operational_review_status": "pending",
+          "required_dependency_ids": [],
+          "legal_relations": [
+            {
+              "source_id": "qd-40-2026-hanoi",
+              "target_id": "qd-56-2024-hanoi",
+              "type": "replaces",
+              "locator": "Điều 2 của Quyết định 40/2026",
+              "source_locator": null,
+              "target_locators": [],
+              "target_locators_complete": false,
+              "explanation": "QĐ 40/2026 thay thế toàn bộ từ 02/04/2026; giữ văn bản cũ cho tra cứu lịch sử và kiểm tra chuyển tiếp.",
+              "source_effective_from": "2026-04-02",
+              "source_verified": true,
+              "scope_note": "Phạm vi từng điều khoản; không suy ra toàn văn bị bãi bỏ từ quan hệ sửa đổi/bãi bỏ một phần."
+            },
+            {
+              "source_id": "qd-40-2026-hanoi",
+              "target_id": "qd-56-2024-hanoi",
+              "type": "transition",
+              "locator": "Điều 29 của Quy định kèm theo Quyết định 40/2026",
+              "source_locator": null,
+              "target_locators": [],
+              "target_locators_complete": false,
+              "explanation": "Dự án đã được chấp thuận chính sách hỗ trợ khác hợp pháp: UBND cấp xã phê duyệt theo chính sách đã chấp thuận. Trường hợp đang thực hiện thu hồi/bồi thường tiếp tục theo thẩm quyền được phân cấp mới. Không suy ra mọi hồ sơ cũ dùng toàn bộ QĐ 56.",
+              "source_effective_from": "2026-04-02",
+              "source_verified": true,
+              "scope_note": "Phạm vi từng điều khoản; không suy ra toàn văn bị bãi bỏ từ quan hệ sửa đổi/bãi bỏ một phần."
+            },
+            {
+              "source_id": "qd-38-2025-hanoi",
+              "target_id": "qd-56-2024-hanoi",
+              "type": "amends",
+              "locator": "Điều 1,2; phạm vi điều khoản được liệt kê trong văn bản",
+              "source_locator": "Điều 1 khoản 1–8; Điều 2",
+              "target_locators": [
+                "Điều 7",
+                "khoản 4 Điều 9",
+                "khoản 2 Điều 10",
+                "khoản 1 Điều 19",
+                "khoản 2 Điều 19",
+                "khoản 3 Điều 22",
+                "khoản 4 Điều 22",
+                "khoản 2 Điều 24",
+                "Điều 25",
+                "Điều 28"
+              ],
+              "target_locators_complete": true,
+              "explanation": "Sửa các điều, khoản được liệt kê của Quy định kèm QĐ 56; không thay thế toàn văn. Điều 4 quy định hiệu lực 01/07/2025.",
+              "source_effective_from": "2025-07-01",
+              "source_verified": true,
+              "scope_note": "Phạm vi từng điều khoản; không suy ra toàn văn bị bãi bỏ từ quan hệ sửa đổi/bãi bỏ một phần."
+            }
+          ]
+        },
+        {
+          "citation_id": "luat-dat-dai-2024-98-0-parent",
+          "document_id": "luat-dat-dai-2024",
+          "title": "Luật Đất đai",
+          "document_number": "31/2024/QH15",
+          "page": 6,
+          "kind": "legal",
+          "locator": "Điều 95 · ngữ cảnh",
+          "text": "CÔNG BÁO/Số 365 + 366/Ngày 01-3-2024 7 b) Cộng đồng dân cư đang sử dụng đất có công trình là chùa, đình, đền, miếu, am, nhà thờ họ, công trình tín ngưỡng khác; đất nông nghiệp quy định tại khoản 4 Điều 178 của Luật này và đất đó không có tranh chấp, được Ủy ban nhân dân cấp xã nơi có đất xác nhận là đất sử dụng chung cho cộng đồng; c) Người gốc Việt Nam định cư ở nước ngoài quy định tại khoản 1 Điều 44 của Luật này; d) Tổ chức tôn giáo, tổ chức tôn giáo trực thuộc được Nhà nước cho phép hoạt động đang sử dụng đất mà không phải là đất do Nhà nước giao, cho thuê; không phải là đất nhận chuyển nhượng, nhận tặng cho từ ngày 01 tháng 7 năm 2004 trở về sau; đ) Người gốc Việt Nam định cư ở nước ngoài được Nhà nước giao đất có thu tiền sử dụng đất, cho thuê đất trả tiền thuê đất một lần cho cả thời gian thuê; nhận chuyển nhượng quyền sử dụng đất trong khu công nghiệp, cụm công nghiệp, khu công nghệ cao, khu kinh tế; e) Tổ chức được Nhà nước giao đất có thu tiền sử dụng đất, cho thuê đất trả tiền thuê đất một lần cho cả thời gian thuê; nhận thừa kế quyền sử dụng đất, nhận chuyển nhượng quyền sử dụng đất, nhận góp vốn bằng quyền sử dụng đất; g) Tổ chức nước ngoài có chức năng ngoại giao được Nhà nước cho thuê đất trả tiền thuê đất một lần cho cả thời gian thuê; h) Tổ chức kinh tế, người gốc Việt Nam định cư ở nước ngoài, tổ chức kinh tế có vốn đầu tư nước ngoài được Nhà nước giao đất có thu tiền sử dụng đất để thực hiện dự án đầu tư xây dựng nhà ở để bán hoặc để bán kết hợp cho thuê; cho thuê đất trả tiền thuê đất một lần cho cả thời gian thuê. 2. Các trường hợp quy định tại khoản 1 Điều này được bồi thường về đất khi có một trong các điều kiện sau đây: a) Có Giấy chứng nhận quyền sử dụng đất hoặc Giấy chứng nhận quyền sở hữu nhà ở và quyền sử dụng đất ở hoặc Giấy chứng nhận quyền sử dụng đất, quyền sở hữu nhà ở và tài sản khác gắn liền với đất hoặc Giấy chứng nhận quyền sử dụng đất, quyền sở hữu tài sản gắn liền với đất; b) Có quyết định giao đất hoặc quyết định cho thuê đất hoặc quyết định cho phép chuyển mục đích sử dụng đất của cơ quan nhà nước có thẩm quyền;",
+          "applicability": "current",
+          "effective_from": "2024-08-01",
+          "effective_to": "None",
+          "provision_validity": [
+            {
+              "locator": "Điều 190",
+              "effective_from": "2024-04-01",
+              "effective_to": null,
+              "source_url": "https://vanban.chinhphu.vn/?pageid=27160&docid=211189",
+              "note": "Điều 252 khoản 2 Luật Đất đai quy định mốc riêng cho Điều 190 và Điều 248; không suy hiệu lực toàn văn."
+            },
+            {
+              "locator": "Điều 248",
+              "effective_from": "2024-04-01",
+              "effective_to": null,
+              "source_url": "https://vanban.chinhphu.vn/?pageid=27160&docid=211189",
+              "note": "Điều 252 khoản 2 Luật Đất đai quy định mốc riêng cho Điều 190 và Điều 248; không suy hiệu lực toàn văn."
+            }
+          ],
+          "source_review_notes": "",
+          "administrative_scope": null,
+          "procedure_id": null,
+          "operational_reviewed_at": null,
+          "operational_review_status": "pending",
+          "required_dependency_ids": [],
+          "legal_relations": [
+            {
+              "source_id": "nq-254-2025",
+              "target_id": "luat-dat-dai-2024",
+              "type": "overrides",
+              "locator": "Điều 3; Điều 5–11; Điều 13 khoản 3",
+              "source_locator": "Điều 3; Điều 13",
+              "target_locators": [],
+              "target_locators_complete": false,
+              "explanation": "Điều 13 khoản 3: ưu tiên Nghị quyết khi cùng vấn đề có quy định khác luật, có ngoại lệ chính sách thí điểm địa phương do HĐND tỉnh lựa chọn. Đây là cơ chế áp dụng khác quy định luật, không phải thao tác sửa văn bản làm hết hiệu lực toàn bộ Luật Đất đai. Phải đọc Điều 3/5/7 về giá đất, thời hạn thông báo/công khai, tài sản, hỗ trợ và Điều 3 khoản 13 về hồ sơ cũ; không tự dùng nguyên quy định gốc nếu có khác biệt. Ánh xạ điều khoản luật chịu tác động chưa đầy đủ.",
+              "source_effective_from": "2026-01-01",
+              "source_verified": true,
+              "scope_note": "Phạm vi từng điều khoản; không suy ra toàn văn bị bãi bỏ từ quan hệ sửa đổi/bãi bỏ một phần."
+            },
+            {
+              "source_id": "nq-254-2025",
+              "target_id": "luat-dat-dai-2024",
+              "type": "transition",
+              "locator": "Điều 3 khoản 13; Điều 7 khoản 4–7",
+              "source_locator": "Điều 3; Điều 7",
+              "target_locators": [],
+              "target_locators_complete": false,
+              "explanation": "Đã có quyết định thu hồi/phê duyệt phương án, mới có phê duyệt phương án, chưa phê duyệt hoặc dự án phê duyệt một phần có cơ chế khác nhau. Điều 7 có ngoại lệ căn cứ giá và giai đoạn chưa đủ căn cứ. Cần kiểm tra ngày và hồ sơ cụ thể.",
+              "source_effective_from": "2026-01-01",
+              "source_verified": true,
+              "scope_note": "Phạm vi từng điều khoản; không suy ra toàn văn bị bãi bỏ từ quan hệ sửa đổi/bãi bỏ một phần."
+            },
+            {
+              "source_id": "nq-258-2025",
+              "target_id": "luat-dat-dai-2024",
+              "type": "overrides",
+              "locator": "Điều 7; Điều 12 khoản 2–3",
+              "source_locator": "Điều 7; Điều 12",
+              "target_locators": [],
+              "target_locators_complete": false,
+              "explanation": "Cơ chế đặc thù chỉ trong phạm vi Điều 1; Điều 7 khoản 4 quy định HĐND quyết định tiêu chí/mức bồi thường, hỗ trợ, tái định cư theo loại dự án. Điều 12 có ưu tiên áp dụng có điều kiện, không bãi bỏ toàn bộ Luật Đất đai. Phải đối chiếu chính sách HĐND cụ thể và chuyển tiếp Luật Thủ đô 2026.",
+              "source_effective_from": "2025-12-12",
+              "source_verified": true,
+              "scope_note": "Phạm vi từng điều khoản; không suy ra toàn văn bị bãi bỏ từ quan hệ sửa đổi/bãi bỏ một phần."
+            },
+            {
+              "source_id": "luat-dat-dai-2024",
+              "target_id": "luat-dat-dai-2013",
+              "type": "replaces",
+              "locator": "Điều 252 khoản 4",
+              "source_locator": "Điều 252 khoản 4",
+              "target_locators": [],
+              "target_locators_complete": true,
+              "explanation": "Hết hiệu lực chung khi Luật31 bắt đầu có hiệu lực, đọc mốc01/08/2024 theo Luật43 và chuyển tiếp; không xóa lịch sử.",
+              "source_effective_from": "2024-08-01",
+              "source_verified": true,
+              "scope_note": "Phạm vi từng điều khoản; không suy ra toàn văn bị bãi bỏ từ quan hệ sửa đổi/bãi bỏ một phần."
+            },
+            {
+              "source_id": "luat-dat-dai-2024",
+              "target_id": "luat-dat-dai-2013",
+              "type": "transition",
+              "locator": "Điều 254;Điều 255;Điều 260",
+              "source_locator": "Điều 254;Điều 255;Điều 260",
+              "target_locators": [],
+              "target_locators_complete": true,
+              "explanation": "Áp dụng lịch sử phải đọc quy định chuyển tiếp và ngày quyết định/phương án; không mặc định toàn bộ hồ sơ cũ dùng quy định hiện nay.",
+              "source_effective_from": "2024-08-01",
+              "source_verified": true,
+              "scope_note": "Phạm vi từng điều khoản; không suy ra toàn văn bị bãi bỏ từ quan hệ sửa đổi/bãi bỏ một phần."
+            },
+            {
+              "source_id": "qd-40-2026-hanoi",
+              "target_id": "luat-dat-dai-2024",
+              "type": "guides",
+              "locator": "Điều 17 của Quy định kèm theo Quyết định 40/2026",
+              "source_locator": "Điều 17",
+              "target_locators": [
+                "Điều 108"
+              ],
+              "target_locators_complete": true,
+              "explanation": "Quy định hỗ trợ ổn định đời sống là triển khai nhóm hỗ trợ tại điểm a khoản1 Điều108; không thay danh mục chung bằng riêng một khoản hỗ trợ.",
+              "source_effective_from": "2026-04-02",
+              "source_verified": true,
+              "scope_note": "Phạm vi từng điều khoản; không suy ra toàn văn bị bãi bỏ từ quan hệ sửa đổi/bãi bỏ một phần."
+            },
+            {
+              "source_id": "qd-40-2026-hanoi",
+              "target_id": "luat-dat-dai-2024",
+              "type": "guides",
+              "locator": "Điều 21 của Quy định kèm theo Quyết định 40/2026",
+              "source_locator": "Điều 21",
+              "target_locators": [
+                "Khoản 4 Điều 111"
+              ],
+              "target_locators_complete": true,
+              "explanation": "Tiêu đề Điều21 Quy định dẫn trực tiếp khoản4 Điều111 Luật Đất đai; giữ đầy đủ chủ thể, điều kiện bồi thường và nhánh nhiều hộ. Không suy mọi người có đất thu hồi đều được một suất.",
+              "source_effective_from": "2026-04-02",
+              "source_verified": true,
+              "scope_note": "Phạm vi từng điều khoản; không suy ra toàn văn bị bãi bỏ từ quan hệ sửa đổi/bãi bỏ một phần."
+            },
+            {
+              "source_id": "qd-40-2026-hanoi",
+              "target_id": "luat-dat-dai-2024",
+              "type": "guides",
+              "locator": "Điều 21 của Quy định kèm theo Quyết định 40/2026",
+              "source_locator": "Điều 21",
+              "target_locators": [
+                "Điều 98"
+              ],
+              "target_locators_complete": true,
+              "explanation": "Liên kết căn cứ thực chất: hình thức bồi thường đất ở tại Điều21 Quy định triển khai khoản4 Điều111 Luật Đất đai và nhánh Điều11 NĐ88 (quy định chi tiết Điều98 Luật Đất đai). Đọc Điều98 để phân biệt các hình thức bồi thường đất ở; đây là quan hệ hướng dẫn/đối chiếu, không phải sửa đổi Điều98.",
+              "source_effective_from": "2026-04-02",
+              "source_verified": true,
+              "scope_note": "Phạm vi từng điều khoản; không suy ra toàn văn bị bãi bỏ từ quan hệ sửa đổi/bãi bỏ một phần."
+            }
+          ]
+        },
+        {
+          "citation_id": "qd-40-2026-hanoi-9-1-parent",
+          "document_id": "qd-40-2026-hanoi",
+          "title": "Quy định một số nội dung bồi thường, hỗ trợ, tái định cư Hà Nội",
+          "document_number": "40/2026/QĐ-UBND",
+          "page": 10,
+          "kind": "legal",
+          "locator": "Điều 17 · ngữ cảnh",
+          "text": "Điều 17. Hỗ trợ ổn định đời sống khi Nhà nước thu hồi đất (Thực hiện khoản 6 Điều 11 Nghị định số 49/2026/NĐ -CP ngày 31/01/2026 của Chính phủ) 1. Hộ gia đình, cá nhân đang sử dụng đất nông nghiệp nếu đủ điều kiện được bồi thường về đất thì được hỗ trợ ổn định đời sống như sau: a) Thu hồi từ 30% đến 70% diện tích đất nông nghiệp đang sử dụng thì được hỗ trợ trong thời gian 6 tháng nếu không phải di chuyển chỗ ở và trong thời gian 12 tháng nếu phải di chuyển chỗ ở; trường hợp phải di chuyển đến vùng có điều kiện kinh tế - xã hội khó khăn hoặc có điều kiện kinh tế - xã hội đặc biệt khó khăn thì thời gian hỗ trợ tối đa là 24 tháng. Đối với trường hợp thu hồi trên 70% diện tích đất nông nghiệp đang sử dụng thì được hỗ trợ trong thời gian 12 tháng nếu không phải di chuyển chỗ ở và trong thời gian 24 tháng nếu phải di chuyển chỗ ở; trường hợp phải di chuyển đến vùng có điều kiện kinh tế - xã hội khó khăn hoặc có điều kiện kinh tế - xã hội đặc biệt khó khăn thì thời gian hỗ trợ tối đa là 36 tháng; b) Diện tích đất nông nghiệp thu hồi để tính hỗ trợ ổn định đời sống quy định tại điểm a khoản này là diện tích trong phạm vi xã, phường nơi có đất thu hồi tại thời điểm có quyết định phê duyệt phương án bồi thường, hỗ trợ, tái định cư và được xác định theo từng dự án phải thu hồi đất của Ủy ban nhân dân cấp có thẩm quyền, không cộng dồn diện tích đất nông nghiệp thu hồi của các dự án thu hồi đất trước đó; c) Mức hỗ trợ cho một nhân khẩu quy định tại điểm a và điểm b khoản này được tính bằng tiền tương đương 30 kg gạo trong 01 tháng theo giá do Sở Nông nghiệp và Môi trường công bố hằng năm . 2. Trường hợp hộ gia đình, cá nhân đang sử dụng đất quy định tại khoản 1 Điều này bị thu hồi dưới 30% diện tích đất nông nghiệp đang sử dụng; hộ gia đình, cá nhân đang sử dụng đất không đủ điều kiện bồi thường về đất hoặc do nhận giao khoán đất để sử dụng vào mục đích nông nghiệp, lâm nghiệp, nuôi trồng thuỷ sản, làm muối từ các nông, lâm trường quốc doanh hoặc công ty nông, lâm nghiệp được",
+          "applicability": "current",
+          "effective_from": "2026-04-02",
+          "effective_to": "None",
+          "provision_validity": [],
+          "source_review_notes": "",
+          "administrative_scope": null,
+          "procedure_id": null,
+          "operational_reviewed_at": null,
+          "operational_review_status": "pending",
+          "required_dependency_ids": [],
+          "legal_relations": [
+            {
+              "source_id": "qd-40-2026-hanoi",
+              "target_id": "qd-56-2024-hanoi",
+              "type": "replaces",
+              "locator": "Điều 2 của Quyết định 40/2026",
+              "source_locator": null,
+              "target_locators": [],
+              "target_locators_complete": false,
+              "explanation": "QĐ 40/2026 thay thế toàn bộ từ 02/04/2026; giữ văn bản cũ cho tra cứu lịch sử và kiểm tra chuyển tiếp.",
+              "source_effective_from": "2026-04-02",
+              "source_verified": true,
+              "scope_note": "Phạm vi từng điều khoản; không suy ra toàn văn bị bãi bỏ từ quan hệ sửa đổi/bãi bỏ một phần."
+            },
+            {
+              "source_id": "qd-40-2026-hanoi",
+              "target_id": "qd-38-2025-hanoi",
+              "type": "replaces",
+              "locator": "Điều 2 của Quyết định 40/2026",
+              "source_locator": null,
+              "target_locators": [],
+              "target_locators_complete": false,
+              "explanation": "QĐ 40/2026 thay thế toàn bộ từ 02/04/2026; giữ văn bản cũ cho tra cứu lịch sử và kiểm tra chuyển tiếp.",
+              "source_effective_from": "2026-04-02",
+              "source_verified": true,
+              "scope_note": "Phạm vi từng điều khoản; không suy ra toàn văn bị bãi bỏ từ quan hệ sửa đổi/bãi bỏ một phần."
+            },
+            {
+              "source_id": "qd-40-2026-hanoi",
+              "target_id": "qd-10-2026-hanoi",
+              "type": "replaces",
+              "locator": "Điều 2 của Quyết định 40/2026",
+              "source_locator": null,
+              "target_locators": [],
+              "target_locators_complete": false,
+              "explanation": "QĐ 40/2026 thay thế toàn bộ từ 02/04/2026; giữ văn bản cũ cho tra cứu lịch sử và kiểm tra chuyển tiếp.",
+              "source_effective_from": "2026-04-02",
+              "source_verified": true,
+              "scope_note": "Phạm vi từng điều khoản; không suy ra toàn văn bị bãi bỏ từ quan hệ sửa đổi/bãi bỏ một phần."
+            },
+            {
+              "source_id": "qd-40-2026-hanoi",
+              "target_id": "qd-56-2024-hanoi",
+              "type": "transition",
+              "locator": "Điều 29 của Quy định kèm theo Quyết định 40/2026",
+              "source_locator": null,
+              "target_locators": [],
+              "target_locators_complete": false,
+              "explanation": "Dự án đã được chấp thuận chính sách hỗ trợ khác hợp pháp: UBND cấp xã phê duyệt theo chính sách đã chấp thuận. Trường hợp đang thực hiện thu hồi/bồi thường tiếp tục theo thẩm quyền được phân cấp mới. Không suy ra mọi hồ sơ cũ dùng toàn bộ QĐ 56.",
+              "source_effective_from": "2026-04-02",
+              "source_verified": true,
+              "scope_note": "Phạm vi từng điều khoản; không suy ra toàn văn bị bãi bỏ từ quan hệ sửa đổi/bãi bỏ một phần."
+            },
+            {
+              "source_id": "qd-40-2026-hanoi",
+              "target_id": "luat-dat-dai-2024",
+              "type": "guides",
+              "locator": "Điều 17 của Quy định kèm theo Quyết định 40/2026",
+              "source_locator": "Điều 17",
+              "target_locators": [
+                "Điều 108"
+              ],
+              "target_locators_complete": true,
+              "explanation": "Quy định hỗ trợ ổn định đời sống là triển khai nhóm hỗ trợ tại điểm a khoản1 Điều108; không thay danh mục chung bằng riêng một khoản hỗ trợ.",
+              "source_effective_from": "2026-04-02",
+              "source_verified": true,
+              "scope_note": "Phạm vi từng điều khoản; không suy ra toàn văn bị bãi bỏ từ quan hệ sửa đổi/bãi bỏ một phần."
+            },
+            {
+              "source_id": "qd-40-2026-hanoi",
+              "target_id": "nd-49-2026",
+              "type": "guides",
+              "locator": "Điều 17 của Quy định kèm theo Quyết định 40/2026",
+              "source_locator": "Điều 17",
+              "target_locators": [
+                "Khoản 6 Điều 11"
+              ],
+              "target_locators_complete": true,
+              "explanation": "Tiêu đề Điều17 Quy định dẫn trực tiếp khoản6 Điều11 NĐ49 bổ sung khoản3 Điều19 NĐ88, giữ khung tối thiểu.",
+              "source_effective_from": "2026-04-02",
+              "source_verified": true,
+              "scope_note": "Phạm vi từng điều khoản; không suy ra toàn văn bị bãi bỏ từ quan hệ sửa đổi/bãi bỏ một phần."
+            },
+            {
+              "source_id": "qd-40-2026-hanoi",
+              "target_id": "luat-dat-dai-2024",
+              "type": "guides",
+              "locator": "Điều 21 của Quy định kèm theo Quyết định 40/2026",
+              "source_locator": "Điều 21",
+              "target_locators": [
+                "Khoản 4 Điều 111"
+              ],
+              "target_locators_complete": true,
+              "explanation": "Tiêu đề Điều21 Quy định dẫn trực tiếp khoản4 Điều111 Luật Đất đai; giữ đầy đủ chủ thể, điều kiện bồi thường và nhánh nhiều hộ. Không suy mọi người có đất thu hồi đều được một suất.",
+              "source_effective_from": "2026-04-02",
+              "source_verified": true,
+              "scope_note": "Phạm vi từng điều khoản; không suy ra toàn văn bị bãi bỏ từ quan hệ sửa đổi/bãi bỏ một phần."
+            },
+            {
+              "source_id": "qd-40-2026-hanoi",
+              "target_id": "nd-88-2024",
+              "type": "guides",
+              "locator": "Điều 21 của Quy định kèm theo Quyết định 40/2026",
+              "source_locator": "Điều 21",
+              "target_locators": [
+                "Điều 11"
+              ],
+              "target_locators_complete": true,
+              "explanation": "Điều21 Quy định về hình thức tái định cư cho nhóm đất ở đủ điều kiện phải đọc cùng nhánh điều kiện tại khoản2 Điều11 NĐ88, không thay điều kiện quốc gia bằng hình thức địa phương.",
+              "source_effective_from": "2026-04-02",
+              "source_verified": true,
+              "scope_note": "Phạm vi từng điều khoản; không suy ra toàn văn bị bãi bỏ từ quan hệ sửa đổi/bãi bỏ một phần."
+            },
+            {
+              "source_id": "qd-40-2026-hanoi",
+              "target_id": "nd-226-2025",
+              "type": "guides",
+              "locator": "Điều 21 của Quy định kèm theo Quyết định 40/2026",
+              "source_locator": "Điều 21",
+              "target_locators": [
+                "Khoản 2 Điều 7"
+              ],
+              "target_locators_complete": true,
+              "explanation": "Đọc cùng điểm a khoản2 Điều7 NĐ226: địa bàn ở điểm a/b khoản2 Điều11 NĐ88 đổi thành cấp xã. Đây là liên kết đối chiếu căn cứ áp dụng, không phải QĐ40 sửa đổi NĐ226.",
+              "source_effective_from": "2026-04-02",
+              "source_verified": true,
+              "scope_note": "Phạm vi từng điều khoản; không suy ra toàn văn bị bãi bỏ từ quan hệ sửa đổi/bãi bỏ một phần."
+            },
+            {
+              "source_id": "qd-40-2026-hanoi",
+              "target_id": "luat-dat-dai-2024",
+              "type": "guides",
+              "locator": "Điều 21 của Quy định kèm theo Quyết định 40/2026",
+              "source_locator": "Điều 21",
+              "target_locators": [
+                "Điều 98"
+              ],
+              "target_locators_complete": true,
+              "explanation": "Liên kết căn cứ thực chất: hình thức bồi thường đất ở tại Điều21 Quy định triển khai khoản4 Điều111 Luật Đất đai và nhánh Điều11 NĐ88 (quy định chi tiết Điều98 Luật Đất đai). Đọc Điều98 để phân biệt các hình thức bồi thường đất ở; đây là quan hệ hướng dẫn/đối chiếu, không phải sửa đổi Điều98.",
+              "source_effective_from": "2026-04-02",
+              "source_verified": true,
+              "scope_note": "Phạm vi từng điều khoản; không suy ra toàn văn bị bãi bỏ từ quan hệ sửa đổi/bãi bỏ một phần."
+            },
+            {
+              "source_id": "qd-40-2026-hanoi",
+              "target_id": "nq-254-2025",
+              "type": "guides",
+              "locator": "Điều 21 của Quy định kèm theo Quyết định 40/2026",
+              "source_locator": "Điều 21",
+              "target_locators": [
+                "Khoản 10 Điều 3"
+              ],
+              "target_locators_complete": true,
+              "explanation": "Điều kiện được bồi thường của nhóm Điều21 phải đọc cùng các trường hợp không được bồi thường ở khoản10 Điều3 NQ254. Đây là liên kết đối chiếu điều kiện loại trừ, không phải QĐ40 sửa đổi NQ254.",
+              "source_effective_from": "2026-04-02",
+              "source_verified": true,
+              "scope_note": "Phạm vi từng điều khoản; không suy ra toàn văn bị bãi bỏ từ quan hệ sửa đổi/bãi bỏ một phần."
+            },
+            {
+              "source_id": "qd-40-2026-hanoi",
+              "target_id": "nd-49-2026",
+              "type": "guides",
+              "locator": "Điều 21 của Quy định kèm theo Quyết định 40/2026",
+              "source_locator": "Điều 21",
+              "target_locators": [
+                "Khoản 3 Điều 16"
+              ],
+              "target_locators_complete": true,
+              "explanation": "Khi đối chiếu Điều21 với thay đổi địa bàn tại Điều7(2a) NĐ226, phải đối chiếu Điều16(3g) NĐ49 bãi bỏ một số gạch đầu dòng. Không suy toàn khoản2 hoặc toàn Điều7 NĐ226 còn áp dụng nguyên trạng.",
+              "source_effective_from": "2026-04-02",
+              "source_verified": true,
+              "scope_note": "Phạm vi từng điều khoản; không suy ra toàn văn bị bãi bỏ từ quan hệ sửa đổi/bãi bỏ một phần."
+            }
+          ]
+        },
+        {
+          "citation_id": "luat-dat-dai-2024-106-1-0",
+          "document_id": "luat-dat-dai-2024",
+          "title": "Luật Đất đai",
+          "document_number": "31/2024/QH15",
+          "page": 14,
+          "kind": "legal",
+          "locator": "Điều 108",
+          "text": "Điều 108. Hỗ trợ khi Nhà nước thu hồi đất 1. Hỗ trợ khi Nhà nước thu hồi đất bao gồm: a) Hỗ trợ ổn định đời sống; b) Hỗ trợ ổn định sản xuất, kinh doanh; c) Hỗ trợ di dời vật nuôi; d) Hỗ trợ đào tạo, chuyển đổi nghề và tìm kiếm việc làm; đ) Hỗ trợ tái định cư đối với trường hợp quy định tại khoản 8 Điều 111 của Luật này; e) Hỗ trợ để tháo dỡ, phá dỡ, di dời theo quy định tại khoản 3 Điều 105 của Luật này. 2. Ngoài việc hỗ trợ quy định tại khoản 1 Điều này, căn cứ vào tình hình thực tế tại địa phương, Ủy ban nhân dân cấp tỉnh quyết định biện pháp, mức hỗ trợ khác để bảo đảm có chỗ ở, ổn định đời sống, sản xuất đối với người có đất thu hồi, chủ sở hữu tài sản cho từng dự án cụ thể. 3. Chính phủ quy định chi tiết Điều này.",
+          "applicability": "current",
+          "effective_from": "2024-08-01",
+          "effective_to": "None",
+          "provision_validity": [
+            {
+              "locator": "Điều 190",
+              "effective_from": "2024-04-01",
+              "effective_to": null,
+              "source_url": "https://vanban.chinhphu.vn/?pageid=27160&docid=211189",
+              "note": "Điều 252 khoản 2 Luật Đất đai quy định mốc riêng cho Điều 190 và Điều 248; không suy hiệu lực toàn văn."
+            },
+            {
+              "locator": "Điều 248",
+              "effective_from": "2024-04-01",
+              "effective_to": null,
+              "source_url": "https://vanban.chinhphu.vn/?pageid=27160&docid=211189",
+              "note": "Điều 252 khoản 2 Luật Đất đai quy định mốc riêng cho Điều 190 và Điều 248; không suy hiệu lực toàn văn."
+            }
+          ],
+          "source_review_notes": "",
+          "administrative_scope": null,
+          "procedure_id": null,
+          "operational_reviewed_at": null,
+          "operational_review_status": "pending",
+          "required_dependency_ids": [],
+          "legal_relations": [
+            {
+              "source_id": "nq-254-2025",
+              "target_id": "luat-dat-dai-2024",
+              "type": "overrides",
+              "locator": "Điều 3; Điều 5–11; Điều 13 khoản 3",
+              "source_locator": "Điều 3; Điều 13",
+              "target_locators": [],
+              "target_locators_complete": false,
+              "explanation": "Điều 13 khoản 3: ưu tiên Nghị quyết khi cùng vấn đề có quy định khác luật, có ngoại lệ chính sách thí điểm địa phương do HĐND tỉnh lựa chọn. Đây là cơ chế áp dụng khác quy định luật, không phải thao tác sửa văn bản làm hết hiệu lực toàn bộ Luật Đất đai. Phải đọc Điều 3/5/7 về giá đất, thời hạn thông báo/công khai, tài sản, hỗ trợ và Điều 3 khoản 13 về hồ sơ cũ; không tự dùng nguyên quy định gốc nếu có khác biệt. Ánh xạ điều khoản luật chịu tác động chưa đầy đủ.",
+              "source_effective_from": "2026-01-01",
+              "source_verified": true,
+              "scope_note": "Phạm vi từng điều khoản; không suy ra toàn văn bị bãi bỏ từ quan hệ sửa đổi/bãi bỏ một phần."
+            },
+            {
+              "source_id": "nq-254-2025",
+              "target_id": "luat-dat-dai-2024",
+              "type": "transition",
+              "locator": "Điều 3 khoản 13; Điều 7 khoản 4–7",
+              "source_locator": "Điều 3; Điều 7",
+              "target_locators": [],
+              "target_locators_complete": false,
+              "explanation": "Đã có quyết định thu hồi/phê duyệt phương án, mới có phê duyệt phương án, chưa phê duyệt hoặc dự án phê duyệt một phần có cơ chế khác nhau. Điều 7 có ngoại lệ căn cứ giá và giai đoạn chưa đủ căn cứ. Cần kiểm tra ngày và hồ sơ cụ thể.",
+              "source_effective_from": "2026-01-01",
+              "source_verified": true,
+              "scope_note": "Phạm vi từng điều khoản; không suy ra toàn văn bị bãi bỏ từ quan hệ sửa đổi/bãi bỏ một phần."
+            },
+            {
+              "source_id": "nq-258-2025",
+              "target_id": "luat-dat-dai-2024",
+              "type": "overrides",
+              "locator": "Điều 7; Điều 12 khoản 2–3",
+              "source_locator": "Điều 7; Điều 12",
+              "target_locators": [],
+              "target_locators_complete": false,
+              "explanation": "Cơ chế đặc thù chỉ trong phạm vi Điều 1; Điều 7 khoản 4 quy định HĐND quyết định tiêu chí/mức bồi thường, hỗ trợ, tái định cư theo loại dự án. Điều 12 có ưu tiên áp dụng có điều kiện, không bãi bỏ toàn bộ Luật Đất đai. Phải đối chiếu chính sách HĐND cụ thể và chuyển tiếp Luật Thủ đô 2026.",
+              "source_effective_from": "2025-12-12",
+              "source_verified": true,
+              "scope_note": "Phạm vi từng điều khoản; không suy ra toàn văn bị bãi bỏ từ quan hệ sửa đổi/bãi bỏ một phần."
+            },
+            {
+              "source_id": "luat-dat-dai-2024",
+              "target_id": "luat-dat-dai-2013",
+              "type": "replaces",
+              "locator": "Điều 252 khoản 4",
+              "source_locator": "Điều 252 khoản 4",
+              "target_locators": [],
+              "target_locators_complete": true,
+              "explanation": "Hết hiệu lực chung khi Luật31 bắt đầu có hiệu lực, đọc mốc01/08/2024 theo Luật43 và chuyển tiếp; không xóa lịch sử.",
+              "source_effective_from": "2024-08-01",
+              "source_verified": true,
+              "scope_note": "Phạm vi từng điều khoản; không suy ra toàn văn bị bãi bỏ từ quan hệ sửa đổi/bãi bỏ một phần."
+            },
+            {
+              "source_id": "luat-dat-dai-2024",
+              "target_id": "luat-dat-dai-2013",
+              "type": "transition",
+              "locator": "Điều 254;Điều 255;Điều 260",
+              "source_locator": "Điều 254;Điều 255;Điều 260",
+              "target_locators": [],
+              "target_locators_complete": true,
+              "explanation": "Áp dụng lịch sử phải đọc quy định chuyển tiếp và ngày quyết định/phương án; không mặc định toàn bộ hồ sơ cũ dùng quy định hiện nay.",
+              "source_effective_from": "2024-08-01",
+              "source_verified": true,
+              "scope_note": "Phạm vi từng điều khoản; không suy ra toàn văn bị bãi bỏ từ quan hệ sửa đổi/bãi bỏ một phần."
+            },
+            {
+              "source_id": "qd-40-2026-hanoi",
+              "target_id": "luat-dat-dai-2024",
+              "type": "guides",
+              "locator": "Điều 17 của Quy định kèm theo Quyết định 40/2026",
+              "source_locator": "Điều 17",
+              "target_locators": [
+                "Điều 108"
+              ],
+              "target_locators_complete": true,
+              "explanation": "Quy định hỗ trợ ổn định đời sống là triển khai nhóm hỗ trợ tại điểm a khoản1 Điều108; không thay danh mục chung bằng riêng một khoản hỗ trợ.",
+              "source_effective_from": "2026-04-02",
+              "source_verified": true,
+              "scope_note": "Phạm vi từng điều khoản; không suy ra toàn văn bị bãi bỏ từ quan hệ sửa đổi/bãi bỏ một phần."
+            },
+            {
+              "source_id": "qd-40-2026-hanoi",
+              "target_id": "luat-dat-dai-2024",
+              "type": "guides",
+              "locator": "Điều 21 của Quy định kèm theo Quyết định 40/2026",
+              "source_locator": "Điều 21",
+              "target_locators": [
+                "Khoản 4 Điều 111"
+              ],
+              "target_locators_complete": true,
+              "explanation": "Tiêu đề Điều21 Quy định dẫn trực tiếp khoản4 Điều111 Luật Đất đai; giữ đầy đủ chủ thể, điều kiện bồi thường và nhánh nhiều hộ. Không suy mọi người có đất thu hồi đều được một suất.",
+              "source_effective_from": "2026-04-02",
+              "source_verified": true,
+              "scope_note": "Phạm vi từng điều khoản; không suy ra toàn văn bị bãi bỏ từ quan hệ sửa đổi/bãi bỏ một phần."
+            },
+            {
+              "source_id": "qd-40-2026-hanoi",
+              "target_id": "luat-dat-dai-2024",
+              "type": "guides",
+              "locator": "Điều 21 của Quy định kèm theo Quyết định 40/2026",
+              "source_locator": "Điều 21",
+              "target_locators": [
+                "Điều 98"
+              ],
+              "target_locators_complete": true,
+              "explanation": "Liên kết căn cứ thực chất: hình thức bồi thường đất ở tại Điều21 Quy định triển khai khoản4 Điều111 Luật Đất đai và nhánh Điều11 NĐ88 (quy định chi tiết Điều98 Luật Đất đai). Đọc Điều98 để phân biệt các hình thức bồi thường đất ở; đây là quan hệ hướng dẫn/đối chiếu, không phải sửa đổi Điều98.",
+              "source_effective_from": "2026-04-02",
+              "source_verified": true,
+              "scope_note": "Phạm vi từng điều khoản; không suy ra toàn văn bị bãi bỏ từ quan hệ sửa đổi/bãi bỏ một phần."
+            }
+          ]
+        },
+        {
+          "citation_id": "nd-49-2026-11-0-1",
+          "document_id": "nd-49-2026",
+          "title": "Hướng dẫn Nghị quyết 254/2025/QH15 tháo gỡ vướng mắc thi hành Luật Đất đai",
+          "document_number": "49/2026/NĐ-CP",
+          "page": 12,
+          "kind": "legal",
+          "locator": "Điều 11",
+          "text": "Điều 14 như sau: “3. Trường hợp cần thiết, đơn vị, tổ chức thực hiện nhiệm vụ bồi thường, hỗ trợ, tái định cư được thuê đơn vị tư vấn để xác định mức độ thiệt hại của nhà, nhà ở, công trình xây dựng, tài sản gắn liền với đất. Kinh phí thuê đơn vị tư vấn được tính vào chi phí bảo đảm cho việc tổ chức thực hiện bồi thường, hỗ trợ, tái định cư.”. 6. Bổ sung khoản 3 vào sau khoản 2 Điều 19 như sau: “3. Căn cứ tình hình thực tế tại địa phương, Ủy ban nhân dân cấp tỉnh được quy định khác về mức hỗ trợ ổn định đời sống, về hình thức hỗ trợ ổn định đời sống nhưng không thấp hơn so với quy định tại khoản 1 và khoản 2 Điều này.”. 7. Sửa đổi, bổ sung khoản 2 Điều 26 như sau: “2. Giá đất để tính ghi nợ tiền sử dụng đất tại nơi tái định cư là giá đất tính theo bảng giá đất và hệ số điều chỉnh giá đất đối với trường hợp quy định tại khoản 3 Điều 5 của Nghị quyết số 254/2025/QH15 hoặc giá đất trong bảng giá đất đối với trường hợp quy định tại khoản 5 Điều 7 của Nghị quyết số 254/2025/QH15 tại thời điểm phê duyệt phương án bồi thường, hỗ trợ, tái định cư.",
+          "applicability": "current",
+          "effective_from": "2026-01-31",
+          "effective_to": "None",
+          "provision_validity": [
+            {
+              "locator": "Điều 14; Điều 15 (Chương IV)",
+              "effective_from": "2026-01-31",
+              "effective_to": "2027-03-01",
+              "source_url": "https://congbao.chinhphu.vn/van-ban/nghi-dinh-so-49-2026-nd-cp-468908.htm",
+              "note": "Khoản 2 Điều 16: thực hiện đến trước 01/03/2027, ưu tiên văn bản mới phù hợp chính quyền hai cấp; không kéo mốc này sang toàn văn."
+            }
+          ],
+          "source_review_notes": "",
+          "administrative_scope": null,
+          "procedure_id": null,
+          "operational_reviewed_at": null,
+          "operational_review_status": "pending",
+          "required_dependency_ids": [],
+          "legal_relations": [
+            {
+              "source_id": "nd-49-2026",
+              "target_id": "nq-254-2025",
+              "type": "guides",
+              "locator": "Điều 1",
+              "source_locator": null,
+              "target_locators": [],
+              "target_locators_complete": false,
+              "explanation": "NĐ49 quy định chi tiết và hướng dẫn một số điều NQ254; giữ liên kết văn bản được hướng dẫn, không thay thế toàn văn nghị quyết.",
+              "source_effective_from": "2026-01-31",
+              "source_verified": true,
+              "scope_note": "Phạm vi từng điều khoản; không suy ra toàn văn bị bãi bỏ từ quan hệ sửa đổi/bãi bỏ một phần."
+            },
+            {
+              "source_id": "nd-49-2026",
+              "target_id": "nd-88-2024",
+              "type": "amends",
+              "locator": "Điều 11",
+              "source_locator": "Điều 11",
+              "target_locators": [
+                "Điểm n khoản 2 Điều 3",
+                "Khoản 1 Điều 4",
+                "Khoản 2 Điều 5",
+                "Khoản 7 Điều 13",
+                "Khoản 3 Điều 14",
+                "Khoản 3 Điều 19",
+                "Khoản 2 Điều 26",
+                "Điểm d khoản 2 Điều 28"
+              ],
+              "target_locators_complete": true,
+              "explanation": "Đã đọc đủ khoản 1–8 Điều 11: thêm nội dung tạm cư vào phương án, sửa giá đất bồi thường bằng đất khác, hồ sơ vi phạm trước 01/07/2014, căn cứ G trong công thức, tư vấn thiệt hại, hỗ trợ đời sống không thấp hơn khung, ghi nợ tái định cư, ứng trước/chậm bồi thường. Hiệu lực 31/01/2026; không coi toàn bộ NĐ88 hết hiệu lực.",
+              "source_effective_from": "2026-01-31",
+              "source_verified": true,
+              "scope_note": "Phạm vi từng điều khoản; không suy ra toàn văn bị bãi bỏ từ quan hệ sửa đổi/bãi bỏ một phần."
+            },
+            {
+              "source_id": "nd-49-2026",
+              "target_id": "nd-101-2024",
+              "type": "amends",
+              "locator": "Điều 12",
+              "source_locator": "Điều 12",
+              "target_locators": [],
+              "target_locators_complete": false,
+              "explanation": "Sửa quy định đo đạc, đăng ký/cấp giấy. Phạm vi chi tiết chưa ánh xạ đầy đủ; không suy từ điều vắng trong danh sách là chưa bị sửa.",
+              "source_effective_from": "2026-01-31",
+              "source_verified": true,
+              "scope_note": "Phạm vi từng điều khoản; không suy ra toàn văn bị bãi bỏ từ quan hệ sửa đổi/bãi bỏ một phần."
+            },
+            {
+              "source_id": "nd-49-2026",
+              "target_id": "nd-102-2024",
+              "type": "amends",
+              "locator": "Điều 13",
+              "source_locator": "Điều 13",
+              "target_locators": [],
+              "target_locators_complete": false,
+              "explanation": "Sửa quy hoạch/thông báo thu hồi, giao đất và thủ tục. Phạm vi chi tiết chưa ánh xạ đầy đủ; không dùng bản gốc để khẳng định quy định hiện tại khi chưa đối chiếu.",
+              "source_effective_from": "2026-01-31",
+              "source_verified": true,
+              "scope_note": "Phạm vi từng điều khoản; không suy ra toàn văn bị bãi bỏ từ quan hệ sửa đổi/bãi bỏ một phần."
+            },
+            {
+              "source_id": "nd-49-2026",
+              "target_id": "nd-71-2024",
+              "type": "repeals",
+              "locator": "Điều 16 khoản 3 điểm a",
+              "source_locator": "Điều 16 khoản 3 điểm a",
+              "target_locators": [
+                "Điều 11",
+                "Khoản 1 Điều 12",
+                "Điều 16",
+                "Điều 17",
+                "Điều 24",
+                "Điều 25",
+                "Điều 26",
+                "Điều 27",
+                "Điều 28",
+                "Điều 29",
+                "Điều 37",
+                "Điểm a khoản 1 Điều 38"
+              ],
+              "target_locators_complete": true,
+              "explanation": "Chỉ bãi bỏ các điều/khoản liệt kê, không bãi bỏ toàn văn NĐ71.",
+              "source_effective_from": "2026-01-31",
+              "source_verified": true,
+              "scope_note": "Phạm vi từng điều khoản; không suy ra toàn văn bị bãi bỏ từ quan hệ sửa đổi/bãi bỏ một phần."
+            },
+            {
+              "source_id": "nd-49-2026",
+              "target_id": "nd-101-2024",
+              "type": "repeals",
+              "locator": "Điều 16 khoản 3 điểm b",
+              "source_locator": "Điều 16 khoản 3 điểm b",
+              "target_locators": [
+                "Khoản 3 Điều 18",
+                "Điểm d khoản 1 Điều 24",
+                "Điểm d khoản 2 Điều 24",
+                "Khoản 3 Điều 65",
+                "Khoản 4 Điều 65"
+              ],
+              "target_locators_complete": true,
+              "explanation": "Chỉ bãi bỏ khoản/điểm được liệt kê, không bãi bỏ toàn văn NĐ101.",
+              "source_effective_from": "2026-01-31",
+              "source_verified": true,
+              "scope_note": "Phạm vi từng điều khoản; không suy ra toàn văn bị bãi bỏ từ quan hệ sửa đổi/bãi bỏ một phần."
+            },
+            {
+              "source_id": "nd-49-2026",
+              "target_id": "nd-102-2024",
+              "type": "repeals",
+              "locator": "Điều 16 khoản 3 điểm c,d",
+              "source_locator": "Điều 16 khoản 3 điểm c,d",
+              "target_locators": [
+                "Khoản 2 Điều 30",
+                "Điều 32",
+                "Điều 33",
+                "Điều 34",
+                "Điều 50",
+                "Khoản 5 Điều 54",
+                "Điều 65",
+                "Khoản 4 Điều 77"
+              ],
+              "target_locators_complete": true,
+              "explanation": "Chỉ bãi bỏ điều/khoản được liệt kê, bao gồm khoản 4 Điều 77 đã được sửa bởi NĐ226; không bãi bỏ toàn văn.",
+              "source_effective_from": "2026-01-31",
+              "source_verified": true,
+              "scope_note": "Phạm vi từng điều khoản; không suy ra toàn văn bị bãi bỏ từ quan hệ sửa đổi/bãi bỏ một phần."
+            },
+            {
+              "source_id": "nd-49-2026",
+              "target_id": "nd-151-2025",
+              "type": "repeals",
+              "locator": "Điều 16 khoản 3 điểm đ,e",
+              "source_locator": "Điều 16 khoản 3 điểm đ,e",
+              "target_locators": [
+                "Điều 4",
+                "Khoản 3 Điều 7",
+                "Điểm c khoản 4 Điều 7",
+                "Khoản 3 Điều 8",
+                "Điều 10",
+                "Điều 11",
+                "Khoản 3 Điều 12",
+                "Khoản 5 Điều 12",
+                "Các điểm b,c,d,e khoản 1 Điều 14",
+                "Điểm đ khoản 2 Điều 14",
+                "Điểm b khoản 1 Điều 17",
+                "Điểm e,g khoản 2 Điều 17",
+                "Điều 19",
+                "Điều 20",
+                "Điều 5, trừ điểm i khoản 1, điểm g khoản 2, điểm d khoản 5",
+                "Điều 9, trừ khoản 3, điểm i và m khoản 4",
+                "Phụ lục I, trừ ngoại lệ tại điểm e1 khoản 3 Điều 16 NĐ49",
+                "Phụ lục II, trừ mẫu giữ lại tại điểm e2 khoản 3 Điều 16 NĐ49"
+              ],
+              "target_locators_complete": true,
+              "explanation": "Bãi bỏ có ngoại lệ tại Điều 5/9 và các phụ lục. Phải đọc đủ điểm đ1–đ3,e1–e2, không suy toàn Điều 5 hoặc mọi mẫu hết hiệu lực. Quy định cơ chế mới ở Chương IV NĐ49, có giới hạn thời gian và ưu tiên văn bản mới tại khoản 2 Điều 16.",
+              "source_effective_from": "2026-01-31",
+              "source_verified": true,
+              "scope_note": "Phạm vi từng điều khoản; không suy ra toàn văn bị bãi bỏ từ quan hệ sửa đổi/bãi bỏ một phần."
+            },
+            {
+              "source_id": "nd-49-2026",
+              "target_id": "nd-226-2025",
+              "type": "repeals",
+              "locator": "Điều 16 khoản 3 điểm g",
+              "source_locator": "Điều 16 khoản 3 điểm g",
+              "target_locators": [
+                "Khoản 12 Điều 1",
+                "Khoản 1 Điều 3",
+                "Khoản 3 Điều 4",
+                "Khoản 4 Điều 4",
+                "Khoản 7 Điều 4",
+                "Khoản 8 Điều 4",
+                "Khoản 11 Điều 4",
+                "Khoản 13 Điều 4",
+                "Khoản 15 Điều 4",
+                "Điểm b khoản 9 Điều 4",
+                "Khoản 1 Điều 6",
+                "Khoản 2 Điều 6",
+                "Khoản 3 Điều 6",
+                "Khoản 5 Điều 6",
+                "Điểm a và điểm b khoản 4 Điều 6",
+                "Gạch đầu dòng thứ 1 điểm a khoản 2 Điều 7",
+                "Gạch đầu dòng thứ 7 điểm a khoản 2 Điều 7",
+                "Điểm a khoản 4 Điều 7",
+                "Gạch đầu dòng thứ 4, 6, 8, 11 và 12 điểm a khoản 3 Điều 7",
+                "Khoản 6 Điều 7",
+                "Phụ lục IV"
+              ],
+              "target_locators_complete": true,
+              "explanation": "Đã đối chiếu toàn bộ điểm g1/g2 khoản3 Điều16 NĐ49, Công báo trang25–26. Liệt kê đầy đủ các khoản/điểm/gạch đầu dòng và Phụ lục IV hết hiệu lực. Trong khoản2 Điều7 chỉ gạch đầu dòng thứ1 và thứ7 điểm a bị bãi bỏ; gạch đầu dòng thứ5 đổi địa bàn cấp xã vẫn được đối chiếu với bản hợp nhất53. Verifier hiện chỉ phân biệt tới khoản nên claim dẫn khoản2 vẫn phải cite đúng NĐ49, không nới guard.",
+              "source_effective_from": "2026-01-31",
+              "source_verified": true,
+              "scope_note": "Phạm vi từng điều khoản; không suy ra toàn văn bị bãi bỏ từ quan hệ sửa đổi/bãi bỏ một phần."
+            },
+            {
+              "source_id": "nd-49-2026",
+              "target_id": "nd-71-2024",
+              "type": "transition",
+              "locator": "Điều 17",
+              "source_locator": "Điều 17",
+              "target_locators": [],
+              "target_locators_complete": false,
+              "explanation": "Các trường hợp đang xác định giá cụ thể trước 31/01/2026 mà tiếp tục áp dụng giá cụ thể theo quy định Luật và NĐ71 đã sửa; thay Hội đồng thẩm định bảng giá/hệ số theo khoản 1.",
+              "source_effective_from": "2026-01-31",
+              "source_verified": true,
+              "scope_note": "Phạm vi từng điều khoản; không suy ra toàn văn bị bãi bỏ từ quan hệ sửa đổi/bãi bỏ một phần."
+            },
+            {
+              "source_id": "qd-40-2026-hanoi",
+              "target_id": "nd-49-2026",
+              "type": "guides",
+              "locator": "Điều 17 của Quy định kèm theo Quyết định 40/2026",
+              "source_locator": "Điều 17",
+              "target_locators": [
+                "Khoản 6 Điều 11"
+              ],
+              "target_locators_complete": true,
+              "explanation": "Tiêu đề Điều17 Quy định dẫn trực tiếp khoản6 Điều11 NĐ49 bổ sung khoản3 Điều19 NĐ88, giữ khung tối thiểu.",
+              "source_effective_from": "2026-04-02",
+              "source_verified": true,
+              "scope_note": "Phạm vi từng điều khoản; không suy ra toàn văn bị bãi bỏ từ quan hệ sửa đổi/bãi bỏ một phần."
+            },
+            {
+              "source_id": "qd-40-2026-hanoi",
+              "target_id": "nd-49-2026",
+              "type": "guides",
+              "locator": "Điều 21 của Quy định kèm theo Quyết định 40/2026",
+              "source_locator": "Điều 21",
+              "target_locators": [
+                "Khoản 3 Điều 16"
+              ],
+              "target_locators_complete": true,
+              "explanation": "Khi đối chiếu Điều21 với thay đổi địa bàn tại Điều7(2a) NĐ226, phải đối chiếu Điều16(3g) NĐ49 bãi bỏ một số gạch đầu dòng. Không suy toàn khoản2 hoặc toàn Điều7 NĐ226 còn áp dụng nguyên trạng.",
+              "source_effective_from": "2026-04-02",
+              "source_verified": true,
+              "scope_note": "Phạm vi từng điều khoản; không suy ra toàn văn bị bãi bỏ từ quan hệ sửa đổi/bãi bỏ một phần."
+            }
+          ]
+        },
+        {
+          "citation_id": "nd-88-2024-0-11-0",
+          "document_id": "nd-88-2024",
+          "title": "Bồi thường, hỗ trợ, tái định cư khi Nhà nước thu hồi đất",
+          "document_number": "88/2024/NĐ-CP",
+          "page": null,
+          "kind": "legal",
+          "locator": "Điều 11",
+          "text": "Điều 11. Bồi thường về đất khi Nhà nước thu hồi đất ở quy định tại Điều 98 của Luật Đất đai 1. Hộ gia đình, cá nhân, người gốc Việt Nam định cư ở nước ngoài, tổ chức kinh tế đang sử dụng đất ở, đang sở hữu nhà ở gắn liền với quyền sử dụng đất tại Việt Nam khi Nhà nước thu hồi đất, nếu có đủ điều kiện được bồi thường quy định tại khoản 1 và khoản 2 Điều 95 của Luật Đất đai hoặc Điều 5 của Nghị định này thì được bồi thường bằng đất ở hoặc bằng nhà ở hoặc bằng tiền hoặc bằng đất có mục đích sử dụng khác với loại đất thu hồi. 2. Hộ gia đình, cá nhân, người gốc Việt Nam định cư ở nước ngoài đang sử dụng đất ở, đang sở hữu nhà ở gắn liền với quyền sử dụng đất tại Việt Nam khi Nhà nước thu hồi đất ở đủ điều kiện được bồi thường về đất thì thực hiện như sau: a) Trường hợp thu hồi hết đất ở hoặc phần diện tích đất ở còn lại của thửa đất sau khi thu hồi nhỏ hơn diện tích tối thiểu theo quy định của Ủy ban nhân dân cấp tỉnh về diện tích tối thiểu tại khoản 2 Điều 220 của Luật Đất đai mà hộ gia đình, cá nhân không còn đất ở, nhà ở nào khác trên địa bàn xã, phường, thị trấn nơi có đất thu hồi thì được bồi thường bằng đất ở hoặc bằng nhà ở tái định cư; b) Trường hợp thu hồi hết đất ở hoặc phần diện tích đất ở còn lại của thửa đất sau khi thu hồi nhỏ hơn diện tích tối thiểu theo quy định của Ủy ban nhân dân cấp tỉnh về diện tích tối thiểu tại khoản 2 Điều 220 của Luật Đất đai mà hộ gia đình, cá",
+          "applicability": "current",
+          "effective_from": "2024-08-01",
+          "effective_to": "None",
+          "provision_validity": [],
+          "source_review_notes": "",
+          "administrative_scope": null,
+          "procedure_id": null,
+          "operational_reviewed_at": null,
+          "operational_review_status": "pending",
+          "required_dependency_ids": [],
+          "legal_relations": [
+            {
+              "source_id": "nd-226-2025",
+              "target_id": "nd-88-2024",
+              "type": "amends",
+              "locator": "Điều 2; Điều 7 khoản 2",
+              "source_locator": "Điều 2; Điều 7",
+              "target_locators": [
+                "Điều 2",
+                "Điều 3",
+                "Điều 7a",
+                "Điều 8",
+                "Điều 11",
+                "Điều 14a",
+                "Điều 15",
+                "Điều 17",
+                "Điều 19",
+                "Điều 22",
+                "Điều 24",
+                "Điều 27",
+                "Điều 31"
+              ],
+              "target_locators_complete": true,
+              "explanation": "Đã đọc đủ Điều 2 khoản 1–8 và Điều 7 khoản 2 từ Công báo: bổ sung Điều 7a/14a; sửa khoản 4 Điều 17; thêm điểm d khoản 1 Điều 19, khoản 5 Điều 22, khoản 5–6 Điều 24, khoản 6 Điều 31; sửa khoản 2/7 Điều 27. Điều 7 khoản 2 sửa cụm từ/mẫu tại Điều 2,3,8,11,15,19,24 và phụ lục. Danh sách điều bị tác động không có nghĩa toàn điều bị bãi bỏ. Các điều NĐ88 khác không bị coi hết hiệu lực toàn bộ bởi quan hệ này.",
+              "source_effective_from": "2025-08-15",
+              "source_verified": true,
+              "scope_note": "Phạm vi từng điều khoản; không suy ra toàn văn bị bãi bỏ từ quan hệ sửa đổi/bãi bỏ một phần."
+            },
+            {
+              "source_id": "nd-226-2025",
+              "target_id": "nd-88-2024",
+              "type": "transition",
+              "locator": "Điều 8 khoản 1",
+              "source_locator": null,
+              "target_locators": [],
+              "target_locators_complete": false,
+              "explanation": "Đã triển khai bồi thường, hỗ trợ, tái định cư nhưng chưa phê duyệt phương án trước 15/08/2025: tiếp tục theo NĐ 226. Phải xác minh mốc phê duyệt của hồ sơ.",
+              "source_effective_from": "2025-08-15",
+              "source_verified": true,
+              "scope_note": "Phạm vi từng điều khoản; không suy ra toàn văn bị bãi bỏ từ quan hệ sửa đổi/bãi bỏ một phần."
+            },
+            {
+              "source_id": "nd-88-2024",
+              "target_id": "nd-47-2014",
+              "type": "replaces",
+              "locator": "Điều 30 khoản 2 điểm a",
+              "source_locator": "Điều 30 khoản 2 điểm a",
+              "target_locators": [],
+              "target_locators_complete": true,
+              "explanation": "NĐ47 hết hiệu lực chung01/08/2024; giữ để đối chiếu hồ sơ cũ.",
+              "source_effective_from": "2024-08-01",
+              "source_verified": true,
+              "scope_note": "Phạm vi từng điều khoản; không suy ra toàn văn bị bãi bỏ từ quan hệ sửa đổi/bãi bỏ một phần."
+            },
+            {
+              "source_id": "nd-88-2024",
+              "target_id": "nd-47-2014",
+              "type": "transition",
+              "locator": "Điều 31",
+              "source_locator": "Điều 31",
+              "target_locators": [],
+              "target_locators_complete": true,
+              "explanation": "Phân biệt đã có quyết định thu hồi/phương án đã phê duyệt và hồ sơ còn lại, trước01/08/2024.",
+              "source_effective_from": "2024-08-01",
+              "source_verified": true,
+              "scope_note": "Phạm vi từng điều khoản; không suy ra toàn văn bị bãi bỏ từ quan hệ sửa đổi/bãi bỏ một phần."
+            },
+            {
+              "source_id": "nd-88-2024",
+              "target_id": "nd-06-2020",
+              "type": "replaces",
+              "locator": "điểm b khoản 2 Điều 30",
+              "source_locator": "Điều 30",
+              "target_locators": [],
+              "target_locators_complete": true,
+              "explanation": "Điểm b khoản 2 Điều30 quy định NĐ06/2020 hết hiệu lực từ ngày NĐ88 có hiệu lực 01/08/2024; không tự loại hồ sơ lịch sử/chuyển tiếp.",
+              "source_effective_from": "2024-08-01",
+              "source_verified": true,
+              "scope_note": "Phạm vi từng điều khoản; không suy ra toàn văn bị bãi bỏ từ quan hệ sửa đổi/bãi bỏ một phần."
+            },
+            {
+              "source_id": "qd-40-2026-hanoi",
+              "target_id": "nd-88-2024",
+              "type": "guides",
+              "locator": "Điều 21 của Quy định kèm theo Quyết định 40/2026",
+              "source_locator": "Điều 21",
+              "target_locators": [
+                "Điều 11"
+              ],
+              "target_locators_complete": true,
+              "explanation": "Điều21 Quy định về hình thức tái định cư cho nhóm đất ở đủ điều kiện phải đọc cùng nhánh điều kiện tại khoản2 Điều11 NĐ88, không thay điều kiện quốc gia bằng hình thức địa phương.",
+              "source_effective_from": "2026-04-02",
+              "source_verified": true,
+              "scope_note": "Phạm vi từng điều khoản; không suy ra toàn văn bị bãi bỏ từ quan hệ sửa đổi/bãi bỏ một phần."
+            }
+          ]
+        },
+        {
+          "citation_id": "nd-226-2025-34-scope-7-2a-5",
+          "document_id": "nd-226-2025",
+          "title": "Sửa đổi, bổ sung các nghị định quy định chi tiết thi hành Luật Đất đai",
+          "document_number": "226/2025/NĐ-CP",
+          "page": 35,
+          "kind": "legal",
+          "locator": "Điều 7",
+          "text": "2. Thay thế, bãi bỏ các cụm từ, mẫu sau đây tại Nghị định số 88/2024/NĐ-CP a) Thay thế các cụm từ, mẫu như sau:\n- Cụm từ “xã, phường, thị trấn nơi có đất thu hồi” bằng cụm từ “cấp xã nơi có đất thu hồi” tại điểm a, điểm b khoản 2 Điều 11; điểm b khoản 1 Điều 19;",
+          "applicability": "current",
+          "effective_from": "2025-08-15",
+          "effective_to": "None",
+          "provision_validity": [],
+          "source_review_notes": "Bản Công báo đầy đủ 44 trang thay phần HTML có locator sai. Phải đọc sửa đổi/bãi bỏ sau đó tại NĐ49/2026 và điều khoản chuyển tiếp trước khi dùng cho câu hỏi hiện nay. Công thức tại trang PDF 15 được đối chiếu ảnh gốc và chuẩn hóa dấu ngoặc/phân số; không cung cấp tính tiền tự động.",
+          "administrative_scope": null,
+          "procedure_id": null,
+          "operational_reviewed_at": null,
+          "operational_review_status": "pending",
+          "required_dependency_ids": [],
+          "legal_relations": [
+            {
+              "source_id": "nd-226-2025",
+              "target_id": "nd-71-2024",
+              "type": "amends",
+              "locator": "Điều 1",
+              "source_locator": "Điều 1",
+              "target_locators": [],
+              "target_locators_complete": false,
+              "explanation": "Sửa một số điều NĐ 71 về giá đất; không thay thế toàn bộ.",
+              "source_effective_from": "2025-08-15",
+              "source_verified": true,
+              "scope_note": "Phạm vi từng điều khoản; không suy ra toàn văn bị bãi bỏ từ quan hệ sửa đổi/bãi bỏ một phần."
+            },
+            {
+              "source_id": "nd-226-2025",
+              "target_id": "nd-88-2024",
+              "type": "amends",
+              "locator": "Điều 2; Điều 7 khoản 2",
+              "source_locator": "Điều 2; Điều 7",
+              "target_locators": [
+                "Điều 2",
+                "Điều 3",
+                "Điều 7a",
+                "Điều 8",
+                "Điều 11",
+                "Điều 14a",
+                "Điều 15",
+                "Điều 17",
+                "Điều 19",
+                "Điều 22",
+                "Điều 24",
+                "Điều 27",
+                "Điều 31"
+              ],
+              "target_locators_complete": true,
+              "explanation": "Đã đọc đủ Điều 2 khoản 1–8 và Điều 7 khoản 2 từ Công báo: bổ sung Điều 7a/14a; sửa khoản 4 Điều 17; thêm điểm d khoản 1 Điều 19, khoản 5 Điều 22, khoản 5–6 Điều 24, khoản 6 Điều 31; sửa khoản 2/7 Điều 27. Điều 7 khoản 2 sửa cụm từ/mẫu tại Điều 2,3,8,11,15,19,24 và phụ lục. Danh sách điều bị tác động không có nghĩa toàn điều bị bãi bỏ. Các điều NĐ88 khác không bị coi hết hiệu lực toàn bộ bởi quan hệ này.",
+              "source_effective_from": "2025-08-15",
+              "source_verified": true,
+              "scope_note": "Phạm vi từng điều khoản; không suy ra toàn văn bị bãi bỏ từ quan hệ sửa đổi/bãi bỏ một phần."
+            },
+            {
+              "source_id": "nd-226-2025",
+              "target_id": "nd-101-2024",
+              "type": "amends",
+              "locator": "Điều 3",
+              "source_locator": "Điều 3",
+              "target_locators": [],
+              "target_locators_complete": false,
+              "explanation": "Sửa một số điều NĐ 101 về đăng ký, cấp giấy chứng nhận và thông tin đất đai.",
+              "source_effective_from": "2025-08-15",
+              "source_verified": true,
+              "scope_note": "Phạm vi từng điều khoản; không suy ra toàn văn bị bãi bỏ từ quan hệ sửa đổi/bãi bỏ một phần."
+            },
+            {
+              "source_id": "nd-226-2025",
+              "target_id": "nd-102-2024",
+              "type": "amends",
+              "locator": "Điều 4",
+              "source_locator": "Điều 4",
+              "target_locators": [],
+              "target_locators_complete": false,
+              "explanation": "Sửa một số điều NĐ 102 quy định chi tiết Luật Đất đai.",
+              "source_effective_from": "2025-08-15",
+              "source_verified": true,
+              "scope_note": "Phạm vi từng điều khoản; không suy ra toàn văn bị bãi bỏ từ quan hệ sửa đổi/bãi bỏ một phần."
+            },
+            {
+              "source_id": "nd-226-2025",
+              "target_id": "nd-151-2025",
+              "type": "amends",
+              "locator": "Điều 6",
+              "source_locator": "Điều 6",
+              "target_locators": [],
+              "target_locators_complete": false,
+              "explanation": "Sửa một số điều NĐ 151 về thẩm quyền chính quyền địa phương hai cấp.",
+              "source_effective_from": "2025-08-15",
+              "source_verified": true,
+              "scope_note": "Phạm vi từng điều khoản; không suy ra toàn văn bị bãi bỏ từ quan hệ sửa đổi/bãi bỏ một phần."
+            },
+            {
+              "source_id": "nd-226-2025",
+              "target_id": "nd-88-2024",
+              "type": "transition",
+              "locator": "Điều 8 khoản 1",
+              "source_locator": null,
+              "target_locators": [],
+              "target_locators_complete": false,
+              "explanation": "Đã triển khai bồi thường, hỗ trợ, tái định cư nhưng chưa phê duyệt phương án trước 15/08/2025: tiếp tục theo NĐ 226. Phải xác minh mốc phê duyệt của hồ sơ.",
+              "source_effective_from": "2025-08-15",
+              "source_verified": true,
+              "scope_note": "Phạm vi từng điều khoản; không suy ra toàn văn bị bãi bỏ từ quan hệ sửa đổi/bãi bỏ một phần."
+            },
+            {
+              "source_id": "nd-226-2025",
+              "target_id": "nd-71-2024",
+              "type": "transition",
+              "locator": "Điều 8 khoản 2",
+              "source_locator": null,
+              "target_locators": [],
+              "target_locators_complete": false,
+              "explanation": "Đã triển khai xác định giá cụ thể nhưng chưa ban hành giá: Chủ tịch có thẩm quyền quyết định tiếp tục quy định trước hoặc quy định NĐ 226. Ngày hiệu lực riêng lẻ chưa đủ quyết định căn cứ áp dụng.",
+              "source_effective_from": "2025-08-15",
+              "source_verified": true,
+              "scope_note": "Phạm vi từng điều khoản; không suy ra toàn văn bị bãi bỏ từ quan hệ sửa đổi/bãi bỏ một phần."
+            },
+            {
+              "source_id": "nd-49-2026",
+              "target_id": "nd-226-2025",
+              "type": "repeals",
+              "locator": "Điều 16 khoản 3 điểm g",
+              "source_locator": "Điều 16 khoản 3 điểm g",
+              "target_locators": [
+                "Khoản 12 Điều 1",
+                "Khoản 1 Điều 3",
+                "Khoản 3 Điều 4",
+                "Khoản 4 Điều 4",
+                "Khoản 7 Điều 4",
+                "Khoản 8 Điều 4",
+                "Khoản 11 Điều 4",
+                "Khoản 13 Điều 4",
+                "Khoản 15 Điều 4",
+                "Điểm b khoản 9 Điều 4",
+                "Khoản 1 Điều 6",
+                "Khoản 2 Điều 6",
+                "Khoản 3 Điều 6",
+                "Khoản 5 Điều 6",
+                "Điểm a và điểm b khoản 4 Điều 6",
+                "Gạch đầu dòng thứ 1 điểm a khoản 2 Điều 7",
+                "Gạch đầu dòng thứ 7 điểm a khoản 2 Điều 7",
+                "Điểm a khoản 4 Điều 7",
+                "Gạch đầu dòng thứ 4, 6, 8, 11 và 12 điểm a khoản 3 Điều 7",
+                "Khoản 6 Điều 7",
+                "Phụ lục IV"
+              ],
+              "target_locators_complete": true,
+              "explanation": "Đã đối chiếu toàn bộ điểm g1/g2 khoản3 Điều16 NĐ49, Công báo trang25–26. Liệt kê đầy đủ các khoản/điểm/gạch đầu dòng và Phụ lục IV hết hiệu lực. Trong khoản2 Điều7 chỉ gạch đầu dòng thứ1 và thứ7 điểm a bị bãi bỏ; gạch đầu dòng thứ5 đổi địa bàn cấp xã vẫn được đối chiếu với bản hợp nhất53. Verifier hiện chỉ phân biệt tới khoản nên claim dẫn khoản2 vẫn phải cite đúng NĐ49, không nới guard.",
+              "source_effective_from": "2026-01-31",
+              "source_verified": true,
+              "scope_note": "Phạm vi từng điều khoản; không suy ra toàn văn bị bãi bỏ từ quan hệ sửa đổi/bãi bỏ một phần."
+            },
+            {
+              "source_id": "qd-40-2026-hanoi",
+              "target_id": "nd-226-2025",
+              "type": "guides",
+              "locator": "Điều 21 của Quy định kèm theo Quyết định 40/2026",
+              "source_locator": "Điều 21",
+              "target_locators": [
+                "Khoản 2 Điều 7"
+              ],
+              "target_locators_complete": true,
+              "explanation": "Đọc cùng điểm a khoản2 Điều7 NĐ226: địa bàn ở điểm a/b khoản2 Điều11 NĐ88 đổi thành cấp xã. Đây là liên kết đối chiếu căn cứ áp dụng, không phải QĐ40 sửa đổi NĐ226.",
+              "source_effective_from": "2026-04-02",
+              "source_verified": true,
+              "scope_note": "Phạm vi từng điều khoản; không suy ra toàn văn bị bãi bỏ từ quan hệ sửa đổi/bãi bỏ một phần."
+            }
+          ]
+        },
+        {
+          "citation_id": "luat-dat-dai-2024-100-2-0",
+          "document_id": "luat-dat-dai-2024",
+          "title": "Luật Đất đai",
+          "document_number": "31/2024/QH15",
+          "page": 8,
+          "kind": "legal",
+          "locator": "Điều 98",
+          "text": "Điều 98. Bồi thường về đất khi Nhà nước thu hồi đất ở 1. Hộ gia đình, cá nhân, người gốc Việt Nam định cư ở nước ngoài, tổ chức kinh tế đang sử dụng đất ở, đang sở hữu nhà ở gắn liền với quyền sử dụng đất tại Việt Nam khi Nhà nước thu hồi đất, nếu có đủ điều kiện được bồi thường quy định tại Điều 95 của Luật này thì được bồi thường bằng đất ở hoặc bằng nhà ở hoặc bằng tiền hoặc bằng đất có mục đích sử dụng khác với loại đất thu hồi. 2. Tổ chức kinh tế, người gốc Việt Nam định cư ở nước ngoài, tổ chức kinh tế có vốn đầu tư nước ngoài đang sử dụng đất để thực hiện dự án đầu tư xây dựng nhà ở khi Nhà nước thu hồi đất, nếu có đủ điều kiện được bồi thường quy định tại Điều 95 của Luật này thì được bồi thường bằng tiền hoặc bằng đất. 3. Chính phủ quy định chi tiết Điều này.",
+          "applicability": "current",
+          "effective_from": "2024-08-01",
+          "effective_to": "None",
+          "provision_validity": [
+            {
+              "locator": "Điều 190",
+              "effective_from": "2024-04-01",
+              "effective_to": null,
+              "source_url": "https://vanban.chinhphu.vn/?pageid=27160&docid=211189",
+              "note": "Điều 252 khoản 2 Luật Đất đai quy định mốc riêng cho Điều 190 và Điều 248; không suy hiệu lực toàn văn."
+            },
+            {
+              "locator": "Điều 248",
+              "effective_from": "2024-04-01",
+              "effective_to": null,
+              "source_url": "https://vanban.chinhphu.vn/?pageid=27160&docid=211189",
+              "note": "Điều 252 khoản 2 Luật Đất đai quy định mốc riêng cho Điều 190 và Điều 248; không suy hiệu lực toàn văn."
+            }
+          ],
+          "source_review_notes": "",
+          "administrative_scope": null,
+          "procedure_id": null,
+          "operational_reviewed_at": null,
+          "operational_review_status": "pending",
+          "required_dependency_ids": [],
+          "legal_relations": [
+            {
+              "source_id": "nq-254-2025",
+              "target_id": "luat-dat-dai-2024",
+              "type": "overrides",
+              "locator": "Điều 3; Điều 5–11; Điều 13 khoản 3",
+              "source_locator": "Điều 3; Điều 13",
+              "target_locators": [],
+              "target_locators_complete": false,
+              "explanation": "Điều 13 khoản 3: ưu tiên Nghị quyết khi cùng vấn đề có quy định khác luật, có ngoại lệ chính sách thí điểm địa phương do HĐND tỉnh lựa chọn. Đây là cơ chế áp dụng khác quy định luật, không phải thao tác sửa văn bản làm hết hiệu lực toàn bộ Luật Đất đai. Phải đọc Điều 3/5/7 về giá đất, thời hạn thông báo/công khai, tài sản, hỗ trợ và Điều 3 khoản 13 về hồ sơ cũ; không tự dùng nguyên quy định gốc nếu có khác biệt. Ánh xạ điều khoản luật chịu tác động chưa đầy đủ.",
+              "source_effective_from": "2026-01-01",
+              "source_verified": true,
+              "scope_note": "Phạm vi từng điều khoản; không suy ra toàn văn bị bãi bỏ từ quan hệ sửa đổi/bãi bỏ một phần."
+            },
+            {
+              "source_id": "nq-254-2025",
+              "target_id": "luat-dat-dai-2024",
+              "type": "transition",
+              "locator": "Điều 3 khoản 13; Điều 7 khoản 4–7",
+              "source_locator": "Điều 3; Điều 7",
+              "target_locators": [],
+              "target_locators_complete": false,
+              "explanation": "Đã có quyết định thu hồi/phê duyệt phương án, mới có phê duyệt phương án, chưa phê duyệt hoặc dự án phê duyệt một phần có cơ chế khác nhau. Điều 7 có ngoại lệ căn cứ giá và giai đoạn chưa đủ căn cứ. Cần kiểm tra ngày và hồ sơ cụ thể.",
+              "source_effective_from": "2026-01-01",
+              "source_verified": true,
+              "scope_note": "Phạm vi từng điều khoản; không suy ra toàn văn bị bãi bỏ từ quan hệ sửa đổi/bãi bỏ một phần."
+            },
+            {
+              "source_id": "nq-258-2025",
+              "target_id": "luat-dat-dai-2024",
+              "type": "overrides",
+              "locator": "Điều 7; Điều 12 khoản 2–3",
+              "source_locator": "Điều 7; Điều 12",
+              "target_locators": [],
+              "target_locators_complete": false,
+              "explanation": "Cơ chế đặc thù chỉ trong phạm vi Điều 1; Điều 7 khoản 4 quy định HĐND quyết định tiêu chí/mức bồi thường, hỗ trợ, tái định cư theo loại dự án. Điều 12 có ưu tiên áp dụng có điều kiện, không bãi bỏ toàn bộ Luật Đất đai. Phải đối chiếu chính sách HĐND cụ thể và chuyển tiếp Luật Thủ đô 2026.",
+              "source_effective_from": "2025-12-12",
+              "source_verified": true,
+              "scope_note": "Phạm vi từng điều khoản; không suy ra toàn văn bị bãi bỏ từ quan hệ sửa đổi/bãi bỏ một phần."
+            },
+            {
+              "source_id": "luat-dat-dai-2024",
+              "target_id": "luat-dat-dai-2013",
+              "type": "replaces",
+              "locator": "Điều 252 khoản 4",
+              "source_locator": "Điều 252 khoản 4",
+              "target_locators": [],
+              "target_locators_complete": true,
+              "explanation": "Hết hiệu lực chung khi Luật31 bắt đầu có hiệu lực, đọc mốc01/08/2024 theo Luật43 và chuyển tiếp; không xóa lịch sử.",
+              "source_effective_from": "2024-08-01",
+              "source_verified": true,
+              "scope_note": "Phạm vi từng điều khoản; không suy ra toàn văn bị bãi bỏ từ quan hệ sửa đổi/bãi bỏ một phần."
+            },
+            {
+              "source_id": "luat-dat-dai-2024",
+              "target_id": "luat-dat-dai-2013",
+              "type": "transition",
+              "locator": "Điều 254;Điều 255;Điều 260",
+              "source_locator": "Điều 254;Điều 255;Điều 260",
+              "target_locators": [],
+              "target_locators_complete": true,
+              "explanation": "Áp dụng lịch sử phải đọc quy định chuyển tiếp và ngày quyết định/phương án; không mặc định toàn bộ hồ sơ cũ dùng quy định hiện nay.",
+              "source_effective_from": "2024-08-01",
+              "source_verified": true,
+              "scope_note": "Phạm vi từng điều khoản; không suy ra toàn văn bị bãi bỏ từ quan hệ sửa đổi/bãi bỏ một phần."
+            },
+            {
+              "source_id": "qd-40-2026-hanoi",
+              "target_id": "luat-dat-dai-2024",
+              "type": "guides",
+              "locator": "Điều 17 của Quy định kèm theo Quyết định 40/2026",
+              "source_locator": "Điều 17",
+              "target_locators": [
+                "Điều 108"
+              ],
+              "target_locators_complete": true,
+              "explanation": "Quy định hỗ trợ ổn định đời sống là triển khai nhóm hỗ trợ tại điểm a khoản1 Điều108; không thay danh mục chung bằng riêng một khoản hỗ trợ.",
+              "source_effective_from": "2026-04-02",
+              "source_verified": true,
+              "scope_note": "Phạm vi từng điều khoản; không suy ra toàn văn bị bãi bỏ từ quan hệ sửa đổi/bãi bỏ một phần."
+            },
+            {
+              "source_id": "qd-40-2026-hanoi",
+              "target_id": "luat-dat-dai-2024",
+              "type": "guides",
+              "locator": "Điều 21 của Quy định kèm theo Quyết định 40/2026",
+              "source_locator": "Điều 21",
+              "target_locators": [
+                "Khoản 4 Điều 111"
+              ],
+              "target_locators_complete": true,
+              "explanation": "Tiêu đề Điều21 Quy định dẫn trực tiếp khoản4 Điều111 Luật Đất đai; giữ đầy đủ chủ thể, điều kiện bồi thường và nhánh nhiều hộ. Không suy mọi người có đất thu hồi đều được một suất.",
+              "source_effective_from": "2026-04-02",
+              "source_verified": true,
+              "scope_note": "Phạm vi từng điều khoản; không suy ra toàn văn bị bãi bỏ từ quan hệ sửa đổi/bãi bỏ một phần."
+            },
+            {
+              "source_id": "qd-40-2026-hanoi",
+              "target_id": "luat-dat-dai-2024",
+              "type": "guides",
+              "locator": "Điều 21 của Quy định kèm theo Quyết định 40/2026",
+              "source_locator": "Điều 21",
+              "target_locators": [
+                "Điều 98"
+              ],
+              "target_locators_complete": true,
+              "explanation": "Liên kết căn cứ thực chất: hình thức bồi thường đất ở tại Điều21 Quy định triển khai khoản4 Điều111 Luật Đất đai và nhánh Điều11 NĐ88 (quy định chi tiết Điều98 Luật Đất đai). Đọc Điều98 để phân biệt các hình thức bồi thường đất ở; đây là quan hệ hướng dẫn/đối chiếu, không phải sửa đổi Điều98.",
+              "source_effective_from": "2026-04-02",
+              "source_verified": true,
+              "scope_note": "Phạm vi từng điều khoản; không suy ra toàn văn bị bãi bỏ từ quan hệ sửa đổi/bãi bỏ một phần."
+            }
+          ]
+        },
+        {
+          "citation_id": "nq-254-2025-2-0-1",
+          "document_id": "nq-254-2025",
+          "title": "Nghị quyết quy định một số cơ chế, chính sách tháo gỡ khó khăn, vướng mắc trong tổ chức thi hành Luật Đất đai",
+          "document_number": "254/2025/QH15",
+          "page": 3,
+          "kind": "legal",
+          "locator": "Điều 3",
+          "text": "khi ban hành quyết định thu hồi đất, cơ quan có thẩm quyền gửi thông báo thu hồi đất cho người có đất thu hồi, chủ sở hữu tài sản gắn liền với đất, người có quyền lợi và nghĩa vụ liên quan (nếu có) biết chậm nhất là 60 ngày đối với đất nông nghiệp và 120 ngày đối với đất phi nông nghiệp. Thời hạn quy định tại điểm này không áp dụng đối với trường hợp quy định tại khoản 2 Điều 85 của Luật Đất đai; b) Thời hạn niêm yết công khai phương án bồi thường, hỗ trợ, tái định cư tại trụ sở Ủy ban nhân dân cấp xã, địa điểm sinh hoạt chung của khu dân cư nơi có đất thu hồi, đăng tải trên Cổng thông tin điện tử của Ủy ban nhân dân cấp xã là 10 ngày. Thời hạn tổ chức đối thoại trong trường hợp còn có ý kiến không đồng ý về phương án bồi thường, hỗ trợ, tái định cư là không quá 30 ngày kể từ ngày tổ chức lấy ý kiến về phương án bổi thường, hỗ trợ, tái định cư; c) Ủy ban nhân dân cấp tỉnh quy định việc tổ chức thực hiện bố trí tái định cư trong trường hợp địa điểm bổ trí tái định cư ngoài địa bàn đơn vị hành chính cấp xã nơi có đất thu hôi. 10. Các trường hợp không được bồi thường về đất khi Nhà nước thu hồi đất bao gồm: a) Trường hợp quy định tại khoản 1 Điều 107 của Luật Đất đai; b) Đất do cơ quan, tổ chức của Nhà nước quản lý quy định tại Điều 217 của Luật Đất đai; c) Đất thu hồi trong trường hợp quy định tại Điều 81, khoản 1 và khoản 2 Điều 82 của Luật Đất đai; d) Các trường hợp khác do Chính phủ quy định.",
+          "applicability": "current",
+          "effective_from": "2026-01-01",
+          "effective_to": "None",
+          "provision_validity": [
+            {
+              "locator": "Điểm b khoản 3 Điều 12",
+              "effective_from": "2025-12-11",
+              "effective_to": null,
+              "source_url": "https://xaydungchinhsach.chinhphu.vn/toan-van-nghi-quyet-254-2025-qh15-quy-dinh-mot-so-co-che-chinh-sach-thao-go-kho-khan-vuong-mac-trong-to-chuc-thi-hanh-luat-dat-dai-119251225171010998.htm",
+              "note": "Điều 13 khoản 2 chỉ cho điểm b khoản 3 Điều 12 có hiệu lực sớm, không coi toàn bộ nghị quyết có hiệu lực 11/12/2025."
+            }
+          ],
+          "source_review_notes": "Nguồn gốc là 15 trang ảnh tại trang Chính phủ. PDF lưu trữ là bản ghép ảnh để xử lý, không phải PDF ký số gốc; OCR đã đối chiếu toàn bộ trang. Chưa thẩm định pháp lý độc lập.",
+          "administrative_scope": null,
+          "procedure_id": null,
+          "operational_reviewed_at": null,
+          "operational_review_status": "pending",
+          "required_dependency_ids": [],
+          "legal_relations": [
+            {
+              "source_id": "nq-254-2025",
+              "target_id": "luat-dat-dai-2024",
+              "type": "overrides",
+              "locator": "Điều 3; Điều 5–11; Điều 13 khoản 3",
+              "source_locator": "Điều 3; Điều 13",
+              "target_locators": [],
+              "target_locators_complete": false,
+              "explanation": "Điều 13 khoản 3: ưu tiên Nghị quyết khi cùng vấn đề có quy định khác luật, có ngoại lệ chính sách thí điểm địa phương do HĐND tỉnh lựa chọn. Đây là cơ chế áp dụng khác quy định luật, không phải thao tác sửa văn bản làm hết hiệu lực toàn bộ Luật Đất đai. Phải đọc Điều 3/5/7 về giá đất, thời hạn thông báo/công khai, tài sản, hỗ trợ và Điều 3 khoản 13 về hồ sơ cũ; không tự dùng nguyên quy định gốc nếu có khác biệt. Ánh xạ điều khoản luật chịu tác động chưa đầy đủ.",
+              "source_effective_from": "2026-01-01",
+              "source_verified": true,
+              "scope_note": "Phạm vi từng điều khoản; không suy ra toàn văn bị bãi bỏ từ quan hệ sửa đổi/bãi bỏ một phần."
+            },
+            {
+              "source_id": "nq-254-2025",
+              "target_id": "luat-dat-dai-2024",
+              "type": "transition",
+              "locator": "Điều 3 khoản 13; Điều 7 khoản 4–7",
+              "source_locator": "Điều 3; Điều 7",
+              "target_locators": [],
+              "target_locators_complete": false,
+              "explanation": "Đã có quyết định thu hồi/phê duyệt phương án, mới có phê duyệt phương án, chưa phê duyệt hoặc dự án phê duyệt một phần có cơ chế khác nhau. Điều 7 có ngoại lệ căn cứ giá và giai đoạn chưa đủ căn cứ. Cần kiểm tra ngày và hồ sơ cụ thể.",
+              "source_effective_from": "2026-01-01",
+              "source_verified": true,
+              "scope_note": "Phạm vi từng điều khoản; không suy ra toàn văn bị bãi bỏ từ quan hệ sửa đổi/bãi bỏ một phần."
+            },
+            {
+              "source_id": "nd-49-2026",
+              "target_id": "nq-254-2025",
+              "type": "guides",
+              "locator": "Điều 1",
+              "source_locator": null,
+              "target_locators": [],
+              "target_locators_complete": false,
+              "explanation": "NĐ49 quy định chi tiết và hướng dẫn một số điều NQ254; giữ liên kết văn bản được hướng dẫn, không thay thế toàn văn nghị quyết.",
+              "source_effective_from": "2026-01-31",
+              "source_verified": true,
+              "scope_note": "Phạm vi từng điều khoản; không suy ra toàn văn bị bãi bỏ từ quan hệ sửa đổi/bãi bỏ một phần."
+            },
+            {
+              "source_id": "qd-40-2026-hanoi",
+              "target_id": "nq-254-2025",
+              "type": "guides",
+              "locator": "Điều 21 của Quy định kèm theo Quyết định 40/2026",
+              "source_locator": "Điều 21",
+              "target_locators": [
+                "Khoản 10 Điều 3"
+              ],
+              "target_locators_complete": true,
+              "explanation": "Điều kiện được bồi thường của nhóm Điều21 phải đọc cùng các trường hợp không được bồi thường ở khoản10 Điều3 NQ254. Đây là liên kết đối chiếu điều kiện loại trừ, không phải QĐ40 sửa đổi NQ254.",
+              "source_effective_from": "2026-04-02",
+              "source_verified": true,
+              "scope_note": "Phạm vi từng điều khoản; không suy ra toàn văn bị bãi bỏ từ quan hệ sửa đổi/bãi bỏ một phần."
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "verifications": [
+    {
+      "draft": {
+        "status": "answered",
+        "summary": "",
+        "claims": [
+          {
+            "kind": "legal_rule",
+            "text": "Theo Điều 95 Luật Đất đai 2024, hộ gia đình, cá nhân đang sử dụng đất không phải là đất thuê trả tiền thuê đất hằng năm và có Giấy chứng nhận quyền sử dụng đất (hoặc quyết định giao đất) được bồi thường khi Nhà nước thu hồi đất vì mục đích quốc phòng, an ninh, phát triển kinh tế‑xã hội vì lợi ích quốc gia, công cộng, trừ các trường hợp được liệt kê tại khoản 10 Điều 3 Nghị quyết 254/2025 (không áp dụng). Khi đủ điều kiện này, theo Điều 98 và Điều 111, hộ gia đình được bồi thường bằng (i) giao đất ở hoặc nhà ở tại khu tái định cư hoặc địa điểm khác phù hợp; (ii) trả tiền; (iii) giao đất có mục đích sử dụng khác; (iv) trong trường hợp không đủ diện tích, có thể hỗ trợ giao đất có thu tiền sử dụng hoặc bán, cho thuê, cho thuê mua nhà ở. Quyết định 40/2026/UBND, Điều 21, cho phép bồi thường bằng bán căn hộ chung cư tái định cư hoặc giao đất ở tái định cư nếu quỹ đất đủ.",
+            "citation_ids": [
+              "luat-dat-dai-2024-97-1-0",
+              "luat-dat-dai-2024-98-0-parent",
+              "luat-dat-dai-2024-100-2-0",
+              "luat-dat-dai-2024-110-scope-4",
+              "qd-40-2026-hanoi-12-1-0"
+            ],
+            "section": "direct"
+          }
+        ],
+        "missing_facts": [],
+        "next_steps": [],
+        "out_of_scope": false
+      },
+      "verdict": {
+        "supported_claim_indexes": [],
+        "supporting_quotes": [],
+        "supporting_spans": [],
+        "issues": [
+          "Claim 0: các điều kiện thay thế chỉ áp dụng cho trường hợp thuộc khoản 1; cần nêu điều kiện về đối tượng trước khi kết luận",
+          "Claim 0: số văn bản trong kết luận không được đoạn dẫn hoặc metadata nguồn chứng minh"
+        ],
+        "needs_more_evidence": false,
+        "followup_query": ""
+      },
+      "rounds": 1,
+      "repairs": 0
+    }
+  ]
+}

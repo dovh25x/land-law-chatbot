@@ -1,0 +1,1 @@
+Initial scoped policy used a one-day window for QD40 replacement facts. Final policy uses the seven-day review horizon, without admitting substantive2026 compensation claims. Earlier offline attempts/locks are retained against initial receipt bytes copied here; they are not reused as final-policy evidence. No model request was made.

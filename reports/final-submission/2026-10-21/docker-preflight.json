@@ -1,0 +1,82 @@
+{
+  "status": "PASS_LOCAL_PREFLIGHT",
+  "serving_image": {
+    "id": "sha256:75592cb987a43c79387dde9cd3f7b58211ab862be7842721f02bd9b09c594166",
+    "repo_digests": [
+      "landlaw@sha256:75592cb987a43c79387dde9cd3f7b58211ab862be7842721f02bd9b09c594166"
+    ],
+    "created": "2026-10-21T08:56:36.030303193Z",
+    "size_bytes": 1212253703
+  },
+  "testtools_image": {
+    "id": "sha256:0acc4b0dbade6075f925970f76904c5af130d62e0bc39fe74ffb431669be6e5b",
+    "repo_digests": [
+      "landlaw@sha256:0acc4b0dbade6075f925970f76904c5af130d62e0bc39fe74ffb431669be6e5b"
+    ],
+    "created": "2026-10-21T09:04:32.122240826Z",
+    "size_bytes": 1352515975
+  },
+  "image_probe": {
+    "status": "PASS",
+    "python": "3.12.15",
+    "uid": 10001,
+    "sqlite_fingerprint": "1697d9dec78b8625398e53999b609e3ce57258666c2e3566a8321385abe8886d",
+    "postgresql_configuration_fingerprint": "2229a1b298052e51b80d1d46530ca9a5ba580f5bc1b04be90cecdf0e15190c6d",
+    "pinned_model_checksums": {
+      "model_quantized.onnx": "f80102d3f2a1229f387d3c81909990d8945513e347b0eab049f7de3c6f98c193",
+      "sentencepiece.bpe.model": "cfc8146abe2a0488e9e2a0c56de7952f7c11ab059eca145a0a727afce0db2865"
+    },
+    "pip_check": "No broken requirements found.",
+    "academic_reports_excluded": true,
+    "duplicate_backup_excluded": true,
+    "public_report_inputs_present": true,
+    "dotenv_absent": true,
+    "external_llm_requests": 0,
+    "scope": "Read-only serving image identity and files, network=none; not database or model inference"
+  },
+  "memory_check": {
+    "passed": true,
+    "peak_rss_mib": 382.6640625,
+    "limit_mib": 512,
+    "reserve_target_mib": 62,
+    "scope": "Exact Python 3.12 deployment image; FastAPI lifespan, resident 8,000-row heading cache and two concurrent long-query CPU embeddings; no LLM; memory fixtures do not certify law"
+  },
+  "python312_serving_image_initial_pytest": {
+    "status": "FAIL_TEST_ENVIRONMENT",
+    "passed": 513,
+    "failed": 3,
+    "log": "backend-python312-docker.log",
+    "reason": "Serving image excludes developer notebook and has no git executable. Original failures retained."
+  },
+  "python312_testtools_pytest": {
+    "status": "PASS",
+    "passed": 516,
+    "elapsed_seconds": 64.43,
+    "network": "none",
+    "real_http_transport": "blocked",
+    "log": "backend-python312-testtools.log",
+    "difference_from_serving_image": "Git installed in a separate test-only layer and notebook directory mounted read-only; same project code/packages."
+  },
+  "dockerfile_serving_modified": false,
+  "project_dependencies_changed": false,
+  "ci_ran": false,
+  "registry_push": false,
+  "deployed": false,
+  "external_llm_requests": 0,
+  "production_database_touched": false,
+  "logs_sha256": {
+    "docker-build.log": "e31eb7606c953f40f0e21a20905b8062812b51602d2506c640e6ff79719c6451",
+    "docker-testtools-build.log": "02c9bb0e4d97dfe521ae633013b6a61370c2d2fea51a66e6a8ea3061a965fb2f",
+    "docker-memory-check.log": "f6fd81c7c3b7f3bcbe3d094f8654e46d4df7f844aa2fb1cc57da7e66f2b043d1",
+    "image-probe.json": "4fda441d04280f54750c74a4a0dae54e1bdad38a462901f3b4c6dc88f2fc7f15",
+    "backend-python312-docker.log": "41cf43a09eb5ba8ba0fd1a94365055b3e4cc27be462bdc2434cdc9d12d681053",
+    "backend-python312-testtools.log": "11526040bbcab20d7fedb8860f6b8967a8f2b885a09c5115f6c84c699c1bb4dc"
+  },
+  "postgres_local": {
+    "receipt": "postgres-preflight.json",
+    "container_retained": true,
+    "container_stopped": true,
+    "database_drop_executed": false
+  },
+  "scope": "Local image and isolated databases only. No model quality, cloud deployment, public E2E or CI claim."
+}

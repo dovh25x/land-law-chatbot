@@ -1,0 +1,130 @@
+{
+  "checked_at": "2026-10-20T19:22:16.964108+00:00",
+  "input_path": "reports/phase2c-current-20261021/acceptance-context-pack/report.json",
+  "input_sha256": "796ac342b5e2806cf5c292f745f5c2413b02e4a500253dea3e6fa34c20dfef25",
+  "scope": "Post-check of real prompt_context selection, not model inference. Same-document/article containment admits parent-equivalent text but does not turn a hidden raw citation ID into a model pass.",
+  "external_llm_requests": 0,
+  "model_pass": null,
+  "full_pipeline_acceptance_established": false,
+  "source_basis_complete_in_synthesis_cases": 1,
+  "n": 3,
+  "results": [
+    {
+      "id": "C01",
+      "fixture_status": "answered",
+      "retrieval_articles_complete": true,
+      "all_cited_ids_shown": false,
+      "all_source_basis_shown_including_parent_equivalence": false,
+      "citations": [
+        {
+          "citation_id": "luat-dat-dai-2024-97-1-0",
+          "same_id_shown": true,
+          "source_text_in_same_document_article_shown": true,
+          "equivalent_prompt_citations": [
+            "luat-dat-dai-2024-97-1-0"
+          ]
+        },
+        {
+          "citation_id": "luat-dat-dai-2024-98-0-parent",
+          "same_id_shown": true,
+          "source_text_in_same_document_article_shown": true,
+          "equivalent_prompt_citations": [
+            "luat-dat-dai-2024-98-0-parent"
+          ]
+        },
+        {
+          "citation_id": "nq-254-2025-2-0-1",
+          "same_id_shown": false,
+          "source_text_in_same_document_article_shown": false,
+          "equivalent_prompt_citations": []
+        },
+        {
+          "citation_id": "luat-dat-dai-2024-100-2-0",
+          "same_id_shown": true,
+          "source_text_in_same_document_article_shown": true,
+          "equivalent_prompt_citations": [
+            "luat-dat-dai-2024-100-2-0"
+          ]
+        }
+      ],
+      "missing_source_ids": [
+        "nq-254-2025-2-0-1"
+      ]
+    },
+    {
+      "id": "C02",
+      "fixture_status": "answered",
+      "retrieval_articles_complete": true,
+      "all_cited_ids_shown": false,
+      "all_source_basis_shown_including_parent_equivalence": true,
+      "citations": [
+        {
+          "citation_id": "luat-dat-dai-2024-106-1-0",
+          "same_id_shown": true,
+          "source_text_in_same_document_article_shown": true,
+          "equivalent_prompt_citations": [
+            "luat-dat-dai-2024-106-1-0"
+          ]
+        },
+        {
+          "citation_id": "qd-40-2026-hanoi-9-1-0",
+          "same_id_shown": false,
+          "source_text_in_same_document_article_shown": true,
+          "equivalent_prompt_citations": [
+            "qd-40-2026-hanoi-9-1-parent"
+          ]
+        }
+      ],
+      "missing_source_ids": []
+    },
+    {
+      "id": "C03",
+      "fixture_status": "answered",
+      "retrieval_articles_complete": true,
+      "all_cited_ids_shown": false,
+      "all_source_basis_shown_including_parent_equivalence": false,
+      "citations": [
+        {
+          "citation_id": "nd-88-2024-0-11-0",
+          "same_id_shown": false,
+          "source_text_in_same_document_article_shown": false,
+          "equivalent_prompt_citations": []
+        },
+        {
+          "citation_id": "nd-226-2025-34-scope-7-2a-5",
+          "same_id_shown": true,
+          "source_text_in_same_document_article_shown": true,
+          "equivalent_prompt_citations": [
+            "nd-226-2025-34-scope-7-2a-5"
+          ]
+        },
+        {
+          "citation_id": "nd-49-2026-23-scope-16-3g",
+          "same_id_shown": false,
+          "source_text_in_same_document_article_shown": false,
+          "equivalent_prompt_citations": []
+        },
+        {
+          "citation_id": "qd-40-2026-hanoi-12-1-0",
+          "same_id_shown": true,
+          "source_text_in_same_document_article_shown": true,
+          "equivalent_prompt_citations": [
+            "qd-40-2026-hanoi-12-1-0"
+          ]
+        },
+        {
+          "citation_id": "qd-40-2026-hanoi-13-0-0",
+          "same_id_shown": true,
+          "source_text_in_same_document_article_shown": true,
+          "equivalent_prompt_citations": [
+            "qd-40-2026-hanoi-13-0-0"
+          ]
+        }
+      ],
+      "missing_source_ids": [
+        "nd-88-2024-0-11-0",
+        "nd-49-2026-23-scope-16-3g"
+      ]
+    }
+  ]
+}

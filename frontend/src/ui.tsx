@@ -56,6 +56,7 @@ export function DocumentRow({ document, onOpen }: { document: LegalDocument; onO
     <span className="document-copy"><strong>{document.title}</strong>
       <span>{document.document_number || 'Chưa có số hiệu'} · {sourceKinds[document.source_kind] || 'Nguồn khác'}</span>
       {document.availability === 'reference_only' && <small>Bản gốc tham khảo · Chưa dùng cho câu trả lời AI</small>}
+      {document.source_lookup_only && <small>{document.verified_passage_count} đoạn được review cho {formatDate(document.review_as_of)} · Không xác minh toàn văn</small>}
       <small>Kiểm tra {formatDate(document.checked_at)}{document.effective_from ? ` · Hiệu lực từ ${formatDate(document.effective_from)}` : ''}{document.effective_to ? ` · Mốc kết thúc ${formatDate(document.effective_to)}` : ''}</small>
     </span><ArrowUpRight size={18}/>
   </button>
@@ -109,7 +110,7 @@ export function SourcePanel({ source, citations, onSelect, onClose }: {
     setDocument(null); setError(''); scrollRef.current?.closest('.panel-body')?.scrollTo(0, 0)
     if (!source || 'excerpt' in source) { setLoading(false); return }
     const controller = new AbortController(); setLoading(true)
-    void getJSON<{ document: LegalDocument }>(`/api/v1/documents/${encodeURIComponent(source.id)}`, controller.signal)
+    void getJSON<{ document: LegalDocument }>(`/api/v1/documents/${encodeURIComponent(source.id)}${source.review_as_of ? `?as_of=${encodeURIComponent(source.review_as_of)}` : ''}`, controller.signal)
       .then(data => { if (!controller.signal.aborted) setDocument(data.document) })
       .catch(() => { if (!controller.signal.aborted) setError('Chưa tải được nội dung; bạn vẫn có thể mở nguồn chính thức bên dưới.') })
       .finally(() => { if (!controller.signal.aborted) setLoading(false) })
@@ -132,8 +133,9 @@ export function SourcePanel({ source, citations, onSelect, onClose }: {
         <div className="source-dates"><p>Ngày bắt đầu hiệu lực<br/><strong>{formatDate((source as LegalDocument).effective_from)}</strong></p><p>Mốc kết thúc hiệu lực<br/><strong>{(source as LegalDocument).effective_to ? formatDate((source as LegalDocument).effective_to) : 'Chưa xác định mốc kết thúc'}</strong></p></div>
         {loading && <p role="status"><LoaderCircle className="spin" size={16}/> Đang tải nội dung…</p>}
         {error && <p role="status">{error}</p>}
-        {document?.chunks?.slice(0, 3).map(chunk => <div className="source-excerpt" key={chunk.id}><h4>{chunk.locator}</h4><blockquote>{chunk.text}</blockquote></div>)}
-        {!!document?.chunks?.length && <p className="secondary-copy">Hiển thị tối đa ba đoạn đầu. Mở nguồn chính thức để đọc đầy đủ.</p>}
+        {document?.source_lookup_only && <p className="data-note">Đoạn nguyên văn được review cho {formatDate(document.review_as_of)}. Không phải đáp án được model kiểm chứng, không xác minh toàn văn hoặc quyền lợi của hộ dân.</p>}
+        {(document?.source_lookup_only ? document.chunks : document?.chunks?.slice(0, 3))?.map(chunk => <div className="source-excerpt" key={chunk.id}><h4>{chunk.locator}</h4><blockquote>{chunk.text}</blockquote></div>)}
+        {!!document?.chunks?.length && <p className="secondary-copy">{document.source_lookup_only ? 'Chỉ hiển thị các đoạn nằm trong phạm vi review của ngày đã chọn.' : 'Hiển thị tối đa ba đoạn đầu.'} Mở nguồn chính thức để đọc đầy đủ.</p>}
       </>}
       <details className="source-technical"><summary>Thông tin phiên bản nguồn</summary><p>Ngày kiểm tra: {formatDate(source.checked_at)}</p><p>Checksum: {source.checksum || 'Chưa có metadata trong lượt hỏi'}</p></details>
       {source.source_review_notes && <p className="secondary-copy">{source.source_review_notes}</p>}
@@ -164,6 +166,7 @@ export function answerText(content: string) {
 
 export function generationLabel(status: GenerationStatus | null) {
   if (!status) return 'Chưa xác định khả năng trả lời'
+  if (status.source_lookup_only) return 'Chỉ tra cứu đoạn nguồn đã review; không sinh đáp án AI'
   if (status.generation_available) return 'Có thể sinh đáp án'
   if (!status.reason) return 'Chưa thể sinh đáp án; chưa xác định nguyên nhân'
   return ({ disabled: 'Trả lời bằng AI đang tạm dừng', source_stale: 'Nguồn cần rà soát; tạm dừng sinh đáp án', provider_limited: 'Nhà cung cấp AI đang giới hạn' })[status.reason] || 'Chưa thể sinh đáp án; chưa xác định nguyên nhân'

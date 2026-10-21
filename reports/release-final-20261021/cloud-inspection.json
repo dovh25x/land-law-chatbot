@@ -1,0 +1,137 @@
+{
+  "checked_at": "2026-10-21T09:50:02.150889+00:00",
+  "mutations": false,
+  "external_llm_requests": 0,
+  "render": {
+    "http_status": 200,
+    "plan": "free",
+    "url": "https://land-law-chatbot.onrender.com",
+    "branch": "main",
+    "repo": "https://github.com/dovh25x/land-law-chatbot",
+    "auto_deploy_trigger": "off",
+    "type": "web_service",
+    "required_env_names_configured": {
+      "GROQ_API_KEY": true,
+      "DATABASE_URL": true,
+      "INGRESS_SECRET": true,
+      "TURNSTILE_SECRET_KEY": true,
+      "IP_HASH_SECRET": true
+    },
+    "owner_connection_absent": true,
+    "secrets_match_local": {
+      "GROQ_API_KEY": true,
+      "DATABASE_URL": true,
+      "INGRESS_SECRET": true,
+      "TURNSTILE_SECRET_KEY": true,
+      "IP_HASH_SECRET": true
+    },
+    "nonsecret_settings": {
+      "APP_ENV": "production",
+      "GROQ_MODEL": "openai/gpt-oss-120b",
+      "GENERATION_ENABLED": null,
+      "ALLOW_STALE_GENERATION": null,
+      "EMBEDDING_DIMENSIONS": "384",
+      "PUBLIC_HOSTNAME": "hanoi-land-law.pages.dev"
+    },
+    "recent_deploys": [
+      {
+        "id": "dep-dbbkmtuq1p3s73cugctg",
+        "status": "live",
+        "commit": "d2424ed5469df05d0994b56daa02d4765323ae83",
+        "created_at": "2026-10-20T11:07:35.969705Z"
+      },
+      {
+        "id": "dep-dbbf4auq1p3s73cd4d10",
+        "status": "deactivated",
+        "commit": "069d21e8fcdc73161e38f678c95805539c8813cd",
+        "created_at": "2026-10-20T04:46:35.952972Z"
+      },
+      {
+        "id": "dep-dbarulcs728c739et7qg",
+        "status": "deactivated",
+        "commit": "371e8c2461f457d36f833320eb2361bb6a10c8eb",
+        "created_at": "2026-10-19T06:57:26.056262Z"
+      },
+      {
+        "id": "dep-dbarhdcs728c739dbsj0",
+        "status": "deactivated",
+        "commit": "f3f99722cfe1fb81c29607eda16055f3a1640ac4",
+        "created_at": "2026-10-19T06:29:09.879885Z"
+      },
+      {
+        "id": "dep-dbarfveq1p3s73cqkn4g",
+        "status": "deactivated",
+        "commit": "4c6494d57984df497df3d677489c122915a392a3",
+        "created_at": "2026-10-19T06:26:05.664201Z"
+      }
+    ]
+  },
+  "cloudflare": {
+    "http_status": 200,
+    "name": "hanoi-land-law",
+    "subdomain": "hanoi-land-law.pages.dev",
+    "production_branch": "main",
+    "domains": [
+      "hanoi-land-law.pages.dev"
+    ],
+    "production_env_names": [
+      "BACKEND_ORIGIN",
+      "INGRESS_SECRET"
+    ],
+    "ingress_matches_local": false,
+    "backend_origin_matches_render": true
+  },
+  "public": {
+    "/healthz": {
+      "http_status": 200,
+      "status": "ok"
+    },
+    "/readyz": {
+      "http_status": 200,
+      "status": "ready",
+      "database": true,
+      "storage": "postgresql",
+      "corpus_release": "corpus-a26bc99e541fbbe2"
+    },
+    "/api/v1/status": {
+      "http_status": 200,
+      "corpus_release": "corpus-a26bc99e541fbbe2",
+      "generation_available": true,
+      "reason": null,
+      "source_fresh": false
+    },
+    "/api/v1/evaluations/latest": {
+      "http_status": 200,
+      "status": "reviewed",
+      "active_configuration_sha256": "83f93f6482ed90765a62c39c818d5972e3560e2a2357efa21cd55f13be603b9e",
+      "configuration_sha256": "c4f0c661af82ab60cc9f918a89e7b417981b070268d2bddfee12116a003c7b25",
+      "active_release": "corpus-a26bc99e541fbbe2"
+    }
+  },
+  "postgresql": {
+    "connected": true,
+    "transaction": "READ ONLY",
+    "server_version": 170011,
+    "required_tables_present": {
+      "releases": true,
+      "release_metadata": true,
+      "source_reviews": true,
+      "turns": true,
+      "chunks": true
+    },
+    "active_corpus": "corpus-a26bc99e541fbbe2",
+    "role": {
+      "superuser": false,
+      "bypass_rls": false,
+      "member_landlaw_runtime": true
+    },
+    "runtime_insert_privileges": {
+      "releases": false,
+      "source_reviews": false,
+      "messages": false,
+      "traces": false,
+      "answer_cache": false
+    },
+    "source_reviews": 0
+  }
+}

@@ -33,6 +33,7 @@ class Settings(BaseSettings):
     public_daily_llm_limit: int = Field(default=100, ge=1)
     public_daily_token_limit: int = Field(default=100000, ge=1)
     generation_enabled: bool = True
+    source_lookup_only: bool = False
     allow_stale_generation: bool = False
     db_statement_timeout_ms: int = Field(default=8000, ge=100, le=15000)
     data_dir: Path = Path("data")
@@ -41,6 +42,8 @@ class Settings(BaseSettings):
     @model_validator(mode="after")
     def production_requirements(self):
         from .local_embedding import MODEL
+        if self.source_lookup_only and self.generation_enabled:
+            raise ValueError('SOURCE_LOOKUP_ONLY requires GENERATION_ENABLED=false')
         if self.embedding_model != MODEL['name'] or self.embedding_dimensions != MODEL['dimensions']:
             raise ValueError('Local embedding contract requires pinned E5 ONNX Q8 with 384 dimensions')
         if self.app_env == "production":

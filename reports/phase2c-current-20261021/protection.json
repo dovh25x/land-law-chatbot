@@ -1,0 +1,23 @@
+{
+  "checked_at": "2026-10-20T18:58:37.697179+00:00",
+  "baseline_files": 2344,
+  "expected_modified_preexisting_files": [
+    "backend/landlaw/agent.py",
+    "backend/landlaw/store.py",
+    "data/legal_relations.json"
+  ],
+  "all_other_preexisting_files_unchanged": true,
+  "all_phase1_phase2b_artifacts_unchanged": true,
+  "previous_untracked_code_and_tests_protected": true,
+  "all_existing_document_metadata_chunks_and_vectors_unchanged": true,
+  "raw_source_manifest_unchanged": true,
+  "frozen_suites_unchanged": true,
+  "base_payload_sha256": "d4694c30042b65fe0874bc95618e7b979484e6f05599ff702434d73b95e9f6ff",
+  "new_chunks": 4,
+  "new_relations": 8,
+  "changed_relation_scope": "nd49 Article16(3g) -> partial repeal of nd226; no verifier relaxation",
+  "model_files": {
+    "models/e5/model_quantized.onnx": "f80102d3f2a1229f387d3c81909990d8945513e347b0eab049f7de3c6f98c193",
+    "models/e5/sentencepiece.bpe.model": "cfc8146abe2a0488e9e2a0c56de7952f7c11ab059eca145a0a727afce0db2865"
+  }
+}

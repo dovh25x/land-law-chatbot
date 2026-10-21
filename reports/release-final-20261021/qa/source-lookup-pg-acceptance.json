@@ -1,0 +1,473 @@
+{
+  "status": "PASS",
+  "checked_at": "2026-10-21T10:08:05.768535+00:00",
+  "storage_backend": "isolated Docker PostgreSQL",
+  "database": "landlaw_phase4_restore",
+  "runtime_role": "landlaw_phase4_runtime",
+  "role_flags": {
+    "rolsuper": false,
+    "rolbypassrls": false
+  },
+  "insert_privileges": {
+    "messages": false,
+    "traces": false,
+    "answer_cache": false,
+    "releases": false,
+    "source_reviews": false
+  },
+  "database_counts_before_after_equal": true,
+  "database_counts": {
+    "documents": 60,
+    "chunks": 7396,
+    "source_reviews": 11
+  },
+  "application_sql_select_only": true,
+  "application_select_queries": 413,
+  "http_methods_executed": [
+    "GET"
+  ],
+  "runtime_fingerprint": "8ee1cd63c2ef531bc603848ce3d5b11334322e368d14c10fc73a81d339d51464",
+  "corpus_id": "corpus-1afca764aa6692e0",
+  "records": [
+    {
+      "as_of": "2026-10-21",
+      "documents": 7,
+      "passages": 43,
+      "chunks": [
+        {
+          "document_id": "luat-dat-dai-2024",
+          "id": "luat-dat-dai-2024-100-2-0",
+          "locator": "Điều 98",
+          "checksum": "38a12ff6b771d2d1ce516bfb363daf6be9405a5027ee5099dee80285b85b3ed5"
+        },
+        {
+          "document_id": "luat-dat-dai-2024",
+          "id": "luat-dat-dai-2024-106-1-0",
+          "locator": "Điều 108",
+          "checksum": "2df8edce5d2a2b47f53daa5197243ad9dbee6c6abf1fdcbec64e313dce69561a"
+        },
+        {
+          "document_id": "luat-dat-dai-2024",
+          "id": "luat-dat-dai-2024-110-scope-4",
+          "locator": "Điều 111",
+          "checksum": "eab98e779ffc5e8ccb75e14e1979694deb9bc847fa5a6452bfac3fdba332de09"
+        },
+        {
+          "document_id": "luat-dat-dai-2024",
+          "id": "luat-dat-dai-2024-97-1-0",
+          "locator": "Điều 95",
+          "checksum": "53e6eda2fbb12c613fabe0591479ee219f8ce707b501493e8ddfff0085601434"
+        },
+        {
+          "document_id": "luat-dat-dai-2024",
+          "id": "luat-dat-dai-2024-98-0-0",
+          "locator": "Điều 95",
+          "checksum": "ff2818d70891a76070e3c8fa74665200229a1a811659925e22293b02eea249e0"
+        },
+        {
+          "document_id": "luat-dat-dai-2024",
+          "id": "luat-dat-dai-2024-98-0-1",
+          "locator": "Điều 95",
+          "checksum": "20c5b744657246cd1389c69e30e97f1f837688e866034c847d08438c727a9147"
+        },
+        {
+          "document_id": "luat-dat-dai-2024",
+          "id": "luat-dat-dai-2024-98-0-parent",
+          "locator": "Điều 95 · ngữ cảnh",
+          "checksum": "83221d1235702559821fef63245562c0334ef2d051954a86e553c9c8424ff1fc"
+        },
+        {
+          "document_id": "luat-dat-dai-2024",
+          "id": "luat-dat-dai-2024-99-0-0",
+          "locator": "Điều 95",
+          "checksum": "00696cbd00cc2e07de5726608bd33248c0e1fe743e62171e85ad01a57791d306"
+        },
+        {
+          "document_id": "nd-88-2024",
+          "id": "nd-88-2024-0-11-0",
+          "locator": "Điều 11",
+          "checksum": "dc096d9940731f54078bfae1d7121e140e5e06239184eba0fbdc401398bd0da3"
+        },
+        {
+          "document_id": "nd-88-2024",
+          "id": "nd-88-2024-0-11-1",
+          "locator": "Điều 11",
+          "checksum": "1891575e0fbe2275d331c8e16005ca4635f41deeed41fee2474f7187803beed9"
+        },
+        {
+          "document_id": "nd-88-2024",
+          "id": "nd-88-2024-0-11-parent",
+          "locator": "Điều 11 · ngữ cảnh",
+          "checksum": "9628d3b7f0612e0724eadc2a23e4b829cadd878dba223682e81106d0c9b8a01f"
+        },
+        {
+          "document_id": "nd-226-2025",
+          "id": "nd-226-2025-15-scope-2-4",
+          "locator": "Điều 2",
+          "checksum": "e24f3aebfc534e8fbaaa60c3b6d96755918b22a96081ebf5f466a698b0c0d103"
+        },
+        {
+          "document_id": "nd-226-2025",
+          "id": "nd-226-2025-34-scope-7-2a-5",
+          "locator": "Điều 7",
+          "checksum": "01185f2239ec01f1e4352dfb67312cf2a0b39a6d84af8c78e9f3f5281d6facb6"
+        },
+        {
+          "document_id": "nd-49-2026",
+          "id": "nd-49-2026-10-1-0",
+          "locator": "Điều 11",
+          "checksum": "1fd47ca2789d49e406d4bd76ae3cca7c4beff2815005c5d3fb8fadff8f31464d"
+        },
+        {
+          "document_id": "nd-49-2026",
+          "id": "nd-49-2026-11-0-0",
+          "locator": "Điều 11",
+          "checksum": "2bb98a3fa97aaa43f8759cd8d2cfb6df9d2ff5d4f915bbee45f40b40994f9c99"
+        },
+        {
+          "document_id": "nd-49-2026",
+          "id": "nd-49-2026-11-0-1",
+          "locator": "Điều 11",
+          "checksum": "1b722af0b898fcdafff9fcd3e33e5e914f2cddbe82c3a1f565b31458cf8e20a0"
+        },
+        {
+          "document_id": "nd-49-2026",
+          "id": "nd-49-2026-11-0-parent",
+          "locator": "Điều 11 · ngữ cảnh",
+          "checksum": "1172f1e12d75d0f41c0014a4d71b5937f4154017ade272425a13ed12ff06a69c"
+        },
+        {
+          "document_id": "nd-49-2026",
+          "id": "nd-49-2026-12-0-0",
+          "locator": "Điều 11",
+          "checksum": "f7bb7645bd23f562df5aeb58119f84c254b54c40abda75f68061abd712a5590f"
+        },
+        {
+          "document_id": "nd-49-2026",
+          "id": "nd-49-2026-23-scope-16-3g",
+          "locator": "Điều 16",
+          "checksum": "c6078f320b710fb1e81e77ff98ac2ea005d110877f457af131851331f0f82aaa"
+        },
+        {
+          "document_id": "nd-49-2026",
+          "id": "nd-49-2026-26-1-0",
+          "locator": "Điều 19",
+          "checksum": "2ec2757d1a852f26b863971f182ac4625fbc6b3d99b7eee8c06a0baca0e27fe9"
+        },
+        {
+          "document_id": "qd-40-2026-hanoi",
+          "id": "qd-40-2026-hanoi-0-2-0",
+          "locator": "Điều 2",
+          "checksum": "2a4a827f49c41d93cbbac4057f8992fe49e94e7894d88dd19c790a34feb7eb81"
+        },
+        {
+          "document_id": "qd-40-2026-hanoi",
+          "id": "qd-40-2026-hanoi-10-0-0",
+          "locator": "Điều 17",
+          "checksum": "5b115d13fc40d0e1d7509c3ff7d65bcdfc153739e28addb6ebb85f13675c8b06"
+        },
+        {
+          "document_id": "qd-40-2026-hanoi",
+          "id": "qd-40-2026-hanoi-12-1-0",
+          "locator": "Điều 21",
+          "checksum": "7b6125f8cd2741ca40c1a26edc8ac03b9077603b86c5d498d2ebc30905cd3256"
+        },
+        {
+          "document_id": "qd-40-2026-hanoi",
+          "id": "qd-40-2026-hanoi-13-0-0",
+          "locator": "Điều 21",
+          "checksum": "55d445374d28faf6745391722e8557d0fc09b27b8cf2b8f4c743b76808077552"
+        },
+        {
+          "document_id": "qd-40-2026-hanoi",
+          "id": "qd-40-2026-hanoi-17-2-0",
+          "locator": "Điều 29",
+          "checksum": "a6fdda4d8ceefdcbcd42b96061f6e53eb6bcd5e6e9fd180fe392cd108784b351"
+        },
+        {
+          "document_id": "qd-40-2026-hanoi",
+          "id": "qd-40-2026-hanoi-9-1-0",
+          "locator": "Điều 17",
+          "checksum": "860ed7f871b3b1b93972f027158d52521affc1bea0aaca85991df1e99d8a3c19"
+        },
+        {
+          "document_id": "qd-40-2026-hanoi",
+          "id": "qd-40-2026-hanoi-9-1-1",
+          "locator": "Điều 17",
+          "checksum": "063da6944b89c206283592137f3a5926b0a6de917e00ad198fb5ebb82fd2eb75"
+        },
+        {
+          "document_id": "qd-40-2026-hanoi",
+          "id": "qd-40-2026-hanoi-9-1-parent",
+          "locator": "Điều 17 · ngữ cảnh",
+          "checksum": "eb0e3b8223a83115b16dbc7744835620ca3e0bb753f9c093e945e380c5678c67"
+        },
+        {
+          "document_id": "luat-thu-do-2026",
+          "id": "luat-thu-do-2026-37-1-0",
+          "locator": "Điều 35",
+          "checksum": "3b9d22af069aa453c424c956b551105204fb59492f1852e1a24ac2a41946ca7f"
+        },
+        {
+          "document_id": "luat-thu-do-2026",
+          "id": "luat-thu-do-2026-37-2-0",
+          "locator": "Điều 36",
+          "checksum": "db9954f4c362407b9c9d12d1a691e7d0ea5648bdbd754c27901b3211ffc6acaa"
+        },
+        {
+          "document_id": "luat-thu-do-2026",
+          "id": "luat-thu-do-2026-38-0-0",
+          "locator": "Điều 36",
+          "checksum": "2ec8680adcea1b589cf66f1b0a2e862b4a7ec8c7ee1b221d5192ae665649715b"
+        },
+        {
+          "document_id": "nq-254-2025",
+          "id": "nq-254-2025-0-3-0",
+          "locator": "Điều 3",
+          "checksum": "c5b74327787747b46b84149c3329a86f40e1082bb5be5945e15f88e06a910ce1"
+        },
+        {
+          "document_id": "nq-254-2025",
+          "id": "nq-254-2025-1-0-0",
+          "locator": "Điều 3",
+          "checksum": "a311084a2bd00b499348248e9979505cf0d7600dd355c96b0af7efa79e76de8c"
+        },
+        {
+          "document_id": "nq-254-2025",
+          "id": "nq-254-2025-1-0-1",
+          "locator": "Điều 3",
+          "checksum": "52556a48c18727151229c66b0459a8776fdc80e24911f67603708c16a1b95e2f"
+        },
+        {
+          "document_id": "nq-254-2025",
+          "id": "nq-254-2025-1-0-parent",
+          "locator": "Điều 3 · ngữ cảnh",
+          "checksum": "52caeed5b8fc118f53fb3b91f83d90656a9d548acb6a63473325498a70beb0f7"
+        },
+        {
+          "document_id": "nq-254-2025",
+          "id": "nq-254-2025-14-1-0",
+          "locator": "Điều 13",
+          "checksum": "426995c90dc2f964ee1f3d0e74c510c98a64ae37244672ddd73064090a3a80c7"
+        },
+        {
+          "document_id": "nq-254-2025",
+          "id": "nq-254-2025-2-0-0",
+          "locator": "Điều 3",
+          "checksum": "29081eacdf91c72d2c2b8d2ab6940e47d97208a6565cade45ce4c27ea8ebda88"
+        },
+        {
+          "document_id": "nq-254-2025",
+          "id": "nq-254-2025-2-0-1",
+          "locator": "Điều 3",
+          "checksum": "9f08a08c0b910e86e612c211962dc3a0c743f3f36ff57bd11ee8d8f67220fa76"
+        },
+        {
+          "document_id": "nq-254-2025",
+          "id": "nq-254-2025-2-0-parent",
+          "locator": "Điều 3 · ngữ cảnh",
+          "checksum": "775d18c6ae9803746d8d940c742276f37a4a1a380a06d58a213bce6c3931eb0e"
+        },
+        {
+          "document_id": "nq-254-2025",
+          "id": "nq-254-2025-3-0-0",
+          "locator": "Điều 3",
+          "checksum": "20dfa7376714fda97c435587025e3a92a45991d3b4115bdb87c2b90a2fc84fed"
+        },
+        {
+          "document_id": "nq-254-2025",
+          "id": "nq-254-2025-3-0-1",
+          "locator": "Điều 3",
+          "checksum": "aa5ace705666227009f4faba23e1b60036dbf25da4e5fe6dd27a5263d5bcde9c"
+        },
+        {
+          "document_id": "nq-254-2025",
+          "id": "nq-254-2025-3-0-parent",
+          "locator": "Điều 3 · ngữ cảnh",
+          "checksum": "9f04261ee808ef279ae501bf7d0130d10ed25da06664e8e40aca2150b12aa0a1"
+        },
+        {
+          "document_id": "nq-254-2025",
+          "id": "nq-254-2025-4-0-0",
+          "locator": "Điều 3",
+          "checksum": "d44791708808f0cbbb4b41f93afbd3e970ff4933f14a0be3a6723587553aebdd"
+        }
+      ]
+    },
+    {
+      "as_of": "2026-10-22",
+      "documents": 1,
+      "passages": 1,
+      "chunks": [
+        {
+          "document_id": "qd-40-2026-hanoi",
+          "id": "qd-40-2026-hanoi-0-2-0",
+          "locator": "Điều 2",
+          "checksum": "2a4a827f49c41d93cbbac4057f8992fe49e94e7894d88dd19c790a34feb7eb81"
+        }
+      ]
+    },
+    {
+      "as_of": "2024-08-02",
+      "documents": 3,
+      "passages": 25,
+      "chunks": [
+        {
+          "document_id": "luat-dat-dai-2024",
+          "id": "luat-dat-dai-2024-104-1-0",
+          "locator": "Điều 104",
+          "checksum": "5cbeb374f268d37de94b63ee4b67b2b837ea156ac9a0d83cd54047668a9bc0fb"
+        },
+        {
+          "document_id": "luat-dat-dai-2024",
+          "id": "luat-dat-dai-2024-106-1-0",
+          "locator": "Điều 108",
+          "checksum": "2df8edce5d2a2b47f53daa5197243ad9dbee6c6abf1fdcbec64e313dce69561a"
+        },
+        {
+          "document_id": "luat-dat-dai-2024",
+          "id": "luat-dat-dai-2024-107-1-0",
+          "locator": "Điều 109",
+          "checksum": "ffaf692dd46fb5d2f26e61f0156d4b39c4bb8293c1e88ebe94bf8f58c9386df9"
+        },
+        {
+          "document_id": "luat-dat-dai-2024",
+          "id": "luat-dat-dai-2024-107-1-1",
+          "locator": "Điều 109",
+          "checksum": "da3ed591c9b29946aee705abdedd17fc5b1746a49fff568cdd8b7e54bb78e364"
+        },
+        {
+          "document_id": "luat-dat-dai-2024",
+          "id": "luat-dat-dai-2024-107-1-parent",
+          "locator": "Điều 109 · ngữ cảnh",
+          "checksum": "e0864ef13ad34497251d2b8ad5ff69f0bd5a26224e4f2f9df90932a4ed9e1f0e"
+        },
+        {
+          "document_id": "luat-dat-dai-2024",
+          "id": "luat-dat-dai-2024-108-0-0",
+          "locator": "Điều 109",
+          "checksum": "7dbd83dafb27340f39641d6a83dbd1a02663366ee2381baf3a4fec271c1a5ad1"
+        },
+        {
+          "document_id": "luat-dat-dai-2024",
+          "id": "luat-dat-dai-2024-93-1-0",
+          "locator": "Điều 91",
+          "checksum": "29c91428a50d3ba6f889b7dbf52558d9131e95b0e8792bc1baf234e75fcb3d0f"
+        },
+        {
+          "document_id": "luat-dat-dai-2024",
+          "id": "luat-dat-dai-2024-94-0-0",
+          "locator": "Điều 91",
+          "checksum": "48f369859c679b156f285c7c4d7c22dcbca515a5d5da693d40845dabaa56fabd"
+        },
+        {
+          "document_id": "luat-dat-dai-2024",
+          "id": "luat-dat-dai-2024-94-0-1",
+          "locator": "Điều 91",
+          "checksum": "76eab3f5444c63ce7c14e1e765539e2966ee6bac91d1f19a17a550006b64656a"
+        },
+        {
+          "document_id": "luat-dat-dai-2024",
+          "id": "luat-dat-dai-2024-94-0-parent",
+          "locator": "Điều 91 · ngữ cảnh",
+          "checksum": "3113c3822dc1610da9225f221fb8c3a89e03922185612ea00a83cf3dbba73936"
+        },
+        {
+          "document_id": "luat-dat-dai-2024",
+          "id": "luat-dat-dai-2024-97-1-0",
+          "locator": "Điều 95",
+          "checksum": "53e6eda2fbb12c613fabe0591479ee219f8ce707b501493e8ddfff0085601434"
+        },
+        {
+          "document_id": "luat-dat-dai-2024",
+          "id": "luat-dat-dai-2024-98-0-0",
+          "locator": "Điều 95",
+          "checksum": "ff2818d70891a76070e3c8fa74665200229a1a811659925e22293b02eea249e0"
+        },
+        {
+          "document_id": "luat-dat-dai-2024",
+          "id": "luat-dat-dai-2024-98-0-1",
+          "locator": "Điều 95",
+          "checksum": "20c5b744657246cd1389c69e30e97f1f837688e866034c847d08438c727a9147"
+        },
+        {
+          "document_id": "luat-dat-dai-2024",
+          "id": "luat-dat-dai-2024-98-0-parent",
+          "locator": "Điều 95 · ngữ cảnh",
+          "checksum": "83221d1235702559821fef63245562c0334ef2d051954a86e553c9c8424ff1fc"
+        },
+        {
+          "document_id": "luat-dat-dai-2024",
+          "id": "luat-dat-dai-2024-99-0-0",
+          "locator": "Điều 95",
+          "checksum": "00696cbd00cc2e07de5726608bd33248c0e1fe743e62171e85ad01a57791d306"
+        },
+        {
+          "document_id": "luat-43-2024",
+          "id": "luat-43-2024-0-1-0",
+          "locator": "Điều 1",
+          "checksum": "c49a768aca49f9639383a26dee5e9193f4a0eac6df0af9f4cb5c7e255a2ffebf"
+        },
+        {
+          "document_id": "luat-43-2024",
+          "id": "luat-43-2024-1-0-0",
+          "locator": "Điều 1",
+          "checksum": "983cbca2c775689f741ac0c49df451237929c4969aa2501eeaef91b68e952413"
+        },
+        {
+          "document_id": "luat-43-2024",
+          "id": "luat-43-2024-1-4-0",
+          "locator": "Điều 5",
+          "checksum": "f7ffd727e1bde5d260f8e729779314d6838d643af1c22544465250053fae4960"
+        },
+        {
+          "document_id": "nd-88-2024",
+          "id": "nd-88-2024-0-19-0",
+          "locator": "Điều 19",
+          "checksum": "e873d4f37b0663d53dbcd6260e109712147b94957cd0fa6e6a0baf797c52b664"
+        },
+        {
+          "document_id": "nd-88-2024",
+          "id": "nd-88-2024-0-19-1",
+          "locator": "Điều 19",
+          "checksum": "8d46cc4232a60856ce2770ba348b1e5df85d3a3179eddefb5f246eb702f96d9b"
+        },
+        {
+          "document_id": "nd-88-2024",
+          "id": "nd-88-2024-0-19-parent",
+          "locator": "Điều 19 · ngữ cảnh",
+          "checksum": "d54f75e7dc69004b9cc949a67d5e1069836f61cbf93d81993cdc6aa26782ab9b"
+        },
+        {
+          "document_id": "nd-88-2024",
+          "id": "nd-88-2024-0-30-0",
+          "locator": "Điều 30",
+          "checksum": "58c013f9a94b5bd7f1a3d66748d8b75a5d117ca7ca45767f57c1ef86cb032415"
+        },
+        {
+          "document_id": "nd-88-2024",
+          "id": "nd-88-2024-0-31-0",
+          "locator": "Điều 31",
+          "checksum": "9d97a1ba33e279dd7b5fdd41a309234e9ff5da359c8ab9d3f222a411e2dad4f3"
+        },
+        {
+          "document_id": "nd-88-2024",
+          "id": "nd-88-2024-0-31-1",
+          "locator": "Điều 31",
+          "checksum": "00985150a8ed0a9d57d02d242f810d5f7cb8e21e8253e9efd50a9d0997d0e70a"
+        },
+        {
+          "document_id": "nd-88-2024",
+          "id": "nd-88-2024-0-31-parent",
+          "locator": "Điều 31 · ngữ cảnh",
+          "checksum": "9be743af420716ed0ec7a5fedf6f96b805a2aee6f4560ef76b298c92bf387ada"
+        }
+      ]
+    }
+  ],
+  "external_llm_requests": 0,
+  "provider_generate_calls": 0,
+  "cloud_database_touched": false,
+  "migrations_or_restore_performed": false,
+  "scope": "Read-only current fallback API on pre-existing local PG16 candidate DB and least-privilege runtime role. Not cloud/public E2E, Turnstile, model inference, legal review renewal or a PG retrieval benchmark."
+}

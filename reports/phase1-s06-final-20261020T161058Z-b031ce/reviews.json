@@ -1,0 +1,8 @@
+{
+  "S06": {
+    "answer_sha256": "1d0930a5afb0d61507339100dfc0092a9ba5a48cea67a4c3a8d1b3c9f10edb37",
+    "verdict": "fail",
+    "review_method": "technical_source_review_by_coding_agent_not_independent_legal_certification",
+    "note": "Final attempt: draft đầu bỏ phạm vi khoản 1. Repair nêu nhóm hộ gia đình/cá nhân không thuê đất trả tiền hằng năm, dẫn khoản 1 và khoản 2, giữ lựa chọn OR. Tuy nhiên structural prerequisite guard vẫn từ chối: từ đối tượng nằm ngoài cửa sổ 80 ký tự sau khoản 1. Không gọi LLM verifier, không có claim/citation được phát hành. Không pass và không sửa/chạy lại."
+  }
+}

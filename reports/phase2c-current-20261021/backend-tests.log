@@ -1,0 +1,34 @@
+...................................................................F.... [ 15%]
+........................................................................ [ 31%]
+........................................................................ [ 47%]
+........................................................................ [ 63%]
+........................................................................ [ 79%]
+........................................................................ [ 95%]
+...................                                                      [100%]
+=================================== FAILURES ===================================
+_ test_legal_relation_prose_cannot_crowd_required_statutory_passages_out_of_prompt _
+
+store = <landlaw.store.Store object at 0x7fdaab64cc30>
+settings = Settings(app_env='development', llm_provider='groq', groq_api_key=SecretStr('**********'), groq_model='openai/gpt-oss-..._prose_cann0/data'), reports_dir=PosixPath('/tmp/pytest-of-dovh25x/pytest-34/test_legal_relation_prose_cann0/reports'))
+
+    def test_legal_relation_prose_cannot_crowd_required_statutory_passages_out_of_prompt(store,settings):
+        from landlaw.models import Evidence
+        law=document(text='Điều 95. Khoản 1 xác định đối tượng. Khoản 2 có giấy chứng nhận hoặc các giấy tờ khác.')
+        other=law.chunks[0].model_copy(update={'id':'law-2','text':'Điều 95. Có quyết định giao đất hoặc giấy tờ nhận chuyển nhượng hợp pháp.'})
+        relations=[{'source_id':f'guide-{i}','target_id':law.id,'type':'guides','source_locator':'Điều 3',
+            'target_locators':['Điều 95'],'target_locators_complete':True,'source_url':str(law.url),
+            'explanation':'Bối cảnh dài không thay thế căn cứ. '*150} for i in range(12)]
+        state={'evidence':[Evidence(chunk=law.chunks[0],document=law),Evidence(chunk=other,document=law)],
+            'release':{'documents':[law.model_dump(mode='json')],'relations':relations}}
+        agent=Agent(store,FakeProvider(settings.model_copy(update={'llm_provider':'groq'})))
+        passages,documents=agent.prompt_context(state)
+        assert {p['citation_id'] for p in passages}=={'law-1','law-2'}
+        fields=documents[0]['legal_relation_fields'];rows=documents[0]['legal_relations']
+>       assert len(rows)==12 and 'target_locators_complete' in fields
+E       assert (0 == 12)
+E        +  where 0 = len([])
+
+tests/test_agent.py:847: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_agent.py::test_legal_relation_prose_cannot_crowd_required_statutory_passages_out_of_prompt
+1 failed, 450 passed in 98.21s (0:01:38)

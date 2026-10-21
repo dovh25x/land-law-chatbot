@@ -27,6 +27,8 @@ Mọi `/api/` request production cần chữ ký ingress. Client sử dụng bea
 
 Các endpoint không yêu cầu bearer vẫn chịu kiểm tra ingress production.
 
+`/readyz` bổ sung `configuration_sha256` và `source_gate`. Khi có policy nguồn giới hạn, `source_gate` gồm `mode`, `policy_sha256`, `eligible_passages`, `usable`, `whole_corpus_verified`; khi không cấu hình policy, giá trị là `null`. `/api/v1/status` trả cùng summary policy. Generation có thể khả dụng cho phạm vi đã duyệt trong khi `source_fresh=false` vẫn phản ánh toàn corpus chưa fresh. Mỗi claim còn phải qua kiểm tra đoạn và ngày hỏi; `usable=true` hoặc HTTP200 không chứng nhận độ đúng pháp luật hay toàn bộ coverage.
+
 ## Tạo phiên
 
 ```http

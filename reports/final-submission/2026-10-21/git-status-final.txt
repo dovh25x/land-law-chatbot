@@ -1,0 +1,49 @@
+ M .dockerignore
+ M .gitignore
+ M backend/landlaw/agent.py
+ M backend/landlaw/api.py
+ M backend/landlaw/cli.py
+ M backend/landlaw/evaluation.py
+ M backend/landlaw/ops.py
+ M backend/landlaw/provider.py
+ M backend/landlaw/store.py
+ M data/legal_relations.json
+ M docs/API.md
+ M docs/EVALUATION.md
+ M docs/OPERATIONS.md
+ M scripts/evaluate_faithfulness.py
+ M scripts/evaluate_generation_candidate.py
+ M scripts/package_release.py
+ M tests/conftest.py
+ M tests/test_agent.py
+ M tests/test_citizen.py
+ M tests/test_claim_encoding.py
+ M tests/test_quality_candidate.py
+ M tests/test_release_readiness.py
+?? backend/landlaw/request_budget.py
+?? backend/landlaw/synthesis_context.py
+?? reports/final-submission/
+?? reports/phase1-s06-20261020T154327Z-7fa717/
+?? reports/phase1-s06-final-20261020T161058Z-b031ce/
+?? reports/phase2-preflight-20261020T1623Z/
+?? reports/phase2b-rc-20261021/
+?? reports/phase2c-current-20261021/
+?? reports/phase2d-synthesis-20261021/
+?? reports/phase3a-live-20261021T070325Z/
+?? reports/phase3b-reliability-20261021T073924Z/
+?? scripts/prepare_current_legal_candidate.py
+?? scripts/verify_current_legal_coverage.py
+?? scripts/verify_source_gate_candidate.py
+?? scripts/verify_synthesis_integrity.py
+?? tests/fixtures/current-source-provisions.json
+?? tests/fixtures/s06-clause-attribution.json
+?? tests/test_alternative_condition_logic.py
+?? tests/test_clause_dependencies.py
+?? tests/test_current_legal_candidate.py
+?? tests/test_faithfulness_isolation.py
+?? tests/test_generation_source_policy_lock.py
+?? tests/test_request_budget.py
+?? tests/test_s06_clause_context.py
+?? tests/test_scoped_source_gate.py
+?? tests/test_source_review_policy.py
+?? tests/test_synthesis_integrity.py

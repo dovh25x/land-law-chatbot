@@ -1,0 +1,50 @@
+{
+  "base_commit": "117e7bd2c4a320c3d02256dfdabf858180b47dbf",
+  "candidate_commit": null,
+  "source_tree_sha256": "a6141c24936798a70960bd601d3168c7b1852941f100980cbaf0b4ca1b1d4545",
+  "scope": "Checks on the uncommitted candidate working tree, not proof the base commit contains these changes. No quality-release pass claim.",
+  "checks": [
+    {
+      "name": "backend",
+      "exit_code": 0,
+      "log": "reports/phase2b-rc-20261021/backend-tests-rc-final.log",
+      "log_sha256": "4ceb04179423450a6a396650691507530678fa3419790f66e2509d8a750c8ad0",
+      "passed_tests": 437
+    },
+    {
+      "name": "backend_python312",
+      "exit_code": 0,
+      "log": "reports/phase2b-rc-20261021/python312-backend-tests-rc-final.log",
+      "log_sha256": "471fcc113159c586c17a7c518beb0ac813e447da417c791d4f4738b033e37699",
+      "passed_tests": 437
+    },
+    {
+      "name": "secrets",
+      "exit_code": 0,
+      "log": "reports/phase2b-rc-20261021/secrets-check-final.log",
+      "log_sha256": "766d75c21b58f1924ca7617ba55b3944d6d327b8f64a36ceba52c177e79340c7",
+      "passed_tests": null
+    },
+    {
+      "name": "frontend_unit",
+      "exit_code": 0,
+      "log": "reports/phase2b-rc-20261021/frontend-tests.log",
+      "log_sha256": "c934516f8b51b95c7117cd4a45df68b4694747690b4d0072d5b16534cc94698a",
+      "passed_tests": 14
+    },
+    {
+      "name": "frontend_build",
+      "exit_code": 0,
+      "log": "reports/phase2b-rc-20261021/frontend-build.log",
+      "log_sha256": "0d78fb708861e7836467be7bb2449a60f8276c9f196a0c064a9f38e3f52a8010",
+      "passed_tests": null
+    },
+    {
+      "name": "frontend_e2e",
+      "exit_code": 0,
+      "log": "reports/phase2b-rc-20261021/frontend-e2e.log",
+      "log_sha256": "a896750752b54e3f56cf6b01e08b6a30c9eaac9e084f061c876b09a8a6cc8a3f",
+      "passed_tests": 100
+    }
+  ]
+}

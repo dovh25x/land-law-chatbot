@@ -1,0 +1,8 @@
+{
+  "S06": {
+    "answer_sha256": "744cb01261b057198fb5c0ca67d1e683d77119082d7c38f0e4395fb244e37256",
+    "verdict": "fail",
+    "review_method": "technical_source_review_by_coding_agent_not_independent_legal_certification",
+    "note": "Cả draft đầu và repair bỏ điều kiện thuộc các trường hợp ở khoản 1 Điều 95. Có đủ context khoản 1 và khoản 2; guard từ chối, không phát claim/citation. Chưa chứng minh phân biệt đúng phạm vi hai khoản. Guard OR/AND còn ghi vấn đề phụ có dấu hiệu false positive với cụm còn phải có một trong. Không chạy lại."
+  }
+}

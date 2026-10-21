@@ -1,0 +1,21 @@
+{
+  "head_unchanged": true,
+  "historical_report_files_checked": 2847,
+  "historical_reports_unchanged": true,
+  "gold_and_corpus_unchanged": true,
+  "modified_existing_source_files": [
+    "backend/landlaw/evaluation.py",
+    "backend/landlaw/provider.py",
+    "scripts/evaluate_generation_candidate.py"
+  ],
+  "new_source_files": [
+    "backend/landlaw/request_budget.py",
+    "tests/test_request_budget.py"
+  ],
+  "all_other_existing_source_files_unchanged": true,
+  "agent_synthesis_verifier_and_F01_source_gate_files_unchanged": true,
+  "new_source_file_count": 201,
+  "source_tree_sha256": "4a7a61b0c3d464bd142ab8887cbaca377f449c66609ef653088a3023734e5a66",
+  "no_commit_push_deploy": true,
+  "no_production_or_cloud_database_operations": true
+}

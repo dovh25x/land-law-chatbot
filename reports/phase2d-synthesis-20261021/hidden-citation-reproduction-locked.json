@@ -1,0 +1,56 @@
+{
+  "scope": "Synthetic integrity reproduction, not model/legal quality. Same SQLite and evidence.",
+  "external_llm_requests": 0,
+  "before_after": [
+    {
+      "version": "before",
+      "status": "answered",
+      "citation_ids": [
+        "law-child"
+      ],
+      "synthesis_payloads": [
+        [
+          {
+            "citation_id": "C1",
+            "document_id": "law",
+            "page": null,
+            "locator": "Điều 1",
+            "text": "Điều 1. Điều kiện bồi thường phải được kiểm tra theo hồ sơ. Điều kiện khác phải được đối chiếu đầy đủ.",
+            "applicability": "current",
+            "clause_spans": []
+          }
+        ]
+      ]
+    },
+    {
+      "version": "after",
+      "status": "insufficient_evidence",
+      "citation_ids": [],
+      "synthesis_payloads": [
+        [
+          {
+            "citation_id": "C1",
+            "document_id": "law",
+            "page": null,
+            "locator": "Điều 1",
+            "text": "Điều 1. Điều kiện bồi thường phải được kiểm tra theo hồ sơ. Điều kiện khác phải được đối chiếu đầy đủ.",
+            "applicability": "current",
+            "clause_spans": []
+          }
+        ],
+        [
+          {
+            "citation_id": "C1",
+            "document_id": "law",
+            "page": null,
+            "locator": "Điều 1",
+            "text": "Điều 1. Điều kiện bồi thường phải được kiểm tra theo hồ sơ. Điều kiện khác phải được đối chiếu đầy đủ.",
+            "applicability": "current",
+            "clause_spans": []
+          }
+        ]
+      ]
+    }
+  ],
+  "regression_demonstrated": true
+}

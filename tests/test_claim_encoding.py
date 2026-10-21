@@ -40,10 +40,11 @@ async def test_generation_roles_follow_the_actual_source_review(store,settings,k
     from landlaw.agent import Agent
     from landlaw.models import Evidence
     from landlaw.security import utcnow
+    from landlaw.security import local_date
     doc=document().model_copy(update={'source_kind':kind,'operational_review_status':status,
         'operational_reviewed_at':utcnow()-timedelta(days=days)})
     payload=release(store,[doc])
     policy=await Agent(store,FakeProvider(settings)).synthesis_claim_policy({
-        'release':payload,'as_of':utcnow().date(),'evidence':[Evidence(document=doc,chunk=doc.chunks[0])]})
+        'release':payload,'as_of':local_date(),'evidence':[Evidence(document=doc,chunk=doc.chunks[0])]})
     assert policy['kind']==['legal_rule','applicability','context']+expected
     assert ('actions' in policy['section']) is bool(expected)

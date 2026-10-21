@@ -1,0 +1,22 @@
+{
+  "checks": {
+    "backend/landlaw/config.py": true,
+    "backend/landlaw/local_embedding.py": true,
+    "backend/landlaw/embedding.py": true,
+    "backend/landlaw/provider.py": true,
+    "data/evaluation/registry.json": true,
+    "data/evaluation/smoke.jsonl": true,
+    "data/evaluation/natural.freeze.json": true,
+    "data/evaluation/supplemental.freeze.json": true,
+    "data/evaluation/supplemental.jsonl": true,
+    "data/evaluation/natural.jsonl": true,
+    "data/evaluation/freeze.json": true,
+    "data/evaluation/citizen-v2-draft/scenarios.jsonl": true,
+    "data/evaluation/citizen-v2-draft/journeys.jsonl": true,
+    "data/evaluation/citizen-v2-draft/manifest.json": true,
+    "data/evaluation/citizen-v2-draft/README.md": true,
+    "data/staging/production-backup-check-20261020/release.json": true,
+    "data/staging/production-backup-check-20261020/corpus-backup.json": true
+  },
+  "all_unchanged": true
+}

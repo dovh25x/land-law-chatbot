@@ -1,0 +1,47 @@
+Timeout (0:00:05)!
+Thread 0x000073e0e57c66c0 [asyncio_0] (most recent call first):
+  File "/usr/lib/python3.14/concurrent/futures/thread.py", line 116 in _worker
+  File "/usr/lib/python3.14/threading.py", line 1024 in run
+  File "/usr/lib/python3.14/threading.py", line 1082 in _bootstrap_inner
+  File "/usr/lib/python3.14/threading.py", line 1044 in _bootstrap
+
+Thread 0x000073e0eb3691c0 [python] (most recent call first):
+  File "/usr/lib/python3.14/selectors.py", line 452 in select
+  File "/usr/lib/python3.14/asyncio/base_events.py", line 2019 in _run_once
+  File "/usr/lib/python3.14/asyncio/base_events.py", line 677 in run_forever
+  File "/usr/lib/python3.14/asyncio/base_events.py", line 706 in run_until_complete
+  File "/usr/lib/python3.14/asyncio/runners.py", line 127 in run
+  File "/home/dovh25x/projects/land-law-chatbot/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py", line 905 in inner
+  File "/home/dovh25x/projects/land-law-chatbot/.venv/lib/python3.14/site-packages/_pytest/python.py", line 167 in pytest_pyfunc_call
+  File "/home/dovh25x/projects/land-law-chatbot/.venv/lib/python3.14/site-packages/pluggy/_callers.py", line 121 in _multicall
+  File "/home/dovh25x/projects/land-law-chatbot/.venv/lib/python3.14/site-packages/pluggy/_manager.py", line 120 in _hookexec
+  File "/home/dovh25x/projects/land-law-chatbot/.venv/lib/python3.14/site-packages/pluggy/_hooks.py", line 512 in __call__
+  File "/home/dovh25x/projects/land-law-chatbot/.venv/lib/python3.14/site-packages/_pytest/python.py", line 1707 in runtest
+  File "/home/dovh25x/projects/land-law-chatbot/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py", line 569 in runtest
+  File "/home/dovh25x/projects/land-law-chatbot/.venv/lib/python3.14/site-packages/_pytest/runner.py", line 184 in pytest_runtest_call
+  File "/home/dovh25x/projects/land-law-chatbot/.venv/lib/python3.14/site-packages/pluggy/_callers.py", line 121 in _multicall
+  File "/home/dovh25x/projects/land-law-chatbot/.venv/lib/python3.14/site-packages/pluggy/_manager.py", line 120 in _hookexec
+  File "/home/dovh25x/projects/land-law-chatbot/.venv/lib/python3.14/site-packages/pluggy/_hooks.py", line 512 in __call__
+  File "/home/dovh25x/projects/land-law-chatbot/.venv/lib/python3.14/site-packages/_pytest/runner.py", line 250 in <lambda>
+  File "/home/dovh25x/projects/land-law-chatbot/.venv/lib/python3.14/site-packages/_pytest/runner.py", line 361 in from_call
+  File "/home/dovh25x/projects/land-law-chatbot/.venv/lib/python3.14/site-packages/_pytest/runner.py", line 249 in call_and_report
+  File "/home/dovh25x/projects/land-law-chatbot/.venv/lib/python3.14/site-packages/_pytest/runner.py", line 139 in runtestprotocol
+  File "/home/dovh25x/projects/land-law-chatbot/.venv/lib/python3.14/site-packages/_pytest/runner.py", line 118 in pytest_runtest_protocol
+  File "/home/dovh25x/projects/land-law-chatbot/.venv/lib/python3.14/site-packages/pluggy/_callers.py", line 121 in _multicall
+  File "/home/dovh25x/projects/land-law-chatbot/.venv/lib/python3.14/site-packages/pluggy/_manager.py", line 120 in _hookexec
+  File "/home/dovh25x/projects/land-law-chatbot/.venv/lib/python3.14/site-packages/pluggy/_hooks.py", line 512 in __call__
+  File "/home/dovh25x/projects/land-law-chatbot/.venv/lib/python3.14/site-packages/_pytest/main.py", line 408 in pytest_runtestloop
+  File "/home/dovh25x/projects/land-law-chatbot/.venv/lib/python3.14/site-packages/pluggy/_callers.py", line 121 in _multicall
+  File "/home/dovh25x/projects/land-law-chatbot/.venv/lib/python3.14/site-packages/pluggy/_manager.py", line 120 in _hookexec
+  File "/home/dovh25x/projects/land-law-chatbot/.venv/lib/python3.14/site-packages/pluggy/_hooks.py", line 512 in __call__
+  File "/home/dovh25x/projects/land-law-chatbot/.venv/lib/python3.14/site-packages/_pytest/main.py", line 384 in _main
+  File "/home/dovh25x/projects/land-law-chatbot/.venv/lib/python3.14/site-packages/_pytest/main.py", line 330 in wrap_session
+  File "/home/dovh25x/projects/land-law-chatbot/.venv/lib/python3.14/site-packages/_pytest/main.py", line 377 in pytest_cmdline_main
+  File "/home/dovh25x/projects/land-law-chatbot/.venv/lib/python3.14/site-packages/pluggy/_callers.py", line 121 in _multicall
+  File "/home/dovh25x/projects/land-law-chatbot/.venv/lib/python3.14/site-packages/pluggy/_manager.py", line 120 in _hookexec
+  File "/home/dovh25x/projects/land-law-chatbot/.venv/lib/python3.14/site-packages/pluggy/_hooks.py", line 512 in __call__
+  File "/home/dovh25x/projects/land-law-chatbot/.venv/lib/python3.14/site-packages/_pytest/config/__init__.py", line 229 in _main
+  File "/home/dovh25x/projects/land-law-chatbot/.venv/lib/python3.14/site-packages/_pytest/config/__init__.py", line 253 in _console_main
+  File "/home/dovh25x/projects/land-law-chatbot/.venv/lib/python3.14/site-packages/pytest/__main__.py", line 9 in <module>
+  File "<frozen runpy>", line 88 in _run_code
+  File "<frozen runpy>", line 198 in _run_module_as_main

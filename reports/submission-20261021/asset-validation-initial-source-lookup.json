@@ -1,0 +1,184 @@
+{
+  "scope": "Academic export QA only; not model, legal or public E2E validation",
+  "pdf": {
+    "Final_Project_Report.pdf": {
+      "pages": 27,
+      "page_sizes_points": [
+        [
+          594.96,
+          841.92
+        ]
+      ],
+      "embedded_fonts": [
+        "/AAAAAA+DejaVuSans-Bold",
+        "/BAAAAA+DejaVuSans",
+        "/CAAAAA+LiberationSans",
+        "/DAAAAA+DejaVuSerif-Bold",
+        "/EAAAAA+DejaVuSerif",
+        "/FAAAAA+DejaVuSansMono",
+        "/GAAAAA+LiberationSerif",
+        "/HAAAAA+DejaVuSans",
+        "/IAAAAA+DejaVuSans",
+        "/JAAAAA+DejaVuSerif"
+      ],
+      "unembedded_detected": [],
+      "text_chars": 44245,
+      "blank_pages": [],
+      "contains_vietnamese": true,
+      "sha256": "d1d6ca809c947edf1ade30f67fb686be18ef48fd03fd148ee50bec703e07c378",
+      "required_text": {
+        "97,37%": true,
+        "95,24%": true,
+        "S06": true,
+        "INCOMPLETE": true,
+        "NOT RUN": true,
+        "LlamaIndex": true,
+        "LangGraph": true,
+        "Groq": true
+      }
+    },
+    "Final_Project_Presentation.pdf": {
+      "pages": 12,
+      "page_sizes_points": [
+        [
+          960.0,
+          540.0
+        ]
+      ],
+      "embedded_fonts": [
+        "/AAAAAA+DejaVuSans-Bold",
+        "/BAAAAA+DejaVuSans",
+        "/CAAAAA+LiberationSerif",
+        "/DAAAAA+DejaVuSans",
+        "/EAAAAA+DejaVuSans"
+      ],
+      "unembedded_detected": [],
+      "text_chars": 4736,
+      "blank_pages": [],
+      "contains_vietnamese": false,
+      "sha256": "a324c830354f202d6bd25a640d87719c4f94d372cf703fb6f682293c1219deb0"
+    }
+  },
+  "pptx": {
+    "slides": 12,
+    "notes": 12,
+    "zip_test": null,
+    "has_architecture_image": true,
+    "sha256": "a23d7d746e66d678de46412c13c0705934d9f33e6f97b6a68ff90aef2ea7cdc5"
+  },
+  "errors": [
+    "Final_Project_Presentation.pdf: Vietnamese extraction missing"
+  ],
+  "html_layout": {
+    "slide_layout": [
+      {
+        "slide": "1",
+        "scrollWidth": 1280,
+        "clientWidth": 1280,
+        "scrollHeight": 711,
+        "clientHeight": 711,
+        "content_overflow": []
+      },
+      {
+        "slide": "2",
+        "scrollWidth": 1280,
+        "clientWidth": 1280,
+        "scrollHeight": 711,
+        "clientHeight": 711,
+        "content_overflow": []
+      },
+      {
+        "slide": "3",
+        "scrollWidth": 1280,
+        "clientWidth": 1280,
+        "scrollHeight": 711,
+        "clientHeight": 711,
+        "content_overflow": []
+      },
+      {
+        "slide": "4",
+        "scrollWidth": 1280,
+        "clientWidth": 1280,
+        "scrollHeight": 711,
+        "clientHeight": 711,
+        "content_overflow": []
+      },
+      {
+        "slide": "5",
+        "scrollWidth": 1280,
+        "clientWidth": 1280,
+        "scrollHeight": 711,
+        "clientHeight": 711,
+        "content_overflow": []
+      },
+      {
+        "slide": "6",
+        "scrollWidth": 1280,
+        "clientWidth": 1280,
+        "scrollHeight": 711,
+        "clientHeight": 711,
+        "content_overflow": []
+      },
+      {
+        "slide": "7",
+        "scrollWidth": 1280,
+        "clientWidth": 1280,
+        "scrollHeight": 711,
+        "clientHeight": 711,
+        "content_overflow": []
+      },
+      {
+        "slide": "8",
+        "scrollWidth": 1280,
+        "clientWidth": 1280,
+        "scrollHeight": 711,
+        "clientHeight": 711,
+        "content_overflow": []
+      },
+      {
+        "slide": "9",
+        "scrollWidth": 1280,
+        "clientWidth": 1280,
+        "scrollHeight": 711,
+        "clientHeight": 711,
+        "content_overflow": []
+      },
+      {
+        "slide": "10",
+        "scrollWidth": 1280,
+        "clientWidth": 1280,
+        "scrollHeight": 711,
+        "clientHeight": 711,
+        "content_overflow": []
+      },
+      {
+        "slide": "11",
+        "scrollWidth": 1280,
+        "clientWidth": 1280,
+        "scrollHeight": 711,
+        "clientHeight": 711,
+        "content_overflow": []
+      },
+      {
+        "slide": "12",
+        "scrollWidth": 1280,
+        "clientWidth": 1280,
+        "scrollHeight": 711,
+        "clientHeight": 711,
+        "content_overflow": []
+      }
+    ]
+  },
+  "missing_local_links": [],
+  "pdf_bounds": {
+    "Final_Project_Report.pdf": {
+      "chars_checked": 45071,
+      "outside_page_boxes": []
+    },
+    "Final_Project_Presentation.pdf": {
+      "chars_checked": 4902,
+      "outside_page_boxes": []
+    }
+  },
+  "status": "FAIL"
+}

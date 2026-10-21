@@ -1,0 +1,55 @@
+{
+  "requests": [
+    {
+      "url": "https://hanoi-land-law.pages.dev/",
+      "method": "GET",
+      "checked_at": "2026-10-20T17:31:41.708745+00:00",
+      "status": 200,
+      "elapsed_ms": 159
+    },
+    {
+      "url": "https://hanoi-land-law.pages.dev/healthz",
+      "method": "GET",
+      "checked_at": "2026-10-20T17:31:41.868152+00:00",
+      "error": "ReadTimeout"
+    },
+    {
+      "url": "https://hanoi-land-law.pages.dev/readyz",
+      "method": "GET",
+      "checked_at": "2026-10-20T17:32:11.901381+00:00",
+      "status": 200,
+      "elapsed_ms": 5121,
+      "public_metadata": {
+        "status": "ready",
+        "database": true,
+        "llm_configured": true,
+        "corpus_release": "corpus-a26bc99e541fbbe2",
+        "storage": "postgresql"
+      }
+    },
+    {
+      "url": "https://hanoi-land-law.pages.dev/api/v1/status",
+      "method": "GET",
+      "checked_at": "2026-10-20T17:32:17.022237+00:00",
+      "status": 200,
+      "elapsed_ms": 709,
+      "public_metadata": {
+        "corpus_release": "corpus-a26bc99e541fbbe2",
+        "generation_available": true,
+        "source_fresh": false,
+        "reason": null
+      }
+    },
+    {
+      "url": "https://hanoi-land-law.pages.dev/api/v1/evaluations",
+      "method": "GET",
+      "checked_at": "2026-10-20T17:32:17.730859+00:00",
+      "status": 404,
+      "elapsed_ms": 148,
+      "public_metadata": {}
+    }
+  ],
+  "chat_post_performed": false,
+  "production_database_mutated": false,
+  "llm_calls": 0
+}

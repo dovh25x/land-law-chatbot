@@ -1,0 +1,24 @@
+{
+  "phase3a_allocation_hard_cap": 60000,
+  "before_proposed_request": {
+    "confirmed_usage": 4829,
+    "estimated_usage": 47330,
+    "estimated_usage_kind": "upper_bound_for_requests_without_provider_usage",
+    "reserved_budget": 0,
+    "remaining_test_budget": 7841,
+    "requests_reserved": 3,
+    "max_tokens": 60000,
+    "max_requests": 18,
+    "blocked_reason": null,
+    "provider_quota_is_separate": true
+  },
+  "proposed_case": "C02",
+  "proposed_initial_request_wire_bytes": 13644,
+  "required_reservation": 19788,
+  "would_exceed_original_allocation": true,
+  "request_allowed_under_carried_budget": false,
+  "new_external_model_requests": 0,
+  "new_confirmed_usage": 0,
+  "runtime_fingerprint_for_proposed_request": "1697d9dec78b8625398e53999b609e3ce57258666c2e3566a8321385abe8886d",
+  "scope": "Read saved receipts; no case execution, model, HTTP, corpus mutation or quota query. No new 60000-token allocation is implied by a new report/output directory. Unknown reservations remain charged; a smaller reservation requires a proven tokenizer/framing bound."
+}
