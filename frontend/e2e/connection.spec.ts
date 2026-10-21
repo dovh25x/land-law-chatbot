@@ -104,6 +104,23 @@ test('a failing document library never disables the chat', async ({ page }) => {
   await expect(page.getByRole('button', { name: 'Thử tải lại thư viện' })).toBeVisible()
 })
 
+test('the source library stays readable while status is unavailable', async ({ page }) => {
+  const doc = {
+    id: 'fixture-doc', title: 'Văn bản kiểm thử', document_number: '40/2026/QĐ-UBND',
+    source_kind: 'legal', url: 'https://hanoi.gov.vn/', checked_at: '2026-10-22',
+    applicability_verified: true,
+  }
+  await baseMocks(page, { status: () => new Error('down'), documents: () => ({ documents: [doc], references: [] }) })
+  await page.route('**/api/v1/documents/fixture-doc*', route => route.fulfill({ json: { document: doc } }))
+  await page.goto('/')
+  await expect(composer(page)).toBeDisabled()
+  await openLibrary(page)
+  await page.locator('.document-row').first().click()
+  const panel = page.getByRole('complementary', { name: 'Nguồn căn cứ' }).or(page.getByRole('dialog', { name: 'Nguồn căn cứ' }))
+  await expect(panel).toBeVisible()
+  await expect(panel).toContainText('Văn bản kiểm thử')
+})
+
 test('an answer in progress is not cancelled by a failed status check, and the question is submitted once', async ({ page }) => {
   let failStatus = false
   let chats = 0
