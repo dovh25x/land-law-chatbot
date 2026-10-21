@@ -32,7 +32,7 @@ class SimpleProvider:
         if self.failure:
             raise self.failure
         assert schema is SimpleAnswer
-        assert payload["allowed_citation_ids"] == ["S1"]
+        assert payload["allowed_citation_ids"]
         return self.answer
 
 
@@ -146,6 +146,23 @@ def test_chat_endpoint_routes_simple_rag_mode(store, settings):
 def test_inline_markers_are_the_only_citation_contract():
     assert _marker_ids("Ý thứ nhất [S1], ý thứ hai 【 S2 】 và lặp lại [ S1 ].") == (["S1", "S2"], False)
     assert _marker_ids("Nguồn không tồn tại [S9].")[1] is True
+
+
+def test_multiple_inline_citations_are_derived_once_each(store, settings):
+    from conftest import document
+    release(store, [
+        document(doc_id="law-1", text="Điều kiện bồi thường phải được xem xét theo hồ sơ."),
+        document(doc_id="law-2", text="Khoản hỗ trợ được xác định theo điều kiện và hồ sơ."),
+    ])
+    sid, _ = session(store)
+    provider = SimpleProvider(settings, answer=SimpleAnswer(
+        answer="Điều kiện bồi thường cần được xem xét theo hồ sơ [S1]. Khoản hỗ trợ cũng phụ thuộc điều kiện [S2].",
+    ))
+    result = asyncio.run(SimpleRAG(store, provider).run(
+        request(sid, "Điều kiện bồi thường và hỗ trợ là gì?"), lambda _: None, "r1"
+    ))
+    assert result.status == "answered"
+    assert {citation.document_id for citation in result.citations} == {"law-1", "law-2"}
 
 
 @pytest.mark.parametrize(
