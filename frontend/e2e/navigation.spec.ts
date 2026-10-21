@@ -41,6 +41,7 @@ test('technical demo clearly discloses pending legal acceptance and coverage gap
 })
 
 test('API quota errors are displayed without an invented answer', async ({ page }) => {
+  await page.route('**/readyz', r => r.fulfill({ json: { status: 'ready', database: true, llm_configured: true } }))
   await page.route('**/api/v1/sessions', r => r.fulfill({ status: 201, json: { session_id: 'test-session', token: 'test-session-token' } }))
   await page.route('**/api/v1/chat', r => r.fulfill({ status: 429, headers: { 'Retry-After': '37' }, json: { detail: 'limited' } }))
   await page.goto('/')
@@ -51,6 +52,7 @@ test('API quota errors are displayed without an invented answer', async ({ page 
 })
 
 test('verified SSE answer opens source and trace with keyboard dismissal', async ({ page }) => {
+  await page.route('**/readyz', r => r.fulfill({ json: { status: 'ready', database: true, llm_configured: true } }))
   const citation = { id: 'law-article', document_id: 'law', title: 'Nguồn thử nghiệm giao diện', document_number: '40/2026/QĐ-UBND', url: 'https://hanoi.gov.vn/', locator: 'Điều 29', excerpt: 'Trích đoạn kiểm thử, không phải dữ liệu pháp lý.', checked_at: '2026-10-11T00:00:00Z', applicability: 'current', page: 6, source_url: 'https://datafiles.hanoi.gov.vn/test-fixture.pdf#page=6' }
   const trace = [{ step: 'verify', tool: 'check_effectivity', summary: 'Đã kiểm tra nguồn trong fixture.', document_ids: ['law'], elapsed_ms: 50 }]
   const result = { status: 'clarification_needed', content: 'Cần bổ sung thời điểm quyết định.', citations: [citation], trace, trace_id: 'ui-test-trace', elapsed_ms: 100, tool_calls: 1 }

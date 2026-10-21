@@ -133,3 +133,22 @@ test('failed metadata does not reuse a previously enabled normal configuration',
   await page.getByRole('button', { name: 'Kiểm tra kết nối', exact: true }).click()
   await expect(page.getByLabel('Câu hỏi pháp luật')).toBeEnabled()
 })
+
+test('known normal-mode provider limit retains the draft and sends no session or chat request', async ({ page }) => {
+  await page.route('**/api/v1/status', route => route.fulfill({ json: {
+    generation_available: false, reason: 'provider_limited', retry_after: 37,
+  } }))
+  await page.route('**/api/v1/documents**', route => route.fulfill({ json: { documents: [], references: [] } }))
+  const posts: string[] = []
+  page.on('request', request => {
+    if (request.method() === 'POST' && /\/api\/v1\/(sessions|chat)$/.test(request.url())) posts.push(request.url())
+  })
+  await page.goto('/')
+  await expect(page.locator('.connection-note')).toContainText('37 giây')
+  await page.getByLabel('Câu hỏi pháp luật').fill('LOCAL_DRAFT_ONLY')
+  await page.getByRole('button', { name: 'Gửi câu hỏi' }).click()
+  await expect(page.getByRole('alert')).toContainText('Nhà cung cấp AI đang giới hạn')
+  await expect(page.getByLabel('Câu hỏi pháp luật')).toHaveValue('LOCAL_DRAFT_ONLY')
+  await expect(page.locator('.message.user')).toHaveCount(0)
+  expect(posts).toEqual([])
+})
