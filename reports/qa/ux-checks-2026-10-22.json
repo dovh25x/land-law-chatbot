@@ -1,0 +1,59 @@
+{
+  "checks": {
+    "theme-toggle": {
+      "ok": true,
+      "detail": "light -> dark"
+    },
+    "theme-persisted": {
+      "ok": true,
+      "detail": "dark -> dark"
+    },
+    "composer-visible-after-scroll": {
+      "ok": true,
+      "detail": "{\"x\":440,\"y\":728.5625,\"width\":824,\"height\":171.4375}"
+    },
+    "return-to-end-visible": {
+      "ok": true,
+      "detail": ""
+    },
+    "return-to-end-works": {
+      "ok": true,
+      "detail": ""
+    },
+    "copy-answer": {
+      "ok": true,
+      "detail": "Nhận định pháp lý số 1: điều kiện bồi th"
+    },
+    "copy-no-error": {
+      "ok": true,
+      "detail": ""
+    },
+    "copy-live-region": {
+      "ok": true,
+      "detail": ""
+    },
+    "official-link-target": {
+      "ok": true,
+      "detail": ""
+    },
+    "official-link-rel": {
+      "ok": true,
+      "detail": ""
+    },
+    "sources-navigation": {
+      "ok": true,
+      "detail": ""
+    },
+    "browser-back": {
+      "ok": true,
+      "detail": "url http://127.0.0.1:4176/ -> about:blank; app state is in-memory (no router)"
+    },
+    "no-page-errors": {
+      "ok": true,
+      "detail": ""
+    }
+  },
+  "failures": [],
+  "page_errors": [],
+  "pass": true
+}
