@@ -4,7 +4,9 @@ import { listConversations, saveConversation, deleteConversation, clearConversat
 import { useEffect, useRef, useState } from 'react'
 import ReactMarkdown from 'react-markdown'
 import { ArrowDown, ArrowUp, BookOpen, CircleHelp, Copy, LoaderCircle, Menu, MessageSquare, Moon, PanelLeftClose, PanelLeftOpen, Plus, Search, Square, Sun, Trash2, X } from 'lucide-react'
-import { ask, APIError, BASE, BACKEND_CONFIGURED, cachedSession, clearSession, getJSON, getSession, type Citation, type GenerationStatus, type LegalDocument, type Readiness, type Result, type Session } from './api'
+import { ask, APIError, BACKEND_CONFIGURED, cachedSession, clearSession, getJSON, getSession, type Citation, type GenerationStatus, type LegalDocument, type Readiness, type Result, type Session } from './api'
+import { canSubmit } from './connection'
+import { useConnection } from './useConnection'
 import { ConfirmDialog, DataPanel, DocumentRow, formatDate, generationLabel, SourcePanel, sourceKinds, answerText, useDialog, useMedia } from './ui'
 import { Turnstile } from './Turnstile'
 
@@ -31,16 +33,20 @@ function App() {
   const [hasSession, setHasSession] = useState(() => !!cachedSession()), [challengeVersion, setChallengeVersion] = useState(0)
   const [dataOpen, setDataOpen] = useState(false), [input, setInput] = useState(''), [messages, setMessages] = useState<Message[]>([])
   const [busy, setBusy] = useState(false), [error, setError] = useState('')
-  const [readiness, setReadiness] = useState<Readiness | null>(null), [generation, setGeneration] = useState<GenerationStatus | null>(null), [connecting, setConnecting] = useState(false)
+  const [readiness, setReadiness] = useState<Readiness | null>(null)
   const [docs, setDocs] = useState<LegalDocument[]>([]), [docsState, setDocsState] = useState<'loading' | 'ready' | 'error'>('loading')
   const [lookupMode, setLookupMode] = useState(false), [lookupDate, setLookupDate] = useState(''), [sourceReviewDate, setSourceReviewDate] = useState('')
+  const { connection, check } = useConnection({ fetchStatus: signal => getJSON<GenerationStatus>('/api/v1/status', signal) })
+  const generation = connection.status
+  const runtimeKnown = generation !== null
   const sourceOnly = lookupMode || !!generation?.source_lookup_only
-  const runtimeKnown = generation !== null && !connecting
   const showVerifiedAnswers = runtimeKnown && !sourceOnly
-  const canGenerate = showVerifiedAnswers && generation.generation_available
+  const canGenerate = showVerifiedAnswers && canSubmit(generation)
+  const connecting = connection.phase === 'connecting' && !generation
   const [sourcePanel, setSourcePanel] = useState<SourceSelection | null>(null)
   const [search, setSearch] = useState(''), [sourceKind, setSourceKind] = useState('all')
   const inputRef = useRef<HTMLTextAreaElement>(null), navRef = useRef<HTMLElement>(null)
+  const docsLoaded = useRef(false)
   const sessionRef = useRef<Session | null>(null), abortRef = useRef<AbortController | null>(null), stopReason = useRef('')
   const chatScroll = useRef<HTMLDivElement>(null), nearBottom = useRef(true), [showBottom, setShowBottom] = useState(false)
   const mobile = useMedia('(max-width: 767px)'), desktop = useMedia('(min-width: 1280px)'), touch = useMedia('(pointer: coarse)')
@@ -60,33 +66,25 @@ function App() {
     try { await navigator.clipboard.writeText(content); setCopiedId(id); setCopyError('') }
     catch { setCopyError('Không sao chép được. Bạn có thể chọn nội dung để sao chép thủ công.') }
   }
-  async function refresh(signal?: AbortSignal) {
-    if (!BACKEND_CONFIGURED) { setReadiness({ status: 'not_deployed' }); setDocsState('error'); return }
-    setConnecting(true); setGeneration(null); setDocsState('loading')
-    const results = await Promise.allSettled([
-      fetch(BASE + '/readyz', { signal }).then(response => response.json() as Promise<Readiness>),
-      getJSON<GenerationStatus>('/api/v1/status', signal),
-      getJSON<{ documents: LegalDocument[]; references?: LegalDocument[]; source_lookup_only?: boolean; as_of?: string }>(`/api/v1/documents${lookupDate ? `?as_of=${encodeURIComponent(lookupDate)}` : ''}`, signal),
-    ])
-    if (signal?.aborted) return
-    const [ready, status, sources] = results
-    setReadiness(ready.status === 'fulfilled' ? ready.value : { status: 'starting' })
-    setGeneration(ready.status === 'fulfilled' && ready.value.status === 'ready'
-      && status.status === 'fulfilled' && sources.status === 'fulfilled' ? status.value : null)
-    if (sources.status === 'fulfilled') { setDocs([...sources.value.documents, ...(sources.value.references || [])]); setLookupMode(!!sources.value.source_lookup_only); setSourceReviewDate(sources.value.as_of || ''); setDocsState('ready') } else { setDocs([]); setDocsState('error') }
-    setConnecting(false)
+  async function loadDocs(signal?: AbortSignal) {
+    if (!BACKEND_CONFIGURED) { setDocsState('error'); return }
+    if (!docsLoaded.current) setDocsState('loading')
+    try {
+      const sources = await getJSON<{ documents: LegalDocument[]; references?: LegalDocument[]; source_lookup_only?: boolean; as_of?: string }>(`/api/v1/documents${lookupDate ? `?as_of=${encodeURIComponent(lookupDate)}` : ''}`, signal)
+      setDocs([...sources.documents, ...(sources.references || [])]); setLookupMode(!!sources.source_lookup_only); setSourceReviewDate(sources.as_of || ''); setDocsState('ready'); docsLoaded.current = true
+    } catch { if (!signal?.aborted) setDocsState(docsLoaded.current ? 'ready' : 'error') }
   }
-  useEffect(() => { const controller = new AbortController(); void refresh(controller.signal); return () => controller.abort() }, [])
+  async function loadReadiness(signal?: AbortSignal) {
+    if (!BACKEND_CONFIGURED) { setReadiness({ status: 'not_deployed' }); return }
+    try { setReadiness(await getJSON<Readiness>('/readyz', signal, 15000)) }
+    catch { if (!signal?.aborted) setReadiness(current => current ?? { status: 'starting' }) }
+  }
+  function manualRefresh() { void check({ force: true }); void loadDocs(); void loadReadiness() }
   useEffect(() => {
-    if (!BACKEND_CONFIGURED) return
     const controller = new AbortController()
-    const update = () => { if (!document.hidden && runtimeKnown) void getJSON<GenerationStatus>('/api/v1/status', controller.signal).then(setGeneration).catch(() => setGeneration(null)) }
-    const timer = generation?.reason === 'provider_limited'
-      ? window.setTimeout(update, Math.min(300000, Math.max(1000, (generation.retry_after || 30) * 1000))) : undefined
-    document.addEventListener('visibilitychange', update)
-    window.addEventListener('focus', update)
-    return () => { controller.abort(); window.clearTimeout(timer); document.removeEventListener('visibilitychange', update); window.removeEventListener('focus', update) }
-  }, [generation, runtimeKnown])
+    void loadDocs(controller.signal); void loadReadiness(controller.signal)
+    return () => controller.abort()
+  }, [])
   useEffect(() => {
     let alive = true
     void listConversations().then(saved => {
@@ -149,6 +147,11 @@ function App() {
         setMessages(current => current.filter(message => message.id !== messageId))
       }
       setError(failure instanceof Error && failure.name !== 'AbortError' ? failure.message : stopReason.current || 'Lượt hỏi đã dừng. Server không lưu đáp án để khôi phục.')
+      // A failed submit is never replayed automatically; only the status is re-verified.
+      if (failure instanceof TypeError) {
+        setError('Không kết nối được dịch vụ. Câu hỏi chưa được gửi; hệ thống sẽ tự kiểm tra kết nối.')
+        void check({ force: true })
+      }
     } finally { window.clearTimeout(timeout); setBusy(false); abortRef.current = null }
   }
   function newConversation() {
@@ -182,11 +185,12 @@ function App() {
   }
   function navigate(target: Page) { setDataOpen(false); setPage(target); setNavOpen(false); setSourcePanel(null) }
   const filteredDocs = docs.filter(doc => (sourceKind === 'all' || doc.source_kind === sourceKind) && searchText(`${doc.title} ${doc.document_number || ''}`).includes(searchText(search)))
-  const ready = readiness?.status === 'ready'
-  const connectionMessage = connecting ? 'Đang kết nối dịch vụ. Lần khởi động đầu có thể mất khoảng một phút…'
-    : !runtimeKnown && BACKEND_CONFIGURED ? 'Chưa xác minh được cấu hình hiện tại; tạm dừng trả lời và nguồn từ lịch sử. Hãy kiểm tra lại kết nối.'
+  const connectionMessage = !BACKEND_CONFIGURED ? 'Bản xem thử giao diện. Backend chưa được triển khai.'
+    : connection.phase === 'connecting' ? 'Đang kết nối dịch vụ. Lần khởi động đầu có thể mất khoảng một phút…'
+    : connection.phase === 'degraded' ? 'Kết nối đang gián đoạn, hệ thống sẽ tự thử lại. Bạn vẫn có thể gửi câu hỏi.'
+    : connection.phase === 'unavailable' ? 'Chưa kết nối được dịch vụ. Hệ thống đang tự thử lại; bạn có thể kiểm tra ngay.'
     : generation && !generation.generation_available ? `${generationLabel(generation)}.${generation.retry_after ? ` Thử lại sau ${generation.retry_after} giây.` : ''} Thư viện nguồn vẫn truy cập được.`
-    : !ready ? readiness?.status === 'not_deployed' ? 'Bản xem trước giao diện. Backend chưa được triển khai.' : 'Dịch vụ chưa sẵn sàng. Bạn có thể kiểm tra lại kết nối.' : ''
+    : ''
 
   return <div onClickCapture={event => { const button = (event.target as HTMLElement).closest('button'); button?.focus() }} className={`app-shell page-${page} ${sourcePanel ? 'panel-open' : ''} ${navOpen ? 'nav-open' : ''} ${collapsed ? 'sidebar-collapsed' : ''}`}>
     <a className="skip-link" href="#main-content">Đến nội dung chính</a>
@@ -222,18 +226,18 @@ function App() {
         <div className="composer-area">
         {showBottom && !!messages.length && <button className="scroll-bottom icon-button" onClick={() => { nearBottom.current = true; chatScroll.current?.scrollTo({ top: chatScroll.current.scrollHeight, behavior: 'instant' }); setShowBottom(false) }} aria-label="Về cuối hội thoại"><ArrowDown size={20}/></button>}
           {error && <div className="error-banner" role="alert"><div><strong>Chưa thể hoàn tất lượt hỏi</strong><p>{error}</p></div><button className="icon-button" onClick={() => setError('')} aria-label="Đóng thông báo"><X size={18}/></button></div>}
-          {connectionMessage && <div className="connection-note" role="status"><p>{connectionMessage}</p><button className="button button-secondary" disabled={connecting} onClick={() => void refresh()}>Kiểm tra kết nối</button></div>}
-          {canGenerate && <Turnstile key={challengeVersion} onToken={setChallenge} hasSession={hasSession}/>}<div className="composer"><form id="chat-form" onSubmit={event => { event.preventDefault(); void send() }}><textarea ref={inputRef} value={input} disabled={!runtimeKnown || sourceOnly} onChange={event => setInput(event.target.value)} placeholder={sourceOnly ? 'Chế độ tra cứu nguồn — mở thư viện để đọc các đoạn đã review' : !runtimeKnown ? 'Đang xác minh khả năng trả lời; bạn có thể mở thư viện nguồn' : mobile ? 'Nhập câu hỏi pháp luật…' : 'Hỏi về bồi thường, hỗ trợ, tái định cư…'} maxLength={4000} rows={1} aria-label="Câu hỏi pháp luật" onKeyDown={event => { if (event.key === 'Enter' && !event.shiftKey && !event.nativeEvent.isComposing && !touch) { event.preventDefault(); void send() } }}/></form><div className="composer-bottom"><span className="composer-hint">{sourceOnly ? 'Không có lượt gọi model trong chế độ này' : touch ? 'Chỉ nhập tình huống đã ẩn danh' : 'Enter để gửi · Shift + Enter xuống dòng'}</span>{busy ? <button type="button" className="send-button" onClick={() => { stopReason.current = 'Bạn đã dừng lượt hỏi. Server không lưu đáp án để khôi phục.'; abortRef.current?.abort() }} aria-label="Dừng lượt hỏi"><Square size={18}/></button> : <button className="send-button" type="submit" form="chat-form" disabled={!runtimeKnown || sourceOnly || !input.trim()} aria-label="Gửi câu hỏi"><ArrowUp size={20}/></button>}</div></div>
+          {connectionMessage && <div className="connection-note" role="status"><p>{connectionMessage}</p><button className="button button-secondary" disabled={connecting} onClick={manualRefresh}>Kiểm tra kết nối</button></div>}
+          {canGenerate && <Turnstile key={challengeVersion} onToken={setChallenge} hasSession={hasSession}/>}<div className="composer"><form id="chat-form" onSubmit={event => { event.preventDefault(); void send() }}><textarea ref={inputRef} value={input} disabled={!runtimeKnown || sourceOnly} onChange={event => setInput(event.target.value)} placeholder={sourceOnly ? 'Chế độ tra cứu nguồn — mở thư viện để đọc các đoạn đã review' : !runtimeKnown ? 'Đang xác minh khả năng trả lời; bạn có thể mở thư viện nguồn' : mobile ? 'Nhập câu hỏi pháp luật…' : 'Hỏi về bồi thường, hỗ trợ, tái định cư…'} maxLength={4000} rows={1} aria-label="Câu hỏi pháp luật" onKeyDown={event => { if (event.key === 'Enter' && !event.shiftKey && !event.nativeEvent.isComposing && !touch) { event.preventDefault(); void send() } }}/></form><div className="composer-bottom"><span className="composer-hint">{sourceOnly ? 'Không có lượt gọi model trong chế độ này' : touch ? 'Chỉ nhập tình huống đã ẩn danh' : 'Enter để gửi · Shift + Enter xuống dòng'}</span>{busy ? <button type="button" className="send-button" onClick={() => { stopReason.current = 'Bạn đã dừng lượt hỏi. Server không lưu đáp án để khôi phục.'; abortRef.current?.abort() }} aria-label="Dừng lượt hỏi"><Square size={18}/></button> : <button className="send-button" type="submit" form="chat-form" disabled={!canGenerate || !input.trim()} aria-label="Gửi câu hỏi"><ArrowUp size={20}/></button>}</div></div>
           {!sourceOnly && !messages.length && <div className="topic-grid" aria-label="Gợi ý câu hỏi">{suggestions.map(question => <button key={question} onClick={() => { setInput(question); inputRef.current?.focus() }}><span>{question}</span></button>)}</div>}
           <span className="sr-only" aria-live="polite">{copiedId ? 'Đã sao chép đáp án' : ''}</span><p className="disclaimer">{messages.length ? 'Có thể có sai sót. Hãy kiểm tra nguồn trước khi áp dụng.' : 'Bản thử nghiệm · Chỉ nhập tình huống đã ẩn danh.'}</p>
         </div>
       </div>}
       {page === 'sources' && <section className="content-page"><h1>Thư viện văn bản</h1><p className="page-intro">Tìm văn bản và mở nguồn gốc để kiểm tra căn cứ.</p><div className="library-toolbar"><label className="searchbox"><Search size={20}/><input value={search} onChange={event => setSearch(event.target.value)} placeholder="Tìm theo số hiệu hoặc tên văn bản…" aria-label="Tìm văn bản"/></label><label className="source-filter"><span>Loại nguồn</span><select aria-label="Loại nguồn" value={sourceKind} onChange={event => setSourceKind(event.target.value)}><option value="all">Tất cả nguồn</option>{Object.entries(sourceKinds).map(([key, label]) => <option key={key} value={key}>{label}</option>)}</select></label></div>
-        {sourceOnly && <div className="library-toolbar"><label>Thời điểm áp dụng <input aria-label="Thời điểm áp dụng nguồn" type="date" value={lookupDate || sourceReviewDate} onChange={event => { setLookupDate(event.target.value); setSourcePanel(null) }}/></label><button className="button button-secondary" disabled={connecting} onClick={() => void refresh()}>Đối chiếu ngày đã chọn</button><p>Chỉ hiện đoạn nguồn có review hợp lệ cho ngày này. Ngoài phạm vi sẽ không có kết quả; không tự suy quyền lợi.</p></div>}
-        {docsState === 'loading' ? <div className="empty-state" role="status"><LoaderCircle className="spin" size={24}/><p>Đang tải thư viện…</p></div> : docsState === 'error' ? <div className="empty-state" role="alert"><h2>Chưa tải được thư viện</h2><p>Không thể xác định danh sách tài liệu lúc này.</p><button className="button button-secondary" onClick={() => void refresh()}>Thử tải lại thư viện</button></div> : <><div className="library-count"><strong>{filteredDocs.length}/{docs.length} tài liệu trong thư viện</strong>{readiness?.checked_at && <span>Nguồn kiểm tra: {formatDate(readiness.checked_at)}</span>}</div>{!docs.length ? <div className="empty-state"><BookOpen size={28}/><h2>Corpus chưa được công bố</h2><p>Tài liệu xuất hiện khi nguồn được thu thập và đưa vào thư viện.</p><button className="button button-secondary" onClick={() => void refresh()}>Kiểm tra lại</button></div> : <><div className="document-list">{filteredDocs.map(document => <DocumentRow key={document.id} document={document} onOpen={doc => openSource(doc)}/>)}</div>{!filteredDocs.length && <div className="empty-state"><Search size={24}/><h2>Không tìm thấy văn bản</h2><p>Thử số hiệu, từ khóa ngắn hơn hoặc loại nguồn khác.</p><button className="button button-secondary" onClick={() => { setSearch(''); setSourceKind('all') }}>Xóa từ khóa</button></div>}</>}</>}
+        {sourceOnly && <div className="library-toolbar"><label>Thời điểm áp dụng <input aria-label="Thời điểm áp dụng nguồn" type="date" value={lookupDate || sourceReviewDate} onChange={event => { setLookupDate(event.target.value); setSourcePanel(null) }}/></label><button className="button button-secondary" disabled={connecting} onClick={manualRefresh}>Đối chiếu ngày đã chọn</button><p>Chỉ hiện đoạn nguồn có review hợp lệ cho ngày này. Ngoài phạm vi sẽ không có kết quả; không tự suy quyền lợi.</p></div>}
+        {docsState === 'loading' ? <div className="empty-state" role="status"><LoaderCircle className="spin" size={24}/><p>Đang tải thư viện…</p></div> : docsState === 'error' ? <div className="empty-state" role="alert"><h2>Chưa tải được thư viện</h2><p>Không thể xác định danh sách tài liệu lúc này.</p><button className="button button-secondary" onClick={manualRefresh}>Thử tải lại thư viện</button></div> : <><div className="library-count"><strong>{filteredDocs.length}/{docs.length} tài liệu trong thư viện</strong>{readiness?.checked_at && <span>Nguồn kiểm tra: {formatDate(readiness.checked_at)}</span>}</div>{!docs.length ? <div className="empty-state"><BookOpen size={28}/><h2>Corpus chưa được công bố</h2><p>Tài liệu xuất hiện khi nguồn được thu thập và đưa vào thư viện.</p><button className="button button-secondary" onClick={manualRefresh}>Kiểm tra lại</button></div> : <><div className="document-list">{filteredDocs.map(document => <DocumentRow key={document.id} document={document} onOpen={doc => openSource(doc)}/>)}</div>{!filteredDocs.length && <div className="empty-state"><Search size={24}/><h2>Không tìm thấy văn bản</h2><p>Thử số hiệu, từ khóa ngắn hơn hoặc loại nguồn khác.</p><button className="button button-secondary" onClick={() => { setSearch(''); setSourceKind('all') }}>Xóa từ khóa</button></div>}</>}</>}
       </section>}
     </main>
-    {dataOpen && <DataPanel readiness={readiness} generation={generation} connecting={connecting} onRefresh={() => void refresh()} onClose={() => setDataOpen(false)}/>}
+    {dataOpen && <DataPanel readiness={readiness} generation={generation} connecting={connecting} onRefresh={manualRefresh} onClose={() => setDataOpen(false)}/>}
     {sourcePanel && runtimeKnown && <SourcePanel source={sourcePanel.source} citations={sourcePanel.citations} onSelect={citation => openSource(citation, sourcePanel.citations)} onClose={() => setSourcePanel(null)}/>}
     {deletion && <ConfirmDialog title={deletion.title} busy={deleting} onCancel={() => setDeletion(null)} onConfirm={() => void confirmDeletion()}/>}
   </div>
