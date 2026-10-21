@@ -70,7 +70,7 @@ Gửi `Authorization: Bearer <token>` và `Content-Type: application/json`.
 | `message` | 1–4.000 ký tự |
 | `project` | `ring4` hoặc `null`; giá trị khác bị từ chối |
 | `as_of` | Ngày ISO `YYYY-MM-DD` hoặc `null` để dùng ngày hiện tại của hệ thống |
-| `mode` | `agentic` (mặc định) hoặc `simple_rag`; simple path dùng một lượt generation, tối đa 5 passage đã lọc và citation marker `[S1]`...`[S5]` chỉ được phép trỏ vào context thực gửi |
+| `mode` | `agentic` (mặc định) hoặc `simple_rag`; simple path dùng một lượt generation, tối đa 5 passage đã lọc và citation marker `[S1]`...`[S5]` chỉ được phép trỏ vào context thực gửi. Citation của simple path được suy ra duy nhất từ marker inline; model không gửi thêm danh sách citation thứ hai |
 | `history` | Tối đa 8 message; tổng nội dung tối đa 12.000 ký tự |
 
 History phải gồm các cặp `user` → `assistant` và kết thúc bằng `assistant`. Mỗi message có `content` dài 1–3.000 ký tự, `as_of` tùy chọn và tối đa 8 citation metadata gồm `document_id`, `document_number`, `locator`. Không gửi trace hoặc bearer token trong history.
