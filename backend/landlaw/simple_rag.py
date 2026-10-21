@@ -192,7 +192,8 @@ class SimpleRAG:
         prompt = """Trả lời bằng tiếng Việt, thân thiện và trực tiếp. Chỉ dùng nguồn trong CONTEXT.
 Nêu quy tắc chung và điều kiện/ngoại lệ quan trọng; nếu thiếu dữ kiện cá nhân thì nói rõ đây là câu trả lời có điều kiện
 hoặc hỏi tối đa một câu ngắn. Không kết luận chắc chắn quyền lợi hoặc số tiền của một hộ cụ thể.
-Gắn [S1]...[S5] ngay sau từng ý được nguồn hỗ trợ. Chỉ dùng các mã xuất hiện trong CONTEXT; không tạo URL, điều luật hay mã nguồn mới."""
+QUY TẮC DẪN NGUỒN BẮT BUỘC: mỗi câu có nội dung pháp lý phải kết thúc bằng mã nguồn tương ứng, ví dụ "…phải đủ điều kiện theo Điều 95 [S1]".
+Chỉ dùng các mã xuất hiện trong CONTEXT; không tạo URL, điều luật hay mã nguồn mới; nếu không có nguồn cho một ý thì không gắn mã cho ý đó."""
         try:
             answer = await self.provider.generate(
                 SimpleAnswer, prompt,
@@ -217,9 +218,12 @@ Gắn [S1]...[S5] ngay sau từng ý được nguồn hỗ trợ. Chỉ dùng c�
         cited, unknown = _marker_ids(answer.answer)
         valid = bool(cited) and not unknown and set(cited) <= set(source_map)
         valid = valid and _markers_are_supported(answer.answer, source_map, cited)
+        raw_markers = len(SOURCE_MARKER.findall(answer.answer))
         trace.append(TraceEvent(
             step="citation_validation",
-            summary=f"Validated {len(cited)} inline source markers" if valid else "Inline source markers failed validation",
+            summary=(f"Validated {len(cited)} inline source markers" if valid else
+                     f"Inline source markers failed validation: {raw_markers} raw markers, "
+                     f"{len(cited)} usable ids, out_of_range={bool(unknown)}"),
             document_ids=[source_map[key].document.id for key in cited if key in source_map],
         ))
         if not valid:
