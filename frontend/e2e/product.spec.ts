@@ -16,7 +16,7 @@ test.beforeEach(async({page}) => {
 test('library supports accent-free search and opens reference-only originals',async({page})=>{
   await page.goto('/')
   const menu=page.getByRole('button',{name:'Mở menu điều hướng'});if(await menu.isVisible())await menu.click()
-  await page.getByRole('button',{name:'Thư viện văn bản',exact:true}).click()
+  await page.getByRole('button',{name:'Văn bản pháp luật',exact:true}).click()
   await expect(page.locator('.document-row')).toHaveCount(2)
   await page.getByLabel('Tìm văn bản').fill('boi thuong')
   await expect(page.locator('.document-row')).toHaveCount(1)
