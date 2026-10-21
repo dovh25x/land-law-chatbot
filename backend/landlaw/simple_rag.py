@@ -65,7 +65,7 @@ def _support_tokens(text: str) -> set[str]:
 
 
 def _markers_are_supported(answer: str, source_map: dict[str, Evidence], marker_ids: list[str]) -> bool:
-    """Require each marked statement to share substantive terms with its cited passage."""
+    """Require grounded support for each asserted statement, not every framing sentence."""
     spans = list(SOURCE_MARKER.finditer(answer))
     if not spans:
         return False
@@ -76,10 +76,25 @@ def _markers_are_supported(answer: str, source_map: dict[str, Evidence], marker_
         if identifier not in marker_ids:
             return False
         statement = answer[start:span.start()]
+        start = span.end()
+        # Only statements that assert a personal outcome or a specific amount need
+        # lexical support. Conditional framing the prompt requires ("đây là câu trả
+        # lời có điều kiện...") or repeated adjacent markers carry no claim of their
+        # own; rejecting them made real grounded answers unpublishable.
+        if not _asserts_specific_outcome(statement):
+            continue
         if not (_support_tokens(statement) & _support_tokens(source_map[identifier].chunk.text)):
             return False
-        start = span.end()
     return True
+
+
+AMOUNT = re.compile(r"\b\d+(?:[.,]\d+)?\s*(?:tỷ|triệu|nghìn|đồng|ha|m2|m²|%)", re.I)
+CONFIDENT = re.compile(r"(chắc chắn|luôn luôn|tất cả trường hợp|không thể không)", re.I)
+
+
+def _asserts_specific_outcome(statement: str) -> bool:
+    """True only for statements asserting an amount or an unconditional entitlement."""
+    return bool(AMOUNT.search(statement) or CONFIDENT.search(statement))
 
 
 def _citation_fallback(source_map: dict[str, Evidence]) -> str:

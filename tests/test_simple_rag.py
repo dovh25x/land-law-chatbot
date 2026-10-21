@@ -171,6 +171,7 @@ def test_multiple_inline_citations_are_derived_once_each(store, settings):
         ("Điều kiện bồi thường cần được xem xét theo hồ sơ [S1].", "answered", 1),
         ("Điều kiện bồi thường [S1].", "answered", 1),
         ("Bạn chắc chắn nhận 10 tỷ đồng [S1].", "clarification_needed", 1),
+        ("Đền bù cho hộ của bạn 5 triệu đồng trên mỗi mét [S1].", "clarification_needed", 1),
         ("Câu trả lời không có nguồn.", "clarification_needed", 1),
         ("Bạn chắc chắn nhận 10 tỷ đồng [S9].", "clarification_needed", 1),
     ],
@@ -189,6 +190,38 @@ def test_citation_validation_requires_supported_inline_markers(
     assert len(result.citations) == expected_citations
     if expected_status == "clarification_needed":
         assert "chưa thể xác nhận" in result.content
+
+
+def test_conditional_framing_keeps_grounded_answers_published(store, settings):
+    from conftest import document
+    release(store, [document(text="Điều kiện bồi thường và hỗ trợ cần được xem xét theo hồ sơ.")])
+    sid, _ = session(store)
+    provider = SimpleProvider(settings, answer=SimpleAnswer(
+        answer="Bạn vẫn có thể được bồi thường nếu đủ điều kiện theo Điều 95 [S1]. "
+               "Đây là câu trả lời có điều kiện vì bạn chưa nêu thời điểm thu hồi và loại đất [S1].",
+    ))
+    result = asyncio.run(SimpleRAG(store, provider).run(
+        request(sid, "Điều kiện bồi thường là gì?"), lambda _: None, "r1"
+    ))
+    assert result.status == "answered"
+    assert len(result.citations) == 1
+
+
+def test_adjacent_inline_markers_do_not_invalidate_support(store, settings):
+    from conftest import document
+    release(store, [
+        document(doc_id="law-1", text="Điều kiện bồi thường cần được xem xét theo hồ sơ."),
+        document(doc_id="law-2", text="Hỗ trợ được xác định theo điều kiện của hồ sơ."),
+    ])
+    sid, _ = session(store)
+    provider = SimpleProvider(settings, answer=SimpleAnswer(
+        answer="Điều kiện bồi thường cần được xem xét theo hồ sơ [S1][S2].",
+    ))
+    result = asyncio.run(SimpleRAG(store, provider).run(
+        request(sid, "Điều kiện bồi thường là gì?"), lambda _: None, "r1"
+    ))
+    assert result.status == "answered"
+    assert {citation.document_id for citation in result.citations} == {"law-1", "law-2"}
 
 
 def test_configured_simple_mode_routes_default_request(store, settings):
