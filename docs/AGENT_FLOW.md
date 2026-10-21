@@ -2,7 +2,7 @@
 
 ## Kết luận thiết kế
 
-Giữ một pipeline Agentic RAG trong `backend/landlaw/agent.py`. Các node của LangGraph là các bước trong cùng một lượt hỏi, không phải nhiều agent độc lập. Planner chọn công cụ chỉ đọc, synthesis tạo draft, verifier kiểm tra trước khi `finish` dựng đáp án. Cấu trúc này phù hợp với phạm vi Vành đai 4, corpus có xuất xứ và ngân sách Free đã cố định; chưa có căn cứ để thay model, thêm reranker hoặc tách pipeline.
+Giữ pipeline Agentic RAG trong `backend/landlaw/agent.py` cho mode `agentic`. Các node của LangGraph là các bước trong cùng một lượt hỏi, không phải nhiều agent độc lập. Planner chọn công cụ chỉ đọc, synthesis tạo draft, verifier kiểm tra trước khi `finish` dựng đáp án. Mode `simple_rag` trong `backend/landlaw/simple_rag.py` là đường chạy tùy chọn: context ngắn, một lượt generation và kiểm tra citation allow-list; LangGraph không bắt buộc ở đường chạy này. Cả hai mode vẫn dùng corpus, source review và giới hạn runtime hiện có.
 
 Câu hỏi pháp lý chưa chỉ định điều khoản được tra từ nguyên văn câu hỏi trước khi tổng hợp, thay vì dùng một request để đoán điều. Khi người dùng chỉ rõ văn bản và điều, hệ thống mở nguồn đó; các trường hợp còn mơ hồ vẫn có planner giới hạn. History chỉ giúp giải tham chiếu, không trở thành chứng cứ.
 

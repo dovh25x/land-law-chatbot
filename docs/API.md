@@ -70,7 +70,7 @@ Gửi `Authorization: Bearer <token>` và `Content-Type: application/json`.
 | `message` | 1–4.000 ký tự |
 | `project` | `ring4` hoặc `null`; giá trị khác bị từ chối |
 | `as_of` | Ngày ISO `YYYY-MM-DD` hoặc `null` để dùng ngày hiện tại của hệ thống |
-| `mode` | Nếu có, chỉ nhận `agentic` |
+| `mode` | `agentic` (mặc định) hoặc `simple_rag`; simple path dùng một lượt generation, tối đa 5 passage đã lọc và citation marker `[S1]`...`[S5]` chỉ được phép trỏ vào context thực gửi |
 | `history` | Tối đa 8 message; tổng nội dung tối đa 12.000 ký tự |
 
 History phải gồm các cặp `user` → `assistant` và kết thúc bằng `assistant`. Mỗi message có `content` dài 1–3.000 ký tự, `as_of` tùy chọn và tối đa 8 citation metadata gồm `document_id`, `document_number`, `locator`. Không gửi trace hoặc bearer token trong history.
@@ -91,6 +91,13 @@ Khi request được chấp nhận, response có `Content-Type: text/event-strea
 `result.status` có thể là `answered`, `clarification_needed`, `insufficient_evidence`, `limited` hoặc `error`. HTTP `200` của stream không đồng nghĩa câu hỏi đã được trả lời thành công; client phải kiểm tra sự kiện cuối và status.
 
 Kết quả gồm `content`, `citations`, `trace`, `trace_id`, corpus/model identity và các chỉ số `llm_calls`, `tool_calls`, `token_usage`, `elapsed_ms`. Citation chứa nguồn, locator, excerpt, ngày kiểm tra và trang/URL nguồn bổ sung khi có. Schema chi tiết nằm trong `backend/landlaw/models.py`.
+
+`simple_rag` là execution mode thử nghiệm để giảm abstention do planner/verifier
+nhiều bước. Nó vẫn giữ retrieval theo release, kiểm tra freshness và source
+review, loại văn bản đã biết hết hiệu lực, không cho citation ngoài context và
+không kết luận quyền lợi cá nhân khi thiếu dữ kiện. Đổi mode không biến
+retrieval accuracy thành answer accuracy; cần pilot model riêng trước khi
+bật production.
 
 `citation.source_url` trỏ tới đúng trang PDF gốc (`#page=...`) khi có attachment được kiểm tra, hoặc tới ảnh trang gốc nếu nguồn công bố bằng ảnh. Client hiển thị liên kết “Mở trang nguồn gốc”; không suy định mọi URL này đều là PDF ký số. Không có ánh xạ xuất xứ chính xác thì trường này để trống.
 
