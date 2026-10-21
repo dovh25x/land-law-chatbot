@@ -1,0 +1,96 @@
+{
+  "checked_at": "2026-10-21T10:22:11.658195+00:00",
+  "status": "PASS",
+  "base_url": "https://hanoi-land-law.pages.dev",
+  "endpoints": {
+    "/readyz": {
+      "http_status": 200,
+      "data": {
+        "status": "ready",
+        "database": true,
+        "llm_configured": true,
+        "corpus_release": "corpus-a26bc99e541fbbe2",
+        "checked_at": "2026-10-11T17:32:27Z",
+        "storage": "postgresql",
+        "publication_profile": "academic",
+        "quality_status": "academic_prototype",
+        "retrieval_mode": "hybrid",
+        "coverage_gaps": [
+          {
+            "document_id": "qd-10-2017-hanoi",
+            "document_number": "10/2017/Q\u0110-UBND",
+            "title": "Quy \u0111\u1ecbnh b\u1ed3i th\u01b0\u1eddng, h\u1ed7 tr\u1ee3 v\u00e0 t\u00e1i \u0111\u1ecbnh c\u01b0 H\u00e0 N\u1ed9i (l\u1ecbch s\u1eed)",
+            "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=189167",
+            "reason": "Ch\u01b0a c\u00f3 to\u00e0n v\u0103n v\u00e0 metadata \u0111\u1ea1t ki\u1ec3m tra; kh\u00f4ng d\u00f9ng l\u00e0m c\u0103n c\u1ee9."
+          },
+          {
+            "document_id": "qd-30-2019-hanoi",
+            "document_number": "30/2019/Q\u0110-UBND",
+            "title": "Quy \u0111\u1ecbnh v\u00e0 b\u1ea3ng gi\u00e1 c\u00e1c lo\u1ea1i \u0111\u1ea5t H\u00e0 N\u1ed9i 2020\u20132024 (l\u1ecbch s\u1eed)",
+            "url": "https://vanban.hanoi.gov.vn/chi-tiet-van-ban/quyet-dinh-so-30-2019-qd-ubnd-cua-ubnd-tp-ha-noi-ve-viec-ban-hanh-quy-dinh-va-bang-gia-cac-loai-dat-189067",
+            "reason": "Ch\u01b0a c\u00f3 to\u00e0n v\u0103n v\u00e0 metadata \u0111\u1ea1t ki\u1ec3m tra; kh\u00f4ng d\u00f9ng l\u00e0m c\u0103n c\u1ee9."
+          },
+          {
+            "document_id": "qd-20-2023-hanoi",
+            "document_number": "20/2023/Q\u0110-UBND",
+            "title": "S\u1eeda \u0111\u1ed5i b\u1ea3ng gi\u00e1 \u0111\u1ea5t Quy\u1ebft \u0111\u1ecbnh 30/2019",
+            "url": "https://vbpl.vn/hanoi/Pages/vbpq-toanvan.aspx?ItemID=164473",
+            "reason": "Ch\u01b0a c\u00f3 to\u00e0n v\u0103n v\u00e0 metadata \u0111\u1ea1t ki\u1ec3m tra; kh\u00f4ng d\u00f9ng l\u00e0m c\u0103n c\u1ee9."
+          },
+          {
+            "document_id": "nd-123-2024",
+            "document_number": "123/2024/N\u0110-CP",
+            "title": "X\u1eed ph\u1ea1t vi ph\u1ea1m h\u00e0nh ch\u00ednh l\u0129nh v\u1ef1c \u0111\u1ea5t \u0111ai",
+            "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=211356",
+            "reason": "Ch\u01b0a c\u00f3 to\u00e0n v\u0103n v\u00e0 metadata \u0111\u1ea1t ki\u1ec3m tra; kh\u00f4ng d\u00f9ng l\u00e0m c\u0103n c\u1ee9."
+          },
+          {
+            "document_id": "ring4-nq106-2022",
+            "document_number": "106/NQ-CP",
+            "title": "Tri\u1ec3n khai Ngh\u1ecb quy\u1ebft 56/2022/QH15 V\u00e0nh \u0111ai 4",
+            "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=206398",
+            "reason": "Ch\u01b0a c\u00f3 to\u00e0n v\u0103n v\u00e0 metadata \u0111\u1ea1t ki\u1ec3m tra; kh\u00f4ng d\u00f9ng l\u00e0m c\u0103n c\u1ee9."
+          },
+          {
+            "document_id": "nd-01-2017",
+            "document_number": "01/2017/N\u0110-CP",
+            "title": "Ngh\u1ecb \u0111\u1ecbnh 01/2017/N\u0110-CP s\u1eeda \u0111\u1ed5i, b\u1ed5 sung m\u1ed9t s\u1ed1 ngh\u1ecb \u0111\u1ecbnh quy \u0111\u1ecbnh chi ti\u1ebft thi h\u00e0nh Lu\u1eadt \u0111\u1ea5t \u0111ai",
+            "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=187962",
+            "reason": "Ch\u01b0a c\u00f3 to\u00e0n v\u0103n v\u00e0 metadata \u0111\u1ea1t ki\u1ec3m tra; kh\u00f4ng d\u00f9ng l\u00e0m c\u0103n c\u1ee9."
+          },
+          {
+            "document_id": "nd-148-2020",
+            "document_number": "148/2020/N\u0110-CP",
+            "title": "Ngh\u1ecb \u0111\u1ecbnh 148/2020/N\u0110-CP s\u1eeda \u0111\u1ed5i, b\u1ed5 sung m\u1ed9t s\u1ed1 ngh\u1ecb \u0111\u1ecbnh quy \u0111\u1ecbnh chi ti\u1ebft thi h\u00e0nh Lu\u1eadt \u0110\u1ea5t \u0111ai",
+            "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=202022",
+            "reason": "Ch\u01b0a c\u00f3 to\u00e0n v\u0103n v\u00e0 metadata \u0111\u1ea1t ki\u1ec3m tra; kh\u00f4ng d\u00f9ng l\u00e0m c\u0103n c\u1ee9."
+          }
+        ],
+        "configuration_sha256": "8ee1cd63c2ef531bc603848ce3d5b11334322e368d14c10fc73a81d339d51464",
+        "source_gate": null,
+        "source_lookup_only": true
+      }
+    },
+    "/api/v1/status": {
+      "http_status": 200,
+      "data": {
+        "generation_available": false,
+        "reason": "disabled",
+        "retry_after": null,
+        "corpus_release": "corpus-a26bc99e541fbbe2",
+        "api_version": 3,
+        "capabilities": {
+          "citizen_answers": false,
+          "answer_schema_version": 2
+        },
+        "source_lookup_only": true,
+        "source_lookup_as_of": "2026-10-21",
+        "source_fresh": false,
+        "warning": "source_stale",
+        "source_gate": null,
+        "source_checked_at": "2026-10-11T17:32:27Z"
+      }
+    }
+  },
+  "initial_direct_status_probe": "403 by design: API requires signed ingress. Direct readyz was public and matched; repeated via approved canonical edge."
+}

@@ -1,0 +1,20 @@
+{
+  "checked_at": "2026-10-21T10:18:55.142125+00:00",
+  "status": "PASS",
+  "nonsecret_flags": {
+    "GENERATION_ENABLED": "false",
+    "SOURCE_LOOKUP_ONLY": "true",
+    "ALLOW_STALE_GENERATION": "false"
+  },
+  "http_statuses": {
+    "GENERATION_ENABLED": 200,
+    "SOURCE_LOOKUP_ONLY": 200,
+    "ALLOW_STALE_GENERATION": 200
+  },
+  "credentials_changed": false,
+  "plan_changed": false,
+  "deploy_triggered": false,
+  "requires_new_deploy_to_apply": true,
+  "documentation": "https://api-docs.render.com/reference/update-env-var",
+  "rollback_policy": "Keep generation false/allow_stale false even on old source; do not restore unsafe flags."
+}

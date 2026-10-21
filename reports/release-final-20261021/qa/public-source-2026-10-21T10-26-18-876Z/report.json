@@ -1,0 +1,114 @@
+{
+  "started_at": "2026-10-21T10:26:18.879Z",
+  "base_url": "https://hanoi-land-law.pages.dev",
+  "status": "FAIL",
+  "runtime_fingerprint_expected": "8ee1cd63c2ef531bc603848ce3d5b11334322e368d14c10fc73a81d339d51464",
+  "corpus_expected": "corpus-1afca764aa6692e0",
+  "no_api_mocking": true,
+  "prohibited_requests": [],
+  "external_non_get_requests": [
+    {
+      "method": "POST",
+      "host": "challenges.cloudflare.com",
+      "path": "/cdn-cgi/challenge-platform/h/b/fo/2200695106:1792576827:DBtdzMioclhlV5xjEhWY1vhRBhk07-msQdZ5UOj7O-0/a4df90805cb41053/8mprF3QXUQhntiE7RLjILdGpmjxWzLuc1pVRtUzJaPU-1792578391-1.2.1.1-jx0sCdEuncMoy47yD1kgrpMTFKQjLm4MRLgGOIDKRbmY2mODOHJSSx4.LZ9Zr2ad",
+      "classification": "Normal page/external telemetry only; not an application API write or human challenge success"
+    },
+    {
+      "method": "POST",
+      "host": "challenges.cloudflare.com",
+      "path": "/cdn-cgi/challenge-platform/h/b/fo/2200695106:1792576827:DBtdzMioclhlV5xjEhWY1vhRBhk07-msQdZ5UOj7O-0/a4df90805cb41053/8mprF3QXUQhntiE7RLjILdGpmjxWzLuc1pVRtUzJaPU-1792578391-1.2.1.1-jx0sCdEuncMoy47yD1kgrpMTFKQjLm4MRLgGOIDKRbmY2mODOHJSSx4.LZ9Zr2ad",
+      "classification": "Normal page/external telemetry only; not an application API write or human challenge success"
+    }
+  ],
+  "api_results": [
+    {
+      "path": "/readyz",
+      "http_status": 200,
+      "elapsed_ms": 10366
+    },
+    {
+      "path": "/api/v1/status",
+      "http_status": 200,
+      "elapsed_ms": 19913
+    },
+    {
+      "path": "/api/v1/documents?as_of=2026-10-21",
+      "http_status": 200,
+      "elapsed_ms": 12082
+    },
+    {
+      "path": "/api/v1/documents/luat-dat-dai-2024?as_of=2026-10-21",
+      "http_status": 200,
+      "elapsed_ms": 2687
+    },
+    {
+      "path": "/api/v1/documents/nd-88-2024?as_of=2026-10-21",
+      "http_status": 200,
+      "elapsed_ms": 2271
+    },
+    {
+      "path": "/api/v1/documents/nd-226-2025?as_of=2026-10-21",
+      "http_status": 200,
+      "elapsed_ms": 1678
+    },
+    {
+      "path": "/api/v1/documents/nd-49-2026?as_of=2026-10-21",
+      "http_status": 200,
+      "elapsed_ms": 2477
+    },
+    {
+      "path": "/api/v1/documents/qd-40-2026-hanoi?as_of=2026-10-21",
+      "http_status": 200,
+      "elapsed_ms": 2650
+    },
+    {
+      "path": "/api/v1/documents/luat-thu-do-2026?as_of=2026-10-21",
+      "http_status": 200,
+      "elapsed_ms": 1948
+    },
+    {
+      "path": "/api/v1/documents/nq-254-2025?as_of=2026-10-21",
+      "http_status": 200,
+      "elapsed_ms": 3614
+    },
+    {
+      "path": "/api/v1/documents?as_of=2026-10-22",
+      "http_status": 200,
+      "elapsed_ms": 3049
+    },
+    {
+      "path": "/api/v1/documents/qd-40-2026-hanoi?as_of=2026-10-22",
+      "http_status": 200,
+      "elapsed_ms": 1406
+    },
+    {
+      "path": "/api/v1/documents?as_of=2024-08-02",
+      "http_status": 200,
+      "elapsed_ms": 7966
+    },
+    {
+      "path": "/api/v1/documents/luat-dat-dai-2024?as_of=2024-08-02",
+      "http_status": 200,
+      "elapsed_ms": 3980
+    },
+    {
+      "path": "/api/v1/documents/luat-43-2024?as_of=2024-08-02",
+      "http_status": 200,
+      "elapsed_ms": 1758
+    },
+    {
+      "path": "/api/v1/documents/nd-88-2024?as_of=2024-08-02",
+      "http_status": 200,
+      "elapsed_ms": 2469
+    }
+  ],
+  "browser_checks": [],
+  "chat": "NOT TESTED — disabled in source-only mode",
+  "follow_up": "NOT TESTED — no generated conversation",
+  "human_turnstile": "NOT TESTED — no challenge automation or session creation",
+  "latency_scope": "Observed source GET/browser timings only, not model latency",
+  "model_requests": 0,
+  "error": "page.waitForResponse: Timeout 30000ms exceeded while waiting for event \"response\"",
+  "completed_at": "2026-10-21T10:28:34.273Z",
+  "scope": "Actual canonical public source-lookup browser and GET API only. No mocked success responses, chat/model/session or challenge automation; synthetic history stays in an isolated browser context. No claim of generated answer/follow-up or human Turnstile success."
+}

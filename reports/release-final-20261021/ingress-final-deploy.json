@@ -1,0 +1,13 @@
+{
+  "checked_at": "2026-10-21T11:00:39.630104+00:00",
+  "edge_http_status": 400,
+  "edge_error_code": "challenge_required",
+  "unsigned_backend_http_status": 403,
+  "unsigned_backend_error_code": "untrusted_ingress",
+  "signed_ingress_observed": true,
+  "unsigned_request_rejected": true,
+  "human_turnstile_pass": "NOT_TESTED",
+  "session_created": false,
+  "external_llm_requests": 0,
+  "scope": "Missing-token negative probe, not CAPTCHA bypass or a successful public chat."
+}

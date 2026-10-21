@@ -1,0 +1,80 @@
+#0 building with "default" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 778B 0.0s done
+#1 DONE 0.0s
+
+#2 [internal] load metadata for docker.io/library/python:3.12-slim
+#2 ...
+
+#3 [auth] library/python:pull token for registry-1.docker.io
+#3 DONE 0.0s
+
+#2 [internal] load metadata for docker.io/library/python:3.12-slim
+#2 DONE 2.6s
+
+#4 [internal] load .dockerignore
+#4 transferring context: 514B done
+#4 DONE 0.0s
+
+#5 [internal] load build context
+#5 DONE 0.0s
+
+#6 [ 1/14] FROM docker.io/library/python:3.12-slim@sha256:2259debdc6af85626058a15a7bf44ad6a68b8c98c9ae82a02cf5cdb92f096d47
+#6 resolve docker.io/library/python:3.12-slim@sha256:2259debdc6af85626058a15a7bf44ad6a68b8c98c9ae82a02cf5cdb92f096d47 0.1s done
+#6 DONE 0.1s
+
+#5 [internal] load build context
+#5 transferring context: 380.35kB 0.3s done
+#5 DONE 0.4s
+
+#7 [10/14] COPY data/place_aliases.json ./data/
+#7 CACHED
+
+#8 [ 5/14] COPY pyproject.toml ./
+#8 CACHED
+
+#9 [11/14] COPY data/evaluation ./data/evaluation
+#9 CACHED
+
+#10 [ 2/14] WORKDIR /app
+#10 CACHED
+
+#11 [ 9/14] COPY data/sources.json data/legal_relations.json data/projects.json ./data/
+#11 CACHED
+
+#12 [12/14] COPY migrations ./migrations
+#12 CACHED
+
+#13 [ 4/14] RUN pip install -r requirements.lock
+#13 CACHED
+
+#14 [ 6/14] COPY backend ./backend
+#14 CACHED
+
+#15 [13/14] COPY reports ./reports
+#15 CACHED
+
+#16 [ 7/14] RUN python backend/landlaw/local_embedding.py download /app/models/e5
+#16 CACHED
+
+#17 [ 3/14] COPY requirements.lock ./requirements.lock
+#17 CACHED
+
+#18 [ 8/14] RUN pip install --no-deps . && useradd --create-home --uid 10001 app
+#18 CACHED
+
+#19 [14/14] RUN chown -R app:app /app
+#19 CACHED
+
+#20 exporting to image
+#20 exporting layers 0.0s done
+#20 exporting manifest sha256:0b2021ae80e7bde2711856f166963b0ae6640786314ea5bf8f23d9e580ada0d4 done
+#20 exporting config sha256:068ba7a9428600dd335fde41c23641573d12ddb7bcd8924ec72a8803bc971a27 0.0s done
+#20 exporting attestation manifest sha256:e0b230cc8cf1de809534ca2ba2f448fc8510afac95ecfcf8b9335f709762ca13
+#20 exporting attestation manifest sha256:e0b230cc8cf1de809534ca2ba2f448fc8510afac95ecfcf8b9335f709762ca13 0.0s done
+#20 exporting manifest list sha256:d1ff01c49a287f78a1620f8040539f7974984c426503fcb34481eedaa6a4bd41 0.1s done
+#20 naming to docker.io/library/landlaw:release-ui-guard-20261021
+#20 naming to docker.io/library/landlaw:release-ui-guard-20261021 0.0s done
+#20 unpacking to docker.io/library/landlaw:release-ui-guard-20261021 0.0s done
+#20 DONE 0.3s

@@ -20,6 +20,15 @@ for name,expected in [('Final_Project_Report.pdf',None),('Final_Project_Presenta
     if not any(key in desc for key in ['/FontFile','/FontFile2','/FontFile3']):unembedded.add(str(font.get('/BaseFont')))
  joined='\n'.join(texts)
  entry={'pages':len(reader.pages),'page_sizes_points':sorted({(round(float(p.mediabox.width),2),round(float(p.mediabox.height),2)) for p in reader.pages}),'embedded_fonts':sorted(fonts),'unembedded_detected':sorted(unembedded),'text_chars':len(joined),'blank_pages':[i+1 for i,t in enumerate(texts) if len(t.strip())<40],'contains_vietnamese':all(s in joined for s in ['nguồn','pháp luật']),'sha256':hashlib.sha256(path.read_bytes()).hexdigest()}
+ uris=[]
+ for p in reader.pages:
+  for ref in p.get('/Annots',[]):
+   annotation=ref.get_object();action=annotation.get('/A')
+   if action:action=action.get_object()
+   if action and action.get('/URI'):uris.append(str(action['/URI']))
+ local_uris=[uri for uri in uris if uri.lower().startswith('file:') or '/home/' in uri or 'localhost' in uri or '127.0.0.1' in uri]
+ entry['link_annotations']={'uri_count':len(uris),'local_uris':local_uris,'public_links':sorted(set(uris)),'http_reachability':'NOT TESTED during offline export; stable tag is published after assets are generated'}
+ if local_uris:results['errors'].append(name+': nonportable local links')
  results['pdf'][name]=entry
  if expected and len(reader.pages)!=expected:results['errors'].append(f'{name}: expected {expected} pages, got {len(reader.pages)}')
  if entry['blank_pages']:results['errors'].append(name+': blank pages')
@@ -55,6 +64,19 @@ for path in BASE.glob('*.md'):
   if not target.exists():missing.append({'file':path.name,'target':dest})
 results['missing_local_links']=missing
 if missing:results['errors'].append('Missing local links')
+# Reject stale PDFs when status/prose or the renderer changed after the build.
+try:
+ build_path=BASE/'build-source-identity.json';build=json.loads(build_path.read_text())
+ exported=json.loads((BASE/'export-identity.json').read_text());mismatches=[]
+ for name,digest in {**build['inputs_sha256'],**build['generated_sha256']}.items():
+  if hashlib.sha256((BASE/name).read_bytes()).hexdigest()!=digest:mismatches.append(name)
+ if hashlib.sha256(build_path.read_bytes()).hexdigest()!=exported['build_source_identity_sha256']:mismatches.append('export references another build')
+ for name,digest in exported['pdf_sha256'].items():
+  if hashlib.sha256((BASE/name).read_bytes()).hexdigest()!=digest:mismatches.append(name)
+ results['source_export_provenance']={'status':'PASS' if not mismatches else 'FAIL','mismatches':mismatches,'build_source_identity_sha256':hashlib.sha256(build_path.read_bytes()).hexdigest()}
+ if mismatches:results['errors'].append('Stale source/export provenance')
+except (OSError,KeyError,ValueError) as exc:
+ results['source_export_provenance']={'status':'FAIL','reason':str(exc)};results['errors'].append('Missing source/export provenance')
 # PDFium coordinates independently catch glyphs clipped outside a PDF page.
 try:
  import pypdfium2 as pdfium

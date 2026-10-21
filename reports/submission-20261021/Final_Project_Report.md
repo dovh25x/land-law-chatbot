@@ -16,15 +16,15 @@
 | Thời hạn nộp theo kế hoạch dự án | 23/10/2026 |
 | Ngày chốt bản thảo/evidence | 21/10/2026 |
 
-Thông tin hành chính được để trống theo yêu cầu. Repository chưa cung cấp syllabus, rubric hoặc mẫu báo cáo chính thức; không xem bản thảo này là xác nhận đã đáp ứng toàn bộ yêu cầu học phần. Các tiêu chí sản phẩm được đối chiếu với PRD, ADR và yêu cầu của người thực hiện. Mục tiêu hoàn thiện bàn giao mới là trước 23:00 ngày 21/10/2026 (Việt Nam); ngày 23/10/2026 trong bìa là deadline học phần theo kế hoạch đã cung cấp. Trước khi nộp cần điền bìa và đối chiếu quy định học phần.
+Thông tin hành chính được để trống theo yêu cầu. Repository chưa cung cấp syllabus, rubric hoặc mẫu báo cáo chính thức; không xem bản thảo này là xác nhận đã đáp ứng toàn bộ yêu cầu học phần. Các tiêu chí sản phẩm được đối chiếu với PRD, ADR và yêu cầu của người thực hiện. Mục tiêu hoàn thiện bàn giao mới là trước 23:00 ngày 21/10/2026 (Việt Nam); ngày 23/10/2026 trong kế hoạch là deadline học phần theo kế hoạch đã cung cấp. Trước khi nộp cần điền bìa và đối chiếu quy định học phần.
 
 ## Tóm tắt
 
-**Mốc bằng chứng:** Các kết quả RAG offline trong báo cáo thuộc cohort Phase 3B/4 (`1697d9de…`); C02 mới được ghi riêng ở mục 11.2a. Fallback tra cứu nguồn đã được kiểm local ở cohort mới `dba69995…`; cloud có receipt riêng nếu được xác minh. Không kế thừa model-quality PASS từ cohort RAG cũ.
+Đồ án xây dựng Hanoi Land Law Assistant nhằm hỗ trợ người dân đọc nguồn về thu hồi đất, bồi thường, hỗ trợ và tái định cư cho Vành đai 4 tại Hà Nội. Source giữ một pipeline FastAPI/LangGraph/Groq GPT-OSS 120B, embedding E5 ONNX Q8 384 chiều và giao diện React/Vite. Candidate bàn giao được giới hạn thành **tra cứu đoạn nguyên văn đã review**, tắt sinh đáp án AI; không xác định thửa đất, tính tiền hoặc bảo đảm quyền lợi cá nhân.
 
-Đồ án xây dựng một ứng dụng tra cứu tiếng Việt cho người dân liên quan đến thu hồi đất, bồi thường, hỗ trợ và tái định cư trong phạm vi Vành đai 4 tại Hà Nội. Hệ thống dùng FastAPI, LangGraph, Groq GPT-OSS 120B và E5 ONNX Q8 384 chiều; giao diện React/Vite, ingress Cloudflare Pages Function và kiến trúc triển khai Render–PostgreSQL/pgvector. Câu trả lời được biểu diễn bằng các claim có trích dẫn, qua kiểm tra nguồn, thời điểm và nội dung trước khi phát hành. Hệ thống không xác định thửa đất, tính tiền hoặc bảo đảm quyền lợi cá nhân.
+Candidate code `ec5d9a9d1f3f265ebd89f5c0524d41142b0806ec` đã có CI PASS: 529 backend tests trên Python 3.12, 16 frontend unit tests/build/audit và 110 Playwright local fixture tests. Image offline đạt 381,80 MiB peak RSS dưới 512 MiB. API thật trên SQLite/PostgreSQL cách ly chỉ hiển thị đoạn đúng receipt/checksum/ngày: 43 passages cho 21/10/2026; ngày 22–23 chỉ một header QĐ 40, không đủ nghiệp vụ. Code guard cuối đã deploy trên Render/Cloudflare; browser public thật đạt PASS trong phạm vi source lookup ở desktop và mobile emulation. Chat/follow-up generative và human Turnstile không được coi đã kiểm.
 
-Trên candidate RAG tại mốc Phase 3B/4, evidence hiện có gồm 516 backend regression tests trên Python 3.14.4 và Python 3.12.15, 14 frontend unit tests, 100 Playwright fixture tests và build frontend thành công. Phase 4 bổ sung image local, kiểm bộ nhớ 512 MiB và PostgreSQL cách ly với migration/role/restore; chưa phải nghiệm thu cloud. Truy xuất offline trên SQLite đạt macro Recall@5 = 97,37% trên 19 câu có gold hợp lệ, tương ứng 20/21 gold chunks và micro Recall@5 = 95,24%. Các số này không đo độ đúng của câu trả lời pháp luật. Tại mốc Phase 4, model inference trên candidate cuối chưa được thực hiện; diễn biến sau đó được tách riêng ở phụ lục cập nhật. Pilot Phase 3A trên fingerprint trước đó có C01 INCOMPLETE; C02/C03 chưa bắt đầu, được công bố NOT RUN. S06 của một cohort cũ giữ FAIL. Vì vậy, báo cáo không công bố RAGAS, độ đúng đáp án hoặc chất lượng production đã đạt. Sau các lỗi model, candidate bàn giao được giới hạn thành tra cứu đoạn nguyên văn đã review, tắt sinh đáp án AI. Kiểm API thật trên SQLite riêng xác nhận 43 passages cho ngày 21/10/2026, không gọi provider. Candidate source-only có 529 backend tests trên Python 3.14, 16 frontend tests, build và 104 Playwright local fixture tests PASS; đây là cohort mới, không cộng với số 516/100 của baseline. Đây là MVP tra cứu nguồn có kiểm soát, không phải kết quả xác nhận chất lượng RAG generative. Đóng góp có thể kiểm chứng gồm phần mềm, provenance, kiểm soát phát hành và thực nghiệm công khai giới hạn; release cloud chưa đủ bằng chứng nghiệm thu tại mốc chốt bản này. [E01–E08](../final-submission/2026-10-21/EVIDENCE_INDEX.md)
+Phép đo RAG riêng trên fingerprint `1697…` đạt macro Recall@5 **97,37% trên 19 câu SQLite**, 20/21 gold chunks và micro 95,24%; **không phải độ đúng đáp án pháp luật** và không phải benchmark mode source-only. S06 giữ FAIL; C01 Phase 3A INCOMPLETE; C02/C03 NOT RUN trong Phase 3A. C02 allocation mới trên 1697… cũng INCOMPLETE vì provider 400 JSON truncate rồi budget chặn request kế tiếp, không có đáp án phát hành. Model Answer Correctness, semantic Citation Accuracy, RAGAS và final-model faithfulness/coverage chưa được đo. Đóng góp kiểm chứng được là phần mềm, provenance, source admission, cơ chế không phát hành claim chưa đủ kiểm chứng và gói thực nghiệm công bố cả thất bại. Thông tin học phần chưa cung cấp được để trống.
 
 ## 1. Giới thiệu bài toán và động lực
 
@@ -36,7 +36,7 @@ Một người có đất bị thu hồi thường cần biết mình nên đọ
 
 ### 1.2. Câu hỏi nghiên cứu ở quy mô đồ án
 
-Đồ án khảo sát ba câu hỏi: hệ thống có truy xuất được các đoạn nguồn đã gắn nhãn hay không; có giữ được căn cứ cần thiết khi đưa vào synthesis hay không; và có ngăn phát hành claim chưa đủ kiểm chứng hay không. Khả năng tạo đáp án đúng từ model thật là một câu hỏi riêng, chưa được xác nhận trên candidate cuối. Không dùng kết quả hai câu hỏi đầu để thay câu hỏi thứ ba.
+Đồ án khảo sát ba câu hỏi: hệ thống có truy xuất được các đoạn nguồn đã gắn nhãn hay không; có giữ được căn cứ cần thiết khi đưa vào synthesis hay không; và có ngăn phát hành claim chưa đủ kiểm chứng hay không. Khả năng tạo đáp án đúng từ model thật là một câu hỏi riêng, chưa được xác nhận trên candidate cuối. Không dùng Recall hoặc context completeness để thay thẩm định model-answer correctness.
 
 ### 1.3. Phương pháp và đóng góp
 
@@ -86,22 +86,22 @@ Truy xuất, tính đầy đủ của context, provenance của citation, entail
 
 ## 4. Đặc tả yêu cầu
 
-Yêu cầu được trích từ PRD và ràng buộc dự án, không tự gán trọng số hoặc điểm của rubric học phần chưa có. [E09](../final-submission/2026-10-21/EVIDENCE_INDEX.md#e09)
+Yêu cầu được trích từ PRD và ràng buộc dự án, không tự gán trọng số hoặc điểm của rubric học phần chưa có. Bảng mô tả pipeline RAG đã xây trong source; candidate bàn giao ở mục 8.4 chỉ tra cứu nguồn, các chức năng chat/generation không được bật hoặc coi đã nghiệm thu. [E09](../final-submission/2026-10-21/EVIDENCE_INDEX.md#e09)
 
 | ID | Yêu cầu | Implementation/evidence | Trạng thái ở candidate |
 |---|---|---|---|
-| FR01 | Hỏi bằng tiếng Việt và làm rõ dữ kiện | Agent/citizen logic; unit và UI fixtures | Phần mềm có; chất lượng model chưa xác nhận |
+| FR01 | Hỏi bằng tiếng Việt và làm rõ dữ kiện | Agent/citizen logic; unit và UI fixtures | Code có; chat tắt trong bản bàn giao |
 | FR02 | Tra cứu điều khoản, nguồn và quan hệ văn bản | Hybrid search/open_article/check_effectivity | Có source và đo retrieval SQLite |
 | FR03 | Kết luận có citation kiểm chứng | Claims, synthesis ledger và verifier | Có guard; chưa có model-answer pass hiện hành |
 | FR04 | Hỏi tiếp, không xem history là chứng cứ | Request history giới hạn và retrieval lại | Có regression; không khẳng định public model flow đã đạt |
-| FR05 | Xem nguồn khi generation không khả dụng | Thư viện và source panel | UI fixture đạt; public candidate chưa kiểm |
+| FR05 | Xem nguồn khi generation không khả dụng | Thư viện và source panel | UI và public source lookup đạt trong scope |
 | FR06 | Lịch sử trên thiết bị, xóa/hết hạn | IndexedDB, không server replay | Có implementation và regression |
 | NFR01 | Không phát draft chưa verify | Graph/SSE contract | Regression đạt |
 | NFR02 | Hữu hạn ngân sách và thời gian | 6 LLM/12 tools/2 rounds/1 repair/90 s | Regression đạt; quota provider vẫn có thể chặn |
 | NFR03 | Nguồn chưa xác minh không khẳng định luật hiện hành | Source gate và scoped receipts | Fail-closed; không toàn corpus fresh |
-| NFR04 | Bảo vệ secret và hạn chế lưu dữ liệu | Ingress, quotas, logging metadata, client history | Kiểm tra local; cấu hình production chưa xác minh mới |
+| NFR04 | Bảo vệ secret và hạn chế lưu dữ liệu | Ingress, quotas, logging metadata, client history | Kiểm tra local; mode source-only/ingress public đã kiểm; human challenge chưa kiểm |
 | NFR05 | Reproducibility | Suite/hash/corpus/fingerprint/attempt | Có asset và index; cần giao đủ asset khi nộp |
-| NFR06 | Website cloud hoạt động và khôi phục được | Workflow/Render/Pages/PG/migrations | Có cấu hình; candidate mới NOT TESTED công khai |
+| NFR06 | Website cloud hoạt động và khôi phục được | Workflow/Render/Pages/PG/migrations | Đã deploy và public source lookup PASS; chat/human Turnstile chưa kiểm |
 
 Không dùng số unit tests hoặc việc có file triển khai để đánh dấu FR03/NFR06 hoàn thành về chất lượng thực tế.
 
@@ -143,7 +143,7 @@ Chỉ có một pipeline. Không có multi-agent, reranker, fine-tuning, GIS ho�
 
 Candidate dùng `corpus-1afca764aa6692e0`, gồm 60 document records và 7396 chunks. Payload SHA256 là `7ce7956ae35c7006b5bfd7d10d516fa9e8e47fe2f073e471ceecbb34b412d317`. Đây là quy mô snapshot, **không phải 60 văn bản đều fresh hoặc được phép áp dụng hiện hành**. Corpus/receipt/source-policy checksum trong freeze manifest giúp đối chiếu đúng phiên bản. [E01](../final-submission/2026-10-21/EVIDENCE_INDEX.md#e01)
 
-Nguồn có phân loại vai trò: pháp luật, hồ sơ dự án/tin chính thức và nguồn thủ tục/danh bạ khi đủ review. Metadata giữ tài liệu, số hiệu, jurisdiction, URL, checksum, ngày kiểm tra và quan hệ văn bản. URL trong allowlist hoặc HTTP200 chỉ là một phần provenance, không chứng minh điều khoản còn áp dụng.
+Nguồn có phân loại vai trò: pháp luật, hồ sơ dự án/tin chính thức và nguồn thủ tục/danh bạ khi đủ review. Metadata giữ tài liệu, số hiệu, jurisdiction, URL, checksum, ngày kiểm tra và quan hệ văn bản. URL trong allowlist hoặc HTTP 200 chỉ là một phần provenance, không chứng minh điều khoản còn áp dụng.
 
 ### 6.2. Xử lý văn bản
 
@@ -164,10 +164,10 @@ Receipt giới hạn `chunk_checksums` và khoảng ngày hỏi, gắn review th
 | Tình huống hiện hành giả lập | Căn cứ trong phần review | Hạn chế quyết định |
 |---|---|---|
 | C01: điều kiện và hình thức bồi thường | Luật 31/2024:95,98; NQ 254/2025:3(10) và chuyển tiếp được review | Đã có source capture ở cohort trước; model attempt INCOMPLETE, không xác nhận quyền lợi |
-| C02: hỗ trợ cho giả định đất nông nghiệp, thu hồi 40%, không di chuyển | Luật 31:108; QĐ 40/2026:17; NĐ 49:11 và các sửa đổi liên quan | Context 3/3,5070 ký tự; chưa có model answer đạt |
-| C03: tái định cư đối với giả định thu hồi hết đất ở tại xã | Luật 31:111(4); NĐ 88:11; NĐ 226:7; NĐ 49:16; QĐ 40:21 | Context 7/7,6981 ký tự; chưa có model answer đạt; không cam kết suất/diện tích |
+| C02: hỗ trợ cho giả định đất nông nghiệp, thu hồi 40%, không di chuyển | Luật 31:108; QĐ 40/2026:17; NĐ 49:11 và các sửa đổi liên quan | Context 3/3, 5070 ký tự; chưa có model answer đạt |
+| C03: tái định cư đối với giả định thu hồi hết đất ở tại xã | Luật 31:111(4); NĐ 88:11; NĐ 226:7; NĐ 49:16; QĐ 40:21 | Context 7/7, 6981 ký tự; chưa có model answer đạt; không cam kết suất/diện tích |
 
-Bảng mô tả phạm vi review ngày 21/10, không đưa ra kết luận tư vấn mới. Nguồn chính thức, điều khoản chuyển tiếp, ngoại lệ và giới hạn xác minh nằm trong [biên bản pháp luật Phase2C](../phase2c-current-20261021/LEGAL_REVIEW.md). Không suy một điều vẫn áp dụng chỉ vì có trong snapshot.
+Bảng mô tả phạm vi review ngày 21/10, không đưa ra kết luận tư vấn mới. Nguồn chính thức, điều khoản chuyển tiếp, ngoại lệ và giới hạn xác minh nằm trong [biên bản pháp luật Phase 2C](../phase2c-current-20261021/LEGAL_REVIEW.md). Không suy một điều vẫn áp dụng chỉ vì có trong snapshot.
 
 ## 7. Truy xuất, tổng hợp, kiểm chứng và trích dẫn
 
@@ -197,22 +197,23 @@ Ledger giữ upper bound cho response thiếu usage, kể cả 429/400. Reservat
 
 ### 8.1. Trải nghiệm người dùng
 
-UI hội thoại có trạng thái loading, hủy, lỗi, hỏi làm rõ và nguồn. Source panel hỗ trợ so sánh trên desktop, modal trên màn hình nhỏ; citation mở đúng đoạn nguồn và đường dẫn gốc. Thiết kế tham chiếu Figma nhưng hình minh họa thiết kế không phải transcript model. Trace chỉ gồm sự kiện thực thi quan sát được. [E14](../final-submission/2026-10-21/EVIDENCE_INDEX.md#e14)
+Giao diện bàn giao đặt thư viện nguồn và thời điểm áp dụng ở trung tâm: tìm theo tên/số hiệu, mở các đoạn nguyên văn được review, xem locator và URL gốc. Banner nêu rõ “không sinh đáp án pháp luật”; composer bị tắt trong source-only mode. UI không coi toàn văn đã xác minh chỉ vì một vài đoạn đạt review. Thiết kế desktop/mobile được giữ theo handoff hiện có. [Frontend source](../../docs/FRONTEND.md)
 
-IndexedDB giữ tối đa 7 ngày, có giới hạn số cuộc/message/dung lượng. Bearer token phiên nằm trong sessionStorage/bộ nhớ tab, không phải lịch sử dài hạn. Không có đồng bộ thiết bị; mất stream không có server replay đáp án. Giao diện không tự gửi lại POST chat để che lỗi.
+History lưu IndexedDB tối đa 7 ngày, không đồng bộ thiết bị; token phiên thuộc sessionStorage/bộ nhớ tab. History/citation cũ là dữ liệu không đáng tin cho thời điểm hiện tại. Guard trình bày cuối khóa structured claims, citation actions/panels, chat và Turnstile khi metadata runtime còn chờ/lỗi; cảnh báo rõ lịch sử chưa review lại. Normal mode đã biết nhưng provider không khả dụng vẫn cho soạn draft, còn send() chặn session/chat POST. Các chức năng hội thoại/SSE/repair vẫn có trong source RAG nhưng không được quảng bá như năng lực đã nghiệm thu của bản demo nguồn.
 
 ### 8.2. Backend và dữ liệu
 
 FastAPI quản lý session token, request ID, quotas, lease và SSE. Một lượt đang chạy mỗi phiên và concurrency toàn hệ thống hữu hạn. Store giữ corpus, review và metadata thực thi; server không giữ messages, answer cache hoặc trace chi tiết. Migration 006 xóa payload cũ và thu hồi quyền runtime; đây không phải migration có thể đảo để khôi phục lịch sử. Chỉ database riêng được dùng để test restore.
 
-PostgreSQL có schema/migration, role và chỉ mục 384 chiều; migration có thể vẫn cho phép vector archive kích thước cũ. Runtime phải ghim contract 384 và không trộn contract chỉ vì schema lưu được nhiều kích thước. Sau chấp thuận bổ sung Docker, Phase 4 kiểm PostgreSQL 16.15/pgvector 0.8.7 trong container mới: migrations 001–006, runtime role, session lease và restore corpus 60 records/7396 chunks sang DB thứ hai đều đạt. Restore thiếu receipts fail-closed, reapply hợp lệ mở gate; không có server conversation rows. Fingerprint PG được kiểm local là `2229a1b298052e51b80d1d46530ca9a5ba580f5bc1b04be90cecdf0e15190c6d`. Chưa chạy PG retrieval benchmark 19 câu, full backend suite trên PG hoặc Supabase integration. [E15](../final-submission/2026-10-21/EVIDENCE_INDEX.md#e15)
+PostgreSQL có schema/migration, role và chỉ mục 384 chiều; migration có thể vẫn cho phép vector archive kích thước cũ. Runtime phải ghim contract 384 và không trộn contract chỉ vì schema lưu được nhiều kích thước. Sau chấp thuận bổ sung Docker, Phase 4 kiểm PostgreSQL 16.15/pgvector 0.8.7 trong container mới: migrations 001–006, runtime role, session lease và restore corpus 60 records/7396 chunks sang DB thứ hai đều đạt. Restore thiếu receipts fail-closed, reapply hợp lệ mở gate; không có server conversation rows. Fingerprint PG được kiểm local là `2229a1b298052e51b80d1d46530ca9a5ba580f5bc1b04be90cecdf0e15190c6d`. Không chạy PG retrieval benchmark19 câu hoặc full pytest trên PostgreSQL; API/role/cloud publication hiện hành được tách tại mục 8.3–8.4, không chuyển score giữa backend. [E15](../final-submission/2026-10-21/EVIDENCE_INDEX.md#e15)
 
 ### 8.3. Triển khai cloud
 
-Source có Dockerfile, CI và workflow Pages/Render; cấu hình Free được giữ. Serving image Phase 4 đã build trên Python 3.12.15, chạy non-root và kiểm checksum model/fingerprint. Kiểm bộ nhớ đạt 382,66 MiB peak RSS dưới giới hạn 512 MiB với lifespan,8000 headingfixtures và hai query embedding đồng thời; đây không phải load test mọi tình huống. Lần chạy tests trong serving image có 513 pass/3 fail do thiếu Git/notebook; giữ log, sau đó dùng testtools image riêng bổ sung Git và mount notebook, đạt 516/516. Không thay serving image để thêm công cụ test. Python 3.14.4 có 516 PASS từ Phase 3B; không cộng hai lần thành 1032 test độc lập. Frontend Node 24, local locks khớp installed packages và npm manifest; CI trên source commit mới vẫn chưa chạy.
+Candidate dùng kiến trúc Free hiện có: Cloudflare Pages/Function ký ingress tới Render/FastAPI và PostgreSQL/pgvector. Không thay hosting hoặc credentials. Code cuối `ec5d9a9…` đã push main/release branch và [CI exact SHA](https://github.com/dovh25x/land-law-chatbot/actions/runs/39588182288) PASS với backend 529 Python 3.12, frontend 16/build/audit, Playwright 110 và image. UI browser tests local dùng fixtures, không tự thay public E2E.
 
-Tại mốc bằng chứng Phase 4, candidate chưa commit và chưa deploy; trạng thái phát hành sau mốc này được ghi trong phụ lục cập nhật cuối báo cáo. Domain được ghi trong README là địa chỉ dự án lịch sử, không xác nhận đang phục vụ source/hash/corpus mới. Public E2E và deployed fingerprint của candidate vẫn NOT TESTED. `.dockerignore` Phase 4 chỉ loại tài liệu nộp và backup replay trùng khỏi image context; dữ liệu gốc được giữ. Image identity, các path bị loại và public report inputs còn đủ được ghi trong Docker receipt; build local chưa phải registry release. [E16](../final-submission/2026-10-21/EVIDENCE_INDEX.md#e16)
+[Serving image cuối](../release-final-20261021/image-probe-final.json) chạy Python 3.12.15, UID 10001, đúng model checksums và fingerprints; [memory probe](../release-final-20261021/docker-memory-ui-guard.log) đạt 381,796875 MiB dưới 512 MiB bằng offline fixtures, không model inference/load test public. Image ID local là `d1ff01c49a287f78a1620f8040539f7974984c426503fcb34481eedaa6a4bd41`. Số 382,66 MiB Phase 4 và 381,71 MiB candidate đầu là các run/image lịch sử riêng, không trộn với số đo cuối.
 
+Corpus `corpus-1afca764aa6692e0` và 11 scoped receipts đã được [publish có kiểm soát](../release-final-20261021/corpus-publication.json), giữ release cũ, không migration/xóa dữ liệu/đổi credentials. Frontend và backend cuối đã deploy exact code ec5d9a9… tại [hanoi-land-law.pages.dev](https://hanoi-land-law.pages.dev). [Identity public](../release-final-20261021/final-public-identity.json) xác nhận fingerprint 8ee1…, corpus 1afc, source-only bật/generation tắt và JS/CSS khớp production build. [Browser public cuối](../release-final-20261021/qa/public-source-2026-10-21T11-02-32-079Z/report.json) đạt **PASS_SOURCE_ONLY_PUBLIC_BROWSER** trên desktop 1440px và mobile emulation 390px: số đoạn/ngày/checksum đúng, link QĐ40 mở HTTP 200 đúng title, reload/history warning/clear và không overflow đều đạt, 0 model/session. Đây không phải kiểm physical mobile device, human Turnstile hoặc một hội thoại generative thành công. Human Turnstile, generated chat và follow-up vẫn không khả dụng/chưa kiểm trong mode nguồn. Tài liệu học thuật và backup trùng được loại khỏi serving image; release có checksum và phương án phục hồi an toàn riêng, không rollback tự động về code generative cũ.
 
 ### 8.4. Candidate an toàn: chỉ tra cứu đoạn nguồn đã review
 
@@ -226,16 +227,16 @@ API thư viện lọc từng passage theo receipt, checksum và ngày `as_of` đ
 |---|---:|---:|---|
 | 02/08/2024 | 3 | 25 | Phạm vi lịch sử của receipts, không áp dụng mặc định cho hiện hành |
 | 21/10/2026 | 7 | 43 | Các đoạn đủ review/checksum cho ngày này; không xác nhận đủ điều kiện của hộ |
-| 22/10/2026 | 1 | 1 | Chỉ header/điều thay thế của QĐ40, không đủ coverage nghiệp vụ |
+| 22/10/2026 | 1 | 1 | Chỉ header/điều thay thế của QĐ 40, không đủ coverage nghiệp vụ |
 | 23/10/2026 | 1 | 1 | Không tự gia hạn các đoạn bồi thường/hỗ trợ/tái định cư |
 
-Cả run có **0 provider generate calls**, readiness không phụ thuộc LLM key trong mode nguồn. Fingerprint SQLite source-only là `dba699954ac85068b40f676eaa2c927065d81c406eda7b08a6665ffafc53e58e`. [API source-only trên PostgreSQL16 cách ly](../release-final-20261021/qa/source-lookup-pg-acceptance.json) cũng PASS với fingerprint `8ee1cd63c2ef531bc603848ce3d5b11334322e368d14c10fc73a81d339d51464`: runtime role không superuser/bypass RLS, không quyền insert các bảng history/corpus/review; 413 SELECT, 0 model calls, counts trước/sau không đổi. Đây là GET API acceptance thật, không phải PG Recall benchmark, cloud hoặc public E2E.
+Cả run có **0 provider generate calls**, readiness không phụ thuộc LLM key trong mode nguồn. Fingerprint SQLite source-only là `dba699954ac85068b40f676eaa2c927065d81c406eda7b08a6665ffafc53e58e`. [API source-only trên PostgreSQL 16 cách ly](../release-final-20261021/qa/source-lookup-pg-acceptance.json) cũng PASS với fingerprint `8ee1cd63c2ef531bc603848ce3d5b11334322e368d14c10fc73a81d339d51464`: runtime role không superuser/bypass RLS, không quyền insert các bảng history/corpus/review; 413 SELECT, 0 model calls, counts trước/sau không đổi. Đây là GET API acceptance thật, không phải PG Recall benchmark, cloud hoặc public E2E.
 
-Kiểm tra liên quan sau thay đổi: [56 backend targeted](../release-final-20261021/qa/source-lookup-tests-unsandboxed.log), gồm 13 test mới; [16 frontend tests](../release-final-20261021/qa/frontend-source-lookup-tests-final.log), [build](../release-final-20261021/qa/frontend-source-lookup-build-final.log) và [4 Playwright mới](../release-final-20261021/qa/source-lookup-playwright.log) đều PASS. Bốn UI test dùng fixtures desktop/mobile, chưa phải browser public. Không cộng 56 và 13 thành 69 test độc lập. [Full backend suite](../release-final-20261021/backend-full.log) sau fallback đạt **529 PASS trong 223,34 giây**, local Python 3.14; [full Playwright](../release-final-20261021/frontend-e2e-full.log) đạt **104 PASS trong 4,9 phút**, vẫn là local fixtures. Số 13 test backend mới giải thích chênh lệch 516→529; không cộng thành 1.045 tests. Image cuối đã build; [memory probe mới](../release-final-20261021/docker-memory-final.log) đạt 381,71 MiB peak RSS dưới 512 MiB với offline fixture load, không gọi LLM. Không gán giá trị 382,66 MiB của image Phase 4 thành số đo image mới; cả hai không phải load test public. CI theo SHA thực tế được ghi ở phụ lục khi có receipt.
+Tests của candidate cuối:529 backend, 16 frontend unit/build và 110 Playwright local đều PASS theo CI exact SHA. [Local full Playwright](../release-final-20261021/frontend-e2e-final-full.log) đạt 110 PASS trong 3,6 phút; [local backend](../release-final-20261021/backend-full.log) đạt 529 trong 223,34 giây trên Python 3.14. Số 516 baseline Phase 3B/4, 56 targeted gồm 13 mới và các run 104 UI là evidence lịch sử riêng; không cộng thành một mẫu lớn hơn. API read-only PostgreSQL acceptance không phải full pytest trên PostgreSQL.
 
-[Cloud preflight chỉ đọc](../release-final-20261021/cloud-inspection.json) xác nhận PG17/schema 006/runtime role tương thích. [Backup rollback của corpus cloud cũ](../release-final-20261021/rollback-restore.json) được restore vào PG16 local mới, khớp 60 documents/7392 chunks, không sessions/messages/traces và không mutate production. Không nhầm corpus cũ này với candidate 7396 chunks. [Negative ingress probes](../release-final-20261021/ingress-before-deploy.json) ghi edge400 thiếu challenge và backend403 unsigned, không tạo session hoặc gọi model; chưa phải human Turnstile/chat thành công.
+[Cloud preflight chỉ đọc](../release-final-20261021/cloud-inspection.json) xác nhận PG17/schema 006/runtime role tương thích. [Backup rollback của corpus cloud cũ](../release-final-20261021/rollback-restore.json) được restore vào PG16 local mới, khớp 60 documents/7392 chunks, không sessions/messages/traces và không mutate production. Không nhầm corpus cũ này với candidate 7396 chunks. [Negative ingress probes](../release-final-20261021/ingress-before-deploy.json) ghi edge 400 thiếu challenge và backend 403 unsigned, không tạo session hoặc gọi model; chưa phải human Turnstile/chat thành công.
 
-Đây là **LOCAL PASS cho source lookup**, chưa phải cloud PASS và không phải model-answer accuracy. Recall@5 97,37% thuộc cohort RAG `1697…`, không gán sang mode source-only hoặc gọi đó là tỷ lệ tư vấn đúng.
+Các acceptance trong mục này xác nhận component API source lookup trên môi trường tách biệt; trạng thái cloud hiện hành ở mục 8.3 và không phải model-answer accuracy. Recall@5 97,37% thuộc cohort RAG `1697…`, không gán sang mode source-only hoặc gọi đó là tỷ lệ tư vấn đúng.
 
 ## 9. Bảo mật, quyền riêng tư và trách nhiệm sử dụng
 
@@ -249,9 +250,16 @@ Rủi ro đạo đức gồm người dùng tin quá mức vào đáp án, nhầ
 
 ### 10.1. Thiết lập và tính tái lập
 
-Runtime SQLite của cohort Phase 3B/4: `1697d9dec78b8625398e53999b609e3ce57258666c2e3566a8321385abe8886d`. Git HEAD `117e7bd2c4a320c3d02256dfdabf858180b47dbf` chỉ là base commit; các bản vá tại mốc Phase 4 vẫn ở working tree. Freeze manifest Phase 4 mô tả source tree sau packaging, dependency locks và trạng thái candidate_commit=null tại mốc đó. Trạng thái phát hành cập nhật được tách riêng ở phụ lục cuối. Không dùng base commit thay cho toàn code đã kiểm thử.
+Code candidate cuối là `ec5d9a9d1f3f265ebd89f5c0524d41142b0806ec`; source-tree SHA256 `5b9b8af81fb3fa2f2f640a6b1053c365274716e5309d0dc21dd864247c4499ea`. [CI run 39588182288](https://github.com/dovh25x/land-law-chatbot/actions/runs/39588182288) kiểm exact code SHA. Tài liệu xuất sau code commit có build/export/hash manifest riêng; tag tài liệu có thể trỏ commit docs/evidence sau đó, không giả nhận một runtime mới đã deploy. Model, embedding, corpus và gold không đổi để tối ưu các ca thất bại.
 
-Bộ smoke 20 + supplemental 4 + natural 8 giữ nguyên bytes/checksum. Registry citizen-v2-draft chưa executable; không gộp vào 32 ca đã khóa. C01–C03 là acceptance/pilot giả lập riêng, không thay câu thất bại của bộ khóa. Snapshot, receipt và context phải cùng cohort. Các tệp corpus/raw/model lớn được liên kết thay vì nhân bản; nộp Git source đơn lẻ chưa đủ nếu thiếu asset ignored cần để tái lập.
+| Cohort | Backend/runtime identity | Phép đo được gắn đúng cohort |
+|---|---|---|
+| RAG Phase 3B/4 và C02 mới | SQLite `1697d9dec78b8625398e53999b609e3ce57258666c2e3566a8321385abe8886d` | Recall@5, actual synthesis capture, C02 INCOMPLETE |
+| Source-only SQLite | `dba699954ac85068b40f676eaa2c927065d81c406eda7b08a6665ffafc53e58e` | API receipt/date/checksum, không model |
+| Source-only PostgreSQL | `8ee1cd63c2ef531bc603848ce3d5b11334322e368d14c10fc73a81d339d51464` | GET API read-only, không PG Recall/model benchmark |
+| UI guard cuối | Presentation fingerprint `3e675c8a872faf613d1c05b79da9090fab051aacbdc6b4614979474532dd3e55` | Pending/failed-metadata/history presentation và browser checks |
+
+Bộ 20 smoke+4 supplemental+8 natural giữ nguyên bytes/checksum. Registry citizen-v2-draft chưa executable; không gộp vào 32 ca đã khóa. C01–C03 là acceptance/pilot giả lập riêng, không thay câu thất bại của bộ khóa. Corpus/raw/model lớn được giao bằng asset/checksum riêng; clone source đơn lẻ chưa đủ nếu thiếu asset ignored. Snapshot, receipts, code và context phải cùng phạm vi/cohort trước khi tái lập.
 
 ### 10.2. Recall@5
 
@@ -282,35 +290,35 @@ Refusal của câu answerable không được chấm đúng. Không có claim/ci
 
 ## 11. Kết quả, phân tích thất bại và thảo luận
 
-### 11.1. Software và retrieval trên candidate Phase 3B/4
+### 11.1. Kết quả phần mềm hiện hành và truy xuất RAG riêng
 
-| Evidence | Kết quả | Phạm vi |
-|---|---:|---|
-| Backend regression | 516 PASS mỗi môi trường | Python 3.14.4 local và Python 3.12.15 testtools Docker; HTTP thật bị chặn |
-| Frontend unit | 14 PASS | Source UI hiện tại |
-| Frontend build | PASS | TypeScript/Vite |
-| Playwright | 100 PASS | Local desktop/mobile, API fixtures |
-| Macro Recall@5 | 97,37% | 19 câu SQLite |
-| Gold hits / gold labels | 20/21 | Micro Recall@5=95,24% |
-| Context C02 | 3/3;5070 ký tự | Payload synthesis đầy đủ |
-| Context C03 | 7/7;6981 ký tự | Sát giới hạn 7000 ký tự |
-| Image memory check |382,66 MiB peak RSS |512 MiB hard cap, offline fixtures; không load test public |
-| PostgreSQL local | PASS | Migration/role/lease/corpus restore, không cloud hoặc model |
+| Lớp bằng chứng | Kết quả thực đo | Phạm vi |
+|---|---|---|
+| Backend candidate cuối |529 PASS |CI Python 3.12; local Python 3.14 là môi trường riêng, không cộng số |
+| Frontend candidate cuối |16 PASS; build/audit PASS |Exact code SHA ec5d9a9… |
+| Browser local |110 PASS |Fixtures desktop/mobile; khác public browser |
+| Source-only API |PASS SQLite/PG cách ly; 0 model calls |25 historical/43 ngày 21/1 header ngày 22–23 |
+| Memory image cuối |381,80 MiB peak RSS dưới 512 MiB |Offline fixture load, không public load test |
+| RAG macro Recall@5 |97,37% |19 câu SQLite, fingerprint 1697… |
+| RAG gold hits/micro |20/21;95,24% |Không phải answer accuracy |
+| RAG actual context C02/C03 |3/3, 5070 ký tự; 7/7, 6981 ký tự |Fingerprint 1697…, không phải model correctness |
 
-N03 có Recall 0,5 vì thiếu gold parent trong top 5 dù child liên quan xuất hiện. Không đổi nhãn hoặc tính tương đương parent/child để làm kết quả 100%. Các chỉ số retrieval chỉ dùng query gốc, không cộng evidence sau agent expansion. [E03](../final-submission/2026-10-21/EVIDENCE_INDEX.md#e03)
+Baseline 516 backend và 100 local Playwright của Phase 3B/4 giữ nguyên như bằng chứng lịch sử; số 529/110 là test suite đã mở rộng, không phải phép cộng nhiều lần chạy. PostgreSQL source API PASS không chuyển số Recall SQLite sang PG. Public source-only guard/browser release đã được chốt tại mục 8.3 theo receipt cuối.
+
+N03 có Recall 0,5 vì thiếu gold parent trong top 5 dù child liên quan xuất hiện. Không đổi nhãn hoặc tính tương đương parent/child để làm 100%. Retrieval dùng query gốc, không cộng evidence sau agent expansion. [Receipt retrieval gốc](../phase3b-reliability-20261021T073924Z/retrieval-final/retrieval-recall-at5.json)
 
 ### 11.2. Model và các cohort lịch sử
 
 | Cohort | Kết quả giữ nguyên | Điều không được suy ra |
 |---|---|---|
-| S06 cuối, fingerprint 2dab4dde… | FAIL;2 HTTP200;8104 tokens; không phát claim | Không coi repair có cải thiện là pass; không gán kết quả cho 1697… |
-| Phase 3A, fingerprint 37d2fb54… | C01 INCOMPLETE; draft đầu không đủ phát hành | HTTP200 không đồng nghĩa answer correctness |
-| Phase 3A C02/C03 | NOT RUN,0 attempts/0 requests | Không coi placeholder INCOMPLETE trong raw receipt là inference đã thất bại |
+| S06 cuối, fingerprint 2dab4dde… | FAIL; 2 HTTP 200; 8104 tokens; không phát claim | Không coi repair có cải thiện là pass; không gán kết quả cho 1697… |
+| Phase 3A, fingerprint 37d2fb54… | C01 INCOMPLETE; draft đầu không đủ phát hành | HTTP 200 không đồng nghĩa answer correctness |
+| Phase 3A C02/C03 | NOT RUN, 0 attempts/0 requests | Không coi placeholder INCOMPLETE trong raw receipt là inference đã thất bại |
 | Phase 3B, fingerprint 1697d9de… |0 model requests | Không có model correctness/faithfulness mới |
 
-Phase 3A C01 gửi đủ 4/4 đoạn bắt buộc nhưng draft thiếu citation NQ 254 và rút gọn mất điều kiện của nhánh Điều 111. Structural verifier chặn; có một issue nhạy với cách diễn đạt khoản 1 nên không được dùng issue đó một mình để khẳng định mọi mô tả chủ thể sai. Repair gặp 429 TPM, rồi 400 JSON; request tiếp theo bị budget chặn.0 claim/citation được phát hành. [E07](../final-submission/2026-10-21/EVIDENCE_INDEX.md#e07)
+Phase 3A C01 gửi đủ 4/4 đoạn bắt buộc nhưng draft thiếu citation NQ 254 và rút gọn mất điều kiện của nhánh Điều 111. Structural verifier chặn; có một issue nhạy với cách diễn đạt khoản 1 nên không được dùng issue đó một mình để khẳng định mọi mô tả chủ thể sai. Repair gặp 429 TPM, rồi 400 JSON; request tiếp theo bị budget chặn. 0 claim/citation được phát hành. [E07](../final-submission/2026-10-21/EVIDENCE_INDEX.md#e07)
 
-C01 mất 34,858 giây toàn ca; ba HTTP latency 3756/148/4941 ms thuộc attempt dở dang. Không biến số này thành latency đáp án thành công hoặc public p95. Usage 4829 là xác nhận;52159 là tổng kế toán bảo thủ có unknown, không phải số token thực đo. Header requests là RPD, token là TPM; không có bằng chứng vượt RPM/TPD hoặc double-retry.
+C01 mất 34,858 giây toàn ca; ba HTTP latency 3756/148/4941 ms thuộc attempt dở dang. Không biến số này thành latency đáp án thành công hoặc public p95. Usage 4829 là xác nhận; 52159 là tổng kế toán bảo thủ có unknown, không phải số token thực đo. Header requests là RPD, token là TPM; không có bằng chứng vượt RPM/TPD hoặc double-retry.
 
 
 ### 11.2a. C02 trong allocation độc lập ngày 21/10/2026
@@ -335,13 +343,24 @@ Retrieval cao nhưng model chưa phát hành được kết quả hợp lệ là
 
 Các đe dọa gồm mẫu nhỏ do tác giả chọn, tương quan giữa người viết code và người gán nhãn, nhiều vòng chỉnh sửa trên cùng tập, thiếu holdout/người review độc lập, khác biệt SQLite/PG, snapshot chỉ có thời điểm áp dụng nhất định, judge cùng model, cắt ngữ cảnh và quota gây censoring. [Bảng đầy đủ và cách giảm rủi ro](LIMITATIONS.md)
 
+
+### 11.6. Kiểm browser public và race hiển thị lịch sử
+
+Run public đầu giữ **FAIL** vì harness chỉ đợi URL có `?as_of=21/10` dù UI đang hiển thị sẵn ngày đó và refresh hợp lệ bằng endpoint mặc định. [Sidecar phân loại harness](../release-final-20261021/qa/public-source-run-01-harness-review.json) giữ nguyên evidence, sửa kỳ vọng URL cho lần kiểm sau; không tăng timeout hoặc thay điều kiện pháp luật để làm pass.
+
+[Run public thứ hai](../release-final-20261021/qa/public-source-2026-10-21T10-30-14-328Z/report.json) phát hiện lỗi thật: history từ IndexedDB được tải trước metadata mode/generation, khiến đáp án/citation cũ có thể tạm được trình bày như đã xác minh mà thiếu cảnh báo. [Diagnostic race](../release-final-20261021/qa/history-race-2026-10-21T10-37-55-451Z/report.json) ghi citation cũ xuất hiện sau 528 ms và metadata source-only về sau 20,767 giây; đây là latency source/status, không phải model latency. Các GET nguồn đã khớp phạm vi nhưng chưa đủ để công bố browser PASS. History test là dữ liệu giả lập trong browser context riêng, không phải một đáp án model đã thành công.
+
+[Bản vá UI nhỏ](../release-final-20261021/qa/UI_UNKNOWN_RUNTIME_FIX.md) đã thêm fail-closed khi metadata đang chờ hoặc lỗi, ẩn structured claims/citation actions/panels, tắt chat/Turnstile khi chưa biết runtime và thêm recovery refresh. Regression delayed/failed metadata được bổ sung; candidate guard 93d… bị CI FAIL do tương tác UX/fixture; bản hoàn chỉnh ec5d9a9… giữ khả năng soạn draft ở normal mode đã biết nhưng provider unavailable, trong khi send() vẫn chặn API. Backend fingerprint/corpus không đổi; CI cuối 16 unit và 110 local browser PASS. Public run03 trên đúng code ec5 sau deploy đã đạt source-only scope; hai lần FAIL và CI trung gian vẫn giữ nguyên. Không thay LLM, prompt, verifier, corpus hoặc ngưỡng pháp luật; không có model request mới. [Run03 thật](../release-final-20261021/qa/public-source-2026-10-21T11-02-32-079Z/report.json) đối chiếu JS/CSS production cùng corpus/fingerprint, test ngay sau reload/history và cả hai viewport, 0 model requests; không xóa hai lần FAIL. Đây là ví dụ backend source admission đạt nhưng UX vẫn có thể làm người đọc hiểu sai độ tin cậy.
+
 ## 12. Kết luận và hướng phát triển
 
-Đồ án đã xây dựng một hệ thống tra cứu pháp luật có giao diện, pipeline, provenance, guards, test và quy trình đóng gói/evaluation có phiên bản. Kết quả xác nhận được là hoạt động phần mềm offline, khả năng truy xuất trên snapshot SQLite và kiểm soát phát hành theo nguồn. Đến mốc Phase 4 chưa đủ bằng chứng xác nhận model giải quyết ổn định ba tình huống hiện hành trên candidate cuối hoặc website cloud mới đạt nghiệm thu. Trạng thái release/pilot sau mốc này nằm ở phụ lục cập nhật, không thay số liệu cũ.
+Đồ án bàn giao một **MVP tra cứu đoạn nguồn pháp luật đã review**, giữ nguyên kiến trúc RAG nhưng tắt sinh đáp án pháp luật. Người dùng đọc nguyên văn theo ngày, locator và nguồn gốc; ứng dụng không xác định quyền lợi, tiền bồi thường hoặc suất tái định cư. Đây là lựa chọn phạm vi để giữ tính kiểm chứng sau khi các model pilots chưa hoàn tất, không phải tuyên bố đã giải quyết chất lượng generative bằng một mode tra cứu.
 
-Phần còn lại trước phát hành là chốt source commit sau review, CI/registry image trên SHA đó, PostgreSQL cloud/role/restore, tính phù hợp receipt cho ngày demo và public E2E. Image và PostgreSQL local đã kiểm chỉ giảm blocker môi trường, không xác nhận production hoặc model. Không tiếp tục tối ưu C01/S06, thay model/framework, cấp lại budget hoặc hạ verifier trong Phase 4. Buổi bảo vệ dùng mode source lookup đã kiểm local, trong đúng ngày/phần được review, kèm kết quả retrieval lịch sử có nhãn và báo cáo thiếu model metrics; không tạo transcript giả. Public deployment/E2E chỉ được nói đã đạt khi có receipt của đúng candidate source-only.
+Code cuối ec5d9a9… đã commit/push và CI PASS với 529 backend, 16 frontend, 110 Playwright local; image/PG/backup-restore có evidence riêng. Corpus và scoped receipts đã được publish có kiểm soát. Guard UI fail-closed sửa rủi ro history hiển thị như đã verify khi metadata chưa về. Code cuối đã deploy trên Render/Cloudflare với public API identity khớp. Browser public thật đạt PASS cho **source lookup hạn chế**: desktop/mobile emulation, đúng excerpt checksum/ngày, mở nguồn chính thức, reload và history warning/clear. Quyết định phát hành là **READY_FOR_RESTRICTED_SOURCE_LOOKUP**, còn generative chatbot **NOT_READY_DISABLED**; không gọi full generative E2E PASS. Trạng thái hiện hành cuối được xác nhận bằng receipt và delivery status, không dùng checklist Phase 4 cũ làm trạng thái release hiện tại.
 
-Hướng nghiên cứu sau học phần có thể là tăng dữ liệu review độc lập, mở rộng corpus có quản trị, đo false abstention và usability với người dùng phù hợp. Đây là đề xuất tương lai, không phải chức năng đã hoàn thành hoặc kế hoạch tự triển khai trong candidate này.
+Giới hạn quan trọng còn lại là nguồn chỉ có 43 passages cho 21/10/2026; ngày 22–23 không có coverage nghiệp vụ ngoài một header. Có thể tra cứu rõ historical as_of 21/10, không gọi đó là luật hiện hành 23/10. Receipt/live import hết hạn phải review mới có căn cứ, không sửa checked_at hoặc nới F01. S06 FAIL, C01/C02 INCOMPLETE và những metric model chưa đo được công bố; không thêm inference để tối ưu một ca riêng hoặc trình transcript giả.
+
+Hướng phát triển sau học phần là review pháp lý độc lập, mở rộng nguồn có quản trị, dữ liệu holdout/answerability được khóa trước chạy, đo correctness/false abstention và usability với người dùng phù hợp. Chỉ mở lại generation khi có evaluation và ngân sách API hợp lệ. Không coi các đề xuất này là chức năng đã hoàn thành hoặc kế hoạch tự triển khai trong release hiện tại.
 
 ## Tài liệu tham khảo
 
@@ -352,8 +371,8 @@ Hướng nghiên cứu sau học phần có thể là tăng dữ liệu review �
 - **T5.** Es, S., James, J., Espinosa-Anke, L., Schockaert, S. *Ragas: Automated Evaluation of Retrieval Augmented Generation*. [arXiv:2309.15217](https://arxiv.org/abs/2309.15217), bản đầu 2023.
 - **T6.** Groq. [Structured Outputs](https://console.groq.com/docs/structured-outputs), [Rate Limits](https://console.groq.com/docs/rate-limits); tham khảo cơ chế API, không dùng quota mặc định thay evidence của tài khoản.
 - **T7.** Repository: [PRD](../../docs/PRD.md), [Architecture](../../docs/ARCHITECTURE.md), [ADR](../../docs/adr/README.md), [Evaluation](../../docs/EVALUATION.md), [Operations](../../docs/OPERATIONS.md).
-- **T8.** [Biên bản nguồn chính thức Phase2C và URL văn bản](../phase2c-current-20261021/LEGAL_REVIEW.md), ngày review 21/10/2026; không xác nhận hiệu lực cho ngày khác.
-- **T9.** [Evidence index và checksum](../final-submission/2026-10-21/EVIDENCE_INDEX.md), [Freeze manifest](../final-submission/2026-10-21/freeze-manifest.json). Các số thực nghiệm trong báo cáo lấy từ các artifact được chỉ rõ; không từ tài liệu lý thuyết.
+- **T8.** [Biên bản nguồn chính thức Phase 2C và URL văn bản](../phase2c-current-20261021/LEGAL_REVIEW.md), ngày review 21/10/2026; không xác nhận hiệu lực cho ngày khác.
+- **T9.** Evidence lịch sử Phase4: [index và checksum](../final-submission/2026-10-21/EVIDENCE_INDEX.md), [Freeze manifest](../final-submission/2026-10-21/freeze-manifest.json). Các số thực nghiệm trong báo cáo lấy từ các artifact được chỉ rõ; không từ tài liệu lý thuyết.
 
 
 - **L1.** Quốc hội. *Luật Đất đai số 31/2024/QH15*, [bản ký phần 2](https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/9/31-2024-qh15_2.pdf); đối chiếu sửa đổi theo review Phase 2C.
@@ -365,6 +384,8 @@ Hướng nghiên cứu sau học phần có thể là tăng dữ liệu review �
 
 Các URL L1–L6 được dẫn từ biên bản review nguồn đã lưu; việc xuất báo cáo không tái xác minh URL hoặc tự gia hạn hiệu lực. Phạm vi đoạn và khoảng ngày được phép sử dụng vẫn do receipt/policy quyết định.
 
+- **T10.** [Manifest phát hành hiện hành](../release-final-20261021/release-manifest.json), [evidence index cuối](../release-final-20261021/EVIDENCE_INDEX.md), [public browser receipt](../release-final-20261021/qa/public-source-2026-10-21T11-02-32-079Z/report.json).
+
 ## Phụ lục: bản đồ tài liệu nộp
 
-[Evaluation summary](EVALUATION.md), [known limitations](LIMITATIONS.md), [slide outline](../final-submission/2026-10-21/SLIDE_OUTLINE.md), [demo script](DEMO_GUIDE.md), [release checklist](../final-submission/2026-10-21/RELEASE_CHECKLIST.md), [submission checklist](SUBMISSION_CHECKLIST.md) và [code freeze/inventory](../final-submission/2026-10-21/CODE_FREEZE.md) là các phần kèm theo. Báo cáo này có bản PDF và slide PPTX/PDF đi kèm. Cần điền thông tin hành chính và đối chiếu mẫu học phần trước khi nộp; việc xuất file không xác nhận đã đáp ứng rubric chưa được cung cấp.
+[Evaluation summary](EVALUATION.md), [known limitations](LIMITATIONS.md), [nguồn slide](slides.json), [PPTX](Final_Project_Presentation.pptx), [PDF slide](Final_Project_Presentation.pdf), [demo script](DEMO_GUIDE.md), [checklist Phase 4 lịch sử](../final-submission/2026-10-21/RELEASE_CHECKLIST.md), [submission checklist](SUBMISSION_CHECKLIST.md) và [code freeze/inventory](../final-submission/2026-10-21/CODE_FREEZE.md) là các phần kèm theo. Báo cáo này có bản PDF và slide PPTX/PDF đi kèm. Cần điền thông tin hành chính và đối chiếu mẫu học phần trước khi nộp; việc xuất file không xác nhận đã đáp ứng rubric chưa được cung cấp.

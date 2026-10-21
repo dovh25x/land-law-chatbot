@@ -1,0 +1,15 @@
+{
+  "original_attempt": "public-source-2026-10-21T10-26-18-876Z/report.json",
+  "original_status": "FAIL",
+  "classification": "TEST_HARNESS_URL_EXPECTATION_ERROR",
+  "confirmed_evidence": "App refresh always runs. Initial dateinput displayed sourceReviewDate21/10 while lookupDate state empty; filling identical21 does not force React onChange, so refresh legitimately requests default /documents rather than explicit?as_of=21. Harness waited only explicit query URL and timed out30s despite successful source GETs.",
+  "change": "If selected date already equals desired day, assert displayed review-date label and do not require redundant explicit-query response; changed-date flows still require actual matching GET. No timeout increases or runtime changes.",
+  "server_latency_observed_ms": {
+    "readyz": 10366,
+    "status": 19913,
+    "documents21": 12082
+  },
+  "all_recorded_api_http_statuses": 200,
+  "original_evidence_retained": true,
+  "followup": "Corrected unmocked browser attempt with distinct timestamp; no model or application POST."
+}

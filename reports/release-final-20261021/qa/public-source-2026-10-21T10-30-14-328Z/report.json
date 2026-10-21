@@ -1,0 +1,168 @@
+{
+  "started_at": "2026-10-21T10:30:14.330Z",
+  "base_url": "https://hanoi-land-law.pages.dev",
+  "status": "FAIL",
+  "runtime_fingerprint_expected": "8ee1cd63c2ef531bc603848ce3d5b11334322e368d14c10fc73a81d339d51464",
+  "corpus_expected": "corpus-1afca764aa6692e0",
+  "no_api_mocking": true,
+  "prohibited_requests": [],
+  "external_non_get_requests": [
+    {
+      "method": "POST",
+      "host": "challenges.cloudflare.com",
+      "path": "/cdn-cgi/challenge-platform/[opaque-path-omitted]",
+      "classification": "Normal page/external telemetry only; not an application API write or human challenge success"
+    },
+    {
+      "method": "POST",
+      "host": "challenges.cloudflare.com",
+      "path": "/cdn-cgi/challenge-platform/[opaque-path-omitted]",
+      "classification": "Normal page/external telemetry only; not an application API write or human challenge success"
+    },
+    {
+      "method": "POST",
+      "host": "congbao.hanoi.gov.vn",
+      "path": "/Handlers/IncreaseOnline.ashx",
+      "classification": "Normal page/external telemetry only; not an application API write or human challenge success"
+    },
+    {
+      "method": "POST",
+      "host": "www.google-analytics.com",
+      "path": "/g/collect",
+      "classification": "Normal page/external telemetry only; not an application API write or human challenge success"
+    },
+    {
+      "method": "POST",
+      "host": "f-emc.ngsp.gov.vn",
+      "path": "/tracking",
+      "classification": "Normal page/external telemetry only; not an application API write or human challenge success"
+    },
+    {
+      "method": "POST",
+      "host": "challenges.cloudflare.com",
+      "path": "/cdn-cgi/challenge-platform/[opaque-path-omitted]",
+      "classification": "Normal page/external telemetry only; not an application API write or human challenge success"
+    },
+    {
+      "method": "POST",
+      "host": "challenges.cloudflare.com",
+      "path": "/cdn-cgi/challenge-platform/[opaque-path-omitted]",
+      "classification": "Normal page/external telemetry only; not an application API write or human challenge success"
+    }
+  ],
+  "api_results": [
+    {
+      "path": "/readyz",
+      "http_status": 200,
+      "elapsed_ms": 9871
+    },
+    {
+      "path": "/api/v1/status",
+      "http_status": 200,
+      "elapsed_ms": 19790
+    },
+    {
+      "path": "/api/v1/documents?as_of=2026-10-21",
+      "http_status": 200,
+      "elapsed_ms": 12044
+    },
+    {
+      "path": "/api/v1/documents/luat-dat-dai-2024?as_of=2026-10-21",
+      "http_status": 200,
+      "elapsed_ms": 2599
+    },
+    {
+      "path": "/api/v1/documents/nd-88-2024?as_of=2026-10-21",
+      "http_status": 200,
+      "elapsed_ms": 1692
+    },
+    {
+      "path": "/api/v1/documents/nd-226-2025?as_of=2026-10-21",
+      "http_status": 200,
+      "elapsed_ms": 1452
+    },
+    {
+      "path": "/api/v1/documents/nd-49-2026?as_of=2026-10-21",
+      "http_status": 200,
+      "elapsed_ms": 2454
+    },
+    {
+      "path": "/api/v1/documents/qd-40-2026-hanoi?as_of=2026-10-21",
+      "http_status": 200,
+      "elapsed_ms": 2591
+    },
+    {
+      "path": "/api/v1/documents/luat-thu-do-2026?as_of=2026-10-21",
+      "http_status": 200,
+      "elapsed_ms": 1624
+    },
+    {
+      "path": "/api/v1/documents/nq-254-2025?as_of=2026-10-21",
+      "http_status": 200,
+      "elapsed_ms": 3453
+    },
+    {
+      "path": "/api/v1/documents?as_of=2026-10-22",
+      "http_status": 200,
+      "elapsed_ms": 2927
+    },
+    {
+      "path": "/api/v1/documents/qd-40-2026-hanoi?as_of=2026-10-22",
+      "http_status": 200,
+      "elapsed_ms": 1325
+    },
+    {
+      "path": "/api/v1/documents?as_of=2024-08-02",
+      "http_status": 200,
+      "elapsed_ms": 8509
+    },
+    {
+      "path": "/api/v1/documents/luat-dat-dai-2024?as_of=2024-08-02",
+      "http_status": 200,
+      "elapsed_ms": 3981
+    },
+    {
+      "path": "/api/v1/documents/luat-43-2024?as_of=2024-08-02",
+      "http_status": 200,
+      "elapsed_ms": 1740
+    },
+    {
+      "path": "/api/v1/documents/nd-88-2024?as_of=2024-08-02",
+      "http_status": 200,
+      "elapsed_ms": 2460
+    },
+    {
+      "path": "/api/v1/documents?as_of=2026-10-21",
+      "http_status": 200,
+      "elapsed_ms": 12249
+    },
+    {
+      "path": "/api/v1/documents/qd-40-2026-hanoi?as_of=2026-10-21",
+      "http_status": 200,
+      "elapsed_ms": 2501
+    }
+  ],
+  "browser_checks": [],
+  "ui_date_filters": [
+    {
+      "as_of": "2026-10-21",
+      "outcome": "ALREADY_SELECTED_AND_DISPLAYED_NO_REDUNDANT_REQUEST"
+    },
+    {
+      "as_of": "2026-10-22",
+      "outcome": "CHANGED_AND_PUBLIC_GET_SUCCEEDED"
+    },
+    {
+      "as_of": "2024-08-02",
+      "outcome": "CHANGED_AND_PUBLIC_GET_SUCCEEDED"
+    }
+  ],
+  "chat": "NOT TESTED — disabled in source-only mode",
+  "follow_up": "NOT TESTED — no generated conversation",
+  "human_turnstile": "NOT TESTED — no challenge automation or session creation",
+  "latency_scope": "Observed source GET/browser timings only, not model latency",
+  "model_requests": 0,
+  "error": "Saved history lacks unverified label",
+  "completed_at": "2026-10-21T10:33:16.220Z",
+  "scope": "Actual canonical public source-lookup browser and GET API only. No mocked success responses, chat/model/session or challenge automation; synthetic history stays in an isolated browser context. No claim of generated answer/follow-up or human Turnstile success."
+}

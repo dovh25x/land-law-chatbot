@@ -1,0 +1,17 @@
+
+> hanoi-land-law-web@0.1.0 test:e2e
+> playwright test source-lookup.spec.ts
+
+
+Running 8 tests using 2 workers
+
+  ✓  1 [desktop] › e2e/source-lookup.spec.ts:41:1 › source-only mode disables chat and displays date-pinned reviewed excerpts (3.9s)
+  ✓  2 [mobile] › e2e/source-lookup.spec.ts:41:1 › source-only mode disables chat and displays date-pinned reviewed excerpts (3.6s)
+  ✓  3 [desktop] › e2e/source-lookup.spec.ts:62:1 › retains local history but never treats saved citations as reviewed current evidence (3.2s)
+  ✓  4 [mobile] › e2e/source-lookup.spec.ts:62:1 › retains local history but never treats saved citations as reviewed current evidence (3.4s)
+  ✓  5 [desktop] › e2e/source-lookup.spec.ts:86:1 › delayed metadata never exposes saved citations or enables generation while configuration is unknown (3.7s)
+  ✓  6 [mobile] › e2e/source-lookup.spec.ts:86:1 › delayed metadata never exposes saved citations or enables generation while configuration is unknown (4.0s)
+  ✓  7 [desktop] › e2e/source-lookup.spec.ts:113:1 › failed metadata does not reuse a previously enabled normal configuration (3.6s)
+  ✓  8 [mobile] › e2e/source-lookup.spec.ts:113:1 › failed metadata does not reuse a previously enabled normal configuration (3.3s)
+
+  8 passed (19.9s)

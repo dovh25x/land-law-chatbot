@@ -1,0 +1,177 @@
+{
+  "format": 1,
+  "created_at": "2026-10-21T11:09:54.404853+00:00",
+  "decision": "READY_FOR_RESTRICTED_SOURCE_LOOKUP",
+  "generative_chatbot_decision": "NOT_READY_DISABLED",
+  "deployed_application_commit": "ec5d9a9d1f3f265ebd89f5c0524d41142b0806ec",
+  "tested_source_tree_sha256": "5b9b8af81fb3fa2f2f640a6b1053c365274716e5309d0dc21dd864247c4499ea",
+  "publication_tag": "v0.1.0-academic-20261021",
+  "release_url": "https://github.com/dovh25x/land-law-chatbot/releases/tag/v0.1.0-academic-20261021",
+  "git_identity_note": "Tag will include a documentation/evidence-only follow-up commit; deployed and CI-tested application bytes remain pinned to deployed_application_commit. Publication receipt records the actual tag target.",
+  "ci": {
+    "status": "PASS",
+    "source_sha": "ec5d9a9d1f3f265ebd89f5c0524d41142b0806ec",
+    "url": "https://github.com/dovh25x/land-law-chatbot/actions/runs/39588182288",
+    "backend_python": "3.12",
+    "backend_tests": 529,
+    "frontend_unit_tests": 16,
+    "playwright_tests": 110,
+    "image": "PASS",
+    "npm_audit": "0 vulnerabilities at CI timestamp"
+  },
+  "local_validation": {
+    "backend_python": "3.14.4",
+    "backend_tests": 529,
+    "postgresql_major": 16,
+    "source_lookup_api": "PASS",
+    "image_python": "3.12.15",
+    "image_id": "sha256:d1ff01c49a287f78a1620f8040539f7974984c426503fcb34481eedaa6a4bd41",
+    "image_peak_rss_mib": 381.796875,
+    "memory_limit_mib": 512
+  },
+  "deployment": {
+    "frontend": "https://hanoi-land-law.pages.dev",
+    "backend": "https://land-law-chatbot.onrender.com",
+    "render_plan": "free",
+    "render_deployment_id": "dep-dbc9lv8n74is73fr10e0",
+    "cloudflare_deployment_id": "5399d48b-0f0a-4f52-b922-fd816999648d",
+    "postgresql_version": 170011,
+    "database_bytes": 184121011,
+    "credentials_changed": false,
+    "schema_changed": false
+  },
+  "runtime": {
+    "source_lookup_only": true,
+    "generation_enabled": false,
+    "allow_stale_generation": false,
+    "postgresql_fingerprint": "8ee1cd63c2ef531bc603848ce3d5b11334322e368d14c10fc73a81d339d51464",
+    "sqlite_fingerprint": "dba699954ac85068b40f676eaa2c927065d81c406eda7b08a6665ffafc53e58e",
+    "model_provider": "groq",
+    "model": "openai/gpt-oss-120b",
+    "model_serving_use": "disabled",
+    "embedding_contract": {
+      "provider": "local_onnx",
+      "model": "multilingual-e5-small-onnx-q8-window-v1",
+      "dimensions": 384,
+      "format_version": "v1",
+      "local_model_spec": {
+        "name": "multilingual-e5-small-onnx-q8-window-v1",
+        "dimensions": 384,
+        "onnx_revision": "761b726dd34fb83930e26aab4e9ac3899aa1fa78",
+        "tokenizer_revision": "614241f622f53c4eeff9890bdc4f31cfecc418b3",
+        "onnx_sha256": "f80102d3f2a1229f387d3c81909990d8945513e347b0eab049f7de3c6f98c193",
+        "tokenizer_sha256": "cfc8146abe2a0488e9e2a0c56de7952f7c11ab059eca145a0a727afce0db2865",
+        "preprocessing": "e5-prefix-each-window-sp-offset1-mask-mean-l2-window-mean-l2-v1",
+        "passage_max_tokens": 512,
+        "query_max_tokens": 128,
+        "overlap_tokens": 64
+      }
+    },
+    "budget_per_generative_turn": {
+      "requests_including_retries": 6,
+      "tools": 12,
+      "retrieval_rounds": 2,
+      "repairs": 1,
+      "seconds": 90
+    }
+  },
+  "corpus": {
+    "id": "corpus-1afca764aa6692e0",
+    "path": "data/staging/phase2c-current/release-v5.json",
+    "payload_sha256": "7ce7956ae35c7006b5bfd7d10d516fa9e8e47fe2f073e471ceecbb34b412d317",
+    "modified_in_phase2d": false,
+    "modified_in_phase3b": false,
+    "backup_asset_sha256": "1db94271217ef3765279a14a7609b09623b25c0fd3b8537f2ba99c674991160d",
+    "documents": 60,
+    "chunks": 7396,
+    "whole_corpus_verified": false
+  },
+  "source_policy": {
+    "path": "reports/phase2c-current-20261021/source-gate-final.json",
+    "canonical_sha256": "dfe58f8376d4d4d978ace0483ba45a70e60eafa473285ffbe5a6a2a8e7f72dd4",
+    "scope_date": "2026-10-21",
+    "receipts_modified": false,
+    "modified_in_phase3b": false
+  },
+  "source_receipts_sha256": {
+    "reports/phase2c-current-20261021/receipts-final/luat-43-2024.json": "b5666c635289fb5a1117130eba9721c23f3f4b9cb6eed9886baf706a5d331c7e",
+    "reports/phase2c-current-20261021/receipts-final/luat-dat-dai-2024.json": "934f2c49725a0ea83562f264c99cedd3598a2fc540033c1a2870667d7311b235",
+    "reports/phase2c-current-20261021/receipts-final/luat-thu-do-2026.json": "d45a2204b7d207020cabda7aadb64fb82393b62720aac3d954fba711a33d49c8",
+    "reports/phase2c-current-20261021/receipts-final/nd-151-2025.json": "6609933111c19821167212640e177a5d1480e7e9b5de5e66765b642752a43c0c",
+    "reports/phase2c-current-20261021/receipts-final/nd-226-2025.json": "390e718e117c134aa9d524253603ea95de01d84dd7ddee18872a85dbfbe57d8f",
+    "reports/phase2c-current-20261021/receipts-final/nd-49-2026.json": "4707323849dfdfbea1d8b8e05359def0d33f6328eca3aec5696a96a1d815d626",
+    "reports/phase2c-current-20261021/receipts-final/nd-88-2024.json": "1e59dc3ecf636e9297801c19b1fb13efe56ae5cd785e95db4240540a3f04dda3",
+    "reports/phase2c-current-20261021/receipts-final/nq-254-2025.json": "5f7991a42bcd3fd95e34367e282ff94be74e91469d42dd7c2396aaf0277e7053",
+    "reports/phase2c-current-20261021/receipts-final/qd-10-2026-hanoi.json": "5a5aaa4e26a1a0181c12635453f7a8b9a8575105e29c2034dd9fe0474662e1e8",
+    "reports/phase2c-current-20261021/receipts-final/qd-40-2026-hanoi.json": "f48719cf7609d889d3f71013c4580175f459bb326315a873179065f3a8e63ce5",
+    "reports/phase2c-current-20261021/receipts-final/qd-56-2024-hanoi-unavailable.json": "f4d79a19d66b65e8375b65ff714683cf56dbed8363ceb816f9afbccc73ebd116"
+  },
+  "evaluation_suites": {
+    "data/evaluation/smoke.jsonl": "38aa8da29bf41a94b4cf8fd8a5ca6769232b87884aeed573c10f5586a09d7254",
+    "data/evaluation/supplemental.jsonl": "e6bb5c9f7ba3a589237835b68d95e491ff2c16aad83683a8437f4a74e4120fea",
+    "data/evaluation/natural.jsonl": "b068bb4e717439938c96e459a63c9a1832b1990d88005cf6a768d9e9c0871e74"
+  },
+  "source_scope": {
+    "2026-10-21": {
+      "documents": 7,
+      "passages": 43
+    },
+    "2024-08-02": {
+      "passages": 25
+    },
+    "2026-10-22_and_23": {
+      "passages": 1,
+      "content": "QD40 header only; no current business-law coverage claim"
+    },
+    "whole_document_verified": false,
+    "freshness_expiry": "No automatic date extension; new review required for unsupported dates."
+  },
+  "public_validation": {
+    "status": "PASS_SOURCE_ONLY_PUBLIC_BROWSER",
+    "evidence": "reports/release-final-20261021/qa/public-source-2026-10-21T11-02-32-079Z/report.json",
+    "signed_ingress": "PASS_NEGATIVE_PROBES",
+    "frontend_asset_integrity": "PASS",
+    "outside_scope_source_rejection": "PASS_EXISTING_ND71_404_AND_UNREVIEWED_DATE_EMPTY",
+    "generation": "UNAVAILABLE_DISABLED",
+    "follow_up": "UNAVAILABLE_DISABLED",
+    "human_turnstile": "NOT_TESTED",
+    "physical_mobile_device": "NOT_TESTED_EMULATED_ONLY",
+    "source_latency": "Raw GET timings recorded in public report; not model latency"
+  },
+  "evaluation": {
+    "recall_at_5": {
+      "macro": 0.9736842105263158,
+      "micro": 0.9523809523809523,
+      "queries": 19,
+      "gold_hits": 20,
+      "gold_chunks": 21,
+      "backend": "SQLite",
+      "runtime_fingerprint": "1697d9dec78b8625398e53999b609e3ce57258666c2e3566a8321385abe8886d",
+      "interpretation": "Historical retrieval-only cohort, not current answer accuracy or new serving-mode measurement"
+    },
+    "S06": "FAIL",
+    "Phase3A_C01": "INCOMPLETE",
+    "Phase3A_C02_C03": "NOT_RUN",
+    "new_independent_C02": "INCOMPLETE_ONE_REQUEST_HTTP400_JSON",
+    "new_C02_confirmed_usage": 0,
+    "new_C02_unknown_usage_upper_bound": 19788,
+    "new_C02_provider_usage_interpretation": "Usage absent: 0 confirmed is not proof of zero actual tokens/cost",
+    "current_semantic_citation_accuracy": "NOT_MEASURED",
+    "current_answer_correctness": "NOT_ESTABLISHED",
+    "ragas": "NOT_RUN",
+    "answerable_coverage_false_abstention_rate": "NOT_MEASURED"
+  },
+  "rollback": {
+    "prior_corpus": "corpus-a26bc99e541fbbe2",
+    "old_data_retained": true,
+    "local_restore": "PASS_PG16",
+    "cloud_restore": "NOT_RUN",
+    "guide": "ROLLBACK_FINAL.md"
+  },
+  "limitations": [
+    "Academic verified-excerpt lookup; no generated legal conclusions or individual entitlements.",
+    "Source evidence reviewed for selected passages/dates only.",
+    "Normal human Turnstile and generative public chat/follow-up not verified.",
+    "Native PowerPoint rendering and physical-device test remain unverified."
+  ]
+}

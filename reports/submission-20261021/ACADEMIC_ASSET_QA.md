@@ -11,4 +11,9 @@ Phạm vi: chất lượng file học thuật; không phải legal review, model
 
 Kết quả máy đọc mới nhất nằm ở [asset-validation.json](asset-validation.json). Không cộng kiểm file thành test phần mềm và không dùng PASS export để đánh dấu deployment/model PASS. Các preview PNG là artifacts có thể giữ ngoài Git; không thay nguồn văn bản hoặc ảnh nội dung legal answer.
 
-Kết quả quan trọng được công bố: SQLite Recall@5 macro 97,37% trên 19 câu, micro 20/21 = 95,24%; không phải answer accuracy. S06 FAIL; C01 INCOMPLETE; C02/C03 NOT RUN trong Phase 3A. C02 allocation mới INCOMPLETE, 1 HTTP 400, không có đáp án phát hành. Tình trạng release cập nhật riêng trong delivery status; fallback chưa được coi hoàn thành nếu chưa có evidence.
+Kết quả quan trọng được công bố: SQLite Recall@5 macro 97,37% trên 19 câu, micro 20/21 = 95,24%; không phải answer accuracy. S06 FAIL; C01 INCOMPLETE; C02/C03 NOT RUN trong Phase 3A. C02 allocation mới INCOMPLETE, 1 HTTP 400, không có đáp án phát hành. Tình trạng release cập nhật riêng trong delivery status; bản bàn giao source-only đã có evidence local/CI/public browser riêng; model generation vẫn tắt.
+
+Provenance xuất cuối được kiểm bằng `build-source-identity.json` và `export-identity.json`: đổi status, prose hoặc renderer sau build phải rebuild/export trước khi package. PASS của validator gắn các hash đó; script ZIP không dùng PDF cũ để mang trạng thái mới. Các files sinh sau code commit được công bố như tài liệu/Release assets có checksum, không giả là đã nằm trong Docker hoặc đã được CI kiểm runtime.
+
+
+Xuất cuối: báo cáo 29 trang A4; slide PDF 12 trang và PPTX 12 slide/12 speaker notes. Validator PASS: glyph bounds trong trang, không trang trắng hoặc HTML overflow; font PDF nhúng đầy đủ. Báo cáo có 87 URI annotations, không file://, /home/, localhost hoặc địa chỉ local; evidence anchors chuyển sang stable tag và binary links sang Releases download. Reachability của tag chưa kiểm trong offline export vì release owner xuất bản sau khi đóng gói. Bìa, slide metrics và một số trang bảng đã xem lại trực quan; không thay thế rehearsal/native PowerPoint.

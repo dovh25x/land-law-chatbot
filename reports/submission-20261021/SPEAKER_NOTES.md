@@ -50,9 +50,9 @@ Evidence: EVALUATION.md · locked suites · retrieval receipt
 
 ## 9. Retrieval tốt ở mẫu nhỏ. Chưa đo accuracy đáp án.
 
-Các số retrieval thuộc fingerprint RAG 1697…: macro trung bình trên 19 câu; 18 câu đạt 1 và một câu đạt 0,5; micro 20/21. Đây không phải legal-answer accuracy. Source-only fingerprint dba69995… là cohort mới. Full backend 529 PASS trong 223,34 giây trên Python 3.14 local; frontend 16 PASS; full Playwright 104 PASS trong 4,9 phút trên fixtures. Không cộng baseline 516 với 529 hoặc UI 100 với 104; 13 backend mới đã nằm trong 529. Python 3.12 baseline 516 không tự thành 529 trên môi trường đó. Cloud PG read-only/restore và image build có receipt riêng; memory 382,66 MiB thuộc image Phase 4, không gán sang image cuối chưa probe. Final image memory probe mới đã PASS 381,70703125 MiB; đây là run riêng, không thay artifact382,6640625 MiB của Phase4. Không phải public load test.
+Recall thuộc fingerprint RAG 1697…: macro trung bình trên 19 câu; 18 câu đạt 1 và một câu đạt 0,5; micro 20/21. Không phải legal-answer accuracy, không phải metric của source-only cuối. Code ec5 có 529 backend PASS trên CI Python 3.12 và local Python 3.14; 16 frontend unit/build/audit, 110 Playwright fixture PASS. Không cộng các run hoặc baseline 516/100 vào mẫu cuối. Image cuối d1ff… có peak RSS 381,796875 MiB trong offline fixture probe; số 381,70703125 MiB candidate đầu và 382,6640625 MiB Phase 4 thuộc image khác. PostgreSQL source API/role và rollback restore có receipts riêng; không phải PG Recall hoặc public load test.
 
-Evidence: Phase 3B retrieval-final · Phase 4 Docker/PG receipts
+Evidence: Recall: Phase 3B 1697… · Software/image/PG: release-final-20261021
 
 ## 10. Giữ cả các lượt chưa thành công.
 
@@ -62,12 +62,12 @@ Evidence: S06 technical review · Phase 3A C01 · accounting ledger
 
 ## 11. Trình bày điều đã đo. Dán nhãn phần chưa đo.
 
-Demo 5 phút theo DEMO_GUIDE.md. Public E2E chỉ gọi PASS khi xác minh đúng SHA/corpus/fingerprint và browser live; Turnstile phải qua tương tác người dùng bình thường, không bypass. Nếu chỉ replay artifact hoặc UI local, nói rõ đây không phải cloud model. Không dùng draft C01/S06 làm legal answer. Release owner cập nhật URL và trạng thái riêng; fallback chỉ được gọi đã triển khai khi có bằng chứng. Local API source lookup PASS, 0 provider generate calls. Ngày lịch sử 02/08/2024 có 25 passages; ngày 21/10/2026 có 43; ngày 22–23 chỉ 1 header. Không gọi chat 503 là semantic refusal pass. C04/C05 chỉ xem fixture cũ nếu cần giải thích RAG.
+Demo 5 phút theo DEMO_GUIDE.md. Public E2E chỉ gọi PASS khi xác minh đúng SHA/corpus/fingerprint và browser live; Turnstile phải qua tương tác người dùng bình thường, không bypass. Nếu chỉ replay artifact hoặc UI local, nói rõ đây không phải cloud model. Không dùng draft C01/S06 làm legal answer. Release owner cập nhật URL và trạng thái riêng; fallback chỉ được gọi đã triển khai khi có bằng chứng. Local API source lookup PASS, 0 provider generate calls. Ngày lịch sử 02/08/2024 có 25 passages; ngày 21/10/2026 có 43; ngày 22–23 chỉ 1 header. Không gọi chat 503 là semantic refusal pass. C04/C05 chỉ xem fixture cũ nếu cần giải thích RAG. Final ec5 public run03 PASS_SOURCE_ONLY_PUBLIC_BROWSER, nguồn43/1/25 đúngchecksum; linkQD40HTTP 200đúngtitle; reload/historywarningclear/mobilekhôngoverflow. KhônghumanTurnstile/chat/followuphayphysicalmobile. HaiFAILtrướcgiữnguyên.
 
 Evidence: DEMO_GUIDE.md · source/capture receipts
 
 ## 12. MVP nhỏ, có nguồn, khai báo đúng giới hạn.
 
-Báo trạng thái cập nhật từ delivery-status.json. Không cam kết hiệu lực mọi văn bản hoặc accuracy 100%. Hướng sau học phần: review độc lập/holdout, false abstention và usability; chưa tuyên bố đã triển khai. Vì sao khác LlamaIndex/ChatGPT: giữ stack đã tích hợp, phù hợp deadline và nguồn lực; không khẳng định tốt hơn khi chưa có benchmark cùng điều kiện.
+Bản bàn giao source lookup đã deploy code ec5, CI PASS 529/16/110 và public browser desktop/mobile emulation PASS trong phạm vi nguồn. Không có model/session requests. Chat, follow-up và human Turnstile không khả dụng/chưa kiểm. Tag v0.1.0-academic-20261021 dự kiến trỏ docs/evidence commit sau code; identity deploy giữ ec5. Không cam kết hiệu lực mọi văn bản hoặc accuracy 100%. Public source-only PASS không biến model FAIL/INCOMPLETE thành PASS. Hướng sau học phần: review độc lập/holdout, false abstention, API reliability và usability; chưa triển khai hoặc đo mới.
 
 Evidence: delivery-status.json · release manifest · LIMITATIONS.md

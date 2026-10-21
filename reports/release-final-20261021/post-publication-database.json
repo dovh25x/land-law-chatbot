@@ -1,0 +1,24 @@
+{
+  "checked_at": "2026-10-21T10:28:01.115581+00:00",
+  "status": "PASS",
+  "transaction": "READ ONLY",
+  "postgres_version": 170011,
+  "role_superuser": false,
+  "role_bypassrls": false,
+  "pointers": {
+    "active_release": "corpus-1afca764aa6692e0",
+    "previous_release": "corpus-a26bc99e541fbbe2"
+  },
+  "counts": {
+    "releases": 2,
+    "source_reviews": 11
+  },
+  "runtime_select_denied_for_retired_tables": {
+    "messages": true,
+    "traces": true,
+    "answer_cache": true
+  },
+  "initial_count_probe": "Permission denied for messages as expected; transaction rolled back. No retry as administrator.",
+  "database_bytes": 184121011,
+  "scope": "Post-publication metadata and runtime role only; no data mutation/model call."
+}

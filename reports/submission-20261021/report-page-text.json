@@ -1,33 +1,33 @@
 [
   {
     "page": 1,
-    "chars": 625,
-    "head": "TRƯỜNG ĐẠI HỌC PHENIKAA\nBÁO CÁO ĐỒ ÁN CUỐI KỲ\nHanoi Land Law\nAssistant\nHệ thống tra cứu pháp luật về bồi thường, hỗ trợ và tái định cư cho Vành\nđai 4 tại Hà Nội"
+    "chars": 657,
+    "head": "TRƯỜNG ĐẠI HỌC PHENIKAA\nBÁO CÁO ĐỒ ÁN CUỐI KỲ\nHanoi Land Law\nAssistant\nHệ thống tra cứu pháp luật về bồi thường, hỗ trợ và tái định cư cho\nVành đai 4 tại Hà Nội"
   },
   {
     "page": 2,
-    "chars": 1211,
+    "chars": 1161,
     "head": "Mục lục\nTóm tắt\n1. Giới thiệu bài toán và động lực\n1.1. Vấn đề thực tiễn\n1.2. Câu hỏi nghiên cứu ở quy mô đồ án\n1.3. Phương pháp và đóng góp\n2. Mục tiêu, đối tư"
   },
   {
     "page": 3,
-    "chars": 585,
-    "head": "10. Thiết lập thực nghiệm, dữ liệu và chỉ số\n10.1. Thiết lập và tính tái lập\n10.2. Recall@5\n10.3. Các phép đo khác\n11. Kết quả, phân tích thất bại và thảo luận\n"
+    "chars": 688,
+    "head": "9. Bảo mật, quyền riêng tư và trách nhiệm sử dụng\n10. Thiết lập thực nghiệm, dữ liệu và chỉ số\n10.1. Thiết lập và tính tái lập\n10.2. Recall@5\n10.3. Các phép đo "
   },
   {
     "page": 4,
-    "chars": 2428,
-    "head": "Tóm tắt\nMốc bằng chứng: Các kết quả RAG oﬄine trong báo cáo thuộc cohort Phase 3B/4\n(1697d9de…); C02 mới được ghi riêng ở mục 11.2a. Fallback tra cứu nguồn đã đ"
+    "chars": 1804,
+    "head": "Tóm tắt\nĐồ án xây dựng Hanoi Land Law Assistant nhằm hỗ trợ người dân đọc nguồn về thu\nhồi đất, bồi thường, hỗ trợ và tái định cư cho Vành đai 4 tại Hà Nội. Sou"
   },
   {
     "page": 5,
-    "chars": 1725,
-    "head": "1. Giới thiệu bài toán và động lực\n1.1. Vấn đề thực tiễn\nMột người có đất bị thu hồi thường cần biết mình nên đọc quy định nào, những điều kiện\nnào quyết định v"
+    "chars": 1754,
+    "head": "1. Giới thiệu bài toán và động lực\n1.1. Vấn đề thực tiễn\nMột người có đất bị thu hồi thường cần biết mình nên đọc quy định nào, những điều\nkiện nào quyết định v"
   },
   {
     "page": 6,
     "chars": 1669,
-    "head": "2. Mục tiêu, đối tượng và giới hạn\n2.1. Mục tiêu sản phẩm\nNgười dùng có thể hỏi bằng tiếng Việt, tra cứu nguồn, xem đoạn trích/locator, nhận câu\nhỏi làm rõ khi "
+    "head": "2. Mục tiêu, đối tượng và giới hạn\n2.1. Mục tiêu sản phẩm\nNgười dùng có thể hỏi bằng tiếng Việt, tra cứu nguồn, xem đoạn trích/locator, nhận\ncâu hỏi làm rõ khi "
   },
   {
     "page": 7,
@@ -36,102 +36,112 @@
   },
   {
     "page": 8,
-    "chars": 1778,
-    "head": "4. Đặc tả yêu cầu\nYêu cầu được trích từ PRD và ràng buộc dự án, không tự gán trọng số hoặc điểm của\nrubric học phần chưa có. E09\nID Yêu cầu Implementation/evide"
+    "chars": 1875,
+    "head": "4. Đặc tả yêu cầu\nYêu cầu được trích từ PRD và ràng buộc dự án, không tự gán trọng số hoặc điểm của\nrubric học phần chưa có. Bảng mô tả pipeline RAG đã xây tron"
   },
   {
     "page": 9,
-    "chars": 1317,
-    "head": "5. Kiến trúc hệ thống và lựa chọn công nghệ\n5.1. Kiến trúc triển khai\nKiến trúc hệ thống\nTrình duyệt\nReact · IndexedDB 7 ngày\nCloudﬂare\nPages Function · HMAC\nRe"
+    "chars": 156,
+    "head": "Không dùng số unit tests hoặc việc có ﬁle triển khai để đánh dấu FR03/NFR06 hoàn\nthành về chất lượng thực tế.\nHanoi Land Law Assistant · 21/10/2026 · 9 / 29"
   },
   {
     "page": 10,
-    "chars": 1435,
-    "head": "Thành phần Trách nhiệm thực tế\nScripts/migrations Chuẩn bị nguồn, kiểm tra, đánh giá, đóng gói và vận\nhành\n5.3. LangGraph + Groq thay cho LlamaIndex + ChatGPT A"
+    "chars": 1177,
+    "head": "5. Kiến trúc hệ thống và lựa chọn công nghệ\n5.1. Kiến trúc triển khai\nKiến trúc hệ thống\nTrình duyệt\nReact · IndexedDB 7 ngày\nCloudﬂare\nPages Function · HMAC\nRe"
   },
   {
     "page": 11,
-    "chars": 2710,
-    "head": "6. Nguồn pháp luật, tiền xử lý và xuất xứ dữ liệu\n6.1. Snapshot và vai trò nguồn\nCandidate dùng corpus-1afca764aa6692e0, gồm 60 document records và 7396 chunks."
+    "chars": 1576,
+    "head": "Thành phần Trách nhiệm thực tế\nGroqProvider JSON request, retry hữu hạn, usage và operator test\nledger\nStore/retrieval Corpus theo phiên bản, tìm kiếm, quan hệ "
   },
   {
     "page": 12,
-    "chars": 926,
-    "head": "Tình huống hiện hành giả lập Căn cứ trong phần review Hạn chế quyết định\nC01: điều kiện và hình thức bồi\nthường\nLuật 31/2024:95,98; NQ\n254/2025:3(10) và chuyển "
+    "chars": 2266,
+    "head": "6. Nguồn pháp luật, tiền xử lý và xuất xứ dữ\nliệu\n6.1. Snapshot và vai trò nguồn\nCandidate dùng corpus-1afca764aa6692e0, gồm 60 document records và 7396 chunks."
   },
   {
     "page": 13,
-    "chars": 2495,
-    "head": "7. Truy xuất, tổng hợp, kiểm chứng và trích dẫn\n7.1. Truy xuất\nCác công cụ chỉ đọc phục vụ search_law, search_project, open_article, check_eﬀectivity\nvà normali"
+    "chars": 1374,
+    "head": "được dùng phát hành claim chỉ vì bật snapshot. Nguồn quá hạn, changed hoặc\nunknown không được nhập nhằng thành fresh. E13\nReceipt giới hạn chunk_checksums và kh"
   },
   {
     "page": 14,
-    "chars": 419,
-    "head": "Ledger giữ upper bound cho response thiếu usage, kể cả 429/400. Reservation vẫn dùng\nbyte UTF-8 của request cộng allowance và max output; chưa có căn cứ giảm bằ"
+    "chars": 2290,
+    "head": "7. Truy xuất, tổng hợp, kiểm chứng và trích\ndẫn\n7.1. Truy xuất\nCác công cụ chỉ đọc phục vụ search_law, search_project, open_article,\ncheck_eﬀectivity và normali"
   },
   {
     "page": 15,
-    "chars": 2862,
-    "head": "8. Frontend, backend, database và cloud\n8.1. Trải nghiệm người dùng\nUI hội thoại có trạng thái loading, hủy, lỗi, hỏi làm rõ và nguồn. Source panel hỗ trợ so\nsá"
+    "chars": 624,
+    "head": "reserved_budget và remaining_test_budget, tách khỏi quota provider. Provider format\nfailures được retry có feedback định dạng chung và giới hạn; không nhận\nfail"
   },
   {
     "page": 16,
-    "chars": 2532,
-    "head": "Public E2E và deployed ﬁngerprint của candidate vẫn NOT TESTED. .dockerignore Phase 4\nchỉ loại tài liệu nộp và backup replay trùng khỏi image context; dữ liệu g"
+    "chars": 2668,
+    "head": "8. Frontend, backend, database và cloud\n8.1. Trải nghiệm người dùng\nGiao diện bàn giao đặt thư viện nguồn và thời điểm áp dụng ở trung tâm: tìm theo\ntên/số hiệu"
   },
   {
     "page": 17,
-    "chars": 1173,
-    "head": "fallback đạt 529 PASS trong 223,34 giây, local Python 3.14; full Playwright đạt 104\nPASS trong 4,9 phút, vẫn là local ﬁxtures. Số 13 test backend mới giải thích"
+    "chars": 2497,
+    "head": "Serving image cuối chạy Python 3.12.15, UID 10001, đúng model checksums và\nﬁngerprints; memory probe đạt 381,796875 MiB dưới 512 MiB bằng oﬄine ﬁxtures,\nkhông m"
   },
   {
     "page": 18,
+    "chars": 2078,
+    "head": "Ngày tra cứu Số tài liệu có đoạn\nđược phép hiển thị\nPassages được review Ý nghĩa phạm vi\n21/10/2026 7 43 Các đoạn đủ\nreview/checksum cho\nngày này; không xác\nnhậ"
+  },
+  {
+    "page": 19,
     "chars": 1225,
     "head": "9. Bảo mật, quyền riêng tư và trách nhiệm sử\ndụng\nSigned ingress HMAC đặt ranh giới giữa Cloudﬂare và backend; backend không tin IP\nclient tự khai. Turnstile xá"
   },
   {
-    "page": 19,
-    "chars": 2181,
-    "head": "10. Thiết lập thực nghiệm, dữ liệu và chỉ số\n10.1. Thiết lập và tính tái lập\nRuntime SQLite của cohort Phase 3B/4:\n1697d9dec78b8625398e53999b609e3ce57258666c2e3"
-  },
-  {
     "page": 20,
-    "chars": 776,
-    "head": "Nhóm Định nghĩa/phương pháp Trạng thái trên runtime cuối\nCustom sampled faithfulness Evaluator riêng phân tách/chấm\nclaim-support\nNOT MEASURED cho runtime cuối;"
+    "chars": 2062,
+    "head": "10. Thiết lập thực nghiệm, dữ liệu và chỉ số\n10.1. Thiết lập và tính tái lập\nCode candidate cuối là ec5d9a9d1f3f265ebd89f5c0524d41142b0806ec; source-tree SHA256"
   },
   {
     "page": 21,
-    "chars": 1951,
-    "head": "11. Kết quả, phân tích thất bại và thảo luận\n11.1. Software và retrieval trên candidate Phase 3B/4\nEvidence Kết quả Phạm vi\nBackend regression 516 PASS mỗi môi "
+    "chars": 1454,
+    "head": "này để suy nhãn answerability hoặc accuracy cho cả 32 ca.\n10.3. Các phép đo khác\nNhóm Định nghĩa/phương pháp Trạng thái trên runtime cuối\nContext completeness Đ"
   },
   {
     "page": 22,
-    "chars": 2692,
-    "head": "C01 mất 34,858 giây toàn ca; ba HTTP latency 3756/148/4941 ms thuộc attempt dở dang.\nKhông biến số này thành latency đáp án thành công hoặc public p95. Usage 48"
+    "chars": 1967,
+    "head": "11. Kết quả, phân tích thất bại và thảo luận\n11.1. Kết quả phần mềm hiện hành và truy xuất RAG riêng\nLớp bằng chứng Kết quả thực đo Phạm vi\nBackend candidate cu"
   },
   {
     "page": 23,
-    "chars": 818,
-    "head": "11.5. Thảo luận và các đe dọa đối với độ tin cậy\nRetrieval cao nhưng model chưa phát hành được kết quả hợp lệ là một khoảng cách thực\nnghiệm quan trọng. Tìm đượ"
+    "chars": 2642,
+    "head": "Phase 3A C01 gửi đủ 4/4 đoạn bắt buộc nhưng draft thiếu citation NQ 254 và rút gọn\nmất điều kiện của nhánh Điều 111. Structural veriﬁer chặn; có một issue nhạy "
   },
   {
     "page": 24,
-    "chars": 2589,
-    "head": "12. Kết luận và hướng phát triển\nĐồ án đã xây dựng một hệ thống tra cứu pháp luật có giao diện, pipeline, provenance,\nguards, test và quy trình đóng gói/evaluat"
+    "chars": 2806,
+    "head": "11.4. Faithfulness lịch sử\nCohort c4f0c661… có custom sampled faithfulness 0,9231 trên 13 claims thuộc 6/8 case\nmẫu; cohort 800c96ba… không chấm được case nào. "
   },
   {
     "page": 25,
-    "chars": 1947,
-    "head": "L1. Quốc hội. Luật Đất đai số 31/2024/QH15, bản ký phần 2; đối chiếu sửa đổi theo\nreview Phase 2C.\nL2. Bộ Nông nghiệp và Môi trường. 53/VBHN-BNNMT, bản công bố "
+    "chars": 270,
+    "head": "production cùng corpus/ﬁngerprint, test ngay sau reload/history và cả hai viewport, 0\nmodel requests; không xóa hai lần FAIL. Đây là ví dụ backend source admiss"
   },
   {
     "page": 26,
-    "chars": 1971,
-    "head": "c02_runtime_ﬁngerprint:\n1697d9dec78b8625398e53999b609e3ce57258666c2e3566a8321385abe8886d\nc02_conﬁrmed_usage: 0\nc02_unknown_upper_bound: 19788\nc02_remaining_inte"
+    "chars": 2431,
+    "head": "12. Kết luận và hướng phát triển\nĐồ án bàn giao một MVP tra cứu đoạn nguồn pháp luật đã review, giữ nguyên\nkiến trúc RAG nhưng tắt sinh đáp án pháp luật. Người "
   },
   {
     "page": 27,
-    "chars": 138,
-    "head": "Các trạng thái không có receipt chưa được coi là PASS. Dữ liệu trạng thái; hướng dẫn\ndemo.\nHanoi Land Law Assistant · 21/10/2026 · 27 / 27"
+    "chars": 1989,
+    "head": "T4. Cormack, G.V., Clarke, C.L.A., Büttcher, S. (2009). Reciprocal Rank Fusion\noutperforms Condorcet and individual Rank Learning Methods. Bản tác giả,\nUniversi"
+  },
+  {
+    "page": 28,
+    "chars": 1704,
+    "head": "Phụ lục cập nhật phát hành ngày 21/10/2026\nBáo cáo đã cập nhật theo bản bàn giao source lookup cuối. Bảng dưới chốt identity và\nphạm vi phát hành; các cohort RA"
+  },
+  {
+    "page": 29,
+    "chars": 621,
+    "head": "Hạng mục Trạng thái / bằng chứng\nGiới hạn thời điểm Archived receipts are not evergreen; live import\nrequires recent review <=7 days; never edit\nchecked_at or b"
   }
 ]

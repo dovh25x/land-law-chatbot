@@ -1,6 +1,6 @@
 """Build academic HTML/PPTX assets offline. No runtime, API or database access."""
 from pathlib import Path
-import json, html, re
+import json, html, re, hashlib
 import markdown
 from pptx import Presentation
 from pptx.util import Inches, Pt
@@ -14,15 +14,18 @@ COL={'navy':'112B3C','teal':'007D7A','paper':'F5F6F2','white':'FFFFFF','ink':'18
 def esc(s):return html.escape(str(s))
 def status_text():
  s=json.loads((BASE/'delivery-status.json').read_text())
- return s, '\n'.join(f'- **{key}:** {value if value is not None else "Chưa có xác nhận"}' for key,value in s.items())
+ fields=[('Code đã CI và deploy', 'candidate_code_sha'),('CI', 'ci'),('CI receipt','ci_url'),('Quyết định phát hành','deployment'),('Mode vận hành','candidate_mode'),('Website','frontend_url'),('Public browser scope','public_e2e'),('Fingerprint PostgreSQL','source_lookup_pg_fingerprint'),('Presentation fingerprint','frontend_presentation_fingerprint'),('Corpus','corpus_id'),('Payload SHA256','corpus_payload_sha256'),('Receipt coverage','source_receipts'),('Image cuối','final_docker_image_id'),('Memory probe','final_image_memory'),('Model pilots','model_statuses'),('Chỉ số model','model_metrics'),('Giới hạn thời điểm','legal_date_caveat'),('Tag dự kiến','release_tag'),('Provenance tài liệu','publication_provenance')]
+ rows=['| Hạng mục | Trạng thái / bằng chứng |','|---|---|']
+ rows.extend('| '+label+' | '+str(s.get(key,'Chưa có xác nhận')).replace('|',' / ')+' |' for label,key in fields)
+ return s, '\n'.join(rows)
 s,status=status_text()
 text=(BASE/'Final_Project_Report.md').read_text()
 # Add the changing release evidence as a separate cohort; never edit Phase 4 artifacts.
-appendix='\n\n## Phụ lục cập nhật phát hành ngày 21/10/2026\n\nMốc kết quả trong các chương là bằng chứng Phase 4 và các cohort lịch sử được ghi rõ. Trạng thái sau mốc này được tách riêng dưới đây; không ghi đè S06/C01 hoặc kết quả Phase 3A.\n\n'+status+'\n\nCác trạng thái không có receipt chưa được coi là PASS. [Dữ liệu trạng thái](delivery-status.json); [hướng dẫn demo](DEMO_GUIDE.md).\n'
+appendix='\n\n## Phụ lục cập nhật phát hành ngày 21/10/2026\n\nBáo cáo đã cập nhật theo bản bàn giao source lookup cuối. Bảng dưới chốt identity và phạm vi phát hành; các cohort RAG, Phase 4 và model failures lịch sử vẫn được giữ riêng, không ghi đè.\n\n'+status+'\n\nCác trạng thái không có receipt chưa được coi là PASS. [Dữ liệu trạng thái](delivery-status.json); [hướng dẫn demo](DEMO_GUIDE.md).\n'
 md=markdown.Markdown(extensions=['tables','fenced_code','toc','sane_lists'],extension_configs={'toc':{'toc_depth':'2-3','title':''}})
 body=md.convert(text+appendix)
 body=body[body.index('<h2'):]
-cover='''<section class="cover"><div class="school">TRƯỜNG ĐẠI HỌC PHENIKAA</div><div class="cover-rule"></div><div class="eyebrow">BÁO CÁO ĐỒ ÁN CUỐI KỲ</div><h1>Hanoi Land Law<br>Assistant</h1><p class="subtitle">Hệ thống tra cứu pháp luật về bồi thường, hỗ trợ và tái định cư cho Vành đai 4 tại Hà Nội bằng RAG có kiểm soát nguồn</p><table class="cover-meta"><tr><td>Khoa / viện</td><td>____________________________</td></tr><tr><td>Học phần / mã học phần</td><td>____________________________</td></tr><tr><td>Sinh viên / MSSV</td><td>____________________________</td></tr><tr><td>Lớp / khóa</td><td>____________________________</td></tr><tr><td>Giảng viên hướng dẫn</td><td>____________________________</td></tr></table><p class="cover-date">Hà Nội · 21 tháng 10 năm 2026</p><p class="cover-note">Phạm vi tra cứu có nguồn; không xác định quyền lợi cá nhân.<br>Thông tin hành chính để trống theo yêu cầu; chưa có rubric chính thức.</p></section>'''
+cover='''<section class="cover"><div class="school">TRƯỜNG ĐẠI HỌC PHENIKAA</div><div class="cover-rule"></div><div class="eyebrow">BÁO CÁO ĐỒ ÁN CUỐI KỲ</div><h1>Hanoi Land Law<br>Assistant</h1><p class="subtitle">Hệ thống tra cứu pháp luật về bồi thường, hỗ trợ và tái định cư cho Vành đai 4 tại Hà Nội bằng RAG có kiểm soát nguồn</p><table class="cover-meta"><tr><td>Khoa / viện</td><td>____________________________</td></tr><tr><td>Học phần / mã học phần</td><td>____________________________</td></tr><tr><td>Sinh viên / MSSV</td><td>____________________________</td></tr><tr><td>Lớp / khóa</td><td>____________________________</td></tr><tr><td>Giảng viên hướng dẫn</td><td>____________________________</td></tr></table><p class="cover-date">Hà Nội · 21 tháng 10 năm 2026</p><p class="cover-note">Bản demo bàn giao: tra cứu đoạn nguồn đã review; không sinh đáp án AI.<br>Không xác định quyền lợi cá nhân. Thông tin hành chính để trống; chưa có rubric chính thức.</p></section>'''
 css='''@page { size:A4; margin:20mm 18mm 20mm 22mm; } *{box-sizing:border-box} body{font:11pt/1.58 "DejaVu Serif",serif;color:#1b2c35;margin:0} h1,h2,h3,h4{font-family:"DejaVu Sans",sans-serif;color:#112b3c;line-height:1.28} h2{font-size:18pt;margin:25px 0 14px;break-after:avoid} h3{font-size:12pt;margin:18px 0 9px;break-after:avoid} p{margin:8px 0;text-align:justify;orphans:3;widows:3} a{color:#00736f;text-decoration:none;overflow-wrap:anywhere} strong{font-weight:700} table{border-collapse:collapse;width:100%;font:8.4pt/1.43 "DejaVu Sans",sans-serif;margin:12px 0;table-layout:fixed;break-inside:auto} th{background:#e8f1ef;color:#112b3c;text-align:left} td,th{border:1px solid #cbd8d8;padding:7px 8px;vertical-align:top;overflow-wrap:anywhere} tr{break-inside:avoid} thead{display:table-header-group} code{font:8.5pt/1.45 "DejaVu Sans Mono",monospace;overflow-wrap:anywhere;background:#f0f3f3} pre{white-space:pre-wrap;overflow-wrap:anywhere;padding:10px;background:#f0f3f3;break-inside:avoid} li{margin:6px 0} img{max-width:100%;height:auto;break-inside:avoid} .cover{height:248mm;break-after:page;text-align:center;font-family:"DejaVu Sans";padding-top:12mm} .school{font-size:15pt;font-weight:700;letter-spacing:.3px}.cover-rule{height:3px;background:#007d7a;width:70mm;margin:14mm auto 20mm}.eyebrow{font-size:12pt;letter-spacing:2px}.cover h1{font-size:35pt;line-height:1.16;margin:10mm 0 7mm}.subtitle{text-align:center;font-size:13pt;line-height:1.55;margin:0 4mm 9mm}.cover-meta{width:145mm;margin:10mm auto;font-size:10pt}.cover-meta td{border:0;text-align:left;padding:6px}.cover-meta td:first-child{width:58mm}.cover-date{text-align:center;margin-top:17mm;font-size:12pt}.cover-note{text-align:center;font-size:8pt;color:#667c82;margin-top:8mm}.toc{font-family:"DejaVu Sans";font-size:10pt;break-after:page}.toc ul{list-style:none;padding-left:13px}.toc>ul{padding:0}.toc li{margin:5px 0}.toc-title{font-size:20pt;font-weight:700;color:#112b3c;margin-bottom:18px} h2[id^="1-"]{break-before:page} h2[id^="2-"],h2[id^="3-"],h2[id^="4-"],h2[id^="5-"],h2[id^="6-"],h2[id^="7-"],h2[id^="8-"],h2[id^="9-"],h2[id^="10-"],h2[id^="11-"],h2[id^="12-"]{break-before:page}'''
 (BASE/'Final_Project_Report.html').write_text('<!doctype html><html lang="vi"><meta charset="utf-8"><title>Hanoi Land Law Assistant — Báo cáo đồ án</title><style>'+css+'</style><body>'+cover+'<section class="toc"><div class="toc-title">Mục lục</div>'+md.toc+'</section><main>'+body+'</main></body></html>')
 slides=json.loads((BASE/'slides.json').read_text())
@@ -61,7 +64,7 @@ for i,data in enumerate(slides):
   cards(sl,data['cards'],4.75,1.3)
  else:
   box(sl,.8,1.05,11.7,1.45,data['title'],34,'navy',True);box(sl,.8,2.78,11.7,.95,data['lead'],20,'muted');cards(sl,data.get('cards',[]),4.25,1.75)
- box(sl,.8,6.75,11.2,.3,data['evidence'],9,'muted');box(sl,12.1,6.7,.5,.35,f'{i+1:02}',11,'teal',True)
+ footer=box(sl,.8,6.75,11.2,.3,data['evidence'],9,'muted');footer.click_action.hyperlink.address='https://github.com/dovh25x/land-law-chatbot/blob/v0.1.0-academic-20261021/reports/release-final-20261021/EVIDENCE_INDEX.md';box(sl,12.1,6.7,.5,.35,f'{i+1:02}',11,'teal',True)
  sl.notes_slide.notes_text_frame.text=data['notes']+'\n\nBằng chứng: '+data['evidence']+'\nTrạng thái phát hành/pilot cập nhật: '+json.dumps(s,ensure_ascii=False)
 prs.core_properties.title='Hanoi Land Law Assistant — Đồ án liên ngành';prs.core_properties.subject='Tra cứu pháp luật có nguồn cho Vành đai 4 Hà Nội';prs.core_properties.author='';prs.core_properties.keywords='RAG, legal source, Vietnamese, academic prototype'
 prs.save(BASE/'Final_Project_Presentation.pptx')
@@ -75,3 +78,9 @@ for i,d in enumerate(slides):
 (BASE/'Final_Project_Presentation.html').write_text('<!doctype html><html lang="vi"><meta charset="utf-8"><title>Hanoi Land Law Assistant — Presentation</title><style>'+slidecss+'</style><body>'+''.join(parts)+'</body></html>')
 (BASE/'SPEAKER_NOTES.md').write_text('# Ghi chú thuyết trình — 12 slide\n\n'+ '\n\n'.join(f'## {i+1}. {d["title"].replace(chr(10), " ")}\n\n{d["notes"]}\n\nEvidence: {d["evidence"]}' for i,d in enumerate(slides)))
 print('Built report HTML, presentation HTML/PPTX, and speaker notes.')
+
+# Bind mutable report/status inputs to the generated assets before PDF export.
+inputs=['Final_Project_Report.md','slides.json','delivery-status.json','build_assets.py','export_pdf.cjs']
+generated=['Final_Project_Report.html','Final_Project_Presentation.html','Final_Project_Presentation.pptx','SPEAKER_NOTES.md']
+identity={'format':1,'inputs_sha256':{name:hashlib.sha256((BASE/name).read_bytes()).hexdigest() for name in inputs},'generated_sha256':{name:hashlib.sha256((BASE/name).read_bytes()).hexdigest() for name in generated},'scope':'Academic asset provenance; no model/deployment inference'}
+(BASE/'build-source-identity.json').write_text(json.dumps(identity,indent=2)+'\n')

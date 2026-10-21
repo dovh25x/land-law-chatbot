@@ -1,0 +1,381 @@
+{
+  "started_at": "2026-10-21T11:02:32.080Z",
+  "base_url": "https://hanoi-land-law.pages.dev",
+  "status": "PASS_SOURCE_ONLY_PUBLIC_BROWSER",
+  "runtime_fingerprint_expected": "8ee1cd63c2ef531bc603848ce3d5b11334322e368d14c10fc73a81d339d51464",
+  "corpus_expected": "corpus-1afca764aa6692e0",
+  "source_commit_expected": "ec5d9a9d1f3f265ebd89f5c0524d41142b0806ec",
+  "no_api_mocking": true,
+  "prohibited_requests": [],
+  "external_non_get_requests": [
+    {
+      "method": "POST",
+      "host": "congbao.hanoi.gov.vn",
+      "path": "/Handlers/IncreaseOnline.ashx",
+      "classification": "Normal page/external telemetry only; not an application API write or human challenge success"
+    },
+    {
+      "method": "POST",
+      "host": "www.google-analytics.com",
+      "path": "/g/collect",
+      "classification": "Normal page/external telemetry only; not an application API write or human challenge success"
+    },
+    {
+      "method": "POST",
+      "host": "f-emc.ngsp.gov.vn",
+      "path": "/tracking",
+      "classification": "Normal page/external telemetry only; not an application API write or human challenge success"
+    },
+    {
+      "method": "POST",
+      "host": "congbao.hanoi.gov.vn",
+      "path": "/Handlers/IncreaseOnline.ashx",
+      "classification": "Normal page/external telemetry only; not an application API write or human challenge success"
+    },
+    {
+      "method": "POST",
+      "host": "www.google-analytics.com",
+      "path": "/g/collect",
+      "classification": "Normal page/external telemetry only; not an application API write or human challenge success"
+    },
+    {
+      "method": "POST",
+      "host": "f-emc.ngsp.gov.vn",
+      "path": "/tracking",
+      "classification": "Normal page/external telemetry only; not an application API write or human challenge success"
+    }
+  ],
+  "api_results": [
+    {
+      "path": "/readyz",
+      "http_status": 200,
+      "elapsed_ms": 9882
+    },
+    {
+      "path": "/api/v1/status",
+      "http_status": 200,
+      "elapsed_ms": 19760
+    },
+    {
+      "path": "/api/v1/documents?as_of=2026-10-21",
+      "http_status": 200,
+      "elapsed_ms": 11789
+    },
+    {
+      "path": "/api/v1/documents/luat-dat-dai-2024?as_of=2026-10-21",
+      "http_status": 200,
+      "elapsed_ms": 2632
+    },
+    {
+      "path": "/api/v1/documents/nd-88-2024?as_of=2026-10-21",
+      "http_status": 200,
+      "elapsed_ms": 1645
+    },
+    {
+      "path": "/api/v1/documents/nd-226-2025?as_of=2026-10-21",
+      "http_status": 200,
+      "elapsed_ms": 1475
+    },
+    {
+      "path": "/api/v1/documents/nd-49-2026?as_of=2026-10-21",
+      "http_status": 200,
+      "elapsed_ms": 2385
+    },
+    {
+      "path": "/api/v1/documents/qd-40-2026-hanoi?as_of=2026-10-21",
+      "http_status": 200,
+      "elapsed_ms": 2521
+    },
+    {
+      "path": "/api/v1/documents/luat-thu-do-2026?as_of=2026-10-21",
+      "http_status": 200,
+      "elapsed_ms": 1739
+    },
+    {
+      "path": "/api/v1/documents/nq-254-2025?as_of=2026-10-21",
+      "http_status": 200,
+      "elapsed_ms": 3484
+    },
+    {
+      "path": "/api/v1/documents?as_of=2026-10-22",
+      "http_status": 200,
+      "elapsed_ms": 2889
+    },
+    {
+      "path": "/api/v1/documents/qd-40-2026-hanoi?as_of=2026-10-22",
+      "http_status": 200,
+      "elapsed_ms": 1289
+    },
+    {
+      "path": "/api/v1/documents?as_of=2024-08-02",
+      "http_status": 200,
+      "elapsed_ms": 7722
+    },
+    {
+      "path": "/api/v1/documents/luat-dat-dai-2024?as_of=2024-08-02",
+      "http_status": 200,
+      "elapsed_ms": 3936
+    },
+    {
+      "path": "/api/v1/documents/luat-43-2024?as_of=2024-08-02",
+      "http_status": 200,
+      "elapsed_ms": 1639
+    },
+    {
+      "path": "/api/v1/documents/nd-88-2024?as_of=2024-08-02",
+      "http_status": 200,
+      "elapsed_ms": 2441
+    },
+    {
+      "path": "/api/v1/documents?as_of=2026-10-21",
+      "http_status": 200,
+      "elapsed_ms": 11824
+    },
+    {
+      "path": "/api/v1/documents/qd-40-2026-hanoi?as_of=2026-10-21",
+      "http_status": 200,
+      "elapsed_ms": 2605
+    },
+    {
+      "path": "/readyz",
+      "http_status": 200,
+      "elapsed_ms": 9433
+    },
+    {
+      "path": "/api/v1/status",
+      "http_status": 200,
+      "elapsed_ms": 19464
+    },
+    {
+      "path": "/api/v1/documents?as_of=2026-10-21",
+      "http_status": 200,
+      "elapsed_ms": 12476
+    },
+    {
+      "path": "/api/v1/documents/luat-dat-dai-2024?as_of=2026-10-21",
+      "http_status": 200,
+      "elapsed_ms": 2621
+    },
+    {
+      "path": "/api/v1/documents/nd-88-2024?as_of=2026-10-21",
+      "http_status": 200,
+      "elapsed_ms": 1730
+    },
+    {
+      "path": "/api/v1/documents/nd-226-2025?as_of=2026-10-21",
+      "http_status": 200,
+      "elapsed_ms": 1540
+    },
+    {
+      "path": "/api/v1/documents/nd-49-2026?as_of=2026-10-21",
+      "http_status": 200,
+      "elapsed_ms": 2353
+    },
+    {
+      "path": "/api/v1/documents/qd-40-2026-hanoi?as_of=2026-10-21",
+      "http_status": 200,
+      "elapsed_ms": 2541
+    },
+    {
+      "path": "/api/v1/documents/luat-thu-do-2026?as_of=2026-10-21",
+      "http_status": 200,
+      "elapsed_ms": 1603
+    },
+    {
+      "path": "/api/v1/documents/nq-254-2025?as_of=2026-10-21",
+      "http_status": 200,
+      "elapsed_ms": 3311
+    },
+    {
+      "path": "/api/v1/documents?as_of=2026-10-22",
+      "http_status": 200,
+      "elapsed_ms": 2972
+    },
+    {
+      "path": "/api/v1/documents/qd-40-2026-hanoi?as_of=2026-10-22",
+      "http_status": 200,
+      "elapsed_ms": 1316
+    },
+    {
+      "path": "/api/v1/documents?as_of=2024-08-02",
+      "http_status": 200,
+      "elapsed_ms": 7686
+    },
+    {
+      "path": "/api/v1/documents/luat-dat-dai-2024?as_of=2024-08-02",
+      "http_status": 200,
+      "elapsed_ms": 3885
+    },
+    {
+      "path": "/api/v1/documents/luat-43-2024?as_of=2024-08-02",
+      "http_status": 200,
+      "elapsed_ms": 1732
+    },
+    {
+      "path": "/api/v1/documents/nd-88-2024?as_of=2024-08-02",
+      "http_status": 200,
+      "elapsed_ms": 2459
+    },
+    {
+      "path": "/api/v1/documents?as_of=2026-10-21",
+      "http_status": 200,
+      "elapsed_ms": 11886
+    },
+    {
+      "path": "/api/v1/documents/qd-40-2026-hanoi?as_of=2026-10-21",
+      "http_status": 200,
+      "elapsed_ms": 2564
+    }
+  ],
+  "browser_checks": [
+    {
+      "width": 1440,
+      "mode": "desktop_browser",
+      "physical_device": false,
+      "status": "PASS",
+      "cases": [
+        {
+          "as_of": "2026-10-21",
+          "documents": 7,
+          "passages": 43,
+          "excerpt_checksums": "PASS"
+        },
+        {
+          "as_of": "2026-10-22",
+          "documents": 1,
+          "passages": 1,
+          "excerpt_checksums": "PASS"
+        },
+        {
+          "as_of": "2024-08-02",
+          "documents": 3,
+          "passages": 25,
+          "excerpt_checksums": "PASS"
+        }
+      ],
+      "stage": "complete",
+      "frontend_script_urls": [
+        "https://hanoi-land-law.pages.dev/assets/index-BsNavn4b.js"
+      ],
+      "frontend_assets": [
+        {
+          "path": "/assets/index-BsNavn4b.js",
+          "sha256": "4642440951dee3b3a5eddc6f65b1d55c8476a41d9780dad42d4a38232d5d8a2b",
+          "matches_final_production_build": true
+        },
+        {
+          "path": "/assets/index-BmPgQ52A.css",
+          "sha256": "ff6aebb2c29c4a144d38a7d4a80715bad64174e1ff6ff506fba19f651e890c67",
+          "matches_final_production_build": true
+        }
+      ],
+      "runtime_fingerprint": "8ee1cd63c2ef531bc603848ce3d5b11334322e368d14c10fc73a81d339d51464",
+      "corpus_id": "corpus-1afca764aa6692e0",
+      "external_document_navigation": {
+        "initial_url": "https://congbao.hanoi.gov.vn/Default.aspx?p_attribute=5335&pageid=45002",
+        "outcome": "PASS_NAVIGATION",
+        "final_url": "https://congbao.hanoi.gov.vn/Default.aspx?p_attribute=5335&pageid=45002",
+        "title": "Quyết định 40/2026/QĐ-UBND",
+        "http_status": 200,
+        "scope": "Actual browser navigation to the expected official source URL; not a new checksum/legal applicability review"
+      },
+      "source_panel": "PASS",
+      "official_link_target": "PASS_URL_MATCH_ONLY",
+      "reload": "PASS",
+      "synthetic_local_history_label_clear": "PASS",
+      "horizontal_overflow": false,
+      "chat_disabled": true
+    },
+    {
+      "width": 390,
+      "mode": "emulated_mobile",
+      "physical_device": false,
+      "status": "PASS",
+      "cases": [
+        {
+          "as_of": "2026-10-21",
+          "documents": 7,
+          "passages": 43,
+          "excerpt_checksums": "PASS"
+        },
+        {
+          "as_of": "2026-10-22",
+          "documents": 1,
+          "passages": 1,
+          "excerpt_checksums": "PASS"
+        },
+        {
+          "as_of": "2024-08-02",
+          "documents": 3,
+          "passages": 25,
+          "excerpt_checksums": "PASS"
+        }
+      ],
+      "stage": "complete",
+      "frontend_script_urls": [
+        "https://hanoi-land-law.pages.dev/assets/index-BsNavn4b.js"
+      ],
+      "frontend_assets": [
+        {
+          "path": "/assets/index-BsNavn4b.js",
+          "sha256": "4642440951dee3b3a5eddc6f65b1d55c8476a41d9780dad42d4a38232d5d8a2b",
+          "matches_final_production_build": true
+        },
+        {
+          "path": "/assets/index-BmPgQ52A.css",
+          "sha256": "ff6aebb2c29c4a144d38a7d4a80715bad64174e1ff6ff506fba19f651e890c67",
+          "matches_final_production_build": true
+        }
+      ],
+      "runtime_fingerprint": "8ee1cd63c2ef531bc603848ce3d5b11334322e368d14c10fc73a81d339d51464",
+      "corpus_id": "corpus-1afca764aa6692e0",
+      "external_document_navigation": {
+        "initial_url": "https://congbao.hanoi.gov.vn/Default.aspx?p_attribute=5335&pageid=45002",
+        "outcome": "PASS_NAVIGATION",
+        "final_url": "https://congbao.hanoi.gov.vn/Default.aspx?p_attribute=5335&pageid=45002",
+        "title": "Quyết định 40/2026/QĐ-UBND",
+        "http_status": 200,
+        "scope": "Actual browser navigation to the expected official source URL; not a new checksum/legal applicability review"
+      },
+      "source_panel": "PASS",
+      "official_link_target": "PASS_URL_MATCH_ONLY",
+      "reload": "PASS",
+      "synthetic_local_history_label_clear": "PASS",
+      "horizontal_overflow": false,
+      "chat_disabled": true
+    }
+  ],
+  "ui_date_filters": [
+    {
+      "as_of": "2026-10-21",
+      "outcome": "ALREADY_SELECTED_AND_DISPLAYED_NO_REDUNDANT_REQUEST"
+    },
+    {
+      "as_of": "2026-10-22",
+      "outcome": "CHANGED_AND_PUBLIC_GET_SUCCEEDED"
+    },
+    {
+      "as_of": "2024-08-02",
+      "outcome": "CHANGED_AND_PUBLIC_GET_SUCCEEDED"
+    },
+    {
+      "as_of": "2026-10-21",
+      "outcome": "ALREADY_SELECTED_AND_DISPLAYED_NO_REDUNDANT_REQUEST"
+    },
+    {
+      "as_of": "2026-10-22",
+      "outcome": "CHANGED_AND_PUBLIC_GET_SUCCEEDED"
+    },
+    {
+      "as_of": "2024-08-02",
+      "outcome": "CHANGED_AND_PUBLIC_GET_SUCCEEDED"
+    }
+  ],
+  "chat": "NOT TESTED — disabled in source-only mode",
+  "follow_up": "NOT TESTED — no generated conversation",
+  "human_turnstile": "NOT TESTED — no challenge automation or session creation",
+  "latency_scope": "Observed source GET/browser timings only, not model latency",
+  "model_requests": 0,
+  "completed_at": "2026-10-21T11:09:20.731Z",
+  "scope": "Actual canonical public source-lookup browser and GET API only. No mocked success responses, chat/model/session or challenge automation; synthetic history stays in an isolated browser context. No claim of generated answer/follow-up or human Turnstile success."
+}

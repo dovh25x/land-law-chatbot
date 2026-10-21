@@ -1,0 +1,65 @@
+{
+  "status": "PASS",
+  "checked_at": "2026-10-21T10:18:11.700374+00:00",
+  "commit": "bc5c0e9c6df2fb72d6cd6aaa110e8cabbdddb9fb",
+  "source_tree_sha256": "deddd9d27614e30fe01fb47f7b3b852853c61d3aea6c0bb00e059950ecc307cb",
+  "source_files_checked": 204,
+  "committed_paths_total": 2814,
+  "checks": {
+    "committed_source_tree_hash_matches": true,
+    "working_source_equals_committed_source": true,
+    "committed_document_build_inputs_present": true,
+    "historical_artifacts_preserved": true,
+    "evaluation_gold_unchanged": true,
+    "source_receipts_unchanged": true,
+    "asset_checksum_matches": true,
+    "asset_documents_exactly_match_original_candidate": true,
+    "asset_counts_match_candidate": true,
+    "asset_format_has_no_conversation_tables": true,
+    "no_missing_non_asset_document_links_in_git": true
+  },
+  "source_mismatches": [],
+  "academic_documents_changed_after_commit": [
+    "reports/submission-20261021/Final_Project_Report.md",
+    "reports/submission-20261021/README.md",
+    "reports/submission-20261021/SUBMISSION_CHECKLIST.md",
+    "reports/submission-20261021/delivery-status.json"
+  ],
+  "historical_files_checked": 2906,
+  "historical_changed": [],
+  "gold_counts": {
+    "data/evaluation/smoke.jsonl": 20,
+    "data/evaluation/supplemental.jsonl": 4,
+    "data/evaluation/natural.jsonl": 8
+  },
+  "gold_changed": [],
+  "receipt_changed": [],
+  "asset_counts": {
+    "documents": 60,
+    "chunks": 7396
+  },
+  "asset_state_keys": [
+    "active_release",
+    "source_gate:corpus-1afca764aa6692e0"
+  ],
+  "asset_sha256": "1db94271217ef3765279a14a7609b09623b25c0fd3b8537f2ba99c674991160d",
+  "missing_non_asset_document_links": [],
+  "expected_links_to_separate_generated_assets": [
+    {
+      "document": "reports/submission-20261021/README.md",
+      "target": "reports/submission-20261021/Final_Project_Report.pdf"
+    },
+    {
+      "document": "reports/submission-20261021/README.md",
+      "target": "reports/submission-20261021/Final_Project_Presentation.pptx"
+    },
+    {
+      "document": "reports/submission-20261021/README.md",
+      "target": "reports/submission-20261021/Final_Project_Presentation.pdf"
+    }
+  ],
+  "clean_checkout_scope": "Committed blob projection and required build-input presence. Full CI fresh checkout, dependency install and document re-export NOT RUN by QA; separate release assets and installed pinned tooling/Chromium/fonts are prerequisites. PDF metadata may differ on re-export.",
+  "external_requests": 0,
+  "git_mutations": false,
+  "database_connections": 0
+}

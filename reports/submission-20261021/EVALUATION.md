@@ -1,164 +1,98 @@
-# Tổng hợp đánh giá cuối kỳ
+# Đánh giá cuối — tách phần mềm, nguồn và đáp án model
 
-> **Phạm vi thời điểm:** Nội dung gốc dưới đây tổng hợp bằng chứng đến Phase 4. Quyền chạy C02 độc lập tối đa 25.000 tokens và quyền commit/push/deploy được cấp ngày 21/10/2026 sau mốc này; trạng thái thực hiện mới xem [delivery-status.json](delivery-status.json). Không dùng quyền mới để đổi kết quả cũ; các câu “không chạy trong Phase 4” mô tả giới hạn của phase đã kết thúc.
+Candidate code **`ec5d9a9d1f3f265ebd89f5c0524d41142b0806ec`**, mode `SOURCE_LOOKUP_ONLY=true`, `GENERATION_ENABLED=false`. Bản bàn giao chỉ đọc các đoạn nguyên văn đã review. Không công bố RAG generative đạt nghiệm thu. Mọi cohort lịch sử giữ nguyên; source-only không được kế thừa score retrieval/model như chất lượng đáp án của chính nó.
 
-Chốt evidence ngày 21/10/2026. Đây là tổng hợp các lần chạy đã lưu, không phải một benchmark mới. Phase 4 không gọi Groq hoặc judge, không chạy lại S06/C01, không sửa gold và không cấp lại ngân sách. Danh tính đầy đủ ở [freeze manifest](../final-submission/2026-10-21/freeze-manifest.json); vị trí và checksum evidence ở [index](../final-submission/2026-10-21/EVIDENCE_INDEX.md).
+## 1. Phần mềm và candidate hiện hành
 
-## 1. Các cohort phải đọc riêng
-
-| Cohort | Runtime fingerprint (rút gọn) | Kết luận được phép |
+| Kiểm tra | Kết quả có evidence | Phạm vi |
 |---|---|---|
-| S06 cuối, 20/10 | `2dab4dde6932…` | S06 FAIL; corpus cũ `corpus-a26bc99e541fbbe2` |
-| Phase 2D và Phase 3A | `37d2fb54ca0c…` | Context capture; C01 INCOMPLETE; C02/C03 NOT RUN trong pilot |
-| Phase 3B fixture trung gian | `80512d4e04f0…` | 9/11 fixture status matches; C02/C03 fixture FAIL |
-| Phase 3B runtime cuối | `1697d9dec78b…` | Software/retrieval/context/quote fixture; không có model inference |
-| PostgreSQL Phase 4 local | `2229a1b29805…` | Migration/role/restore đạt trên PG cách ly; Phase 3B mới là planned-only; không suy SQLite = PG |
-| Faithfulness lịch sử | `c4f0c661af82…`, `800c96bad3ff…` | Báo riêng evaluator tùy biến; không gán cho candidate cuối |
+| Backend | **529 PASS** | CI Python 3.12; local Python 3.14 là môi trường riêng, không cộng thành 1.058 |
+| Frontend unit/build/audit | **16 PASS**, build/audit PASS | Exact code SHA ec5d9a9… |
+| Playwright local | **110 PASS**, local full 3,6 phút | Fixtures desktop/mobile; không thay public E2E |
+| Image cuối | Build/probe PASS; **381,796875 MiB** dưới 512 MiB | Offline fixture load, không public load test/model inference |
+| SQLite source API | PASS, 0 provider calls | Fingerprint `dba69995…` |
+| PG16 source API | PASS, 413 SELECT-only queries, không mutate counts, 0 model calls | Runtime role không superuser/bypass RLS; fingerprint `8ee1cd63…` |
+| Public deployment/API | Code/corpus/fingerprint đã khớp | Browser public source-only run03 PASS (desktop 1440/mobile emulation 390), 0 model/session |
 
-Thay đổi Phase 4 chỉ gồm tài liệu, công cụ kiểm chứng evidence và packaging; không có bản vá sinh/kiểm chứng đáp án. Các kiểm tra Docker được người dùng cho phép bổ sung ghi riêng ở [release checklist](../final-submission/2026-10-21/RELEASE_CHECKLIST.md), không biến thành model evaluation.
+[CI exact SHA](https://github.com/dovh25x/land-law-chatbot/actions/runs/39588182288), [local backend](../release-final-20261021/backend-full.log), [local Playwright cuối](../release-final-20261021/frontend-e2e-final-full.log), [image probe cuối](../release-final-20261021/image-probe-final.json), [memory cuối](../release-final-20261021/docker-memory-ui-guard.log), [SQLite API](../release-final-20261021/qa/source-lookup-acceptance.json), [PG API](../release-final-20261021/qa/source-lookup-pg-acceptance.json), [public identity](../release-final-20261021/final-public-identity.json).
 
-## 2. Software tests
+Baseline Phase 3B/4 có 516 backend và 100 local UI tests; candidate nguồn đầu có 104 UI. Các số này là các phiên bản suite, không cộng vào 529/110. Số 13 backend mới giải thích 516→529; 56 targeted đã bao gồm 13 mới, không cộng 56+13. Các run partial/FAIL giữ trong evidence index.
 
-| Kiểm tra | Evidence Phase 3B | Kết quả và giới hạn |
+## 2. Retrieval Recall@5 — cohort RAG riêng
+
+[Receipt gốc](../phase3b-reliability-20261021T073924Z/retrieval-final/retrieval-recall-at5.json): SQLite cách ly, corpus `corpus-1afca764aa6692e0`, fingerprint đầy đủ `1697d9dec78b8625398e53999b609e3ce57258666c2e3566a8321385abe8886d`. Dùng query gốc/E5/hybrid search và replacement candidates hiện có; không rewrite, model generation, judge hoặc agent tool expansion.
+
+Với gold chunks `G_i` và top-five IDs `R_i^5`:
+
+- `Recall@5_i = |G_i ∩ R_i^5| / |G_i|`.
+- `Macro Recall@5 = Σ_i Recall@5_i / n`.
+- `Micro Recall@5 = Σ_i |G_i ∩ R_i^5| / Σ_i |G_i|`.
+
+| Mẫu số | Kết quả |
+|---|---:|
+| Queries có positive gold hợp lệ | 19: 10 smoke, 3 supplemental, 6 natural |
+| Macro | `(18×1 + 0,5)/19 = 97,37%` |
+| Gold chunks hit / labels | 20/21 |
+| Micro | `20/21 = 95,24%` |
+| Natural split | 6 câu; macro 91,67% |
+
+S06 loại trước run theo chỉ dẫn không chạy lại; 12 ca không có positive gold không có mẫu số Recall. Tổng suite khóa 20+4+8 không đổi. N03 thiếu gold parent dù child liên quan có mặt; không coi ID tương đương để tăng score. Diagnostic review admission trên chính top-five gốc không refill cũng có macro 97,37%, nhưng không chứng minh toàn corpus fresh. Ngày hỏi theo từng case, có cả historical; không phải kiểm current-law coverage cho mọi ngày.
+
+**97,37% là retrieval Recall@5, không phải legal-answer accuracy, Citation Accuracy hoặc score của mode nguồn cuối.** PostgreSQL Recall@5 chưa đo; không chuyển kết quả SQLite sang PG.
+
+## 3. Context và citation integrity
+
+- [Actual synthesis capture](../phase3b-reliability-20261021T073924Z/synthesis-final/report.json) giữ C02 3/3 required units, 5.070 ký tự; C03 7/7, 6.981/7.000 ký tự. Đây là completeness, không phải model-answer pass.
+- [C02 actual-wire QA](../release-final-20261021/qa/c02-pilot-review.md) xác nhận đúng câu hỏi khóa, không gold/history, 3/3 required units; cả 5 synthesis passages fresh đúng checksum/ngày. Payload khớp synthesis snapshot; không có nguồn ngoài snapshot dùng để cite.
+- Source-quote fixture Phase 3B phát hành một claim/một citation, nhưng generation và semantic judge đều là fixture. Coverage fixture 9/11 ở fingerprint `8051…` giữ hai FAIL; không biến thành model score hoặc chuyển sang fingerprint `1697…`.
+- Mode nguồn cuối chỉ hiển thị đúng passage được review; locator/URL/checksum giúp kiểm provenance. **Integrity không tự chứng minh citation hỗ trợ đầy đủ một kết luận tổng hợp.** Không có model answer thì không gán semantic Citation Accuracy bằng 100%.
+
+## 4. Model outcomes và API reliability
+
+| Cohort/case | Outcome giữ nguyên | Requests/usage/latency | Điều chưa đo |
+|---|---|---|---|
+| S06 cuối, fingerprint `2dab…` | **FAIL** | 2 HTTP200; 8.104 confirmed tokens; 5.815 ms | Không có published claim; không đổi repair cải thiện thành PASS |
+| C01 Phase 3A, `37d2…` | **INCOMPLETE** | 3 HTTP requests; 4.829 confirmed; 34.858 ms | Draft đầu không đủ phát hành; 429 TPM, 400 JSON, budget stop |
+| C02/C03 Phase 3A | **NOT RUN** | 0 attempts/0 requests | Placeholder INCOMPLETE trong raw execution không phải inference đã bắt đầu |
+| C02 mới, `1697…`, allocation độc lập | **INCOMPLETE** | 1 HTTP400; 6.951 ms whole-turn, 5.252 ms wire | Không Draft hợp lệ, không semantic verifier verdict hoặc published answer/citation |
+
+[S06](../phase1-s06-final-20261020T161058Z-b031ce/technical-review.json), [Phase 3A](../phase3a-live-20261021T070325Z/execution.json), [C02 mới](../release-final-20261021/pilot-C02/attempt.json), [response C02](../release-final-20261021/pilot-C02/wire/01/response.json).
+
+S06 vẫn FAIL dù repair cải thiện scope/OR; structural guard chưa chấp thuận, không đủ căn cứ tuyên bố PASS. C01 có issue citation/điều kiện và lỗi thực thi; không gọi mọi issue lexical là kết luận pháp lý độc lập. C02 mới provider báo `json_validate_failed` vì output bị truncate tại max completion 2.048 và thiếu properties bắt buộc; không quy cho app parser hoặc suy nội dung pháp luật của failed_generation chưa lưu. Không có 429 trong C02 mới. Không rerun/tune C01/S06/C02 hoặc chạy judge ngoài pipeline.
+
+### Token accounting — không cộng hai allocations
+
+| Allocation | Confirmed | Unknown upper bound | Reserved cuối | Remaining |
+|---|---:|---:|---:|---:|
+| Phase 3A 60.000 | 4.829 | 47.330 | 0 | 7.841 |
+| C02 độc lập 25.000 | 0 được xác nhận | 19.788 | 0 | 5.212 |
+
+[Ledger gốc](../phase3b-reliability-20261021T073924Z/prior-allocation-ledger.json), [ledger C02 mới](../release-final-20261021/pilot-C02/request-budget.json). `confirmed_usage=0` không nghĩa actual usage bằng 0. Upper bound/reservation không phải token provider đã đo; unknown không được tự refund. Request C02 tiếp theo bị chặn trước network, không vượt cap. Internal budget khác quota provider; không suy RPM/TPD exhaustion chỉ từ các headers thiếu định nghĩa trong run.
+
+## 5. Public browser, safety và latency
+
+Run public đầu **FAIL** do harness đợi URL ngày dư thừa dù default-day GET hợp lệ; [sidecar](../release-final-20261021/qa/public-source-run-01-harness-review.json) giữ nguyên failure và sửa kỳ vọng, không tăng timeout hoặc đổi scope luật. Run public thứ hai **FAIL thật** do history/citation cũ xuất hiện trước metadata source-only. [Diagnostic](../release-final-20261021/qa/history-race-2026-10-21T10-37-55-451Z/report.json) ghi 528 ms thấy old citation và 20,767 giây mode metadata về. Đây là seeded synthetic history trong browser riêng, không phải một output model mới.
+
+[Guard trình bày](../release-final-20261021/qa/UI_UNKNOWN_RUNTIME_FIX.md) fail-closed khi metadata pending/failed và không dùng focus để mở lại panel chưa tin cậy. Candidate trung gian 93d có [CI FAIL](https://github.com/dovh25x/land-law-chatbot/actions/runs/39586847824) trước deploy; không gán CANCELLED vì yêu cầu hủy đến sau khi run kết thúc. Code ec5 hoàn chỉnh có CI PASS. [Full public source-only browser run03](../release-final-20261021/qa/public-source-2026-10-21T11-02-32-079Z/report.json) đã PASS trên đúng final code ec5/corpus/fingerprint,1440px desktop/390px emulated mobile. Checksum/date43/1/25, link chính thức HTTP200 đúng title, source panel, reload/immediate history warning/clear và không overflow đạt, 0 model/session. Không physical-device test hoặc full generative E2E. Hai FAIL gốc không bị xóa hay thay bằng local fixtures.
+
+Latency model hiện có chỉ là các incomplete attempts n=1/case trong bảng trên, không phải successful-answer latency hoặc p95. Public source/status latency của run lỗi là network/API observations, không gọi model latency. Chưa có load test hoặc phân phối latency public đủ mẫu; không tự tính p95 ổn định. Human Turnstile, generative chat và follow-up không được kiểm/thực hiện trong source-only mode; không gọi full generative E2E PASS.
+
+## 6. Metrics chưa đo
+
+| Metric | Trạng thái | Yêu cầu để đo đúng |
 |---|---|---|
-| Backend | `backend-tests-final-2.log` | 516 passed, 33,70 s; Python 3.14.4; chặn HTTP model thật |
-| Budget/provider regression | `accounting-tests-after-import-check.log` | 30 passed; là tập con, không cộng thành 546 tests |
-| Frontend unit | `frontend-tests.log` | 14 passed |
-| Frontend build | `frontend-build.log` | PASS, không xác nhận public website |
-| Playwright | `frontend-e2e.log` | 100 passed; API fixture trên local, không có Groq/Turnstile production |
-| Secret scan | `secrets-check-final.log` | PASS tại thời điểm Phase 3B; Phase 4 có scan cuối riêng |
+| RAG model Answer Correctness | **NOT MEASURED** như aggregate cuối | Proposition/rubric khóa, reviewer, report completed/incomplete và mẫu số |
+| Semantic Citation Accuracy | **NOT MEASURED** | Chấm từng claim–citation, đúng subject/ngày/ngoại lệ; khác integrity |
+| RAGAS Faithfulness | **NOT MEASURED** | Chạy RAGAS thật, version/judge/input được ghim và budget được duyệt |
+| Custom faithfulness final | **NOT MEASURED** | Evaluator riêng, không đổi tên thành RAGAS |
+| Answerable Coverage / False Abstention Rate | **NOT MEASURED** | Sidecar answerability được review/khóa trước run; incomplete riêng, refusal ca answerable không tự đúng |
+| Model/public p50/p95 | **NOT MEASURED** trên bộ đủ mẫu | Tách cold start, network, source GET, whole-turn và model time |
+| PostgreSQL Recall@5 | **NOT MEASURED** | Dataset/ngày/gold/backend cohort riêng |
 
-Bổ sung Phase 4 theo chấp thuận Docker: serving image build đạt, image probe Python 3.12.15/model hashes/fingerprints/non-root đạt; memory check 382,66 MiB/512 MiB đạt. Lần pytest trong serving image thiếu Git/notebook:513 pass/3 fail (giữ log); testtools layer chỉ thêm Git và mount notebook sau đó đạt **516 passed trong 64,43 s**, network-none/chặn HTTP. Không cộng thành nhiều hơn 516 test độc lập hoặc gọi serving image đã đủ công cụ dev. PostgreSQL 16.15/pgvector 0.8.7 container cách ly đạt migrations 001–006, runtime role, leases và round-trip corpus 60/7396; không phải full suite trên PG, RecallPG hoặc cloud. [Docker receipt](../final-submission/2026-10-21/docker-preflight.json), [PG receipt](../final-submission/2026-10-21/postgres-preflight.json).
+Mode nguồn không có generated legal answer để chấm các metrics tổng hợp đó; không dùng zero claims làm faithfulness=1. Historical [custom sampled faithfulness `c4f0…`](../evaluation/ring4-c4f0c661/faithfulness.json) có 12/13 supported claims (0,9231), 6/8 sampled cases; [cohort `800c…`](../evaluation/ring4-800c96ba/faithfulness.json) không có case scored, score null. Không phải RAGAS, không independent legal certification, không gộp hoặc dùng null thành zero/one.
 
-Tái sử dụng kết quả chỉ khi checksum source tương ứng còn khớp; thay đổi `.dockerignore` phải kiểm tra đóng gói riêng. Python 3.12/image/PG không được suy từ Python 3.14. Chi tiết preflight bổ sung và exit codes nằm trong manifest/checklist, không được gọi là CI đã chạy.
+## 7. Source scope và tái lập
 
-## 3. Retrieval Recall@5
+Actual API source-only có 25 passages cho 02/08/2024, 43 cho 21/10/2026, ngày 22–23 chỉ1 header QĐ 40. Không suy current coverage ngày 23 từ ngày 21. Archived receipt chỉ chứng nhận scope/time đã review; live import yêu cầu review gần đây không quá 7 ngày. Restore có thể khớp bytes nhưng activation sau expiry cần renewed review hợp lệ; không đổi `checked_at`, gia hạn hàng loạt hoặc bypass F01.
 
-Nguồn: [receipt và từng hàng](../phase3b-reliability-20261021T073924Z/retrieval-final/retrieval-recall-at5.json). Backend: **SQLite cách ly**, runtime `1697d9dec78b…`, corpus `corpus-1afca764aa6692e0`. Không có LLM calls.
-
-Với câu i, `G_i` là tập gold chunk IDs đã khóa và `R_i^5` là năm ID truy xuất đầu tiên:
-
-`Recall@5_i = |G_i ∩ R_i^5| / |G_i|`.
-
-`Macro Recall@5 = (Σ_i Recall@5_i) / N = (18 × 1 + 0,5) / 19 = 97,3684% ≈ 97,37%`.
-
-`Micro Recall@5 = Σ_i |G_i ∩ R_i^5| / Σ_i |G_i| = 20 / 21 = 95,2381% ≈ 95,24%`.
-
-| Split khóa | Câu được tính | Macro Recall@5 |
-|---|---:|---:|
-| Smoke (tập 20) | 10 | 100% |
-| Supplemental (tập 4) | 3 | 100% |
-| Natural (tập 8) | 6 | 91,67% |
-| Tổng | 19 | 97,37% |
-
-32 câu của bộ 20+4+8 được giữ nguyên. S06 loại **trước chạy** theo yêu cầu không chạy lại; 12 câu không có positive gold chunks loại khỏi mẫu số Recall. Receipt ghi đủ 13 trường hợp loại và lý do. Đây không phải score của cả 32 câu hay test set ngẫu nhiên đại diện người dân. Ngày hỏi của mỗi câu giữ nguyên, gồm cả lịch sử; không gọi toàn bộ là câu hiện hành 21/10/2026.
-
-N03 chỉ trúng một trong hai gold IDs: parent `luat-dat-dai-2024-107-1-parent` không có trong top 5 dù child liên quan có mặt. Không đổi gold hoặc đồng nhất parent/child sau khi xem kết quả. Diagnostic admission dùng chính top 5 này, không refill, cũng đạt macro 97,37%; không chứng minh toàn corpus đã fresh. Metric dùng query gốc với candidate search/replacement handling, không cộng kết quả sau agent tool expansion. Chưa đo Recall@5 trên PostgreSQL/pgvector hoặc public candidate trong cohort này.
-
-## 4. Context completeness và citation integrity
-
-| Kiểm tra | Evidence | Kết quả |
-|---|---|---|
-| Phase 2D C01/C02/C03 | [locked capture](../phase2d-synthesis-20261021/acceptance-locked/report.json), FP `37d2…` | 4/4, 3/3, 7/7 required units; không inference |
-| Final C02 | [capture](../phase3b-reliability-20261021T073924Z/synthesis-final/report.json), FP `1697…` | 3/3, 5.070 ký tự serialized evidence/documents |
-| Final C03 | Cùng receipt | 7/7, 6.981 ký tự; sát giới hạn 7.000 |
-| Final quote fixture | [startup/quote receipt](../phase3b-reliability-20261021T073924Z/startup-and-positive-fixture-final.json) | Một claim/một citation đã review, thuộc synthesis snapshot; semantic judge là fixture |
-| Coverage fixture trung gian | [11-case receipt](../phase3b-reliability-20261021T073924Z/coverage-preflight/report.json), FP `8051…` | 9/11 status matches; C02/C03 FAIL do cite child ngoài snapshot thực chọn parent |
-
-Final capture dùng provider ghi payload rồi trả Draft từ chối có chủ ý; không chấm những refusal đó là model false abstention. Trường cũ `all_three_complete=false` trong receipt final không đại diện C01/C02/C03: lần chạy đã lọc hai ca dương và các ca âm; đọc các bản ghi từng case. Không sửa artifact lịch sử để đổi ý nghĩa trường này.
-
-Citation integrity kiểm tra provenance/ID/locator/excerpt/checksum, khác **Citation Accuracy** là citation có thực sự chứng minh toàn bộ claim, chủ thể, ngoại lệ và ngày áp dụng hay không. Không có published citations thì metric accuracy/faithfulness không tự bằng 100%.
-
-## 5. Kết quả model thật và API
-
-| Case | Cohort | Attempts/HTTP | Kết quả công bố |
-|---|---|---:|---|
-| S06 | Lần cuối Phase 1 | 1 / 2 | **FAIL**; refusal, không published claim/citation |
-| C01 | Phase 3A | 1 / 3 | **INCOMPLETE**; draft correctness issue, 429, JSON validation, budget stop |
-| C02 | Phase 3A | 0 / 0 | **NOT RUN** |
-| C03 | Phase 3A | 0 / 0 | **NOT RUN** |
-| C01/C02/C03 | Runtime cuối Phase 3B/4 | 0 / 0 | **NOT RUN**; không có model answer pass mới |
-
-Raw `execution.json` Phase 3A dùng placeholder `INCOMPLETE` cho C02/C03 nhưng `attempt_started=false`. Summary này chuẩn hóa thành NOT RUN theo yêu cầu, bảo toàn raw receipt và giải thích sự khác biệt. Không đổi attempt count vì repair/retry.
-
-**C01:** HTTP 200 đầu sinh Draft có lỗi nội dung/citation, verifier không chấp nhận. Synthesis có đủ 4/4 required units, 6.697 ký tự; do vậy “không tìm thấy nguồn” không giải thích đầy đủ lỗi đáp án. Một issue của structural verifier nhạy cách diễn đạt; chỉ dùng cả trace để kết luận draft chưa đủ phát hành, không kết luận mọi phần đều sai. Sau đó HTTP 429 và HTTP 400 khiến repair không hoàn tất; không có đáp án hợp lệ để tính accuracy.
-
-| Sự kiện xác nhận | Giá trị từ wire receipts | Phần chưa biết |
-|---|---|---|
-| HTTP 200 | 3.474 prompt + 1.355 completion = 4.829 tokens; 3.756 ms | Không có model pass dù 200 |
-| HTTP 429 | Body: TPM limit 8.000, used 4.254, requested 4.198; `retry-after=4`; token remaining 3.746, reset 31,904 s; 148 ms | Không chứng minh vượt RPM/RPD/TPD; request headers có semantics riêng |
-| Cooldown | Khoảng từ 429 đến retry ít nhất 4,497 s | Không bằng chứng double-retry trong ba wire calls |
-| HTTP 400 | `json_validate_failed`, `invalid_request_error`, 4.941 ms | Không lưu failed_generation; không thể dựng lại JSON sai hoặc quy toàn bộ cho parser |
-| Turn | 34.858 ms, 0 published claims/citations | Không phải latency đáp án thành công hoặc public p95 |
-
-S06 giữ FAIL: repair cải thiện phân biệt chủ thể và OR nhưng structural guard vẫn chặn, chưa có semantic verification chấp thuận. Không coi việc sửa fixture hoặc lập luận hậu kiểm là biến ca này thành PASS.
-
-## 6. Token accounting và ngân sách còn lại
-
-Confirmed usage **4.829** là số provider xác nhận. Hai request không có usage giữ unknown upper bounds tổng **47.330**; `reserved_budget=0` khi không có request in-flight. Tổng accounting 52.159 không phải tokens thực đo. `remaining_test_budget=60.000−4.829−47.330=7.841`.
-
-Phase 3B bảo toàn allocation gốc bằng [ledger](../phase3b-reliability-20261021T073924Z/prior-allocation-ledger.json). Reservation C02 ban đầu trên runtime mới là **19.788**, lớn hơn 7.841; [dry precheck](../phase3b-reliability-20261021T073924Z/prior-allocation-check.json) chặn trước HTTP, **0 external requests**. Không reset ngân sách bằng thư mục output mới. Usage không biết không được tự refund. Budget nội bộ khác provider quota: có budget cũng có thể bị TPM/RPD chặn, và quota provider còn chưa cho phép vượt hard cap nội bộ.
-
-Runtime mới tách confirmed/estimated/reserved/remaining và dùng giới hạn bảo thủ theo body bytes + framing allowance + max output. Chưa có chứng minh tokenizer/framing nhỏ hơn để giải phóng các khoản unknown. Phase 4 không thay hard cap hoặc tự phê duyệt allocation mới.
-
-## 7. Metrics chưa đo và protocol còn thiếu
-
-| Metric | Trạng thái final runtime | Phương pháp cần làm sau phê duyệt |
-|---|---|---|
-| Model Answer Correctness | **NOT MEASURED** | Review từng proposition/ngoại lệ theo rubric và case khóa; báo PASS/PARTIAL/FAIL/INCOMPLETE và mẫu số attempts/completed |
-| Citation Accuracy | **NOT MEASURED** | Chấm từng cặp claim–citation theo nội dung, subject, ngày, ngoại lệ; tách integrity khỏi support |
-| RAGAS Faithfulness | **NOT MEASURED** | Chạy RAGAS thật, ghim package/judge/version và inputs, nếu được duyệt; không tự đổi tên evaluator hiện có |
-| Custom faithfulness final | **NOT MEASURED** | Evaluator hiện có, báo raw support counts/unscored; cần judge approval và budget |
-| Answerable Coverage | **NOT MEASURED** | Khóa sidecar answerability trước run; số case answerable có câu trả lời / tất cả case answerable; báo thêm tỷ lệ đúng |
-| False Abstention Rate | **NOT MEASURED** | Số refusal sai / tổng case answerable; INCOMPLETE báo riêng, không loại âm thầm |
-| Safety rate model | **NOT MEASURED** | Các câu thiếu dữ kiện/ngoài scope có đúng nhánh, không phát legal claim sai; không thay bằng unit pass |
-| Latency final/public p50/p95 | **NOT MEASURED** | Ghi whole-turn/request/cooldown/cold start và completed/incomplete; mẫu nhỏ không diễn giải p95 ổn định |
-| Recall@5 PostgreSQL | **NOT MEASURED** trong cohort retrieval 19 câu | Giữ nguyên IDs/query/ngày/gold, chạy trên PG cách ly và báo cohort riêng |
-
-Answerable Coverage ở đây đo **có trả lời**, không tự đo đúng. Có thể thêm Correct Answer Coverage = số đáp án đúng / tất cả case answerable nếu được khóa protocol. Không chấm refusal là đúng cho ca đủ căn cứ; safety refusal đúng ở ca ngoài phạm vi phải có nhãn riêng.
-
-Historical custom faithfulness: [cohort c4f0…](../evaluation/ring4-c4f0c661/faithfulness.json) có 12/13 claims supported = 0,9231 trên 6/8 sampled cases; [cohort 800c…](../evaluation/ring4-800c96ba/faithfulness.json) 0/8 scored, giá trị null. Không phải RAGAS, không phải final runtime, không gộp, không dùng null thành zero hoặc one. Các kết quả lịch sử khác giữ nguyên và được tra qua index.
-
-## 8. Kết luận đánh giá
-
-Có evidence cho software, retrieval SQLite và context/provenance. Chưa có evidence model answer success trên runtime cuối, chưa có quality aggregate hoặc public E2E hợp lệ. **Deployment NOT READY** và **pilot với allocation cũ NOT READY**. Không yêu cầu tối ưu thêm S06/C01. Nếu được duyệt một bước tiếp theo, ưu tiên xác minh PG/image/public configuration và giải quyết điều kiện ngân sách minh bạch trước khi đề nghị duy nhất một C02 pilot có đủ nguồn; không tự thực hiện.
-
-## 9. Pilot C02 mới — allocation độc lập sau Phase 4
-
-| Thuộc tính | Kết quả có evidence |
-|---|---|
-| Fingerprint | `1697d9dec78b8625398e53999b609e3ce57258666c2e3566a8321385abe8886d` |
-| Budget / số attempts | 25.000 tokens nội bộ mới; đúng 1 attempt |
-| Outcome / requests | **INCOMPLETE** / 1 HTTP request |
-| Context actual wire | QA xác nhận 3/3 đơn vị bắt buộc; 5 passages fresh đúng checksum/ngày; không gửi gold/history |
-| Provider | HTTP 400 `json_validate_failed`; message nói output bị truncate tại max completion và thiếu trường schema |
-| Confirmed usage | 0 tokens được xác nhận; không đồng nghĩa actual usage bằng 0 |
-| Unknown upper bound / reserved / remaining | 19.788 / 0 / 5.212 tokens |
-| Whole-turn latency | 6.951 ms, n=1 incomplete attempt; không phải successful-answer latency |
-| Published answer / citations | Không có; semantic correctness/citation metrics không chấm được |
-| Tiếp theo | Không chạy lại, không sửa prompt/guard; fallback nguồn đang chuẩn bị, chưa coi PASS |
-
-[Attempt](../release-final-20261021/pilot-C02/attempt.json), [response metadata](../release-final-20261021/pilot-C02/wire/01/response.json), [ledger](../release-final-20261021/pilot-C02/request-budget.json). C02/C03 Phase 3A vẫn **NOT RUN**; không nhập allocation này vào ledger cũ hoặc sửa artifact lịch sử. Không có HTTP 429 trong C02 mới; không suy lỗi TPM từ C01 sang attempt này. Chỉ số tổng thể Answer Correctness/Citation Accuracy/Faithfulness trên runtime cuối vẫn NOT MEASURED; có 1 attempt model chưa hoàn tất được ghi riêng.
-
-[QA review C02](../release-final-20261021/qa/c02-pilot-review.md) chấm integrity/accounting PASS_REVIEW; đó không phải kết luận model-answer PASS.
-
-## 10. Cohort source-only sau fallback — không gộp với RAG
-
-| Hạng mục | Bằng chứng mới | Giới hạn |
-|---|---|---|
-| Mode | `SOURCE_LOOKUP_ONLY=true`, `GENERATION_ENABLED=false` | Không sinh legal answer |
-| SQLite fingerprint | `dba699954ac85068b40f676eaa2c927065d81c406eda7b08a6665ffafc53e58e` | Khác fingerprint retrieval/model `1697…` |
-| PG source-only fingerprint | `8ee1cd63c2ef531bc603848ce3d5b11334322e368d14c10fc73a81d339d51464` | API acceptance read-only PG16 cách ly PASS; không phải PG Recall/cloud |
-| Actual API local | PASS; 25 historical passages 02/08/2024, 43 current-date passages 21/10/2026 | 22–23/10 chỉ 1 header QĐ40, không coverage nghiệp vụ |
-| Provider generate calls | 0 | Không phải model-quality evaluation |
-| Backend targeted / full | 56 targeted PASS gồm 13 mới; **529 full PASS**, 223,34 giây, Python 3.14 local | Không cộng 516+529 hoặc 56+13 |
-| Frontend | 16 PASS; build PASS | Source hiện tại sau fallback |
-| Playwright mới / full | 4 mới PASS; **104 full PASS**, 4,9 phút | Fixtures local, chưa public E2E |
-
-[Actual API receipt](../release-final-20261021/qa/source-lookup-acceptance.json), [backend](../release-final-20261021/qa/source-lookup-tests-unsandboxed.log), [frontend](../release-final-20261021/qa/frontend-source-lookup-tests-final.log), [build](../release-final-20261021/qa/frontend-source-lookup-build-final.log), [Playwright](../release-final-20261021/qa/source-lookup-playwright.log). Việc chỉ hiển thị passage được review là source admission/integrity, không semantic Citation Accuracy hoặc legal correctness của một câu trả lời tổng hợp.
-
-Mode nguồn không có câu trả lời sinh để chấm Answer Correctness/Faithfulness; không gán điểm 1 vì không có claim. Recall@5 97,37% thuộc phép đo RAG cũ, không chạy lại hoặc đổi tên thành hiệu quả source-only. Các model failures được bảo toàn; kiểm API/UI mới không đổi chúng thành PASS. CI/image/cloud/public E2E của candidate mới xem delivery status cùng receipts, không mặc định kế thừa local PASS.
-
-[Full backend 529](../release-final-20261021/backend-full.log) và [full Playwright 104](../release-final-20261021/frontend-e2e-full.log) thuộc code source-only mới. Backend Python 3.12 đã có 516 PASS ở cohort Phase 4 trước fallback; không tự công bố 529 trên Python 3.12 nếu chưa có run tương ứng. Cloud PG/readiness và public source lookup vẫn cần kiểm riêng; negative ingress probes không tương đương human Turnstile hoặc chat pass.
-
-[Source-only PG API receipt](../release-final-20261021/qa/source-lookup-pg-acceptance.json): 413 SELECT-only queries, role least privilege, corpus/review counts trước-sau không đổi, 0 LLM. Đây là kiểm API thật trên database cách ly, không chuyển Recall@5 SQLite thành kết quả PostgreSQL.
+Các giới hạn thực nghiệm: mẫu nhỏ/tác giả chọn, cùng người viết code/gán nhãn, nhiều vòng chỉnh trên cùng tập, thiếu holdout/người review độc lập, khác SQLite/PG và judge cùng model ở các run lịch sử. [LIMITATIONS](LIMITATIONS.md) nêu rõ; [delivery status](delivery-status.json) và evidence index giữ identity/outcomes hiện hành. Thay phần mềm/nguồn hoặc thu hẹp mode không biến các model failures thành PASS.
