@@ -1,0 +1,25 @@
+
+> hanoi-land-law-web@0.1.0 test:e2e
+> playwright test source-lookup.spec.ts product.spec.ts
+
+
+Running 16 tests using 2 workers
+
+  ✓   2 [desktop] › e2e/product.spec.ts:16:1 › library supports accent-free search and opens reference-only originals (4.2s)
+  ✓   1 [desktop] › e2e/source-lookup.spec.ts:41:1 › source-only mode disables chat and displays date-pinned reviewed excerpts (6.2s)
+  ✓   3 [desktop] › e2e/product.spec.ts:28:1 › expired in-memory session restores the draft and never automatically resends (5.2s)
+  ✓   4 [desktop] › e2e/source-lookup.spec.ts:62:1 › retains local history but never treats saved citations as reviewed current evidence (4.2s)
+  ✓   5 [desktop] › e2e/product.spec.ts:47:1 › blocked sessionStorage does not prevent chat within the current tab (3.5s)
+  ✓   6 [desktop] › e2e/source-lookup.spec.ts:86:1 › delayed metadata never exposes saved citations or enables generation while configuration is unknown (4.8s)
+  ✓   7 [desktop] › e2e/product.spec.ts:52:1 › generation availability refreshes after a provider cooldown (3.2s)
+  ✓   8 [desktop] › e2e/source-lookup.spec.ts:113:1 › failed metadata does not reuse a previously enabled normal configuration (4.5s)
+  ✓   9 [mobile] › e2e/product.spec.ts:16:1 › library supports accent-free search and opens reference-only originals (2.4s)
+  ✓  11 [mobile] › e2e/product.spec.ts:28:1 › expired in-memory session restores the draft and never automatically resends (4.4s)
+  ✓  10 [mobile] › e2e/source-lookup.spec.ts:41:1 › source-only mode disables chat and displays date-pinned reviewed excerpts (4.5s)
+  ✓  12 [mobile] › e2e/product.spec.ts:47:1 › blocked sessionStorage does not prevent chat within the current tab (2.5s)
+  ✓  13 [mobile] › e2e/source-lookup.spec.ts:62:1 › retains local history but never treats saved citations as reviewed current evidence (4.3s)
+  ✓  14 [mobile] › e2e/product.spec.ts:52:1 › generation availability refreshes after a provider cooldown (3.5s)
+  ✓  15 [mobile] › e2e/source-lookup.spec.ts:86:1 › delayed metadata never exposes saved citations or enables generation while configuration is unknown (3.4s)
+  ✓  16 [mobile] › e2e/source-lookup.spec.ts:113:1 › failed metadata does not reuse a previously enabled normal configuration (3.4s)
+
+  16 passed (50.1s)
