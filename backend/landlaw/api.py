@@ -16,7 +16,6 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, StreamingResponse
 
-from .agent import Agent
 from .evaluation import configuration_fingerprint
 from .config import Settings, get_settings
 from .models import ChatRequest, ChatResult, TraceEvent
@@ -24,12 +23,17 @@ from .provider import GroqProvider
 from .security import digest, hash_ip, local_date, new_token, redact, utcnow
 from .store import RateLimited, Store
 from .publication import public_status
+from .simple_rag import SimpleRAG
 
 logger = logging.getLogger("landlaw")
 if not logger.handlers:
     logger.addHandler(logging.StreamHandler(sys.stdout))
 logger.setLevel(logging.INFO)
 logger.propagate=False
+
+# Kept as a lazy injection point for legacy agentic tests and operators. The
+# LangGraph implementation is imported only when the agentic path is selected.
+Agent = None
 
 
 def create_app(settings: Settings | None = None, store: Store | None = None, provider=None):
@@ -40,7 +44,8 @@ def create_app(settings: Settings | None = None, store: Store | None = None, pro
     async def lifespan(app):
         state["store"] = store or Store(settings)
         state["provider"] = provider or GroqProvider(settings, state["store"], usage_scope="public")
-        state["agent"] = Agent(state["store"], state["provider"])
+        state["simple_rag"] = SimpleRAG(state["store"], state["provider"])
+        state["agent"] = None
         state["semaphore"] = asyncio.Semaphore(settings.max_concurrent_requests)
         state["ip_secret"] = settings.ip_hash_secret.get_secret_value() or secrets.token_hex(32)
         state["configuration"] = configuration_fingerprint(settings)
@@ -331,7 +336,16 @@ def create_app(settings: Settings | None = None, store: Store | None = None, pro
                     remaining=max(.01,settings.turn_timeout_seconds-(time.monotonic()-request.state.started))
                     async with asyncio.timeout(remaining):
                         release_id=await asyncio.to_thread(state['store'].state,'active_release')
-                        result=await state['agent'].run(body,emit,release_id)
+                        if body.mode == "simple_rag" or settings.execution_mode == "simple_rag":
+                            runner = state["simple_rag"]
+                        else:
+                            if state["agent"] is None:
+                                agent_class = Agent
+                                if agent_class is None:
+                                    from .agent import Agent as agent_class
+                                state["agent"] = agent_class(state["store"], state["provider"])
+                            runner = state["agent"]
+                        result=await runner.run(body,emit,release_id)
                         # Only metadata is durable. No replayable answer is stored.
                         await asyncio.to_thread(state['store'].finish_turn,turn_id,'completed')
                         outcome='completed'

@@ -20,6 +20,15 @@ it('expires a rejected chat session without resending the question', async () =>
   expect(fetcher).toHaveBeenCalledTimes(1)
   expect(cachedSession()).toBeNull()
 })
+it('sends the simple RAG execution mode for chat turns', async () => {
+  const fetcher = vi.fn().mockResolvedValue(new Response('event: result\ndata: {"status":"answered"}\n\n', {
+    status: 200, headers: { 'Content-Type': 'text/event-stream' },
+  }))
+  vi.stubGlobal('fetch', fetcher)
+  await ask({session_id:'fixture',token:'test-token'},'Điều kiện bồi thường?','ring4','',new AbortController().signal,()=>{})
+  const body = JSON.parse(fetcher.mock.calls[0][1].body)
+  expect(body.mode).toBe('simple_rag')
+})
 describe('SSE protocol', () => {
   it('handles fragmented unicode frames, comments and multiple events', () => {
     const events: unknown[] = []

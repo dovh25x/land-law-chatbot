@@ -33,6 +33,7 @@ class Settings(BaseSettings):
     public_daily_llm_limit: int = Field(default=100, ge=1)
     public_daily_token_limit: int = Field(default=100000, ge=1)
     generation_enabled: bool = True
+    execution_mode: Literal['agentic', 'simple_rag'] = 'agentic'
     source_lookup_only: bool = False
     allow_stale_generation: bool = False
     db_statement_timeout_ms: int = Field(default=8000, ge=100, le=15000)

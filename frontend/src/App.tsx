@@ -1,22 +1,20 @@
-import { EvaluationPage } from './EvaluationPage'
 import { CitizenAnswer } from './CitizenAnswer'
-import { citizenAnswerText, citizenSuggestions, validCitizenAnswer } from './citizen'
-import type { EvaluationData } from './evaluation'
+import { citizenSuggestions, validCitizenAnswer } from './citizen'
 import { listConversations, saveConversation, deleteConversation, clearConversations, type Conversation, newConversation as makeConversation } from './history'
 import { useEffect, useRef, useState } from 'react'
 import ReactMarkdown from 'react-markdown'
-import { ArrowDown, ArrowUp, BookOpen, CircleHelp, Copy, GitBranch, LoaderCircle, Menu, MessageSquare, Moon, PanelLeftClose, PanelLeftOpen, Plus, Search, ShieldCheck, Square, Sun, Trash2, X } from 'lucide-react'
-import { ask, APIError, BASE, BACKEND_CONFIGURED, cachedSession, clearSession, getJSON, getSession, type Citation, type GenerationStatus, type LegalDocument, type Readiness, type Result, type Session, type Trace } from './api'
-import { ConfirmDialog, DataPanel, DocumentRow, formatDate, generationLabel, SourcePanel, sourceKinds, answerText, TracePanel, useDialog, useMedia } from './ui'
+import { ArrowDown, ArrowUp, BookOpen, CircleHelp, Copy, LoaderCircle, Menu, MessageSquare, Moon, PanelLeftClose, PanelLeftOpen, Plus, Search, Square, Sun, Trash2, X } from 'lucide-react'
+import { ask, APIError, BASE, BACKEND_CONFIGURED, cachedSession, clearSession, getJSON, getSession, type Citation, type GenerationStatus, type LegalDocument, type Readiness, type Result, type Session } from './api'
+import { ConfirmDialog, DataPanel, DocumentRow, formatDate, generationLabel, SourcePanel, sourceKinds, answerText, useDialog, useMedia } from './ui'
 import { Turnstile } from './Turnstile'
 
-type Page = 'chat' | 'sources' | 'evaluation'
+type Page = 'chat' | 'sources'
 type Message = { id: string; role: 'user' | 'assistant'; content: string; result?: Result }
 type SourceSelection = { source: Citation | LegalDocument | null; citations: Citation[] }
 const suggestions = citizenSuggestions
 const searchText = (value: string) => value.toLocaleLowerCase('vi').normalize('NFD').replace(/\p{Diacritic}/gu, '').replace(/đ/g, 'd')
-const pageLabels: Record<Page, string> = { chat: 'Hỏi đáp pháp luật', sources: 'Thư viện văn bản', evaluation: 'Đánh giá hệ thống' }
-const pageIcons = { chat: MessageSquare, sources: BookOpen, evaluation: ShieldCheck }
+const pageLabels: Record<Page, string> = { chat: 'Hỏi đáp', sources: 'Văn bản pháp luật' }
+const pageIcons = { chat: MessageSquare, sources: BookOpen }
 const labels: Record<string, string> = { answered: 'Có căn cứ', clarification_needed: 'Cần bổ sung thông tin', insufficient_evidence: 'Chưa đủ căn cứ', limited: 'Giới hạn lượt dùng', error: 'Chưa xử lý được' }
 function initialTheme() {
   try { const saved = localStorage.getItem('landlaw-theme'); if (saved === 'light' || saved === 'dark') return saved } catch { /* Theme works in memory when storage is unavailable. */ }
@@ -40,15 +38,13 @@ function App() {
   const runtimeKnown = generation !== null && !connecting
   const showVerifiedAnswers = runtimeKnown && !sourceOnly
   const canGenerate = showVerifiedAnswers && generation.generation_available
-  const [evaluationState, setEvaluationState] = useState<'loading' | 'ready' | 'error'>('loading')
-  const [trace, setTrace] = useState<Trace[]>([]), [traceOpen, setTraceOpen] = useState(false)
   const [sourcePanel, setSourcePanel] = useState<SourceSelection | null>(null)
-  const [evaluation, setEvaluation] = useState<EvaluationData | null>(null), [search, setSearch] = useState(''), [sourceKind, setSourceKind] = useState('all')
+  const [search, setSearch] = useState(''), [sourceKind, setSourceKind] = useState('all')
   const inputRef = useRef<HTMLTextAreaElement>(null), navRef = useRef<HTMLElement>(null)
   const sessionRef = useRef<Session | null>(null), abortRef = useRef<AbortController | null>(null), stopReason = useRef('')
   const chatScroll = useRef<HTMLDivElement>(null), nearBottom = useRef(true), [showBottom, setShowBottom] = useState(false)
   const mobile = useMedia('(max-width: 767px)'), desktop = useMedia('(min-width: 1280px)'), touch = useMedia('(pointer: coarse)')
-  const modalOpen = !!deletion || dataOpen || traceOpen || (!!sourcePanel && !desktop)
+  const modalOpen = !!deletion || dataOpen || (!!sourcePanel && !desktop)
   useDialog(navRef, navOpen && !deletion, true, () => setNavOpen(false))
   useEffect(() => { if (!mobile) setNavOpen(false) }, [mobile])
   useEffect(() => {
@@ -65,21 +61,19 @@ function App() {
     catch { setCopyError('Không sao chép được. Bạn có thể chọn nội dung để sao chép thủ công.') }
   }
   async function refresh(signal?: AbortSignal) {
-    if (!BACKEND_CONFIGURED) { setReadiness({ status: 'not_deployed' }); setDocsState('error'); setEvaluationState('error'); return }
-    setConnecting(true); setGeneration(null); setDocsState('loading'); setEvaluationState('loading')
+    if (!BACKEND_CONFIGURED) { setReadiness({ status: 'not_deployed' }); setDocsState('error'); return }
+    setConnecting(true); setGeneration(null); setDocsState('loading')
     const results = await Promise.allSettled([
       fetch(BASE + '/readyz', { signal }).then(response => response.json() as Promise<Readiness>),
       getJSON<GenerationStatus>('/api/v1/status', signal),
       getJSON<{ documents: LegalDocument[]; references?: LegalDocument[]; source_lookup_only?: boolean; as_of?: string }>(`/api/v1/documents${lookupDate ? `?as_of=${encodeURIComponent(lookupDate)}` : ''}`, signal),
-      getJSON<EvaluationData>('/api/v1/evaluations/latest', signal),
     ])
     if (signal?.aborted) return
-    const [ready, status, sources, report] = results
+    const [ready, status, sources] = results
     setReadiness(ready.status === 'fulfilled' ? ready.value : { status: 'starting' })
     setGeneration(ready.status === 'fulfilled' && ready.value.status === 'ready'
       && status.status === 'fulfilled' && sources.status === 'fulfilled' ? status.value : null)
     if (sources.status === 'fulfilled') { setDocs([...sources.value.documents, ...(sources.value.references || [])]); setLookupMode(!!sources.value.source_lookup_only); setSourceReviewDate(sources.value.as_of || ''); setDocsState('ready') } else { setDocs([]); setDocsState('error') }
-    if (report.status === 'fulfilled') { setEvaluation(report.value); setEvaluationState('ready') } else setEvaluationState('error')
     setConnecting(false)
   }
   useEffect(() => { const controller = new AbortController(); void refresh(controller.signal); return () => controller.abort() }, [])
@@ -104,7 +98,7 @@ function App() {
       void listConversations().then(saved => {
         if (!alive) return
         setConversations(saved)
-        if (conversationRef.current.expires_at <= Date.now()) { conversationRef.current = makeConversation(); setMessages([]); setTrace([]) }
+        if (conversationRef.current.expires_at <= Date.now()) { conversationRef.current = makeConversation(); setMessages([]) }
       }).catch(() => { if (alive) setStorageError('Không dọn được lịch sử hết hạn tại máy.') })
     }, 60000)
     return () => { alive = false; clearInterval(timer) }
@@ -121,7 +115,7 @@ function App() {
     else setShowBottom(true)
   }, [messages, busy])
   useEffect(() => () => abortRef.current?.abort(), [])
-  useEffect(() => { setSourcePanel(null); if (!runtimeKnown) setTraceOpen(false) }, [sourceOnly, runtimeKnown])
+  useEffect(() => { setSourcePanel(null) }, [sourceOnly, runtimeKnown])
 
   async function send() {
     if (busy || !input.trim()) return
@@ -129,7 +123,7 @@ function App() {
     if (!canGenerate) { setError(`${generationLabel(generation)}. Bạn vẫn có thể tra cứu thư viện nguồn.`); return }
     if (import.meta.env.VITE_TURNSTILE_SITE_KEY && !hasSession && !challenge) { setError('Vui lòng hoàn tất xác minh trình duyệt trước khi gửi.'); return }
     const question = input.trim()
-    setPage('chat'); setNavOpen(false); setInput(''); setError(''); setBusy(true); setTrace([]); stopReason.current = ''; nearBottom.current = true
+    setPage('chat'); setNavOpen(false); setInput(''); setError(''); setBusy(true); stopReason.current = ''; nearBottom.current = true
     const messageId = crypto.randomUUID()
     setMessages(current => [...current, { id: messageId, role: 'user', content: question }])
     const controller = new AbortController(); abortRef.current = controller
@@ -140,11 +134,10 @@ function App() {
       setHasSession(true)
       if (controller.signal.aborted) throw new DOMException('Aborted', 'AbortError')
       await ask(sessionRef.current, question, 'ring4', '', controller.signal, (event, data) => {
-        if (event === 'progress') setTrace(current => [...current, data as Trace])
         if (event === 'result') {
           received = true
           const result = data as Result
-          setMessages(current => [...current, { id: result.trace_id, role: 'assistant', content: result.content, result }]); setTrace(result.trace)
+          setMessages(current => [...current, { id: result.trace_id, role: 'assistant', content: result.content, result }])
         }
         if (event === 'failure') { received = true; setError((data as { content: string }).content) }
       }, messages)
@@ -160,7 +153,7 @@ function App() {
   }
   function newConversation() {
     if (busy) return
-    conversationRef.current = makeConversation(); setMessages([]); setTrace([]); setError(''); setInput(''); setPage('chat'); setNavOpen(false); setSourcePanel(null); nearBottom.current = true
+    conversationRef.current = makeConversation(); setMessages([]); setError(''); setInput(''); setPage('chat'); setNavOpen(false); setSourcePanel(null); nearBottom.current = true
   }
   async function confirmDeletion() {
     if (!deletion || busy) return
@@ -176,7 +169,7 @@ function App() {
   function openSource(source: Citation | LegalDocument | null, citations: Citation[] = []) {
     const scroll = chatScroll.current
     if (scroll) scroll.scrollTo({ top: scroll.scrollTop, behavior: 'instant' })
-    setDataOpen(false); setTraceOpen(false)
+    setDataOpen(false)
     if (!runtimeKnown) { setSourcePanel(null); return }
     if (sourceOnly) {
       const reviewed = source && docs.find(doc => doc.id === ('document_id' in source ? source.document_id : source.id))
@@ -187,7 +180,7 @@ function App() {
     const enriched = source ? { ...source, checksum: source.checksum || docs.find(doc => doc.id === ('document_id' in source ? source.document_id : source.id))?.checksum } : null
     setSourcePanel({ source: enriched, citations })
   }
-  function navigate(target: Page) { setDataOpen(false); setPage(target); setNavOpen(false); setTraceOpen(false); setSourcePanel(null) }
+  function navigate(target: Page) { setDataOpen(false); setPage(target); setNavOpen(false); setSourcePanel(null) }
   const filteredDocs = docs.filter(doc => (sourceKind === 'all' || doc.source_kind === sourceKind) && searchText(`${doc.title} ${doc.document_number || ''}`).includes(searchText(search)))
   const ready = readiness?.status === 'ready'
   const connectionMessage = connecting ? 'Đang kết nối dịch vụ. Lần khởi động đầu có thể mất khoảng một phút…'
@@ -207,10 +200,10 @@ function App() {
         <button disabled={busy} title={conversation.title} onClick={() => { conversationRef.current = conversation; setMessages(conversation.messages); setPage('chat'); setNavOpen(false); setSourcePanel(null); setError(''); nearBottom.current = true }}>{conversation.title}</button>
         <button disabled={busy} aria-label={`Xóa cuộc trò chuyện ${conversation.title}`} onClick={() => setDeletion({ id: conversation.id, title: 'Xóa cuộc trò chuyện?' })}><Trash2 size={16}/></button>
       </div>)}{!conversations.length && <p className="secondary-copy">Chưa có cuộc trò chuyện.</p>}</div>
-      <div className="sidebar-note"><button className="mobile-data-link" onClick={() => { setNavOpen(false); setSourcePanel(null); setTraceOpen(false); setDataOpen(true) }} aria-label="Thông tin dữ liệu và kết nối"><CircleHelp size={18}/>Dữ liệu và kết nối</button><button onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')} aria-label="Đổi giao diện sáng tối">{theme === 'dark' ? <Sun size={18}/> : <Moon size={18}/>}Giao diện {theme === 'dark' ? 'sáng' : 'tối'}</button><button disabled={busy} onClick={() => setDeletion({ title: 'Xóa toàn bộ lịch sử?' })}><Trash2 size={18}/>Xóa toàn bộ lịch sử</button><p>Lưu tại máy trong 7 ngày.<br/>Không đồng bộ giữa thiết bị.</p></div>
+      <div className="sidebar-note"><button className="mobile-data-link" onClick={() => { setNavOpen(false); setSourcePanel(null); setDataOpen(true) }} aria-label="Thông tin dữ liệu và kết nối"><CircleHelp size={18}/>Dữ liệu và kết nối</button><button onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')} aria-label="Đổi giao diện sáng tối">{theme === 'dark' ? <Sun size={18}/> : <Moon size={18}/>}Giao diện {theme === 'dark' ? 'sáng' : 'tối'}</button><button disabled={busy} onClick={() => setDeletion({ title: 'Xóa toàn bộ lịch sử?' })}><Trash2 size={18}/>Xóa toàn bộ lịch sử</button><p>Lưu tại máy trong 7 ngày.<br/>Không đồng bộ giữa thiết bị.</p></div>
     </aside>
     <main className="main" id="main-content" inert={navOpen || modalOpen}>
-      <header className="topbar"><div className="topbar-title"><button className="icon-button mobile-menu" onClick={() => setNavOpen(true)} aria-label="Mở menu điều hướng" aria-expanded={navOpen} aria-controls="main-navigation"><Menu size={20}/></button>{collapsed && <button className="icon-button desktop-expand" onClick={() => setCollapsed(false)} aria-label="Mở rộng thanh điều hướng"><PanelLeftOpen size={20}/></button>}<div><span>{page === 'chat' ? 'Vành đai 4' : pageLabels[page]}</span>{page === 'chat' && <span className="topbar-subtitle">Trợ lý pháp luật</span>}</div></div><div className="topbar-actions"><span className="preview-label">Bản thử nghiệm</span><button className="icon-button data-trigger" onClick={() => { setSourcePanel(null); setTraceOpen(false); setDataOpen(true) }} aria-label="Thông tin dữ liệu và kết nối" title="Thông tin dữ liệu và kết nối"><CircleHelp size={20}/></button><button className="icon-button mobile-new-chat" onClick={newConversation} disabled={busy} aria-label="Cuộc trò chuyện mới"><Plus size={20}/></button></div></header>
+      <header className="topbar"><div className="topbar-title"><button className="icon-button mobile-menu" onClick={() => setNavOpen(true)} aria-label="Mở menu điều hướng" aria-expanded={navOpen} aria-controls="main-navigation"><Menu size={20}/></button>{collapsed && <button className="icon-button desktop-expand" onClick={() => setCollapsed(false)} aria-label="Mở rộng thanh điều hướng"><PanelLeftOpen size={20}/></button>}<div><span>{page === 'chat' ? 'Vành đai 4' : pageLabels[page]}</span>{page === 'chat' && <span className="topbar-subtitle">Trợ lý pháp luật</span>}</div></div><div className="topbar-actions"><span className="preview-label">Bản thử nghiệm</span><button className="icon-button data-trigger" onClick={() => { setSourcePanel(null); setDataOpen(true) }} aria-label="Thông tin dữ liệu và kết nối" title="Thông tin dữ liệu và kết nối"><CircleHelp size={20}/></button><button className="icon-button mobile-new-chat" onClick={newConversation} disabled={busy} aria-label="Cuộc trò chuyện mới"><Plus size={20}/></button></div></header>
       {storageError && <div className="global-notice" role="alert"><span>{storageError}</span><button className="icon-button" onClick={() => setStorageError('')} aria-label="Đóng thông báo lịch sử"><X size={18}/></button></div>}
       {copyError && <div className="global-notice" role="status"><span>{copyError}</span><button className="icon-button" onClick={() => setCopyError('')} aria-label="Đóng thông báo sao chép"><X size={18}/></button></div>}
       {sourceOnly && <div className="global-notice" role="note"><span><strong>Bản thử nghiệm — chỉ tra cứu đoạn nguồn đã review.</strong> Thời điểm đối chiếu: {formatDate(sourceReviewDate || generation?.source_lookup_as_of)}. Không sinh đáp án pháp luật, không xác nhận quyền lợi cá nhân; từng đoạn có phạm vi riêng, không phải toàn văn đã được xác minh.</span>{page !== 'sources' && <button className="button button-secondary" onClick={() => navigate('sources')}>Mở thư viện nguồn đã review</button>}</div>}
@@ -223,8 +216,8 @@ function App() {
             <div className="message-body">{message.result && showVerifiedAnswers ? <CitizenAnswer result={message.result} busy={busy} canReply={messages.at(-1)?.id===message.id} onChoose={text=>{setInput(text);inputRef.current?.focus()}} onCitation={id=>{const citation=message.result!.citations.find(c=>c.id===id);if(citation)openSource(citation,message.result!.citations)}}/> : <ReactMarkdown components={{ a: ({ children }) => <span>{children}</span> }}>{message.role === 'assistant' ? answerText(message.content) : message.content}</ReactMarkdown>}</div>
             {!!message.result?.retry_after && <p className="secondary-copy">Thử lại sau {message.result.retry_after} giây.</p>}
             {showVerifiedAnswers && !!message.result?.citations?.length && (message.result.answer_schema_version!==2 || validCitizenAnswer(message.result)) && <div className="citations" aria-label="Căn cứ của đáp án">{message.result.citations.map((citation, index) => <button key={citation.id} onClick={() => openSource(citation, message.result!.citations)} aria-label={`[${index + 1}] ${citation.title} ${citation.document_number || ''} · ${citation.locator}`}><span className="citation-index">{index + 1}</span><span><strong>{citation.document_number || citation.title}</strong><small>{citation.document_number ? `${citation.title} · ` : ''}{citation.locator}</small></span></button>)}</div>}
-            {showVerifiedAnswers && message.result && (message.result.answer_schema_version!==2 || validCitizenAnswer(message.result)) && <div className="answer-actions">{!!message.result.citations?.length && <button onClick={() => openSource(null, message.result!.citations)}><BookOpen size={16}/>Xem nguồn</button>}<button className="trace-link" aria-label="Xem quá trình kiểm chứng" onClick={() => { setSourcePanel(null); setDataOpen(false); setTrace(message.result!.trace || []); setTraceOpen(true) }}><GitBranch size={16}/>Chi tiết thực thi</button><button onClick={() => void copyAnswer(message.id, message.result!.answer_schema_version===2?citizenAnswerText(message.result!):answerText(message.content))}><Copy size={16}/>{copiedId === message.id ? 'Đã sao chép' : 'Sao chép'}</button></div>}
-          </article>)}{busy && <div className="working" role="status"><LoaderCircle className="spin" size={18}/><span>{trace.at(-1)?.summary || 'Đang kết nối và chuẩn bị tra cứu…'}</span><button onClick={() => { setSourcePanel(null); setDataOpen(false); setTraceOpen(true) }}>Xem quá trình</button></div>}</div>}
+            {showVerifiedAnswers && message.result && (message.result.answer_schema_version!==2 || validCitizenAnswer(message.result)) && <div className="answer-actions">{!!message.result.citations?.length && <button onClick={() => openSource(null, message.result!.citations)}><BookOpen size={16}/>Xem nguồn</button>}<button onClick={() => void copyAnswer(message.id, answerText(message.content))}><Copy size={16}/>{copiedId === message.id ? 'Đã sao chép' : 'Sao chép'}</button></div>}
+          </article>)}{busy && <div className="working" role="status"><LoaderCircle className="spin" size={18}/><span>Đang tìm căn cứ và soạn câu trả lời…</span></div>}</div>}
         </div>
         <div className="composer-area">
         {showBottom && !!messages.length && <button className="scroll-bottom icon-button" onClick={() => { nearBottom.current = true; chatScroll.current?.scrollTo({ top: chatScroll.current.scrollHeight, behavior: 'instant' }); setShowBottom(false) }} aria-label="Về cuối hội thoại"><ArrowDown size={20}/></button>}
@@ -239,11 +232,9 @@ function App() {
         {sourceOnly && <div className="library-toolbar"><label>Thời điểm áp dụng <input aria-label="Thời điểm áp dụng nguồn" type="date" value={lookupDate || sourceReviewDate} onChange={event => { setLookupDate(event.target.value); setSourcePanel(null) }}/></label><button className="button button-secondary" disabled={connecting} onClick={() => void refresh()}>Đối chiếu ngày đã chọn</button><p>Chỉ hiện đoạn nguồn có review hợp lệ cho ngày này. Ngoài phạm vi sẽ không có kết quả; không tự suy quyền lợi.</p></div>}
         {docsState === 'loading' ? <div className="empty-state" role="status"><LoaderCircle className="spin" size={24}/><p>Đang tải thư viện…</p></div> : docsState === 'error' ? <div className="empty-state" role="alert"><h2>Chưa tải được thư viện</h2><p>Không thể xác định danh sách tài liệu lúc này.</p><button className="button button-secondary" onClick={() => void refresh()}>Thử tải lại thư viện</button></div> : <><div className="library-count"><strong>{filteredDocs.length}/{docs.length} tài liệu trong thư viện</strong>{readiness?.checked_at && <span>Nguồn kiểm tra: {formatDate(readiness.checked_at)}</span>}</div>{!docs.length ? <div className="empty-state"><BookOpen size={28}/><h2>Corpus chưa được công bố</h2><p>Tài liệu xuất hiện khi nguồn được thu thập và đưa vào thư viện.</p><button className="button button-secondary" onClick={() => void refresh()}>Kiểm tra lại</button></div> : <><div className="document-list">{filteredDocs.map(document => <DocumentRow key={document.id} document={document} onOpen={doc => openSource(doc)}/>)}</div>{!filteredDocs.length && <div className="empty-state"><Search size={24}/><h2>Không tìm thấy văn bản</h2><p>Thử số hiệu, từ khóa ngắn hơn hoặc loại nguồn khác.</p><button className="button button-secondary" onClick={() => { setSearch(''); setSourceKind('all') }}>Xóa từ khóa</button></div>}</>}</>}
       </section>}
-      {page === 'evaluation' && <EvaluationPage data={evaluation} readiness={readiness} state={evaluationState} onRefresh={() => void refresh()}/>}
     </main>
     {dataOpen && <DataPanel readiness={readiness} generation={generation} connecting={connecting} onRefresh={() => void refresh()} onClose={() => setDataOpen(false)}/>}
     {sourcePanel && runtimeKnown && <SourcePanel source={sourcePanel.source} citations={sourcePanel.citations} onSelect={citation => openSource(citation, sourcePanel.citations)} onClose={() => setSourcePanel(null)}/>}
-    {traceOpen && runtimeKnown && <TracePanel trace={trace} onClose={() => setTraceOpen(false)}/>}
     {deletion && <ConfirmDialog title={deletion.title} busy={deleting} onCancel={() => setDeletion(null)} onConfirm={() => void confirmDeletion()}/>}
   </div>
 }

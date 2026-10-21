@@ -7,7 +7,7 @@ const send = async (page:Page, text:string) => { await page.getByLabel('Câu h�
 test.beforeEach(async({page}) => {
   await page.route('**/readyz', r=>r.fulfill({json:{status:'ready',database:true}}))
   await page.route('**/api/v1/status', r=>r.fulfill({json:{generation_available:true,reason:null}}))
-  await page.route('**/api/v1/documents',r=>r.fulfill({json:{documents:[law],references:[reference]}}))
+  await page.route('**/api/v1/documents**',r=>r.fulfill({json:{documents:[law],references:[reference]}}))
   await page.route('**/api/v1/documents/reference-product',r=>r.fulfill({json:{document:{...reference,chunks:[]},relations:[]}}))
   await page.route('**/api/v1/evaluations/latest',r=>r.fulfill({json:{status:'not_run'}}))
   await page.route('**/api/v1/sessions',r=>r.fulfill({status:201,json:{session_id:'fixture',token:'fixture-token'}}))
@@ -16,7 +16,7 @@ test.beforeEach(async({page}) => {
 test('library supports accent-free search and opens reference-only originals',async({page})=>{
   await page.goto('/')
   const menu=page.getByRole('button',{name:'Mở menu điều hướng'});if(await menu.isVisible())await menu.click()
-  await page.getByRole('button',{name:'Thư viện văn bản',exact:true}).click()
+  await page.getByRole('button',{name:'Văn bản pháp luật',exact:true}).click()
   await expect(page.locator('.document-row')).toHaveCount(2)
   await page.getByLabel('Tìm văn bản').fill('boi thuong')
   await expect(page.locator('.document-row')).toHaveCount(1)

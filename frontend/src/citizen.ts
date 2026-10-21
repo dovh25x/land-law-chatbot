@@ -1,12 +1,10 @@
 import type { Result } from './api'
 
 export const citizenSuggestions = [
-  'Tôi vừa nhận giấy về Vành đai 4, cần bắt đầu từ đâu?',
-  'Tôi cần chuẩn bị giấy tờ gì để tìm hiểu phương án?',
-  'Tôi muốn tìm nơi hỏi về hồ sơ Vành đai 4.',
-  'Tôi chưa đồng ý phương án, nên tìm hiểu bước nào?',
-  'Tôi muốn hiểu điều kiện hỗ trợ và chỗ ở mới.',
-  'Tôi chưa rõ mình đang ở bước nào.',
+  'Điều kiện bồi thường khi thu hồi đất là gì?',
+  'Không có giấy chứng nhận thì có được xem xét hỗ trợ không?',
+  'Sau khi thu hồi đất nông nghiệp có thể được hỗ trợ gì?',
+  'Điều kiện tái định cư cần những thông tin nào?',
 ]
 
 /** A malformed v2 projection must never cause unchecked content to be shown. */

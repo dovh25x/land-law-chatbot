@@ -137,7 +137,6 @@ export function SourcePanel({ source, citations, onSelect, onClose }: {
         {(document?.source_lookup_only ? document.chunks : document?.chunks?.slice(0, 3))?.map(chunk => <div className="source-excerpt" key={chunk.id}><h4>{chunk.locator}</h4><blockquote>{chunk.text}</blockquote></div>)}
         {!!document?.chunks?.length && <p className="secondary-copy">{document.source_lookup_only ? 'Chỉ hiển thị các đoạn nằm trong phạm vi review của ngày đã chọn.' : 'Hiển thị tối đa ba đoạn đầu.'} Mở nguồn chính thức để đọc đầy đủ.</p>}
       </>}
-      <details className="source-technical"><summary>Thông tin phiên bản nguồn</summary><p>Ngày kiểm tra: {formatDate(source.checked_at)}</p><p>Checksum: {source.checksum || 'Chưa có metadata trong lượt hỏi'}</p></details>
       {source.source_review_notes && <p className="secondary-copy">{source.source_review_notes}</p>}
       <p className="secondary-copy">Nguồn dẫn hỗ trợ đối chiếu. Việc áp dụng còn phụ thuộc thời điểm, dữ kiện và hồ sơ cụ thể.</p>
     </div> : <p className="secondary-copy">Chọn một nguồn để đọc đoạn căn cứ và mở văn bản chính thức.</p>}
@@ -177,11 +176,11 @@ export function DataPanel({ readiness, generation, connecting, onRefresh, onClos
   return <SidePanel title="Dữ liệu và phạm vi sử dụng" icon={<FileText size={20}/>} onClose={onClose} footer={
     <button className="button button-secondary" onClick={onRefresh} disabled={connecting}>{connecting ? <><LoaderCircle size={16} className="spin"/>Đang kết nối…</> : 'Kiểm tra lại kết nối'}</button>
   }>
-    <div className="data-status"><span className={readiness?.status === 'ready' ? 'status-dot ready' : 'status-dot'}/>{connecting ? 'Đang kết nối' : readiness?.database || readiness?.status === 'ready' ? 'Đã kết nối dịch vụ' : 'Dịch vụ chưa sẵn sàng'}</div>
+    <div className="data-status"><span className={readiness?.status === 'ready' ? 'status-dot ready' : 'status-dot'}/>{connecting ? 'Đang kết nối' : readiness?.status === 'ready' ? 'Đã kết nối dịch vụ' : 'Dịch vụ chưa sẵn sàng'}</div>
     <p>{generationLabel(generation)}{generation?.retry_after ? ` · Thử lại sau ${generation.retry_after} giây.` : ''}</p>
-    <div className="data-note" role="note"><strong>Bản thử nghiệm — chưa được thẩm định pháp lý độc lập.</strong><p>Chỉ trả lời trong phạm vi nguồn đã kiểm tra. Quyền lợi cụ thể cần đối chiếu hồ sơ và cơ quan có thẩm quyền.</p></div>
-    <div className="source-dates"><p>Dữ liệu kiểm tra<br/><strong>{formatDate(readiness?.checked_at)}</strong></p><p>Corpus đang hoạt động<br/><strong>{readiness?.corpus_release || 'Chưa công bố'}</strong></p></div>
-    {!!readiness?.coverage_gaps?.length && <details><summary>Các nguồn chưa đủ dữ liệu ({readiness.coverage_gaps.length})</summary><ul>{readiness.coverage_gaps.map(g => <li key={g.document_id}><strong>{g.title}:</strong> {g.reason}</li>)}</ul></details>}
-    <p className="secondary-copy">Phạm vi dự án hiện chỉ hỗ trợ Vành đai 4. Chỉ nhập tình huống đã ẩn danh.</p>
+    <div className="data-note" role="note"><strong>Đây là nguyên mẫu hỗ trợ thông tin học thuật.</strong><p>Nội dung chỉ trong phạm vi Vành đai 4 Hà Nội và không thay thế tư vấn pháp lý chuyên nghiệp.</p></div>
+    <h3>Trợ lý có thể giúp gì?</h3><p>Giải thích quy định chung về bồi thường, hỗ trợ, tái định cư và dẫn bạn tới đoạn nguồn chính thức.</p>
+    <h3>Nguồn và quyền riêng tư</h3><p>Ứng dụng dùng các nguồn pháp luật đã được chọn trong corpus giới hạn. Hội thoại được lưu tại thiết bị tối đa 7 ngày; nội dung câu hỏi có thể được gửi tới nhà cung cấp AI để xử lý. Không nhập thông tin định danh hoặc hồ sơ riêng tư.</p>
+    <p className="secondary-copy">Khi câu hỏi thiếu dữ kiện hoặc nguồn chưa đủ, câu trả lời sẽ nêu rõ giới hạn thay vì tự suy đoán.</p>
   </SidePanel>
 }

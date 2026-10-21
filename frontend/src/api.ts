@@ -114,7 +114,7 @@ export class SSEParser {
 export async function ask(session: Session, message: string, project: string, asOf: string, signal: AbortSignal, onEvent: (event: string, data: unknown) => void, history:LocalMessage[]=[], requestId=crypto.randomUUID()) {
   const response = await fetch(BASE + '/api/v1/chat', {
     method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${session.token}` }, signal,
-    body: JSON.stringify({ session_id: session.session_id, message, project: project || null, as_of: asOf || null, request_id:requestId, history:requestHistory(history) }),
+    body: JSON.stringify({ session_id: session.session_id, message, project: project || null, as_of: asOf || null, mode: 'simple_rag', request_id:requestId, history:requestHistory(history) }),
   })
   if (response.status === 404 || response.status === 410) {
     clearSession()
