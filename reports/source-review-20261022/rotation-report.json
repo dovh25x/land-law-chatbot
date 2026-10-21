@@ -1,0 +1,101 @@
+{
+  "created_at": "2026-10-21T17:36:54.310157+00:00",
+  "release_id": "corpus-1afca764aa6692e0",
+  "recheck_records": 28,
+  "receipts": {
+    "luat-thu-do-2026": {
+      "previous_receipt_sha256": "94e56afeaebff09de3afd6535176ff09141f9188587270a0f67de8b3ce83607a",
+      "new_receipt_sha256": "b3771a332e170dfc045b9693d16ab577f55a18010ad4c8444b1504c0b0c80117",
+      "window": [
+        "2026-10-22",
+        "2026-10-23"
+      ],
+      "chunks": 3,
+      "checked_at": "2026-10-21T17:36:54.310157+00:00",
+      "recheck_artifacts": 1
+    },
+    "nd-226-2025": {
+      "previous_receipt_sha256": "58f05d54eda0f39111d0a65dc732f7f05b29cd9bb552f84b8fa14c1f4ccdaad6",
+      "new_receipt_sha256": "416f87e02dbdc1bc7b3c000b5941d8bfa33c9e299ee6b0566a08d0801cebbd51",
+      "window": [
+        "2026-10-22",
+        "2026-10-23"
+      ],
+      "chunks": 2,
+      "checked_at": "2026-10-21T17:36:54.310157+00:00",
+      "recheck_artifacts": 1
+    },
+    "nd-151-2025": {
+      "rotated": false,
+      "reason": "historical-only windows; no current-day scope",
+      "unchanged_receipt_sha256": "57da6721584d1a120d14dd30c9283f9cce7c02892c827f9aa5a65d2833b428f5"
+    },
+    "luat-43-2024": {
+      "rotated": false,
+      "reason": "historical-only windows; no current-day scope",
+      "unchanged_receipt_sha256": "da95b452cc1946b6871b885cedbda25aef8b06f9e22c2d2ffec8692ffecd0565"
+    },
+    "qd-40-2026-hanoi": {
+      "previous_receipt_sha256": "77a7971c7fce1cff7cb3beccef807fa06e0de571dfd88d07941f74546dd70bca",
+      "new_receipt_sha256": "5a334f9d34d0e6f6cade220a48f6fd0283a3270a816cc3b688ddee8afe295134",
+      "window": [
+        "2026-10-22",
+        "2026-10-23"
+      ],
+      "chunks": 7,
+      "checked_at": "2026-10-21T17:36:54.310157+00:00",
+      "recheck_artifacts": 1
+    },
+    "luat-dat-dai-2024": {
+      "previous_receipt_sha256": "27229c319ac7ed0902c96285bc991ab538f067e217b111f5a34d451ea2197f1f",
+      "new_receipt_sha256": "795afd58ed422da2736086546e4e4c855c2e278e7b2ea2e8344c656acdf0eb62",
+      "window": [
+        "2026-10-22",
+        "2026-10-23"
+      ],
+      "chunks": 8,
+      "checked_at": "2026-10-21T17:36:54.310157+00:00",
+      "recheck_artifacts": 3
+    },
+    "qd-10-2026-hanoi": {
+      "rotated": false,
+      "reason": "historical-only windows; no current-day scope",
+      "unchanged_receipt_sha256": "792006ce16276b24abb012912a78f89ad6e267dea57f6c44469b421101dd1e8b"
+    },
+    "nd-49-2026": {
+      "previous_receipt_sha256": "9e4dff5dba1027b96d6db986ff11580223774ca66e162635e20e169f0e7eb348",
+      "new_receipt_sha256": "e95e81d27ac3f7d8df7ce6cb4dc47ee8ceb6ae680e48b7449351979a632e0046",
+      "window": [
+        "2026-10-22",
+        "2026-10-23"
+      ],
+      "chunks": 7,
+      "checked_at": "2026-10-21T17:36:54.310157+00:00",
+      "recheck_artifacts": 1
+    },
+    "nq-254-2025": {
+      "previous_receipt_sha256": "06b2298b91c4372e56ccc185c7e1d4573d92ece49a8393dc92234aa8b3f1c73c",
+      "new_receipt_sha256": "c056935e6f17d915f1a3b41a95ee2fe5d77c5389898e85430ea4d5e0eaff78ba",
+      "window": [
+        "2026-10-22",
+        "2026-10-23"
+      ],
+      "chunks": 12,
+      "checked_at": "2026-10-21T17:36:54.310157+00:00",
+      "recheck_artifacts": 15
+    },
+    "nd-88-2024": {
+      "previous_receipt_sha256": "3b9cfc7f8528d4b24b28076ae2ea0ecc594cdc757647b2e3090ea7f90ff6324e",
+      "new_receipt_sha256": "8ad1053c884b28ffbc7e66ef8d9e67b753c759e58f0435e1b26538763c94025f",
+      "window": [
+        "2026-10-22",
+        "2026-10-23"
+      ],
+      "chunks": 3,
+      "checked_at": "2026-10-21T17:36:54.310157+00:00",
+      "recheck_artifacts": 1
+    }
+  },
+  "policy_sha256": "015e33634ae920889271bbfcdf1a3e20977116b21c6c10be4face0c962d8d220",
+  "scope": "Mechanical window rotation of unchanged sources; review of identical checksums from 2026-10-20/21 remains attached."
+}
