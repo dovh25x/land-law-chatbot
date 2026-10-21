@@ -1,0 +1,106 @@
+{
+  "base": "https://hanoi-land-law.pages.dev",
+  "started_at": "2026-10-21T19:42:58.057Z",
+  "checks": [
+    {
+      "name": "composer_enabled_after_load_ms",
+      "value": 3833,
+      "pass": true
+    },
+    {
+      "name": "no_connection_note_when_healthy",
+      "value": 0,
+      "pass": true
+    },
+    {
+      "name": "two_public_pages",
+      "value": [
+        "Hỏi đáp",
+        "Văn bản pháp luật"
+      ],
+      "pass": true
+    },
+    {
+      "name": "no_generation_paused_banner",
+      "value": false,
+      "pass": true
+    },
+    {
+      "name": "library_document_panel_opens",
+      "value": {
+        "docCount": 71,
+        "panelVisible": true
+      },
+      "pass": true
+    },
+    {
+      "name": "composer_stays_enabled_on_transient_status_failure",
+      "value": {
+        "enabledDuring": true,
+        "noteSeen": true,
+        "noteText": "Kết nối đang gián đoạn, hệ thống sẽ tự thử lại. Bạn vẫn có thể gửi câu hỏi.\n\nKiểm tra kết nối"
+      },
+      "pass": true
+    },
+    {
+      "name": "connection_recovers_without_reload",
+      "value": true,
+      "pass": true
+    },
+    {
+      "name": "composer_enabled_after_recovery",
+      "value": true,
+      "pass": true
+    },
+    {
+      "name": "library_readable_while_status_unavailable",
+      "value": {
+        "composerDisabled": true,
+        "panelVisible": true
+      },
+      "pass": true
+    }
+  ],
+  "healthy_console_errors": [],
+  "deliberate_failure_console_errors": [
+    "Failed to load resource: net::ERR_FAILED",
+    "Connecting to 'data:,' violates the following Content Security Policy directive: \"connect-src 'self' https://hagen.challenges.cloudflare.com https://brunhild.challenges.cloudflare.com https://valid.alg13.dnstest.challenges.cloudflare.com https://invalid.alg13.dnstest.challenges.cloudflare.com https://dual-valid.mldsa44.dnstest.challenges.cloudflare.com https://valid.mldsa44.dnstest.challenges.cloudflare.com https://dnstest.dev\". The action has been blocked.",
+    "Connecting to 'data:,' violates the following Content Security Policy directive: \"connect-src 'self' https://hagen.challenges.cloudflare.com https://brunhild.challenges.cloudflare.com https://valid.alg13.dnstest.challenges.cloudflare.com https://invalid.alg13.dnstest.challenges.cloudflare.com https://dual-valid.mldsa44.dnstest.challenges.cloudflare.com https://valid.mldsa44.dnstest.challenges.cloudflare.com https://dnstest.dev\". The action has been blocked.",
+    "Fetch API cannot load data:,. Refused to connect because it violates the document's Content Security Policy.",
+    "%c%d font-size:0;color:transparent NaN",
+    "%c%d font-size:0;color:transparent NaN",
+    "Failed to load resource: net::ERR_FAILED"
+  ],
+  "page_errors": [],
+  "failed_requests": [
+    {
+      "phase": "healthy",
+      "url": "https://hanoi-land-law.pages.dev/api/v1/documents/luat-dat-dai-2024",
+      "error": "net::ERR_ABORTED"
+    },
+    {
+      "phase": "deliberate_status_failure",
+      "url": "https://hanoi-land-law.pages.dev/api/v1/status",
+      "error": "net::ERR_FAILED"
+    },
+    {
+      "phase": "status_unavailable_library",
+      "url": "https://hanoi-land-law.pages.dev/api/v1/status",
+      "error": "net::ERR_FAILED"
+    }
+  ],
+  "http_errors": [
+    {
+      "phase": "healthy",
+      "url": "https://challenges.cloudflare.com/cdn-cgi/challenge-platform/h/b/pat/a4e2bff4eeefa8b5/1792611792775/011f2b81ac29761d04a3bf69ca581003723d83486f1d6e5eca1efb4b413412c2/mqfIwRnF2B5IbjY7HFnXGkbRoE.L4g4Bv3M9R_Avb7M-1792611792-1.3.1.1-aFXf1CWafphSMrHYA03Yq1LHzZSHkduAxrdCMZdh2dno5hSgjyjo0w_Vez.Td1KlvIJkEwawfjdVeepK7RJ3o6pMPR8gpN6CGfqhF4.WhgIzmzRg4GIOWAxu4ggGifIBpwgl2dNHmKT1Ab9BP6XYV1Lt95.unb7eYBrja3vI3D5OYOggjoz42C8qo9SmAZd5usqaNGK3TmlRU8e4Hi5a.Uvv5rpg4NkatfxwPxuYQeLpCGq7ai0.SUX1fN6r7TktAZ6Pbgo0MKhXAl_tpDkQUiagexeQsTqCiVuvKFKM3NGftMbB6nUtgKqma1iCG2Y3cPulTV9zghpXFxTToikn8XPZT_CUDVpW5g1aGHaWQvSKb8APxpUOCasiVXldDAqcWfIANHLCU2QkFAcxpff8H73AiKemHYgllDLWizY5ah0ViuVQILXIE9QlbRuJJrOXZYOgQRZAOGn9cVhGU1.fP7EfEspvk7hvzHA4zldOnfdzyrbbW7DKVkJ0lW5t04M__ocJpmIIwx2d1rfoAK__VasgxGQpo5IMGgPU2i0mQHHYtQDLpE.7UA8CrX90bkslAEMUL0gnClFa9JiXx8qtwxRkYp75Fwr60DPJPuTxXAie8YKLkZb.FyDjyM4LNxjwsebfVQexpYvK36UlPz2ZMax4gRv84JDLauwN3tUK8823UkPkiYoXCTIIYpqhKBs.nz7JQqvUZ7X2_rkaFUtkFcla6v2k94rs1BaR5roK42BCRLXkrO_3fIBUdPWOU4LODM87eXrYifqVJfSzj6phqFfLfSiC9ZlGAvb0EPRnq9ybUXDiFYRF9L7HePgjmLgl",
+      "status": 401
+    },
+    {
+      "phase": "deliberate_status_failure",
+      "url": "https://challenges.cloudflare.com/cdn-cgi/challenge-platform/h/b/pat/a4e2c009eeb2a8b5/1792611795980/5a05b764daa9a9acd0a7dba3a068d97233236a8e8f5ad64b659a5c8e076327b1/Nw_4mBuk.U7rsTEL9pL3TT2NTvxX4rb0I8VBmFaqX94-1792611795-1.3.1.1-ufOxh3aMWmXH3yvSN6jCTG9QY7V5QDL4UHjJQryKT0tpRZMyzL6gzic40oFxHhXfdKeNaysXwA2Xx6KOeLfFxIQJt0KjynqM92eXCoxMdFl27Klx3lZegshWW50lzTo3lSHUnLink03QdrddARUAvxzvBfLDua9rgd7OySxAoIVTTxm07eyMF7yOEsUCa4Z5Cm95tzW5O_LkycuRJeR9.0G.jmPG72vbrbIFyr1Ja8f.atEsM8Cc.4GcK1GHEh_Gc8apalV2zP6d3baDWLWCUmMSNo7RwZHNjobz70N5obfQ4NoyTZ8rzuHdMDR6fyH.CrQRTADdjDVggQ_kEre6j1pJWFjEnITZDx21EH0DSUpfXZ8_gFRoRLbG1Fi_w09XmE4sTzftHwNROAl3HO8neFSTOHcTvtugjCB1EZHecMbA61LKVBZ0eKVHizsKmXVQbFtYXgAByKZJSOtKYxlcmr.IslJOBv7QILqkjVVHz6P4ojbiW7IpCUO7beAUeIh7ncI429BmAlaWj27hj20rbvvn89YyqOFYssnol2q8oANXkZXHfWULLU5rBD.DznCv2osy3fkUN9R16IpTWV4Oxzv9pql5lntj06aNvcFfOz6H5tRTLl4zejjiUkBQMc3Me8susj.blqX3f7aw0zaDAWuQXQeWGwOrnOnl1PdVLSf19T.w3Lpu1td0CeXJ5MGhd_SyQBR_6BoZAhsLMJ3VLQaA0pVEIEXsMmMRFKJuWPYHqPnERZQm.oJpe5l1kcZxEZL70MJTd9e6Xr_ylRMKgiJFOEU6dcfN61WymaSgW6zRulhuCjtZX7NqUmkyVHXf",
+      "status": 401
+    }
+  ],
+  "finished_at": "2026-10-21T19:43:14.323Z",
+  "passed": true
+}
