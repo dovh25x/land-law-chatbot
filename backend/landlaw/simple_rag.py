@@ -2,7 +2,6 @@
 
 import asyncio
 from datetime import date
-from typing import Literal
 import re
 import time
 import uuid
@@ -20,13 +19,19 @@ from .source_policy import applicability, citation_source_url
 
 class SimpleAnswer(BaseModel):
     answer: str = Field(min_length=1, max_length=5000)
-    citation_ids: list[str] = Field(default_factory=list, max_length=5)
     clarification_question: str = Field(default="", max_length=400)
     limitation: str = Field(default="", max_length=500)
 
 
 GREETING = re.compile(r"^(xin chao|xin chào|chao|chào|hello|hi|cam on|cảm ơn|xin cam on|xin cảm ơn)[!.? ]*$", re.I)
 OUT_OF_SCOPE = re.compile(r"\b(thời tiết|thoi tiet|chứng khoán|chung khoan|nấu ăn|nau an|lập trình|lap trinh)\b", re.I)
+SOURCE_MARKER = re.compile(r"[\[【]\s*S(\d+)\s*[\]】]", re.I)
+WORD = re.compile(r"[^\W\d_]{3,}", re.UNICODE)
+STOP_WORDS = {
+    "của", "cho", "được", "không", "nhà", "nước", "người", "đất", "khi",
+    "theo", "với", "và", "hoặc", "này", "đó", "những", "một", "các",
+    "trong", "đến", "từ", "về", "có", "là", "thì", "nếu", "phải",
+}
 
 
 def _citation(item: Evidence, as_of: date) -> Citation:
@@ -45,6 +50,49 @@ def _citation(item: Evidence, as_of: date) -> Citation:
         page=item.chunk.page,
         source_url=citation_source_url(item),
     )
+
+
+def _marker_ids(answer: str) -> tuple[list[str], bool]:
+    """Normalize harmless bracket/spacing variants and reject unknown markers."""
+    markers = [f"S{match.group(1)}" for match in SOURCE_MARKER.finditer(answer)]
+    unknown = bool(re.search(r"[\[【]\s*S\d+\s*[\]】]", answer, re.I)
+                   and any(int(identifier[1:]) > 5 for identifier in markers))
+    return list(dict.fromkeys(markers)), unknown
+
+
+def _support_tokens(text: str) -> set[str]:
+    return {word.casefold() for word in WORD.findall(text) if word.casefold() not in STOP_WORDS}
+
+
+def _markers_are_supported(answer: str, source_map: dict[str, Evidence], marker_ids: list[str]) -> bool:
+    """Require each marked statement to share substantive terms with its cited passage."""
+    spans = list(SOURCE_MARKER.finditer(answer))
+    if not spans:
+        return False
+    start = 0
+    for span in spans:
+        marker_match = re.search(r"\d+", span.group())
+        identifier = f"S{marker_match.group()}" if marker_match else ""
+        if identifier not in marker_ids:
+            return False
+        statement = answer[start:span.start()]
+        if not (_support_tokens(statement) & _support_tokens(source_map[identifier].chunk.text)):
+            return False
+        start = span.end()
+    return True
+
+
+def _citation_fallback(source_map: dict[str, Evidence]) -> str:
+    selected = list(source_map.items())[:2]
+    lines = [
+        "Tôi đã tìm thấy nguồn liên quan nhưng chưa thể xác nhận câu trả lời tự động đủ chắc chắn.",
+        "Dưới đây là trích đoạn để bạn đối chiếu; đây chưa phải kết luận về quyền lợi của hồ sơ cụ thể:",
+    ]
+    for _, item in selected:
+        excerpt = " ".join(item.chunk.text.split())[:500]
+        lines.append(f"- **{item.document.title} — {item.chunk.locator}:** “{excerpt}”")
+    lines.append("Bạn có thể bổ sung loại đất, giấy tờ và thời điểm thu hồi để tôi tra cứu tiếp.")
+    return "\n\n".join(lines)
 
 
 class SimpleRAG:
@@ -129,8 +177,7 @@ class SimpleRAG:
         prompt = """Trả lời bằng tiếng Việt, thân thiện và trực tiếp. Chỉ dùng nguồn trong CONTEXT.
 Nêu quy tắc chung và điều kiện/ngoại lệ quan trọng; nếu thiếu dữ kiện cá nhân thì nói rõ đây là câu trả lời có điều kiện
 hoặc hỏi tối đa một câu ngắn. Không kết luận chắc chắn quyền lợi hoặc số tiền của một hộ cụ thể.
-Gắn [S1]...[S5] ngay sau các ý được nguồn hỗ trợ. citation_ids chỉ được chứa các mã đã dùng trong câu trả lời.
-Nếu nguồn không đủ, nói limitation và để citation_ids rỗng. Không tạo URL, điều luật hay mã nguồn mới."""
+Gắn [S1]...[S5] ngay sau từng ý được nguồn hỗ trợ. Chỉ dùng các mã xuất hiện trong CONTEXT; không tạo URL, điều luật hay mã nguồn mới."""
         try:
             answer = await self.provider.generate(
                 SimpleAnswer, prompt,
@@ -152,15 +199,23 @@ Nếu nguồn không đủ, nói limitation và để citation_ids rỗng. Khôn
             return ChatResult(**base, status="error", content=str(exc), trace=trace,
                 embedding_calls=budget.embedding_calls, llm_calls=budget.llm_calls,
                 token_usage=budget.tokens, elapsed_ms=int((time.monotonic()-started)*1000))
-        allowed = set(source_map)
-        used = set(re.findall(r"\[(S[1-5])\]", answer.answer))
-        cited = set(answer.citation_ids)
-        if not cited <= allowed or not used <= allowed or cited != used:
-            return ChatResult(**base, status="insufficient_evidence",
-                content="Câu trả lời chưa gắn được nguồn hợp lệ trong ngữ cảnh vừa tra cứu. Vui lòng thử lại với câu hỏi cụ thể hơn.",
+        cited, unknown = _marker_ids(answer.answer)
+        valid = bool(cited) and not unknown and set(cited) <= set(source_map)
+        valid = valid and _markers_are_supported(answer.answer, source_map, cited)
+        trace.append(TraceEvent(
+            step="citation_validation",
+            summary=f"Validated {len(cited)} inline source markers" if valid else "Inline source markers failed validation",
+            document_ids=[source_map[key].document.id for key in cited if key in source_map],
+        ))
+        if not valid:
+            fallback_ids = cited if cited and set(cited) <= set(source_map) else list(source_map)[:2]
+            fallback_map = {key: source_map[key] for key in fallback_ids}
+            return ChatResult(**base, status="clarification_needed",
+                content=_citation_fallback(fallback_map),
+                citations=[_citation(item, as_of) for item in fallback_map.values()],
                 trace=trace, embedding_calls=budget.embedding_calls, llm_calls=budget.llm_calls,
                 token_usage=budget.tokens, elapsed_ms=int((time.monotonic()-started)*1000))
-        citations = [_citation(source_map[key], as_of) for key in sorted(cited)]
+        citations = [_citation(source_map[key], as_of) for key in cited]
         claim = Claim(text=answer.answer, citation_ids=[c.id for c in citations], section="direct")
         content = answer.answer
         if answer.limitation:

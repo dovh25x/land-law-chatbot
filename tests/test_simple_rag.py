@@ -7,7 +7,7 @@ from fastapi.testclient import TestClient
 from landlaw.api import create_app
 from landlaw.models import ChatRequest
 from landlaw.provider import ProviderUnavailable
-from landlaw.simple_rag import SimpleAnswer, SimpleRAG
+from landlaw.simple_rag import SimpleAnswer, SimpleRAG, _marker_ids
 from landlaw.store import RateLimited
 from conftest import release, session
 
@@ -20,7 +20,6 @@ class SimpleProvider:
         self.failure = failure
         self.answer = answer or SimpleAnswer(
             answer="Theo nguồn đã tra cứu, điều kiện này cần được xem xét theo hồ sơ [S1].",
-            citation_ids=["S1"],
         )
         self.calls = 0
 
@@ -96,7 +95,6 @@ def test_exact_amount_without_facts_can_be_qualified(store, settings):
     sid, _ = session(store)
     provider = SimpleProvider(settings, answer=SimpleAnswer(
         answer="Chưa thể xác định số tiền chỉ từ câu hỏi này; cần hồ sơ và nhiều điều kiện cụ thể [S1].",
-        citation_ids=["S1"],
         clarification_question="Bạn đang hỏi loại đất và thời điểm phương án nào?",
     ))
     result = asyncio.run(SimpleRAG(store, provider).run(
@@ -143,6 +141,37 @@ def test_chat_endpoint_routes_simple_rag_mode(store, settings):
     assert "event: result" in response.text
     assert '"status": "answered"' in response.text
     assert provider.calls == 1
+
+
+def test_inline_markers_are_the_only_citation_contract():
+    assert _marker_ids("Ý thứ nhất [S1], ý thứ hai 【 S2 】 và lặp lại [ S1 ].") == (["S1", "S2"], False)
+    assert _marker_ids("Nguồn không tồn tại [S9].")[1] is True
+
+
+@pytest.mark.parametrize(
+    "answer, expected_status, expected_citations",
+    [
+        ("Điều kiện bồi thường cần được xem xét theo hồ sơ [S1].", "answered", 1),
+        ("Điều kiện bồi thường [S1].", "answered", 1),
+        ("Bạn chắc chắn nhận 10 tỷ đồng [S1].", "clarification_needed", 1),
+        ("Câu trả lời không có nguồn.", "clarification_needed", 1),
+        ("Bạn chắc chắn nhận 10 tỷ đồng [S9].", "clarification_needed", 1),
+    ],
+)
+def test_citation_validation_requires_supported_inline_markers(
+    store, settings, answer, expected_status, expected_citations
+):
+    from conftest import document
+    release(store, [document(text="Điều kiện bồi thường và hỗ trợ cần được xem xét theo hồ sơ.")])
+    sid, _ = session(store)
+    provider = SimpleProvider(settings, answer=SimpleAnswer(answer=answer))
+    result = asyncio.run(SimpleRAG(store, provider).run(
+        request(sid, "Điều kiện bồi thường là gì?"), lambda _: None, "r1"
+    ))
+    assert result.status == expected_status
+    assert len(result.citations) == expected_citations
+    if expected_status == "clarification_needed":
+        assert "chưa thể xác nhận" in result.content
 
 
 def test_configured_simple_mode_routes_default_request(store, settings):
