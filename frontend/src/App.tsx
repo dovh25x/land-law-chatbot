@@ -113,7 +113,7 @@ function App() {
     else setShowBottom(true)
   }, [messages, busy])
   useEffect(() => () => abortRef.current?.abort(), [])
-  useEffect(() => { setSourcePanel(null) }, [sourceOnly, runtimeKnown])
+  useEffect(() => { setSourcePanel(null) }, [sourceOnly])
 
   async function send() {
     if (busy || !input.trim()) return
@@ -173,7 +173,9 @@ function App() {
     const scroll = chatScroll.current
     if (scroll) scroll.scrollTo({ top: scroll.scrollTop, behavior: 'instant' })
     setDataOpen(false)
-    if (!runtimeKnown) { setSourcePanel(null); return }
+    // Library documents remain readable while status is still being verified;
+    // only answer citations require a verified runtime mode.
+    if (!runtimeKnown && (!source || 'excerpt' in source || 'document_id' in source)) { setSourcePanel(null); return }
     if (sourceOnly) {
       const reviewed = source && docs.find(doc => doc.id === ('document_id' in source ? source.document_id : source.id))
       if (!reviewed) { setSourcePanel(null); setPage('sources'); return }
@@ -238,7 +240,7 @@ function App() {
       </section>}
     </main>
     {dataOpen && <DataPanel readiness={readiness} generation={generation} connecting={connecting} onRefresh={manualRefresh} onClose={() => setDataOpen(false)}/>}
-    {sourcePanel && runtimeKnown && <SourcePanel source={sourcePanel.source} citations={sourcePanel.citations} onSelect={citation => openSource(citation, sourcePanel.citations)} onClose={() => setSourcePanel(null)}/>}
+    {sourcePanel && <SourcePanel source={sourcePanel.source} citations={sourcePanel.citations} onSelect={citation => openSource(citation, sourcePanel.citations)} onClose={() => setSourcePanel(null)}/>}
     {deletion && <ConfirmDialog title={deletion.title} busy={deleting} onCancel={() => setDeletion(null)} onConfirm={() => void confirmDeletion()}/>}
   </div>
 }

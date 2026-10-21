@@ -204,12 +204,21 @@ class Store:
                 return stamp if stamp.tzinfo is not None and stamp <= now else None
             except (ValueError, AttributeError, TypeError):
                 return None
+        # One release-level read preserves the latest-receipt rule without a
+        # database round trip for every document on the public status path.
+        latest = {}
+        if release.get('id'):
+            for row in self.rows("SELECT document_id,checksum,checked_at,status,receipt FROM source_reviews WHERE release_id=?",
+                                 (release['id'],)):
+                key = (row['document_id'], row['checksum'])
+                if key not in latest or row['checked_at'] > latest[key]['checked_at']:
+                    latest[key] = row
         for ident in selected:
             states[ident] = 'unknown'
             doc = docs.get(ident)
             if not doc or not doc.get('checksum') or not release.get('id'):
                 continue
-            reviews=self.rows("SELECT checked_at,status,receipt FROM source_reviews WHERE release_id=? AND document_id=? AND checksum=? ORDER BY checked_at DESC LIMIT 1", (release['id'],doc['id'],doc['checksum']))
+            reviews = [latest[(doc['id'], doc['checksum'])]] if (doc['id'], doc['checksum']) in latest else []
             if reviews:
                 status = reviews[0]['status']
                 if status == 'changed':
@@ -253,18 +262,21 @@ class Store:
         except (ValueError, TypeError):
             return {'invalid': True}
 
-    def scoped_source_reviews(self, release, passages, as_of):
+    def scoped_source_reviews(self, release, passages, as_of, review_cache=None):
         """Strict candidate gate: pinned recent receipts, exact chunks and dates.
 
         Missing receipts after a corpus-only restore fail closed. Snapshot
         permission never overrides this gate, including historical questions.
+        ``review_cache`` lets a caller that already loaded the latest receipts
+        avoid repeating the same read for every reviewed window.
         """
         from datetime import date, datetime
         import hashlib
         policy = self.source_gate((release or {}).get('id')) or {}
         docs = {d['id']: d for d in (release or {}).get('documents', [])}
         states = {}
-        review_cache = {}
+        if review_cache is None:
+            review_cache = {}
         for doc_id, chunk_id, checksum in passages:
             key = f'{doc_id}:{chunk_id}'
             states[key] = 'unknown'
@@ -313,17 +325,31 @@ class Store:
         policy = self.source_gate((release or {}).get('id'))
         if policy is None:
             return None
+        latest = {}
+        for row in self.rows('SELECT id,document_id,checksum,checked_at,status,receipt FROM source_reviews WHERE release_id=?',
+                             ((release or {}).get('id'),)):
+            key = (row['document_id'], row['checksum'])
+            if key not in latest or row['checked_at'] > latest[key]['checked_at']:
+                latest[key] = row
+        docs = {d['id']: d for d in (release or {}).get('documents', [])}
+        review_cache = {}
+        for doc_id in (policy.get('receipts') or {}):
+            doc = docs.get(doc_id)
+            row = latest.get((doc_id, doc.get('checksum'))) if doc else None
+            review_cache[doc_id] = [row] if row else []
         approved = set()
         for doc_id, ident in (policy.get('receipts') or {}).items():
-            rows = self.rows('SELECT receipt FROM source_reviews WHERE id=? AND release_id=?',
-                             (ident, (release or {}).get('id')))
-            if not rows:
+            rows = review_cache.get(doc_id) or []
+            if not rows or rows[0]['id'] != ident:
                 continue
             try:
-                for scope in json.loads(rows[0]['receipt']).get('verified_scope', []):
-                    passages = [(doc_id, cid, checksum) for cid, checksum in scope['chunk_checksums'].items()]
-                    states = self.scoped_source_reviews(release, passages, target)
-                    approved.update(key for key, status in states.items() if status == 'fresh')
+                scopes = json.loads(rows[0]['receipt']).get('verified_scope', [])
+                # Evaluate every reviewed window for this document from the
+                # receipt fetched once above.
+                passages = [(doc_id, cid, checksum) for scope in scopes
+                            for cid, checksum in scope['chunk_checksums'].items()]
+                states = self.scoped_source_reviews(release, passages, target, review_cache)
+                approved.update(key for key, status in states.items() if status == 'fresh')
             except (ValueError, TypeError, KeyError, AttributeError):
                 continue
         return {'mode': 'scoped_receipts',

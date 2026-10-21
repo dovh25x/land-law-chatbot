@@ -142,6 +142,20 @@ def test_review_is_bound_to_checksum_and_latest_receipt(store):
     assert store.source_review_states(payload) == {doc.id: 'fresh'}
 
 
+def test_source_review_states_read_the_release_once(monkeypatch, store):
+    docs = [document(), document('other')]; payload = release(store, docs)
+    review(store, payload, docs[0], 'unchanged')
+    review(store, payload, docs[1], 'changed')
+    original, calls = store.rows, []
+    def counting(sql, params=()):
+        if 'source_reviews' in sql:
+            calls.append(sql)
+        return original(sql, params)
+    monkeypatch.setattr(store, 'rows', counting)
+    assert store.source_review_states(payload) == {docs[0].id: 'fresh', docs[1].id: 'changed'}
+    assert len(calls) == 1, calls
+
+
 def test_unknown_selected_document_is_not_silently_ignored(store):
     doc = document(); payload = release(store, [doc])
     assert store.source_review_states(payload, {doc.id, 'missing'}) == {doc.id: 'fresh', 'missing': 'unknown'}

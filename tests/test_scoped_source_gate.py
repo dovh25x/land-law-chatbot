@@ -147,6 +147,35 @@ def test_gate_status_counts_only_passages_valid_today(store, tmp_path):
     assert historical['eligible_passages'] == 1 and historical['usable'] is True
 
 
+def test_gate_status_reads_each_pinned_receipt_once(monkeypatch, store, tmp_path):
+    doc = document(); payload = release(store, [doc])
+    scopes = [{'as_of_from': str(local_date()-timedelta(days=offset)),
+               'as_of_to': str(local_date()-timedelta(days=offset-1)),
+               'chunk_checksums': {doc.chunks[0].id: doc.chunks[0].checksum}}
+              for offset in range(3)]
+    receipt = {'document_id': doc.id, 'checksum': doc.checksum,
+        'checked_at': utcnow().isoformat(), 'status': 'unchanged',
+        'evidence_urls': [str(doc.url)],
+        'relation_review': 'Reviewed only the named passages and date intervals.',
+        'verified_scope': scopes}
+    path = tmp_path/'receipt.json'; path.write_text(json.dumps(receipt))
+    pinned = record_source_review(store, path)
+    policy = {'version': 1, 'release_id': payload['id'], 'receipts': {doc.id: pinned['receipt_sha256']}}
+    path = tmp_path/'gate.json'; path.write_text(json.dumps(policy))
+    activate_source_gate(store, path)
+
+    original, calls = store.rows, []
+    def counting(sql, params=()):
+        if 'source_reviews' in sql:
+            calls.append(sql)
+        return original(sql, params)
+    monkeypatch.setattr(store, 'rows', counting)
+    status = store.source_gate_status(payload)
+    assert status['eligible_passages'] == 1 and status['usable'] is True
+    # One release-level receipt read serves every document and date window.
+    assert len(calls) == 1, calls
+
+
 @pytest.mark.parametrize('mutation', ['checksum', 'document', 'empty', 'dates'])
 def test_receipt_import_rejects_invalid_scope(store, tmp_path, mutation):
     doc = document(); payload = release(store, [doc, document('other')])
