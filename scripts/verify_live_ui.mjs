@@ -50,7 +50,7 @@ try {
     if (await page.getByLabel('Dự án', { exact: true }).count() || await page.getByLabel('Chế độ truy xuất').count()) throw Error('Unexpected scope/model controls')
     if (!await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)) throw Error('Horizontal overflow')
     phase = 'navigation'
-    await menu(page); await page.getByRole('button', { name: 'Thư viện văn bản', exact: true }).click()
+    await menu(page); await page.getByRole('button', { name: 'Văn bản pháp luật', exact: true }).click()
     await page.locator('.document-row').first().waitFor({ timeout: 90000 })
     const { documents } = await get(page, '/api/v1/documents')
     if (!documents.length || documents.some(doc => doc.project && doc.project !== 'ring4')) throw Error('Unexpected corpus scope')
@@ -60,10 +60,7 @@ try {
     if (width >= 1280 && await source.getAttribute('role') !== 'complementary') throw Error('Desktop source is not a comparison region')
     if (width < 1280 && await source.getAttribute('role') !== 'dialog') throw Error('Mobile source is not modal')
     await page.keyboard.press('Escape')
-    await menu(page); await page.getByRole('button', { name: 'Đánh giá hệ thống', exact: true }).click()
-    await page.getByRole('heading', { name: 'Đánh giá hệ thống', exact: true }).waitFor()
-    if (!evaluation.matches_active_configuration) await page.getByRole('status').filter({ hasText: 'Chưa hoàn tất đánh giá' }).waitFor()
-    await menu(page); await page.getByRole('button', { name: 'Hỏi đáp pháp luật', exact: true }).click()
+    await menu(page); await page.getByRole('button', { name: 'Hỏi đáp', exact: true }).click()
     await page.screenshot({ path: resolve(directory, `navigation-${width}.png`), fullPage: true })
     checks.push({ width, device_mode: width < 768 ? 'emulated_mobile' : 'desktop_browser', physical_device: false, corpus_documents: documents.length, corpus_release: readiness.corpus_release, runtime_configuration_sha256: evaluation.active_configuration_sha256, report_matches_configuration: evaluation.matches_active_configuration, report_matches_corpus: evaluation.matches_active_release, responsive: true, source_access: true })
     if (width === 1440 && chat) {
@@ -94,16 +91,15 @@ try {
         throw Error('Result was not saved in browser history')
       }
       phase = 'generation'
-      const first = await submit(sourceOnly ? 'Quyết định 56/2024/QĐ-UBND Hà Nội còn hiệu lực không? Văn bản nào thay thế?' : 'Chi phí di chuyển tài sản khi bị thu hồi đất được quy định như thế nào?')
+      const first = await submit(sourceOnly ? 'Quyết định 56/2024/QĐ-UBND Hà Nội còn hiệu lực không? Văn bản nào thay thế?' : 'Khi Nhà nước thu hồi đất nông nghiệp, người dân có thể nhận những khoản hỗ trợ nào?')
       const verified = await sessionResponse
       if (verified.status() !== 201) throw Error(`Turnstile session HTTP ${verified.status()}`)
       turnstileSessionVerified = true
       if (first.result.model !== 'openai/gpt-oss-120b' || (sourceOnly ? first.result.llm_calls !== 0 : first.result.llm_calls < 1)) throw Error('Unexpected model/generation origin')
       generationChecked = !sourceOnly
       await page.locator('.message.assistant .citations button').first().click(); await source.waitFor(); await page.keyboard.press('Escape')
-      await page.locator('.message.assistant .trace-link').first().click(); await page.getByRole('dialog', { name: 'Quá trình kiểm chứng' }).waitFor(); await page.keyboard.press('Escape')
       phase = 'follow_up'
-      const second = await submit('Văn bản đó quy định cơ quan nào quyết định mức bồi thường chi phí di chuyển tài sản?')
+      const second = await submit('Vậy mức hỗ trợ ổn định đời sống cho một nhân khẩu được tính như thế nào khi đất nông nghiệp bị thu hồi?')
       if (second.payload.history.length < 2 || second.payload.session_id !== first.payload.session_id) throw Error('Follow-up context/session missing')
       const session = await page.evaluate(() => JSON.parse(sessionStorage.getItem('landlaw-session')))
       const forbidden = await page.request.get(base + '/api/v1/sessions/' + session.session_id, { headers: { Authorization: 'Bearer invalid' } })
@@ -115,7 +111,7 @@ try {
       await page.getByRole('dialog').getByRole('button', { name: 'Xóa lịch sử', exact: true }).click()
       await page.waitForFunction(() => document.querySelectorAll('.history-row').length === 0)
       if ((await browserHistory(page)).length) throw Error('Local history not cleared')
-      checks.push({ llm_generation_checked: !sourceOnly, model: first.result.model, first_llm_calls: first.result.llm_calls, follow_up_llm_calls: second.result.llm_calls, follow_up_history_pairs: second.payload.history.length / 2, client_sources_and_trace: true, reload: true, delete: true, server_history_410: true, session_isolation: true })
+      checks.push({ llm_generation_checked: !sourceOnly, model: first.result.model, first_llm_calls: first.result.llm_calls, follow_up_llm_calls: second.result.llm_calls, follow_up_history_pairs: second.payload.history.length / 2, client_sources: true, reload: true, delete: true, server_history_410: true, session_isolation: true })
     }
     await context.close()
   }
