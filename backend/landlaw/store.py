@@ -413,6 +413,77 @@ class Store:
                 continue
         return states
 
+    def admissible_chunk_scope(self, release, as_of):
+        """Reviewed passages that the active policy admits on ``as_of``.
+
+        Retrieval uses this only to keep reviewed evidence from being crowded
+        out by unreviewed candidates. Every returned passage is still re-checked
+        with ``scoped_source_reviews`` and legal applicability before generation.
+        """
+        release = release or {}
+        policy = self.source_gate(release.get('id'))
+        if not isinstance(policy, dict) or policy.get('version') not in {1, 2}:
+            return {}
+        from datetime import date
+        docs = {d['id']: d for d in release.get('documents', [])}
+        latest = {}
+        for row in self.rows('SELECT id,document_id,checksum,checked_at,status,receipt '
+                             'FROM source_reviews WHERE release_id=?', (release.get('id'),)):
+            key = (row['document_id'], row['checksum'])
+            if key not in latest or row['checked_at'] > latest[key]['checked_at']:
+                latest[key] = row
+        scope = {}
+        if policy.get('version') == 2:
+            entries = policy.get('standing', {})
+        else:
+            entries = {doc_id: {'receipt_sha256': ident} for doc_id, ident in policy.get('receipts', {}).items()}
+        for doc_id, entry in entries.items():
+            doc = docs.get(doc_id)
+            row = latest.get((doc_id, doc.get('checksum'))) if doc else None
+            if (not doc or not row or row['status'] != 'unchanged'
+                    or row['id'] != policy.get('receipts', {}).get(doc_id)):
+                continue
+            try:
+                from datetime import datetime
+                from .security import digest, utcnow
+                receipt = json.loads(row['receipt'])
+                if digest(json.dumps(receipt, ensure_ascii=False, sort_keys=True)) != row['id']:
+                    continue
+                stamp = datetime.fromisoformat(row['checked_at'].replace('Z', '+00:00'))
+                if stamp.tzinfo is None or stamp > utcnow():
+                    continue
+            except (ValueError, TypeError, KeyError, AttributeError):
+                continue
+            if policy.get('version') == 2:
+                if entry.get('receipt_sha256') != row['id']:
+                    continue
+                eligible = dict(entry.get('standing_chunks') or {})
+                for window in entry.get('legal_windows') or []:
+                    try:
+                        if date.fromisoformat(window['as_of_from']) <= as_of < date.fromisoformat(window['as_of_to']):
+                            eligible.update(window.get('chunk_checksums') or {})
+                    except (ValueError, KeyError, TypeError):
+                        continue
+            else:
+                if stamp < utcnow() - timedelta(days=7):
+                    continue
+                eligible = {}
+                for window in receipt.get('verified_scope') or []:
+                    try:
+                        if date.fromisoformat(window['as_of_from']) <= as_of < date.fromisoformat(window['as_of_to']):
+                            eligible.update(window.get('chunk_checksums') or {})
+                    except (ValueError, KeyError, TypeError):
+                        continue
+            reviewed_scopes = receipt.get('verified_scope') or []
+            for chunk_id, checksum in eligible.items():
+                if policy.get('version') == 2 and entry.get('chunks', {}).get(chunk_id) != checksum:
+                    continue
+                if not any(window.get('chunk_checksums', {}).get(chunk_id) == checksum
+                           for window in reviewed_scopes if isinstance(window, dict)):
+                    continue
+                scope[chunk_id] = checksum
+        return scope
+
     def source_gate_status(self, release, as_of=None):
         from datetime import date
         from .security import local_date
@@ -857,6 +928,8 @@ class Store:
                     replacement_rows.extend(c.model_dump() for c in opened.chunks)
         headings = self.heading_index(release_id)
         eligible={d.id for d in docs.values() if not project or d.project in {None,project}}
+        release_meta = self.release(release_id, True) or {}
+        admitted_scope = self.admissible_chunk_scope(release_meta, as_of) if as_of else {}
         heading_scores=headings.rank(query,eligible,exact_docs)
         heading_ids=[item[1] for item in heading_scores]
         heading_rows=self.rows(f"SELECT {projection} FROM chunks c JOIN documents d ON d.id=c.document_id AND d.release_id=c.release_id WHERE c.release_id=? AND c.id IN ({','.join('?' for _ in heading_ids)})", (release_id,*heading_ids)) if heading_ids else []
@@ -872,6 +945,7 @@ class Store:
                 exact_params.extend([f"Điều {article[1]}", f"Điều {article[1]} · ngữ cảnh"])
             exact = self.rows(f"""SELECT {projection} FROM chunks c JOIN documents d ON d.id=c.document_id AND d.release_id=c.release_id
                 WHERE c.release_id=?""" + scope_sql + exact_sql + " ORDER BY c.id LIMIT 20", tuple(exact_params))
+        admitted_lexical, admitted_semantic = [], []
         if self.postgres:
             lexical = self.rows(f"""SELECT {projection}, ts_rank_cd(c.search_tsv, websearch_to_tsquery('simple',?)) AS rank
                 FROM chunks c JOIN documents d ON d.id=c.document_id AND d.release_id=c.release_id
@@ -895,6 +969,20 @@ class Store:
                 semantic = self.rows(f"""SELECT {projection} FROM chunks c JOIN documents d ON d.id=c.document_id AND d.release_id=c.release_id
                     WHERE c.release_id=? AND c.embedding IS NOT NULL AND c.embedding_model=? AND vector_dims(c.embedding)={dimensions}""" + scope_sql +
                     f" ORDER BY c.embedding::vector({dimensions}) <=> ?::vector({dimensions}) LIMIT 20", (*params[:1], embedding_model, *params[1:], json.dumps(vector)))
+            if admitted_scope:
+                admitted_ids = list(admitted_scope)
+                admitted_sql = " AND c.id IN (" + ",".join("?" for _ in admitted_ids) + ")"
+                scope_params = (project,) if project else ()
+                admitted_lexical = self.rows(f"""SELECT {projection}, ts_rank_cd(c.search_tsv, websearch_to_tsquery('simple',?)) AS rank
+                    FROM chunks c JOIN documents d ON d.id=c.document_id AND d.release_id=c.release_id
+                    WHERE c.release_id=? AND c.search_tsv @@ websearch_to_tsquery('simple',?)""" + scope_sql + admitted_sql +
+                    " ORDER BY rank DESC,c.id LIMIT 12", (normalize(query), release_id, *scope_params, *admitted_ids))
+                if vector:
+                    dimensions = len(vector)
+                    admitted_semantic = self.rows(f"""SELECT {projection} FROM chunks c JOIN documents d ON d.id=c.document_id AND d.release_id=c.release_id
+                        WHERE c.release_id=? AND c.embedding IS NOT NULL AND c.embedding_model=? AND vector_dims(c.embedding)={dimensions}""" + scope_sql + admitted_sql +
+                        f" ORDER BY c.embedding::vector({dimensions}) <=> ?::vector({dimensions}) LIMIT 12",
+                        (release_id, embedding_model, *scope_params, *admitted_ids, json.dumps(vector)))
         else:
             candidates = self.rows("""SELECT c.* FROM chunks c JOIN documents d ON d.id=c.document_id AND d.release_id=c.release_id
                 WHERE c.release_id=?""" + scope_sql, params)
@@ -910,13 +998,20 @@ class Store:
                     return sum(a*b for a, b in zip(v, vector, strict=True))
                 semantic = sorted((r for r in candidates if r["embedding"] and r["embedding_model"] == embedding_model
                     and len(json.loads(r['embedding']))==len(vector)), key=cosine, reverse=True)[:20]
+            if admitted_scope:
+                admitted_candidates = [r for r in candidates if r['id'] in admitted_scope]
+                admitted_lexical = sorted((r for r in admitted_candidates if lexical_score(r) > 0),
+                                          key=lexical_score, reverse=True)[:12]
+                if vector:
+                    admitted_semantic = sorted((r for r in admitted_candidates if r['embedding']
+                        and r['embedding_model'] == embedding_model and len(json.loads(r['embedding'])) == len(vector)),
+                        key=cosine, reverse=True)[:12]
         scores, rows_by_id = {}, {}
         for branch in (lexical, semantic, heading_rows, exact, replacement_rows):
             for position, row in enumerate(branch, 1):
                 scores[row["id"]] = scores.get(row["id"], 0) + 1 / (60 + position)
                 rows_by_id[row["id"]] = row
         for chunk_id, row in rows_by_id.items():
-            number = docs[row["document_id"]].document_number
             if row['document_id'] in exact_docs:
                 scores[chunk_id] += 0.1
             if article and row['id'] in {r['id'] for r in exact}:
@@ -928,15 +1023,34 @@ class Store:
             if as_of and doc.id not in exact_docs and not temporal:
                 if (doc.effective_to and as_of>=doc.effective_to) or (doc.effective_from and as_of<doc.effective_from):
                     scores[chunk_id] *= .35
+        # Keep the ordinary ranking first. Reviewed passages that the ordinary
+        # branches already found retain their exact position; the reviewed-only
+        # branch appends rescued passages instead of reshuffling stronger hits.
+        admitted_scores, admitted_rows = {}, {}
+        for branch in (admitted_lexical, admitted_semantic):
+            for position, row in enumerate(branch, 1):
+                admitted_scores[row["id"]] = admitted_scores.get(row["id"], 0) + 1 / (60 + position)
+                admitted_rows[row["id"]] = row
+        main_order = sorted(scores, key=lambda i: (-scores[i], i))
+        admitted_main = [i for i in main_order if i in admitted_scope]
+        admitted_extra = [i for i in sorted(admitted_scores, key=lambda i: (-admitted_scores[i], i))
+                          if i not in rows_by_id]
+        for chunk_id in admitted_extra:
+            rows_by_id[chunk_id] = admitted_rows[chunk_id]
+            scores[chunk_id] = admitted_scores[chunk_id]
+        order = admitted_main + admitted_extra + [i for i in main_order if i not in admitted_scope]
         reviewed = {}
         if as_of and self.source_gate(release_id) is not None:
-            # Reuse the active legal review, without changing candidate generation
-            # or admission rules. Stale hits must not crowd out reviewed evidence.
-            reviewed = self.scoped_source_reviews(self.release(release_id, True),
+            # Reuse the active legal review, without changing admission rules.
+            # Stale hits must not crowd out reviewed evidence.
+            reviewed = self.scoped_source_reviews(release_meta,
                 [(r['document_id'], r['id'], r['checksum']) for r in rows_by_id.values()], as_of)
+            admitted_order = [i for i in order
+                              if reviewed.get(rows_by_id[i]['document_id']+':'+i) in
+                              {'fresh', 'standing', 'reviewed_window'}]
+            order = admitted_order + [i for i in order if i not in admitted_order]
         return [Evidence(chunk=self._chunk(rows_by_id[i]), document=docs[rows_by_id[i]["document_id"]], score=scores[i])
-                for i in sorted(scores, key=lambda i: (
-                    reviewed.get(rows_by_id[i]['document_id']+':'+i) not in {'fresh', 'standing', 'reviewed_window'}, -scores[i], i))[:8]]
+                for i in order[:8]]
 
     def backup(self, target: Path, include_sessions=False):
         # Only corpus/config; deliberately exclude session tokens and personal messages.

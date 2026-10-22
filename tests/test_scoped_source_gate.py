@@ -47,6 +47,15 @@ async def test_scoped_passage_answers_despite_unreviewed_corpus(store, settings,
     assert result.source_context['source_fresh'] is True  # Cited passages only.
 
 
+def test_reviewed_passage_is_not_crowded_out_by_unreviewed_lexical_noise(store, settings, tmp_path):
+    noise = document('noise', text='bồi thường bồi thường bồi thường bồi thường thu hồi đất')
+    good = document('good', text='Điều 1. Điều kiện bồi thường khi thu hồi đất ở.', locator='Điều 1')
+    payload = release(store, [noise, good])
+    install_gate(store, payload, good, tmp_path)
+    hits = store.search('bồi thường thu hồi đất', None, None, payload['id'], None, local_date())
+    assert hits and hits[0].document.id == 'good'
+
+
 @pytest.mark.parametrize('snapshot', [False, True])
 @pytest.mark.parametrize('violation', ['other_document', 'other_chunk', 'before', 'after',
                                       'changed', 'unavailable', 'expired', 'replaced_receipt', 'missing_receipt'])
