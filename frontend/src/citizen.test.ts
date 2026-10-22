@@ -1,10 +1,22 @@
 import { describe, expect, it } from 'vitest'
-import { citizenAnswerText, clarificationReply, validCitizenAnswer } from './citizen'
+import { citizenAnswerText, citizenSuggestions, clarificationReply, validCitizenAnswer } from './citizen'
 import type { Result } from './api'
 
 const valid = { status:'answered', answer_schema_version:2, content:'Không dùng phần này để thay claim.',
   citations:[{id:'c1'}],verified_claims:[{text:'Đoạn đã kiểm chứng.',citation_ids:['c1']}],
   answer_sections:[{kind:'direct',claim_indexes:[0]}] } as Result
+describe('citizen suggestions', () => {
+  it('keeps four distinct, short prompts across the supported topics', () => {
+    expect(citizenSuggestions).toHaveLength(4)
+    expect(new Set(citizenSuggestions).size).toBe(4)
+    expect(citizenSuggestions[0]).toMatch(/giúp gì/i)
+    expect(citizenSuggestions[1]).toContain('sổ đỏ')
+    expect(citizenSuggestions[2]).toContain('nông nghiệp')
+    expect(citizenSuggestions[3]).toContain('tái định cư')
+    expect(citizenSuggestions.every(question => question.length <= 90)).toBe(true)
+  })
+})
+
 describe('verified citizen projection', () => {
   it('accepts a complete projection and refuses missing, repeated or orphan references', () => {
     expect(validCitizenAnswer(valid)).toBe(true)

@@ -13,6 +13,21 @@ test.beforeEach(async({page}) => {
   await page.route('**/api/v1/sessions',r=>r.fulfill({status:201,json:{session_id:'fixture',token:'fixture-token'}}))
   await page.route('**/api/v1/chat',r=>r.fulfill({contentType:'text/event-stream',body:`event: result\ndata: ${JSON.stringify(result(1))}\n\n`}))
 })
+test('landing suggestions cover capabilities and legal topics without auto-send',async({page})=>{
+  let posts=0
+  page.on('request',request=>{if(request.url().endsWith('/chat'))posts++})
+  await page.goto('/')
+  const suggestions=page.locator('.topic-grid button')
+  await expect(suggestions).toHaveCount(4)
+  const labels=await suggestions.allInnerTexts()
+  expect(new Set(labels).size).toBe(4)
+  for(let index=0;index<labels.length;index++){
+    await suggestions.nth(index).click()
+    await expect(page.getByLabel('Câu hỏi pháp luật')).toHaveValue(labels[index])
+    await expect(page.getByLabel('Câu hỏi pháp luật')).toBeFocused()
+  }
+  expect(posts).toBe(0)
+})
 test('library supports accent-free search and opens reference-only originals',async({page})=>{
   await page.goto('/')
   const menu=page.getByRole('button',{name:'Mở menu điều hướng'});if(await menu.isVisible())await menu.click()
