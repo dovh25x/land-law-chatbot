@@ -211,6 +211,27 @@ def marker_ids(text):
     return [f"S{match}" for match in re.findall(r"[\[【]\s*S(\d+)\s*[\]】]", text or '', re.I)]
 
 
+NEGATED_CERTAINTY = re.compile(
+    r"(?:chưa|không|ko|khó|chưa thể|không thể)\s+(?:đủ\s+)?(?:chắc chắn|chính xác)", re.I)
+
+
+def forbidden_pattern_hit(pattern, text):
+    """Match forbidden wording, but not a safe negated certainty phrase.
+
+    L05 correctly says "chưa thể xác nhận ... đủ chắc chắn"; treating that as
+    the forbidden assertion "chắc chắn" was a false positive. Numeric and
+    outcome patterns are still matched against the raw text.
+    """
+    if pattern.strip().casefold() in {'chắc chắn', 'chính xác là'}:
+        for match in re.finditer(pattern, text, re.I):
+            prefix = text[max(0, match.start() - 60):match.start()].casefold()
+            if re.search(r"\b(?:chưa|không|ko|khó)\b", prefix):
+                continue
+            return True
+        return False
+    return bool(re.search(pattern, text, re.I))
+
+
 def auto_checks(case, result):
     checks = {}
     text = result.content or ''
@@ -220,7 +241,7 @@ def auto_checks(case, result):
     if case.get('required_patterns'):
         checks['required_patterns'] = all(re.search(pattern, text, re.I) for pattern in case['required_patterns'])
     if case.get('forbidden_patterns'):
-        checks['forbidden_patterns'] = not any(re.search(pattern, text, re.I)
+        checks['forbidden_patterns'] = not any(forbidden_pattern_hit(pattern, text)
                                                for pattern in case['forbidden_patterns'])
     checks['status'] = result.status in case.get('expected_statuses', [])
     evidence = set(result.evidence_chunk_ids)

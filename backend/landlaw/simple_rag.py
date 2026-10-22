@@ -15,7 +15,8 @@ from .request_budget import BudgetExceeded
 from .security import local_date, redact
 from .publication import public_status
 from .source_policy import applicability, citation_source_url
-from .conversation import classify
+from .conversation import classify, contextual_retrieval_query
+from .legal_text import validate_answer
 
 
 class SimpleAnswer(BaseModel):
@@ -114,6 +115,11 @@ def _asserts_specific_outcome(statement: str) -> bool:
     return bool(AMOUNT.search(statement) or CONFIDENT.search(statement))
 
 
+def _limitation_issues(answer: SimpleAnswer, source_map: dict[str, Evidence]) -> list[str]:
+    from .legal_text import reference_issues
+    return reference_issues(answer.limitation, source_map) if answer.limitation else []
+
+
 def _citation_fallback(source_map: dict[str, Evidence]) -> str:
     selected = list(source_map.items())[:2]
     lines = [
@@ -122,7 +128,7 @@ def _citation_fallback(source_map: dict[str, Evidence]) -> str:
     ]
     for _, item in selected:
         excerpt = " ".join(item.chunk.text.split())[:500]
-        lines.append(f"- **{item.document.title} — {item.chunk.locator}:** “{excerpt}”")
+        lines.append(f"- **{item.document.document_number or ''} {item.document.title} — {item.chunk.locator}:** “{excerpt}”")
     lines.append("Bạn có thể bổ sung loại đất, giấy tờ và thời điểm thu hồi để tôi tra cứu tiếp.")
     return "\n\n".join(lines)
 
@@ -135,13 +141,7 @@ def _retrieval_query(message: str, history) -> tuple[str, bool]:
     có sổ đỏ?" keeps the legal subject. Never expands from a greeting or
     out-of-scope turn, and never changes source, applicability or citation rules.
     """
-    if not FOLLOW_UP.search(message.strip()):
-        return message, False
-    previous = next((item.content.strip() for item in reversed(list(history or []))
-                     if item.role == 'user'), '')
-    if not previous or classify(previous).kind != "legal":
-        return message, False
-    return f"{previous[:600]} — {message.strip()}", True
+    return contextual_retrieval_query(message, history)
 
 
 class SimpleRAG:
@@ -232,15 +232,18 @@ class SimpleRAG:
             )
         source_map = {f"S{i}": item for i, item in enumerate(evidence, 1)}
         context = "\n\n".join(
-            f"[{key}] {item.document.title} — {item.chunk.locator}\n{item.chunk.text}"
+            f"[{key}] {item.document.document_number or 'không số hiệu'} — {item.document.title} — {item.chunk.locator}\n{item.chunk.text}"
             for key, item in source_map.items()
         )
         history = "\n".join(f"{m.role}: {redact(m.content)}" for m in request.history[-4:])
         prompt = """Trả lời bằng tiếng Việt, thân thiện và trực tiếp. Chỉ dùng nguồn trong CONTEXT.
+Phân biệt rõ: (a) điều kiện được bồi thường, (b) hình thức bồi thường, (c) hỗ trợ, (d) tái định cư, (e) thủ tục.
 Nêu quy tắc chung và điều kiện/ngoại lệ quan trọng; nếu thiếu dữ kiện cá nhân thì nói rõ đây là câu trả lời có điều kiện
 hoặc hỏi tối đa một câu ngắn. Không kết luận chắc chắn quyền lợi hoặc số tiền của một hộ cụ thể.
 QUY TẮC DẪN NGUỒN BẮT BUỘC: mỗi câu có nội dung pháp lý phải kết thúc bằng mã nguồn tương ứng, ví dụ "…phải đủ điều kiện theo Điều 95 [S1]".
-Chỉ dùng các mã xuất hiện trong CONTEXT; không tạo URL, điều luật hay mã nguồn mới; nếu không có nguồn cho một ý thì không gắn mã cho ý đó."""
+Chỉ nêu điều, khoản, điểm, số hiệu văn bản và mốc thời gian có đúng trong CONTEXT; không thêm điều kiện hoặc điều/khoản không có trong CONTEXT.
+Nếu CONTEXT không đủ cho một ý, hãy nói rõ phần chưa đủ và không gắn mã cho ý đó; không dùng token trùng nhau thay cho việc kiểm tra nguồn.
+Chỉ dùng các mã xuất hiện trong CONTEXT; không tạo URL, điều luật hay mã nguồn mới."""
         try:
             answer = await self.provider.generate(
                 SimpleAnswer, prompt,
@@ -263,14 +266,15 @@ Chỉ dùng các mã xuất hiện trong CONTEXT; không tạo URL, điều lu�
                 embedding_calls=budget.embedding_calls, llm_calls=budget.llm_calls,
                 token_usage=budget.tokens, elapsed_ms=int((time.monotonic()-started)*1000))
         cited, unknown = _marker_ids(answer.answer)
+        issues = validate_answer(answer.answer, source_map) + _limitation_issues(answer, source_map)
         valid = bool(cited) and not unknown and set(cited) <= set(source_map)
-        valid = valid and _markers_are_supported(answer.answer, source_map, cited)
+        valid = valid and _markers_are_supported(answer.answer, source_map, cited) and not issues
         raw_markers = len(SOURCE_MARKER.findall(answer.answer))
         trace.append(TraceEvent(
             step="citation_validation",
             summary=(f"Validated {len(cited)} inline source markers" if valid else
-                     f"Inline source markers failed validation: {raw_markers} raw markers, "
-                     f"{len(cited)} usable ids, out_of_range={bool(unknown)}"),
+                     f"Citation/reference guard rejected the draft: {raw_markers} raw markers, "
+                     f"{len(cited)} usable ids, out_of_range={bool(unknown)}, issues={len(issues)}"),
             document_ids=[source_map[key].document.id for key in cited if key in source_map],
         ))
         if not valid:

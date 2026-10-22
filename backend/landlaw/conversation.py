@@ -187,3 +187,38 @@ def classify(message: str, history=()) -> ConversationalIntent:
     if _AMBIGUOUS.fullmatch(social) or len(canonical.split()) <= 4:
         return ConversationalIntent("ambiguous", AMBIGUOUS_REPLY, "Ambiguous request")
     return ConversationalIntent("ambiguous", AMBIGUOUS_REPLY, "Ambiguous request")
+
+
+_CONTINUATION = re.compile(
+    r"^(?:vay|vay thi|vay neu|the|the thi|the nao|va|con|nhu vay|neu vay|"
+    r"truong hop (?:do|nay)|cai (?:do|nay)|dieu (?:do|nay)|van de (?:do|nay)|"
+    r"thi sao|nhung|ma|dat toi|nha toi)\b")
+_NEW_TOPIC = re.compile(
+    r"\b(khieu nai|khoi kien|thu tuc|ho so|giay to|bang gia|khung gia|"
+    r"thua ke|tach thua|hop thua|chuyen nhuong|tranh chap|the chap|cuong che)\b")
+
+
+def contextual_retrieval_query(message: str, history=()) -> tuple[str, bool]:
+    """Resolve short/contextual follow-ups for retrieval.
+
+    A short continuation or an explicit follow-up opener inherits the previous
+    legal user question so references such as "đất tôi ở thuộc dự án Vành đai 4"
+    or "vậy nếu chưa có sổ đỏ?" keep their subject. A new-topic keyword keeps the
+    message standalone, and no user facts are inferred.
+    """
+    text = (message or '').strip()
+    canonical = _canonical(text)
+    previous = ''
+    for item in reversed(list(history or ())):
+        role = item.get('role') if isinstance(item, dict) else getattr(item, 'role', None)
+        content = item.get('content', '') if isinstance(item, dict) else getattr(item, 'content', '')
+        if role == 'user' and isinstance(content, str) and content.strip():
+            previous = content.strip()
+            break
+    if not previous or not _has_legal_signal(_canonical(previous), previous.casefold()):
+        return text, False
+    if not _CONTINUATION.search(canonical):
+        return text, False
+    if _NEW_TOPIC.search(canonical) and not _CONTINUATION.search(canonical):
+        return text, False
+    return f"{previous[:600]} — {text}", True

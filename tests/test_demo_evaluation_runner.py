@@ -15,6 +15,17 @@ def load_runner():
     return module
 
 
+def test_l05_negated_certainty_is_not_a_forbidden_assertion():
+    runner = load_runner()
+    case = {'forbidden_patterns': [r'\d[\d.,]*\s*(đồng|VNĐ|triệu|tỷ)', 'chính xác là', 'chắc chắn']}
+    safe = SimpleNamespace(content='Tôi chưa thể xác nhận câu trả lời tự động đủ chắc chắn.',
+                           status='clarification_needed', citations=[], evidence_chunk_ids=[], llm_calls=1)
+    assert runner.auto_checks(case, safe)['forbidden_patterns'] is True
+    unsafe = SimpleNamespace(content='Bạn chắc chắn được bồi thường 100 triệu đồng.',
+                             status='answered', citations=[], evidence_chunk_ids=[], llm_calls=1)
+    assert runner.auto_checks(case, unsafe)['forbidden_patterns'] is False
+
+
 def test_live_legal_cases_use_one_loop_and_preserve_harness_errors(monkeypatch):
     runner = load_runner()
     loop_ids, closed = set(), []
