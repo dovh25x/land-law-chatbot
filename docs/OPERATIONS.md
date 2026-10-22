@@ -12,9 +12,9 @@ Tên biến tham chiếu tại [`.env.example`](../.env.example). Không đưa g
 
 | Nơi cấu hình | Biến chính | Nguyên tắc |
 |---|---|---|
-| Render | `APP_ENV`, `DATABASE_URL`, `GROQ_API_KEY`, `INGRESS_SECRET`, `IP_HASH_SECRET`, `TURNSTILE_SECRET_KEY`, `PUBLIC_HOSTNAME` | Database role runtime; không cấu hình owner credentials |
+| Render | `APP_ENV`, `DATABASE_URL`, `GROQ_API_KEY`, `INGRESS_SECRET`, `IP_HASH_SECRET`, `SESSION_CHALLENGE_MODE`, `PUBLIC_DAILY_IP_CHAT_LIMIT`, `PUBLIC_HOSTNAME` | Database role runtime; không cấu hình owner credentials. `TURNSTILE_SECRET_KEY` chỉ bắt buộc khi challenge mode là `turnstile` |
 | Cloudflare Function | `BACKEND_ORIGIN`, `INGRESS_SECRET` | Origin backend cố định; secret ingress phải khớp Render |
-| Frontend build | `VITE_API_BASE_URL`, `VITE_TURNSTILE_SITE_KEY` | Chỉ cấu hình công khai; API cùng origin Pages |
+| Frontend build | `VITE_API_BASE_URL`, `VITE_TURNSTILE_SITE_KEY` | Site key chỉ cần khi challenge mode là `turnstile`; API cùng origin Pages |
 | Operator | `ADMIN_DATABASE_URL` và credentials triển khai khi cần | Quyền nâng cao chỉ dùng cho tác vụ được kiểm soát |
 | GitHub Actions | Encrypted secrets và repository variables | Không lưu owner DB credential trong workflow runtime |
 
@@ -24,7 +24,7 @@ Migration `006_browser_history.sql` xóa payload hội thoại cũ và thu hồi
 
 ## Nguồn hướng dẫn thủ tục và liên hệ
 
-Ngoài receipt nguồn hiện có, hướng dẫn tác nghiệp cần receipt `unchanged` khớp checksum, còn hạn bảy ngày và có `operational_review` với ba xác nhận boolean: `source_role_checked`, `jurisdiction_checked`, `procedure_and_dependencies_checked`. Chỉ ghi sau khi đã đọc/đối chiếu thực; evidence URL và relation review vẫn bắt buộc. Receipt mới nhất có trạng thái changed/unavailable hoặc thiếu xác nhận sẽ chặn action. Snapshot override không vượt cổng này.
+Ngoài receipt nguồn hiện có, hướng dẫn tác nghiệp cần receipt `unchanged` khớp checksum, còn hạn bảy ngày và có `operational_review` với ba xác nhận boolean: `source_role_checked`, `jurisdiction_checked`, `procedure_and_dependencies_checked`. Đây là cổng riêng cho nguồn thủ tục/liên hệ dạng ngắn hạn, không phải hạn dùng của snapshot pháp luật đã kiểm chứng. Chỉ ghi sau khi đã đọc/đối chiếu thực; evidence URL và relation review vẫn bắt buộc. Receipt mới nhất có trạng thái changed/unavailable hoặc thiếu xác nhận sẽ chặn action. Snapshot override không vượt cổng này.
 
 `official_directory` chỉ được giữ liên hệ công khai trong chunks khi manifest có `public_contacts_reviewed=true`, `contains_personal_data=false` sau rà soát thật. Không dùng cờ này cho danh sách hộ dân hoặc dữ liệu định danh. Thêm nguồn mới vẫn cần raw/provenance/dependency, kiểm tra ingest và release riêng. Worklist ở `data/source_candidates/` không thuộc active corpus. Xem [trạng thái triển khai](redesign/IMPLEMENTATION.md).
 
@@ -45,25 +45,50 @@ Không dùng riêng HTTP status mở stream để đếm lượt chat thành cô
 
 ## Candidate có phạm vi nguồn đã duyệt
 
+### Standing verified snapshot (v2, target)
+
 Receipt có thể giới hạn `verified_scope` theo `chunk_checksums` và khoảng ngày hỏi `[as_of_from, as_of_to)`. Phải review nội dung, chủ thể, điều kiện và quan hệ sửa đổi/chuyển tiếp thực sự trước khi ghi receipt; kiểm tra HTTP hoặc hash chỉ là bằng chứng về bản tải. Receipt giới hạn không làm toàn văn được đánh dấu fresh.
 
-Operator nhập receipt bằng `land-law review-source <receipt.json>`, rồi kích hoạt tập receipt đã ghim bằng `land-law activate-source-gate <policy.json>`. Policy có `version: 1`, `release_id` và mapping `receipts` từ document ID sang SHA256 canonical receipt. Luôn xác nhận database đích trước hai lệnh này. Tài khoản runtime chỉ đọc policy và receipt.
+Policy v2 `standing_verified_snapshot` là chính sách đích cho bản demo. Nó giữ nguyên checksum tài liệu, checksum từng đoạn, SHA256 receipt và mốc `checked_at`; không tự gia hạn timestamp, không quay vòng nguồn và không đánh dấu toàn corpus là đã xác minh. Cửa sổ quay vòng ngày (thường dài 1–2 ngày) trở thành `standing_chunks`; cửa sổ dài hơn là phạm vi ngày thực chất của người review và được giữ nguyên trong `legal_windows`, không mở rộng. Policy ghi `supersedes` là hash SHA256 của policy v1 đã dùng để migrate.
 
-Khi policy tồn tại, từng citation phải khớp đoạn, checksum, ngày hỏi và receipt mới nhất còn hạn. Snapshot override và ngày hỏi lịch sử không vượt cổng này. Receipt changed/unavailable, receipt mới chưa ghim, policy lỗi hoặc thiếu receipt đều chặn claim. Verify và finish kiểm tra lại; không có đoạn đủ điều kiện thì không gọi synthesis. Phần corpus không được dùng trong claim không khiến toàn bộ câu hỏi bị chặn.
+Operator tạo candidate từ policy v1 đang active, chỉ đọc:
 
-Backup corpus giữ policy nhưng không chứa bảng receipt. Sau restore, policy thiếu receipt giữ trạng thái fail-closed; nhập lại bộ receipt đã review còn hạn trước khi mở generation. Phát hành policy và receipt như các artifact có checksum đi cùng corpus asset. Không xóa policy để làm restore hoặc health check đạt. `/readyz`, `/api/v1/status` và `ops-status` công khai hash policy cùng số đoạn đủ điều kiện; `usable` không chứng nhận độ đúng câu trả lời, coverage hiện hành hay chất lượng model.
+```bash
+.venv/bin/land-law build-standing-policy reports/source-review-<ngày>/source-gate-v2-candidate.json
+```
+
+Sau khi đối chiếu source ID, checksum, scope và hash, kích hoạt bằng:
+
+```bash
+.venv/bin/land-law activate-source-gate reports/source-review-<ngày>/source-gate-v2-candidate.json
+```
+
+Activation từ chối policy thiếu `supersedes` khớp policy v1 hiện hành, thiếu receipt `unchanged`, sai document checksum, hoặc có đoạn không nằm trong `verified_scope` gốc. Policy v2 chỉ thay điều kiện tuổi receipt; mọi điều kiện nội dung, chủ thể, thẩm quyền, hiệu lực và citation vẫn giữ.
+
+Khi policy tồn tại, từng citation phải khớp đoạn, checksum và receipt mới nhất. Receipt changed/unavailable hoặc thiếu receipt đều chặn claim ngay lập tức. Với `standing_chunks`, hiệu lực pháp lý được kiểm tra tại ngày hỏi bằng `applicability()`; với `legal_windows`, ngày hỏi còn phải nằm trong đúng cửa sổ đã review. Verify và finish kiểm tra lại; không có đoạn đủ điều kiện thì không gọi synthesis. Phần corpus không được dùng trong claim không khiến toàn bộ câu hỏi bị chặn.
+
+`/readyz`, `/api/v1/status` và `ops-status` công khai `source_gate.mode`, `review_mode`, `reviewed_at`, `operational_expiry`, hash policy và số đoạn đủ điều kiện tại ngày hiện tại. `source_fresh=false` vẫn phản ánh toàn corpus chưa được xác minh; `source_partial_review` chỉ báo rằng phạm vi đã review đang dùng được, không tuyên bố snapshot là “pháp luật hiện hành” hay thay thế thẩm định pháp lý.
+
+Backup corpus giữ policy nhưng không chứa bảng receipt. Sau restore, policy thiếu receipt giữ trạng thái fail-closed; nhập lại bộ receipt đã review trước khi mở generation. Phát hành policy và receipt như các artifact có checksum đi cùng corpus asset. Không xóa policy để làm restore hoặc health check đạt.
+
+Rollback v2: giữ nguyên receipt, ghi lại đúng JSON policy v1 đã lưu trong `reports/source-review-<ngày>/source-gate-<ngày>.json` vào `app_state` của release, xác nhận `source_gate.mode=scoped_receipts`, rồi chạy lại boundary tests. Không xóa receipt, không sửa checksum và không drop database.
+
+### Scoped receipts v1 (legacy)
+
+Policy v1 vẫn được đọc để bảo toàn lịch sử và làm đường rollback. Policy có `version: 1`, `release_id` và mapping `receipts` từ document ID sang SHA256 canonical receipt; receipt còn giới hạn bảy ngày và cửa sổ ngày hỏi. Khi v1 active, hành vi cũ được giữ nguyên; không dùng v1 để mô tả chính sách đích. Luôn xác nhận database đích trước `review-source` hoặc `activate-source-gate`. Tài khoản runtime chỉ đọc policy và receipt.
 
 ## Ingress và chống lạm dụng
 
 Cloudflare ký method, path, query, timestamp, IP và SHA256 body bằng HMAC. Backend production kiểm tra chữ ký cùng cửa sổ 60 giây, không tin IP do client tự khai báo. API chỉ được gọi qua Pages; truy cập trực tiếp Render phải bị từ chối.
 
-Turnstile được xác minh server-side khi tạo phiên, với hostname đã cấu hình và action `create_session`. Managed challenge có thể yêu cầu tương tác thủ công. Không dùng test key hoặc tắt xác minh production để làm smoke test đạt.
+Turnstile là challenge tạo phiên, được xác minh server-side với hostname đã cấu hình và action `create_session`. `SESSION_CHALLENGE_MODE` có hai giá trị: `turnstile` (mặc định an toàn cho production) và `disabled` (chỉ dùng cho demo đã được duyệt). Khi `disabled`, frontend không tải script/UI Turnstile và backend không đọc token challenge; session, bearer token, hạn phiên, chữ ký ingress, quota theo phiên/IP, concurrency, idempotency và body limit vẫn bắt buộc. Không dùng test key, không thêm endpoint bypass và không tắt các lớp còn lại khi tắt challenge.
 
 | Phạm vi | Giới hạn hiện tại |
 |---|---|
 | Hệ thống | Hai lượt đồng thời; một lượt đang chạy cho mỗi phiên |
 | Chat theo phiên/IP | Ba request/phút cho mỗi loại định danh |
 | Chat theo phiên | 20 request/ngày |
+| Chat theo IP | 30 request/ngày, độc lập với việc tạo phiên mới; cấu hình bằng `PUBLIC_DAILY_IP_CHAT_LIMIT` |
 | Public LLM | 100 request/ngày, gồm retry |
 | Public token usage | Dừng nhận thêm khi usage ghi nhận đạt 100.000 token/ngày |
 | Body | 64 KiB; thời gian đọc body tối đa 10 giây |
@@ -74,30 +99,33 @@ API dùng scope `public`; CLI/dev entrypoint tin cậy dùng `operator`, ghi usa
 
 ## Rà soát nguồn và freshness
 
-Ở chế độ mặc định, nguồn quá bảy ngày hoặc receipt cho biết `changed`/`unavailable` chặn generation. Runtime hiện kiểm tra freshness của corpus một cách bảo thủ; một nguồn cần rà soát có thể ảnh hưởng toàn bộ chat, dù thư viện vẫn truy cập được.
+Chính sách đích là **standing verified snapshot (v2)**. Policy này tách bốn khái niệm:
 
-`source_review_states()` phân biệt trạng thái rà soát với hiệu lực pháp lý tại ngày hỏi:
+1. **Toàn vẹn nội dung**: document checksum, passage checksum và SHA256 receipt phải khớp chính xác.
+2. **Độ mới vận hành**: snapshot đã review không còn hạn 24 giờ, 72 giờ hoặc 7 ngày. `reviewed_at` là mốc đối chiếu gần nhất để hiển thị, không phải ngày hết hạn tự động.
+3. **Hiệu lực pháp lý**: `applicability()` kiểm tra ngày hiệu lực, điều khoản sửa đổi/chuyển tiếp và thẩm quyền tại ngày hỏi.
+4. **Phạm vi thực chất**: `standing_chunks` là các đoạn đã review cho câu hỏi hiện hành; `legal_windows` giữ nguyên đúng khoảng ngày của người review cho câu hỏi lịch sử.
 
 | Trạng thái | Ý nghĩa và hành vi |
 |---|---|
-| `fresh` | Metadata/receipt hợp lệ, đúng checksum, timestamp có timezone và chưa quá bảy ngày; vẫn phải kiểm tra hiệu lực, phạm vi, sửa đổi và citation của từng claim. |
-| `stale` | Snapshot từng được rà soát nhưng đã quá hạn, chưa có receipt bất lợi mới; chỉ được tham khảo theo ngoại lệ snapshot đã cấu hình hoặc câu hỏi lịch sử, vẫn qua verify và finish. |
-| `changed` | Receipt mới nhất cho checksum xác nhận thay đổi; không được snapshot override hoặc ngày hỏi lịch sử vượt cổng. |
-| `unknown` | Receipt `unavailable`, timestamp/metadata không hợp lệ hoặc không xác định được nguồn; không được phát claim phụ thuộc nguồn đó. |
+| `standing` | Đoạn nằm trong snapshot đã review, checksum và receipt mới nhất khớp; vẫn phải qua `applicability()` và verify claim/citation. |
+| `reviewed_window` | Đoạn chỉ thuộc một cửa sổ ngày lịch sử đã review; chỉ dùng khi ngày hỏi nằm trong đúng cửa sổ đó. |
+| `changed` | Receipt mới nhất xác nhận nội dung thay đổi; loại bỏ ngay, không có ngoại lệ snapshot. |
+| `unknown` | Thiếu receipt, receipt unavailable, checksum sai, policy lỗi hoặc metadata không hợp lệ; fail closed. |
 
-HTTP 200 và checksum không đổi chỉ chứng minh truy cập/toàn vẹn, không tự chứng minh văn bản còn hiệu lực. Văn bản hết hiệu lực nhưng được lưu đúng vai trò lịch sử không tự trở thành receipt `changed` mới. Receipt phải ghi rõ điều đã đối chiếu và phần chưa xác minh; không ghi `unchanged` chỉ để gia hạn timestamp. Biên bản đề xuất trong `reports/` chưa có tác dụng với runtime cho đến khi được người vận hành duyệt và ghi vào database đích đã xác nhận.
+Có snapshot không có nghĩa là toàn corpus đã xác minh hoặc văn bản đang là “pháp luật hiện hành”. `source_fresh=false` vẫn phản ánh toàn corpus chưa fresh; `usable=true` chỉ báo rằng có đoạn đã review dùng được cho ngày hiện tại. Mỗi câu trả lời phải giữ citation, checksum, URL nguồn và mốc `reviewed_at`. Receipt bất lợi mới làm mất hiệu lực ngay các đoạn bị ảnh hưởng.
 
 Quy trình rà soát:
 
 1. Xác định tài liệu và checksum trong active corpus.
 2. Kiểm tra nội dung nguồn chính thức, mốc hiệu lực, văn bản sửa đổi/thay thế và điều khoản chuyển tiếp. URL trả HTTP thành công là chưa đủ.
-3. Lập receipt nêu `document_id`, `checksum`, `checked_at`, `status`, `relation_review` và `evidence_urls` chính thức.
+3. Lập receipt nêu `document_id`, `checksum`, `checked_at`, `status`, `relation_review`, `evidence_urls` và `verified_scope` chính thức.
 4. Ghi nhận bằng `.venv/bin/land-law review-source <receipt.json>` với quyền phù hợp. Schema và validation nằm trong `backend/landlaw/ops.py`.
-5. Nếu nội dung thay đổi, chuẩn bị corpus mới; không đánh dấu `unchanged` hoặc sửa `checked_at` để vượt freshness.
+5. Nếu nội dung thay đổi, chuẩn bị corpus mới; không đánh dấu `unchanged`, không sửa `checked_at` và không tự gia hạn cửa sổ để vượt cổng.
 
-Sau restore phải đánh giá lại freshness. Backup không tự chứng minh nguồn còn hiện hành và không thay thế receipt rà soát.
+Backup không tự chứng minh nguồn còn hiện hành và không thay thế receipt rà soát. Sau restore, policy thiếu receipt vẫn fail closed.
 
-`ALLOW_STALE_GENERATION=false` giữ mặc định dừng sinh đáp án khi nguồn quá hạn. Khi người vận hành chủ động cho phép tham khảo snapshot chưa rà soát, đặt đồng thời `GENERATION_ENABLED=true` và `ALLOW_STALE_GENERATION=true`, kiểm thử rồi deploy đúng SHA. API vẫn báo `source_fresh=false`, `warning=source_stale` và mốc kiểm tra thực tế; Thông tin freshness được báo cho người vận hành và lưu trong reports; không chèn cảnh báo snapshot vào giao diện hay đáp án. Ngoại lệ này không ghi receipt, không đổi `checked_at`, không vượt verify claim/citation, quota hoặc cooldown và không làm readiness đạt. Chính sách này nằm trong fingerprint; kết quả đánh giá của cấu hình khác không chứng nhận cấu hình đang chạy. Ghi biên bản riêng và giữ cấu hình rollback; tắt ngoại lệ bằng `ALLOW_STALE_GENERATION=false`.
+Policy v1 `scoped_receipts` là legacy: receipt còn hạn bảy ngày, cửa sổ ngày hỏi ngắn và `source_fresh` bảo thủ. Chỉ dùng v1 khi rollback có kiểm soát; không dùng v1 để mô tả chính sách đích. `ALLOW_STALE_GENERATION=false` vẫn là mặc định. Ngoại lệ `ALLOW_STALE_GENERATION=true` chỉ dành cho tình huống vận hành đã được ghi biên bản, không ghi receipt, không đổi `checked_at`, không vượt verify/citation/quota và không làm readiness đạt. Với v2, không cần bật ngoại lệ này cho snapshot đã review.
 
 Để chuẩn bị bản sửa corpus, dùng `scripts/prepare_corpus_candidate.py --source <snapshot.json> --output <thư-mục-mới>`. Lệnh chỉ đọc raw đã duyệt ở chế độ offline, tái sử dụng chính xác vector theo title/checksum và chỉ embed đoạn mới hoặc đổi nội dung. Output gồm snapshot, backup và báo cáo; database dùng để đóng gói là SQLite tạm. Lệnh không ghi receipt freshness hoặc thay active corpus đang phục vụ.
 
@@ -159,7 +187,7 @@ Chỉ rollback tới corpus Vành đai 4 và code không lưu hội thoại lên
 ![Triển khai và phục hồi](diagrams/deploy-recovery.svg)
 
 1. Chọn source SHA đã kiểm thử, push source và kiểm tra CI.
-2. Xác nhận runtime role, biến môi trường, ingress secret và Turnstile hostname. Không thay đổi gói hosting trong bước deploy.
+2. Xác nhận runtime role, biến môi trường, ingress secret, `SESSION_CHALLENGE_MODE` và (nếu dùng challenge) Turnstile hostname. Không thay đổi gói hosting trong bước deploy.
 3. Dùng workflow triển khai hoặc `scripts/deploy.py`; ghim đúng SHA và không chạy các deploy cạnh tranh nhau.
 4. Kiểm tra SHA thực tế trên Render, corpus, model và fingerprint qua API.
 5. Kiểm tra nguồn và navigation trên desktop/mobile; sau đó kiểm tra luồng chat thật, hỏi tiếp, nguồn/trace tại client, reload, xóa và quyền truy cập phiên.
@@ -170,14 +198,14 @@ node scripts/verify_live_ui.mjs
 node scripts/verify_live_ui.mjs --chat
 ```
 
-Lệnh đầu chỉ kiểm tra navigation/nguồn, không chứng minh LLM hoạt động. Luồng `--chat` có thể bị chặn bởi Turnstile yêu cầu tương tác hoặc quota provider; kết quả đó phải giữ trạng thái chưa xác minh. Không dùng source-only hoặc CLI generation để thay thế tuyên bố đã kiểm tra toàn bộ public browser flow.
+Lệnh đầu chỉ kiểm tra navigation/nguồn, không chứng minh LLM hoạt động. Luồng `--chat` chỉ hoàn tất tự động khi `SESSION_CHALLENGE_MODE=disabled`; với `turnstile`, verifier dừng ở bước chờ token và kết quả phải giữ trạng thái chưa xác minh nếu con người chưa hoàn tất challenge. Đặt `LIVE_SESSION_CHALLENGE_MODE` khớp backend để tránh suy đoán. Không dùng source-only hoặc CLI generation để thay thế tuyên bố đã kiểm tra toàn bộ public browser flow.
 
 ## Xử lý sự cố
 
 | Triệu chứng | Kiểm tra ưu tiên | Hành động |
 |---|---|---|
 | `403 untrusted_ingress` | Cùng secret, origin, timestamp và đường gọi qua Pages | Sửa cấu hình; giữ backend từ chối direct API |
-| Challenge không hoàn tất | Widget, hostname/action, secret và tương tác được yêu cầu | Hướng dẫn xác minh; không bypass |
+| Challenge không hoàn tất | Chỉ khi `SESSION_CHALLENGE_MODE=turnstile`: widget, hostname/action, secret và tương tác được yêu cầu | Hướng dẫn xác minh; không bypass. Nếu mode `disabled`, kiểm tra cấu hình thay vì tìm widget |
 | Chat unavailable, nguồn vẫn mở | Status generation, freshness, cooldown | Xử lý đúng lý do; không retry liên tục |
 | `409` | Request ID đã dùng hoặc phiên đang chạy | Chờ kết thúc/lease; không replay tự động |
 | Mất stream | Sự kiện cuối, timeout và metadata request | Thông báo không có server replay; người dùng quyết định lượt mới |
@@ -201,7 +229,7 @@ Cổng kiểm tra đối chiếu nội dung backup với snapshot, dependency/co
 
 Deploy mặc định không yêu cầu báo cáo rubric. `scripts/deploy.py backend --commit <SHA-40-ký-tự>` và `scripts/deploy.py frontend --commit <SHA-40-ký-tự>` kiểm tra source đã commit, giữ Render Free, ghim SHA và không cho thay đổi ứng dụng chưa commit. CLI backend ghi receipt JSONL nối tiếp; khi hết thời gian theo dõi, dùng `--deployment-id <ID> --receipt <path>` để tiếp tục theo dõi cùng deployment. Preview frontend dùng branch `preview`, production dùng `main`.
 
-Workflow **Deploy application** nhận `source_sha` tùy chọn, chạy kiểm tra phần mềm, deploy Pages/Render rồi kiểm tra navigation và corpus/fingerprint thật. Chat public là bước tùy chọn `verify_public_chat`, vì managed Turnstile có thể yêu cầu tương tác. Workflow **Runtime metadata checks** dùng cùng database runtime và các cờ generation của production; chế độ snapshot được chủ động bật vẫn báo warning nguồn cũ nhưng không bị xem là lỗi vận hành chỉ vì freshness.
+Workflow **Deploy application** nhận `source_sha` tùy chọn, chạy kiểm tra phần mềm, deploy Pages/Render rồi kiểm tra navigation và corpus/fingerprint thật. Chat public là bước tùy chọn `verify_public_chat`; biến GitHub `SESSION_CHALLENGE_MODE` điều khiển cả site key lúc build và verifier, nên phải khớp biến môi trường Render đã đặt trước khi deploy. Workflow **Runtime metadata checks** dùng cùng database runtime và các cờ generation của production; snapshot v2 đã review dùng được qua ngày cũ nhưng vẫn báo `source_fresh=false` cho toàn corpus.
 
 Khi cần bật lại rubric cho CLI deploy, đặt `REQUIRE_QUALITY_READINESS=true` cùng `RELEASE_READINESS_REPORT`; báo cáo được tính lại và phải khớp SHA. Chế độ tùy chọn không đổi các kết quả blocked lịch sử thành passed.
 Commit chứa tài liệu và bằng chứng có thể được tạo sau SHA đã kiểm thử nếu chỉ khác trong `reports/`, `docs/` hoặc `README.md`. Thay đổi runtime, data hay CI bắt buộc kiểm thử SHA mới. Backend Render và frontend Cloudflare đều ghim SHA source đã kiểm thử; commit bằng chứng không tự trở thành phiên bản ứng dụng đã kiểm thử.

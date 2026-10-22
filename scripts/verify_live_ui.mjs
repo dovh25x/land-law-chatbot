@@ -11,6 +11,8 @@ const directory = process.env.LIVE_REPORT_DIR || `reports/live-${new Date().toIS
 const output = resolve(directory, chat ? (sourceOnly ? 'source-only.json' : 'generation.json') : 'navigation.json')
 const checks = []
 let phase = 'configuration', browser, turnstileTokenObserved = false, turnstileSessionVerified = false, generationChecked = false
+let challengeModeResolved = process.env.LIVE_SESSION_CHALLENGE_MODE || 'auto'
+let turnstileScriptRequested = false
 const local = spawnSync(existsSync('.venv/bin/python') ? '.venv/bin/python' : 'python3', ['-c', 'import os; from landlaw.config import Settings; from landlaw.evaluation import configuration_fingerprint; from pydantic import SecretStr; s=Settings(); s=s.model_copy(update={"database_url":SecretStr("postgresql://fingerprint-only/metadata" if os.getenv("LIVE_STORAGE_BACKEND","postgresql")=="postgresql" else "")}); print(configuration_fingerprint(s))'], { encoding: 'utf8' })
 const expected = process.env.LIVE_EXPECTED_CONFIGURATION || (local.status === 0 ? local.stdout.trim() : null)
 const menu = async page => {
@@ -39,6 +41,7 @@ try {
   for (const width of [1440, 390, 320]) {
     const context = await browser.newContext({ viewport: { width, height: 900 }, isMobile: width < 768, hasTouch: width < 768, deviceScaleFactor: width < 768 ? 2 : 1 })
     const page = await context.newPage()
+    page.on('request', request => { if (request.url().includes('challenges.cloudflare.com')) turnstileScriptRequested = true })
     await page.goto(base, { waitUntil: 'domcontentloaded', timeout: 90000 })
     await page.getByLabel('Câu hỏi pháp luật').waitFor()
     await page.evaluate(() => document.fonts.ready)
@@ -65,10 +68,24 @@ try {
     checks.push({ width, device_mode: width < 768 ? 'emulated_mobile' : 'desktop_browser', physical_device: false, corpus_documents: documents.length, corpus_release: readiness.corpus_release, runtime_configuration_sha256: evaluation.active_configuration_sha256, report_matches_configuration: evaluation.matches_active_configuration, report_matches_corpus: evaluation.matches_active_release, responsive: true, source_access: true })
     if (width === 1440 && chat) {
       if (!status.generation_available) throw Error(`Generation unavailable: ${status.reason || 'unknown'}`)
-      phase = 'turnstile'
-      // Managed interactive challenges require the human user. Never automate the checkbox.
-      await page.waitForFunction(() => !!document.querySelector('input[name="cf-turnstile-response"]')?.value, {}, { timeout: 45000 })
-      turnstileTokenObserved = true
+      challengeModeResolved = process.env.LIVE_SESSION_CHALLENGE_MODE || status.session_challenge_mode || 'auto'
+      if (challengeModeResolved === 'turnstile') {
+        phase = 'turnstile'
+        // Managed interactive challenges require the human user. Never automate the checkbox.
+        await page.waitForFunction(() => !!document.querySelector('input[name="cf-turnstile-response"]')?.value, {}, { timeout: 45000 })
+        turnstileTokenObserved = true
+      } else if (challengeModeResolved === 'auto') {
+        phase = 'turnstile_or_disabled'
+        // Older backends do not expose the mode. A rendered widget means the
+        // challenge is active; otherwise proceed as the demo disabled mode.
+        try {
+          await page.waitForFunction(() => !!document.querySelector('input[name="cf-turnstile-response"]')?.value, {}, { timeout: 6000 })
+          turnstileTokenObserved = true
+          challengeModeResolved = 'turnstile'
+        } catch { challengeModeResolved = 'disabled' }
+      } else if (challengeModeResolved !== 'disabled') {
+        throw Error(`Unknown LIVE_SESSION_CHALLENGE_MODE: ${challengeModeResolved}`)
+      }
       const sessionResponse = page.waitForResponse(response => response.request().method() === 'POST' && response.url().endsWith('/api/v1/sessions'), { timeout: 110000 })
       async function submit(question) {
         const previous = await page.locator('.message.assistant').count()
@@ -93,8 +110,9 @@ try {
       phase = 'generation'
       const first = await submit(sourceOnly ? 'Quyết định 56/2024/QĐ-UBND Hà Nội còn hiệu lực không? Văn bản nào thay thế?' : 'Khi Nhà nước thu hồi đất nông nghiệp, người dân có thể nhận những khoản hỗ trợ nào?')
       const verified = await sessionResponse
-      if (verified.status() !== 201) throw Error(`Turnstile session HTTP ${verified.status()}`)
-      turnstileSessionVerified = true
+      if (verified.status() !== 201) throw Error(`Session HTTP ${verified.status()}`)
+      turnstileSessionVerified = turnstileTokenObserved
+      if (challengeModeResolved === 'disabled' && turnstileScriptRequested) throw Error('Turnstile script loaded while challenge is disabled')
       if (first.result.model !== 'openai/gpt-oss-120b' || (sourceOnly ? first.result.llm_calls !== 0 : first.result.llm_calls < 1)) throw Error('Unexpected model/generation origin')
       generationChecked = !sourceOnly
       await page.locator('.message.assistant .citations button').first().click(); await source.waitFor(); await page.keyboard.press('Escape')
@@ -115,11 +133,11 @@ try {
     }
     await context.close()
   }
-  await writeFile(output, JSON.stringify({ passed: true, checked_at: new Date().toISOString(), base_url: base, llm_generation_checked: generationChecked, turnstile_token_observed: turnstileTokenObserved, turnstile_browser_checked: turnstileSessionVerified, physical_device: false, checks }, null, 2) + '\n')
-  console.log(JSON.stringify({ passed: true, output, llm_generation_checked: generationChecked }))
+  await writeFile(output, JSON.stringify({ passed: true, checked_at: new Date().toISOString(), base_url: base, session_challenge_mode: challengeModeResolved, llm_generation_checked: generationChecked, turnstile_token_observed: turnstileTokenObserved, turnstile_script_requested: turnstileScriptRequested, turnstile_browser_checked: turnstileSessionVerified, physical_device: false, checks }, null, 2) + '\n')
+  console.log(JSON.stringify({ passed: true, output, session_challenge_mode: challengeModeResolved, llm_generation_checked: generationChecked }))
 } catch (error) {
   const safeError = phase === 'turnstile' ? 'Managed Turnstile did not produce a token; human interaction may be required.' : error.message
   await mkdir(directory, { recursive: true })
-  await writeFile(output, JSON.stringify({ passed: false, checked_at: new Date().toISOString(), base_url: base, phase, error: safeError, llm_generation_checked: generationChecked, turnstile_token_observed: turnstileTokenObserved, turnstile_browser_checked: turnstileSessionVerified, physical_device: false, checks }, null, 2) + '\n')
+  await writeFile(output, JSON.stringify({ passed: false, checked_at: new Date().toISOString(), base_url: base, phase, error: safeError, session_challenge_mode: challengeModeResolved, llm_generation_checked: generationChecked, turnstile_token_observed: turnstileTokenObserved, turnstile_script_requested: turnstileScriptRequested, turnstile_browser_checked: turnstileSessionVerified, physical_device: false, checks }, null, 2) + '\n')
   console.log(JSON.stringify({ passed: false, phase, error: safeError, output })); process.exitCode = 1
 } finally { await browser?.close() }

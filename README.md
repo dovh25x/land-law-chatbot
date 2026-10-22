@@ -101,6 +101,6 @@ Unit test và E2E dùng fixture để kiểm tra hành vi phần mềm. Đánh g
 
 ## Vận hành và giới hạn
 
-Deployment sử dụng Cloudflare Pages, Render và Supabase trên cấu hình Free hiện có. Cold start, hạn mức provider và yêu cầu tương tác Turnstile có thể ảnh hưởng trải nghiệm. Chưa có cam kết SLA; corpus còn coverage gaps và verifier có thể bỏ sót hoặc từ chối quá mức.
+Deployment sử dụng Cloudflare Pages, Render và Supabase trên cấu hình Free hiện có. Cold start, hạn mức provider và challenge tạo phiên (khi bật) có thể ảnh hưởng trải nghiệm. Bản demo chỉ chạy `SESSION_CHALLENGE_MODE=disabled` khi có phê duyệt riêng; khi đó frontend không tải Turnstile nhưng session, quota và các lớp bảo vệ khác vẫn giữ. Chưa có cam kết SLA; corpus còn coverage gaps và verifier có thể bỏ sót hoặc từ chối quá mức.
 
 Xem [runbook vận hành](docs/OPERATIONS.md) để cấu hình ingress, quản lý quota, rà soát nguồn, triển khai và khôi phục. Trạng thái kiểm chứng deployment nằm trong [artifact triển khai](reports/deployment-ring4.json), tách biệt với đánh giá chất lượng câu trả lời.

@@ -34,7 +34,7 @@ Citation hiển thị nguồn và locator, mở đoạn căn cứ cùng liên k�
 | `frontend/src/App.tsx` | Hội thoại, điều hướng, gửi/hủy và các panel |
 | `frontend/src/api.ts` | Phiên, HTTP và parser SSE |
 | `frontend/src/history.ts` | IndexedDB, TTL, giới hạn dung lượng và history request |
-| `frontend/src/Turnstile.tsx` | Widget xác minh trước khi tạo phiên |
+| `frontend/src/Turnstile.tsx` | Widget xác minh trước khi tạo phiên; chỉ được lazy-load khi có `VITE_TURNSTILE_SITE_KEY` |
 | `frontend/src/ui.tsx` | Component thư viện, nguồn, trace và thông tin dữ liệu |
 | `frontend/src/styles.css` | Tokens sáng/tối và responsive layout |
 | `frontend/public/figma/` | Asset tĩnh lấy từ thiết kế |
@@ -63,7 +63,8 @@ Không lưu được IndexedDB phải có thông báo. Không chuyển sang serv
 | Mất kết nối/hủy | Không ngụ ý có thể lấy lại đáp án từ server |
 | Lỗi lịch sử | Nêu rõ dữ liệu chỉ còn trong tab |
 | Báo cáo khác phiên bản | Hiển thị cảnh báo corpus/fingerprint |
-| Turnstile yêu cầu tương tác | Cho phép người dùng hoàn tất challenge, không bypass |
+| Challenge tắt (`SESSION_CHALLENGE_MODE=disabled`) | Không render widget, không tải script; gửi câu hỏi tạo phiên ẩn danh trực tiếp |
+| Turnstile yêu cầu tương tác (chỉ khi bật) | Cho phép người dùng hoàn tất challenge, không bypass |
 
 ## Kiểm tra thay đổi
 
@@ -102,13 +103,13 @@ Các frame tối nằm cùng trang, tên bắt đầu bằng `Dark`. Frame `14:1
 - Modal có focus trap, Escape và trả focus; vùng nguồn desktop không có focus trap. Trả focus dùng `preventScroll` để giữ vị trí đọc. Autoscroll chỉ hoạt động khi người dùng ở gần cuối.
 - Xác nhận xóa lịch sử dùng dialog trong ứng dụng; không đổi session API hoặc quota. Theme vẫn hoạt động trong tab nếu localStorage không dùng được.
 
-E2E cho redesign dùng fixture và xuất ảnh vào thư mục báo cáo mới, không ghi đè ảnh lịch sử. Cần phân biệt kiểm tra ARIA/bàn phím tự động với kiểm tra screen reader và bàn phím ảo trên thiết bị thật; kiểm tra public deployment, Groq và Turnstile thật thực hiện riêng.
+E2E cho redesign dùng fixture và xuất ảnh vào thư mục báo cáo mới, không ghi đè ảnh lịch sử. Cần phân biệt kiểm tra ARIA/bàn phím tự động với kiểm tra screen reader và bàn phím ảo trên thiết bị thật; kiểm tra public deployment, Groq và challenge (nếu đang bật) thực hiện riêng.
 
 Thư viện gộp nguồn đã lập chỉ mục và bản gốc tham khảo, hỗ trợ tìm tiếng Việt không dấu. Bản gốc chưa lập chỉ mục có nhãn riêng và liên kết mở tài liệu chính thức. Phiên hết hạn giữ bản nháp, xóa token cũ và cho xác minh/gửi lại chủ động; storage bị chặn vẫn giữ phiên trong bộ nhớ tab. Status được cập nhật khi tab trở lại và sau cooldown provider. Báo cáo lệch fingerprint vẫn hiển thị đầy đủ số liệu; nhãn phiên bản nêu rõ cấu hình đã thay đổi.
 
 Ảnh E2E dùng thư mục output của lần chạy Playwright; không ghi đè artifact lịch sử trong `reports/`.
 
-Khi generation được cho phép trên snapshot, không hiển thị banner hoặc lời mở đầu tự động cảnh báo nguồn cũ. Metadata API, ngày kiểm tra nguồn và reports giữ trạng thái thực tế. Câu cảnh báo tự động ở đầu đáp án đã lưu trên thiết bị được bỏ khi hiển thị/sao chép; nội dung gốc trong IndexedDB không bị viết lại.
+Khi generation được cho phép trên snapshot, không hiển thị banner hoặc lời mở đầu tự động cảnh báo nguồn cũ. Với policy v2, đáp án pháp luật có thể kèm một câu ngắn ghi mốc `reviewed_at` và khuyến nghị kiểm tra văn bản gốc; đây là metadata nguồn, không phải banner cảnh báo. Metadata API, ngày kiểm tra nguồn và reports giữ trạng thái thực tế. Câu cảnh báo tự động ở đầu đáp án đã lưu trên thiết bị được bỏ khi hiển thị/sao chép; nội dung gốc trong IndexedDB không bị viết lại.
 
 ## Trang đánh giá
 

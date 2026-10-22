@@ -165,3 +165,73 @@ def test_demo_preserves_daily_session_limit_and_shared_ip_burst_limit(settings, 
         assert chat(sessions[2]).status_code == 200
         response = chat(sessions[2])
         assert response.status_code == 429 and response.headers['retry-after'] == '60'
+
+
+def test_demo_disabled_challenge_keeps_sessions_and_reports_mode(settings, store):
+    import hashlib
+    import hmac
+    import time
+    from pydantic import SecretStr
+    release(store)
+    production = settings.model_copy(update={
+        'app_env': 'production', 'session_challenge_mode': 'disabled',
+        'database_url': SecretStr('postgresql://user@db.example.test/app?sslmode=require'),
+        'ip_hash_secret': SecretStr('x' * 32), 'turnstile_secret_key': SecretStr(''),
+        'ingress_secret': SecretStr('test-ingress-secret'),
+        'cors_origins': 'https://hanoi-land-law.pages.dev',
+    })
+    def signed(method, path, body=b''):
+        stamp = str(int(time.time()))
+        ip = '203.0.113.7'
+        canonical = '\n'.join((method, path, '', stamp, ip, hashlib.sha256(body).hexdigest()))
+        signature = hmac.new(production.ingress_secret.get_secret_value().encode(),
+                             canonical.encode(), hashlib.sha256).hexdigest()
+        return {'X-Landlaw-Time': stamp, 'X-Landlaw-IP': ip, 'X-Landlaw-Signature': signature}
+    with TestClient(create_app(production, store, FakeProvider(production))) as client:
+        session = client.post('/api/v1/sessions', headers=signed('POST', '/api/v1/sessions'))
+        assert session.status_code == 201 and session.json()['token']
+        status = client.get('/api/v1/status', headers=signed('GET', '/api/v1/status')).json()
+        assert status['session_challenge_mode'] == 'disabled'
+
+
+def test_turnstile_mode_requires_a_real_challenge(settings, store):
+    import hashlib
+    import hmac
+    import time
+    from pydantic import SecretStr
+    release(store)
+    production = settings.model_copy(update={
+        'app_env': 'production', 'session_challenge_mode': 'turnstile',
+        'database_url': SecretStr('postgresql://user@db.example.test/app?sslmode=require'),
+        'ip_hash_secret': SecretStr('x' * 32), 'turnstile_secret_key': SecretStr(''),
+        'ingress_secret': SecretStr('test-ingress-secret'),
+        'cors_origins': 'https://hanoi-land-law.pages.dev',
+    })
+    body = b'{}'
+    stamp = str(int(time.time()))
+    ip = '203.0.113.7'
+    canonical = '\n'.join(('POST', '/api/v1/sessions', '', stamp, ip, hashlib.sha256(body).hexdigest()))
+    signature = hmac.new(production.ingress_secret.get_secret_value().encode(),
+                         canonical.encode(), hashlib.sha256).hexdigest()
+    with TestClient(create_app(production, store, FakeProvider(production))) as client:
+        response = client.post('/api/v1/sessions', content=body, headers={
+            'Content-Type': 'application/json',
+            'X-Landlaw-Time': stamp, 'X-Landlaw-IP': ip, 'X-Landlaw-Signature': signature})
+        assert response.status_code == 400
+        assert response.json()['detail']['code'] == 'challenge_required'
+
+
+def test_daily_ip_chat_quota_survives_a_new_session(settings, store):
+    from landlaw.security import hash_ip, utcnow
+    release(store)
+    settings.public_daily_ip_chat_limit = 1
+    with TestClient(create_app(settings, store, FakeProvider(settings))) as client:
+        first = client.post('/api/v1/sessions').json()
+        second = client.post('/api/v1/sessions').json()
+        def chat(session):
+            return client.post('/api/v1/chat', headers={'Authorization':'Bearer '+session['token']},
+                json={'session_id':session['session_id'], 'message':'Bồi thường thu hồi đất'})
+        assert chat(first).status_code == 200
+        assert chat(second).status_code == 429
+        key = f"daily:ip-chat:{hash_ip('testclient', settings.ip_hash_secret.get_secret_value())}:{utcnow().date()}"
+        assert store.rows('SELECT value FROM counters WHERE key=?', (key,))[0]['value'] == 1

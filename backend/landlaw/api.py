@@ -125,30 +125,60 @@ def create_app(settings: Settings | None = None, store: Store | None = None, pro
         repo = state['store']
         release = repo.release(None, True)
         policy = repo.source_gate((release or {}).get('id')) or {}
-        if policy.get('version') != 1:
+        if policy.get('version') not in {1, 2}:
             return []
         passages = {}
         try:
-            for ident, receipt_id in policy['receipts'].items():
-                if document_id and ident != document_id:
-                    continue
-                rows = repo.rows('SELECT receipt FROM source_reviews WHERE id=? AND release_id=? AND document_id=?',
-                                 (receipt_id, release['id'], ident))
-                for row in rows:
-                    for scope in json.loads(row['receipt']).get('verified_scope', []):
+            if policy.get('version') == 2:
+                for ident, entry in policy.get('standing', {}).items():
+                    if document_id and ident != document_id:
+                        continue
+                    eligible = dict(entry.get('standing_chunks') or {})
+                    for scope in entry.get('legal_windows', []):
                         if date.fromisoformat(scope['as_of_from']) <= as_of < date.fromisoformat(scope['as_of_to']):
-                            for cid, checksum in scope['chunk_checksums'].items():
-                                passages[(ident, cid, checksum)] = None
-                                if len(passages) > 256:
-                                    return []  # Bounded public read; malformed/oversized policy fails closed.
+                            eligible.update(scope.get('chunk_checksums') or {})
+                    for cid, checksum in eligible.items():
+                        passages[(ident, cid, checksum)] = None
+                        if len(passages) > 256:
+                            return []  # Bounded public read; malformed/oversized policy fails closed.
+            else:
+                for ident, receipt_id in policy['receipts'].items():
+                    if document_id and ident != document_id:
+                        continue
+                    rows = repo.rows('SELECT receipt FROM source_reviews WHERE id=? AND release_id=? AND document_id=?',
+                                     (receipt_id, release['id'], ident))
+                    for row in rows:
+                        for scope in json.loads(row['receipt']).get('verified_scope', []):
+                            if date.fromisoformat(scope['as_of_from']) <= as_of < date.fromisoformat(scope['as_of_to']):
+                                for cid, checksum in scope['chunk_checksums'].items():
+                                    passages[(ident, cid, checksum)] = None
+                                    if len(passages) > 256:
+                                        return []
         except (ValueError, TypeError, KeyError, AttributeError):
             return []
         reviews = repo.scoped_source_reviews(release, list(passages), as_of)
+        docs_by_id = {d['id']: d for d in (release or {}).get('documents', [])}
         grouped = {}
         for ident, cid, checksum in passages:
-            if reviews.get(ident+':'+cid) != 'fresh':
+            if policy.get('version') == 2:
+                # A standing snapshot still checks the document's legal date
+                # scope; it removes only the operational receipt-age window.
+                if reviews.get(ident+':'+cid) not in {'standing', 'reviewed_window'}:
+                    continue
+                doc = docs_by_id.get(ident)
+                chunk = repo.chunk(cid, release['id'])
+                try:
+                    from .models import Document as DocumentModel
+                    from .source_policy import applicability
+                    if not doc or not chunk or applicability(DocumentModel.model_validate(doc), as_of, chunk) not in {
+                            'current', 'provision_specific', 'context'}:
+                        continue
+                except (ValueError, TypeError):
+                    continue
+            elif reviews.get(ident+':'+cid) == 'fresh':
+                chunk = repo.chunk(cid, release['id'])
+            else:
                 continue
-            chunk = repo.chunk(cid, release['id'])
             if (not chunk or chunk.document_id != ident or chunk.checksum != checksum
                     or digest(chunk.text) != checksum or (locator and chunk.locator != locator)):
                 continue
@@ -191,7 +221,7 @@ def create_app(settings: Settings | None = None, store: Store | None = None, pro
         now, ip = utcnow(), identity(request)
         await reserve([(f"session-create:{ip}:{now.strftime('%Y-%m-%dT%H:%M')}", 10, 60),
                        (f"session-create:{ip}:{now.date()}", 100, 86400)])
-        if settings.app_env=='production':
+        if settings.app_env=='production' and settings.session_challenge_mode=='turnstile':
             payload=await request.json() if await request.body() else {}
             token=payload.get('turnstile_token')
             if not token or not settings.turnstile_secret_key.get_secret_value():
@@ -231,16 +261,20 @@ def create_app(settings: Settings | None = None, store: Store | None = None, pro
         release=await asyncio.to_thread(state['store'].release,None,True)
         fresh=bool(release) and await asyncio.to_thread(state['store'].source_fresh,release)
         gate=await asyncio.to_thread(state['store'].source_gate_status,release)
+        review=await asyncio.to_thread(state['store'].source_review_metadata,release)
         delay=await asyncio.to_thread(state['store'].cooldown)
         sources_available=gate['usable'] if gate is not None else (fresh or settings.allow_stale_generation)
         enabled=bool(release) and settings.generation_enabled and not settings.source_lookup_only and sources_available and not delay
+        warning = None if fresh else ('source_partial_review' if gate and gate.get('usable')
+            and gate.get('review_mode') == 'standing_verified_snapshot' else 'source_stale')
         return {'generation_available':enabled,'reason':'disabled' if not settings.generation_enabled else
             'source_stale' if not sources_available or not release else 'provider_limited' if delay else None,
             'retry_after':delay or None,'corpus_release':(release or {}).get('id'), 'api_version':3,
             'capabilities':{'citizen_answers':not settings.source_lookup_only,'answer_schema_version':2},
             'source_lookup_only':settings.source_lookup_only,'source_lookup_as_of':str(local_date()),
-            'source_fresh':fresh,'warning':None if fresh else 'source_stale',
-            'source_gate':gate,
+            'session_challenge_mode':settings.session_challenge_mode,
+            'source_fresh':fresh,'warning':warning,
+            'source_gate':gate,'source_review':review,
             'source_checked_at':(release or {}).get('checked_at')}
 
     @app.get("/api/v1/documents")
@@ -310,7 +344,8 @@ def create_app(settings: Settings | None = None, store: Store | None = None, pro
         now, ip = utcnow(), identity(request)
         await reserve([(f"minute:{kind}:{who}:{now.strftime('%Y-%m-%dT%H:%M')}", 3, 60)
                        for kind, who in [('session', body.session_id), ('ip', ip)]]+
-                      [(f'daily:session:{body.session_id}:{now.date()}',20,86400)])
+                      [(f'daily:session:{body.session_id}:{now.date()}',20,86400),
+                       (f'daily:ip-chat:{ip}:{now.date()}',settings.public_daily_ip_chat_limit,86400)])
         semaphore=state['semaphore']
         if semaphore.locked():
             raise HTTPException(429, {'code':'system_busy'},headers={'Retry-After':'5'})

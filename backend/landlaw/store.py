@@ -252,26 +252,101 @@ class Store:
             return None
         try:
             policy = json.loads(value)
-            valid = (isinstance(policy, dict) and policy.get('version') == 1
-                     and policy.get('release_id') == release_id
-                     and isinstance(policy.get('receipts'), dict) and bool(policy['receipts'])
-                     and all(isinstance(key, str) and isinstance(ident, str)
-                             and re.fullmatch(r'[0-9a-f]{64}', ident)
-                             for key, ident in policy['receipts'].items()))
+            receipts_valid = (isinstance(policy.get('receipts'), dict) and bool(policy['receipts'])
+                              and all(isinstance(key, str) and isinstance(ident, str)
+                                      and re.fullmatch(r'[0-9a-f]{64}', ident)
+                                      for key, ident in policy['receipts'].items()))
+            valid = (isinstance(policy, dict) and policy.get('release_id') == release_id
+                     and receipts_valid and policy.get('version') == 1)
+            if not valid and isinstance(policy, dict) and policy.get('version') == 2:
+                valid = self._standing_policy_valid(policy, release_id)
             return policy if valid else {'invalid': True}
-        except (ValueError, TypeError):
+        except (ValueError, TypeError, AttributeError):
             return {'invalid': True}
 
-    def scoped_source_reviews(self, release, passages, as_of, review_cache=None):
-        """Strict candidate gate: pinned recent receipts, exact chunks and dates.
+    @staticmethod
+    def _standing_policy_valid(policy, release_id):
+        """A v2 gate is an explicit, reviewed migration to a standing snapshot.
 
-        Missing receipts after a corpus-only restore fail closed. Snapshot
-        permission never overrides this gate, including historical questions.
-        ``review_cache`` lets a caller that already loaded the latest receipts
-        avoid repeating the same read for every reviewed window.
+        It must name the v1 policy it supersedes and pin the exact receipt and
+        passage checksums that were reviewed under that older policy. A missing
+        or malformed migration block fails closed instead of silently
+        reinterpreting historical evidence.
+        """
+        if (policy.get('mode') != 'standing_verified_snapshot'
+                or policy.get('release_id') != release_id
+                or not isinstance(policy.get('receipts'), dict) or not policy['receipts']
+                or not isinstance(policy.get('standing'), dict) or not policy['standing']
+                or set(policy['standing']) != set(policy['receipts'])):
+            return False
+        supersedes = policy.get('supersedes')
+        if (not isinstance(supersedes, dict) or supersedes.get('version') != 1
+                or not isinstance(supersedes.get('policy_sha256'), str)
+                or not re.fullmatch(r'[0-9a-f]{64}', supersedes['policy_sha256'])):
+            return False
+        for doc_id, ident in policy['receipts'].items():
+            entry = policy['standing'].get(doc_id)
+            if (not isinstance(ident, str) or not re.fullmatch(r'[0-9a-f]{64}', ident)
+                    or not isinstance(entry, dict)
+                    or entry.get('receipt_sha256') != ident
+                    or not isinstance(entry.get('reviewed_at'), str)
+                    or not isinstance(entry.get('reviewed_as_of'), str)
+                    or not isinstance(entry.get('chunks'), dict) or not entry['chunks']
+                    or not isinstance(entry.get('standing_chunks'), dict)
+                    or not (entry['standing_chunks'] or entry.get('legal_windows'))
+                    or not all(isinstance(chunk_id, str) and isinstance(checksum, str)
+                               and re.fullmatch(r'[0-9a-f]{64}', checksum)
+                               for chunk_id, checksum in entry['chunks'].items())
+                    or not all(chunk_id in entry['chunks']
+                               and entry['chunks'][chunk_id] == checksum
+                               for chunk_id, checksum in entry['standing_chunks'].items())):
+                return False
+            windows = entry.get('legal_windows', [])
+            if not isinstance(windows, list):
+                return False
+            for scope in windows:
+                if (not isinstance(scope, dict)
+                        or not isinstance(scope.get('as_of_from'), str)
+                        or not isinstance(scope.get('as_of_to'), str)
+                        or not re.fullmatch(r'\d{4}-\d{2}-\d{2}', scope['as_of_from'])
+                        or not re.fullmatch(r'\d{4}-\d{2}-\d{2}', scope['as_of_to'])
+                        or scope['as_of_from'] >= scope['as_of_to']
+                        or not isinstance(scope.get('chunk_checksums'), dict)
+                        or not scope['chunk_checksums']
+                        or any(chunk_id not in entry['chunks']
+                               or entry['chunks'][chunk_id] != checksum
+                               for chunk_id, checksum in scope['chunk_checksums'].items())):
+                    return False
+        return True
+
+    def source_review_metadata(self, release):
+        """Review identity for status and answer notices; never a legal-currency claim."""
+        policy = self.source_gate((release or {}).get('id')) or {}
+        if policy.get('version') == 2 and policy.get('standing'):
+            reviewed = [entry.get('reviewed_at') for entry in policy['standing'].values()]
+            reviewed_as_of = [entry.get('reviewed_as_of') for entry in policy['standing'].values()]
+            return {'mode': 'standing_verified_snapshot',
+                    'reviewed_at': max((value for value in reviewed if value), default=None),
+                    'reviewed_as_of': max((value for value in reviewed_as_of if value), default=None),
+                    'whole_corpus_verified': False,
+                    'policy_sha256': digest(json.dumps(policy, ensure_ascii=False, sort_keys=True))}
+        if policy.get('version') == 1:
+            return {'mode': 'scoped_receipts', 'reviewed_at': None, 'reviewed_as_of': None,
+                    'whole_corpus_verified': False,
+                    'policy_sha256': digest(json.dumps(policy, ensure_ascii=False, sort_keys=True))}
+        return {'mode': 'none', 'reviewed_at': None, 'reviewed_as_of': None,
+                'whole_corpus_verified': False, 'policy_sha256': None}
+
+    def scoped_source_reviews(self, release, passages, as_of, review_cache=None):
+        """Pinned receipt gate for candidate passages.
+
+        Version 1 keeps the original scoped date windows and receipt age limit.
+        Version 2 is a standing verified snapshot: the exact pinned receipt and
+        passage checksums are still required, the latest adverse receipt still
+        wins, but operational age alone never invalidates reviewed evidence.
+        Legal applicability is checked separately at the question date.
         """
         from datetime import date, datetime
-        import hashlib
         policy = self.source_gate((release or {}).get('id')) or {}
         docs = {d['id']: d for d in (release or {}).get('documents', [])}
         states = {}
@@ -281,7 +356,7 @@ class Store:
             key = f'{doc_id}:{chunk_id}'
             states[key] = 'unknown'
             doc = docs.get(doc_id)
-            if policy.get('version') != 1 or not doc:
+            if policy.get('version') not in {1, 2} or not doc:
                 continue
             if doc_id not in review_cache:
                 review_cache[doc_id] = self.rows('SELECT id,status,checked_at,receipt FROM source_reviews WHERE release_id=? '
@@ -299,10 +374,31 @@ class Store:
             try:
                 receipt = json.loads(row['receipt'])
                 canonical = json.dumps(receipt, ensure_ascii=False, sort_keys=True)
-                if hashlib.sha256(canonical.encode()).hexdigest() != row['id']:
+                if digest(canonical) != row['id']:
                     continue
                 stamp = datetime.fromisoformat(row['checked_at'].replace('Z', '+00:00'))
                 if stamp.tzinfo is None or stamp > utcnow():
+                    continue
+                if policy.get('version') == 2:
+                    entry = policy.get('standing', {}).get(doc_id) or {}
+                    if (entry.get('receipt_sha256') != row['id']
+                            or entry.get('chunks', {}).get(chunk_id) != checksum):
+                        continue
+                    # The passage checksum must also appear in the imported receipt's
+                    # own reviewed scope; the migration cannot invent passage coverage.
+                    if not any(scope.get('chunk_checksums', {}).get(chunk_id) == checksum
+                               for scope in receipt.get('verified_scope', [])
+                               if isinstance(scope, dict)):
+                        continue
+                    if entry.get('standing_chunks', {}).get(chunk_id) == checksum:
+                        states[key] = 'standing'
+                        continue
+                    for scope in entry.get('legal_windows', []):
+                        if (scope.get('chunk_checksums', {}).get(chunk_id) == checksum
+                                and date.fromisoformat(scope['as_of_from']) <= as_of
+                                and as_of < date.fromisoformat(scope['as_of_to'])):
+                            states[key] = 'reviewed_window'
+                            break
                     continue
                 if stamp < utcnow()-timedelta(days=7):
                     states[key] = 'stale'
@@ -320,11 +416,13 @@ class Store:
     def source_gate_status(self, release, as_of=None):
         from datetime import date
         from .security import local_date
-        import hashlib
+        from .source_policy import applicability
         target = as_of or local_date()
         policy = self.source_gate((release or {}).get('id'))
         if policy is None:
             return None
+        if policy.get('version') == 2:
+            return self._standing_gate_status(policy, release, target, applicability)
         latest = {}
         for row in self.rows('SELECT id,document_id,checksum,checked_at,status,receipt FROM source_reviews WHERE release_id=?',
                              ((release or {}).get('id'),)):
@@ -353,9 +451,90 @@ class Store:
             except (ValueError, TypeError, KeyError, AttributeError):
                 continue
         return {'mode': 'scoped_receipts',
-                'policy_sha256': hashlib.sha256(json.dumps(policy, ensure_ascii=False, sort_keys=True).encode()).hexdigest(),
+                'policy_sha256': digest(json.dumps(policy, ensure_ascii=False, sort_keys=True)),
                 'eligible_passages': len(approved), 'usable': bool(approved),
+                'review_mode': 'scoped_receipts', 'operational_expiry': None,
                 'whole_corpus_verified': False}
+
+    def _standing_gate_status(self, policy, release, target, applicability):
+        """Count exact reviewed passages that are legally applicable at target.
+
+        The receipt age is intentionally not part of this calculation. A latest
+        adverse receipt still removes its document, and a passage is counted only
+        when its checksum matches both the standing policy and the imported
+        receipt's reviewed scope. The returned mode names the snapshot rather
+        than asserting that the whole corpus or current law is verified.
+        """
+        from datetime import date
+        latest = {}
+        for row in self.rows('SELECT id,document_id,checksum,checked_at,status,receipt FROM source_reviews WHERE release_id=?',
+                             ((release or {}).get('id'),)):
+            key = (row['document_id'], row['checksum'])
+            if key not in latest or row['checked_at'] > latest[key]['checked_at']:
+                latest[key] = row
+        docs = {d['id']: d for d in (release or {}).get('documents', [])}
+        chunk_ids = [chunk_id for entry in policy.get('standing', {}).values()
+                     for chunk_id in entry.get('chunks', {})]
+        chunks = {}
+        if chunk_ids:
+            placeholders = ','.join('?' * len(chunk_ids))
+            for row in self.rows(f'SELECT * FROM chunks WHERE release_id=? AND id IN ({placeholders})',
+                                 ((release or {}).get('id'), *chunk_ids)):
+                chunks[row['id']] = row
+        approved = []
+        reviewed = []
+        reviewed_as_of = []
+        for doc_id, entry in (policy.get('standing') or {}).items():
+            doc = docs.get(doc_id)
+            ident = entry.get('receipt_sha256')
+            row = latest.get((doc_id, doc.get('checksum'))) if doc else None
+            if not doc or not row or row['id'] != ident or row['status'] != 'unchanged':
+                continue
+            try:
+                receipt = json.loads(row['receipt'])
+                if digest(json.dumps(receipt, ensure_ascii=False, sort_keys=True)) != row['id']:
+                    continue
+            except (ValueError, TypeError):
+                continue
+            eligible = {}
+            for chunk_id, checksum in (entry.get('standing_chunks') or {}).items():
+                eligible[chunk_id] = checksum
+            for scope in entry.get('legal_windows', []):
+                try:
+                    if date.fromisoformat(scope['as_of_from']) <= target < date.fromisoformat(scope['as_of_to']):
+                        eligible.update(scope.get('chunk_checksums') or {})
+                except (ValueError, KeyError, TypeError):
+                    continue
+            doc_model = None
+            for chunk_id, checksum in eligible.items():
+                if entry.get('chunks', {}).get(chunk_id) != checksum:
+                    continue
+                chunk = chunks.get(chunk_id)
+                if (not chunk or chunk['document_id'] != doc_id or chunk['checksum'] != checksum
+                        or digest(chunk['text']) != checksum):
+                    continue
+                if not any(scope.get('chunk_checksums', {}).get(chunk_id) == checksum
+                           for scope in receipt.get('verified_scope', []) if isinstance(scope, dict)):
+                    continue
+                try:
+                    doc_model = doc_model or Document.model_validate(doc)
+                    chunk_model = self._chunk(chunk)
+                    if applicability(doc_model, target, chunk_model) not in {'current', 'provision_specific', 'context'}:
+                        continue
+                except (ValueError, TypeError):
+                    continue
+                approved.append(f'{doc_id}:{chunk_id}')
+            reviewed.append(entry.get('reviewed_at'))
+            reviewed_as_of.append(entry.get('reviewed_as_of'))
+        return {'mode': 'standing_verified_snapshot',
+                'policy_sha256': digest(json.dumps(policy, ensure_ascii=False, sort_keys=True)),
+                'eligible_passages': len(approved), 'usable': bool(approved),
+                'review_mode': 'standing_verified_snapshot',
+                'reviewed_at': max((value for value in reviewed if value), default=None),
+                'reviewed_as_of': max((value for value in reviewed_as_of if value), default=None),
+                'operational_expiry': None,
+                'whole_corpus_verified': False,
+                'legal_applicability_checked_at': str(target)}
 
     def consume(self, limits: list[tuple[str, int, int]]):
         return self.consume_weighted([(key,limit,window,1) for key,limit,window in limits])
@@ -757,7 +936,7 @@ class Store:
                 [(r['document_id'], r['id'], r['checksum']) for r in rows_by_id.values()], as_of)
         return [Evidence(chunk=self._chunk(rows_by_id[i]), document=docs[rows_by_id[i]["document_id"]], score=scores[i])
                 for i in sorted(scores, key=lambda i: (
-                    reviewed.get(rows_by_id[i]['document_id']+':'+i) != 'fresh', -scores[i], i))[:8]]
+                    reviewed.get(rows_by_id[i]['document_id']+':'+i) not in {'fresh', 'standing', 'reviewed_window'}, -scores[i], i))[:8]]
 
     def backup(self, target: Path, include_sessions=False):
         # Only corpus/config; deliberately exclude session tokens and personal messages.

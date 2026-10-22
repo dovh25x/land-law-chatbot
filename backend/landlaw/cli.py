@@ -238,5 +238,23 @@ def activate_source_gate(policy: Path):
     finally:store.close()
 
 
+@app.command('build-standing-policy')
+def build_standing_policy_command(output: Path):
+    """Write a v2 candidate derived from the active v1 scoped policy. Read-only."""
+    from .ops import build_standing_policy
+    store=Store(Settings().for_operator())
+    try:
+        policy=build_standing_policy(store)
+        output.write_text(json.dumps(policy,ensure_ascii=False,sort_keys=True,indent=2))
+        typer.echo(json.dumps({'output':str(output),'release_id':policy['release_id'],
+            'supersedes_policy_sha256':policy['supersedes']['policy_sha256'],
+            'documents':len(policy['standing']),
+            'reviewed_passages':sum(len(entry['chunks']) for entry in policy['standing'].values()),
+            'standing_passages':sum(len(entry['standing_chunks']) for entry in policy['standing'].values()),
+            'legal_windows':sum(len(entry['legal_windows']) for entry in policy['standing'].values())},
+            ensure_ascii=False))
+    finally:store.close()
+
+
 if __name__ == "__main__":
     app()

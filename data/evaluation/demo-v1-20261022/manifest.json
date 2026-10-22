@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "suite_id": "demo-v1-20261022",
+  "status": "frozen_before_generation",
+  "frozen_at": "2026-10-22",
+  "as_of": "2026-10-22",
+  "corpus_release": "corpus-1afca764aa6692e0",
+  "source_policy_sha256": "7e6ec4c4f581c9e8e7355288f7f76e61f67bdaed67d95f68d7d541c5b256983d",
+  "scenarios_sha256": "1423aa3023d3079bea32c6fa16d13448fd69f15eea14d97897ccb315d8e97c3d",
+  "cases": {
+    "total": 12,
+    "social_zero_groq": 4,
+    "legal_single_request": 5,
+    "deterministic_safety": 3
+  },
+  "execution": {
+    "real_provider": "groq openai/gpt-oss-120b",
+    "request_cap": 5,
+    "reserved_token_cap": 15000,
+    "reserved_tokens_per_legal_case": 3000,
+    "sequential": true,
+    "retries_or_repair_loops": false,
+    "unrun_policy": "mark NOT RUN; never substitute a fixture or a second attempt"
+  },
+  "review": {
+    "method": "deterministic checks plus manual legal reading; no RAGAS and no independent LLM judge",
+    "legal_review_status": "pending",
+    "not_a_legal_opinion": true
+  }
+}

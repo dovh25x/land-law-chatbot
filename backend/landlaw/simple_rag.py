@@ -15,6 +15,7 @@ from .request_budget import BudgetExceeded
 from .security import local_date, redact
 from .publication import public_status
 from .source_policy import applicability, citation_source_url
+from .conversation import classify
 
 
 class SimpleAnswer(BaseModel):
@@ -23,8 +24,6 @@ class SimpleAnswer(BaseModel):
     limitation: str = Field(default="", max_length=500)
 
 
-GREETING = re.compile(r"^(xin chao|xin chào|chao|chào|hello|hi|cam on|cảm ơn|xin cam on|xin cảm ơn)[!.? ]*$", re.I)
-OUT_OF_SCOPE = re.compile(r"\b(thời tiết|thoi tiet|chứng khoán|chung khoan|nấu ăn|nau an|lập trình|lap trinh)\b", re.I)
 # Vietnamese follow-up openers that refer back to the previous question. Only an
 # explicit reference inherits context, so an unrelated new topic stays standalone.
 FOLLOW_UP = re.compile(
@@ -37,6 +36,19 @@ STOP_WORDS = {
     "theo", "với", "và", "hoặc", "này", "đó", "những", "một", "các",
     "trong", "đến", "từ", "về", "có", "là", "thì", "nếu", "phải",
 }
+
+
+def _review_notice(meta: dict) -> str:
+    """State the review date of a standing snapshot without claiming legal currency."""
+    reviewed = meta.get("reviewed_at")
+    if not reviewed:
+        return ""
+    try:
+        stamp = date.fromisoformat(str(reviewed)[:10])
+    except ValueError:
+        return ""
+    return (f"Nguồn được đối chiếu đến {stamp.day:02d}/{stamp.month:02d}/{stamp.year}. "
+            "Nếu cần xác nhận hiệu lực mới nhất, hãy kiểm tra văn bản gốc.")
 
 
 def _citation(item: Evidence, as_of: date) -> Citation:
@@ -127,7 +139,7 @@ def _retrieval_query(message: str, history) -> tuple[str, bool]:
         return message, False
     previous = next((item.content.strip() for item in reversed(list(history or []))
                      if item.role == 'user'), '')
-    if not previous or GREETING.fullmatch(previous) or OUT_OF_SCOPE.search(previous):
+    if not previous or classify(previous).kind != "legal":
         return message, False
     return f"{previous[:600]} — {message.strip()}", True
 
@@ -141,36 +153,35 @@ class SimpleRAG:
         budget = Budget()
         as_of = request.as_of or local_date()
         trace: list[TraceEvent] = []
+        # Conversation intents are answered before any corpus read. This keeps
+        # social turns independent of database/corpus availability.
+        base = dict(
+            as_of=as_of,
+            trace_id=str(uuid.uuid4()),
+            model=self.provider.settings.generation_model,
+            embedding_model=self.provider.settings.embedding_model,
+            mode="simple_rag",
+        )
+        intent = classify(request.message, request.history)
+        if intent.kind != "legal":
+            status = "clarification_needed" if intent.kind in {"out_of_scope", "ambiguous"} else "answered"
+            return ChatResult(
+                **base,
+                status=status,
+                content=intent.reply,
+                trace=[TraceEvent(step="conversation",
+                                  summary=f"{intent.reason} handled without retrieval")],
+                elapsed_ms=int((time.monotonic() - started) * 1000),
+            )
         release = await asyncio.to_thread(self.store.release, release_id, True)
         publication = await asyncio.to_thread(
             self.store.publication, (release or {}).get("id")
         )
-        base = dict(
-            **public_status(release, publication),
-            as_of=as_of,
+        base.update(public_status(release, publication))
+        base.update(
             corpus_release=(release or {}).get("id"),
-            trace_id=str(uuid.uuid4()),
-            model=self.provider.settings.generation_model,
             embedding_model=(release or {}).get("embedding_model", self.provider.settings.embedding_model),
-            mode="simple_rag",
         )
-        if GREETING.fullmatch(request.message.strip()):
-            return ChatResult(
-                **base,
-                status="answered",
-                content="Xin chào! Tôi có thể giúp bạn tra cứu bồi thường, hỗ trợ và tái định cư trong phạm vi dự án Vành đai 4 Hà Nội. Bạn muốn hỏi vấn đề nào?",
-                answer_notices=["Đây là trợ lý tra cứu nguồn, không thay thế tư vấn pháp lý cho hồ sơ cá nhân."],
-                trace=[TraceEvent(step="conversation", summary="Greeting handled without retrieval")],
-                elapsed_ms=int((time.monotonic() - started) * 1000),
-            )
-        if OUT_OF_SCOPE.search(request.message):
-            return ChatResult(
-                **base,
-                status="clarification_needed",
-                content="Tôi chỉ hỗ trợ tra cứu bồi thường, hỗ trợ và tái định cư liên quan Vành đai 4 Hà Nội. Bạn có thể hỏi về điều kiện, giấy tờ hoặc quy trình trong phạm vi này.",
-                trace=[TraceEvent(step="conversation", summary="Out-of-scope request declined without retrieval")],
-                elapsed_ms=int((time.monotonic() - started) * 1000),
-            )
         if not self.provider.configured:
             raise ProviderUnavailable("GROQ_API_KEY chưa được cấu hình; chưa thể sinh câu trả lời")
         retrieval_query, inherited = _retrieval_query(request.message, request.history)
@@ -180,6 +191,14 @@ class SimpleRAG:
             self.provider.settings.embedding_model, as_of
         )
         gate = await asyncio.to_thread(self.store.source_gate, (release or {}).get("id"))
+        review_meta = await asyncio.to_thread(self.store.source_review_metadata, release)
+        base["source_context"] = {
+            "as_of": str(as_of),
+            "source_checked_at": (release or {}).get("checked_at"),
+            "source_fresh": False,
+            "source_review_mode": review_meta.get("mode"),
+            "source_reviewed_at": review_meta.get("reviewed_at"),
+        }
         if gate is not None:
             reviews = await asyncio.to_thread(
                 self.store.scoped_source_reviews,
@@ -189,12 +208,14 @@ class SimpleRAG:
             )
             evidence = [
                 item for item in evidence
-                if reviews.get(f"{item.document.id}:{item.chunk.id}") == "fresh"
+                if reviews.get(f"{item.document.id}:{item.chunk.id}") in {"fresh", "standing", "reviewed_window"}
             ]
         evidence = [
             item for item in evidence
             if applicability(item.document, as_of, item.chunk) in {"current", "provision_specific", "context"}
         ][:5]
+        base["retrieved_chunk_ids"] = [item.chunk.id for item in evidence]
+        base["evidence_chunk_ids"] = [item.chunk.id for item in evidence]
         trace.append(TraceEvent(step="retrieval", summary=f"Selected {len(evidence)} reviewed passages",
                                 document_ids=[item.document.id for item in evidence]))
         if inherited:
@@ -255,14 +276,21 @@ Chỉ dùng các mã xuất hiện trong CONTEXT; không tạo URL, điều lu�
         if not valid:
             fallback_ids = cited if cited and set(cited) <= set(source_map) else list(source_map)[:2]
             fallback_map = {key: source_map[key] for key in fallback_ids}
+            fallback = _citation_fallback(fallback_map)
+            notice = _review_notice(review_meta)
+            if notice:
+                fallback += f"\n\n{notice}"
             return ChatResult(**base, status="clarification_needed",
-                content=_citation_fallback(fallback_map),
+                content=fallback,
                 citations=[_citation(item, as_of) for item in fallback_map.values()],
                 trace=trace, embedding_calls=budget.embedding_calls, llm_calls=budget.llm_calls,
                 token_usage=budget.tokens, elapsed_ms=int((time.monotonic()-started)*1000))
         citations = [_citation(source_map[key], as_of) for key in cited]
         claim = Claim(text=answer.answer, citation_ids=[c.id for c in citations], section="direct")
         content = answer.answer
+        notice = _review_notice(review_meta)
+        if notice:
+            content += f"\n\n{notice}"
         if answer.limitation:
             content += f"\n\nLưu ý: {answer.limitation}"
         if answer.clarification_question:

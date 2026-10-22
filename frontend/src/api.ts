@@ -23,8 +23,10 @@ export interface GenerationStatus {
   retry_after?: number | null
   corpus_release?: string | null
   source_fresh?: boolean
-  warning?: 'source_stale' | null
+  warning?: 'source_stale' | 'source_partial_review' | null
+  session_challenge_mode?: 'turnstile' | 'disabled'
   source_checked_at?: string | null
+  source_review?: { mode?: string; reviewed_at?: string | null; reviewed_as_of?: string | null; whole_corpus_verified?: boolean }
 }
 
 export class APIError extends Error {
@@ -52,7 +54,7 @@ export async function responseError(response: Response): Promise<APIError> {
   const seconds = raw && /^\d+$/.test(raw) ? Number(raw) : undefined
   const wait = seconds === undefined ? '' : ` Thử lại sau ${seconds} giây.`
   const messages: Record<string, string> = {
-    session_expired: 'Phiên đã hết hạn. Vui lòng xác minh trình duyệt và gửi lại câu hỏi.',
+    session_expired: 'Phiên đã hết hạn. Vui lòng gửi lại câu hỏi.',
     generation_disabled: 'Trả lời bằng AI đang tạm dừng. Bạn vẫn có thể tra cứu thư viện nguồn.',
     system_busy: 'Hệ thống đang bận.',
     challenge_required: 'Vui lòng hoàn tất xác minh trình duyệt trước khi gửi.',
@@ -102,7 +104,9 @@ export async function getSession(turnstileToken?:string): Promise<Session> {
       if (response.status !== 404 && response.status !== 410) throw new Error('Chưa tải được phiên đã lưu. Vui lòng thử lại sau khi backend khởi động.')
       clearSession()
   }
-  const response = await fetch(BASE + '/api/v1/sessions', { method: 'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({turnstile_token:turnstileToken}) })
+  const response = await fetch(BASE + '/api/v1/sessions', turnstileToken
+    ? { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ turnstile_token: turnstileToken }) }
+    : { method: 'POST' })
   if (!response.ok) throw await responseError(response)
   const session: Session = await response.json()
   if (!session.session_id || !session.token) throw new Error('Máy chủ chưa tạo được phiên hợp lệ. Vui lòng thử lại.')
