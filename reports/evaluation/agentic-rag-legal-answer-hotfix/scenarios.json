@@ -1,0 +1,124 @@
+{
+ "suite": "legal-answer-hotfix-deterministic-v1",
+ "date": "2026-10-22",
+ "fixture": {
+  "path": "tests/fixtures/legal-answer-hotfix-release.json",
+  "sha256": "1bbab6bb5f8ac9a2e90738fbe2c5abda025fa3fa5d42b83230c6f9251d4e5c08",
+  "bytes": 397826,
+  "documents": 6,
+  "chunks": 31,
+  "source_snapshot": "corpus-1afca764aa6692e0"
+ },
+ "scenarios": [
+  {
+   "id": "T01",
+   "message": "Nhà tôi nằm trong khu vực quy hoạch đường Vành đai 4 Hà Nội, tôi có được bố trí tái định cư không?",
+   "tool_query": "quy hoạch Vành đai 4 bố trí tái định cư",
+   "mocked_model_draft": {
+    "answer": "Việc nằm trong vùng quy hoạch chưa đủ để kết luận về tái định cư. Khi Nhà nước thu hồi đất ở và hộ đủ điều kiện bồi thường về đất ở, việc bố trí tái định cư được thực hiện theo phương án đã được phê duyệt [S1]. Bạn đã nhận quyết định thu hồi đất hoặc thông báo thu hồi chưa?",
+    "clarification_question": "Bạn đã nhận quyết định thu hồi đất hoặc thông báo thu hồi chưa?",
+    "limitation": "Đây là quy định chung; quyền lợi cụ thể phụ thuộc hồ sơ và phương án của dự án."
+   },
+   "expected_contract": "Grounded answer retained; no regression."
+  },
+  {
+   "id": "T02",
+   "message": "Tôi không có sổ đỏ thì có được bồi thường về đất khi thu hồi không?",
+   "tool_query": "không có sổ đỏ điều kiện bồi thường về đất",
+   "mocked_model_draft": {
+    "answer": "Có giấy chứng nhận quyền sử dụng đất là một căn cứ quan trọng để xét điều kiện được bồi thường về đất khi Nhà nước thu hồi đất [S1]. Trường hợp không có giấy chứng nhận vẫn có thể được xét theo quy định về giấy tờ và nguồn gốc sử dụng đất [S1]. Bạn đang có loại giấy tờ nào?",
+    "clarification_question": "Bạn đang có loại giấy tờ nào?",
+    "limitation": ""
+   },
+   "expected_contract": "Grounded answer retained; no regression."
+  },
+  {
+   "id": "L01",
+   "message": "Tôi có sổ đỏ, khi thu hồi đất có được bồi thường không?",
+   "tool_query": "sổ đỏ bồi thường đất ở thu hồi",
+   "mocked_model_draft": {
+    "answer": "Khi Nhà nước thu hồi hết đất ở hoặc phần diện tích đất ở còn lại nhỏ hơn diện tích tối thiểu được phép tách thửa, hộ gia đình đủ điều kiện được bồi thường có thể được bồi thường bằng giao đất ở có thu tiền sử dụng đất, mua nhà ở tái định cư hoặc bằng tiền [S3]. Điều kiện bồi thường còn phụ thuộc giấy tờ và nguồn gốc của thửa đất; bạn đang có loại giấy tờ nào?",
+    "clarification_question": "Bạn đang có loại giấy tờ nào?",
+    "limitation": ""
+   },
+   "expected_contract": "Direct Hanoi compensation source must be admitted before the unrelated national support provision."
+  },
+  {
+   "id": "L02",
+   "message": "Tôi đã nhận quyết định giao đất tái định cư, vậy có được bồi thường thêm không?",
+   "tool_query": "quyết định giao đất tái định cư",
+   "mocked_model_draft": {
+    "answer": "Hộ gia đình đủ điều kiện bồi thường về đất ở có thể được bồi thường bằng giao đất ở tái định cư theo phương án đã được phê duyệt [S1, S2]. Bạn đã nhận được quyết định giao đất tái định cư chưa?",
+    "clarification_question": "Bạn đã nhận được quyết định giao đất tái định cư chưa?",
+    "limitation": ""
+   },
+   "expected_contract": "Grouped markers must validate and the draft must publish as grounded, not fall back."
+  },
+  {
+   "id": "L03",
+   "message": "Hỗ trợ ổn định đời sống khi thu hồi đất nông nghiệp được tính thế nào?",
+   "tool_query": "hỗ trợ ổn định đời sống đất nông nghiệp",
+   "mocked_model_draft": {
+    "answer": "Hỗ trợ ổn định đời sống được xét cho hộ gia đình, cá nhân đang sử dụng đất nông nghiệp nếu đủ điều kiện được bồi thường về đất [S1]. Mức và thời gian hỗ trợ phụ thuộc quy định của địa phương và diện tích đất thu hồi [S1]. Bạn bị thu hồi bao nhiêu phần trăm diện tích đất nông nghiệp?",
+    "clarification_question": "Bạn bị thu hồi bao nhiêu phần trăm diện tích đất nông nghiệp?",
+    "limitation": ""
+   },
+   "expected_contract": "Grounded answer retained; no regression."
+  },
+  {
+   "id": "T01-CLARIFY",
+   "message": "Nhà tôi trong vùng quy hoạch Vành đai 4 thì có được bố trí tái định cư không?",
+   "tool_query": "quy hoạch Vành đai 4 tái định cư",
+   "mocked_model_draft": {
+    "answer": "Bạn đã nhận được quyết định thu hồi đất hoặc thông báo thu hồi chưa?",
+    "clarification_question": "Bạn đã nhận được quyết định thu hồi đất hoặc thông báo thu hồi chưa?",
+    "limitation": ""
+   },
+   "expected_contract": "Claim-free clarification publishes without citations and without raw excerpts."
+  },
+  {
+   "id": "T02-CLARIFY",
+   "message": "Tôi không có sổ đỏ thì có được bồi thường về đất khi thu hồi không?",
+   "tool_query": "không có sổ đỏ điều kiện bồi thường về đất",
+   "mocked_model_draft": {
+    "answer": "Bạn đang có loại giấy tờ nào?",
+    "clarification_question": "Bạn đang có loại giấy tờ nào?",
+    "limitation": ""
+   },
+   "expected_contract": "Claim-free clarification publishes without citations and without raw excerpts."
+  },
+  {
+   "id": "UNCITED",
+   "message": "Tôi có sổ đỏ thì có được bồi thường về đất không?",
+   "tool_query": "bồi thường đất ở",
+   "mocked_model_draft": {
+    "answer": "Hộ gia đình có sổ đỏ được bồi thường về đất khi Nhà nước thu hồi đất.",
+    "clarification_question": "",
+    "limitation": ""
+   },
+   "expected_contract": "Substantive uncited claim is rejected; fallback names source identities only."
+  },
+  {
+   "id": "GROUPED",
+   "message": "Điều kiện bồi thường về đất là gì?",
+   "tool_query": "điều kiện bồi thường về đất",
+   "mocked_model_draft": {
+    "answer": "Theo Điều 95 [S1, S3], điều kiện bồi thường về đất được xét theo giấy tờ và nguồn gốc đất.",
+    "clarification_question": "",
+    "limitation": ""
+   },
+   "expected_contract": "Grouped markers are accepted; answer publishes with both sources."
+  },
+  {
+   "id": "UNKNOWN",
+   "message": "Điều kiện bồi thường về đất là gì?",
+   "tool_query": "điều kiện bồi thường về đất",
+   "mocked_model_draft": {
+    "answer": "Theo Điều 95 [S1, S9], điều kiện bồi thường về đất được xét theo hồ sơ.",
+    "clarification_question": "",
+    "limitation": ""
+   },
+   "expected_contract": "Unknown marker is rejected and is not published as a citation."
+  }
+ ]
+}

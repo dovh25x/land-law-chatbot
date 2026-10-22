@@ -12,6 +12,8 @@ Trợ lý hội thoại tiếng Việt hỗ trợ tra cứu pháp luật đất 
 - Corpus: `corpus-1afca764aa6692e0`; standing source policy v2 SHA `7e6ec4c4f581c9e8e7355288f7f76e61f67bdaed67d95f68d7d541c5b256983d`.
 - Kết quả release gần nhất: [FINAL_RESULT.md](reports/evaluation/agentic-rag-final/FINAL_RESULT.md) · [metrics.json](reports/evaluation/agentic-rag-final/metrics.json).
 
+> **Trạng thái 22/10/2026:** các mô tả claim-aware guard, fallback ngắn, evidence ordering và bốn gợi ý mới dưới đây phản ánh **hotfix candidate** trên branch `fix/legal-answer-grounding-hotfix`, chưa deploy. Production `b1c10f4` vẫn dùng guard citation toàn cục, fallback trích đoạn cũ và bốn gợi ý cũ cho tới khi release được duyệt.
+
 ## 2. Bài toán và phạm vi
 
 Người dân hỏi bằng ngôn ngữ tự nhiên, thường thiếu dữ kiện và hay hỏi tiếp ("vậy nếu chưa có sổ đỏ?", "đất tôi ở thuộc dự án Vành đai 4"). Yêu cầu cốt lõi:
@@ -24,9 +26,10 @@ Người dân hỏi bằng ngôn ngữ tự nhiên, thường thiếu dữ kiệ
 ## 3. Năng lực chính
 
 - Hội thoại tiếng Việt, có history giới hạn và follow-up theo ngữ cảnh.
+- Trang đầu có bốn gợi ý ngắn về năng lực trợ lý, bồi thường đất ở, hỗ trợ đất nông nghiệp và tái định cư; chọn chỉ điền câu hỏi, không tự gửi.
 - Model tự chọn trả lời trực tiếp hoặc gọi tool đọc-only; ứng dụng kiểm tra tham số và thực thi.
 - Tool `search_legal_evidence` và `open_legal_provision` trả đoạn nguồn kèm số hiệu, điều/khoản, URL và trạng thái áp dụng.
-- Citation inline `[S1]`… bắt buộc cho câu pháp lý; guard deterministically kiểm tra điều/khoản/số hiệu văn bản, điều kiện thêm vào và nguồn bối cảnh.
+- Citation inline `[S1]`… bắt buộc cho **câu khẳng định** pháp lý; câu hỏi làm rõ và câu nêu giới hạn không cần marker. Guard deterministically kiểm tra điều/khoản/số hiệu văn bản, điều kiện thêm vào và nguồn bối cảnh; chấp nhận nhóm marker như `[S1, S2]` nhưng từ chối ID ngoài context.
 - Thư viện văn bản, panel nguồn, citation mở được URL công bố, lịch sử hội thoại trong IndexedDB 7 ngày.
 - Session ẩn danh, signed ingress HMAC, quota theo session/IP, giới hạn LLM/token/concurrency.
 - Chế độ `simple_rag` giữ làm rollback; mode legacy `agentic` (LangGraph) chỉ còn cho tương thích.
@@ -58,9 +61,9 @@ Trình duyệt → Cloudflare Pages/Pages Function (ký HMAC) → FastAPI trên 
 1. Nhận câu hỏi + history giới hạn.
 2. Một request tool-decision tới Groq (`tool_choice="auto"`).
 3. Nếu là xã giao: trả lời trực tiếp, không retrieval.
-4. Nếu là pháp luật: ứng dụng thực thi tool do model chọn (tối đa 2 tool), admission bằng chứng qua policy/ngày hiệu lực; nếu model không gọi tool, ứng dụng fallback retrieval.
+4. Nếu là pháp luật: ứng dụng thực thi tool do model chọn (tối đa 2 tool), admission bằng chứng qua policy/ngày hiệu lực; nếu model không gọi tool, ứng dụng fallback retrieval. Đoạn trực tiếp về bồi thường/hỗ trợ/tái định cư/Luật Đất đai được xếp trước nghị quyết chuyển tiếp; tối đa một đoạn tin/dự án context và ưu tiên locator khác nhau.
 5. Một request final generation với schema `SimpleAnswer`.
-6. Guard kiểm tra citation/reference; nếu không đạt, trả clarification kèm trích đoạn thật, không kết luận quyền lợi.
+6. Guard kiểm tra citation/reference theo từng câu khẳng định. Nếu không đạt, trả clarification ngắn chỉ nêu danh tính nguồn và tối đa một câu hỏi; không đổ trích đoạn nguyên văn và không kết luận quyền lợi.
 
 Hard guard: tối đa 3 LLM request/lượt (bình thường 1–2), tối đa 2 tool execution, không repair loop, không có tool-decision thứ hai. Chi tiết: [docs/AGENTIC_RAG.md](docs/AGENTIC_RAG.md).
 
@@ -78,6 +81,7 @@ Hard guard: tối đa 3 LLM request/lượt (bình thường 1–2), tối đa 2
 - Retrieval hybrid: lexical (`search_tsv`), semantic (pgvector/E5), heading/article index.
 - Candidate ranking có nhánh ưu tiên đoạn đã review để không bị top-K của tài liệu chưa review lấn át.
 - Đoạn chỉ được dùng khi: receipt mới nhất khớp policy, checksum khớp release, policy v2 cho phép (standing hoặc legal window), và `applicability()` trả `current`/`provision_specific`/`context`.
+- Với câu hỏi pháp lý, văn bản trực tiếp về bồi thường/hỗ trợ/tái định cư/Luật Đất đai được xếp trước nghị quyết chuyển tiếp; nếu có đoạn trực tiếp, tối đa một đoạn tin/dự án context được giữ. Search ưu tiên locator khác nhau trước khi lấp slot bằng chunk trùng điều.
 - Số liệu hiện tại: 60 tài liệu, 7.396 chunk, 10 tài liệu có receipt, 74 đoạn reviewed, **43 đoạn admitted** ngày 22/10/2026. `source_fresh=false`, warning `source_partial_review`; không có expiry 24h/72h/7d.
 - Tin chính thức/dự án chỉ là context, không chứng minh quyền lợi hộ dân.
 
@@ -168,16 +172,18 @@ Các script hữu ích: `scripts/diagnose_two_turn_retrieval.py`, `scripts/evalu
 
 ## 16. Kết quả đánh giá hiện tại
 
-**Tất cả số liệu dưới đây là đo thật, mẫu nhỏ; không phải chứng nhận pháp lý.**
+**Tất cả số liệu dưới đây là đo thật, mẫu nhỏ; không phải chứng nhận pháp lý.** Các số liệu release được giữ nguyên lịch sử; chúng không đo hiệu quả của hotfix đang mở.
 
-- Software regression: backend **634 passed**, frontend unit **29 passed**, Playwright desktop/mobile **36 passed**, build pass, secrets scan pass (trước release).
-- Offline retrieval (20 ca gold smoke/supplemental/natural): **Recall@5 = 0,975**, **Admitted Recall@5 = 0,925**.
+- Software regression của release `b1c10f4`: backend **634 passed**, frontend unit **29 passed**, Playwright desktop/mobile **36 passed**, build pass, secrets scan pass (trước release).
+- Hotfix legal-answer (branch `fix/legal-answer-grounding-hotfix`, **chưa deploy**): **18 test tất định** trên fixture chunk verbatim của corpus production; bao phủ T01/T02, L01/L02/L03, clarification không marker, marker nhóm/ID lạ, thứ tự nguồn trực tiếp, social control và evidence coverage của ba gợi ý pháp luật. Bằng chứng tất định không gọi Groq.
+- Pilot live hậu hotfix (22/10, **một phần**): 3 request/4.738 token; A01 social đạt, T01 clarification an toàn nhưng chỉ partial, T02/L02 chưa chạy. Dừng do reservation phẳng 3.000 token/request bị vượt ở request cuối T01, không phải lỗi provider hay chạm trần 10 request/30.000 token. Chi tiết và checksum: [`reports/evaluation/agentic-rag-post-hotfix-pilot/`](reports/evaluation/agentic-rag-post-hotfix-pilot/README.md).
+- Offline retrieval (20 ca gold smoke/supplemental/natural, rerun sau hotfix trên cùng corpus/gold/policy/E5): **Recall@5 = 0,975** (39/40 gold chunk), **Admitted Recall@5 = 0,925** (37/40), top-5 hit **20/20**. Output trùng byte với benchmark trước; không tuyên bố cải thiện retrieval.
 - Offline hai lượt hội thoại quy hoạch/tái định cư: **8/8 admitted** ở cả lượt 1, lượt 2 và follow-up.
 - Pre-deployment live (runtime `4fff5e1`, 16 request): Tool Selection **6/6**; Tool Execution **6/6**; Citation Correctness **7/7**; Unsupported Legal Claim **0**; Task success **1/6 full + 3/6 partial + 2/6 lỗi provider**; False abstention **2/5 ca legal**; L03 **NOT RUN**.
 - Production smoke (runtime `b1c10f4`, 4 request): social `answered`, `agentic_rag`, 1 request, 0 tool; legal L02 `clarification_needed`, 2 request, 1 tool, 2 citation thật (`49/2026/NĐ-CP` Điều 11, `31/2024/QH15` Điều 95). Không có entitlement bịa.
 - Ngân sách: **20/20 request**, **60.000 token reservation**, **18.893 token xác nhận**, 1 request lỗi không nhận usage.
 
-Chi tiết và artifact thô: [FINAL_RESULT.md](reports/evaluation/agentic-rag-final/FINAL_RESULT.md), [metrics.json](reports/evaluation/agentic-rag-final/metrics.json), [pre-deployment-live.json](reports/evaluation/agentic-rag-final/pre-deployment-live.json), [production-smoke-legal.json](reports/evaluation/agentic-rag-final/production-smoke-legal.json).
+Chi tiết và artifact thô: [FINAL_RESULT.md](reports/evaluation/agentic-rag-final/FINAL_RESULT.md), [metrics.json](reports/evaluation/agentic-rag-final/metrics.json), [pre-deployment-live.json](reports/evaluation/agentic-rag-final/pre-deployment-live.json), [production-smoke-legal.json](reports/evaluation/agentic-rag-final/production-smoke-legal.json). Báo cáo hotfix tất định: [agentic-rag-legal-answer-hotfix](reports/evaluation/agentic-rag-legal-answer-hotfix/README.md).
 
 ## 17. Triển khai production
 
@@ -185,7 +191,7 @@ Chi tiết và artifact thô: [FINAL_RESULT.md](reports/evaluation/agentic-rag-f
 - Deploy bằng GitHub Actions `Deploy application`, ghim `source_sha` đã kiểm thử; verify navigation/corpus/fingerprint.
 - Production cấu hình: `EXECUTION_MODE=agentic_rag`, `GENERATION_ENABLED=true`, `SOURCE_LOOKUP_ONLY=false`, `ALLOW_STALE_GENERATION=false`, `SESSION_CHALLENGE_MODE=disabled` (demo).
 - Rollback: `EXECUTION_MODE=simple_rag` + redeploy SHA `625e90e84079950e953267d1e4caaf0cb3e8c8e5`; giữ nguyên corpus/policy.
-- Không deploy thay đổi tài liệu/diagram trong đợt handoff này; production vẫn ở `b1c10f4`.
+- PR hotfix legal-answer không tự deploy. Production vẫn ở `b1c10f4` cho tới khi có phê duyệt ngân sách Groq, kết quả live và release riêng.
 
 ## 18. Bảo mật và quyền riêng tư
 
@@ -197,7 +203,8 @@ Chi tiết và artifact thô: [FINAL_RESULT.md](reports/evaluation/agentic-rag-f
 
 ## 19. Hạn chế đã biết
 
-- **False abstention** còn ở T01/T02 và L02 production: hệ thống trả clarification kèm trích đoạn thay vì câu trả lời có điều kiện đầy đủ.
+- **False abstention trên production `b1c10f4`** còn ở T01/T02 và L02: hệ thống trả clarification kèm trích đoạn thay vì câu trả lời có điều kiện đầy đủ.
+- Hotfix hiện tại sửa lớp lỗi tất định: clarification không marker bị coi là invalid, marker nhóm không được nhận, và thứ tự nguồn để nghị quyết chuyển tiếp lấn đoạn trực tiếp. Đây là bằng chứng regression, **chưa phải** kết quả Groq/live; chỉ kết luận hết false abstention sau khi chạy bộ đo và duyệt.
 - **L03 chưa chạy live** do provider 429/400 trong pre-deploy; chất lượng L03 chưa xác nhận.
 - Coverage nguồn một phần: Luật Nhà ở 2023 Điều 72, Luật Quy hoạch 2025, nhóm khiếu nại và nguồn vận hành Hà Nội chưa có receipt.
 - Chưa có thẩm định pháp lý độc lập; không được xem 7/7 citation đúng cấu trúc là mọi claim đúng ngữ nghĩa.

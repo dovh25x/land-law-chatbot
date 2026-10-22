@@ -27,11 +27,18 @@ test('suggestions populate an editable composer without sending a request', asyn
   let posts = 0
   page.on('request', request => { if (request.url().endsWith('/chat')) posts++ })
   await page.goto('/')
-  const suggestion = page.locator('.topic-grid button').first()
-  const value = await suggestion.innerText()
-  await suggestion.click()
-  await expect(page.getByLabel('Câu hỏi pháp luật')).toHaveValue(value)
-  await expect(page.getByLabel('Câu hỏi pháp luật')).toBeFocused()
+  const suggestions = page.locator('.topic-grid button')
+  await expect(suggestions).toHaveCount(4)
+  const seen = new Set<string>()
+  for (let index = 0; index < 4; index++) {
+    const suggestion = suggestions.nth(index)
+    const value = await suggestion.innerText()
+    seen.add(value)
+    await suggestion.click()
+    await expect(page.getByLabel('Câu hỏi pháp luật')).toHaveValue(value)
+    await expect(page.getByLabel('Câu hỏi pháp luật')).toBeFocused()
+  }
+  expect(seen.size).toBe(4)
   expect(posts).toBe(0)
 })
 

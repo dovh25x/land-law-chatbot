@@ -1,0 +1,176 @@
+{
+  "schema_version": "post-hotfix-pilot-1",
+  "run_id": "agentic-rag-post-hotfix-pilot-20261022",
+  "date": "2026-10-22",
+  "status": "PARTIAL",
+  "review_method": "Assistant review against frozen task expectations and published admitted citations; not independent legal certification. Rejected draft was not retained.",
+  "reviewed_artifacts": {
+    "live.json": "1edab73afec8740526aaa9228572c98a34c8e8ab81dec41d0b5aab75a0b31b36",
+    "request-budget.json": "9ce9d25b9c83f0efe4c7ce7cfda978a3f436900d26b3a88e5a764f32892e3d78"
+  },
+  "approval": {
+    "approved_cases": ["A01", "T01", "T02", "L02"],
+    "max_requests": 10,
+    "reserved_tokens": 30000,
+    "reserved_tokens_per_request": 3000,
+    "sequential": true,
+    "retry": false,
+    "repair": false,
+    "single_attempt": true
+  },
+  "runtime": {
+    "candidate_commit": "d7e2fe59b672",
+    "branch_head_at_run": "76e42e6877262bc6bfd63a81a57040c2bef98e77",
+    "model": "openai/gpt-oss-120b",
+    "embedding_model": "multilingual-e5-small-onnx-q8-window-v1",
+    "execution_mode": "agentic_rag"
+  },
+  "configuration": {
+    "suite_id": "agentic-v1-20261022",
+    "suite_sha256": "91cb76aefb292d8e426f4cc7e9433be5bcc8face35341e0b523a03a25acb7621",
+    "corpus_release": "corpus-1afca764aa6692e0",
+    "policy_sha256": "7e6ec4c4f581c9e8e7355288f7f76e61f67bdaed67d95f68d7d541c5b256983d",
+    "source_gate_passages": 43,
+    "as_of": "2026-10-22",
+    "storage": "temporary SQLite restored from the versioned backup; production database untouched",
+    "t02_history": "frozen suite history in the same session; not the live T01 output"
+  },
+  "budget": {
+    "requests_reserved": 3,
+    "requests_max": 10,
+    "reserved_tokens": 9000,
+    "reserved_token_cap": 30000,
+    "confirmed_usage": 4738,
+    "remaining_reserved_tokens": 21000,
+    "blocked_reason": "single_request_exceeded_reservation",
+    "provider_quota_is_separate": true
+  },
+  "execution": {
+    "completed": ["A01", "T01"],
+    "blocked_before_provider": ["T02"],
+    "not_run": ["L02"],
+    "stopped": "provider_or_budget_error",
+    "stop_detail": "T01 final request confirmed 3,242 tokens against a 3,000 flat reservation; the allocation blocked the next request before T02 reached Groq.",
+    "retry_after_stop": false
+  },
+  "metrics": {
+    "task_success": {
+      "full": 1,
+      "partial": 1,
+      "not_run": 2,
+      "completed_denominator": 2,
+      "not_run_cases": ["T02", "L02"]
+    },
+    "false_abstention": {
+      "status": "OBSERVED",
+      "observed": 1,
+      "cases": ["T01"],
+      "completed_legal_denominator": 1,
+      "answerable_completed_denominator": 0,
+      "not_run_answerable": ["L02"],
+      "note": "T01 provides no conditional explanation despite relevant admitted evidence. Clarification is mechanically allowed by the frozen suite, but remains partial/false abstention under the historical task rubric. No result for T02 or L02; do not extrapolate this 1-case rate."
+    },
+    "grounded_answer": {
+      "status": "NOT MEASURED",
+      "substantive_legal_answers": 0,
+      "note": "T01 is a safe claim-free clarification, not a grounded substantive legal answer. Do not score refusal/clarification as faithfulness success."
+    },
+    "citation_correctness": {
+      "checked": 2,
+      "correct": 2,
+      "denominator": 2,
+      "note": "Published T01 citations are valid source identities and admitted passages; they are not used as support for a substantive claim because the answer is claim-free."
+    },
+    "tool_selection": {
+      "decisions": 2,
+      "correct": 2,
+      "note": "A01 correctly selected no tool; T01 selected search_legal_evidence."
+    },
+    "tool_execution": {
+      "attempted": 1,
+      "succeeded": 1,
+      "rate": 1.0
+    },
+    "unsupported_legal_claims": 0,
+    "raw_excerpt_fallbacks": 0,
+    "requests_actual": 3,
+    "confirmed_tokens": 4738,
+    "latency_ms": {
+      "A01": 635,
+      "T01": 17361,
+      "median_completed": 8998,
+      "p95_small_sample": 17361
+    },
+    "provider_errors": {
+      "http_429": 0,
+      "http_5xx": 0,
+      "format_or_schema": 0,
+      "internal_budget_stop": 1
+    },
+    "l03_live": "NOT RUN"
+  },
+  "cases": [
+    {
+      "id": "A01",
+      "kind": "social",
+      "status": "answered",
+      "outcome": "PASS",
+      "llm_calls": 1,
+      "tool_calls": 0,
+      "embedding_calls": 0,
+      "tokens": 751,
+      "latency_ms": 635,
+      "citations": 0,
+      "evidence_count": 0,
+      "support_level": "full",
+      "checks": {
+        "expected_status": true,
+        "required_term_vanh_dai_4": true,
+        "forbidden_legal_marker": false,
+        "retrieval_expected": false
+      }
+    },
+    {
+      "id": "T01",
+      "kind": "legal",
+      "status": "clarification_needed",
+      "outcome": "PARTIAL",
+      "llm_calls": 2,
+      "tool_calls": 1,
+      "embedding_calls": 1,
+      "tokens": 3987,
+      "latency_ms": 17361,
+      "citations": 2,
+      "evidence_count": 5,
+      "support_level": "insufficient",
+      "validation_reason": "missing_required_citation",
+      "checks": {
+        "expected_status": true,
+        "required_term_thu_hoi": true,
+        "min_citations": true,
+        "raw_excerpt_fallback": false,
+        "full_conditional_answer": false
+      },
+      "note": "Safe claim-free clarification with two source identities; draft had one uncited claim and was not published."
+    },
+    {
+      "id": "T02",
+      "kind": "legal",
+      "status": "error",
+      "outcome": "NOT RUN",
+      "reason": "BudgetExceeded",
+      "note": "Blocked before a provider request because the prior request exceeded the flat 3,000-token reservation.",
+      "llm_calls": null,
+      "provider_requests": 0,
+      "tool_calls": 0,
+      "tokens": 0
+    },
+    {
+      "id": "L02",
+      "kind": "legal",
+      "status": "not_run",
+      "outcome": "NOT RUN",
+      "note": "Not reached after the allocation stopped."
+    }
+  ]
+}

@@ -1,10 +1,10 @@
 import type { Result } from './api'
 
 export const citizenSuggestions = [
-  'Bạn có thể giúp gì cho tôi?',
-  'Có sổ đỏ thì khi Nhà nước thu hồi đất có được bồi thường không?',
-  'Khi thu hồi đất nông nghiệp, người dân được hỗ trợ những gì?',
-  'Bị thu hồi đất ở và phải chuyển nhà thì có được tái định cư không?',
+  'Trợ lý này có thể giúp gì?',
+  'Có sổ đỏ, khi Nhà nước thu hồi đất ở thì điều kiện được bồi thường là gì?',
+  'Khi bị thu hồi đất nông nghiệp, người dân có thể được hỗ trợ những gì?',
+  'Nếu bị thu hồi đất ở và phải chuyển nhà, điều kiện được bố trí tái định cư là gì?',
 ]
 
 /** A malformed v2 projection must never cause unchecked content to be shown. */

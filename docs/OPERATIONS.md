@@ -225,6 +225,14 @@ Log JSON chỉ chứa metadata vận hành; không ghi câu hỏi, đáp án, hi
 Nội dung đi qua Cloudflare/Render tới Groq. Operator phải kiểm tra chính sách và cấu hình data controls của tổ chức tại provider trước khi khẳng định Zero Data Retention; repository không chứng minh được setting tài khoản đó. Lịch sử dài hạn chỉ ở client không phải cam kết nội dung không được xử lý bên ngoài thiết bị.
 
 
+## Hotfix legal-answer đang mở
+
+- Base `982aae704d57127d4544d048c24aa295da40ff12`; production vẫn ở `b1c10f4bad6b89f1d555eb08f5216b4b285be6d6` cho tới khi có phê duyệt release riêng.
+- Hotfix chỉ sửa contract validation/fallback/evidence ordering của `agentic_rag`, không đổi model, embedding, corpus, policy, receipt hay database.
+- Bằng chứng tất định nằm tại `reports/evaluation/agentic-rag-legal-answer-hotfix/`. Pilot Groq được duyệt riêng đã dừng một phần do request vượt reservation; xem [artifact và review](../reports/evaluation/agentic-rag-post-hotfix-pilot/README.md). Chưa deploy, chưa chạy migration.
+- Không tự tiếp tục allocation bị chặn hoặc dùng quota còn dư để chạy lại. Lượt bổ sung cần phê duyệt mới, ledger/output mới và kiểm tra reservation theo request trước HTTP; giữ nguyên mọi attempt cũ.
+- Trước khi release phải review PR, chạy lại bộ kiểm thử trên candidate SHA, chạy acceptance Groq theo ngân sách được duyệt riêng, rồi mới quyết định deploy/rollback.
+
 ## Cổng kiểm tra trước deploy
 
 `scripts/check_release_readiness.py --manifest <inputs.json> --output <report-mới.json>` tính lại điều kiện từ artifact gắn SHA-256, không mở database phục vụ. Manifest gồm `source_commit` và map `inputs`; mỗi phần tử là `{path, sha256}` hoặc null nếu còn thiếu. Các key bắt buộc để đạt gồm `snapshot`, `backup`, `review:smoke`, `review:supplemental`, `review:natural`, `restore:sqlite`, `restore:postgresql`, `software`, `release_download` và `postgres_runtime`. Receipt nguồn thật có thể bổ sung bằng key `source_receipt:<document_id>`; lệnh chỉ áp dụng chúng vào SQLite tạm để kiểm tra, không tạo receipt thay người rà soát.

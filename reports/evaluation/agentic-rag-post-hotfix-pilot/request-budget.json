@@ -1,0 +1,47 @@
+{
+  "version": 1,
+  "identity": "agentic-rag-post-hotfix-pilot-20261022",
+  "max_requests": 10,
+  "max_tokens": 30000,
+  "per_request": 3000,
+  "actual_tokens": 4738,
+  "blocked_reason": "single_request_exceeded_reservation",
+  "summary": {
+    "max_requests": 10,
+    "reserved_token_cap": 30000,
+    "reserved_tokens_per_request": 3000,
+    "requests_reserved": 3,
+    "reserved_tokens": 9000,
+    "remaining_reserved_tokens": 21000,
+    "confirmed_usage": 4738,
+    "reported_actual_tokens": 4738,
+    "blocked_reason": "single_request_exceeded_reservation",
+    "provider_quota_is_separate": true
+  },
+  "entries": [
+    {
+      "id": 0,
+      "state": "confirmed",
+      "reservation": 3000,
+      "wire_bytes": 3200,
+      "confirmed_usage": 751,
+      "http_status": 200
+    },
+    {
+      "id": 1,
+      "state": "confirmed",
+      "reservation": 3000,
+      "wire_bytes": 3259,
+      "confirmed_usage": 745,
+      "http_status": 200
+    },
+    {
+      "id": 2,
+      "state": "confirmed",
+      "reservation": 3000,
+      "wire_bytes": 13047,
+      "confirmed_usage": 3242,
+      "http_status": 200
+    }
+  ]
+}

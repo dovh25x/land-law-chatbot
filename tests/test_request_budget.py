@@ -310,6 +310,20 @@ async def test_operator_suite_stops_after_hard_cap_and_keeps_denominator(setting
         await client.aclose()
 
 
+def test_pilot_allocation_reports_confirmed_usage_and_resumes(tmp_path):
+    from scripts.evaluate_agentic_pilot import PilotAllocation
+    path = tmp_path / 'pilot-budget.json'
+    ledger = PilotAllocation(path, 'post-hotfix-pilot', max_requests=10,
+                             max_tokens=30000, per_request=3000)
+    ident = ledger.reserve({'messages': []})
+    ledger.settle(ident, {'total_tokens': 123}, status_code=200)
+    assert ledger.summary()['confirmed_usage'] == 123
+    assert ledger.summary()['reported_actual_tokens'] == 123
+    assert ledger.summary()['requests_reserved'] == 1
+    assert PilotAllocation(path, 'post-hotfix-pilot', max_requests=10,
+                           max_tokens=30000, per_request=3000).summary()['confirmed_usage'] == 123
+
+
 async def test_resumed_blocked_evaluation_never_starts_a_case(settings, store, monkeypatch):
     from types import SimpleNamespace
 

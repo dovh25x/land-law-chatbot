@@ -14,10 +14,10 @@ Skill được cài ngoài repository tại `~/.config/opencode/skills/diagram-d
 
 | Sơ đồ | Loại | Nguồn HTML | SVG nhúng | Markdown sử dụng | Trạng thái |
 |---|---|---|---|---|---|
-| Kiến trúc triển khai | Architecture | [architecture.html](architecture.html) | [architecture.svg](architecture.svg) | `README.md`, `docs/ARCHITECTURE.md` | Đã cập nhật theo agentic_rag |
-| Luồng quyết định Agentic RAG | Flowchart | [agent-flow.html](agent-flow.html) | [agent-flow.svg](agent-flow.svg) | `docs/ARCHITECTURE.md`, `docs/AGENTIC_RAG.md` | Đã cập nhật theo bounded flow |
+| Kiến trúc triển khai | Architecture | [architecture.html](architecture.html) | [architecture.svg](architecture.svg) | `README.md`, `docs/ARCHITECTURE.md` | Đã cập nhật claim-aware guard |
+| Luồng quyết định Agentic RAG | Flowchart | [agent-flow.html](agent-flow.html) | [agent-flow.svg](agent-flow.svg) | `docs/ARCHITECTURE.md`, `docs/AGENTIC_RAG.md` | Đã cập nhật fallback ngắn và evidence ordering |
 | Trình tự chat | Sequence | [chat-sequence.html](chat-sequence.html) | [chat-sequence.svg](chat-sequence.svg) | `docs/ARCHITECTURE.md` | Đã cập nhật |
-| Retrieval và admission | Data flow | [retrieval-admission.html](retrieval-admission.html) | [retrieval-admission.svg](retrieval-admission.svg) | `README.md`, `docs/ARCHITECTURE.md` | Mới |
+| Retrieval và admission | Data flow | [retrieval-admission.html](retrieval-admission.html) | [retrieval-admission.svg](retrieval-admission.svg) | `README.md`, `docs/ARCHITECTURE.md` | Đã cập nhật claim-aware guard và direct-first |
 | Triển khai và phục hồi | Deployment | [deploy-recovery.html](deploy-recovery.html) | [deploy-recovery.svg](deploy-recovery.svg) | `docs/OPERATIONS.md` | Đã cập nhật |
 | Vòng đời corpus | Process | [corpus-lifecycle.html](corpus-lifecycle.html) | [corpus-lifecycle.svg](corpus-lifecycle.svg) | `docs/redesign/CORPUS.md` | Giữ và recolor |
 | Cổng phát hành (legacy) | Flowchart | [agent-publication-gate.html](agent-publication-gate.html) | [agent-publication-gate.svg](agent-publication-gate.svg) | `docs/AGENT_FLOW.md` | Legacy LangGraph, không phải production |
@@ -31,7 +31,7 @@ python3 ~/tools/diagram-design/skills/diagram-design/scripts/self_check.py --off
 python3 ~/tools/diagram-design/scripts/verify-geometry.py <file>.html
 ```
 
-Kết quả 22/10/2026: 6/6 sơ đồ hiện hành pass self-check và geometry (0 finding); `agent-publication-gate` giữ nguyên như tài liệu legacy. SVG không có JavaScript, không gọi Google Fonts, render trực tiếp trong GitHub Markdown.
+Kết quả 22/10/2026 (sau hotfix legal-answer): 6/6 sơ đồ hiện hành pass self-check và geometry (0 finding); ba sơ đồ thay đổi semantics (`agent-flow`, `architecture`, `retrieval-admission`) đã export lại SVG và xem trực quan. `agent-publication-gate` giữ nguyên như tài liệu legacy, gồm cả tham chiếu font cũ. SVG hiện hành không chứa JavaScript, không gọi Google Fonts và render trực tiếp trong GitHub Markdown.
 
 ## Quy trình cập nhật
 
