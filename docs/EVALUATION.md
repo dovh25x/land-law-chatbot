@@ -161,6 +161,12 @@ Pilot là các case đầu tiên của evaluation đầy đủ trên cùng cấu
 
 **Không** suy ra false abstention đã hết trên production, không suy ra cải thiện chất lượng pháp lý và không thay thế L03 live. Đây là bằng chứng để review hotfix, không phải nghiệm thu release.
 
+### Pilot Groq hậu hotfix — PARTIAL
+
+Pilot riêng đã được duyệt và thực hiện một lần tại SHA `76e42e6`: A01 hoàn tất (PASS), T01 hoàn tất (PARTIAL), T02 bị chặn trước HTTP, L02 NOT RUN. T01 vẫn không giải thích điều kiện từ evidence sẵn có nên giữ đánh giá false abstention theo rubric nội dung; việc suite cho phép `clarification_needed` không đồng nghĩa task success. Không có câu trả lời pháp lý substantive được phát hành để chấm grounded-answer/faithfulness.
+
+Request cuối T01 dùng 3.242 token, vượt reservation phẳng 3.000; allocation chặn request kế tiếp. Không retry, không dùng phần ngân sách còn dư, không deploy. Reservation phẳng không phải upper bound đã chứng minh; lần bổ sung cần phê duyệt và kiểm tra affordability riêng. Output thô, ledger, review gắn checksum và các mẫu số nằm tại [report pilot](../reports/evaluation/agentic-rag-post-hotfix-pilot/README.md). Kết quả này không thay thế artifact release lịch sử.
+
 ## Đánh giá Agentic RAG (release 22/10/2026 — historical runtime)
 
 Các số liệu trong mục này thuộc release `4fff5e1`/`b1c10f4` và được giữ nguyên lịch sử; chúng không đo hotfix legal-answer ở trên.

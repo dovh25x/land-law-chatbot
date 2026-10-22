@@ -1,0 +1,213 @@
+{
+  "mode": "live-pre-deployment",
+  "suite_id": "agentic-v1-20261022",
+  "suite_sha256": "91cb76aefb292d8e426f4cc7e9433be5bcc8face35341e0b523a03a25acb7621",
+  "release_id": "corpus-1afca764aa6692e0",
+  "policy_sha256": "7e6ec4c4f581c9e8e7355288f7f76e61f67bdaed67d95f68d7d541c5b256983d",
+  "model": "openai/gpt-oss-120b",
+  "as_of": "2026-10-22",
+  "request_cap": 10,
+  "token_cap": 30000,
+  "global_request_cap": 10,
+  "global_token_cap": 30000,
+  "ledger": "reports/evaluation/agentic-rag-post-hotfix-pilot/request-budget.json",
+  "ledger_identity": "agentic-rag-post-hotfix-pilot-20261022",
+  "cases": [
+    {
+      "id": "A01",
+      "kind": "social",
+      "message": "Xin chào, bạn giúp được gì cho tôi?",
+      "history": [],
+      "execution": "RUN",
+      "elapsed_ms": 635,
+      "status": "answered",
+      "answer": "Chào bạn! Tôi có thể hỗ trợ giải đáp các thắc mắc liên quan đến đất đai, thu hồi, bồi thường, hỗ trợ, tái định cư, quy hoạch, dự án và các giấy tờ tại khu vực Vành đai 4 Hà Nội. Bạn cần giúp đỡ gì cụ thể?",
+      "citations": [],
+      "evidence_chunk_ids": [],
+      "retrieved_chunk_ids": [],
+      "llm_calls": 1,
+      "tool_calls": 0,
+      "embedding_calls": 0,
+      "token_usage": 751,
+      "support_level": "full",
+      "trace": [
+        {
+          "step": "intent",
+          "tool": null,
+          "summary": "Model-driven turn (ambiguous)",
+          "document_ids": [],
+          "elapsed_ms": 0
+        }
+      ],
+      "decisions": [
+        {
+          "step": "tool_step",
+          "tool_calls": [],
+          "content_chars": 204
+        }
+      ]
+    },
+    {
+      "id": "T01",
+      "kind": "legal",
+      "message": "Tôi có được bố trí chỗ ở mới nếu nhà hiện tại đang ở diện quy hoạch không?",
+      "history": [],
+      "execution": "RUN",
+      "elapsed_ms": 17361,
+      "status": "clarification_needed",
+      "answer": "Mình chưa thể xác nhận câu trả lời tự động đủ chắc chắn cho trường hợp này.\n\nNguồn liên quan đã được đối chiếu: 40/2026/QĐ-UBND — Điều 21; 31/2024/QH15 — Điều 111.\n\nBạn có thể mở phần nguồn để xem nội dung gốc.\n\nĐể trả lời đúng, bạn cho biết: bạn đã nhận quyết định thu hồi đất hoặc thông báo thu hồi chưa?\n\nNguồn được đối chiếu đến 21/10/2026. Nếu cần xác nhận hiệu lực mới nhất, hãy kiểm tra văn bản gốc.",
+      "citations": [
+        {
+          "id": "qd-40-2026-hanoi-13-0-0",
+          "document_id": "qd-40-2026-hanoi",
+          "title": "Quy định một số nội dung bồi thường, hỗ trợ, tái định cư Hà Nội",
+          "document_number": "40/2026/QĐ-UBND",
+          "url": "https://congbao.hanoi.gov.vn/Default.aspx?p_attribute=5335&pageid=45002",
+          "locator": "Điều 21",
+          "excerpt": "CÔNG BÁO HÀ NỘI/Số 132/Ngày 09 -4-2026 19 2. Đối với các xã thì thực hiện bồi thường bằng giao đất ở tái định cư. Diện tích đất ở được bồi thường bằng diện tích đất ở bị thu hồi (trường hợp thửa đất thuộc ranh giới thu hồi từ 2 dự án trở lên, diện tích đất ở được bồi thường bằng tổng diện tích đất thu hồi của các dự án) nhưng không nhỏ hơn suất tái định cư tối thiểu quy định tại khoản 1 Điều 22 của Quy định này và không vượt quá hạn mức giao đất ở mới tối đa tại địa phương, trừ trường hợp quy định tại khoản 3 Điều này . 3. Đối với trường hợp trong hộ gia đình có nhiều thế hệ hoặc có nhiều cặp vợ chồng cùng chung sống trên một thửa đất ở bị thu hồi theo khoản 1, khoản 2 Điều này nếu đủ điều kiện để tách thành từng hộ gia đình riêng theo quy định của pháp luật về cư trú hoặc có nhiều hộ gia đình có chung quyền sử dụng 01 thửa đất ở bị thu hồi thì từng hộ gia đình được mua 01 căn hộ tái định cư hoặc giao 01 suất đất ở tái định cư. Trường hợp tổng diện tích căn hộ tái định cư hoặc đất ở tái định cư mà vượt quá diện tích đất ở bị thu hồi thì được xem xét bán căn hộ có diện tích nhỏ nhất của quỹ nhà tái định cư bố trí cho dự án hoặc bằng hạn mức giao đất ở tối thiểu tại địa phương. 4. Ủy",
+          "checked_at": "2026-10-11T17:32:27Z",
+          "applicability": "current",
+          "source_review_notes": "",
+          "source_kind": "legal",
+          "page": 14,
+          "source_url": "https://datafiles.hanoi.gov.vn/gov-hni/6249/VanBanCongBao/2026/5/29/QDPQ-40-2026_signed.pdf#page=14"
+        },
+        {
+          "id": "luat-dat-dai-2024-110-scope-4",
+          "document_id": "luat-dat-dai-2024",
+          "title": "Luật Đất đai",
+          "document_number": "31/2024/QH15",
+          "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=211189",
+          "locator": "Điều 111",
+          "excerpt": "4. Hộ gia đình, cá nhân có đất ở, người gốc Việt Nam định cư ở nước ngoài, tổ chức kinh tế đang sử dụng đất ở, đang sở hữu nhà ở gắn liền với quyền sử dụng đất tại Việt Nam khi Nhà nước thu hồi đất, nếu có đủ điều kiện được bồi thường về đất ở theo quy định tại Điều 95 của Luật này thì được bồi thường bằng giao đất ở hoặc nhà ở tại khu tái định cư hoặc tại địa điểm khác phù hợp. Trường hợp trong hộ gia đình có nhiều thế hệ hoặc có nhiều cặp vợ chồng cùng chung sống trên một thửa đất ở bị thu hồi nếu đủ điều kiện để tách thành từng hộ gia đình riêng theo quy định của pháp luật về cư trú hoặc có nhiều hộ gia đình có chung quyền sử dụng 01 thửa đất ở bị thu hồi mà diện tích đất ở được bồi thường không đủ để giao riêng cho từng hộ gia đình thì được xem xét hỗ trợ để giao đất ở có thu tiền sử dụng đất hoặc bán, cho thuê, cho thuê mua nhà ở cho các hộ gia đình còn thiếu.",
+          "checked_at": "2026-10-11T17:32:27Z",
+          "applicability": "current",
+          "source_review_notes": "",
+          "source_kind": "legal",
+          "page": 18,
+          "source_url": "https://datafiles.chinhphu.vn/cpp/files/vbpq/2024/9/31-2024-qh15_2.pdf#page=18"
+        }
+      ],
+      "evidence_chunk_ids": [
+        "qd-40-2026-hanoi-13-0-0",
+        "luat-dat-dai-2024-98-0-0",
+        "luat-dat-dai-2024-110-scope-4",
+        "nq-254-2025-1-0-1",
+        "nd-49-2026-11-0-0"
+      ],
+      "retrieved_chunk_ids": [
+        "qd-40-2026-hanoi-13-0-0",
+        "luat-dat-dai-2024-98-0-0",
+        "luat-dat-dai-2024-110-scope-4",
+        "nq-254-2025-1-0-1",
+        "nd-49-2026-11-0-0"
+      ],
+      "llm_calls": 2,
+      "tool_calls": 1,
+      "embedding_calls": 1,
+      "token_usage": 3987,
+      "support_level": "insufficient",
+      "trace": [
+        {
+          "step": "intent",
+          "tool": null,
+          "summary": "Model-driven turn (legal)",
+          "document_ids": [],
+          "elapsed_ms": 0
+        },
+        {
+          "step": "retrieval",
+          "tool": null,
+          "summary": "Retrieved 5 reviewed passage(s)",
+          "document_ids": [
+            "qd-40-2026-hanoi",
+            "luat-dat-dai-2024",
+            "luat-dat-dai-2024",
+            "nq-254-2025",
+            "nd-49-2026"
+          ],
+          "elapsed_ms": 0
+        },
+        {
+          "step": "tool",
+          "tool": "search_legal_evidence",
+          "summary": "search_legal_evidence(quyền bố trí chỗ ở mới khi nhà hiện tại nằm trong diện quy hoạch tại Vành đai 4)",
+          "document_ids": [
+            "qd-40-2026-hanoi",
+            "luat-dat-dai-2024",
+            "luat-dat-dai-2024",
+            "nq-254-2025",
+            "nd-49-2026"
+          ],
+          "elapsed_ms": 0
+        },
+        {
+          "step": "citation_validation",
+          "tool": null,
+          "summary": "Validation: valid=false; reason_codes=missing_required_citation; cited=2; unknown=0; claims=3; uncited=1",
+          "document_ids": [
+            "qd-40-2026-hanoi",
+            "luat-dat-dai-2024"
+          ],
+          "elapsed_ms": 0
+        },
+        {
+          "step": "clarification",
+          "tool": null,
+          "summary": "Safe clarification fallback: reason_codes=missing_required_citation",
+          "document_ids": [
+            "qd-40-2026-hanoi",
+            "luat-dat-dai-2024"
+          ],
+          "elapsed_ms": 0
+        }
+      ],
+      "decisions": [
+        {
+          "step": "tool_step",
+          "tool_calls": [],
+          "content_chars": 204
+        },
+        {
+          "step": "tool_step",
+          "tool_calls": [
+            "search_legal_evidence"
+          ],
+          "content_chars": 0
+        }
+      ]
+    },
+    {
+      "id": "T02",
+      "kind": "legal",
+      "message": "đất tôi ở thuộc dự án Vành đai 4",
+      "history": [
+        {
+          "role": "user",
+          "content": "Tôi có được bố trí chỗ ở mới nếu nhà hiện tại đang ở diện quy hoạch không?"
+        },
+        {
+          "role": "assistant",
+          "content": "Mình đã tra cứu các quy định liên quan đến thu hồi đất và tái định cư; để kết luận cần biết hồ sơ cụ thể."
+        }
+      ],
+      "execution": "ERROR",
+      "reason": "BudgetExceeded"
+    }
+  ],
+  "stopped": "provider_or_budget_error",
+  "budget": {
+    "max_requests": 10,
+    "reserved_token_cap": 30000,
+    "reserved_tokens_per_request": 3000,
+    "requests_reserved": 3,
+    "reserved_tokens": 9000,
+    "remaining_reserved_tokens": 21000,
+    "confirmed_usage": 4738,
+    "reported_actual_tokens": 4738,
+    "blocked_reason": "single_request_exceeded_reservation",
+    "provider_quota_is_separate": true
+  },
+  "total_requests": 3,
+  "total_confirmed_usage": 4738
+}

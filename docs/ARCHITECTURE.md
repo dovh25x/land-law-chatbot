@@ -115,7 +115,7 @@ Không có planner request, không có verifier LLM, không tự nối điều k
 ## Giới hạn đã biết
 
 - Production `b1c10f4` còn false abstention ở T01/T02 và L02 (clarification thay vì câu trả lời có điều kiện đầy đủ).
-- Hotfix hiện tại chỉ chứng minh regression tất định cho claim-free clarification, marker nhóm và thứ tự nguồn; chưa có kết quả Groq/live nên chưa thể tuyên bố hết false abstention.
+- Hotfix có regression tất định cho claim-free clarification, marker nhóm và thứ tự nguồn. [Pilot Groq hậu hotfix](../reports/evaluation/agentic-rag-post-hotfix-pilot/README.md) mới hoàn tất một phần: T01 còn false abstention, T02/L02 chưa chạy; chưa đủ điều kiện release.
 - L03 chưa chạy live; coverage nguồn còn thiếu Luật Nhà ở 2023 Điều 72, Luật Quy hoạch 2025, nhóm khiếu nại và nguồn vận hành Hà Nội.
 - `answer_schema_version=1` trong agentic_rag, nên structured claim renderer chưa hoạt động trong production.
 - Chưa có thẩm định pháp lý độc lập; citation đúng cấu trúc không đồng nghĩa mọi claim đúng ngữ nghĩa.

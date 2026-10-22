@@ -229,7 +229,8 @@ Nội dung đi qua Cloudflare/Render tới Groq. Operator phải kiểm tra chí
 
 - Base `982aae704d57127d4544d048c24aa295da40ff12`; production vẫn ở `b1c10f4bad6b89f1d555eb08f5216b4b285be6d6` cho tới khi có phê duyệt release riêng.
 - Hotfix chỉ sửa contract validation/fallback/evidence ordering của `agentic_rag`, không đổi model, embedding, corpus, policy, receipt hay database.
-- Chưa gửi request Groq, chưa deploy, chưa chạy migration. Báo cáo tất định nằm tại `reports/evaluation/agentic-rag-legal-answer-hotfix/`; đây không phải kết quả live.
+- Bằng chứng tất định nằm tại `reports/evaluation/agentic-rag-legal-answer-hotfix/`. Pilot Groq được duyệt riêng đã dừng một phần do request vượt reservation; xem [artifact và review](../reports/evaluation/agentic-rag-post-hotfix-pilot/README.md). Chưa deploy, chưa chạy migration.
+- Không tự tiếp tục allocation bị chặn hoặc dùng quota còn dư để chạy lại. Lượt bổ sung cần phê duyệt mới, ledger/output mới và kiểm tra reservation theo request trước HTTP; giữ nguyên mọi attempt cũ.
 - Trước khi release phải review PR, chạy lại bộ kiểm thử trên candidate SHA, chạy acceptance Groq theo ngân sách được duyệt riêng, rồi mới quyết định deploy/rollback.
 
 ## Cổng kiểm tra trước deploy
