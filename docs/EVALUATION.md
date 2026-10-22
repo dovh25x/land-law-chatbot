@@ -13,8 +13,17 @@ Unit/E2E dùng fixture để kiểm tra phần mềm. Generation benchmark và o
 | `smoke` | 20 | Quy định, hiệu lực, ngữ cảnh, hỏi làm rõ và từ chối |
 | `supplemental` | 4 | Regression probes cho lỗi đã xác định |
 | `natural` | 8 | Câu hỏi tự nhiên và các trường hợp giới hạn |
+| `demo-v1-20261022` | 12 | 4 hội thoại, 5 pháp luật có retrieval và 3 kiểm tra an toàn tất định |
 
 JSONL và freeze/checksum nằm trong `data/evaluation/`. Giữ nguyên bộ đã khóa; không đổi gold hoặc tiêu chí sau khi thấy đáp án để tăng điểm. Những hạn chế annotation được ghi trong báo cáo thay vì sửa ngầm.
+
+### Demo 12 ca ngày 22/10/2026
+
+Bộ `data/evaluation/demo-v1-20261022/` được khóa trước khi sinh câu trả lời, gồm 4 ca xã giao không retrieval, 5 ca pháp luật dùng đúng một request mỗi ca và 3 ca an toàn tất định. Không dùng RAGAS hoặc LLM judge độc lập. Preflight ngày 22/10/2026 đạt 4/4 xã giao, 3/3 an toàn và 5/5 ca pháp luật truy xuất được chứng cứ đã review; **không gửi request Groq nào**, không dùng token và cả 5 ca pháp luật được ghi `NOT RUN`. Kết quả nằm tại `reports/evaluation/demo-v1-20261022/preflight.json`.
+
+Lần chạy thật được thực hiện sau khi duyệt ngân sách bổ sung 5 request và 15.000 token đặt trước (3.000 token mỗi ca), tuần tự, không retry/repair. Lần chạy đầu dừng do lỗi event loop sau một request đã xác nhận; ledger được giữ tại `reports/evaluation/demo-v1-20261022/attempts/`. Lần chạy thay thế hoàn tất 5/5 ca với 5 request và 10.442 token thực tế. Kiểm tra tự động đạt 4/5; đọc thủ công đạt 4/5 `task_success`, 3/5 `grounded`, 0/5 false abstention. L01 có điều kiện/dẫn nguồn sai, L02 thêm điều kiện không có trong evidence, L03 nhầm nhãn Nghị định 49/QĐ40 trong phần Lưu ý và L05 bị auto-check bắt nhầm cụm phủ định. Vì vậy kết quả **không** chứng minh chất lượng pháp lý và **không** thay thế thẩm định độc lập.
+
+Ca chưa chạy phải giữ `NOT RUN`; không thay bằng fixture và không chọn lại đáp án đẹp. Kết quả tự động chỉ kiểm tra trạng thái, citation, cụm bắt buộc/cấm và số request; `task_success`/`grounded` được đọc thủ công. Raw và bản review có checksum liên kết nằm trong `reports/evaluation/demo-v1-20261022/`.
 
 Mỗi ca chạy một lần trên cấu hình cuối. Chỉ chạy lại khi lỗi thực thi hoặc thay đổi liên quan; giữ mọi attempt và retry count. Không lựa chọn đáp án tốt nhất từ nhiều lượt.
 

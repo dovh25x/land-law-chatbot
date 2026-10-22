@@ -30,6 +30,16 @@
 
 `progress` phản ánh sự kiện thực thi quan sát được. Draft và suy nghĩ nội bộ không được phát ra client. Contract chi tiết nằm trong [API](API.md).
 
+### Bounded Agentic RAG
+
+`EXECUTION_MODE=agentic_rag` chạy `BoundedAgenticRAG`: model tự chọn trả lời trực
+tiếp hoặc gọi tối đa hai tool đọc-only (`search_legal_evidence`,
+`open_legal_provision`), tối đa ba request Groq mỗi lượt. Tool decision không
+gửi strict JSON schema vì Groq không hỗ trợ đồng thời tool use và Structured
+Outputs; câu trả lời cuối là request schema riêng. Mọi đoạn vẫn phải qua
+standing policy, applicability và citation/reference guard. `simple_rag` được
+giữ làm rollback mode. Chi tiết: [Agentic RAG](AGENTIC_RAG.md).
+
 ### Agent flow
 
 ![Agent flow](diagrams/agent-flow.svg)
@@ -68,6 +78,12 @@ Query và corpus dùng cùng contract `multilingual-e5-small-onnx-q8-window-v1`,
 
 SQLite và PostgreSQL có lexical backend khác nhau. Vì vậy storage backend tham gia fingerprint và phải được ghi trong báo cáo; kết quả retrieval của hai backend không tự tương đương.
 
+## Cổng nguồn đã review
+
+Citation chỉ được dùng nếu đoạn văn khớp checksum với active release và vượt cổng source review. Policy v2 `standing_verified_snapshot` giữ nguyên receipt SHA256, checksum tài liệu/đoạn và `checked_at` đã có; nó không tự gia hạn timestamp và không mở rộng sang đoạn chưa review. Các cửa sổ quay vòng ngày trở thành `standing_chunks`; các cửa sổ dài hơn được giữ nguyên trong `legal_windows`. Hiệu lực pháp lý vẫn được kiểm tra tại ngày hỏi; receipt changed/unavailable hoặc thiếu receipt loại bỏ chứng cứ ngay.
+
+Policy v2 ghi `supersedes` hash của policy v1, chỉ được kích hoạt qua operator command và có thể rollback bằng cách khôi phục policy v1 đã lưu. `source_fresh` mô tả toàn corpus; `source_gate.usable` chỉ mô tả phạm vi đã review và không tuyên bố snapshot là pháp luật hiện hành. Chi tiết vận hành ở [runbook](OPERATIONS.md#candidate-có-phạm-vi-nguồn-đã-duyệt).
+
 ## Lưu trữ và quyền riêng tư
 
 | Vị trí | Dữ liệu | Vòng đời |
@@ -85,7 +101,7 @@ Server không lưu messages, answer cache hoặc trace chi tiết giữa các l�
 - Browser input, lịch sử và tài liệu đều là dữ liệu không đáng tin. Chúng không được cấp quyền thực thi SQL, shell hoặc URL tùy ý.
 - Citation cũ chỉ giúp xác định ngữ cảnh. Kết luận mới phải có chứng cứ được truy xuất và kiểm tra lại.
 - Cloudflare là ingress tin cậy để xác định IP và ký HMAC. Backend production từ chối API request không có chữ ký hợp lệ; không tin IP do client tự khai báo.
-- Turnstile được xác minh server-side khi tạo phiên. Chỉ số hoặc header do client gửi không thể chuyển usage sang operator.
+- Turnstile là challenge tạo phiên khi `SESSION_CHALLENGE_MODE=turnstile` và được xác minh server-side. Mode `disabled` chỉ bỏ challenge, không bỏ session, token, ingress, quota hay budget. Chỉ số hoặc header do client gửi không thể chuyển usage sang operator.
 - Markdown không thực thi HTML. Credentials không xuất hiện trong `VITE_*`, response hoặc log nội dung.
 
 Chi tiết cấu hình và xử lý sự cố nằm trong [vận hành](OPERATIONS.md).

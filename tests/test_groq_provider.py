@@ -61,6 +61,44 @@ async def test_groq_transport_has_no_remote_tools_and_does_not_expose_reasoning(
     finally:await provider.close()
 
 
+async def test_groq_tool_step_uses_native_tools_without_structured_output(settings,store):
+    seen=[]
+    def respond(request):
+        seen.append(json.loads(request.content))
+        return httpx.Response(200,json={'choices':[{'message':{
+            'content':'',
+            'tool_calls':[{'id':'call-1','type':'function','function':{
+                'name':'search_legal_evidence','arguments':'{"query":"điều kiện bồi thường"}'}}]},
+            'finish_reason':'tool_calls'}],'usage':{'total_tokens':21}})
+    config=settings.model_copy(update={'llm_provider':'groq','groq_api_key':settings.groq_api_key})
+    provider=GroqProvider(config,store,httpx.AsyncClient(transport=httpx.MockTransport(respond)))
+    budget=Budget()
+    try:
+        result=await provider.tool_step(
+            'Choose a tool',[{'role':'user','content':'Tôi có được bồi thường không?'}],
+            [{'type':'function','function':{'name':'search_legal_evidence','parameters':{'type':'object'}}}],budget)
+        assert result['tool_calls'][0]['name']=='search_legal_evidence'
+        assert 'tools' in seen[0] and seen[0]['tool_choice']=='auto'
+        assert 'response_format' not in seen[0]
+        assert budget.llm_calls==1 and budget.tokens==21
+    finally:await provider.close()
+
+
+async def test_groq_tool_step_format_failure_is_not_retried(settings,store):
+    from landlaw.provider import ProviderUnavailable
+    attempts=[]
+    def respond(request):
+        attempts.append(json.loads(request.content))
+        return httpx.Response(400,json={'error':{'code':'tool_use_failed','message':'private output'}})
+    config=settings.model_copy(update={'llm_provider':'groq','groq_api_key':settings.groq_api_key})
+    provider=GroqProvider(config,store,httpx.AsyncClient(transport=httpx.MockTransport(respond)))
+    try:
+        with pytest.raises(ProviderUnavailable):
+            await provider.tool_step('Choose a tool',[{'role':'user','content':'x'}],[{'type':'function','function':{'name':'x'}}],Budget())
+        assert len(attempts)==1
+    finally:await provider.close()
+
+
 async def test_groq_daily_quota_stops_without_retry_loop(settings,store):
     class Probe(BaseModel):ok: bool
     config=settings.model_copy(update={'llm_provider':'groq','groq_api_key':settings.groq_api_key})

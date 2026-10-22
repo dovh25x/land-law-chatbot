@@ -150,7 +150,7 @@ class ChatRequest(BaseModel):
     message: str = Field(min_length=1, max_length=4000)
     project: Literal['ring4'] | None = None
     as_of: date | None = None
-    mode: Literal["agentic", "simple_rag"] = "agentic"
+    mode: Literal["agentic", "simple_rag", "agentic_rag"] = "agentic"
     request_id: UUID = Field(default_factory=uuid4)
     history: list[HistoryMessage] = Field(default_factory=list, max_length=8)
     interaction: Interaction | None = None

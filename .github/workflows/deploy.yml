@@ -7,7 +7,7 @@ on:
         required: false
         type: string
       verify_public_chat:
-        description: 'Also attempt chat with the real managed Turnstile challenge'
+        description: 'Also verify public chat using the configured SESSION_CHALLENGE_MODE'
         required: false
         type: boolean
         default: false
@@ -49,7 +49,7 @@ jobs:
         working-directory: frontend
         env:
           VITE_API_BASE_URL: ${{ vars.API_BASE_URL }}
-          VITE_TURNSTILE_SITE_KEY: ${{ vars.VITE_TURNSTILE_SITE_KEY }}
+          VITE_TURNSTILE_SITE_KEY: ${{ vars.SESSION_CHALLENGE_MODE != 'disabled' && vars.VITE_TURNSTILE_SITE_KEY || '' }}
       - run: env -u ALLOW_STALE_GENERATION python -m pytest -q && python scripts/check_secrets.py
       - run: npm test
         working-directory: frontend
@@ -73,12 +73,14 @@ jobs:
           LIVE_BASE_URL: ${{ vars.API_BASE_URL }}
           LIVE_EXPECTED_CORPUS: ${{ vars.CORPUS_RELEASE }}
           LIVE_REPORT_DIR: reports/deployment-live
+          LIVE_SESSION_CHALLENGE_MODE: ${{ vars.SESSION_CHALLENGE_MODE || 'turnstile' }}
       - name: Optional public chat verification
         if: ${{ inputs.verify_public_chat }}
         run: node scripts/verify_live_ui.mjs --chat
         env:
           LIVE_BASE_URL: ${{ vars.API_BASE_URL }}
           LIVE_REPORT_DIR: reports/deployment-chat
+          LIVE_SESSION_CHALLENGE_MODE: ${{ vars.SESSION_CHALLENGE_MODE || 'turnstile' }}
       - uses: actions/upload-artifact@v4
         if: always()
         with:

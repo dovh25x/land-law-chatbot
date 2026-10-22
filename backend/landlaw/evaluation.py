@@ -50,7 +50,7 @@ def preserve_attempt(folder,record,origin='executed'):
 
 
 def configuration_fingerprint(settings):
-    files = [Path(__file__).with_name(name) for name in ("agent.py", "synthesis_context.py", "provider.py", "request_budget.py", "embedding.py", "local_embedding.py", "store.py", "retrieval.py", "config.py", "publication.py", "models.py", "security.py", "api.py", "catalog.py", "citizen.py", "ops.py")]
+    files = [Path(__file__).with_name(name) for name in ("agent.py", "agentic_rag.py", "legal_text.py", "synthesis_context.py", "provider.py", "request_budget.py", "embedding.py", "local_embedding.py", "store.py", "retrieval.py", "config.py", "publication.py", "models.py", "security.py", "api.py", "catalog.py", "citizen.py", "ops.py")]
     configuration = {"model": settings.generation_model, "llm_provider": settings.llm_provider, "embedding_model": settings.embedding_model,
                      "dimensions": settings.embedding_dimensions, 'embedding_provider':settings.embedding_provider,
                      "timeout_seconds": settings.turn_timeout_seconds,

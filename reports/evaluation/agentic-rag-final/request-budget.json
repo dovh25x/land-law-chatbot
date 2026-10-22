@@ -1,0 +1,150 @@
+{
+  "version": 1,
+  "identity": "agentic-rag-final-20261022",
+  "max_requests": 20,
+  "max_tokens": 60000,
+  "per_request": 3000,
+  "actual_tokens": 14852,
+  "blocked_reason": null,
+  "summary": {
+    "max_requests": 20,
+    "reserved_token_cap": 60000,
+    "reserved_tokens_per_request": 3000,
+    "requests_reserved": 16,
+    "reserved_tokens": 48000,
+    "remaining_reserved_tokens": 12000,
+    "reported_actual_tokens": 14852,
+    "blocked_reason": null,
+    "provider_quota_is_separate": true
+  },
+  "entries": [
+    {
+      "id": 0,
+      "state": "confirmed",
+      "reservation": 3000,
+      "wire_bytes": 3200,
+      "confirmed_usage": 751,
+      "http_status": 200
+    },
+    {
+      "id": 1,
+      "state": "confirmed",
+      "reservation": 3000,
+      "wire_bytes": 3259,
+      "confirmed_usage": 746,
+      "http_status": 200
+    },
+    {
+      "id": 2,
+      "state": "estimated",
+      "reservation": 3000,
+      "wire_bytes": 9042,
+      "confirmed_usage": null,
+      "http_status": 400
+    },
+    {
+      "id": 3,
+      "state": "confirmed",
+      "reservation": 3000,
+      "wire_bytes": 11991,
+      "confirmed_usage": 2916,
+      "http_status": 200
+    },
+    {
+      "id": 4,
+      "state": "confirmed",
+      "reservation": 3000,
+      "wire_bytes": 3514,
+      "confirmed_usage": 800,
+      "http_status": 200
+    },
+    {
+      "id": 5,
+      "state": "confirmed",
+      "reservation": 3000,
+      "wire_bytes": 9296,
+      "confirmed_usage": 2096,
+      "http_status": 200
+    },
+    {
+      "id": 6,
+      "state": "confirmed",
+      "reservation": 3000,
+      "wire_bytes": 12362,
+      "confirmed_usage": 2891,
+      "http_status": 200
+    },
+    {
+      "id": 7,
+      "state": "confirmed",
+      "reservation": 3000,
+      "wire_bytes": 3323,
+      "confirmed_usage": 764,
+      "http_status": 200
+    },
+    {
+      "id": 8,
+      "state": "estimated",
+      "reservation": 3000,
+      "wire_bytes": 9194,
+      "confirmed_usage": null,
+      "http_status": 400
+    },
+    {
+      "id": 9,
+      "state": "confirmed",
+      "reservation": 3000,
+      "wire_bytes": 9783,
+      "confirmed_usage": 2397,
+      "http_status": 200
+    },
+    {
+      "id": 10,
+      "state": "confirmed",
+      "reservation": 3000,
+      "wire_bytes": 3273,
+      "confirmed_usage": 735,
+      "http_status": 200
+    },
+    {
+      "id": 11,
+      "state": "estimated",
+      "reservation": 3000,
+      "wire_bytes": 9038,
+      "confirmed_usage": null,
+      "http_status": 400
+    },
+    {
+      "id": 12,
+      "state": "estimated",
+      "reservation": 3000,
+      "wire_bytes": 11911,
+      "confirmed_usage": null,
+      "http_status": 429
+    },
+    {
+      "id": 13,
+      "state": "confirmed",
+      "reservation": 3000,
+      "wire_bytes": 3311,
+      "confirmed_usage": 756,
+      "http_status": 200
+    },
+    {
+      "id": 14,
+      "state": "estimated",
+      "reservation": 3000,
+      "wire_bytes": 9057,
+      "confirmed_usage": null,
+      "http_status": 400
+    },
+    {
+      "id": 15,
+      "state": "estimated",
+      "reservation": 3000,
+      "wire_bytes": 10680,
+      "confirmed_usage": null,
+      "http_status": 429
+    }
+  ]
+}

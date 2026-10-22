@@ -1,14 +1,17 @@
 import { CitizenAnswer } from './CitizenAnswer'
 import { citizenSuggestions, validCitizenAnswer } from './citizen'
 import { listConversations, saveConversation, deleteConversation, clearConversations, type Conversation, newConversation as makeConversation } from './history'
-import { useEffect, useRef, useState } from 'react'
+import { lazy, Suspense, useEffect, useRef, useState } from 'react'
 import ReactMarkdown from 'react-markdown'
 import { ArrowDown, ArrowUp, BookOpen, CircleHelp, Copy, LoaderCircle, Menu, MessageSquare, Moon, PanelLeftClose, PanelLeftOpen, Plus, Search, Square, Sun, Trash2, X } from 'lucide-react'
 import { ask, APIError, BACKEND_CONFIGURED, cachedSession, clearSession, getJSON, getSession, type Citation, type GenerationStatus, type LegalDocument, type Readiness, type Result, type Session } from './api'
 import { canSubmit } from './connection'
 import { useConnection } from './useConnection'
 import { ConfirmDialog, DataPanel, DocumentRow, formatDate, generationLabel, SourcePanel, sourceKinds, answerText, useDialog, useMedia } from './ui'
-import { Turnstile } from './Turnstile'
+const challengeEnabled = !!import.meta.env.VITE_TURNSTILE_SITE_KEY
+const Turnstile = challengeEnabled
+  ? lazy(() => import('./Turnstile').then(module => ({ default: module.Turnstile })))
+  : null
 
 type Page = 'chat' | 'sources'
 type Message = { id: string; role: 'user' | 'assistant'; content: string; result?: Result }
@@ -119,7 +122,7 @@ function App() {
     if (busy || !input.trim()) return
     if (!BACKEND_CONFIGURED) { setError('Backend chưa được triển khai. Bản xem trước hiện chỉ có giao diện.'); return }
     if (!canGenerate) { setError(`${generationLabel(generation)}. Bạn vẫn có thể tra cứu thư viện nguồn.`); return }
-    if (import.meta.env.VITE_TURNSTILE_SITE_KEY && !hasSession && !challenge) { setError('Vui lòng hoàn tất xác minh trình duyệt trước khi gửi.'); return }
+    if (challengeEnabled && !hasSession && !challenge) { setError('Vui lòng hoàn tất xác minh trình duyệt trước khi gửi.'); return }
     const question = input.trim()
     setPage('chat'); setNavOpen(false); setInput(''); setError(''); setBusy(true); stopReason.current = ''; nearBottom.current = true
     const messageId = crypto.randomUUID()
@@ -229,7 +232,7 @@ function App() {
         {showBottom && !!messages.length && <button className="scroll-bottom icon-button" onClick={() => { nearBottom.current = true; chatScroll.current?.scrollTo({ top: chatScroll.current.scrollHeight, behavior: 'instant' }); setShowBottom(false) }} aria-label="Về cuối hội thoại"><ArrowDown size={20}/></button>}
           {error && <div className="error-banner" role="alert"><div><strong>Chưa thể hoàn tất lượt hỏi</strong><p>{error}</p></div><button className="icon-button" onClick={() => setError('')} aria-label="Đóng thông báo"><X size={18}/></button></div>}
           {connectionMessage && <div className="connection-note" role="status"><p>{connectionMessage}</p><button className="button button-secondary" disabled={connecting} onClick={manualRefresh}>Kiểm tra kết nối</button></div>}
-          {canGenerate && <Turnstile key={challengeVersion} onToken={setChallenge} hasSession={hasSession}/>}<div className="composer"><form id="chat-form" onSubmit={event => { event.preventDefault(); void send() }}><textarea ref={inputRef} value={input} disabled={!runtimeKnown || sourceOnly} onChange={event => setInput(event.target.value)} placeholder={sourceOnly ? 'Chế độ tra cứu nguồn — mở thư viện để đọc các đoạn đã review' : !runtimeKnown ? 'Đang xác minh khả năng trả lời; bạn có thể mở thư viện nguồn' : mobile ? 'Nhập câu hỏi pháp luật…' : 'Hỏi về bồi thường, hỗ trợ, tái định cư…'} maxLength={4000} rows={1} aria-label="Câu hỏi pháp luật" onKeyDown={event => { if (event.key === 'Enter' && !event.shiftKey && !event.nativeEvent.isComposing && !touch) { event.preventDefault(); void send() } }}/></form><div className="composer-bottom"><span className="composer-hint">{sourceOnly ? 'Không có lượt gọi model trong chế độ này' : touch ? 'Chỉ nhập tình huống đã ẩn danh' : 'Enter để gửi · Shift + Enter xuống dòng'}</span>{busy ? <button type="button" className="send-button" onClick={() => { stopReason.current = 'Bạn đã dừng lượt hỏi. Server không lưu đáp án để khôi phục.'; abortRef.current?.abort() }} aria-label="Dừng lượt hỏi"><Square size={18}/></button> : <button className="send-button" type="submit" form="chat-form" disabled={!canGenerate || !input.trim()} aria-label="Gửi câu hỏi"><ArrowUp size={20}/></button>}</div></div>
+          {canGenerate && Turnstile && <Suspense fallback={null}><Turnstile key={challengeVersion} onToken={setChallenge} hasSession={hasSession}/></Suspense>}<div className="composer"><form id="chat-form" onSubmit={event => { event.preventDefault(); void send() }}><textarea ref={inputRef} value={input} disabled={!runtimeKnown || sourceOnly} onChange={event => setInput(event.target.value)} placeholder={sourceOnly ? 'Chế độ tra cứu nguồn — mở thư viện để đọc các đoạn đã review' : !runtimeKnown ? 'Đang xác minh khả năng trả lời; bạn có thể mở thư viện nguồn' : mobile ? 'Nhập câu hỏi pháp luật…' : 'Hỏi về bồi thường, hỗ trợ, tái định cư…'} maxLength={4000} rows={1} aria-label="Câu hỏi pháp luật" onKeyDown={event => { if (event.key === 'Enter' && !event.shiftKey && !event.nativeEvent.isComposing && !touch) { event.preventDefault(); void send() } }}/></form><div className="composer-bottom"><span className="composer-hint">{sourceOnly ? 'Không có lượt gọi model trong chế độ này' : touch ? 'Chỉ nhập tình huống đã ẩn danh' : 'Enter để gửi · Shift + Enter xuống dòng'}</span>{busy ? <button type="button" className="send-button" onClick={() => { stopReason.current = 'Bạn đã dừng lượt hỏi. Server không lưu đáp án để khôi phục.'; abortRef.current?.abort() }} aria-label="Dừng lượt hỏi"><Square size={18}/></button> : <button className="send-button" type="submit" form="chat-form" disabled={!canGenerate || !input.trim()} aria-label="Gửi câu hỏi"><ArrowUp size={20}/></button>}</div></div>
           {!sourceOnly && !messages.length && <div className="topic-grid" aria-label="Gợi ý câu hỏi">{suggestions.map(question => <button key={question} onClick={() => { setInput(question); inputRef.current?.focus() }}><span>{question}</span></button>)}</div>}
           <span className="sr-only" aria-live="polite">{copiedId ? 'Đã sao chép đáp án' : ''}</span><p className="disclaimer">{messages.length ? 'Có thể có sai sót. Hãy kiểm tra nguồn trước khi áp dụng.' : 'Bản thử nghiệm · Chỉ nhập tình huống đã ẩn danh.'}</p>
         </div>

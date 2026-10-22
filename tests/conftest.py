@@ -28,10 +28,11 @@ def store(settings):
     repo.close()
 
 
-def document(doc_id="law", text="Điều 1. Điều kiện bồi thường khi thu hồi đất phải được kiểm tra theo hồ sơ.", **kwargs):
-    chunk = Chunk(id=f"{doc_id}-1", document_id=doc_id, text=text, locator="Điều 1", checksum=digest(text))
+def document(doc_id="law", text="Điều 1. Điều kiện bồi thường khi thu hồi đất phải được kiểm tra theo hồ sơ.",
+             locator="Điều 1", source_kind="legal", **kwargs):
+    chunk = Chunk(id=f"{doc_id}-1", document_id=doc_id, text=text, locator=locator, checksum=digest(text))
     return Document(id=doc_id, title=f"Văn bản {doc_id}", url="https://vanban.chinhphu.vn/?docid=1",
-                    source_kind="legal", jurisdiction="national", checked_at=utcnow(), checksum=digest(doc_id),
+                    source_kind=source_kind, jurisdiction="national", checked_at=utcnow(), checksum=digest(doc_id),
                     effective_from=date(2024, 8, 1), applicability_verified=True, chunks=[chunk], **kwargs)
 
 

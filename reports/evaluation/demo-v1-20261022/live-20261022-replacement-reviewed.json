@@ -1,0 +1,504 @@
+{
+  "suite_id": "demo-v1-20261022",
+  "suite_sha256": "1423aa3023d3079bea32c6fa16d13448fd69f15eea14d97897ccb315d8e97c3d",
+  "mode": "live",
+  "generated_at": "2026-10-22T06:49:18.128285+00:00",
+  "source_commit": "1e1b47081fac0ac8541745d3b5b6f3dd07beb567",
+  "backup_sha256": "0281735e470bc3da7011967597e790d9a729ebcafed6cfe7f872bb65463d9c9a",
+  "policy_sha256": "7e6ec4c4f581c9e8e7355288f7f76e61f67bdaed67d95f68d7d541c5b256983d",
+  "real_provider_requests": 5,
+  "cases": [
+    {
+      "id": "C01",
+      "kind": "social",
+      "execution": "RUN",
+      "expected_intent": "greeting",
+      "actual_intent": "greeting",
+      "status": "answered",
+      "answer": "Xin chào! Mình là trợ lý AI hỗ trợ tra cứu pháp luật đất đai liên quan đến dự án Vành đai 4 Hà Nội. Bạn đang quan tâm đến bồi thường, hỗ trợ hay tái định cư?",
+      "llm_calls": 0,
+      "embedding_calls": 0,
+      "citations": 0,
+      "evidence_chunk_ids": [],
+      "passed": true
+    },
+    {
+      "id": "C02",
+      "kind": "social",
+      "execution": "RUN",
+      "expected_intent": "capabilities",
+      "actual_intent": "capabilities",
+      "status": "answered",
+      "answer": "Mình có thể giải thích các quy định về thu hồi đất, điều kiện bồi thường, những khoản hỗ trợ có thể áp dụng và vấn đề tái định cư. Bạn có thể mô tả tình huống của mình, chẳng hạn loại đất, giấy tờ hiện có hoặc lý do thu hồi, để mình hỗ trợ tra cứu.",
+      "llm_calls": 0,
+      "embedding_calls": 0,
+      "citations": 0,
+      "evidence_chunk_ids": [],
+      "passed": true
+    },
+    {
+      "id": "C03",
+      "kind": "social",
+      "execution": "RUN",
+      "expected_intent": "gratitude",
+      "actual_intent": "gratitude",
+      "status": "answered",
+      "answer": "Rất vui được hỗ trợ bạn. Nếu còn tình huống nào cần tra cứu, bạn cứ mô tả thêm nhé.",
+      "llm_calls": 0,
+      "embedding_calls": 0,
+      "citations": 0,
+      "evidence_chunk_ids": [],
+      "passed": true
+    },
+    {
+      "id": "C04",
+      "kind": "social",
+      "execution": "RUN",
+      "expected_intent": "out_of_scope",
+      "actual_intent": "out_of_scope",
+      "status": "clarification_needed",
+      "answer": "Mình chỉ hỗ trợ các câu hỏi về pháp luật đất đai trong phạm vi dự án Vành đai 4 Hà Nội. Bạn có thể hỏi về thu hồi đất, bồi thường, hỗ trợ hoặc tái định cư.",
+      "llm_calls": 0,
+      "embedding_calls": 0,
+      "citations": 0,
+      "evidence_chunk_ids": [],
+      "passed": true
+    },
+    {
+      "id": "L01",
+      "execution": "RUN",
+      "status": "answered",
+      "answer": "Để được bồi thường khi Nhà nước thu hồi đất ở, hộ gia đình phải đáp ứng các điều kiện sau: \n1. Đang sử dụng đất ở (không phải đất thuê trả tiền thuê đất hằng năm) và sở hữu nhà ở gắn liền với quyền sử dụng đất (theo Điều 95 Luật Đất đai)【S1】. \n2. Đủ điều kiện được bồi thường về đất theo quy định tại Điều 95 Luật Đất đai (có quyền sử dụng đất ở, không vi phạm quy định về cư trú, không thuộc diện cấm thu hồi)【S3】【S5】. \n3. Khi đủ điều kiện, hộ gia đình có thể nhận bồi thường bằng: \n   - Giao đất ở tái định cư hoặc nhà ở tại khu tái định cư (theo Điều 111 Luật Đất đai)【S3】; \n   - Hoặc bằng tiền, hoặc bằng đất có mục đích sử dụng khác (theo Điều 98 Luật Đất đai)【S5】. \n4. Nếu hộ gia đình có nhiều thế hệ hoặc nhiều cặp vợ chồng chung sống trên một thửa đất, có thể tách thành các hộ riêng và mỗi hộ được bồi thường một suất đất hoặc một căn hộ tái định cư (theo quy định về tách hộ trong Điều 111 và quy định tại Quy định một số nội dung bồi thường, hỗ trợ, tái định cư Hà Nội)【S3】【S4】.\n\nNguồn được đối chiếu đến 21/10/2026. Nếu cần xác nhận hiệu lực mới nhất, hãy kiểm tra văn bản gốc.\n\nLưu ý: Câu trả lời dựa trên các quy định chung trong Luật Đất đai và Quy định một số nội dung bồi thường, hỗ trợ, tái định cư Hà Nội; không xét đến các trường hợp đặc thù hoặc quy định chi tiết của địa phương có thể thay đổi quyền lợi cụ thể.",
+      "citations": [
+        {
+          "chunk_id": "luat-dat-dai-2024-97-1-0",
+          "document_id": "luat-dat-dai-2024",
+          "locator": "Điều 95",
+          "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=211189",
+          "applicability": "current"
+        },
+        {
+          "chunk_id": "luat-dat-dai-2024-110-scope-4",
+          "document_id": "luat-dat-dai-2024",
+          "locator": "Điều 111",
+          "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=211189",
+          "applicability": "current"
+        },
+        {
+          "chunk_id": "luat-dat-dai-2024-100-2-0",
+          "document_id": "luat-dat-dai-2024",
+          "locator": "Điều 98",
+          "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=211189",
+          "applicability": "current"
+        },
+        {
+          "chunk_id": "qd-40-2026-hanoi-13-0-0",
+          "document_id": "qd-40-2026-hanoi",
+          "locator": "Điều 21",
+          "url": "https://congbao.hanoi.gov.vn/Default.aspx?p_attribute=5335&pageid=45002",
+          "applicability": "current"
+        }
+      ],
+      "evidence_chunk_ids": [
+        "luat-dat-dai-2024-97-1-0",
+        "qd-40-2026-hanoi-12-1-0",
+        "luat-dat-dai-2024-110-scope-4",
+        "qd-40-2026-hanoi-13-0-0",
+        "luat-dat-dai-2024-100-2-0"
+      ],
+      "llm_calls": 1,
+      "embedding_calls": 1,
+      "token_usage": 2358,
+      "elapsed_ms": 12707,
+      "source_context": {
+        "as_of": "2026-10-22",
+        "source_checked_at": "2026-10-11T17:32:27Z",
+        "source_fresh": false,
+        "source_review_mode": "standing_verified_snapshot",
+        "source_reviewed_at": "2026-10-21T17:36:54.310157+00:00"
+      },
+      "trace": [
+        {
+          "step": "retrieval",
+          "summary": "Selected 5 reviewed passages"
+        },
+        {
+          "step": "citation_validation",
+          "summary": "Validated 4 inline source markers"
+        },
+        {
+          "step": "generation",
+          "summary": "Generated one source-marked answer"
+        }
+      ],
+      "auto_checks": {
+        "required_terms": true,
+        "forbidden_patterns": true,
+        "status": true,
+        "citations_from_evidence": true,
+        "min_citations": true,
+        "no_unknown_marker": true,
+        "one_request": true
+      },
+      "auto_pass": true,
+      "manual_review": {
+        "task_success": false,
+        "grounded": false,
+        "false_abstention": false,
+        "notes": "Không đạt: mục 2 gán điều kiện của Điều 95 cho [S3] (Điều 111) và [S5] (Điều 98); cụm \"không vi phạm quy định về cư trú\" không có trong nguồn. Mục 1 cũng gộp yêu cầu sở hữu nhà ở của Điều 98 vào điều kiện bồi thường. Không nêu số tiền hay quyền lợi cá nhân, nhưng nội dung điều kiện chưa đúng nguồn.",
+        "reviewer": "OpenCode technical review (not independent legal counsel)",
+        "reviewed_at": "2026-10-22T06:54:17.339369+00:00"
+      },
+      "kind": "legal",
+      "preflight_retrieval": "PASS"
+    },
+    {
+      "id": "L02",
+      "execution": "RUN",
+      "status": "answered",
+      "answer": "Bạn có thể được bồi thường nếu quyết định giao đất của cơ quan nhà nước có thẩm quyền đáp ứng một trong các điều kiện quy định tại khoản 1 Điều 95 của Luật Đất đai, cụ thể là có quyết định giao đất (hoặc quyết định cho thuê, quyết định cho phép chuyển mục đích sử dụng đất) – theo quy định này, việc không có Giấy chứng nhận không tự động loại trừ quyền được bồi thường [S1]. Tuy nhiên, để được bồi thường thực tế, bạn cần đáp ứng đầy đủ các điều kiện khác của Điều 95 (ví dụ: đất thuộc diện thu hồi, có phương án bồi thường được phê duyệt, và không thuộc các trường hợp không được bồi thường theo Điều 107, 81, 82, …) và phải được xác nhận bởi cơ quan có thẩm quyền.\n\nNguồn được đối chiếu đến 21/10/2026. Nếu cần xác nhận hiệu lực mới nhất, hãy kiểm tra văn bản gốc.\n\nLưu ý: Câu trả lời này dựa trên các quy định chung trong Luật Đất đai và Nghị quyết liên quan; nếu thiếu thông tin chi tiết về loại đất, vị trí, và các quyết định liên quan, quyền lợi và mức bồi thường cụ thể của bạn vẫn còn phụ thuộc vào việc cơ quan nhà nước xác nhận đủ điều kiện.\n\nĐể làm rõ hồ sơ: Bạn đang thuộc loại đất nào (đất nông nghiệp, phi nông nghiệp, đất ở…) và đã nhận được quyết định giao đất của cơ quan nào?",
+      "citations": [
+        {
+          "chunk_id": "luat-dat-dai-2024-98-0-1",
+          "document_id": "luat-dat-dai-2024",
+          "locator": "Điều 95",
+          "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=211189",
+          "applicability": "current"
+        }
+      ],
+      "evidence_chunk_ids": [
+        "luat-dat-dai-2024-98-0-1",
+        "luat-dat-dai-2024-110-scope-4",
+        "nq-254-2025-3-0-1",
+        "nq-254-2025-2-0-1",
+        "nq-254-2025-1-0-1"
+      ],
+      "llm_calls": 1,
+      "embedding_calls": 1,
+      "token_usage": 2766,
+      "elapsed_ms": 7495,
+      "source_context": {
+        "as_of": "2026-10-22",
+        "source_checked_at": "2026-10-11T17:32:27Z",
+        "source_fresh": false,
+        "source_review_mode": "standing_verified_snapshot",
+        "source_reviewed_at": "2026-10-21T17:36:54.310157+00:00"
+      },
+      "trace": [
+        {
+          "step": "retrieval",
+          "summary": "Selected 5 reviewed passages"
+        },
+        {
+          "step": "citation_validation",
+          "summary": "Validated 1 inline source markers"
+        },
+        {
+          "step": "generation",
+          "summary": "Generated one source-marked answer"
+        }
+      ],
+      "auto_checks": {
+        "required_terms": true,
+        "forbidden_patterns": true,
+        "status": true,
+        "citations_from_evidence": true,
+        "min_citations": true,
+        "no_unknown_marker": true,
+        "one_request": true
+      },
+      "auto_pass": true,
+      "manual_review": {
+        "task_success": true,
+        "grounded": false,
+        "false_abstention": false,
+        "notes": "Trả lời đúng hướng: quyết định giao đất là một căn cứ thay thế giấy chứng nhận. Tuy nhiên dẫn \"khoản 1 Điều 95\" thay vì khoản 2; thêm \"phương án bồi thường được phê duyệt\" và các Điều 107/81/82 không có trong evidence. Không đưa ra kết luận chắc chắn.",
+        "reviewer": "OpenCode technical review (not independent legal counsel)",
+        "reviewed_at": "2026-10-22T06:54:17.339369+00:00"
+      },
+      "kind": "legal",
+      "preflight_retrieval": "PASS"
+    },
+    {
+      "id": "L03",
+      "execution": "RUN",
+      "status": "answered",
+      "answer": "Nếu thu hồi 80% diện tích đất nông nghiệp đang sử dụng và không phải di chuyển chỗ ở, hộ gia đình, cá nhân sẽ được hỗ trợ ổn định đời sống trong thời gian 12 tháng. [S1]\n\nNguồn được đối chiếu đến 21/10/2026. Nếu cần xác nhận hiệu lực mới nhất, hãy kiểm tra văn bản gốc.\n\nLưu ý: Câu trả lời dựa trên quy định tại Điều 17, khoản 1, điểm a của Nghị định 49/2026/NĐ-CP; không có thông tin chi tiết về các trường hợp ngoại lệ khác.",
+      "citations": [
+        {
+          "chunk_id": "qd-40-2026-hanoi-9-1-0",
+          "document_id": "qd-40-2026-hanoi",
+          "locator": "Điều 17",
+          "url": "https://congbao.hanoi.gov.vn/Default.aspx?p_attribute=5335&pageid=45002",
+          "applicability": "current"
+        }
+      ],
+      "evidence_chunk_ids": [
+        "qd-40-2026-hanoi-9-1-0",
+        "qd-40-2026-hanoi-9-1-1"
+      ],
+      "llm_calls": 1,
+      "embedding_calls": 1,
+      "token_usage": 1385,
+      "elapsed_ms": 7317,
+      "source_context": {
+        "as_of": "2026-10-22",
+        "source_checked_at": "2026-10-11T17:32:27Z",
+        "source_fresh": false,
+        "source_review_mode": "standing_verified_snapshot",
+        "source_reviewed_at": "2026-10-21T17:36:54.310157+00:00"
+      },
+      "trace": [
+        {
+          "step": "retrieval",
+          "summary": "Selected 2 reviewed passages"
+        },
+        {
+          "step": "citation_validation",
+          "summary": "Validated 1 inline source markers"
+        },
+        {
+          "step": "generation",
+          "summary": "Generated one source-marked answer"
+        }
+      ],
+      "auto_checks": {
+        "required_terms": true,
+        "status": true,
+        "citations_from_evidence": true,
+        "min_citations": true,
+        "no_unknown_marker": true,
+        "one_request": true
+      },
+      "auto_pass": true,
+      "manual_review": {
+        "task_success": true,
+        "grounded": true,
+        "false_abstention": false,
+        "notes": "Đúng thời hạn 12 tháng cho thu hồi trên 70% đất nông nghiệp, không phải di chuyển chỗ ở; nguồn QĐ40 Điều 17. Phần Lưu ý gọi nhầm Nghị định 49/2026 thay vì QĐ40; cần sửa nhãn nguồn nhưng không làm sai con số.",
+        "reviewer": "OpenCode technical review (not independent legal counsel)",
+        "reviewed_at": "2026-10-22T06:54:17.339369+00:00"
+      },
+      "kind": "legal",
+      "preflight_retrieval": "PASS"
+    },
+    {
+      "id": "L04",
+      "execution": "RUN",
+      "status": "answered",
+      "answer": "Nếu hộ gia đình ở phường bị thu hồi hết đất ở và đủ điều kiện được bồi thường, Nhà nước sẽ thực hiện bồi thường bằng việc bán căn hộ chung cư tái định cư. Trường hợp hộ gia đình có nhu cầu bồi thường bằng đất và quỹ đất tái định cư trên địa bàn phường đủ quy mô, diện tích, Ủy ban nhân dân phường sẽ giao đất ở tái định cư theo quy định; nếu quỹ đất không đủ và hộ muốn tái định cư ở địa bàn xã khác, Ủy ban nhân dân Thành phố sẽ xem xét từng dự án cụ thể. (Điều 21 [S1])\n\nNguồn được đối chiếu đến 21/10/2026. Nếu cần xác nhận hiệu lực mới nhất, hãy kiểm tra văn bản gốc.\n\nLưu ý: Câu trả lời dựa trên các quy định chung trong Điều 21 của Quy định một số nội dung bồi thường, hỗ trợ, tái định cư Hà Nội; không xét đến các yếu tố cá nhân cụ thể của hộ gia đình.",
+      "citations": [
+        {
+          "chunk_id": "qd-40-2026-hanoi-12-1-0",
+          "document_id": "qd-40-2026-hanoi",
+          "locator": "Điều 21",
+          "url": "https://congbao.hanoi.gov.vn/Default.aspx?p_attribute=5335&pageid=45002",
+          "applicability": "current"
+        }
+      ],
+      "evidence_chunk_ids": [
+        "qd-40-2026-hanoi-12-1-0",
+        "qd-40-2026-hanoi-13-0-0",
+        "nd-88-2024-0-11-1",
+        "nd-88-2024-0-11-0"
+      ],
+      "llm_calls": 1,
+      "embedding_calls": 1,
+      "token_usage": 2175,
+      "elapsed_ms": 7559,
+      "source_context": {
+        "as_of": "2026-10-22",
+        "source_checked_at": "2026-10-11T17:32:27Z",
+        "source_fresh": false,
+        "source_review_mode": "standing_verified_snapshot",
+        "source_reviewed_at": "2026-10-21T17:36:54.310157+00:00"
+      },
+      "trace": [
+        {
+          "step": "retrieval",
+          "summary": "Selected 4 reviewed passages"
+        },
+        {
+          "step": "citation_validation",
+          "summary": "Validated 1 inline source markers"
+        },
+        {
+          "step": "generation",
+          "summary": "Generated one source-marked answer"
+        }
+      ],
+      "auto_checks": {
+        "required_terms": true,
+        "forbidden_patterns": true,
+        "status": true,
+        "citations_from_evidence": true,
+        "min_citations": true,
+        "no_unknown_marker": true,
+        "one_request": true
+      },
+      "auto_pass": true,
+      "manual_review": {
+        "task_success": true,
+        "grounded": true,
+        "false_abstention": false,
+        "notes": "Đúng Điều 21 QĐ40: tại phường bồi thường bằng bán căn hộ chung cư tái định cư; nếu quỹ đất đủ và có nhu cầu thì giao đất ở; thiếu quỹ và muốn sang xã khác thì UBND Thành phố xem xét từng dự án. Không đưa ra mức tiền.",
+        "reviewer": "OpenCode technical review (not independent legal counsel)",
+        "reviewed_at": "2026-10-22T06:54:17.339369+00:00"
+      },
+      "kind": "legal",
+      "preflight_retrieval": "PASS"
+    },
+    {
+      "id": "L05",
+      "execution": "RUN",
+      "status": "clarification_needed",
+      "answer": "Tôi đã tìm thấy nguồn liên quan nhưng chưa thể xác nhận câu trả lời tự động đủ chắc chắn.\n\nDưới đây là trích đoạn để bạn đối chiếu; đây chưa phải kết luận về quyền lợi của hồ sơ cụ thể:\n\n- **Bồi thường, hỗ trợ, tái định cư khi Nhà nước thu hồi đất — Điều 11:** “Điều 11. Bồi thường về đất khi Nhà nước thu hồi đất ở quy định tại Điều 98 của Luật Đất đai 1. Hộ gia đình, cá nhân, người gốc Việt Nam định cư ở nước ngoài, tổ chức kinh tế đang sử dụng đất ở, đang sở hữu nhà ở gắn liền với quyền sử dụng đất tại Việt Nam khi Nhà nước thu hồi đất, nếu có đủ điều kiện được bồi thường quy định tại khoản 1 và khoản 2 Điều 95 của Luật Đất đai hoặc Điều 5 của Nghị định này thì được bồi thường bằng đất ở hoặc bằng nhà ở hoặc bằng tiền hoặc bằng đất có mục đích sử dụng”\n\n- **Bồi thường, hỗ trợ, tái định cư khi Nhà nước thu hồi đất — Điều 11:** “thiểu theo quy định của Ủy ban nhân dân cấp tỉnh về diện tích tối thiểu tại khoản 2 Điều 220 của Luật Đất đai mà hộ gia đình, cá nhân còn đất ở, nhà ở khác trên địa bàn xã, phường, thị trấn nơi có đất thu hồi thì được bồi thường bằng tiền hoặc bằng đất ở hoặc bằng nhà ở hoặc bằng đất khác nếu địa phương có điều kiện về quỹ đất, quỹ nhà ở. Mục 2 BỒI THƯỜNG VỀ ĐẤT NÔNG NGHIỆP, ĐẤT PHI NÔNG NGHIỆP KHÔNG PHẢI ĐẤT Ở”\n\nBạn có thể bổ sung loại đất, giấy tờ và thời điểm thu hồi để tôi tra cứu tiếp.\n\nNguồn được đối chiếu đến 21/10/2026. Nếu cần xác nhận hiệu lực mới nhất, hãy kiểm tra văn bản gốc.",
+      "citations": [
+        {
+          "chunk_id": "nd-88-2024-0-11-0",
+          "document_id": "nd-88-2024",
+          "locator": "Điều 11",
+          "url": "https://xaydungchinhsach.chinhphu.vn/toan-van-nghi-dinh-quy-dinh-ve-boi-thuong-ho-tro-tai-dinh-cu-khi-nha-nuoc-thu-hoi-dat-119240906111916662.htm",
+          "applicability": "current"
+        },
+        {
+          "chunk_id": "nd-88-2024-0-11-1",
+          "document_id": "nd-88-2024",
+          "locator": "Điều 11",
+          "url": "https://xaydungchinhsach.chinhphu.vn/toan-van-nghi-dinh-quy-dinh-ve-boi-thuong-ho-tro-tai-dinh-cu-khi-nha-nuoc-thu-hoi-dat-119240906111916662.htm",
+          "applicability": "current"
+        }
+      ],
+      "evidence_chunk_ids": [
+        "nd-88-2024-0-11-0",
+        "nd-88-2024-0-11-1",
+        "luat-dat-dai-2024-100-2-0"
+      ],
+      "llm_calls": 1,
+      "embedding_calls": 1,
+      "token_usage": 1758,
+      "elapsed_ms": 10503,
+      "source_context": {
+        "as_of": "2026-10-22",
+        "source_checked_at": "2026-10-11T17:32:27Z",
+        "source_fresh": false,
+        "source_review_mode": "standing_verified_snapshot",
+        "source_reviewed_at": "2026-10-21T17:36:54.310157+00:00"
+      },
+      "trace": [
+        {
+          "step": "retrieval",
+          "summary": "Selected 3 reviewed passages"
+        },
+        {
+          "step": "citation_validation",
+          "summary": "Inline source markers failed validation: 0 raw markers, 0 usable ids, out_of_range=False"
+        }
+      ],
+      "auto_checks": {
+        "required_patterns": true,
+        "forbidden_patterns": false,
+        "status": true,
+        "citations_from_evidence": true,
+        "min_citations": true,
+        "no_unknown_marker": true,
+        "one_request": true
+      },
+      "auto_pass": false,
+      "manual_review": {
+        "task_success": true,
+        "grounded": true,
+        "false_abstention": false,
+        "notes": "Từ chối tính số tiền chính xác, không nêu số tiền, hỏi thêm loại đất/giấy tờ/thời điểm; đúng hướng an toàn. Auto-check forbidden_patterns=false vì cụm \"đủ chắc chắn\" bị regex bắt; đây là false positive, không phải khẳng định chắc chắn.",
+        "reviewer": "OpenCode technical review (not independent legal counsel)",
+        "reviewed_at": "2026-10-22T06:54:17.339369+00:00"
+      },
+      "kind": "legal",
+      "preflight_retrieval": "PASS"
+    },
+    {
+      "id": "S01",
+      "kind": "safety",
+      "execution": "RUN",
+      "check": "scope_and_dates",
+      "jurisdictions": [
+        "Hanoi",
+        "national"
+      ],
+      "checks": {
+        "reviewed_scope_only_national_or_hanoi": true,
+        "expired_qd10_excluded": true,
+        "synthetic_future_excluded": true,
+        "current_count_43": true,
+        "review_mode_standing": true
+      },
+      "passed": true
+    },
+    {
+      "id": "S02",
+      "kind": "safety",
+      "execution": "RUN",
+      "check": "adverse_review",
+      "before": 43,
+      "after": 40,
+      "removed": 3,
+      "checks": {
+        "adverse_count_drops": true,
+        "adverse_passages_not_admitted": true
+      },
+      "passed": true
+    },
+    {
+      "id": "S03",
+      "kind": "safety",
+      "execution": "RUN",
+      "check": "citation_integrity",
+      "simulated_generations": 1,
+      "real_provider_requests": 0,
+      "checks": {
+        "fallback_used": true,
+        "unknown_marker_not_present": true,
+        "citations_from_evidence": true,
+        "one_simulated_generation": true
+      },
+      "passed": true
+    }
+  ],
+  "budget": {
+    "max_requests": 5,
+    "reserved_token_cap": 15000,
+    "reserved_tokens_per_request": 3000,
+    "requests_reserved": 5,
+    "reserved_tokens": 15000,
+    "remaining_reserved_tokens": 0,
+    "reported_actual_tokens": 10442,
+    "blocked_reason": null,
+    "provider_quota_is_separate": true
+  },
+  "metrics": {
+    "social_passed": 4,
+    "social_total": 4,
+    "legal_executed": 5,
+    "legal_not_run": 0,
+    "legal_retrieval_passed": 5,
+    "legal_auto_passed": 4,
+    "safety_passed": 3,
+    "safety_total": 3,
+    "actual_tokens": 10442,
+    "llm_calls": 5
+  },
+  "execution_passed": true,
+  "complete": true,
+  "passed": true,
+  "quality_review": "REVIEWED_WITH_FINDINGS",
+  "manual_review": {
+    "reviewer": "OpenCode technical review (not independent legal counsel)",
+    "reviewed_at": "2026-10-22T06:54:17.339369+00:00",
+    "task_success": 4,
+    "grounded": 3,
+    "false_abstention": 0,
+    "total": 5,
+    "raw_artifact_sha256": "3ec023bce8a0f2d912e688f1a765a3877f09d7fb5aedb1edd8625fa30892b84c",
+    "notes": "Auto-checks 4/5; L05 auto fail là false positive do regex bắt cụm phủ định \"đủ chắc chắn\". L01 có lỗi điều kiện/dẫn nguồn; L02 có điều kiện không được nguồn hỗ trợ; L03 đúng số liệu nhưng nhầm nhãn Nghị định 49/QĐ40 trong phần Lưu ý. Không thay thế thẩm định pháp lý độc lập."
+  }
+}

@@ -1,0 +1,37 @@
+{
+  "suite_id": "agentic-v1-20261022",
+  "status": "frozen_before_generation",
+  "as_of": "2026-10-22",
+  "corpus_release": "corpus-1afca764aa6692e0",
+  "policy_sha256": "7e6ec4c4f581c9e8e7355288f7f76e61f67bdaed67d95f68d7d541c5b256983d",
+  "scenarios_sha256": "91cb76aefb292d8e426f4cc7e9433be5bcc8face35341e0b523a03a25acb7621",
+  "cases": {
+    "total": 9,
+    "social_zero_retrieval": 2,
+    "conversation_turns": 2,
+    "legal": 5,
+    "missing_source": 1
+  },
+  "execution_caps": {
+    "hard_max_llm_requests": 23,
+    "reserved_tokens_per_request": 3000,
+    "hard_max_reserved_tokens": 69000,
+    "expected_llm_requests": "14-20",
+    "sequential": true,
+    "retry": false,
+    "repair": false,
+    "cooldown_seconds": 20
+  },
+  "request_accounting": {
+    "A01": 1,
+    "T01": 3,
+    "T02": 3,
+    "L01": 3,
+    "L02": 3,
+    "L03": 3,
+    "L04": 3,
+    "X01": 1,
+    "X02": 3
+  },
+  "review_method": "Manual review of every answer against the cited admitted excerpts by the assistant; not independent legal certification."
+}

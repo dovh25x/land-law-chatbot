@@ -29,11 +29,13 @@ class Settings(BaseSettings):
     session_retention_days: int = Field(default=7, ge=1, le=7)
     ingress_secret: SecretStr = SecretStr('')
     turnstile_secret_key: SecretStr = SecretStr('')
+    session_challenge_mode: Literal['turnstile', 'disabled'] = 'turnstile'
     public_hostname: str = 'hanoi-land-law.pages.dev'
     public_daily_llm_limit: int = Field(default=100, ge=1)
     public_daily_token_limit: int = Field(default=100000, ge=1)
+    public_daily_ip_chat_limit: int = Field(default=30, ge=1, le=1000)
     generation_enabled: bool = True
-    execution_mode: Literal['agentic', 'simple_rag'] = 'agentic'
+    execution_mode: Literal['agentic', 'simple_rag', 'agentic_rag'] = 'agentic'
     source_lookup_only: bool = False
     allow_stale_generation: bool = False
     db_statement_timeout_ms: int = Field(default=8000, ge=100, le=15000)
@@ -54,6 +56,9 @@ class Settings(BaseSettings):
                 raise ValueError("Production DATABASE_URL must require TLS")
             if len(self.ip_hash_secret.get_secret_value()) < 32:
                 raise ValueError("Production requires a stable IP_HASH_SECRET of at least 32 characters")
+            if (self.session_challenge_mode == "turnstile"
+                    and not self.turnstile_secret_key.get_secret_value()):
+                raise ValueError("Production challenge mode requires TURNSTILE_SECRET_KEY")
             if any("localhost" in x or "*" in x for x in self.origins):
                 raise ValueError("Production CORS_ORIGINS must name deployed frontend origins")
         return self

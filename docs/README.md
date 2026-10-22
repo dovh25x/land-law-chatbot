@@ -11,6 +11,7 @@ Tài liệu mô tả phạm vi sản phẩm, thiết kế và cách vận hành 
 | Đọc thiết kế đích cho người dân và lộ trình triển khai | [Thiết kế lại v2](redesign/README.md) · [trạng thái triển khai](redesign/IMPLEMENTATION.md) |
 | Đọc luồng xử lý và ranh giới tin cậy | [Kiến trúc](ARCHITECTURE.md) |
 | Phản biện thiết kế và xem agent flow | [Agent flow](AGENT_FLOW.md) |
+| Chạy bounded Agentic RAG, tool call và citation guard | [Agentic RAG](AGENTIC_RAG.md) |
 | Tích hợp phiên, chat và SSE | [API](API.md) |
 | Phát triển giao diện theo Figma | [Frontend](FRONTEND.md) |
 | Triển khai, xử lý sự cố và khôi phục | [Vận hành](OPERATIONS.md) |

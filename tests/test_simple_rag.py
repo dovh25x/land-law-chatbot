@@ -269,7 +269,8 @@ def test_citation_validation_requires_supported_inline_markers(
 
 def test_conditional_framing_keeps_grounded_answers_published(store, settings):
     from conftest import document
-    release(store, [document(text="Điều kiện bồi thường và hỗ trợ cần được xem xét theo hồ sơ.")])
+    release(store, [document(text="Điều 95. Điều kiện bồi thường và hỗ trợ cần được xem xét theo hồ sơ.",
+                             locator="Điều 95")])
     sid, _ = session(store)
     provider = SimpleProvider(settings, answer=SimpleAnswer(
         answer="Bạn vẫn có thể được bồi thường nếu đủ điều kiện theo Điều 95 [S1]. "

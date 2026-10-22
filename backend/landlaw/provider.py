@@ -131,6 +131,104 @@ class GroqProvider:
 
 
 
+    async def tool_step(self, instruction: str, messages: list[dict], tools: list[dict],
+                        budget: Budget, *, max_attempts=1):
+        """One bounded Groq tool-selection request.
+
+        Groq does not support strict Structured Outputs together with tool use,
+        so this leg sends only ``tools`` + ``tool_choice='auto'``. The final
+        schema-validated answer is a separate request. The caller owns the
+        request/tool caps and always executes tools application-side.
+        """
+        if not self.configured:
+            raise ProviderUnavailable('GROQ_API_KEY chưa được cấu hình')
+        request = {
+            'model': self.settings.groq_model,
+            'temperature': 0,
+            'max_completion_tokens': 2048,
+            'tool_choice': 'auto',
+            'tools': tools,
+            'messages': [{'role': 'system', 'content': SYSTEM_BOUNDARY + instruction}, *messages],
+        }
+        if self.settings.groq_model.startswith('openai/gpt-oss-'):
+            request['reasoning_effort'] = 'low'
+        if self.usage_scope == 'public':
+            await asyncio.to_thread(self.store.reserve_public_llm)
+        budget.llm()
+        await self.record_usage('llm')
+        try:
+            result = await self._post_tool_request(request)
+        except RateLimited as exc:
+            await asyncio.to_thread(self.store.set_cooldown, exc.retry_after)
+            raise
+        usage = result.get('usage') if isinstance(result, dict) else {}
+        usage = usage if isinstance(usage, dict) else {}
+        tokens = usage.get('total_tokens')
+        if type(tokens) is not int or tokens < 0:
+            await self.record_usage('llm-usage-unknown')
+            tokens = 0
+        budget.tokens += tokens
+        await self.record_usage('tokens', tokens)
+        try:
+            message = result['choices'][0]['message']
+        except (KeyError, IndexError, TypeError):
+            raise ProviderUnavailable('Groq không trả lựa chọn tool hợp lệ.',
+                                      retryable=True, format_failure=True) from None
+        calls = []
+        for call in message.get('tool_calls') or []:
+            function = call.get('function') if isinstance(call, dict) else None
+            if not isinstance(function, dict):
+                continue
+            name = function.get('name')
+            arguments = function.get('arguments')
+            if isinstance(name, str) and isinstance(arguments, str):
+                calls.append({'id': call.get('id'), 'name': name, 'arguments': arguments})
+        return {
+            'content': message.get('content') if isinstance(message.get('content'), str) else '',
+            'tool_calls': calls,
+            'finish_reason': result['choices'][0].get('finish_reason'),
+        }
+
+    async def _post_tool_request(self, request):
+        """HTTP/error mapping for the tools leg; no response_format is sent."""
+        reservation = self.request_budget.reserve(request) if self.request_budget is not None else None
+        try:
+            response = await self.client.post(
+                'https://api.groq.com/openai/v1/chat/completions',
+                headers={'Authorization': 'Bearer ' + self.settings.groq_api_key.get_secret_value()},
+                json=request)
+        except httpx.HTTPError:
+            if reservation is not None:
+                self.request_budget.settle(reservation, {})
+            raise ProviderUnavailable('Không kết nối được Groq', retryable=True) from None
+        try:
+            result = response.json()
+        except ValueError:
+            result = None
+        if reservation is not None:
+            self.request_budget.settle(reservation, result.get('usage', {}) if isinstance(result, dict) else {},
+                                       status_code=response.status_code, headers=response.headers)
+        if response.status_code == 429:
+            try:
+                delay = math.ceil(float(response.headers.get('retry-after', '60')))
+            except (ValueError, TypeError):
+                delay = 60
+            raise RateLimited(min(86400, max(1, delay)), source='provider')
+        if response.status_code == 413:
+            raise ProviderUnavailable('Ngữ cảnh vượt dung lượng request của Groq Free. Hãy tách câu hỏi để đối chiếu từng vấn đề.')
+        if response.status_code == 400:
+            error = result.get('error') if isinstance(result, dict) else None
+            code = error.get('code') if isinstance(error, dict) else None
+            if code in {'tool_use_failed', 'json_validate_failed'}:
+                await self.record_usage('provider-format:' + code)
+                raise ProviderUnavailable('Groq chưa trả lựa chọn tool hợp lệ.',
+                                          retryable=False, format_failure=True)
+        if response.status_code >= 400:
+            raise ProviderUnavailable(f'Groq trả HTTP {response.status_code}', retryable=response.status_code >= 500)
+        if not isinstance(result, dict):
+            raise ProviderUnavailable('Groq không trả JSON object hợp lệ.', retryable=True, format_failure=True)
+        return result
+
     async def generate(self, schema: type[BaseModel], instruction: str, payload: dict, budget: Budget, *, max_attempts=3):
         if not 1 <= max_attempts <= 3:
             raise ValueError('Retries must remain inside the workflow budget')

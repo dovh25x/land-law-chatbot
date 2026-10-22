@@ -1,0 +1,481 @@
+{
+  "audit": "ring4-corpus-quality",
+  "as_of": "2026-10-22",
+  "release_id": "corpus-1afca764aa6692e0",
+  "manifest_records": 71,
+  "release_documents": 60,
+  "release_chunks": 7396,
+  "reviewed_documents": 10,
+  "reviewed_passages": 74,
+  "admissible_passages_20261022": 43,
+  "categories": {
+    "A": [
+      "luat-43-2024",
+      "luat-dat-dai-2024",
+      "luat-thu-do-2026",
+      "nd-226-2025",
+      "nd-49-2026",
+      "nd-88-2024",
+      "nq-254-2025",
+      "qd-40-2026-hanoi"
+    ],
+    "B": [
+      "ring4-nq56-2022"
+    ],
+    "C": [
+      "ring4-hadong-2025",
+      "ring4-hotro-2025",
+      "ring4-phuluong-2025",
+      "ring4-trienkhai-2022"
+    ],
+    "D": [
+      "luat-dat-dai-2013",
+      "luat-quy-hoach-2017",
+      "luat-thu-do-2024",
+      "nd-06-2020",
+      "nd-151-2025",
+      "nd-47-2014",
+      "qd-10-2026-hanoi",
+      "qd-20-2022-hanoi",
+      "qd-27-2024-hanoi",
+      "qd-38-2025-hanoi",
+      "qd-56-2024-hanoi",
+      "qd-566-2026-hanoi"
+    ],
+    "E": [],
+    "F": [
+      "luat-116-2025",
+      "luat-130-2025",
+      "luat-136-2025",
+      "luat-142-2025",
+      "luat-144-2025",
+      "luat-146-2025",
+      "luat-147-2025",
+      "luat-35-2018",
+      "luat-58-2024",
+      "luat-71-2025",
+      "luat-84-2025",
+      "luat-93-2025",
+      "luat-95-2025",
+      "luat-khieu-nai-2011",
+      "luat-nha-o-2023",
+      "luat-quy-hoach-2025",
+      "luat-quy-hoach-do-thi-2024",
+      "nd-101-2024",
+      "nd-102-2024",
+      "nd-103-2024",
+      "nd-104-2024",
+      "nd-124-2020",
+      "nd-141-2025",
+      "nd-155-2026",
+      "nd-178-2025",
+      "nd-71-2024",
+      "nq-258-2025",
+      "nq-52-2025-hanoi",
+      "nq-90-2026-hanoi",
+      "qd-19-2026-hanoi",
+      "qd-40-2025-hanoi",
+      "qd-55-2024-hanoi",
+      "qd-61-2024-hanoi",
+      "qd-71-2024-hanoi",
+      "qd-89-2025-hanoi"
+    ]
+  },
+  "requirements": [
+    {
+      "requirement_id": "C01",
+      "question": "Hiểu các bước thu hồi đất",
+      "required_provisions": [
+        "Luật Đất đai 2024 Điều 83–87 (trình tự, thủ tục thu hồi)",
+        "NĐ 88/2024 Điều 20–29",
+        "QĐ 40/2026-HN Điều 17"
+      ],
+      "candidate_documents": [
+        "luat-dat-dai-2024",
+        "nd-88-2024",
+        "nd-151-2025",
+        "nd-226-2025",
+        "qd-40-2026-hanoi"
+      ],
+      "present_in_release": [
+        "luat-dat-dai-2024",
+        "nd-88-2024",
+        "nd-151-2025",
+        "nd-226-2025",
+        "qd-40-2026-hanoi"
+      ],
+      "reviewed_documents": [
+        "luat-dat-dai-2024",
+        "nd-88-2024",
+        "nd-151-2025",
+        "nd-226-2025",
+        "qd-40-2026-hanoi"
+      ],
+      "admitted_passages_20261022": {
+        "luat-dat-dai-2024": 8,
+        "nd-88-2024": 3,
+        "nd-226-2025": 2,
+        "qd-40-2026-hanoi": 8
+      },
+      "retrieval_status": "admitted",
+      "missing_review_documents": [],
+      "needs_operational_source": false,
+      "answerability": "partial",
+      "remaining_gap": "Có đoạn được review nhưng cần đối chiếu đủ điều/khoản liệt kê; không phải mọi điều khoản bắt buộc đã có review."
+    },
+    {
+      "requirement_id": "C02",
+      "question": "Hiểu điều kiện bồi thường và hỗ trợ",
+      "required_provisions": [
+        "Luật Đất đai 2024 Điều 95, 96, 101, 104, 108",
+        "NĐ 88/2024 Điều 4–11, 19",
+        "QĐ 40/2026-HN Điều 17"
+      ],
+      "candidate_documents": [
+        "luat-dat-dai-2024",
+        "nd-88-2024",
+        "nd-226-2025",
+        "qd-40-2026-hanoi",
+        "nq-254-2025",
+        "nd-49-2026"
+      ],
+      "present_in_release": [
+        "luat-dat-dai-2024",
+        "nd-88-2024",
+        "nd-226-2025",
+        "qd-40-2026-hanoi",
+        "nq-254-2025",
+        "nd-49-2026"
+      ],
+      "reviewed_documents": [
+        "luat-dat-dai-2024",
+        "nd-88-2024",
+        "nd-226-2025",
+        "qd-40-2026-hanoi",
+        "nq-254-2025",
+        "nd-49-2026"
+      ],
+      "admitted_passages_20261022": {
+        "luat-dat-dai-2024": 8,
+        "nd-88-2024": 3,
+        "nd-226-2025": 2,
+        "qd-40-2026-hanoi": 8,
+        "nq-254-2025": 12,
+        "nd-49-2026": 7
+      },
+      "retrieval_status": "admitted",
+      "missing_review_documents": [],
+      "needs_operational_source": false,
+      "answerability": "partial",
+      "remaining_gap": "Có đoạn được review nhưng cần đối chiếu đủ điều/khoản liệt kê; không phải mọi điều khoản bắt buộc đã có review."
+    },
+    {
+      "requirement_id": "C03",
+      "question": "Hiểu tái định cư và di chuyển",
+      "required_provisions": [
+        "Luật Đất đai 2024 Điều 96, 104, 111",
+        "NĐ 88/2024 Điều 30–31",
+        "Luật Nhà ở 2023 Điều 72",
+        "QĐ 40/2026-HN Điều 21"
+      ],
+      "candidate_documents": [
+        "luat-dat-dai-2024",
+        "nd-88-2024",
+        "luat-nha-o-2023",
+        "qd-40-2026-hanoi"
+      ],
+      "present_in_release": [
+        "luat-dat-dai-2024",
+        "nd-88-2024",
+        "luat-nha-o-2023",
+        "qd-40-2026-hanoi"
+      ],
+      "reviewed_documents": [
+        "luat-dat-dai-2024",
+        "nd-88-2024",
+        "qd-40-2026-hanoi"
+      ],
+      "admitted_passages_20261022": {
+        "luat-dat-dai-2024": 8,
+        "nd-88-2024": 3,
+        "qd-40-2026-hanoi": 8
+      },
+      "retrieval_status": "admitted",
+      "missing_review_documents": [
+        "luat-nha-o-2023"
+      ],
+      "needs_operational_source": false,
+      "answerability": "partial",
+      "remaining_gap": "Có đoạn được review nhưng cần đối chiếu đủ điều/khoản liệt kê; không phải mọi điều khoản bắt buộc đã có review."
+    },
+    {
+      "requirement_id": "C04",
+      "question": "Giấy tờ theo từng việc",
+      "required_provisions": [
+        "NĐ 88/2024 Điều 4–11",
+        "Luật Khiếu nại 2011",
+        "NĐ 124/2020"
+      ],
+      "candidate_documents": [
+        "nd-88-2024",
+        "luat-khieu-nai-2011",
+        "nd-124-2020"
+      ],
+      "present_in_release": [
+        "nd-88-2024",
+        "luat-khieu-nai-2011",
+        "nd-124-2020"
+      ],
+      "reviewed_documents": [
+        "nd-88-2024"
+      ],
+      "admitted_passages_20261022": {
+        "nd-88-2024": 3
+      },
+      "retrieval_status": "admitted",
+      "missing_review_documents": [
+        "luat-khieu-nai-2011",
+        "nd-124-2020"
+      ],
+      "needs_operational_source": true,
+      "answerability": "partial",
+      "remaining_gap": "Có đoạn được review nhưng cần đối chiếu đủ điều/khoản liệt kê; không phải mọi điều khoản bắt buộc đã có review."
+    },
+    {
+      "requirement_id": "C05",
+      "question": "Ý kiến và khiếu nại",
+      "required_provisions": [
+        "Luật Khiếu nại 2011",
+        "NĐ 124/2020",
+        "Luật 136/2025"
+      ],
+      "candidate_documents": [
+        "luat-khieu-nai-2011",
+        "nd-124-2020",
+        "luat-136-2025"
+      ],
+      "present_in_release": [
+        "luat-khieu-nai-2011",
+        "nd-124-2020",
+        "luat-136-2025"
+      ],
+      "reviewed_documents": [],
+      "admitted_passages_20261022": {},
+      "retrieval_status": "not_reviewed",
+      "missing_review_documents": [
+        "luat-khieu-nai-2011",
+        "nd-124-2020",
+        "luat-136-2025"
+      ],
+      "needs_operational_source": false,
+      "answerability": "missing_review",
+      "remaining_gap": "Tài liệu có trong release nhưng chưa có receipt/đoạn review."
+    },
+    {
+      "requirement_id": "C06",
+      "question": "Địa bàn và thẩm quyền theo thời điểm",
+      "required_provisions": [
+        "NĐ 151/2025",
+        "QĐ 40/2025-HN",
+        "Luật 136/2025"
+      ],
+      "candidate_documents": [
+        "nd-151-2025",
+        "qd-40-2025-hanoi",
+        "luat-136-2025"
+      ],
+      "present_in_release": [
+        "nd-151-2025",
+        "qd-40-2025-hanoi",
+        "luat-136-2025"
+      ],
+      "reviewed_documents": [
+        "nd-151-2025"
+      ],
+      "admitted_passages_20261022": {},
+      "retrieval_status": "reviewed_not_admitted",
+      "missing_review_documents": [
+        "qd-40-2025-hanoi",
+        "luat-136-2025"
+      ],
+      "needs_operational_source": false,
+      "answerability": "missing_evidence",
+      "remaining_gap": "Tài liệu đã có receipt nhưng không có đoạn nào admitted tại ngày audit."
+    },
+    {
+      "requirement_id": "C07",
+      "question": "Đầu mối công khai đúng chức năng",
+      "required_provisions": [
+        "Nguồn vận hành: đầu mối tiếp nhận, lịch tiếp dân, biểu mẫu"
+      ],
+      "candidate_documents": [],
+      "present_in_release": [],
+      "reviewed_documents": [],
+      "admitted_passages_20261022": {},
+      "retrieval_status": "not_reviewed",
+      "missing_review_documents": [],
+      "needs_operational_source": true,
+      "answerability": "missing_operational_source",
+      "remaining_gap": "Cần nguồn vận hành chính thức chưa được review."
+    },
+    {
+      "requirement_id": "C08",
+      "question": "Hiểu tên và ý nghĩa giấy tờ",
+      "required_provisions": [
+        "Luật Đất đai 2024 Điều 3, 137",
+        "NĐ 88/2024",
+        "NĐ 102/2024"
+      ],
+      "candidate_documents": [
+        "luat-dat-dai-2024",
+        "nd-88-2024",
+        "nd-102-2024"
+      ],
+      "present_in_release": [
+        "luat-dat-dai-2024",
+        "nd-88-2024",
+        "nd-102-2024"
+      ],
+      "reviewed_documents": [
+        "luat-dat-dai-2024",
+        "nd-88-2024"
+      ],
+      "admitted_passages_20261022": {
+        "luat-dat-dai-2024": 8,
+        "nd-88-2024": 3
+      },
+      "retrieval_status": "admitted",
+      "missing_review_documents": [
+        "nd-102-2024"
+      ],
+      "needs_operational_source": false,
+      "answerability": "partial",
+      "remaining_gap": "Có đoạn được review nhưng cần đối chiếu đủ điều/khoản liệt kê; không phải mọi điều khoản bắt buộc đã có review."
+    },
+    {
+      "requirement_id": "C09",
+      "question": "Bối cảnh Vành đai 4 tại Hà Nội",
+      "required_provisions": [
+        "Nghị quyết 56/2022/QH15",
+        "Nghị quyết 106/2022/QH15 (chưa có trong release)",
+        "Tin chính thức 4 quận/huyện"
+      ],
+      "candidate_documents": [
+        "ring4-nq56-2022",
+        "ring4-trienkhai-2022",
+        "ring4-hadong-2025",
+        "ring4-phuluong-2025"
+      ],
+      "present_in_release": [
+        "ring4-nq56-2022",
+        "ring4-trienkhai-2022",
+        "ring4-hadong-2025",
+        "ring4-phuluong-2025"
+      ],
+      "reviewed_documents": [],
+      "admitted_passages_20261022": {},
+      "retrieval_status": "not_reviewed",
+      "missing_review_documents": [
+        "ring4-nq56-2022",
+        "ring4-trienkhai-2022",
+        "ring4-hadong-2025",
+        "ring4-phuluong-2025"
+      ],
+      "needs_operational_source": false,
+      "answerability": "missing_review",
+      "remaining_gap": "Tài liệu có trong release nhưng chưa có receipt/đoạn review."
+    },
+    {
+      "requirement_id": "C10",
+      "question": "Hồ sơ qua nhiều mốc pháp luật",
+      "required_provisions": [
+        "Luật Đất đai 2024 Điều 254–255, 260",
+        "Luật Đất đai 2013",
+        "NĐ 47/2014",
+        "QĐ 56/2024-HN",
+        "QĐ 40/2026-HN"
+      ],
+      "candidate_documents": [
+        "luat-dat-dai-2013",
+        "luat-dat-dai-2024",
+        "nd-47-2014",
+        "nd-88-2024",
+        "qd-56-2024-hanoi",
+        "qd-40-2026-hanoi"
+      ],
+      "present_in_release": [
+        "luat-dat-dai-2013",
+        "luat-dat-dai-2024",
+        "nd-47-2014",
+        "nd-88-2024",
+        "qd-56-2024-hanoi",
+        "qd-40-2026-hanoi"
+      ],
+      "reviewed_documents": [
+        "luat-dat-dai-2024",
+        "nd-88-2024",
+        "qd-40-2026-hanoi"
+      ],
+      "admitted_passages_20261022": {
+        "luat-dat-dai-2024": 8,
+        "nd-88-2024": 3,
+        "qd-40-2026-hanoi": 8
+      },
+      "retrieval_status": "admitted",
+      "missing_review_documents": [
+        "luat-dat-dai-2013",
+        "nd-47-2014",
+        "qd-56-2024-hanoi"
+      ],
+      "needs_operational_source": false,
+      "answerability": "partial",
+      "remaining_gap": "Có đoạn được review nhưng cần đối chiếu đủ điều/khoản liệt kê; không phải mọi điều khoản bắt buộc đã có review."
+    },
+    {
+      "requirement_id": "C11",
+      "question": "Phí, số bản và thời hạn thủ tục",
+      "required_provisions": [
+        "Luật Khiếu nại 2011",
+        "NĐ 124/2020",
+        "Luật 136/2025"
+      ],
+      "candidate_documents": [
+        "luat-khieu-nai-2011",
+        "nd-124-2020",
+        "luat-136-2025"
+      ],
+      "present_in_release": [
+        "luat-khieu-nai-2011",
+        "nd-124-2020",
+        "luat-136-2025"
+      ],
+      "reviewed_documents": [],
+      "admitted_passages_20261022": {},
+      "retrieval_status": "not_reviewed",
+      "missing_review_documents": [
+        "luat-khieu-nai-2011",
+        "nd-124-2020",
+        "luat-136-2025"
+      ],
+      "needs_operational_source": true,
+      "answerability": "missing_review",
+      "remaining_gap": "Tài liệu có trong release nhưng chưa có receipt/đoạn review."
+    },
+    {
+      "requirement_id": "C12",
+      "question": "Kênh trợ giúp và tiếp công dân",
+      "required_provisions": [
+        "Nguồn vận hành: kênh trợ giúp, tiếp công dân, số điện thoại/địa chỉ chính thức"
+      ],
+      "candidate_documents": [],
+      "present_in_release": [],
+      "reviewed_documents": [],
+      "admitted_passages_20261022": {},
+      "retrieval_status": "not_reviewed",
+      "missing_review_documents": [],
+      "needs_operational_source": true,
+      "answerability": "missing_operational_source",
+      "remaining_gap": "Cần nguồn vận hành chính thức chưa được review."
+    }
+  ]
+}
