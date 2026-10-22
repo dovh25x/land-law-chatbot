@@ -970,19 +970,21 @@ class Store:
                     WHERE c.release_id=? AND c.embedding IS NOT NULL AND c.embedding_model=? AND vector_dims(c.embedding)={dimensions}""" + scope_sql +
                     f" ORDER BY c.embedding::vector({dimensions}) <=> ?::vector({dimensions}) LIMIT 20", (*params[:1], embedding_model, *params[1:], json.dumps(vector)))
             if admitted_scope:
+                # One array parameter avoids fragile placeholder counting on
+                # Postgres; SQLite uses its Python-side branch below.
                 admitted_ids = list(admitted_scope)
-                admitted_sql = " AND c.id IN (" + ",".join("?" for _ in admitted_ids) + ")"
+                admitted_sql = " AND c.id = ANY(?)"
                 scope_params = (project,) if project else ()
                 admitted_lexical = self.rows(f"""SELECT {projection}, ts_rank_cd(c.search_tsv, websearch_to_tsquery('simple',?)) AS rank
                     FROM chunks c JOIN documents d ON d.id=c.document_id AND d.release_id=c.release_id
                     WHERE c.release_id=? AND c.search_tsv @@ websearch_to_tsquery('simple',?)""" + scope_sql + admitted_sql +
-                    " ORDER BY rank DESC,c.id LIMIT 12", (normalize(query), release_id, *scope_params, *admitted_ids))
+                    " ORDER BY rank DESC,c.id LIMIT 12", (normalize(query), release_id, normalize(query), *scope_params, admitted_ids))
                 if vector:
                     dimensions = len(vector)
                     admitted_semantic = self.rows(f"""SELECT {projection} FROM chunks c JOIN documents d ON d.id=c.document_id AND d.release_id=c.release_id
                         WHERE c.release_id=? AND c.embedding IS NOT NULL AND c.embedding_model=? AND vector_dims(c.embedding)={dimensions}""" + scope_sql + admitted_sql +
                         f" ORDER BY c.embedding::vector({dimensions}) <=> ?::vector({dimensions}) LIMIT 12",
-                        (release_id, embedding_model, *scope_params, *admitted_ids, json.dumps(vector)))
+                        (release_id, embedding_model, *scope_params, admitted_ids, json.dumps(vector)))
         else:
             candidates = self.rows("""SELECT c.* FROM chunks c JOIN documents d ON d.id=c.document_id AND d.release_id=c.release_id
                 WHERE c.release_id=?""" + scope_sql, params)
