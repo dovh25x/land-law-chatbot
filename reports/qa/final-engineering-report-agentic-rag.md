@@ -5,6 +5,8 @@
 - **PR:** [#11](https://github.com/dovh25x/land-law-chatbot/pull/11)
 - **Production hiện hành:** runtime `625e90e84079950e953267d1e4caaf0cb3e8c8e5`, `EXECUTION_MODE=simple_rag`
 - **Trạng thái đợt này:** code + test + audit hoàn tất trên local; **chưa deploy, chưa chạy Groq mới, chưa đổi corpus/policy production**.
+- **Commit workstream:** `e203af9` (guard citation/điều kiện), `6470761` (agentic runtime), `5d0f340` (retrieval admitted + audit), `85f504d` (khóa pilot + báo cáo).
+- **CI:** run `39781150352` tại `85f504d` — backend, frontend, image **success**.
 - **Bằng chứng chi tiết:** `reports/qa/`.
 
 ## 1. Nguyên nhân thật của lỗi hội thoại quy hoạch/tái định cư
@@ -82,7 +84,7 @@ Các khoảng trống ưu tiên: Luật Nhà ở 2023 Điều 72; Luật Đất 
 | Secrets scan | **pass** |
 | Corpus audit `audit_corpus.py` | 60 documents, 7.396 chunks, 0 error, 0 warning |
 | Citizen coverage audit | 12 requirements, `coverage_approved=false` |
-| CI | sẽ chạy sau khi push commit này; xem PR #11 |
+| CI | run `39781150352` tại `85f504d` — backend, frontend, image **success** |
 
 Test mới tiêu biểu: model chọn tool cho câu pháp luật; social trả lời trực tiếp; bắt buộc retrieval khi model trả lời pháp luật trực tiếp; cap 2 tool; sai điều/khoản/số hiệu văn bản bị loại; điều kiện thêm vào không nguồn bị loại; tin dự án không chứng minh quyền lợi; L05 không còn false positive.
 
