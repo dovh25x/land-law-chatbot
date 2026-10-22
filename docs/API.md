@@ -70,7 +70,7 @@ Gửi `Authorization: Bearer <token>` và `Content-Type: application/json`.
 | `message` | 1–4.000 ký tự |
 | `project` | `ring4` hoặc `null`; giá trị khác bị từ chối |
 | `as_of` | Ngày ISO `YYYY-MM-DD` hoặc `null` để dùng ngày hiện tại của hệ thống |
-| `mode` | `simple_rag` là đường chạy đích; `agentic` là legacy, chỉ dùng khi cấu hình cũ yêu cầu. Simple path dùng một lượt generation, tối đa 5 passage đã lọc và citation marker `[S1]`...`[S5]` chỉ được phép trỏ vào context thực gửi. Câu xã giao/định danh/ngoài phạm vi được xử lý tất định, không retrieval và không gọi model. Citation của simple path được suy ra duy nhất từ marker inline; model không gửi thêm danh sách citation thứ hai |
+| `mode` | `agentic_rag` là đường chạy đích khi `EXECUTION_MODE=agentic_rag`: model chọn trả lời trực tiếp hoặc gọi tối đa hai tool đọc-only, tối đa ba request mỗi lượt. `simple_rag` là rollback mode: một lượt generation, tối đa 5 passage đã lọc, citation marker `[S1]`...`[S5]` chỉ trỏ vào context thực gửi. `agentic` là legacy. Cả hai mode hiện hành đều suy citation từ marker inline, không nhận danh sách citation thứ hai từ model |
 | `history` | Tối đa 8 message; tổng nội dung tối đa 12.000 ký tự |
 
 History phải gồm các cặp `user` → `assistant` và kết thúc bằng `assistant`. Mỗi message có `content` dài 1–3.000 ký tự, `as_of` tùy chọn và tối đa 8 citation metadata gồm `document_id`, `document_number`, `locator`. Không gửi trace hoặc bearer token trong history.
@@ -92,7 +92,7 @@ Khi request được chấp nhận, response có `Content-Type: text/event-strea
 
 Kết quả gồm `content`, `citations`, `trace`, `trace_id`, corpus/model identity và các chỉ số `llm_calls`, `tool_calls`, `token_usage`, `elapsed_ms`. Citation chứa nguồn, locator, excerpt, ngày kiểm tra và trang/URL nguồn bổ sung khi có. Schema chi tiết nằm trong `backend/landlaw/models.py`.
 
-`simple_rag` là execution mode đích để giảm abstention do planner/verifier nhiều bước. Nó vẫn giữ retrieval theo release, kiểm tra source review (v1 scoped hoặc v2 standing), loại văn bản đã biết hết hiệu lực, không cho citation ngoài context và không kết luận quyền lợi cá nhân khi thiếu dữ kiện. Với snapshot v2, câu trả lời pháp luật có thể kèm một câu ghi mốc `reviewed_at` và khuyến nghị kiểm tra văn bản gốc; đây không phải tuyên bố snapshot là pháp luật hiện hành. Đổi mode không biến retrieval accuracy thành answer accuracy; cần pilot model riêng trước khi bật production.
+`agentic_rag` là execution mode đích: model chọn tool nhưng ứng dụng thực thi, giới hạn request/tool và vẫn kiểm tra source review, applicability, citation/reference guard trước khi phát hành. `simple_rag` là rollback mode ít request hơn nhưng không có tool calling; cả hai giữ retrieval theo release, loại văn bản đã biết hết hiệu lực, không cho citation ngoài context và không kết luận quyền lợi cá nhân khi thiếu dữ kiện. Với snapshot v2, câu trả lời pháp luật có thể kèm một câu ghi mốc `reviewed_at` và khuyến nghị kiểm tra văn bản gốc; đây không phải tuyên bố snapshot là pháp luật hiện hành. Đổi mode không biến retrieval accuracy thành answer accuracy; cần pilot model riêng trước khi bật production.
 
 `citation.source_url` trỏ tới đúng trang PDF gốc (`#page=...`) khi có attachment được kiểm tra, hoặc tới ảnh trang gốc nếu nguồn công bố bằng ảnh. Client hiển thị liên kết “Mở trang nguồn gốc”; không suy định mọi URL này đều là PDF ký số. Không có ánh xạ xuất xứ chính xác thì trường này để trống.
 

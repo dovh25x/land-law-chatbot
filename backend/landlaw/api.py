@@ -24,6 +24,7 @@ from .security import digest, hash_ip, local_date, new_token, redact, utcnow
 from .store import RateLimited, Store
 from .publication import public_status
 from .simple_rag import SimpleRAG
+from .agentic_rag import BoundedAgenticRAG
 
 logger = logging.getLogger("landlaw")
 if not logger.handlers:
@@ -45,6 +46,7 @@ def create_app(settings: Settings | None = None, store: Store | None = None, pro
         state["store"] = store or Store(settings)
         state["provider"] = provider or GroqProvider(settings, state["store"], usage_scope="public")
         state["simple_rag"] = SimpleRAG(state["store"], state["provider"])
+        state["agentic_rag"] = BoundedAgenticRAG(state["store"], state["provider"])
         state["agent"] = None
         state["semaphore"] = asyncio.Semaphore(settings.max_concurrent_requests)
         state["ip_secret"] = settings.ip_hash_secret.get_secret_value() or secrets.token_hex(32)
@@ -371,7 +373,9 @@ def create_app(settings: Settings | None = None, store: Store | None = None, pro
                     remaining=max(.01,settings.turn_timeout_seconds-(time.monotonic()-request.state.started))
                     async with asyncio.timeout(remaining):
                         release_id=await asyncio.to_thread(state['store'].state,'active_release')
-                        if body.mode == "simple_rag" or settings.execution_mode == "simple_rag":
+                        if settings.execution_mode == "agentic_rag":
+                            runner = state["agentic_rag"]
+                        elif body.mode == "simple_rag" or settings.execution_mode == "simple_rag":
                             runner = state["simple_rag"]
                         else:
                             if state["agent"] is None:

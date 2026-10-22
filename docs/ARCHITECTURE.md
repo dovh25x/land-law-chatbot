@@ -30,6 +30,16 @@
 
 `progress` phản ánh sự kiện thực thi quan sát được. Draft và suy nghĩ nội bộ không được phát ra client. Contract chi tiết nằm trong [API](API.md).
 
+### Bounded Agentic RAG
+
+`EXECUTION_MODE=agentic_rag` chạy `BoundedAgenticRAG`: model tự chọn trả lời trực
+tiếp hoặc gọi tối đa hai tool đọc-only (`search_legal_evidence`,
+`open_legal_provision`), tối đa ba request Groq mỗi lượt. Tool decision không
+gửi strict JSON schema vì Groq không hỗ trợ đồng thời tool use và Structured
+Outputs; câu trả lời cuối là request schema riêng. Mọi đoạn vẫn phải qua
+standing policy, applicability và citation/reference guard. `simple_rag` được
+giữ làm rollback mode. Chi tiết: [Agentic RAG](AGENTIC_RAG.md).
+
 ### Agent flow
 
 ![Agent flow](diagrams/agent-flow.svg)

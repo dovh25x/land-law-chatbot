@@ -2,7 +2,7 @@
 
 ## Kết luận thiết kế
 
-Giữ pipeline Agentic RAG trong `backend/landlaw/agent.py` cho mode `agentic`. Các node của LangGraph là các bước trong cùng một lượt hỏi, không phải nhiều agent độc lập. Planner chọn công cụ chỉ đọc, synthesis tạo draft, verifier kiểm tra trước khi `finish` dựng đáp án. Mode `simple_rag` trong `backend/landlaw/simple_rag.py` là đường chạy tùy chọn: context ngắn, một lượt generation và kiểm tra citation allow-list; LangGraph không bắt buộc ở đường chạy này. Cả hai mode vẫn dùng corpus, source review và giới hạn runtime hiện có.
+Giữ pipeline Agentic RAG trong `backend/landlaw/agent.py` cho mode legacy `agentic`. Các node của LangGraph là các bước trong cùng một lượt hỏi, không phải nhiều agent độc lập. Planner chọn công cụ chỉ đọc, synthesis tạo draft, verifier kiểm tra trước khi `finish` dựng đáp án. Mode `agentic_rag` trong `backend/landlaw/agentic_rag.py` là đường chạy đích hiện tại: model dùng Groq native tool calling, ứng dụng thực thi tối đa hai tool đọc-only và tối đa ba request mỗi lượt; không khôi phục planner/verifier nhiều tầng. Mode `simple_rag` trong `backend/landlaw/simple_rag.py` là rollback: context ngắn, một lượt generation và kiểm tra citation allow-list. Cả ba mode vẫn dùng corpus, source review và giới hạn runtime hiện có; chi tiết tool và guard ở [Agentic RAG](AGENTIC_RAG.md).
 
 Câu hỏi pháp lý chưa chỉ định điều khoản được tra từ nguyên văn câu hỏi trước khi tổng hợp, thay vì dùng một request để đoán điều. Khi người dùng chỉ rõ văn bản và điều, hệ thống mở nguồn đó; các trường hợp còn mơ hồ vẫn có planner giới hạn. History chỉ giúp giải tham chiếu, không trở thành chứng cứ.
 
