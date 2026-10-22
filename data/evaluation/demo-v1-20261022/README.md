@@ -36,4 +36,4 @@ Chạy 5 ca pháp luật thật (chỉ sau khi được duyệt ngân sách 5 re
 .venv/bin/python scripts/evaluate_demo_suite.py ... --live
 ```
 
-Runner dừng khi hết 5 request hoặc 15.000 token đã đặt trước; các ca còn lại ghi `NOT RUN`. Không retry, không repair loop. Kết quả live phải được đọc và chấm thủ công trước khi dùng trong báo cáo.
+Runner dừng khi hết 5 request hoặc 15.000 token đã đặt trước; các ca còn lại ghi `NOT RUN`. Mặc định nghỉ 20 giây giữa hai request thật để tránh vượt cửa sổ token của provider (có thể đổi bằng `--cooldown-seconds`). Không retry, không repair loop. Kết quả live phải được đọc và chấm thủ công trước khi dùng trong báo cáo.

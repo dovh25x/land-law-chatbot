@@ -314,6 +314,7 @@ async def run_legal_live(case, store, provider, allocation):
         }
     record = case_record(case, result, 'RUN')
     record['kind'] = 'legal'
+    record['preflight_retrieval'] = 'PASS' if record['evidence_chunk_ids'] else 'FAIL'
     record['manual_review'] = {
         'task_success': None, 'grounded': None, 'false_abstention': None,
         'notes': '', 'reviewer': None, 'reviewed_at': None,
@@ -401,7 +402,11 @@ def main():
                         default=Path('reports/evaluation/demo-v1-20261022/preflight.json'))
     parser.add_argument('--live', action='store_true',
                         help='Send the five approved legal requests to Groq; all other checks stay deterministic')
+    parser.add_argument('--cooldown-seconds', type=float, default=20,
+                        help='Pause between live legal requests to respect the provider token window')
     args = parser.parse_args()
+    if args.cooldown_seconds < 0:
+        raise SystemExit('cooldown-seconds must not be negative')
 
     manifest, cases = load_suite(args.suite)
     if [case['id'] for case in cases] != [f'C{i:02d}' for i in range(1, 5)] + \
@@ -443,6 +448,8 @@ def main():
                 provider = PreflightProvider(
                     isolated.model_copy(update={'groq_api_key': SecretStr('preflight-not-used')}),
                     store, usage_scope='operator')
+            live_legal_done = 0
+            legal_total = sum(case['kind'] == 'legal' for case in cases)
             for case in cases:
                 if case['kind'] == 'social':
                     output['cases'].append(asyncio.run(run_social(case, isolated, store)))
@@ -452,6 +459,11 @@ def main():
                     else:
                         record = asyncio.run(run_legal_preflight(case, isolated, store, provider))
                     output['cases'].append(record)
+                    if (args.live and record.get('execution') == 'RUN'
+                            and record.get('llm_calls', 0) > 0):
+                        live_legal_done += 1
+                        if live_legal_done < legal_total:
+                            time.sleep(args.cooldown_seconds)
                 else:
                     if case['check'] == 'scope_and_dates':
                         output['cases'].append(safety_scope_and_dates(store, release, policy))
