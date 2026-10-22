@@ -22,7 +22,6 @@ jobs:
     environment: production
     env:
       ALLOW_STALE_GENERATION: ${{ vars.ALLOW_STALE_GENERATION || 'false' }}
-      SESSION_CHALLENGE_MODE: ${{ vars.SESSION_CHALLENGE_MODE || 'turnstile' }}
     steps:
       - uses: actions/checkout@v4
         with:
