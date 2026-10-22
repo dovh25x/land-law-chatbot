@@ -8,6 +8,8 @@ Trong development, Vite proxy tới FastAPI local và OpenAPI được bật t�
 
 Mọi `/api/` request production cần chữ ký ingress. Client sử dụng bearer token cho các thao tác phiên và chat; không tự tạo chữ ký hoặc gọi vòng qua Render. Request body giới hạn 64 KiB.
 
+> **Trạng thái 22/10/2026:** contract claim-aware trong tài liệu này là hotfix candidate, chưa deploy. Production `b1c10f4` chưa chấp nhận marker nhóm/fallback ngắn mới; response vẫn dùng `answer_schema_version=1`.
+
 ## Endpoint
 
 | Method và đường dẫn | Xác thực client | Kết quả |
@@ -70,7 +72,7 @@ Gửi `Authorization: Bearer <token>` và `Content-Type: application/json`.
 | `message` | 1–4.000 ký tự |
 | `project` | `ring4` hoặc `null`; giá trị khác bị từ chối |
 | `as_of` | Ngày ISO `YYYY-MM-DD` hoặc `null` để dùng ngày hiện tại của hệ thống |
-| `mode` | `agentic_rag` là đường chạy production khi `EXECUTION_MODE=agentic_rag`: model chọn trả lời trực tiếp hoặc gọi tối đa hai tool đọc-only, tối đa ba request mỗi lượt. `simple_rag` là rollback mode: một lượt generation, tối đa 5 passage đã lọc, citation marker `[S1]`...`[S5]` chỉ trỏ vào context thực gửi. `agentic` là legacy. Cả hai mode hiện hành đều suy citation từ marker inline, không nhận danh sách citation thứ hai từ model |
+| `mode` | `agentic_rag` là đường chạy production khi `EXECUTION_MODE=agentic_rag`: model chọn trả lời trực tiếp hoặc gọi tối đa hai tool đọc-only; bình thường 1 request xã giao hoặc 2 request pháp luật, hard ceiling 3. `simple_rag` là rollback mode: một lượt generation, tối đa 5 passage đã lọc, citation marker `[S1]`...`[S5]` chỉ trỏ vào context thực gửi. `agentic` là legacy. Cả hai mode hiện hành đều suy citation từ marker inline, không nhận danh sách citation thứ hai từ model. Ở `agentic_rag`, câu khẳng định pháp lý cần marker trong câu; câu hỏi làm rõ có thể không có marker. Marker nhóm `[S1, S2]` được chấp nhận; ID ngoài context bị từ chối |
 | `history` | Tối đa 8 message; tổng nội dung tối đa 12.000 ký tự |
 
 History phải gồm các cặp `user` → `assistant` và kết thúc bằng `assistant`. Mỗi message có `content` dài 1–3.000 ký tự, `as_of` tùy chọn và tối đa 8 citation metadata gồm `document_id`, `document_number`, `locator`. Không gửi trace hoặc bearer token trong history.
@@ -88,9 +90,11 @@ Khi request được chấp nhận, response có `Content-Type: text/event-strea
 | `failure` | Mã lỗi và thông báo lượt không hoàn tất | Thông báo lỗi; không tự gửi lại |
 | SSE comment | `: connected` hoặc `: heartbeat` | Giữ kết nối; không có nội dung trả lời |
 
-`result.status` có thể là `answered`, `clarification_needed`, `insufficient_evidence`, `limited` hoặc `error`. HTTP `200` của stream không đồng nghĩa câu hỏi đã được trả lời thành công; client phải kiểm tra sự kiện cuối và status.
+`result.status` có thể là `answered`, `clarification_needed`, `insufficient_evidence`, `limited` hoặc `error`. HTTP `200` của stream không đồng nghĩa câu hỏi đã được trả lời thành công; client phải kiểm tra sự kiện cuối và status. `clarification_needed` có hai dạng: câu hỏi làm rõ không marker (citations có thể rỗng) hoặc fallback an toàn sau validation thất bại (citations chỉ là danh tính nguồn đã đối chiếu, không phải kết luận).
 
 Kết quả gồm `content`, `citations`, `trace`, `trace_id`, corpus/model identity và các chỉ số `llm_calls`, `tool_calls`, `token_usage`, `elapsed_ms`. Citation chứa nguồn, locator, excerpt, ngày kiểm tra và trang/URL nguồn bổ sung khi có. Schema chi tiết nằm trong `backend/landlaw/models.py`.
+
+`trace` là chẩn đoán vận hành đã redact: reason code validation, số marker/claim và document ID; không chứa draft, excerpt hay nội dung hội thoại. Client không hiển thị các reason code này như lời giải thích pháp lý hoặc lỗi cho người dân.
 
 `agentic_rag` là execution mode đích: model chọn tool nhưng ứng dụng thực thi, giới hạn request/tool và vẫn kiểm tra source review, applicability, citation/reference guard trước khi phát hành. `simple_rag` là rollback mode ít request hơn nhưng không có tool calling; cả hai giữ retrieval theo release, loại văn bản đã biết hết hiệu lực, không cho citation ngoài context và không kết luận quyền lợi cá nhân khi thiếu dữ kiện. Với snapshot v2, câu trả lời pháp luật có thể kèm một câu ghi mốc `reviewed_at` và khuyến nghị kiểm tra văn bản gốc; đây không phải tuyên bố snapshot là pháp luật hiện hành. Pilot model đã chạy và mode này đang phục vụ production; xem `reports/evaluation/agentic-rag-final/`. Đổi mode không biến retrieval accuracy thành answer accuracy.
 

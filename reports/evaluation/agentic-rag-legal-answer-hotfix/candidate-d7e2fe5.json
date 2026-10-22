@@ -1,0 +1,678 @@
+{
+ "fixture": "tests/fixtures/legal-answer-hotfix-release.json",
+ "fixture_provenance": {
+  "source_release_id": "corpus-1afca764aa6692e0",
+  "source_snapshot": "data/staging/phase2c-current/release-v5.json",
+  "note": "Selected chunks copied verbatim from the reviewed production corpus snapshot for deterministic regression fixtures; not a production release."
+ },
+ "scenarios": [
+  {
+   "id": "T01",
+   "message": "Nhà tôi nằm trong khu vực quy hoạch đường Vành đai 4 Hà Nội, tôi có được bố trí tái định cư không?",
+   "query": "quy hoạch Vành đai 4 bố trí tái định cư",
+   "status": "answered",
+   "content": "Việc nằm trong vùng quy hoạch chưa đủ để kết luận về tái định cư. Khi Nhà nước thu hồi đất ở và hộ đủ điều kiện bồi thường về đất ở, việc bố trí tái định cư được thực hiện theo phương án đã được phê duyệt [S1]. Bạn đã nhận quyết định thu hồi đất hoặc thông báo thu hồi chưa?\n\nLưu ý: Đây là quy định chung; quyền lợi cụ thể phụ thuộc hồ sơ và phương án của dự án.",
+   "citations": [
+    {
+     "document_id": "nd-88-2024",
+     "document_number": "88/2024/NĐ-CP",
+     "locator": "Điều 24"
+    }
+   ],
+   "trace": [
+    {
+     "step": "intent",
+     "tool": null,
+     "summary": "Model-driven turn (legal)",
+     "document_ids": []
+    },
+    {
+     "step": "retrieval",
+     "tool": null,
+     "summary": "Retrieved 5 reviewed passage(s)",
+     "document_ids": [
+      "nd-88-2024",
+      "qd-40-2026-hanoi",
+      "luat-dat-dai-2024",
+      "qd-40-2026-hanoi",
+      "qd-40-2026-hanoi"
+     ]
+    },
+    {
+     "step": "tool",
+     "tool": "search_legal_evidence",
+     "summary": "search_legal_evidence(quy hoạch Vành đai 4 bố trí tái định cư)",
+     "document_ids": [
+      "nd-88-2024",
+      "qd-40-2026-hanoi",
+      "luat-dat-dai-2024",
+      "qd-40-2026-hanoi",
+      "qd-40-2026-hanoi"
+     ]
+    },
+    {
+     "step": "citation_validation",
+     "tool": null,
+     "summary": "Validation: valid=true; reason_codes=grounded_answer; cited=1; unknown=0; claims=1; uncited=0",
+     "document_ids": [
+      "nd-88-2024"
+     ]
+    },
+    {
+     "step": "generation",
+     "tool": null,
+     "summary": "Generated one source-marked answer",
+     "document_ids": [
+      "nd-88-2024"
+     ]
+    }
+   ],
+   "llm_calls": 2,
+   "tool_calls": 1,
+   "support_level": "partial",
+   "provider_generations": 1,
+   "provider_tool_steps": 1
+  },
+  {
+   "id": "T02",
+   "message": "Tôi không có sổ đỏ thì có được bồi thường về đất khi thu hồi không?",
+   "query": "không có sổ đỏ điều kiện bồi thường về đất",
+   "status": "answered",
+   "content": "Có giấy chứng nhận quyền sử dụng đất là một căn cứ quan trọng để xét điều kiện được bồi thường về đất khi Nhà nước thu hồi đất [S1]. Trường hợp không có giấy chứng nhận vẫn có thể được xét theo quy định về giấy tờ và nguồn gốc sử dụng đất [S1]. Bạn đang có loại giấy tờ nào?",
+   "citations": [
+    {
+     "document_id": "nd-88-2024",
+     "document_number": "88/2024/NĐ-CP",
+     "locator": "Điều 5"
+    }
+   ],
+   "trace": [
+    {
+     "step": "intent",
+     "tool": null,
+     "summary": "Model-driven turn (legal)",
+     "document_ids": []
+    },
+    {
+     "step": "retrieval",
+     "tool": null,
+     "summary": "Retrieved 5 reviewed passage(s)",
+     "document_ids": [
+      "nd-88-2024",
+      "luat-dat-dai-2024",
+      "qd-40-2026-hanoi",
+      "luat-dat-dai-2024",
+      "qd-40-2026-hanoi"
+     ]
+    },
+    {
+     "step": "tool",
+     "tool": "search_legal_evidence",
+     "summary": "search_legal_evidence(không có sổ đỏ điều kiện bồi thường về đất)",
+     "document_ids": [
+      "nd-88-2024",
+      "luat-dat-dai-2024",
+      "qd-40-2026-hanoi",
+      "luat-dat-dai-2024",
+      "qd-40-2026-hanoi"
+     ]
+    },
+    {
+     "step": "citation_validation",
+     "tool": null,
+     "summary": "Validation: valid=true; reason_codes=grounded_answer; cited=1; unknown=0; claims=1; uncited=0",
+     "document_ids": [
+      "nd-88-2024"
+     ]
+    },
+    {
+     "step": "generation",
+     "tool": null,
+     "summary": "Generated one source-marked answer",
+     "document_ids": [
+      "nd-88-2024"
+     ]
+    }
+   ],
+   "llm_calls": 2,
+   "tool_calls": 1,
+   "support_level": "full",
+   "provider_generations": 1,
+   "provider_tool_steps": 1
+  },
+  {
+   "id": "L01",
+   "message": "Tôi có sổ đỏ, khi thu hồi đất có được bồi thường không?",
+   "query": "sổ đỏ bồi thường đất ở thu hồi",
+   "status": "answered",
+   "content": "Khi Nhà nước thu hồi hết đất ở hoặc phần diện tích đất ở còn lại nhỏ hơn diện tích tối thiểu được phép tách thửa, hộ gia đình đủ điều kiện được bồi thường có thể được bồi thường bằng giao đất ở có thu tiền sử dụng đất, mua nhà ở tái định cư hoặc bằng tiền [S3]. Điều kiện bồi thường còn phụ thuộc giấy tờ và nguồn gốc của thửa đất; bạn đang có loại giấy tờ nào?",
+   "citations": [
+    {
+     "document_id": "qd-40-2026-hanoi",
+     "document_number": "40/2026/QĐ-UBND",
+     "locator": "Điều 4"
+    }
+   ],
+   "trace": [
+    {
+     "step": "intent",
+     "tool": null,
+     "summary": "Model-driven turn (legal)",
+     "document_ids": []
+    },
+    {
+     "step": "retrieval",
+     "tool": null,
+     "summary": "Retrieved 5 reviewed passage(s)",
+     "document_ids": [
+      "qd-40-2026-hanoi",
+      "luat-dat-dai-2024",
+      "qd-40-2026-hanoi",
+      "nd-88-2024",
+      "qd-40-2026-hanoi"
+     ]
+    },
+    {
+     "step": "tool",
+     "tool": "search_legal_evidence",
+     "summary": "search_legal_evidence(sổ đỏ bồi thường đất ở thu hồi)",
+     "document_ids": [
+      "qd-40-2026-hanoi",
+      "luat-dat-dai-2024",
+      "qd-40-2026-hanoi",
+      "nd-88-2024",
+      "qd-40-2026-hanoi"
+     ]
+    },
+    {
+     "step": "citation_validation",
+     "tool": null,
+     "summary": "Validation: valid=true; reason_codes=grounded_answer; cited=1; unknown=0; claims=1; uncited=0",
+     "document_ids": [
+      "qd-40-2026-hanoi"
+     ]
+    },
+    {
+     "step": "generation",
+     "tool": null,
+     "summary": "Generated one source-marked answer",
+     "document_ids": [
+      "qd-40-2026-hanoi"
+     ]
+    }
+   ],
+   "llm_calls": 2,
+   "tool_calls": 1,
+   "support_level": "full",
+   "provider_generations": 1,
+   "provider_tool_steps": 1
+  },
+  {
+   "id": "L02",
+   "message": "Tôi đã nhận quyết định giao đất tái định cư, vậy có được bồi thường thêm không?",
+   "query": "quyết định giao đất tái định cư",
+   "status": "answered",
+   "content": "Hộ gia đình đủ điều kiện bồi thường về đất ở có thể được bồi thường bằng giao đất ở tái định cư theo phương án đã được phê duyệt [S1, S2]. Bạn đã nhận được quyết định giao đất tái định cư chưa?",
+   "citations": [
+    {
+     "document_id": "luat-dat-dai-2024",
+     "document_number": "31/2024/QH15",
+     "locator": "Điều 111"
+    },
+    {
+     "document_id": "qd-40-2026-hanoi",
+     "document_number": "40/2026/QĐ-UBND",
+     "locator": "Điều 21"
+    }
+   ],
+   "trace": [
+    {
+     "step": "intent",
+     "tool": null,
+     "summary": "Model-driven turn (legal)",
+     "document_ids": []
+    },
+    {
+     "step": "retrieval",
+     "tool": null,
+     "summary": "Retrieved 5 reviewed passage(s)",
+     "document_ids": [
+      "luat-dat-dai-2024",
+      "qd-40-2026-hanoi",
+      "nd-88-2024",
+      "qd-40-2026-hanoi",
+      "nd-88-2024"
+     ]
+    },
+    {
+     "step": "tool",
+     "tool": "search_legal_evidence",
+     "summary": "search_legal_evidence(quyết định giao đất tái định cư)",
+     "document_ids": [
+      "luat-dat-dai-2024",
+      "qd-40-2026-hanoi",
+      "nd-88-2024",
+      "qd-40-2026-hanoi",
+      "nd-88-2024"
+     ]
+    },
+    {
+     "step": "citation_validation",
+     "tool": null,
+     "summary": "Validation: valid=true; reason_codes=grounded_answer; cited=2; unknown=0; claims=1; uncited=0",
+     "document_ids": [
+      "luat-dat-dai-2024",
+      "qd-40-2026-hanoi"
+     ]
+    },
+    {
+     "step": "generation",
+     "tool": null,
+     "summary": "Generated one source-marked answer",
+     "document_ids": [
+      "luat-dat-dai-2024",
+      "qd-40-2026-hanoi"
+     ]
+    }
+   ],
+   "llm_calls": 2,
+   "tool_calls": 1,
+   "support_level": "full",
+   "provider_generations": 1,
+   "provider_tool_steps": 1
+  },
+  {
+   "id": "L03",
+   "message": "Hỗ trợ ổn định đời sống khi thu hồi đất nông nghiệp được tính thế nào?",
+   "query": "hỗ trợ ổn định đời sống đất nông nghiệp",
+   "status": "answered",
+   "content": "Hỗ trợ ổn định đời sống được xét cho hộ gia đình, cá nhân đang sử dụng đất nông nghiệp nếu đủ điều kiện được bồi thường về đất [S1]. Mức và thời gian hỗ trợ phụ thuộc quy định của địa phương và diện tích đất thu hồi [S1]. Bạn bị thu hồi bao nhiêu phần trăm diện tích đất nông nghiệp?",
+   "citations": [
+    {
+     "document_id": "nd-88-2024",
+     "document_number": "88/2024/NĐ-CP",
+     "locator": "Điều 19"
+    }
+   ],
+   "trace": [
+    {
+     "step": "intent",
+     "tool": null,
+     "summary": "Model-driven turn (legal)",
+     "document_ids": []
+    },
+    {
+     "step": "retrieval",
+     "tool": null,
+     "summary": "Retrieved 5 reviewed passage(s)",
+     "document_ids": [
+      "nd-88-2024",
+      "luat-dat-dai-2024",
+      "qd-40-2026-hanoi",
+      "qd-40-2026-hanoi",
+      "luat-dat-dai-2024"
+     ]
+    },
+    {
+     "step": "tool",
+     "tool": "search_legal_evidence",
+     "summary": "search_legal_evidence(hỗ trợ ổn định đời sống đất nông nghiệp)",
+     "document_ids": [
+      "nd-88-2024",
+      "luat-dat-dai-2024",
+      "qd-40-2026-hanoi",
+      "qd-40-2026-hanoi",
+      "luat-dat-dai-2024"
+     ]
+    },
+    {
+     "step": "citation_validation",
+     "tool": null,
+     "summary": "Validation: valid=true; reason_codes=grounded_answer; cited=1; unknown=0; claims=1; uncited=0",
+     "document_ids": [
+      "nd-88-2024"
+     ]
+    },
+    {
+     "step": "generation",
+     "tool": null,
+     "summary": "Generated one source-marked answer",
+     "document_ids": [
+      "nd-88-2024"
+     ]
+    }
+   ],
+   "llm_calls": 2,
+   "tool_calls": 1,
+   "support_level": "full",
+   "provider_generations": 1,
+   "provider_tool_steps": 1
+  },
+  {
+   "id": "T01-CLARIFY",
+   "message": "Nhà tôi trong vùng quy hoạch Vành đai 4 thì có được bố trí tái định cư không?",
+   "query": "quy hoạch Vành đai 4 tái định cư",
+   "status": "clarification_needed",
+   "content": "Bạn đã nhận được quyết định thu hồi đất hoặc thông báo thu hồi chưa?",
+   "citations": [],
+   "trace": [
+    {
+     "step": "intent",
+     "tool": null,
+     "summary": "Model-driven turn (legal)",
+     "document_ids": []
+    },
+    {
+     "step": "retrieval",
+     "tool": null,
+     "summary": "Retrieved 5 reviewed passage(s)",
+     "document_ids": [
+      "qd-40-2026-hanoi",
+      "nd-88-2024",
+      "luat-dat-dai-2024",
+      "qd-40-2026-hanoi",
+      "nd-88-2024"
+     ]
+    },
+    {
+     "step": "tool",
+     "tool": "search_legal_evidence",
+     "summary": "search_legal_evidence(quy hoạch Vành đai 4 tái định cư)",
+     "document_ids": [
+      "qd-40-2026-hanoi",
+      "nd-88-2024",
+      "luat-dat-dai-2024",
+      "qd-40-2026-hanoi",
+      "nd-88-2024"
+     ]
+    },
+    {
+     "step": "citation_validation",
+     "tool": null,
+     "summary": "Validation: valid=true; reason_codes=legitimate_clarification; cited=0; unknown=0; claims=0; uncited=0",
+     "document_ids": []
+    },
+    {
+     "step": "clarification",
+     "tool": null,
+     "summary": "Claim-free clarification published",
+     "document_ids": []
+    }
+   ],
+   "llm_calls": 2,
+   "tool_calls": 1,
+   "support_level": "insufficient",
+   "provider_generations": 1,
+   "provider_tool_steps": 1
+  },
+  {
+   "id": "T02-CLARIFY",
+   "message": "Tôi không có sổ đỏ thì có được bồi thường về đất khi thu hồi không?",
+   "query": "không có sổ đỏ điều kiện bồi thường về đất",
+   "status": "clarification_needed",
+   "content": "Bạn đang có loại giấy tờ nào?",
+   "citations": [],
+   "trace": [
+    {
+     "step": "intent",
+     "tool": null,
+     "summary": "Model-driven turn (legal)",
+     "document_ids": []
+    },
+    {
+     "step": "retrieval",
+     "tool": null,
+     "summary": "Retrieved 5 reviewed passage(s)",
+     "document_ids": [
+      "nd-88-2024",
+      "luat-dat-dai-2024",
+      "qd-40-2026-hanoi",
+      "luat-dat-dai-2024",
+      "qd-40-2026-hanoi"
+     ]
+    },
+    {
+     "step": "tool",
+     "tool": "search_legal_evidence",
+     "summary": "search_legal_evidence(không có sổ đỏ điều kiện bồi thường về đất)",
+     "document_ids": [
+      "nd-88-2024",
+      "luat-dat-dai-2024",
+      "qd-40-2026-hanoi",
+      "luat-dat-dai-2024",
+      "qd-40-2026-hanoi"
+     ]
+    },
+    {
+     "step": "citation_validation",
+     "tool": null,
+     "summary": "Validation: valid=true; reason_codes=legitimate_clarification; cited=0; unknown=0; claims=0; uncited=0",
+     "document_ids": []
+    },
+    {
+     "step": "clarification",
+     "tool": null,
+     "summary": "Claim-free clarification published",
+     "document_ids": []
+    }
+   ],
+   "llm_calls": 2,
+   "tool_calls": 1,
+   "support_level": "insufficient",
+   "provider_generations": 1,
+   "provider_tool_steps": 1
+  },
+  {
+   "id": "UNCITED",
+   "message": "Tôi có sổ đỏ thì có được bồi thường về đất không?",
+   "query": "bồi thường đất ở",
+   "status": "clarification_needed",
+   "content": "Mình chưa thể xác nhận câu trả lời tự động đủ chắc chắn cho trường hợp này.\n\nNguồn liên quan đã được đối chiếu: 88/2024/NĐ-CP — Điều 5; 40/2026/QĐ-UBND — Điều 4.\n\nBạn có thể mở phần nguồn để xem nội dung gốc.\n\nĐể trả lời đúng, bạn cho biết: giấy tờ về quyền sử dụng đất bạn đang có là loại nào?",
+   "citations": [
+    {
+     "document_id": "nd-88-2024",
+     "document_number": "88/2024/NĐ-CP",
+     "locator": "Điều 5"
+    },
+    {
+     "document_id": "qd-40-2026-hanoi",
+     "document_number": "40/2026/QĐ-UBND",
+     "locator": "Điều 4"
+    }
+   ],
+   "trace": [
+    {
+     "step": "intent",
+     "tool": null,
+     "summary": "Model-driven turn (legal)",
+     "document_ids": []
+    },
+    {
+     "step": "retrieval",
+     "tool": null,
+     "summary": "Retrieved 5 reviewed passage(s)",
+     "document_ids": [
+      "nd-88-2024",
+      "qd-40-2026-hanoi",
+      "qd-40-2026-hanoi",
+      "luat-dat-dai-2024",
+      "nq-254-2025"
+     ]
+    },
+    {
+     "step": "tool",
+     "tool": "search_legal_evidence",
+     "summary": "search_legal_evidence(bồi thường đất ở)",
+     "document_ids": [
+      "nd-88-2024",
+      "qd-40-2026-hanoi",
+      "qd-40-2026-hanoi",
+      "luat-dat-dai-2024",
+      "nq-254-2025"
+     ]
+    },
+    {
+     "step": "citation_validation",
+     "tool": null,
+     "summary": "Validation: valid=false; reason_codes=missing_required_citation; cited=0; unknown=0; claims=1; uncited=1",
+     "document_ids": []
+    },
+    {
+     "step": "clarification",
+     "tool": null,
+     "summary": "Safe clarification fallback: reason_codes=missing_required_citation",
+     "document_ids": [
+      "nd-88-2024",
+      "qd-40-2026-hanoi"
+     ]
+    }
+   ],
+   "llm_calls": 2,
+   "tool_calls": 1,
+   "support_level": "insufficient",
+   "provider_generations": 1,
+   "provider_tool_steps": 1
+  },
+  {
+   "id": "GROUPED",
+   "message": "Điều kiện bồi thường về đất là gì?",
+   "query": "điều kiện bồi thường về đất",
+   "status": "answered",
+   "content": "Theo Điều 95 [S1, S3], điều kiện bồi thường về đất được xét theo giấy tờ và nguồn gốc đất.",
+   "citations": [
+    {
+     "document_id": "nd-88-2024",
+     "document_number": "88/2024/NĐ-CP",
+     "locator": "Điều 5"
+    },
+    {
+     "document_id": "luat-dat-dai-2024",
+     "document_number": "31/2024/QH15",
+     "locator": "Điều 95"
+    }
+   ],
+   "trace": [
+    {
+     "step": "intent",
+     "tool": null,
+     "summary": "Model-driven turn (legal)",
+     "document_ids": []
+    },
+    {
+     "step": "retrieval",
+     "tool": null,
+     "summary": "Retrieved 5 reviewed passage(s)",
+     "document_ids": [
+      "nd-88-2024",
+      "qd-40-2026-hanoi",
+      "luat-dat-dai-2024",
+      "qd-40-2026-hanoi",
+      "nq-254-2025"
+     ]
+    },
+    {
+     "step": "tool",
+     "tool": "search_legal_evidence",
+     "summary": "search_legal_evidence(điều kiện bồi thường về đất)",
+     "document_ids": [
+      "nd-88-2024",
+      "qd-40-2026-hanoi",
+      "luat-dat-dai-2024",
+      "qd-40-2026-hanoi",
+      "nq-254-2025"
+     ]
+    },
+    {
+     "step": "citation_validation",
+     "tool": null,
+     "summary": "Validation: valid=true; reason_codes=grounded_answer; cited=2; unknown=0; claims=1; uncited=0",
+     "document_ids": [
+      "nd-88-2024",
+      "luat-dat-dai-2024"
+     ]
+    },
+    {
+     "step": "generation",
+     "tool": null,
+     "summary": "Generated one source-marked answer",
+     "document_ids": [
+      "nd-88-2024",
+      "luat-dat-dai-2024"
+     ]
+    }
+   ],
+   "llm_calls": 2,
+   "tool_calls": 1,
+   "support_level": "full",
+   "provider_generations": 1,
+   "provider_tool_steps": 1
+  },
+  {
+   "id": "UNKNOWN",
+   "message": "Điều kiện bồi thường về đất là gì?",
+   "query": "điều kiện bồi thường về đất",
+   "status": "clarification_needed",
+   "content": "Mình chưa thể xác nhận câu trả lời tự động đủ chắc chắn cho trường hợp này.\n\nNguồn liên quan đã được đối chiếu: 88/2024/NĐ-CP — Điều 5.\n\nBạn có thể mở phần nguồn để xem nội dung gốc.\n\nĐể trả lời đúng, bạn cho biết: đất đang là đất ở hay đất nông nghiệp?",
+   "citations": [
+    {
+     "document_id": "nd-88-2024",
+     "document_number": "88/2024/NĐ-CP",
+     "locator": "Điều 5"
+    }
+   ],
+   "trace": [
+    {
+     "step": "intent",
+     "tool": null,
+     "summary": "Model-driven turn (legal)",
+     "document_ids": []
+    },
+    {
+     "step": "retrieval",
+     "tool": null,
+     "summary": "Retrieved 5 reviewed passage(s)",
+     "document_ids": [
+      "nd-88-2024",
+      "qd-40-2026-hanoi",
+      "luat-dat-dai-2024",
+      "qd-40-2026-hanoi",
+      "nq-254-2025"
+     ]
+    },
+    {
+     "step": "tool",
+     "tool": "search_legal_evidence",
+     "summary": "search_legal_evidence(điều kiện bồi thường về đất)",
+     "document_ids": [
+      "nd-88-2024",
+      "qd-40-2026-hanoi",
+      "luat-dat-dai-2024",
+      "qd-40-2026-hanoi",
+      "nq-254-2025"
+     ]
+    },
+    {
+     "step": "citation_validation",
+     "tool": null,
+     "summary": "Validation: valid=false; reason_codes=unknown_citation_id; cited=1; unknown=1; claims=1; uncited=0",
+     "document_ids": [
+      "nd-88-2024"
+     ]
+    },
+    {
+     "step": "clarification",
+     "tool": null,
+     "summary": "Safe clarification fallback: reason_codes=unknown_citation_id",
+     "document_ids": [
+      "nd-88-2024"
+     ]
+    }
+   ],
+   "llm_calls": 2,
+   "tool_calls": 1,
+   "support_level": "insufficient",
+   "provider_generations": 1,
+   "provider_tool_steps": 1
+  }
+ ]
+}

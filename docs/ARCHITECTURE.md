@@ -1,5 +1,7 @@
 # Kiến trúc
 
+> **Trạng thái 22/10/2026:** tài liệu mô tả code trên branch hotfix candidate. Production `b1c10f4` chưa có claim-aware guard, fallback ngắn và direct-first evidence ordering; các khác biệt được đánh dấu tại mục giới hạn.
+
 ## Tổng quan
 
 Hệ thống là một pipeline duy nhất: React → Cloudflare Pages/Pages Function → FastAPI trên Render → Bounded Agentic RAG (`backend/landlaw/agentic_rag.py`) → Groq `openai/gpt-oss-120b` + tool đọc-only → PostgreSQL/pgvector trên Supabase.
@@ -23,7 +25,7 @@ Hệ thống là một pipeline duy nhất: React → Cloudflare Pages/Pages Fun
 | Legacy agentic | `backend/landlaw/agent.py` | Planner/verify/repair LangGraph cũ; không phải production |
 | Provider | `backend/landlaw/provider.py` | Groq chat/tool HTTP, usage, quota, retry có giới hạn |
 | Retrieval/store | `backend/landlaw/store.py`, `retrieval.py` | Hybrid search, release, receipt, source gate, applicability |
-| Citation guard | `backend/landlaw/legal_text.py` | Điều/khoản/số hiệu, điều kiện thêm vào, nguồn bối cảnh |
+| Citation guard | `backend/landlaw/legal_text.py` | Claim-aware: marker theo câu, điều/khoản/số hiệu, điều kiện thêm vào, nguồn bối cảnh |
 | Corpus/policy | `backend/landlaw/source_policy.py`, `publication.py`, `ops.py` | Applicability, standing snapshot, review receipt |
 | Frontend | `frontend/src/` | Chat, library, source panel, history, connection recovery |
 | Ingress | `frontend/functions/api/[[path]].ts` | Signed proxy Pages → Render |
@@ -36,9 +38,9 @@ Hệ thống là một pipeline duy nhất: React → Cloudflare Pages/Pages Fun
 2. Một request tool-decision tới Groq với `tool_choice="auto"` và hai tool schema.
 3. Nếu model trả lời trực tiếp: xã giao/ngoài phạm vi được trả luôn; câu pháp luật bị buộc retrieval.
 4. Nếu model gọi tool: ứng dụng validate tham số, thực thi tối đa 2 tool, thu evidence.
-5. Admission: policy v2 + checksum + receipt + `applicability()` tại ngày hỏi.
+5. Admission: policy v2 + checksum + receipt + `applicability()` tại ngày hỏi. Với câu hỏi pháp lý, đoạn legal trực tiếp được xếp trước context và nghị quyết chuyển tiếp; tối đa một context, ưu tiên locator khác nhau.
 6. Một request final generation với schema `SimpleAnswer` (không gửi tool).
-7. Guard citation/reference; đạt → `answered` + citation, không đạt → `clarification_needed` kèm trích đoạn.
+7. Guard claim-aware: câu khẳng định pháp lý phải có marker trong câu; câu hỏi làm rõ được phép không marker. Đạt → `answered` + citation; không đạt → `clarification_needed` ngắn, chỉ nêu danh tính nguồn và một câu hỏi, không đổ trích đoạn.
 
 ### Ngân sách và giới hạn
 
@@ -49,7 +51,7 @@ Hệ thống là một pipeline duy nhất: React → Cloudflare Pages/Pages Fun
 | Vòng tool-decision thứ hai | Không |
 | Repair loop | Không |
 | Deadline mỗi lượt | 90 giây (`turn_timeout_seconds`) |
-| Evidence tối đa | 5 đoạn |
+| Evidence tối đa | 5 đoạn; ưu tiên nguồn trực tiếp, locator khác nhau, tối đa một context khi có legal |
 | `reasoning_effort` | `low` cho tool decision và final generation; `medium` chỉ cho schema legacy |
 
 Không có planner request, không có verifier LLM, không tự nối điều kiện và không phát draft trước kiểm chứng.
@@ -104,14 +106,16 @@ Không có planner request, không có verifier LLM, không tự nối điều k
 | Model trả lời xã giao | `answered`, không tool/retrieval |
 | Model trả lời pháp luật trực tiếp | Ứng dụng buộc retrieval rồi generation |
 | Không có evidence admitted | `clarification_needed` hỏi đúng một dữ kiện còn thiếu |
-| Citation/reference không đạt | Clarification kèm trích đoạn thật, không kết luận quyền lợi |
+| Draft chỉ có câu hỏi làm rõ | `clarification_needed`, không cần marker, không phải task success |
+| Citation/reference không đạt | Fallback ngắn nêu tối đa hai danh tính nguồn và một câu hỏi; không đổ trích đoạn, không kết luận quyền lợi |
 | Groq 429 | `limited` + `Retry-After`; không retry vô hạn |
 | Groq 400/5xx | Tool decision bị bỏ, fallback retrieval + generation; lỗi khác trả `error` |
 | Mất kết nối SSE | Client không replay; người dùng chủ động gửi lượt mới |
 
 ## Giới hạn đã biết
 
-- False abstention còn ở T01/T02 và L02 production (clarification thay vì câu trả lời có điều kiện đầy đủ).
+- Production `b1c10f4` còn false abstention ở T01/T02 và L02 (clarification thay vì câu trả lời có điều kiện đầy đủ).
+- Hotfix hiện tại chỉ chứng minh regression tất định cho claim-free clarification, marker nhóm và thứ tự nguồn; chưa có kết quả Groq/live nên chưa thể tuyên bố hết false abstention.
 - L03 chưa chạy live; coverage nguồn còn thiếu Luật Nhà ở 2023 Điều 72, Luật Quy hoạch 2025, nhóm khiếu nại và nguồn vận hành Hà Nội.
 - `answer_schema_version=1` trong agentic_rag, nên structured claim renderer chưa hoạt động trong production.
 - Chưa có thẩm định pháp lý độc lập; citation đúng cấu trúc không đồng nghĩa mọi claim đúng ngữ nghĩa.

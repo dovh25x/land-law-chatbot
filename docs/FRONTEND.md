@@ -17,7 +17,16 @@ Các frame ban đầu được giữ nguyên để đối chiếu:
 | Thư viện văn bản | `7:8` |
 | Đánh giá hệ thống | `7:15` |
 
-[Handoff cho người dân](redesign/IMPLEMENTATION.md#handoff-giao-diện) bổ sung trang đầu và làm rõ tên giấy, sáng/tối, desktop/mobile trên cùng hệ thiết kế. Trang đầu hỏi “Bạn đang vướng việc gì?”, có bốn gợi ý; chọn chỉ điền ô nhập. `agentic_rag` production hiện trả `answer_schema_version=1`, nên UI dùng prose renderer; structured claim renderer version 2 chưa hoạt động trong production. `citizen.ts` kiểm tra projection và tạo nội dung sao chép tương ứng. Lịch sử schema cũ tiếp tục đọc được. Phiên bản v2 sai cấu trúc không hiển thị content thay thế.
+[Handoff cho người dân](redesign/IMPLEMENTATION.md#handoff-giao-diện) bổ sung trang đầu và làm rõ tên giấy, sáng/tối, desktop/mobile trên cùng hệ thiết kế. Trang đầu hỏi “Bạn đang vướng việc gì?”, có bốn gợi ý ngắn: năng lực của trợ lý; điều kiện bồi thường đất ở khi có sổ đỏ; hỗ trợ khi thu hồi đất nông nghiệp; điều kiện bố trí tái định cư khi phải chuyển nhà. Chọn gợi ý chỉ điền và focus ô nhập, không tự gửi hay hardcode đáp án. Đây là câu hỏi giao diện, không phải evaluation suite. `agentic_rag` production hiện trả `answer_schema_version=1`, nên UI dùng prose renderer; structured claim renderer version 2 chưa hoạt động trong production. `citizen.ts` kiểm tra projection và tạo nội dung sao chép tương ứng. Lịch sử schema cũ tiếp tục đọc được. Phiên bản v2 sai cấu trúc không hiển thị content thay thế.
+
+Bốn câu này là **candidate branch**, chưa deploy; public production `b1c10f4` vẫn hiển thị bốn câu cũ cho tới khi frontend được release. Bốn câu trong `frontend/src/citizen.ts`:
+
+1. `Trợ lý này có thể giúp gì?`
+2. `Có sổ đỏ, khi Nhà nước thu hồi đất ở thì điều kiện được bồi thường là gì?`
+3. `Khi bị thu hồi đất nông nghiệp, người dân có thể được hỗ trợ những gì?`
+4. `Nếu bị thu hồi đất ở và phải chuyển nhà, điều kiện được bố trí tái định cư là gì?`
+
+Câu 1 được phân loại là capabilities/social để trả lời giới thiệu năng lực, không kéo retrieval pháp luật. Ba câu còn lại là câu hỏi có điều kiện, không hứa chắc chắn được bồi thường/tái định cư; deterministic test kiểm tra chúng có ít nhất một đoạn admitted trực tiếp trong fixture đã review.
 
 ## Nguyên tắc trải nghiệm
 

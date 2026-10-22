@@ -145,7 +145,25 @@ Helper `scripts/evaluate_generation_candidate.py` nhận nhiều `--source-recei
 Pilot là các case đầu tiên của evaluation đầy đủ trên cùng cấu hình đã khóa. Khóa case IDs trước khi xem kết quả, giữ attempt fail và không chạy lại để chọn điểm. Với case answerable đã có đủ nguồn, từ chối vẫn là false abstention và không đạt Answer Correctness. Báo Answerable Coverage, False Abstention Rate, trạng thái chưa chạy và thiếu review riêng; không tính refusal không có claim là faithfulness bằng1. SQLite, PostgreSQL và public HTTP phải có cohort/latency riêng.
 
 
-## Đánh giá Agentic RAG (release 22/10/2026)
+## Hotfix legal-answer — kiểm tra tất định (22/10/2026)
+
+Đây là kiểm tra **application contract**, không phải evaluation model. Runner dùng fixture 6 tài liệu/31 chunk chọn lọc từ `corpus-1afca764aa6692e0`, mock tool decision và mock `SimpleAnswer`; không gửi request Groq và không dùng kết quả này để tính Recall, faithfulness, task success hay latency.
+
+- Baseline runtime: `982aae704d57127d4544d048c24aa295da40ff12` (các file runtime liên quan giống production `b1c10f4`).
+- Candidate runtime: `d7e2fe59b672`; test tất định trên branch cuối: 18.
+- 10 scenario đóng băng: T01/T02, L01/L02/L03, hai clarification thuần, UNCITED, GROUPED và UNKNOWN.
+- Kết quả: 6/10 thoát fallback trích đoạn; L02 và GROUPED chuyển sang `answered`; hai clarification thuần không còn citation/raw excerpt; UNCITED và UNKNOWN còn fallback ngắn, không phát hành marker lạ. L01 chọn `40/2026/QĐ-UBND — Điều 4` thay cho `31/2024/QH15 — Điều 109`; T01/T02/L03 không regression.
+- Mọi scenario dùng 2 LLM request (mock) và 1 tool execution; không có second tool decision, repair loop hay request thứ ba.
+- Reason code candidate: 6 `grounded_answer`, 2 `legitimate_clarification`, 1 `missing_required_citation`, 1 `unknown_citation_id`.
+- Kiểm thử: **18 passed** hotfix; **150 passed** trên sáu file focused (hotfix, bounded Agentic RAG, source review, scoped gate, standing snapshot, conversation); **653 passed** full backend; frontend **30 passed**; build pass; Playwright **38 passed**; `npm audit` 0 vulnerability; secrets scan pass.
+- Offline retrieval rerun sau hotfix trên cùng corpus `corpus-1afca764aa6692e0`, gold, receipt, policy và E5: **Recall@5 = 0,975** (39/40 gold chunk), **Admitted Evidence Recall@5 = 0,925** (37/40), top-5 hit **20/20**, admitted top-5 hit **20/20**. JSON byte-identical với benchmark trước; không tuyên bố cải thiện retrieval. Thứ tự `direct-first` sau admission được kiểm tra riêng ở T01/L01.
+- Report, scenario freeze, output baseline/candidate, retrieval rerun và checksum: [`reports/evaluation/agentic-rag-legal-answer-hotfix/`](../reports/evaluation/agentic-rag-legal-answer-hotfix/README.md).
+
+**Không** suy ra false abstention đã hết trên production, không suy ra cải thiện chất lượng pháp lý và không thay thế L03 live. Đây là bằng chứng để review hotfix, không phải nghiệm thu release.
+
+## Đánh giá Agentic RAG (release 22/10/2026 — historical runtime)
+
+Các số liệu trong mục này thuộc release `4fff5e1`/`b1c10f4` và được giữ nguyên lịch sử; chúng không đo hotfix legal-answer ở trên.
 
 - Script hiện hành: `scripts/evaluate_agentic_pilot.py` (pre-deploy, dùng `BoundedAgenticRAG`) và `scripts/smoke_agentic_production.py` (production smoke qua Pages ingress). Các lệnh CLI `land-law benchmark --mode agentic` chỉ chạy legacy `agentic`.
 - Kết quả pre-deploy (runtime `4fff5e1`, 16 request): tool selection 6/6, tool execution 6/6, citation correctness 7/7, unsupported legal claim 0, task success 1/6 full + 3/6 partial + 2/6 lỗi provider, false abstention 2/5 ca legal, L03 NOT RUN.
