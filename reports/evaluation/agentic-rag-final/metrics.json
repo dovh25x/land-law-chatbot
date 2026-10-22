@@ -1,0 +1,447 @@
+{
+  "evaluated_runtime_commit": "4fff5e1a8b3b8e88ed9bef379c79cb62680262db",
+  "pre_deployment_acceptance_runtime": "4fff5e1 (bounded Agentic RAG with two tool-decision loop)",
+  "runtime_fix_commit": "d4c153a (one tool decision per turn)",
+  "merge_commit": "5223937d28d9042e47521f41ce4c2b7ecd9ee126",
+  "deployed_source_commit": "b1c10f4bad6b89f1d555eb08f5216b4b285be6d6",
+  "deployed_render_deployment": "dep-dbd26u2vcj2c739dtck0",
+  "deployed_pages_deployment": "636baf63-fde3-44c6-a26f-91f62d8cf970",
+  "source_tree_configuration_sha256": "44d118d8dca10fdb19349631c608269ace47a26145e1ea997e0fda7e6838090f",
+  "corpus_id": "corpus-1afca764aa6692e0",
+  "policy_sha256": "7e6ec4c4f581c9e8e7355288f7f76e61f67bdaed67d95f68d7d541c5b256983d",
+  "model": "openai/gpt-oss-120b",
+  "embedding_model": "multilingual-e5-small-onnx-q8-window-v1",
+  "frozen_suite": "agentic-v1-20261022",
+  "frozen_suite_sha256": "91cb76aefb292d8e426f4cc7e9433be5bcc8face35341e0b523a03a25acb7621",
+  "pre_deployment": {
+    "cases": [
+      {
+        "id": "A01",
+        "kind": "social",
+        "execution": "RUN",
+        "status": "answered",
+        "llm_requests": 1,
+        "tool_executions": 0,
+        "embedding_calls": 0,
+        "tokens": 751,
+        "latency_ms": 1011,
+        "evidence_count": 0,
+        "citations": [],
+        "trace": [
+          {
+            "step": "intent",
+            "tool": null,
+            "summary": "Model-driven turn (ambiguous)"
+          }
+        ],
+        "answer_excerpt": "Chào bạn! Tôi có thể hỗ trợ giải đáp các thắc mắc liên quan đến đất đai, thu hồi, bồi thường, hỗ trợ, tái định cư, quy hoạch, dự án và các giấy tờ tại khu vực Vành đai 4 Hà Nội. Bạn cần giúp đỡ gì cụ thể?"
+      },
+      {
+        "id": "T01",
+        "kind": "legal",
+        "execution": "RUN",
+        "status": "clarification_needed",
+        "llm_requests": 3,
+        "tool_executions": 1,
+        "embedding_calls": 1,
+        "tokens": 3662,
+        "latency_ms": 18013,
+        "evidence_count": 5,
+        "citations": [
+          {
+            "document_id": "nq-254-2025",
+            "document_number": "254/2025/QH15",
+            "locator": "Điều 3"
+          },
+          {
+            "document_id": "qd-40-2026-hanoi",
+            "document_number": "40/2026/QĐ-UBND",
+            "locator": "Điều 21"
+          }
+        ],
+        "trace": [
+          {
+            "step": "intent",
+            "tool": null,
+            "summary": "Model-driven turn (legal)"
+          },
+          {
+            "step": "retrieval",
+            "tool": null,
+            "summary": "Retrieved 5 reviewed passage(s)"
+          },
+          {
+            "step": "tool",
+            "tool": "search_legal_evidence",
+            "summary": "search_legal_evidence(quyền bố trí chỗ ở mới khi nhà hiện tại nằm trong diện quy hoạch tại Vành đai 4)"
+          },
+          {
+            "step": "tool_routing",
+            "tool": null,
+            "summary": "Tool routing unavailable: ProviderUnavailable"
+          },
+          {
+            "step": "citation_validation",
+            "tool": null,
+            "summary": "Citation/reference guard rejected the draft: 0 issue(s)"
+          },
+          {
+            "step": "clarification",
+            "tool": null,
+            "summary": "Draft failed deterministic citation/reference validation"
+          }
+        ],
+        "answer_excerpt": "Mình đã tìm thấy nguồn liên quan nhưng chưa thể xác nhận câu trả lời tự động đủ chắc chắn.\n\nDưới đây là trích đoạn để bạn đối chiếu; đây chưa phải kết luận về quyền lợi của hồ sơ cụ thể:\n\n- **254/2025/QH15 Nghị quyết quy định một số cơ chế, chính sách tháo gỡ khó khăn, vướng mắc trong tổ chức thi hành Luật Đất đai — Điều 3:** “khẩn cấp theo quy định của pháp luật về đầu tư công, dự án thực hiện tái định cư tại chỗ, dự án mà việc bố trí tái định cư theo tuyến công trình chính; c) Chính phủ quy định chi tiết việc thu hồi đất trước khi phê duyệt phương án bồi thường, hỗ trợ, tái định cư và thu hồi đất trước khi hoàn thành việc bố trí tái định cư. 4. Ủy ban nhân dân cấp tỉnh quy định việc bố trí tạm cư, thời gian và kinh phí tạm cư đối với trường hợp quyết định thu hồi đất trước khi hoàn thành việc bố trí tái định cư. 5. ”\n\n- **40/2026/QĐ-UBND Quy định một số nội dung bồi thường, hỗ trợ, tái định cư Hà Nội — Điều 21:** “CÔNG BÁO HÀ NỘI/Số 132/Ngày 09 -4-2026 19 2. Đối với các xã thì thực hiện bồi thường bằng giao đất ở tái định cư. Diện tích đất ở được bồi thường bằng diện tích đất ở bị thu hồi (trường hợp thửa đất thuộc ranh giới thu hồi từ 2 dự án trở lên, diện tích đất ở được bồi th"
+      },
+      {
+        "id": "T02",
+        "kind": "legal",
+        "execution": "RUN",
+        "status": "clarification_needed",
+        "llm_requests": 3,
+        "tool_executions": 2,
+        "embedding_calls": 1,
+        "tokens": 5787,
+        "latency_ms": 9491,
+        "evidence_count": 5,
+        "citations": [
+          {
+            "document_id": "nq-254-2025",
+            "document_number": "254/2025/QH15",
+            "locator": "Điều 3"
+          },
+          {
+            "document_id": "nq-254-2025",
+            "document_number": "254/2025/QH15",
+            "locator": "Điều 3"
+          }
+        ],
+        "trace": [
+          {
+            "step": "intent",
+            "tool": null,
+            "summary": "Model-driven turn (legal)"
+          },
+          {
+            "step": "retrieval",
+            "tool": null,
+            "summary": "Retrieved 5 reviewed passage(s)"
+          },
+          {
+            "step": "tool",
+            "tool": "search_legal_evidence",
+            "summary": "search_legal_evidence(quy định về việc bố trí chỗ ở mới khi đất thuộc dự án Vành đai 4 đang ở diện quy hoạch)"
+          },
+          {
+            "step": "tool",
+            "tool": "open_legal_provision",
+            "summary": "open_legal_provision(qd-40-2026-hanoi · Điều 21)"
+          },
+          {
+            "step": "citation_validation",
+            "tool": null,
+            "summary": "Citation/reference guard rejected the draft: 0 issue(s)"
+          },
+          {
+            "step": "clarification",
+            "tool": null,
+            "summary": "Draft failed deterministic citation/reference validation"
+          }
+        ],
+        "answer_excerpt": "Mình đã tìm thấy nguồn liên quan nhưng chưa thể xác nhận câu trả lời tự động đủ chắc chắn.\n\nDưới đây là trích đoạn để bạn đối chiếu; đây chưa phải kết luận về quyền lợi của hồ sơ cụ thể:\n\n- **254/2025/QH15 Nghị quyết quy định một số cơ chế, chính sách tháo gỡ khó khăn, vướng mắc trong tổ chức thi hành Luật Đất đai — Điều 3:** “khẩn cấp theo quy định của pháp luật về đầu tư công, dự án thực hiện tái định cư tại chỗ, dự án mà việc bố trí tái định cư theo tuyến công trình chính; c) Chính phủ quy định chi tiết việc thu hồi đất trước khi phê duyệt phương án bồi thường, hỗ trợ, tái định cư và thu hồi đất trước khi hoàn thành việc bố trí tái định cư. 4. Ủy ban nhân dân cấp tỉnh quy định việc bố trí tạm cư, thời gian và kinh phí tạm cư đối với trường hợp quyết định thu hồi đất trước khi hoàn thành việc bố trí tái định cư. 5. ”\n\n- **254/2025/QH15 Nghị quyết quy định một số cơ chế, chính sách tháo gỡ khó khăn, vướng mắc trong tổ chức thi hành Luật Đất đai — Điều 3:** “thời gian gia hạn phải hoàn thành việc thỏa thuận mà đã thoả thuận được trên 75% diện tích đất và trên 75% số lượng người sử dụng đất thì Hội đồng nhân dân cấp tỉnh xem xét, thông qua việc thu hồi phần diện tích đất còn lại để "
+      },
+      {
+        "id": "L01",
+        "kind": "legal",
+        "execution": "RUN",
+        "status": "answered",
+        "llm_requests": 3,
+        "tool_executions": 1,
+        "embedding_calls": 1,
+        "tokens": 3161,
+        "latency_ms": 11719,
+        "evidence_count": 5,
+        "citations": [
+          {
+            "document_id": "luat-dat-dai-2024",
+            "document_number": "31/2024/QH15",
+            "locator": "Điều 95"
+          },
+          {
+            "document_id": "luat-dat-dai-2024",
+            "document_number": "31/2024/QH15",
+            "locator": "Điều 111"
+          },
+          {
+            "document_id": "luat-dat-dai-2024",
+            "document_number": "31/2024/QH15",
+            "locator": "Điều 98"
+          }
+        ],
+        "trace": [
+          {
+            "step": "intent",
+            "tool": null,
+            "summary": "Model-driven turn (legal)"
+          },
+          {
+            "step": "retrieval",
+            "tool": null,
+            "summary": "Retrieved 5 reviewed passage(s)"
+          },
+          {
+            "step": "tool",
+            "tool": "search_legal_evidence",
+            "summary": "search_legal_evidence(điều kiện hộ gia đình đang sử dụng đất ở được bồi thường khi Nhà nước thu hồi đất để làm dự án Vành đai 4)"
+          },
+          {
+            "step": "tool_routing",
+            "tool": null,
+            "summary": "Tool routing unavailable: ProviderUnavailable"
+          },
+          {
+            "step": "citation_validation",
+            "tool": null,
+            "summary": "Validated 3 inline source marker(s)"
+          },
+          {
+            "step": "generation",
+            "tool": null,
+            "summary": "Generated one source-marked answer"
+          }
+        ],
+        "answer_excerpt": "Hộ gia đình, cá nhân đang sử dụng đất ở phải đáp ứng Điều kiện được bồi thường quy định tại Điều 95 Luật Đất đai, cụ thể là: không phải là đất thuê trả tiền thuê đất hằng năm và phải là người đang sử dụng đất ở thực tế (không phải đất cho thuê) — theo Điều 95 [S4]. Khi đáp ứng các điều kiện này, hộ gia đình sẽ được xem xét bồi thường bằng đất ở, nhà ở hoặc tiền theo quy định tại Điều 111 và Điều 98 Luật Đất đai — theo Điều 111, khoản 4 và Điều 98 [S1][S3].\n\nNguồn được đối chiếu đến 21/10/2026. Nếu cần xác nhận hiệu lực mới nhất, hãy kiểm tra văn bản gốc.\n\nLưu ý: Câu trả lời chỉ dựa trên các điều kiện chung được nêu trong luật; để xác định cụ thể hộ gia đình có đủ điều kiện hay không cần biết thêm thông tin cá nhân (ví dụ: loại hình sử dụng đất, có phải đất thuê hay không)."
+      },
+      {
+        "id": "L02",
+        "kind": "legal",
+        "execution": "RUN",
+        "status": "limited",
+        "llm_requests": 3,
+        "tool_executions": 1,
+        "embedding_calls": 1,
+        "tokens": 735,
+        "latency_ms": 7992,
+        "evidence_count": 5,
+        "citations": [],
+        "trace": [
+          {
+            "step": "intent",
+            "tool": null,
+            "summary": "Model-driven turn (legal)"
+          },
+          {
+            "step": "retrieval",
+            "tool": null,
+            "summary": "Retrieved 5 reviewed passage(s)"
+          },
+          {
+            "step": "tool",
+            "tool": "search_legal_evidence",
+            "summary": "search_legal_evidence(quyết định giao đất không có giấy chứng nhận bồi thường)"
+          },
+          {
+            "step": "tool_routing",
+            "tool": null,
+            "summary": "Tool routing unavailable: ProviderUnavailable"
+          }
+        ],
+        "answer_excerpt": "Nhà cung cấp AI đang giới hạn lượt dùng. Vui lòng thử lại sau 11 giây."
+      },
+      {
+        "id": "L03",
+        "kind": "legal",
+        "execution": "RUN",
+        "status": "limited",
+        "llm_requests": 3,
+        "tool_executions": 1,
+        "embedding_calls": 1,
+        "tokens": 756,
+        "latency_ms": 9561,
+        "evidence_count": 5,
+        "citations": [],
+        "trace": [
+          {
+            "step": "intent",
+            "tool": null,
+            "summary": "Model-driven turn (legal)"
+          },
+          {
+            "step": "retrieval",
+            "tool": null,
+            "summary": "Retrieved 5 reviewed passage(s)"
+          },
+          {
+            "step": "tool",
+            "tool": "search_legal_evidence",
+            "summary": "search_legal_evidence(thu hồi đất nông nghiệp đang sử dụng không di chuyển chỗ ở hỗ trợ ổn định đời sống thời gian)"
+          },
+          {
+            "step": "tool_routing",
+            "tool": null,
+            "summary": "Tool routing unavailable: ProviderUnavailable"
+          }
+        ],
+        "answer_excerpt": "Nhà cung cấp AI đang giới hạn lượt dùng. Vui lòng thử lại sau 4 giây."
+      }
+    ],
+    "totals": {
+      "cases": 6,
+      "llm_requests": 16,
+      "actual_tokens": 14852,
+      "reserved_tokens": 48000,
+      "provider_errors_http_400": 4,
+      "provider_errors_http_429": 2,
+      "tool_executions": 6
+    },
+    "tool_selection": {
+      "decisions": 6,
+      "correct": 6,
+      "accuracy": 1.0
+    },
+    "tool_execution_success": {
+      "attempted": 6,
+      "succeeded": 6,
+      "rate": 1.0
+    },
+    "task_success": {
+      "full": 1,
+      "partial": 3,
+      "error_or_not_run": 2,
+      "denominator": 6
+    },
+    "grounded": {
+      "fully_reviewed_legal_answers": 1,
+      "excerpt_backed_clarifications": 2,
+      "no_answer": 2,
+      "legal_denominator": 5
+    },
+    "citation_correctness": {
+      "checked": 7,
+      "correct": 7,
+      "rate": 1.0
+    },
+    "unsupported_legal_claims": 0,
+    "false_abstention": {
+      "cases": [
+        "T01",
+        "T02"
+      ],
+      "count": 2,
+      "legal_denominator": 5,
+      "rate": 0.4,
+      "note": "L02/L03 không có câu trả lời do provider giới hạn/400 nên không tính là false abstention."
+    },
+    "latency_ms": {
+      "values": [
+        1011,
+        18013,
+        9491,
+        11719,
+        7992,
+        9561
+      ],
+      "median": 9526.0,
+      "p95_small_sample": 18013,
+      "note": "p95 là giá trị lớn nhất vì mẫu 6 ca."
+    }
+  },
+  "production_smoke": {
+    "social": {
+      "status": "answered",
+      "mode": "agentic_rag",
+      "llm_requests": 1,
+      "tool_executions": 0,
+      "tokens": 749,
+      "latency_ms": 6862,
+      "citations": 0
+    },
+    "legal_L02": {
+      "status": "clarification_needed",
+      "mode": "agentic_rag",
+      "llm_requests": 2,
+      "tool_executions": 1,
+      "tokens": 3292,
+      "latency_ms": 43830,
+      "citations": [
+        {
+          "document_id": "nd-49-2026",
+          "document_number": "49/2026/NĐ-CP",
+          "locator": "Điều 11",
+          "url": "https://congbao.chinhphu.vn/van-ban/nghi-dinh-so-49-2026-nd-cp-468908.htm"
+        },
+        {
+          "document_id": "luat-dat-dai-2024",
+          "document_number": "31/2024/QH15",
+          "locator": "Điều 95",
+          "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=211189"
+        }
+      ],
+      "evidence_count": 4,
+      "trace": [
+        {
+          "step": "intent",
+          "tool": null,
+          "summary": "Model-driven turn (legal)"
+        },
+        {
+          "step": "retrieval",
+          "tool": null,
+          "summary": "Retrieved 4 reviewed passage(s)"
+        },
+        {
+          "step": "tool",
+          "tool": "search_legal_evidence",
+          "summary": "search_legal_evidence(quyết định giao đất không có giấy chứng nhận bồi thường)"
+        },
+        {
+          "step": "citation_validation",
+          "tool": null,
+          "summary": "Citation/reference guard rejected the draft: 0 issue(s)"
+        },
+        {
+          "step": "clarification",
+          "tool": null,
+          "summary": "Draft failed deterministic citation/reference validation"
+        }
+      ]
+    },
+    "failed_first_attempt": {
+      "label": "legal-L02",
+      "http_status": "error",
+      "code": "turn_failed"
+    },
+    "totals": {
+      "llm_requests": 4,
+      "confirmed_tokens": 4041,
+      "unknown_usage_requests": 1
+    }
+  },
+  "release_budget": {
+    "max_requests": 20,
+    "reserved_tokens": 60000,
+    "requests_used": 20,
+    "confirmed_actual_tokens": 18893,
+    "unknown_usage_requests": 1,
+    "note": "Một request lượt pháp luật production đầu tiên lỗi trước khi nhận usage; reservation 3.000 token vẫn được giữ."
+  },
+  "offline_retrieval": {
+    "gold_cases": 20,
+    "recall_at_5": 0.975,
+    "admitted_recall_at_5": 0.925,
+    "source": "reports/qa/ring4-retrieval-offline-current.json"
+  },
+  "two_turn_offline": {
+    "turn1_admitted": 8,
+    "turn2_admitted": 8,
+    "turn3_admitted": 8,
+    "source": "reports/qa/phase-a-two-turn-diagnosis.json"
+  },
+  "remaining_limitations": [
+    "L03 chưa chạy live (provider limited trong pre-deploy), nên chưa có kết luận chất lượng cho L03.",
+    "T01/T02/L02 trả clarification có trích đoạn thật thay vì câu trả lời có điều kiện đầy đủ; đây là false abstention P1.",
+    "Chỉ 20 request thật được phép; mẫu nhỏ, không phải benchmark diện rộng.",
+    "Chưa có thẩm định pháp lý độc lập; corpus vẫn chỉ 43 đoạn admitted.",
+    "Provider Free Plan có thể trả 429/400; production đã được kiểm tra nhưng chưa load-test."
+  ]
+}
