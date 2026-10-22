@@ -49,7 +49,7 @@ jobs:
         working-directory: frontend
         env:
           VITE_API_BASE_URL: ${{ vars.API_BASE_URL }}
-          VITE_TURNSTILE_SITE_KEY: ${{ vars.SESSION_CHALLENGE_MODE == 'disabled' && '' || vars.VITE_TURNSTILE_SITE_KEY }}
+          VITE_TURNSTILE_SITE_KEY: ${{ vars.SESSION_CHALLENGE_MODE != 'disabled' && vars.VITE_TURNSTILE_SITE_KEY || '' }}
       - run: env -u ALLOW_STALE_GENERATION python -m pytest -q && python scripts/check_secrets.py
       - run: npm test
         working-directory: frontend
