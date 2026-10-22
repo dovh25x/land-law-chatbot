@@ -1,6 +1,6 @@
 # Kiến trúc
 
-> **Trạng thái 22/10/2026:** tài liệu mô tả code trên branch hotfix candidate. Production `b1c10f4` chưa có claim-aware guard, fallback ngắn và direct-first evidence ordering; các khác biệt được đánh dấu tại mục giới hạn.
+> **Đã phát hành PR #13:** Pages và Render cùng chạy SHA `1a9718f03ed261f3511598488ab273b6bf5e0b92`, gồm claim-aware guard, fallback ngắn và direct-first evidence ordering. [Receipt public](../reports/releases/academic-mvp-1a9718f/README.md) ghi cấu hình và phần chưa kiểm tra; pilot Groq PARTIAL không được đổi thành nghiệm thu pháp lý.
 
 ## Tổng quan
 
@@ -114,8 +114,8 @@ Không có planner request, không có verifier LLM, không tự nối điều k
 
 ## Giới hạn đã biết
 
-- Production `b1c10f4` còn false abstention ở T01/T02 và L02 (clarification thay vì câu trả lời có điều kiện đầy đủ).
-- Hotfix có regression tất định cho claim-free clarification, marker nhóm và thứ tự nguồn. [Pilot Groq hậu hotfix](../reports/evaluation/agentic-rag-post-hotfix-pilot/README.md) mới hoàn tất một phần: T01 còn false abstention, T02/L02 chưa chạy; chưa đủ điều kiện release.
+- Release cũ `b1c10f4` từng có false abstention ở T01/T02 và L02 (clarification thay vì câu trả lời có điều kiện đầy đủ); đây là kết quả lịch sử.
+- Hotfix có regression tất định cho claim-free clarification, marker nhóm và thứ tự nguồn. [Pilot Groq hậu hotfix](../reports/evaluation/agentic-rag-post-hotfix-pilot/README.md) mới hoàn tất một phần: T01 còn false abstention, T02/L02 chưa chạy. Chủ dự án đã duyệt phát hành MVP học thuật với giới hạn này, không công nhận legal-quality acceptance.
 - L03 chưa chạy live; coverage nguồn còn thiếu Luật Nhà ở 2023 Điều 72, Luật Quy hoạch 2025, nhóm khiếu nại và nguồn vận hành Hà Nội.
 - `answer_schema_version=1` trong agentic_rag, nên structured claim renderer chưa hoạt động trong production.
 - Chưa có thẩm định pháp lý độc lập; citation đúng cấu trúc không đồng nghĩa mọi claim đúng ngữ nghĩa.

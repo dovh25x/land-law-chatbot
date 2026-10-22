@@ -1,0 +1,73 @@
+{
+  "checked_at": "2026-10-22T19:44:06.867626+00:00",
+  "source_sha": "1a9718f03ed261f3511598488ab273b6bf5e0b92",
+  "base_url": "https://hanoi-land-law.pages.dev",
+  "groq_requests": 0,
+  "live_generation": "NOT RUN",
+  "cloudflare": {
+    "deployment_id": "9a00398a-eb3f-4283-987a-e2fe6d34d090",
+    "sha": "1a9718f03ed261f3511598488ab273b6bf5e0b92",
+    "url": "https://9a00398a.hanoi-land-law.pages.dev",
+    "stage": "success"
+  },
+  "render": {
+    "deployment_id": "dep-dbd6dukipgvc73e7rsm0",
+    "sha": "1a9718f03ed261f3511598488ab273b6bf5e0b92",
+    "status": "live",
+    "url": "https://land-law-chatbot.onrender.com",
+    "plan": "free",
+    "auto_deploy": "off"
+  },
+  "runtime": {
+    "APP_ENV": "production",
+    "EXECUTION_MODE": "agentic_rag",
+    "GENERATION_ENABLED": "true",
+    "SOURCE_LOOKUP_ONLY": "false",
+    "ALLOW_STALE_GENERATION": "false",
+    "GROQ_MODEL": "openai/gpt-oss-120b",
+    "LLM_PROVIDER": "groq",
+    "SESSION_CHALLENGE_MODE": "disabled",
+    "PUBLIC_DAILY_IP_CHAT_LIMIT": "30",
+    "secrets_present": true
+  },
+  "public_api": {
+    "health_http": 200,
+    "readiness_http": 200,
+    "status_http": 200,
+    "document_library_http": 200,
+    "document_detail_http": 200,
+    "corpus_release": "corpus-1afca764aa6692e0",
+    "source_gate": {
+      "mode": "standing_verified_snapshot",
+      "policy_sha256": "7e6ec4c4f581c9e8e7355288f7f76e61f67bdaed67d95f68d7d541c5b256983d",
+      "eligible_passages": 43,
+      "usable": true,
+      "review_mode": "standing_verified_snapshot",
+      "reviewed_at": "2026-10-21T17:36:54.310157+00:00",
+      "reviewed_as_of": "2026-10-21",
+      "operational_expiry": null,
+      "whole_corpus_verified": false,
+      "legal_applicability_checked_at": "2026-10-23"
+    },
+    "configuration_sha256": "977bbd4ec571f87d0c2937b8a514c57aae283db35a8cdbe0397baaa358ecb834",
+    "source_fresh": false,
+    "warning": "source_partial_review",
+    "document_count": 60,
+    "historical_evaluation_matches_runtime": false
+  },
+  "direct_origin_unsigned_denied": true,
+  "direct_origin_forged_signature_denied": true,
+  "ingress_method_allowlist_http": 405,
+  "unauthenticated_empty_chat_http": 422,
+  "frontend_bundle": {
+    "path": "/assets/index-Dvu57KE3.js",
+    "sha256": "64ff9922baca5958ac8d2e8ab4f161861e7adc26bc88d1eaa156eb94298fff28",
+    "matches_deployment_url": true,
+    "four_suggestions_present": true
+  },
+  "official_source_link": {
+    "url": "https://vanban.chinhphu.vn/?pageid=27160&docid=211189",
+    "http_status": 200
+  },
+  "passed": true
+}

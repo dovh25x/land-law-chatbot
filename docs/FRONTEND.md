@@ -19,7 +19,7 @@ Các frame ban đầu được giữ nguyên để đối chiếu:
 
 [Handoff cho người dân](redesign/IMPLEMENTATION.md#handoff-giao-diện) bổ sung trang đầu và làm rõ tên giấy, sáng/tối, desktop/mobile trên cùng hệ thiết kế. Trang đầu hỏi “Bạn đang vướng việc gì?”, có bốn gợi ý ngắn: năng lực của trợ lý; điều kiện bồi thường đất ở khi có sổ đỏ; hỗ trợ khi thu hồi đất nông nghiệp; điều kiện bố trí tái định cư khi phải chuyển nhà. Chọn gợi ý chỉ điền và focus ô nhập, không tự gửi hay hardcode đáp án. Đây là câu hỏi giao diện, không phải evaluation suite. `agentic_rag` production hiện trả `answer_schema_version=1`, nên UI dùng prose renderer; structured claim renderer version 2 chưa hoạt động trong production. `citizen.ts` kiểm tra projection và tạo nội dung sao chép tương ứng. Lịch sử schema cũ tiếp tục đọc được. Phiên bản v2 sai cấu trúc không hiển thị content thay thế.
 
-Bốn câu này là **candidate branch**, chưa deploy; public production `b1c10f4` vẫn hiển thị bốn câu cũ cho tới khi frontend được release. Bốn câu trong `frontend/src/citizen.ts`:
+Bốn câu trong `frontend/src/citizen.ts` đã deploy cùng PR #13 tại SHA `1a9718f03ed261f3511598488ab273b6bf5e0b92`. [Kiểm tra public](../reports/releases/academic-mvp-1a9718f/README.md) xác nhận click chỉ điền/focus trên desktop và mobile emulation; không tự gửi:
 
 1. `Trợ lý này có thể giúp gì?`
 2. `Có sổ đỏ, khi Nhà nước thu hồi đất ở thì điều kiện được bồi thường là gì?`

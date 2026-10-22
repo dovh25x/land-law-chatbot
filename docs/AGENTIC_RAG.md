@@ -2,7 +2,7 @@
 
 `EXECUTION_MODE=agentic_rag` là mode production hiện tại; `BoundedAgenticRAG` nằm tại `backend/landlaw/agentic_rag.py`. `simple_rag` là rollback và mode `agentic` (LangGraph) chỉ còn legacy.
 
-> **Trạng thái 22/10/2026:** mô tả claim-aware validation, marker nhóm, fallback ngắn và direct-first ordering thuộc **hotfix candidate**, chưa deploy lên production `b1c10f4`. Production vẫn dùng guard citation toàn cục và fallback trích đoạn cũ.
+> **Đã phát hành PR #13:** production chạy SHA `1a9718f03ed261f3511598488ab273b6bf5e0b92`, gồm claim-aware validation, marker nhóm, fallback ngắn và direct-first ordering. [Receipt release và kiểm tra public](../reports/releases/academic-mvp-1a9718f/README.md) tách biệt với pilot Groq PARTIAL; đây là MVP học thuật, không phải dịch vụ đã thẩm định pháp lý.
 
 ![Luồng quyết định Agentic RAG](diagrams/agent-flow.svg)
 
@@ -89,6 +89,6 @@ Fallback không thay thế đáp án pháp lý và không tạo entitlement. Cit
 
 ## Rollback
 
-Đặt `EXECUTION_MODE=simple_rag` và redeploy SHA `625e90e84079950e953267d1e4caaf0cb3e8c8e5`. Corpus và policy v2 giữ nguyên; không cần restore database.
+Rollback ứng dụng gần nhất bằng workflow triển khai SHA `b1c10f4bad6b89f1d555eb08f5216b4b285be6d6` lên cả Pages/Render, giữ `EXECUTION_MODE=agentic_rag` và nguyên corpus/policy. Chỉ khi chủ động chọn rollback mode legacy mới đặt `EXECUTION_MODE=simple_rag` và redeploy SHA `625e90e84079950e953267d1e4caaf0cb3e8c8e5`; không cần restore database.
 
 Hotfix claim-aware chỉ áp dụng cho `agentic_rag`. `simple_rag` vẫn dùng guard citation toàn cục và fallback cũ; rollback không tự mang theo sửa đổi này. Vì vậy chỉ rollback khi chấp nhận hành vi cũ, không dùng `simple_rag` làm bằng chứng cho hiệu quả hotfix.

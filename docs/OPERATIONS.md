@@ -225,13 +225,13 @@ Log JSON chỉ chứa metadata vận hành; không ghi câu hỏi, đáp án, hi
 Nội dung đi qua Cloudflare/Render tới Groq. Operator phải kiểm tra chính sách và cấu hình data controls của tổ chức tại provider trước khi khẳng định Zero Data Retention; repository không chứng minh được setting tài khoản đó. Lịch sử dài hạn chỉ ở client không phải cam kết nội dung không được xử lý bên ngoài thiết bị.
 
 
-## Hotfix legal-answer đang mở
+## Hotfix legal-answer đã phát hành
 
-- Base `982aae704d57127d4544d048c24aa295da40ff12`; production vẫn ở `b1c10f4bad6b89f1d555eb08f5216b4b285be6d6` cho tới khi có phê duyệt release riêng.
+- PR #13 đã merge và deploy SHA `1a9718f03ed261f3511598488ab273b6bf5e0b92` trên Pages/Render qua workflow hiện có. [Receipt triển khai và xác minh public](../reports/releases/academic-mvp-1a9718f/README.md) là nguồn đối chiếu phiên bản; `b1c10f4bad6b89f1d555eb08f5216b4b285be6d6` là rollback ứng dụng trước đó.
 - Hotfix chỉ sửa contract validation/fallback/evidence ordering của `agentic_rag`, không đổi model, embedding, corpus, policy, receipt hay database.
-- Bằng chứng tất định nằm tại `reports/evaluation/agentic-rag-legal-answer-hotfix/`. Pilot Groq được duyệt riêng đã dừng một phần do request vượt reservation; xem [artifact và review](../reports/evaluation/agentic-rag-post-hotfix-pilot/README.md). Chưa deploy, chưa chạy migration.
+- Bằng chứng tất định nằm tại `reports/evaluation/agentic-rag-legal-answer-hotfix/`. Pilot Groq được duyệt riêng đã dừng một phần do request vượt reservation; xem [artifact và review](../reports/evaluation/agentic-rag-post-hotfix-pilot/README.md). Release không chạy migration, không thay receipt/policy/corpus và không gọi thêm Groq.
 - Không tự tiếp tục allocation bị chặn hoặc dùng quota còn dư để chạy lại. Lượt bổ sung cần phê duyệt mới, ledger/output mới và kiểm tra reservation theo request trước HTTP; giữ nguyên mọi attempt cũ.
-- Trước khi release phải review PR, chạy lại bộ kiểm thử trên candidate SHA, chạy acceptance Groq theo ngân sách được duyệt riêng, rồi mới quyết định deploy/rollback.
+- Chủ dự án đã phê duyệt publish MVP học thuật dù pilot PARTIAL, với điều kiện CI và kiểm tra deployment/security/grounding safety. Không coi quyết định phát hành này là kết quả model PASS; các lần legal-quality acceptance sau vẫn cần ngân sách riêng.
 
 ## Cổng kiểm tra trước deploy
 

@@ -34,9 +34,10 @@ Tài liệu mô tả phạm vi, kiến trúc, API, vận hành và đánh giá c
 | Nhu cầu | Tài liệu |
 |---|---|
 | Phương pháp đánh giá, artifact hiện hành | [Đánh giá](EVALUATION.md) |
+| Release public hiện tại — PR #13 | [Deployment receipt và public smoke](../reports/releases/academic-mvp-1a9718f/README.md) |
 | Kết quả release Agentic RAG (release cũ, giữ lịch sử) | [FINAL_RESULT](../reports/evaluation/agentic-rag-final/FINAL_RESULT.md) · [metrics](../reports/evaluation/agentic-rag-final/metrics.json) |
-| Hotfix legal-answer (tất định, chưa deploy) | [Report](../reports/evaluation/agentic-rag-legal-answer-hotfix/README.md) |
-| Pilot Groq hậu hotfix (PARTIAL, chưa đủ release gate) | [Report và review](../reports/evaluation/agentic-rag-post-hotfix-pilot/README.md) |
+| Hotfix legal-answer (bằng chứng tất định trước release) | [Report lịch sử](../reports/evaluation/agentic-rag-legal-answer-hotfix/README.md) |
+| Pilot Groq hậu hotfix (PARTIAL, không phải legal-quality acceptance) | [Report và review lịch sử](../reports/evaluation/agentic-rag-post-hotfix-pilot/README.md) |
 | Triển khai, backup, rollback, sự cố | [Vận hành](OPERATIONS.md) |
 | Sơ đồ và quy trình diagram-design | [Diagrams](diagrams/README.md) |
 

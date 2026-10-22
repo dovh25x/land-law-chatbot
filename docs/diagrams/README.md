@@ -24,6 +24,8 @@ Skill được cài ngoài repository tại `~/.config/opencode/skills/diagram-d
 
 ## Xác minh
 
+Các sơ đồ hiện hành mô tả implementation đã phát hành trong PR #13 tại SHA `1a9718f03ed261f3511598488ab273b6bf5e0b92`; xem [receipt release](../../reports/releases/academic-mvp-1a9718f/README.md). Việc chuyển trạng thái candidate → deployed không đổi topology/semantics, nên giữ nguyên identity và cặp HTML/SVG đã kiểm tra; không export lại chỉ để đổi metadata release.
+
 Mỗi file HTML đã qua:
 
 ```bash
