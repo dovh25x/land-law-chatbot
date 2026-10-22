@@ -1,0 +1,94 @@
+{
+  "status": "CANDIDATE_READY_NOT_ACTIVATED",
+  "release_id": "corpus-1afca764aa6692e0",
+  "source_commit": "a1144d09c43d3427306cebd44c82e1189eb7fee4",
+  "backup_sha256": "0281735e470bc3da7011967597e790d9a729ebcafed6cfe7f872bb65463d9c9a",
+  "policy_v1_sha256": "015e33634ae920889271bbfcdf1a3e20977116b21c6c10be4face0c962d8d220",
+  "policy_v2_sha256": "7e6ec4c4f581c9e8e7355288f7f76e61f67bdaed67d95f68d7d541c5b256983d",
+  "receipt_files": {
+    "luat-43-2024.json": "b5666c635289fb5a1117130eba9721c23f3f4b9cb6eed9886baf706a5d331c7e",
+    "luat-dat-dai-2024.json": "bd3b9d95004cfcc046b48b429dbac372a4d96898d0e9f7bccca61ab28d1ad84f",
+    "luat-thu-do-2026.json": "f9ad64ebd6499f3fbff6f43c4529777c0b234ee06420c87fc15a4332c325b6c6",
+    "nd-151-2025.json": "6609933111c19821167212640e177a5d1480e7e9b5de5e66765b642752a43c0c",
+    "nd-226-2025.json": "7c9810544132d2b547d5b32b0fac437cc8ae83513e4166e58588e75e52638da0",
+    "nd-49-2026.json": "324fe9ad52dc1cbec91bdd52f6316b2850b3aa65ad27086486d86cf0c75dbb21",
+    "nd-88-2024.json": "738969d25f7b1110fb8988cac064c4082f37aba33d08109e48d69c66fec572a5",
+    "nq-254-2025.json": "1d5f70327b78c614ca88f9bf437ad4d8a941980c2e78d905fd12166679c11d34",
+    "qd-10-2026-hanoi.json": "5a5aaa4e26a1a0181c12635453f7a8b9a8575105e29c2034dd9fe0474662e1e8",
+    "qd-40-2026-hanoi.json": "744c47227c3287b636a3b6fef5731940a962f5e9bf81322509756294b7d3afcf"
+  },
+  "reviewed_passages": 74,
+  "standing_passages": 42,
+  "legal_windows": 6,
+  "documents_with_standing_chunks": [
+    "luat-dat-dai-2024",
+    "luat-thu-do-2026",
+    "nd-226-2025",
+    "nd-49-2026",
+    "nd-88-2024",
+    "nq-254-2025",
+    "qd-40-2026-hanoi"
+  ],
+  "current_day_eligible_passages": 43,
+  "checks": {
+    "2026-10-22": {
+      "mode": "standing_verified_snapshot",
+      "eligible_passages": 43,
+      "usable": true,
+      "operational_expiry": null,
+      "reviewed_at": "2026-10-21T17:36:54.310157+00:00",
+      "reviewed_as_of": "2026-10-21",
+      "whole_corpus_verified": false
+    },
+    "2026-10-23": {
+      "mode": "standing_verified_snapshot",
+      "eligible_passages": 43,
+      "usable": true,
+      "operational_expiry": null,
+      "reviewed_at": "2026-10-21T17:36:54.310157+00:00",
+      "reviewed_as_of": "2026-10-21",
+      "whole_corpus_verified": false
+    },
+    "2026-10-25": {
+      "mode": "standing_verified_snapshot",
+      "eligible_passages": 43,
+      "usable": true,
+      "operational_expiry": null,
+      "reviewed_at": "2026-10-21T17:36:54.310157+00:00",
+      "reviewed_as_of": "2026-10-21",
+      "whole_corpus_verified": false
+    },
+    "2026-10-28": {
+      "mode": "standing_verified_snapshot",
+      "eligible_passages": 42,
+      "usable": true,
+      "operational_expiry": null,
+      "reviewed_at": "2026-10-21T17:36:54.310157+00:00",
+      "reviewed_as_of": "2026-10-21",
+      "whole_corpus_verified": false
+    },
+    "2026-11-01": {
+      "mode": "standing_verified_snapshot",
+      "eligible_passages": 42,
+      "usable": true,
+      "operational_expiry": null,
+      "reviewed_at": "2026-10-21T17:36:54.310157+00:00",
+      "reviewed_as_of": "2026-10-21",
+      "whole_corpus_verified": false
+    },
+    "2025-01-01": {
+      "mode": "standing_verified_snapshot",
+      "eligible_passages": 20,
+      "usable": true,
+      "operational_expiry": null,
+      "reviewed_at": "2026-10-21T17:36:54.310157+00:00",
+      "reviewed_as_of": "2026-10-21",
+      "whole_corpus_verified": false
+    }
+  },
+  "rollback_policy_v1_mode": "scoped_receipts",
+  "production_database_opened": false,
+  "database_write_scope": "temporary SQLite only",
+  "external_llm_requests": 0,
+  "scope_note": "Migrates exactly the pinned receipt bytes and passage checksums. Long legal windows are preserved; only <=2-day rotation windows become standing chunks. This does not certify legal currency."
+}

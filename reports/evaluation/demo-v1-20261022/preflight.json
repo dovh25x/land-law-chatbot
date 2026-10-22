@@ -1,0 +1,220 @@
+{
+  "suite_id": "demo-v1-20261022",
+  "suite_sha256": "1423aa3023d3079bea32c6fa16d13448fd69f15eea14d97897ccb315d8e97c3d",
+  "mode": "preflight",
+  "generated_at": "2026-10-22T06:13:37.096374+00:00",
+  "source_commit": "a1144d09c43d3427306cebd44c82e1189eb7fee4",
+  "backup_sha256": "0281735e470bc3da7011967597e790d9a729ebcafed6cfe7f872bb65463d9c9a",
+  "policy_sha256": "7e6ec4c4f581c9e8e7355288f7f76e61f67bdaed67d95f68d7d541c5b256983d",
+  "real_provider_requests": 0,
+  "cases": [
+    {
+      "id": "C01",
+      "kind": "social",
+      "execution": "RUN",
+      "expected_intent": "greeting",
+      "actual_intent": "greeting",
+      "status": "answered",
+      "answer": "Xin chào! Mình là trợ lý AI hỗ trợ tra cứu pháp luật đất đai liên quan đến dự án Vành đai 4 Hà Nội. Bạn đang quan tâm đến bồi thường, hỗ trợ hay tái định cư?",
+      "llm_calls": 0,
+      "embedding_calls": 0,
+      "citations": 0,
+      "evidence_chunk_ids": [],
+      "passed": true
+    },
+    {
+      "id": "C02",
+      "kind": "social",
+      "execution": "RUN",
+      "expected_intent": "capabilities",
+      "actual_intent": "capabilities",
+      "status": "answered",
+      "answer": "Mình có thể giải thích các quy định về thu hồi đất, điều kiện bồi thường, những khoản hỗ trợ có thể áp dụng và vấn đề tái định cư. Bạn có thể mô tả tình huống của mình, chẳng hạn loại đất, giấy tờ hiện có hoặc lý do thu hồi, để mình hỗ trợ tra cứu.",
+      "llm_calls": 0,
+      "embedding_calls": 0,
+      "citations": 0,
+      "evidence_chunk_ids": [],
+      "passed": true
+    },
+    {
+      "id": "C03",
+      "kind": "social",
+      "execution": "RUN",
+      "expected_intent": "gratitude",
+      "actual_intent": "gratitude",
+      "status": "answered",
+      "answer": "Rất vui được hỗ trợ bạn. Nếu còn tình huống nào cần tra cứu, bạn cứ mô tả thêm nhé.",
+      "llm_calls": 0,
+      "embedding_calls": 0,
+      "citations": 0,
+      "evidence_chunk_ids": [],
+      "passed": true
+    },
+    {
+      "id": "C04",
+      "kind": "social",
+      "execution": "RUN",
+      "expected_intent": "out_of_scope",
+      "actual_intent": "out_of_scope",
+      "status": "clarification_needed",
+      "answer": "Mình chỉ hỗ trợ các câu hỏi về pháp luật đất đai trong phạm vi dự án Vành đai 4 Hà Nội. Bạn có thể hỏi về thu hồi đất, bồi thường, hỗ trợ hoặc tái định cư.",
+      "llm_calls": 0,
+      "embedding_calls": 0,
+      "citations": 0,
+      "evidence_chunk_ids": [],
+      "passed": true
+    },
+    {
+      "id": "L01",
+      "kind": "legal",
+      "execution": "NOT RUN",
+      "reason": "GROQ_BUDGET_NOT_APPROVED",
+      "preflight_retrieval": "PASS",
+      "evidence_chunk_ids": [
+        "luat-dat-dai-2024-97-1-0",
+        "qd-40-2026-hanoi-12-1-0",
+        "luat-dat-dai-2024-110-scope-4",
+        "qd-40-2026-hanoi-13-0-0",
+        "luat-dat-dai-2024-100-2-0"
+      ],
+      "status": "error",
+      "llm_calls": 0,
+      "embedding_calls": 1,
+      "refused_generations": 1,
+      "answer": "NOT RUN: real Groq generation was not approved."
+    },
+    {
+      "id": "L02",
+      "kind": "legal",
+      "execution": "NOT RUN",
+      "reason": "GROQ_BUDGET_NOT_APPROVED",
+      "preflight_retrieval": "PASS",
+      "evidence_chunk_ids": [
+        "luat-dat-dai-2024-98-0-1",
+        "luat-dat-dai-2024-110-scope-4",
+        "nq-254-2025-3-0-1",
+        "nq-254-2025-2-0-1",
+        "nq-254-2025-1-0-1"
+      ],
+      "status": "error",
+      "llm_calls": 0,
+      "embedding_calls": 1,
+      "refused_generations": 2,
+      "answer": "NOT RUN: real Groq generation was not approved."
+    },
+    {
+      "id": "L03",
+      "kind": "legal",
+      "execution": "NOT RUN",
+      "reason": "GROQ_BUDGET_NOT_APPROVED",
+      "preflight_retrieval": "PASS",
+      "evidence_chunk_ids": [
+        "qd-40-2026-hanoi-9-1-0",
+        "qd-40-2026-hanoi-9-1-1"
+      ],
+      "status": "error",
+      "llm_calls": 0,
+      "embedding_calls": 1,
+      "refused_generations": 3,
+      "answer": "NOT RUN: real Groq generation was not approved."
+    },
+    {
+      "id": "L04",
+      "kind": "legal",
+      "execution": "NOT RUN",
+      "reason": "GROQ_BUDGET_NOT_APPROVED",
+      "preflight_retrieval": "PASS",
+      "evidence_chunk_ids": [
+        "qd-40-2026-hanoi-12-1-0",
+        "qd-40-2026-hanoi-13-0-0",
+        "nd-88-2024-0-11-1",
+        "nd-88-2024-0-11-0"
+      ],
+      "status": "error",
+      "llm_calls": 0,
+      "embedding_calls": 1,
+      "refused_generations": 4,
+      "answer": "NOT RUN: real Groq generation was not approved."
+    },
+    {
+      "id": "L05",
+      "kind": "legal",
+      "execution": "NOT RUN",
+      "reason": "GROQ_BUDGET_NOT_APPROVED",
+      "preflight_retrieval": "PASS",
+      "evidence_chunk_ids": [
+        "nd-88-2024-0-11-0",
+        "nd-88-2024-0-11-1",
+        "luat-dat-dai-2024-100-2-0"
+      ],
+      "status": "error",
+      "llm_calls": 0,
+      "embedding_calls": 1,
+      "refused_generations": 5,
+      "answer": "NOT RUN: real Groq generation was not approved."
+    },
+    {
+      "id": "S01",
+      "kind": "safety",
+      "execution": "RUN",
+      "check": "scope_and_dates",
+      "jurisdictions": [
+        "Hanoi",
+        "national"
+      ],
+      "checks": {
+        "reviewed_scope_only_national_or_hanoi": true,
+        "expired_qd10_excluded": true,
+        "synthetic_future_excluded": true,
+        "current_count_43": true,
+        "review_mode_standing": true
+      },
+      "passed": true
+    },
+    {
+      "id": "S02",
+      "kind": "safety",
+      "execution": "RUN",
+      "check": "adverse_review",
+      "before": 43,
+      "after": 40,
+      "removed": 3,
+      "checks": {
+        "adverse_count_drops": true,
+        "adverse_passages_not_admitted": true
+      },
+      "passed": true
+    },
+    {
+      "id": "S03",
+      "kind": "safety",
+      "execution": "RUN",
+      "check": "citation_integrity",
+      "simulated_generations": 1,
+      "real_provider_requests": 0,
+      "checks": {
+        "fallback_used": true,
+        "unknown_marker_not_present": true,
+        "citations_from_evidence": true,
+        "one_simulated_generation": true
+      },
+      "passed": true
+    }
+  ],
+  "metrics": {
+    "social_passed": 4,
+    "social_total": 4,
+    "legal_executed": 0,
+    "legal_not_run": 5,
+    "legal_retrieval_passed": 5,
+    "legal_auto_passed": 0,
+    "safety_passed": 3,
+    "safety_total": 3,
+    "actual_tokens": 0,
+    "llm_calls": 0
+  },
+  "execution_passed": true,
+  "complete": true,
+  "passed": true,
+  "quality_review": "NOT_APPLICABLE"
+}
