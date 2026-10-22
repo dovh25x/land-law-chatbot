@@ -156,7 +156,7 @@ Pilot là các case đầu tiên của evaluation đầy đủ trên cùng cấu
 - Mọi scenario dùng 2 LLM request (mock) và 1 tool execution; không có second tool decision, repair loop hay request thứ ba.
 - Reason code candidate: 6 `grounded_answer`, 2 `legitimate_clarification`, 1 `missing_required_citation`, 1 `unknown_citation_id`.
 - Kiểm thử: **18 passed** hotfix; **150 passed** trên sáu file focused (hotfix, bounded Agentic RAG, source review, scoped gate, standing snapshot, conversation); **653 passed** full backend; frontend **30 passed**; build pass; Playwright **38 passed**; `npm audit` 0 vulnerability; secrets scan pass.
-- Offline retrieval rerun sau hotfix trên cùng corpus `corpus-1afca764aa6692e0`, gold, receipt, policy và E5: **Recall@5 = 0,975** (39/40 gold chunk), **Admitted Evidence Recall@5 = 0,925** (37/40), top-5 hit **20/20**, admitted top-5 hit **20/20**. JSON byte-identical với benchmark trước; không tuyên bố cải thiện retrieval. Thứ tự `direct-first` sau admission được kiểm tra riêng ở T01/L01.
+- Offline retrieval rerun sau hotfix trên cùng corpus `corpus-1afca764aa6692e0`, gold, receipt, policy và E5: **macro Recall@5 = 0,975**, **macro Admitted Evidence Recall@5 = 0,925**; top-5 hit **20/20**, admitted top-5 hit **19/20**. JSON byte-identical với benchmark trước; không tuyên bố cải thiện retrieval. Đính chính diễn giải: tổng 23 gold chunk, raw hit 22/23, admitted 21/23; macro recall không phải tỷ lệ 39/40 hoặc 37/40 chunk. [Erratum release](../reports/releases/academic-mvp-1a9718f/README.md#6-evaluation-và-giới-hạn-giữ-nguyên) giữ nguyên JSON/report lịch sử. Thứ tự `direct-first` sau admission được kiểm tra riêng ở T01/L01.
 - Report, scenario freeze, output baseline/candidate, retrieval rerun và checksum: [`reports/evaluation/agentic-rag-legal-answer-hotfix/`](../reports/evaluation/agentic-rag-legal-answer-hotfix/README.md).
 
 **Không** suy ra false abstention đã hết trên production, không suy ra cải thiện chất lượng pháp lý và không thay thế L03 live. Đây là bằng chứng để review hotfix, không phải nghiệm thu release.
@@ -165,7 +165,11 @@ Pilot là các case đầu tiên của evaluation đầy đủ trên cùng cấu
 
 Pilot riêng đã được duyệt và thực hiện một lần tại SHA `76e42e6`: A01 hoàn tất (PASS), T01 hoàn tất (PARTIAL), T02 bị chặn trước HTTP, L02 NOT RUN. T01 vẫn không giải thích điều kiện từ evidence sẵn có nên giữ đánh giá false abstention theo rubric nội dung; việc suite cho phép `clarification_needed` không đồng nghĩa task success. Không có câu trả lời pháp lý substantive được phát hành để chấm grounded-answer/faithfulness.
 
-Request cuối T01 dùng 3.242 token, vượt reservation phẳng 3.000; allocation chặn request kế tiếp. Không retry, không dùng phần ngân sách còn dư, không deploy. Reservation phẳng không phải upper bound đã chứng minh; lần bổ sung cần phê duyệt và kiểm tra affordability riêng. Output thô, ledger, review gắn checksum và các mẫu số nằm tại [report pilot](../reports/evaluation/agentic-rag-post-hotfix-pilot/README.md). Kết quả này không thay thế artifact release lịch sử.
+Request cuối T01 dùng 3.242 token, vượt reservation phẳng 3.000; allocation chặn request kế tiếp. Không retry hoặc dùng phần ngân sách còn dư; tại thời điểm pilot chưa deploy. Reservation phẳng không phải upper bound đã chứng minh; lần bổ sung cần phê duyệt và kiểm tra affordability riêng. Output thô, ledger, review gắn checksum và các mẫu số nằm tại [report pilot](../reports/evaluation/agentic-rag-post-hotfix-pilot/README.md). Kết quả này không thay thế artifact release lịch sử.
+
+### Phát hành MVP học thuật PR #13
+
+Chủ dự án chấp thuận phát hành với các giới hạn đã biết, không yêu cầu hoàn tất pilot. SHA `1a9718f03ed261f3511598488ab273b6bf5e0b92` đã được kiểm tra CI và xác minh dịch vụ public; [receipt release](../reports/releases/academic-mvp-1a9718f/README.md) ghi bằng chứng deployment, browser và fingerprint. Lượt release không gọi thêm Groq; legal-generation smoke **NOT RUN**. Không dùng kiểm tra session/navigation hoặc history/citation từ kết quả pilot lưu cục bộ để khẳng định đã kiểm tra một câu trả lời pháp lý mới.
 
 ## Đánh giá Agentic RAG (release 22/10/2026 — historical runtime)
 

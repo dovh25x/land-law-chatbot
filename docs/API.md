@@ -8,7 +8,7 @@ Trong development, Vite proxy tới FastAPI local và OpenAPI được bật t�
 
 Mọi `/api/` request production cần chữ ký ingress. Client sử dụng bearer token cho các thao tác phiên và chat; không tự tạo chữ ký hoặc gọi vòng qua Render. Request body giới hạn 64 KiB.
 
-> **Trạng thái 22/10/2026:** contract claim-aware trong tài liệu này là hotfix candidate, chưa deploy. Production `b1c10f4` chưa chấp nhận marker nhóm/fallback ngắn mới; response vẫn dùng `answer_schema_version=1`.
+> **Đã phát hành PR #13:** contract claim-aware, marker nhóm và fallback ngắn đã deploy tại SHA `1a9718f03ed261f3511598488ab273b6bf5e0b92`; response `agentic_rag` vẫn dùng `answer_schema_version=1`. `/api/v1/evaluations/latest` có thể trả mode/fingerprint của báo cáo lịch sử: không dùng chúng thay cho runtime cấu hình và `active_configuration_sha256`. Xem [receipt public](../reports/releases/academic-mvp-1a9718f/README.md).
 
 ## Endpoint
 

@@ -8,11 +8,11 @@ Trợ lý hội thoại tiếng Việt hỗ trợ tra cứu pháp luật đất 
 
 - Ứng dụng: **https://hanoi-land-law.pages.dev/**
 - Runtime production: `EXECUTION_MODE=agentic_rag` (bounded Agentic RAG).
-- Source đang chạy: `b1c10f4bad6b89f1d555eb08f5216b4b285be6d6`.
+- Source đang chạy: `1a9718f03ed261f3511598488ab273b6bf5e0b92` (merge PR #13).
 - Corpus: `corpus-1afca764aa6692e0`; standing source policy v2 SHA `7e6ec4c4f581c9e8e7355288f7f76e61f67bdaed67d95f68d7d541c5b256983d`.
-- Kết quả release gần nhất: [FINAL_RESULT.md](reports/evaluation/agentic-rag-final/FINAL_RESULT.md) · [metrics.json](reports/evaluation/agentic-rag-final/metrics.json).
+- Release và xác minh public hiện tại: [academic MVP PR #13](reports/releases/academic-mvp-1a9718f/README.md). Kết quả model lịch sử: [FINAL_RESULT.md](reports/evaluation/agentic-rag-final/FINAL_RESULT.md) · [metrics.json](reports/evaluation/agentic-rag-final/metrics.json).
 
-> **Trạng thái 22/10/2026:** các mô tả claim-aware guard, fallback ngắn, evidence ordering và bốn gợi ý mới dưới đây phản ánh **hotfix candidate** trên branch `fix/legal-answer-grounding-hotfix`, chưa deploy. Production `b1c10f4` vẫn dùng guard citation toàn cục, fallback trích đoạn cũ và bốn gợi ý cũ cho tới khi release được duyệt.
+> **Đã phát hành MVP học thuật:** PR #13 được merge và deploy cùng SHA trên Pages/Render; claim-aware guard, fallback ngắn, evidence ordering và bốn gợi ý mới đã có trên public. Pilot Groq vẫn **PARTIAL**, chưa có thẩm định pháp lý độc lập; chấp thuận phát hành không phải nghiệm thu chất lượng trả lời pháp luật.
 
 ## 2. Bài toán và phạm vi
 
@@ -172,12 +172,12 @@ Các script hữu ích: `scripts/diagnose_two_turn_retrieval.py`, `scripts/evalu
 
 ## 16. Kết quả đánh giá hiện tại
 
-**Tất cả số liệu dưới đây là đo thật, mẫu nhỏ; không phải chứng nhận pháp lý.** Các số liệu release được giữ nguyên lịch sử; chúng không đo hiệu quả của hotfix đang mở.
+**Tất cả số liệu dưới đây là đo thật, mẫu nhỏ; không phải chứng nhận pháp lý.** Các số liệu release cũ được giữ nguyên lịch sử; không dùng chúng thay cho đánh giá hotfix.
 
 - Software regression của release `b1c10f4`: backend **634 passed**, frontend unit **29 passed**, Playwright desktop/mobile **36 passed**, build pass, secrets scan pass (trước release).
-- Hotfix legal-answer (branch `fix/legal-answer-grounding-hotfix`, **chưa deploy**): **18 test tất định** trên fixture chunk verbatim của corpus production; bao phủ T01/T02, L01/L02/L03, clarification không marker, marker nhóm/ID lạ, thứ tự nguồn trực tiếp, social control và evidence coverage của ba gợi ý pháp luật. Bằng chứng tất định không gọi Groq.
+- Hotfix legal-answer (PR #13, **đã deploy**): **18 test tất định** trên fixture chunk verbatim của corpus production; bao phủ T01/T02, L01/L02/L03, clarification không marker, marker nhóm/ID lạ, thứ tự nguồn trực tiếp, social control và evidence coverage của ba gợi ý pháp luật. Bằng chứng tất định không gọi Groq.
 - Pilot live hậu hotfix (22/10, **một phần**): 3 request/4.738 token; A01 social đạt, T01 clarification an toàn nhưng chỉ partial, T02/L02 chưa chạy. Dừng do reservation phẳng 3.000 token/request bị vượt ở request cuối T01, không phải lỗi provider hay chạm trần 10 request/30.000 token. Chi tiết và checksum: [`reports/evaluation/agentic-rag-post-hotfix-pilot/`](reports/evaluation/agentic-rag-post-hotfix-pilot/README.md).
-- Offline retrieval (20 ca gold smoke/supplemental/natural, rerun sau hotfix trên cùng corpus/gold/policy/E5): **Recall@5 = 0,975** (39/40 gold chunk), **Admitted Recall@5 = 0,925** (37/40), top-5 hit **20/20**. Output trùng byte với benchmark trước; không tuyên bố cải thiện retrieval.
+- Offline retrieval (20 ca gold smoke/supplemental/natural, rerun sau hotfix trên cùng corpus/gold/policy/E5): **macro Recall@5 = 0,975**, **macro Admitted Recall@5 = 0,925**; top-5 hit **20/20**, admitted hit **19/20**. Output trùng byte với benchmark trước; không tuyên bố cải thiện retrieval. Xem [đính chính cách diễn giải mẫu số](reports/releases/academic-mvp-1a9718f/README.md#6-evaluation-và-giới-hạn-giữ-nguyên).
 - Offline hai lượt hội thoại quy hoạch/tái định cư: **8/8 admitted** ở cả lượt 1, lượt 2 và follow-up.
 - Pre-deployment live (runtime `4fff5e1`, 16 request): Tool Selection **6/6**; Tool Execution **6/6**; Citation Correctness **7/7**; Unsupported Legal Claim **0**; Task success **1/6 full + 3/6 partial + 2/6 lỗi provider**; False abstention **2/5 ca legal**; L03 **NOT RUN**.
 - Production smoke (runtime `b1c10f4`, 4 request): social `answered`, `agentic_rag`, 1 request, 0 tool; legal L02 `clarification_needed`, 2 request, 1 tool, 2 citation thật (`49/2026/NĐ-CP` Điều 11, `31/2024/QH15` Điều 95). Không có entitlement bịa.
@@ -190,8 +190,8 @@ Chi tiết và artifact thô: [FINAL_RESULT.md](reports/evaluation/agentic-rag-f
 - Cloudflare Pages + Pages Function cho frontend/ingress; Render Free Docker cho FastAPI; Supabase PostgreSQL; Groq Free.
 - Deploy bằng GitHub Actions `Deploy application`, ghim `source_sha` đã kiểm thử; verify navigation/corpus/fingerprint.
 - Production cấu hình: `EXECUTION_MODE=agentic_rag`, `GENERATION_ENABLED=true`, `SOURCE_LOOKUP_ONLY=false`, `ALLOW_STALE_GENERATION=false`, `SESSION_CHALLENGE_MODE=disabled` (demo).
-- Rollback: `EXECUTION_MODE=simple_rag` + redeploy SHA `625e90e84079950e953267d1e4caaf0cb3e8c8e5`; giữ nguyên corpus/policy.
-- PR hotfix legal-answer không tự deploy. Production vẫn ở `b1c10f4` cho tới khi có phê duyệt ngân sách Groq, kết quả live và release riêng.
+- Rollback ứng dụng gần nhất: redeploy SHA `b1c10f4bad6b89f1d555eb08f5216b4b285be6d6` trên cả Pages/Render, giữ `agentic_rag` và nguyên corpus/policy. `simple_rag` vẫn là lựa chọn rollback riêng khi chấp nhận hành vi cũ.
+- PR #13 đã được chủ dự án phê duyệt phát hành MVP học thuật với pilot PARTIAL. Public metadata/navigation/history/citation rendering đã kiểm tra; live generation trong lượt release **NOT RUN**, 0 request Groq mới.
 
 ## 18. Bảo mật và quyền riêng tư
 
@@ -203,8 +203,8 @@ Chi tiết và artifact thô: [FINAL_RESULT.md](reports/evaluation/agentic-rag-f
 
 ## 19. Hạn chế đã biết
 
-- **False abstention trên production `b1c10f4`** còn ở T01/T02 và L02: hệ thống trả clarification kèm trích đoạn thay vì câu trả lời có điều kiện đầy đủ.
-- Hotfix hiện tại sửa lớp lỗi tất định: clarification không marker bị coi là invalid, marker nhóm không được nhận, và thứ tự nguồn để nghị quyết chuyển tiếp lấn đoạn trực tiếp. Đây là bằng chứng regression, **chưa phải** kết quả Groq/live; chỉ kết luận hết false abstention sau khi chạy bộ đo và duyệt.
+- **False abstention chưa được xử lý hết:** pilot hậu hotfix ghi nhận T01 PARTIAL; T02/L02 chưa có kết quả. Release cũ `b1c10f4` từng có clarification thay cho giải thích điều kiện; không dùng kết quả cũ để chấm release mới.
+- Hotfix sửa lớp lỗi tất định: clarification không marker bị coi là invalid, marker nhóm không được nhận, và thứ tự nguồn để nghị quyết chuyển tiếp lấn đoạn trực tiếp. Pilot thật vẫn chưa hoàn tất; không tuyên bố mọi câu pháp luật đã đạt acceptance.
 - **L03 chưa chạy live** do provider 429/400 trong pre-deploy; chất lượng L03 chưa xác nhận.
 - Coverage nguồn một phần: Luật Nhà ở 2023 Điều 72, Luật Quy hoạch 2025, nhóm khiếu nại và nguồn vận hành Hà Nội chưa có receipt.
 - Chưa có thẩm định pháp lý độc lập; không được xem 7/7 citation đúng cấu trúc là mọi claim đúng ngữ nghĩa.

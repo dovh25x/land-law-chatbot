@@ -1,0 +1,15 @@
+{
+  "kind": "narrative_erratum_not_new_evaluation",
+  "source": "reports/evaluation/agentic-rag-legal-answer-hotfix/retrieval-post-hotfix.json",
+  "source_sha256": "bcf5f7c7c73b0e0aee140628f1c5540c11421afbe8eb90457943af030a64ba11",
+  "method": "Macro mean across scored cases; chunk counts use set intersections with frozen gold_chunk_ids. No rerun or changed annotations.",
+  "scored_cases": 20,
+  "macro_recall_at_5": 0.975,
+  "macro_admitted_recall_at_5": 0.925,
+  "total_gold_chunks": 23,
+  "raw_gold_hits": 22,
+  "admitted_gold_hits": 21,
+  "top5_hit_cases": 20,
+  "admitted_top5_hit_cases": 19,
+  "correction": "Prior narrative 39/40 and 37/40 gold chunks, and admitted hit 20/20, were incorrect. Macro recall values and raw source JSON remain unchanged."
+}
