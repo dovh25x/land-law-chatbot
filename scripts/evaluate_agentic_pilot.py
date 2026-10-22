@@ -53,10 +53,13 @@ class PilotAllocation:
 
     def summary(self):
         reserved = sum(entry['reservation'] for entry in self.entries)
+        confirmed = sum(entry['confirmed_usage'] for entry in self.entries
+                        if type(entry.get('confirmed_usage')) is int)
         return {
             'max_requests': self.max_requests, 'reserved_token_cap': self.max_tokens,
             'reserved_tokens_per_request': self.per_request, 'requests_reserved': len(self.entries),
             'reserved_tokens': reserved, 'remaining_reserved_tokens': self.max_tokens - reserved,
+            'confirmed_usage': confirmed,
             'reported_actual_tokens': self.actual_tokens, 'blocked_reason': self.blocked_reason,
             'provider_quota_is_separate': True,
         }
@@ -167,6 +170,8 @@ async def main():
     parser.add_argument('--token-cap', type=int, default=48000)
     parser.add_argument('--global-request-cap', type=int, default=20)
     parser.add_argument('--global-token-cap', type=int, default=60000)
+    parser.add_argument('--ledger', default=str(LEDGER))
+    parser.add_argument('--ledger-identity', default='agentic-rag-final-20261022')
     parser.add_argument('--cooldown-seconds', type=int, default=20)
     args = parser.parse_args()
     manifest, cases = load_suite()
@@ -188,7 +193,7 @@ async def main():
     output = ROOT / args.output
     output.parent.mkdir(parents=True, exist_ok=True)
     ledger = None if args.dry_run else PilotAllocation(
-        LEDGER, 'agentic-rag-final-20261022', max_tokens=args.global_token_cap,
+        ROOT / args.ledger, args.ledger_identity, max_tokens=args.global_token_cap,
         max_requests=args.global_request_cap, per_request=3000)
     store = Store(settings)
     store.restore(ROOT / args.backup)
@@ -219,6 +224,7 @@ async def main():
         'policy_sha256': manifest['policy_sha256'], 'model': settings.generation_model,
         'as_of': '2026-10-22', 'request_cap': args.request_cap, 'token_cap': args.token_cap,
         'global_request_cap': args.global_request_cap, 'global_token_cap': args.global_token_cap,
+        'ledger': args.ledger, 'ledger_identity': args.ledger_identity,
         'cases': [], 'stopped': None,
     }
     output.write_text(json.dumps(report, ensure_ascii=False, indent=2) + '\n')
