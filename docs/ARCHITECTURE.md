@@ -1,117 +1,117 @@
-# Kiến trúc hệ thống
+# Kiến trúc
 
 ## Tổng quan
 
-![Kiến trúc hệ thống](diagrams/architecture.svg)
+Hệ thống là một pipeline duy nhất: React → Cloudflare Pages/Pages Function → FastAPI trên Render → Bounded Agentic RAG (`backend/landlaw/agentic_rag.py`) → Groq `openai/gpt-oss-120b` + tool đọc-only → PostgreSQL/pgvector trên Supabase.
 
-Ứng dụng tách ba luồng: chuẩn bị corpus ngoại tuyến, xử lý câu hỏi theo request và lưu hội thoại tại trình duyệt. Runtime không ingest hoặc OCR trong lúc phục vụ chat.
+![Kiến trúc triển khai](diagrams/architecture.svg)
 
-| Thành phần | Implementation | Trách nhiệm |
+- **Frontend** giữ hội thoại trong IndexedDB 7 ngày, hiển thị citation và thư viện nguồn.
+- **Cloudflare Pages Function** phục vụ tài nguyên tĩnh và ký HMAC mọi request `/api/*` gửi tới Render.
+- **FastAPI** xử lý session ẩn danh, quota, lease chống trùng lượt, SSE và orchestration.
+- **Bounded Agentic RAG** để model chọn trả lời trực tiếp hoặc gọi tool đọc-only; ứng dụng thực thi và kiểm chứng.
+- **Groq** nhận prompt và trả tool call/nội dung; Groq không truy vấn PostgreSQL.
+- **PostgreSQL/pgvector** lưu corpus, chunk, embedding, release, receipt và trạng thái policy. Chỉ server đọc.
+
+## Thành phần chính
+
+| Thành phần | File | Trách nhiệm |
 |---|---|---|
-| Giao diện | `frontend/src/` | Hội thoại, nguồn, trace và lịch sử IndexedDB |
-| Ingress | `frontend/functions/` | Chuyển tiếp SSE, lấy IP tại Cloudflare và ký request tới Render |
-| API | `backend/landlaw/api.py` | Phiên, validation, quota, lease và vòng đời SSE |
-| Agent | `backend/landlaw/agent.py` | Điều phối truy xuất, tạo draft và kiểm chứng |
-| Provider | `backend/landlaw/provider.py` | Groq, retry trong ngân sách và ghi nhận usage |
-| Retrieval/store | `retrieval.py`, `store.py` | Hybrid search, quan hệ văn bản, corpus và metadata thực thi |
-| Corpus ngoại tuyến | `ingest.py`, `scripts/` | Parse/OCR, chuẩn hóa, kiểm tra và đóng gói snapshot |
+| API/SSE | `backend/landlaw/api.py` | Session, quota, lease, body limit, ingress, stream kết quả |
+| Bounded Agentic RAG | `backend/landlaw/agentic_rag.py` | Tool decision, thực thi tool, admission, final generation, fallback |
+| Simple RAG (rollback) | `backend/landlaw/simple_rag.py` | Một retrieval + một generation, không tool calling |
+| Legacy agentic | `backend/landlaw/agent.py` | Planner/verify/repair LangGraph cũ; không phải production |
+| Provider | `backend/landlaw/provider.py` | Groq chat/tool HTTP, usage, quota, retry có giới hạn |
+| Retrieval/store | `backend/landlaw/store.py`, `retrieval.py` | Hybrid search, release, receipt, source gate, applicability |
+| Citation guard | `backend/landlaw/legal_text.py` | Điều/khoản/số hiệu, điều kiện thêm vào, nguồn bối cảnh |
+| Corpus/policy | `backend/landlaw/source_policy.py`, `publication.py`, `ops.py` | Applicability, standing snapshot, review receipt |
+| Frontend | `frontend/src/` | Chat, library, source panel, history, connection recovery |
+| Ingress | `frontend/functions/api/[[path]].ts` | Signed proxy Pages → Render |
 
-## Vòng đời một lượt hỏi
+## Luồng Agentic RAG
 
-![Trình tự xử lý chat](diagrams/chat-sequence.svg)
+![Luồng quyết định Agentic RAG](diagrams/agent-flow.svg)
 
-1. Client tạo UUID `request_id`, chọn các cặp hội thoại gần nhất và gửi tới API cùng origin.
-2. Cloudflare Function ký request; backend xác thực ingress, bearer token và các giới hạn đầu vào.
-3. API kiểm tra quota, lấy slot xử lý và tạo lease. Request ID đã sử dụng không được chạy lại.
-4. Agent giải tham chiếu từ history và xác định phạm vi. Các trường hợp đủ điều kiện có thể được xử lý theo quy tắc; không phải mọi lượt đều gọi LLM.
-5. Planner đề xuất truy xuất. Công cụ tìm kiếm, mở điều khoản và kiểm tra quan hệ cung cấp chứng cứ cho synthesis.
-6. Verifier kiểm tra chủ thể, điều kiện, ngoại lệ, hệ quả và thời điểm. Claim không được hỗ trợ phải được sửa trong ngân sách hoặc loại bỏ, kể cả phần phụ thuộc bị mất ngữ cảnh.
-7. API phát kết quả cuối qua SSE. Frontend lưu nội dung, citation và trace trong IndexedDB; server chỉ kết thúc metadata của lượt.
+1. Nhận câu hỏi + history giới hạn (≤8 message, redact).
+2. Một request tool-decision tới Groq với `tool_choice="auto"` và hai tool schema.
+3. Nếu model trả lời trực tiếp: xã giao/ngoài phạm vi được trả luôn; câu pháp luật bị buộc retrieval.
+4. Nếu model gọi tool: ứng dụng validate tham số, thực thi tối đa 2 tool, thu evidence.
+5. Admission: policy v2 + checksum + receipt + `applicability()` tại ngày hỏi.
+6. Một request final generation với schema `SimpleAnswer` (không gửi tool).
+7. Guard citation/reference; đạt → `answered` + citation, không đạt → `clarification_needed` kèm trích đoạn.
 
-`progress` phản ánh sự kiện thực thi quan sát được. Draft và suy nghĩ nội bộ không được phát ra client. Contract chi tiết nằm trong [API](API.md).
+### Ngân sách và giới hạn
 
-### Bounded Agentic RAG
+| Giới hạn | Giá trị |
+|---|---|
+| LLM request mỗi lượt | Tối đa 3; bình thường 1 (xã giao) hoặc 2 (pháp luật) |
+| Tool execution mỗi lượt | Tối đa 2, do ứng dụng thực thi |
+| Vòng tool-decision thứ hai | Không |
+| Repair loop | Không |
+| Deadline mỗi lượt | 90 giây (`turn_timeout_seconds`) |
+| Evidence tối đa | 5 đoạn |
+| `reasoning_effort` | `low` cho tool decision và final generation; `medium` chỉ cho schema legacy |
 
-`EXECUTION_MODE=agentic_rag` chạy `BoundedAgenticRAG`: model tự chọn trả lời trực
-tiếp hoặc gọi tối đa hai tool đọc-only (`search_legal_evidence`,
-`open_legal_provision`), tối đa ba request Groq mỗi lượt. Tool decision không
-gửi strict JSON schema vì Groq không hỗ trợ đồng thời tool use và Structured
-Outputs; câu trả lời cuối là request schema riêng. Mọi đoạn vẫn phải qua
-standing policy, applicability và citation/reference guard. `simple_rag` được
-giữ làm rollback mode. Chi tiết: [Agentic RAG](AGENTIC_RAG.md).
+Không có planner request, không có verifier LLM, không tự nối điều kiện và không phát draft trước kiểm chứng.
 
-### Agent flow
+## Nguồn pháp luật và source gate
 
-![Agent flow](diagrams/agent-flow.svg)
+- Corpus bất biến: 60 tài liệu, 7.396 chunk; embedding E5 ONNX Q8 384 chiều chạy local.
+- 10 tài liệu có receipt đang pin; 74 đoạn reviewed; **43 đoạn admitted** ngày 22/10/2026.
+- Policy v2 `standing_verified_snapshot`: receipt và checksum vẫn là điều kiện bắt buộc; tuổi receipt không tự làm hết hiệu lực.
+- `source_fresh=false` và `warning=source_partial_review` phản ánh toàn corpus chưa được review; generation vẫn khả dụng cho phạm vi đã review.
+- Tin chính thức/dự án có thể là context nhưng không chứng minh quyền lợi; `official_news` không được dùng cho câu khẳng định entitlement.
 
-Retry truy xuất được ưu tiên trước repair. Tới `finish` không đồng nghĩa đã đủ chứng cứ: nếu verifier còn `issues`, còn `needs_more_evidence` hoặc không duyệt đủ claim, toàn bộ nhóm claim và citation bị loại. Giới hạn hiệu lực phải được kiểm tra ngay trong claim; `finish` không tự nối điều kiện pháp lý sau verify.
+![Retrieval hybrid và admission](diagrams/retrieval-admission.svg)
 
-Xem [phân tích và sơ đồ agent chi tiết](AGENT_FLOW.md) cho nhánh quy tắc không gọi LLM, điều kiện ngân sách, cổng phát hành và giới hạn của thiết kế.
+## API và SSE
 
-## Tương tác cho người dân
+- `POST /api/v1/sessions`: tạo session ẩn danh; trả bearer token.
+- `POST /api/v1/chat`: bearer + body giới hạn; trả SSE `progress`/`result`/`failure`.
+- `GET /api/v1/status`, `/readyz`, `/healthz`: trạng thái corpus/policy/model.
+- `GET /api/v1/documents`: thư viện nguồn có lọc theo policy/ngày.
+- Lịch sử server đã retired: `GET/PUT /api/v1/history` trả `410 browser_history_only`.
 
-`citizen.py` xử lý định hướng tên giấy, chọn một câu hỏi và kiểm tra vai trò/freshness nguồn ngay trong graph hiện có. Câu hỏi chỉ đọc tên giấy không sinh hướng dẫn pháp lý và không cần gọi model. Các nội dung thực chất, kể cả việc tiếp theo, phải nằm trong claim trước verify; `next_steps` tự do không được phát.
+![Trình tự một lượt chat](diagrams/chat-sequence.svg)
 
-Nguồn thủ tục/danh bạ vẫn đi qua store/retrieval hiện tại; action cần receipt tác nghiệp còn hạn, đúng checksum và đủ phụ thuộc. Nguồn thiếu hoặc chưa duyệt làm nhánh tương ứng nêu giới hạn. Không có pipeline hoặc bảng lưu hội thoại mới. [Chi tiết triển khai](redesign/IMPLEMENTATION.md) mô tả schema, source policy và phần chưa đủ điều kiện phát hành.
+## Bảo mật và ranh giới tin cậy
 
-## Ngân sách và kiểm soát thực thi
-
-| Giới hạn mỗi lượt | Giá trị |
-|---|---:|
-| Request LLM, gồm retry | 6 |
-| Lần gọi công cụ | 12 |
-| Vòng retrieval | 2 |
-| Lần repair | 1 |
-| Deadline backend, gồm xử lý DB và agent | 90 giây |
-
-Planner có tối đa một request trước fallback. Runtime giữ một lượt đang chạy cho mỗi phiên và hai lượt đồng thời toàn hệ thống. Lease có thời hạn để giải phóng phiên khi worker chết; lease không cung cấp khả năng replay đáp án.
-
-Với GPT-OSS 120B, planner dùng `reasoning_effort=low`, synthesis và verification dùng `medium` để đối chiếu điều kiện pháp lý. Mỗi request vẫn giới hạn `max_completion_tokens=2048`; token suy luận cũng tính vào usage nhà cung cấp. Provider chỉ đọc JSON kết quả, không lưu hoặc phát reasoning. Các mức này được [Groq hỗ trợ](https://console.groq.com/docs/reasoning); đổi mức cần cohort đánh giá mới, không chuyển điểm từ cấu hình trước.
-
-Khi hết ngân sách hoặc thiếu chứng cứ, hệ thống trả giới hạn thay vì giữ kết luận chưa được hỗ trợ. Không tự gắn thêm điều kiện vào claim để làm claim vượt kiểm chứng.
-
-## Truy xuất và embedding
-
-Hybrid retrieval kết hợp từ khóa, vector, tiêu đề và viện dẫn bằng RRF. Từ khóa hỗ trợ số hiệu và điều khoản; vector hỗ trợ cách diễn đạt tự nhiên. Các công cụ chỉ đọc gồm `search_law`, `search_project`, `open_article`, `check_effectivity` và `normalize_place`.
-
-Query và corpus dùng cùng contract `multilingual-e5-small-onnx-q8-window-v1`, E5 ONNX Q8 384 chiều và preprocessing đã ghim trong `local_embedding.py`. Lọc corpus theo phạm vi không làm thay đổi embedding của chunk được giữ lại.
-
-SQLite và PostgreSQL có lexical backend khác nhau. Vì vậy storage backend tham gia fingerprint và phải được ghi trong báo cáo; kết quả retrieval của hai backend không tự tương đương.
-
-## Cổng nguồn đã review
-
-Citation chỉ được dùng nếu đoạn văn khớp checksum với active release và vượt cổng source review. Policy v2 `standing_verified_snapshot` giữ nguyên receipt SHA256, checksum tài liệu/đoạn và `checked_at` đã có; nó không tự gia hạn timestamp và không mở rộng sang đoạn chưa review. Các cửa sổ quay vòng ngày trở thành `standing_chunks`; các cửa sổ dài hơn được giữ nguyên trong `legal_windows`. Hiệu lực pháp lý vẫn được kiểm tra tại ngày hỏi; receipt changed/unavailable hoặc thiếu receipt loại bỏ chứng cứ ngay.
-
-Policy v2 ghi `supersedes` hash của policy v1, chỉ được kích hoạt qua operator command và có thể rollback bằng cách khôi phục policy v1 đã lưu. `source_fresh` mô tả toàn corpus; `source_gate.usable` chỉ mô tả phạm vi đã review và không tuyên bố snapshot là pháp luật hiện hành. Chi tiết vận hành ở [runbook](OPERATIONS.md#candidate-có-phạm-vi-nguồn-đã-duyệt).
+- Pages Function ký HMAC (`method`, path, query, timestamp, IP, body hash) cho mọi request `/api/*`; production còn kiểm tra timestamp ≤60 giây.
+- Session bearer ẩn danh, retention 7 ngày; quota session/IP theo phút/ngày; concurrency mặc định 2.
+- `TRUST_PROXY_HEADERS=false`; IP lấy từ ingress đã ký.
+- Body limit 64 KB; `X-Content-Type-Options: nosniff`, `Cache-Control: no-store`.
+- Prompt injection: history, câu hỏi và tài liệu là dữ liệu không tin cậy; tool chỉ đọc và tham số bị validate.
+- Demo hiện tại `SESSION_CHALLENGE_MODE=disabled`; mode `turnstile` vẫn hỗ trợ production thật.
 
 ## Lưu trữ và quyền riêng tư
 
-| Vị trí | Dữ liệu | Vòng đời |
-|---|---|---|
-| IndexedDB | Hội thoại, đáp án, citation, trace | 7 ngày từ khi tạo; tối đa 20 cuộc, 40 message/cuộc, tổng 10 MiB |
-| `sessionStorage` hoặc bộ nhớ tab khi bị chặn | Bearer token phiên API | Theo vòng đời storage/tab; tách khỏi lịch sử dài hạn |
-| Database backend | Corpus, hash token/IP, counters, fingerprint request, trạng thái và lease | Corpus có phiên bản; metadata được cleanup theo chính sách |
-| Log ứng dụng | Request ID, kết quả, lỗi theo loại, latency và usage | Theo cấu hình lưu log của hosting |
-| Corpus backup | Snapshot và cấu hình công khai cần khôi phục | Theo Release và quy trình vận hành |
+- Server chỉ lưu metadata phiên/lượt; không lưu message, answer cache hay trace chi tiết.
+- History, citation và trạng thái hội thoại thuộc IndexedDB của trình duyệt, TTL 7 ngày.
+- Corpus/receipt/release là dữ liệu vận hành; backup tách khỏi session.
 
-Server không lưu messages, answer cache hoặc trace chi tiết giữa các lượt. Migration 006 xóa payload cũ và thu hồi quyền runtime trên các bảng đó. Nội dung vẫn được xử lý trong bộ nhớ và truyền tới Groq; lịch sử chỉ ở client không đồng nghĩa nội dung không rời thiết bị.
+## Triển khai
 
-## Ranh giới tin cậy
+![Triển khai, tin cậy và khôi phục](diagrams/deploy-recovery.svg)
 
-- Browser input, lịch sử và tài liệu đều là dữ liệu không đáng tin. Chúng không được cấp quyền thực thi SQL, shell hoặc URL tùy ý.
-- Citation cũ chỉ giúp xác định ngữ cảnh. Kết luận mới phải có chứng cứ được truy xuất và kiểm tra lại.
-- Cloudflare là ingress tin cậy để xác định IP và ký HMAC. Backend production từ chối API request không có chữ ký hợp lệ; không tin IP do client tự khai báo.
-- Turnstile là challenge tạo phiên khi `SESSION_CHALLENGE_MODE=turnstile` và được xác minh server-side. Mode `disabled` chỉ bỏ challenge, không bỏ session, token, ingress, quota hay budget. Chỉ số hoặc header do client gửi không thể chuyển usage sang operator.
-- Markdown không thực thi HTML. Credentials không xuất hiện trong `VITE_*`, response hoặc log nội dung.
+- Cloudflare Pages + Pages Function; Render Free Docker; Supabase PostgreSQL; Groq Free.
+- CI kiểm thử, build và deploy đúng SHA đã kiểm thử; verify navigation/corpus/fingerprint sau deploy.
+- Rollback ứng dụng: `EXECUTION_MODE=simple_rag` + redeploy SHA `625e90e84079950e953267d1e4caaf0cb3e8c8e5`; corpus/policy giữ nguyên.
 
-Chi tiết cấu hình và xử lý sự cố nằm trong [vận hành](OPERATIONS.md).
+## Xử lý lỗi
 
-## Vòng đời corpus
+| Tình huống | Hành vi |
+|---|---|
+| Model trả lời xã giao | `answered`, không tool/retrieval |
+| Model trả lời pháp luật trực tiếp | Ứng dụng buộc retrieval rồi generation |
+| Không có evidence admitted | `clarification_needed` hỏi đúng một dữ kiện còn thiếu |
+| Citation/reference không đạt | Clarification kèm trích đoạn thật, không kết luận quyền lợi |
+| Groq 429 | `limited` + `Retry-After`; không retry vô hạn |
+| Groq 400/5xx | Tool decision bị bỏ, fallback retrieval + generation; lỗi khác trả `error` |
+| Mất kết nối SSE | Client không replay; người dùng chủ động gửi lượt mới |
 
-![Vòng đời corpus](diagrams/corpus-lifecycle.svg)
+## Giới hạn đã biết
 
-Nguồn chính thức được parse hoặc OCR ngoại tuyến, chia chunk theo điều/khoản/trang và gắn checksum, locator, ngày kiểm tra cùng quan hệ văn bản. Snapshot chỉ chuyển active sau khi kiểm tra phạm vi, tính toàn vẹn và restore riêng thành công.
-
-Corpus vận hành chỉ gồm Vành đai 4 và luật chung liên quan. Không rollback sang corpus đa dự án hoặc phiên bản ghi hội thoại lên server. Các lựa chọn kiến trúc và hệ quả được lưu trong [ADR](adr/README.md).
-
-Danh mục `catalog.py` chỉ cung cấp provenance và liên kết bản gốc chưa lập chỉ mục cho thư viện. Nó không thêm pipeline retrieval, không thay đổi corpus hoặc embedding và không cấp chứng cứ cho synthesis.
+- False abstention còn ở T01/T02 và L02 production (clarification thay vì câu trả lời có điều kiện đầy đủ).
+- L03 chưa chạy live; coverage nguồn còn thiếu Luật Nhà ở 2023 Điều 72, Luật Quy hoạch 2025, nhóm khiếu nại và nguồn vận hành Hà Nội.
+- `answer_schema_version=1` trong agentic_rag, nên structured claim renderer chưa hoạt động trong production.
+- Chưa có thẩm định pháp lý độc lập; citation đúng cấu trúc không đồng nghĩa mọi claim đúng ngữ nghĩa.

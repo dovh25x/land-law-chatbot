@@ -111,7 +111,7 @@ Chỉ dùng `--public-summary reports/latest.json` sau khi mọi ca suite chính
 
 Nếu artifact cũ không có telemetry bước sinh Draft, ghi `answer_origin=unknown`; không suy ra có generation chỉ từ số lần gọi planner/verifier. Không có citation thì integrity là “không áp dụng”.
 
-Báo cáo số liệu chỉ ở `reports/`; tài liệu này định nghĩa phương pháp. Xem [báo cáo có phiên bản](../reports/evaluation/ring4-c4f0c661/README.md) và [trạng thái triển khai](../reports/deployment-ring4.json). Các báo cáo corpus đã bị thu hồi asset giữ nguyên checksum và công khai hạn chế tái lập.
+Báo cáo số liệu chỉ ở `reports/`; tài liệu này định nghĩa phương pháp. Xem [FINAL_RESULT của release Agentic RAG](../reports/evaluation/agentic-rag-final/FINAL_RESULT.md), [metrics](../reports/evaluation/agentic-rag-final/metrics.json) và [trạng thái triển khai](../reports/deployment-live/README.md). Report `ring4-c4f0c661` và `deployment-ring4.json` là cohort lịch sử. Các báo cáo corpus đã bị thu hồi asset giữ nguyên checksum và công khai hạn chế tái lập.
 
 Rubric và readiness nội dung được giữ để đo, rà soát và công bố giới hạn; deploy mặc định không yêu cầu chúng đạt. Người vận hành có thể bật chế độ yêu cầu quality qua runbook. Việc bỏ điều kiện chặn deploy không đổi nhãn kết quả lịch sử hoặc thay kiểm chứng claim/citation trong runtime.
 
@@ -143,3 +143,13 @@ Helper `scripts/evaluate_generation_candidate.py` nhận nhiều `--source-recei
 `--no-generation` dùng cho các case guard đã chọn rõ; wrapper chặn mọi generate trước HTTP và giữ cooldown. `scripts/verify_source_gate_candidate.py` kiểm tra source gate bằng SQLite riêng và E5 local; phần synthesis fixture được ghi nhãn, không tính vào kết quả model. Diagnostic Recall@5 tính trên top5 có thứ tự của chính phép retrieval đã ghi lại, với mẫu số gold cố định; không đổi tên Recall@8 thành Recall@5.
 
 Pilot là các case đầu tiên của evaluation đầy đủ trên cùng cấu hình đã khóa. Khóa case IDs trước khi xem kết quả, giữ attempt fail và không chạy lại để chọn điểm. Với case answerable đã có đủ nguồn, từ chối vẫn là false abstention và không đạt Answer Correctness. Báo Answerable Coverage, False Abstention Rate, trạng thái chưa chạy và thiếu review riêng; không tính refusal không có claim là faithfulness bằng1. SQLite, PostgreSQL và public HTTP phải có cohort/latency riêng.
+
+
+## Đánh giá Agentic RAG (release 22/10/2026)
+
+- Script hiện hành: `scripts/evaluate_agentic_pilot.py` (pre-deploy, dùng `BoundedAgenticRAG`) và `scripts/smoke_agentic_production.py` (production smoke qua Pages ingress). Các lệnh CLI `land-law benchmark --mode agentic` chỉ chạy legacy `agentic`.
+- Kết quả pre-deploy (runtime `4fff5e1`, 16 request): tool selection 6/6, tool execution 6/6, citation correctness 7/7, unsupported legal claim 0, task success 1/6 full + 3/6 partial + 2/6 lỗi provider, false abstention 2/5 ca legal, L03 NOT RUN.
+- Production smoke (runtime `b1c10f4`, 4 request): social answered/agentic_rag/1 request/0 tool; L02 clarification kèm 2 citation thật; không có entitlement bịa.
+- Tổng ngân sách: 20/20 request, 60.000 token reservation, 18.893 token xác nhận.
+- Artifact: `reports/evaluation/agentic-rag-final/{metrics.json,FINAL_RESULT.md,pre-deployment-live.json,production-smoke-legal.json,request-budget.json}`.
+- Không trộn cohort này với Simple RAG demo 12 ca hoặc report `ring4-c4f0c661` (SQLite, corpus `corpus-581da76c79b0b362`, legacy `agentic`).

@@ -1,77 +1,75 @@
 # Bounded Agentic RAG
 
-`EXECUTION_MODE=agentic_rag` selects `BoundedAgenticRAG`
-(`backend/landlaw/agentic_rag.py`). The previous `simple_rag` path remains as the
-rollback mode until production activation is approved.
+`EXECUTION_MODE=agentic_rag` là mode production hiện tại; `BoundedAgenticRAG` nằm tại `backend/landlaw/agentic_rag.py`. `simple_rag` là rollback và mode `agentic` (LangGraph) chỉ còn legacy.
 
-## Tools
+![Luồng quyết định Agentic RAG](diagrams/agent-flow.svg)
 
-The model sees exactly two read-only function definitions:
+## Tool
 
-| Tool | Arguments (validated server-side) | Result |
+Model chỉ thấy hai function đọc-only; ứng dụng validate tham số và thực thi:
+
+| Tool | Tham số (validate server-side) | Kết quả |
 |---|---|---|
-| `search_legal_evidence` | `query` (1–600 chars), optional `topic` enum | Up to five reviewed passages with document number, title, locator, excerpt and applicability |
-| `open_legal_provision` | `document_id` (1–120), `locator` (1–200), optional `query` | Exact admissible chunks of one article/provision, bounded to three chunks |
+| `search_legal_evidence` | `query` 1–600 ký tự, `topic` tùy chọn | Tối đa 5 đoạn reviewed kèm số hiệu, tiêu đề, locator, excerpt, applicability |
+| `open_legal_provision` | `document_id` 1–120, `locator` 1–200, `query` tùy chọn | Đúng đoạn đã admitted của một điều/khoản, tối đa 3 chunk |
 
-No SQL, filesystem, URL fetch, write or credential capability is exposed.
-Unknown tool names, malformed JSON, unknown document IDs and overlong
-arguments are rejected without execution.
+Không có SQL, ghi DB, filesystem, URL fetch, credential hay tool ngoài allow-list. Tool name lạ, JSON hỏng, document ngoài corpus và tham số quá dài bị từ chối mà không thực thi.
 
-## Request and tool budget
+## Ngân sách thực thi
 
-- At most **3 Groq requests per turn** as a hard guard, and at most **2** in the
-  normal path: one tool-decision request plus one final structured generation.
-- At most **2 application-controlled tool executions** returned by that single
-  decision. There is no second tool-decision round trip; gpt-oss does not
-  support parallel tool calls, so this is normally one execution.
-- No parallel tool execution, no automatic repair loop, no unbounded reasoning.
-- Social turns finish in request 1 with a natural model reply and no retrieval.
-- Legal questions are forced through reviewed evidence even when the model returns
-  a direct answer: the application then performs one bounded retrieval and final generation.
+| Giới hạn | Giá trị |
+|---|---|
+| LLM request mỗi lượt | Tối đa 3; bình thường 1 (xã giao) hoặc 2 (pháp luật) |
+| Tool execution | Tối đa 2, từ **một** tool decision duy nhất |
+| Tool-decision thứ hai | Không |
+| Repair loop | Không |
+| Song song | Không (gpt-oss không hỗ trợ parallel tool calls) |
+| Deadline | 90 giây/lượt |
 
-Groq does not support strict Structured Outputs together with tool use, so the
-tool-decision request sends `tools` + `tool_choice="auto"` without
-`response_format`; the final answer is a separate strict-schema request.
+## Tương thích provider Groq
 
-## Routing and conversation
+- Tool decision: `tools` + `tool_choice="auto"`, không gửi `response_format` (Groq không hỗ trợ đồng thời strict Structured Outputs và tool use).
+- Final generation: strict JSON schema `SimpleAnswer`, `tool_choice="none"`.
+- `reasoning_effort="low"` cho cả hai leg; `medium` chỉ dùng cho schema legacy `Draft`/`Verification`.
+- 429 → `limited` + `retry_after`; 400 tool/format → bỏ tool decision, fallback retrieval + generation, không retry vòng lặp.
 
-- The model receives the bounded client history (last 8 messages, redacted, 2000 chars each)
-  plus the current question. It decides whether a tool is needed based on subject,
-  history and scope.
-- `conversation.contextual_retrieval_query` is a deterministic fallback for explicit
-  follow-ups (`vậy`, `còn`, `thế`, `nhưng`, `đất tôi`, `nhà tôi`, ...) when the model
-  does not rewrite the query itself.
-- Out-of-scope requests are declined in the model's direct reply; the deterministic
-  classifier is used only as a subject guard, not as a template answer.
-- No user facts are inferred from the project name, a planning map or an assistant
-  answer in history.
+## Định tuyến và hội thoại
 
-## Evidence and citation validation
+- Model nhận history giới hạn (≤8 message, redact, 2000 ký tự/message) và tự chọn trả lời trực tiếp hay gọi tool.
+- Xã giao/ngoài phạm vi: trả lời trực tiếp, không database, không citation.
+- Câu pháp luật: nếu model trả lời trực tiếp mà không gọi tool, ứng dụng bắt buộc retrieval rồi generation; không phát hành đáp án pháp luật từ trí nhớ.
+- Fallback `conversation.contextual_retrieval_query` mở rộng truy vấn cho tiếp nối rõ (`vậy`, `còn`, `thế`, `nhưng`, `đất tôi`, `nhà tôi`). Không suy diễn dữ kiện chưa có và không kế thừa chủ thể sau khi đổi đề tài.
 
-- Every passage is re-checked with `Store.scoped_source_reviews` and
-  `source_policy.applicability`; only `fresh`, `standing` or `reviewed_window`
-  evidence with `current`, `provision_specific` or `context` applicability is used.
-- `legal_text.validate_answer` checks per citation segment:
-  - article and paragraph identifiers must appear in the cited excerpt;
-  - document numbers must match the cited document, not merely be mentioned somewhere;
-  - specific added conditions (`phương án`, `phê duyệt`, `giấy chứng nhận`, `cư trú`, ...)
-    must appear in the cited evidence;
-  - absolute certainty wording is rejected, while negated certainty
-    (“chưa đủ chắc chắn”) is allowed.
-- Invalid drafts fall back to a bounded excerpt clarification, never to an
-  unsupported legal conclusion. The guard is a rejection filter, not proof of
-  legal correctness or an independent legal review.
+## Nguồn và citation guard
 
-## Error behavior
+- Mọi đoạn phải qua `Store.scoped_source_reviews` (receipt/checksum/policy v2) và `source_policy.applicability()` (`current`, `provision_specific`, `context`).
+- `legal_text.validate_answer` kiểm tra theo từng câu/citation:
+  - điều và khoản phải xuất hiện trong excerpt được dẫn;
+  - số hiệu văn bản phải khớp `document_number` của nguồn được dẫn;
+  - điều kiện thủ tục thêm vào (`phương án`, `phê duyệt`, `giấy chứng nhận`, `cư trú`, …) phải có trong nguồn;
+  - nguồn `official_news`/`project_decision` không được chứng minh quyền lợi;
+  - từ ngữ khẳng định tuyệt đối bị loại, nhưng câu phủ định an toàn ("chưa đủ chắc chắn") được giữ.
+- Guard là bộ lọc từ chối, không phải bằng chứng đúng ngữ nghĩa hay thẩm định pháp lý độc lập.
 
-- `RateLimited` → `status="limited"` with provider `retry_after`.
-- `ProviderUnavailable` → `status="error"` without inventing an answer.
-- `BudgetExceeded` or exhausted turn budget → bounded clarification based on the
-  retrieved excerpts.
-- No evidence after tools and fallback retrieval → one targeted clarification
-  that names the actual coverage gap.
+## Thất bại và fallback
+
+| Tình huống | Kết quả |
+|---|---|
+| Không có evidence admitted | `clarification_needed` hỏi đúng một dữ kiện (quyết định thu hồi, loại đất, giấy tờ) |
+| Citation/reference không đạt | Clarification kèm tối đa 2 trích đoạn thật + review notice |
+| 429 | `limited`, giữ `retry_after` |
+| BudgetExceeded | Clarification trong ngân sách còn lại |
+| Tool decision 400/5xx | Fallback retrieval + final generation |
+
+## Khác biệt với legacy
+
+| | `agentic_rag` (production) | `simple_rag` (rollback) | `agentic` (legacy) |
+|---|---|---|---|
+| Tool calling | Groq native, 2 tool đọc-only | Không | Planner JSON + tool nội bộ |
+| LLM request/lượt | 1–2 (hard 3) | 1 | Tới 6 gồm retry/repair |
+| Verification | Deterministic guard | Citation marker + guard | LLM verifier + cấu trúc nặng |
+| Repair | Không | Không | 1 lần |
 
 ## Rollback
 
-Set `EXECUTION_MODE=simple_rag` and redeploy the last tested runtime. The corpus
-and source policy are unchanged by this mode switch.
+Đặt `EXECUTION_MODE=simple_rag` và redeploy SHA `625e90e84079950e953267d1e4caaf0cb3e8c8e5`. Corpus và policy v2 giữ nguyên; không cần restore database.

@@ -45,11 +45,11 @@ Không dùng riêng HTTP status mở stream để đếm lượt chat thành cô
 
 ## Candidate có phạm vi nguồn đã duyệt
 
-### Standing verified snapshot (v2, target)
+### Standing verified snapshot (v2, active)
 
 Receipt có thể giới hạn `verified_scope` theo `chunk_checksums` và khoảng ngày hỏi `[as_of_from, as_of_to)`. Phải review nội dung, chủ thể, điều kiện và quan hệ sửa đổi/chuyển tiếp thực sự trước khi ghi receipt; kiểm tra HTTP hoặc hash chỉ là bằng chứng về bản tải. Receipt giới hạn không làm toàn văn được đánh dấu fresh.
 
-Policy v2 `standing_verified_snapshot` là chính sách đích cho bản demo. Nó giữ nguyên checksum tài liệu, checksum từng đoạn, SHA256 receipt và mốc `checked_at`; không tự gia hạn timestamp, không quay vòng nguồn và không đánh dấu toàn corpus là đã xác minh. Cửa sổ quay vòng ngày (thường dài 1–2 ngày) trở thành `standing_chunks`; cửa sổ dài hơn là phạm vi ngày thực chất của người review và được giữ nguyên trong `legal_windows`, không mở rộng. Policy ghi `supersedes` là hash SHA256 của policy v1 đã dùng để migrate.
+Policy v2 `standing_verified_snapshot` là chính sách đang chạy production. Nó giữ nguyên checksum tài liệu, checksum từng đoạn, SHA256 receipt và mốc `checked_at`; không tự gia hạn timestamp, không quay vòng nguồn và không đánh dấu toàn corpus là đã xác minh. Cửa sổ quay vòng ngày (thường dài 1–2 ngày) trở thành `standing_chunks`; cửa sổ dài hơn là phạm vi ngày thực chất của người review và được giữ nguyên trong `legal_windows`, không mở rộng. Policy ghi `supersedes` là hash SHA256 của policy v1 đã dùng để migrate.
 
 Operator tạo candidate từ policy v1 đang active, chỉ đọc:
 
@@ -65,7 +65,7 @@ Sau khi đối chiếu source ID, checksum, scope và hash, kích hoạt bằng:
 
 Activation từ chối policy thiếu `supersedes` khớp policy v1 hiện hành, thiếu receipt `unchanged`, sai document checksum, hoặc có đoạn không nằm trong `verified_scope` gốc. Policy v2 chỉ thay điều kiện tuổi receipt; mọi điều kiện nội dung, chủ thể, thẩm quyền, hiệu lực và citation vẫn giữ.
 
-Khi policy tồn tại, từng citation phải khớp đoạn, checksum và receipt mới nhất. Receipt changed/unavailable hoặc thiếu receipt đều chặn claim ngay lập tức. Với `standing_chunks`, hiệu lực pháp lý được kiểm tra tại ngày hỏi bằng `applicability()`; với `legal_windows`, ngày hỏi còn phải nằm trong đúng cửa sổ đã review. Verify và finish kiểm tra lại; không có đoạn đủ điều kiện thì không gọi synthesis. Phần corpus không được dùng trong claim không khiến toàn bộ câu hỏi bị chặn.
+Khi policy tồn tại, từng citation phải khớp đoạn, checksum và receipt mới nhất. Receipt changed/unavailable hoặc thiếu receipt đều chặn claim ngay lập tức. Với `standing_chunks`, hiệu lực pháp lý được kiểm tra tại ngày hỏi bằng `applicability()`; với `legal_windows`, ngày hỏi còn phải nằm trong đúng cửa sổ đã review. `BoundedAgenticRAG` kiểm tra lại receipt, checksum và `applicability()` trước final generation; guard citation/reference chạy sau generation. Phần corpus không được dùng trong claim không khiến toàn bộ câu hỏi bị chặn.
 
 `/readyz`, `/api/v1/status` và `ops-status` công khai `source_gate.mode`, `review_mode`, `reviewed_at`, `operational_expiry`, hash policy và số đoạn đủ điều kiện tại ngày hiện tại. `source_fresh=false` vẫn phản ánh toàn corpus chưa được xác minh; `source_partial_review` chỉ báo rằng phạm vi đã review đang dùng được, không tuyên bố snapshot là “pháp luật hiện hành” hay thay thế thẩm định pháp lý.
 
@@ -99,7 +99,7 @@ API dùng scope `public`; CLI/dev entrypoint tin cậy dùng `operator`, ghi usa
 
 ## Rà soát nguồn và freshness
 
-Chính sách đích là **standing verified snapshot (v2)**. Policy này tách bốn khái niệm:
+Chính sách đang chạy là **standing verified snapshot (v2)**. Policy này tách bốn khái niệm:
 
 1. **Toàn vẹn nội dung**: document checksum, passage checksum và SHA256 receipt phải khớp chính xác.
 2. **Độ mới vận hành**: snapshot đã review không còn hạn 24 giờ, 72 giờ hoặc 7 ngày. `reviewed_at` là mốc đối chiếu gần nhất để hiển thị, không phải ngày hết hạn tự động.
@@ -183,6 +183,10 @@ Corpus đa dự án cũ đã được thu hồi khỏi dữ liệu vận hành v
 Chỉ rollback tới corpus Vành đai 4 và code không lưu hội thoại lên server. Nếu chưa có bản rollback đáp ứng điều kiện, đặt `GENERATION_ENABLED=false` và giữ tra cứu nguồn.
 
 ## Triển khai và xác minh
+
+![Triển khai, tin cậy và khôi phục](diagrams/deploy-recovery.svg)
+
+Runtime production hiện tại: `EXECUTION_MODE=agentic_rag`; rollback bằng `simple_rag`.
 
 ![Triển khai và phục hồi](diagrams/deploy-recovery.svg)
 

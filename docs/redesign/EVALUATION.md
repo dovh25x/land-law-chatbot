@@ -1,5 +1,8 @@
 # Chương trình đánh giá cho người dân
 
+> **Design record — historical.** Tài liệu này được viết trước khi bounded Agentic RAG lên production; các đoạn nói về planner/verifier/repair, budget 6/12/2/1 hoặc schema-2 có thể không còn đúng. Runtime hiện hành: [AGENTIC_RAG.md](../AGENTIC_RAG.md) và [ARCHITECTURE.md](../ARCHITECTURE.md).
+
+
 **Cần thiết kế lại chương trình đánh giá, không sửa hoặc xóa bộ câu hỏi đã khóa.** Bộ cũ tiếp tục phát hiện regression pháp lý/an toàn; bộ mới đo người dùng có hiểu và hoàn thành việc tìm hiểu hay không. Điểm hai thế hệ không được so trực tiếp như cùng một thước đo.
 
 ## Các lớp đánh giá
