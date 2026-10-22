@@ -73,8 +73,9 @@ def test_legal_question_uses_search_tool_then_grounded_generation(store, setting
     assert result.verified_claims and result.citations
     assert result.citations[0].locator == "Điều 95"
     assert result.tool_calls == 1
+    assert result.llm_calls == 2  # one tool decision + one grounded generation
     assert result.evidence_chunk_ids == [result.citations[0].id]
-    assert provider.tool_steps == 2 and provider.generations == 1
+    assert provider.tool_steps == 1 and provider.generations == 1
 
 
 def test_legal_model_direct_answer_is_forced_through_retrieval(store, settings):
@@ -184,16 +185,16 @@ def test_tool_execution_cap_is_two(store, settings):
                              locator="Điều 95")])
     sid, _ = session(store)
     provider = ToolProvider(settings, [
-        {"content": "", "tool_calls": [tool_call("search_legal_evidence", '{"query":"bồi thường"}', "c1")]},
-        {"content": "", "tool_calls": [tool_call("open_legal_provision",
-                                                 '{"document_id":"law","locator":"Điều 95"}', "c2")]},
-        {"content": "", "tool_calls": [tool_call("search_legal_evidence", '{"query":"nữa"}', "c3")]},
+        {"content": "", "tool_calls": [
+            tool_call("search_legal_evidence", '{"query":"bồi thường"}', "c1"),
+            tool_call("open_legal_provision", '{"document_id":"law","locator":"Điều 95"}', "c2"),
+        ]},
     ], answer=SimpleAnswer(answer="Theo Điều 95, điều kiện được bồi thường cần kiểm tra [S1]."))
     result = asyncio.run(BoundedAgenticRAG(store, provider).run(
         request(sid, "Tôi có được bồi thường không?"), lambda _: None, "r1"))
     assert result.tool_calls == 2
-    assert result.llm_calls <= 3
-    assert provider.tool_steps == 2  # final generation is separate
+    assert result.llm_calls == 2  # one tool decision + one grounded generation
+    assert provider.tool_steps == 1
 
 
 def test_contextual_retrieval_query_inherits_short_follow_ups_only():

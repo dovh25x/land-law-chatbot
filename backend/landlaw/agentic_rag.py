@@ -265,38 +265,31 @@ Không tạo URL, điều luật, mã nguồn hoặc văn bản mới. Không nh
         messages.append({"role": "user", "content": redact(request.message)})
         evidence: list[Evidence] = []
         direct_content = ""
-        executed = 0
-        for _ in range(2):
-            if budget.llm_calls >= MAX_LLM_REQUESTS - 1:
-                break
-            try:
-                reply = await self.provider.tool_step(TOOL_INSTRUCTION, messages, TOOLS, budget, max_attempts=1)
-            except RateLimited as exc:
-                return ChatResult(**base, status="limited",
-                                  content=f"Nhà cung cấp AI đang giới hạn lượt dùng. Vui lòng thử lại sau {exc.retry_after} giây.",
-                                  trace=trace, embedding_calls=budget.embedding_calls,
-                                  llm_calls=budget.llm_calls, tool_calls=budget.tool_calls,
-                                  token_usage=budget.tokens, elapsed_ms=int((time.monotonic() - started) * 1000))
-            except ProviderUnavailable as exc:
-                trace.append(TraceEvent(step="tool_routing", summary=f"Tool routing unavailable: {type(exc).__name__}"))
-                break
+        reply = None
+        try:
+            reply = await self.provider.tool_step(TOOL_INSTRUCTION, messages, TOOLS, budget, max_attempts=1)
+        except RateLimited as exc:
+            return ChatResult(**base, status="limited",
+                              content=f"Nhà cung cấp AI đang giới hạn lượt dùng. Vui lòng thử lại sau {exc.retry_after} giây.",
+                              trace=trace, embedding_calls=budget.embedding_calls,
+                              llm_calls=budget.llm_calls, tool_calls=budget.tool_calls,
+                              token_usage=budget.tokens, elapsed_ms=int((time.monotonic() - started) * 1000))
+        except ProviderUnavailable as exc:
+            # A rejected tool-decision leg is not retried. The bounded fallback
+            # below can still retrieve reviewed evidence and generate an answer.
+            trace.append(TraceEvent(step="tool_routing", summary=f"Tool routing unavailable: {type(exc).__name__}"))
+        if reply is not None:
             calls = reply.get('tool_calls') or []
-            if not calls:
+            if calls:
+                # gpt-oss does not support parallel tool calls; the loop is kept
+                # bounded for a provider that returns one or two calls in a
+                # single decision. There is no second tool-decision request and
+                # therefore no tool-result message round trip.
+                for call in calls[:MAX_TOOL_EXECUTIONS]:
+                    _, items = await self._execute_tool(call, request, release, as_of, budget, trace)
+                    evidence.extend(items)
+            else:
                 direct_content = (reply.get('content') or '').strip()
-                break
-            for call in calls[:MAX_TOOL_EXECUTIONS]:
-                if executed >= MAX_TOOL_EXECUTIONS:
-                    break
-                result, items = await self._execute_tool(call, request, release, as_of, budget, trace)
-                evidence.extend(items)
-                executed += 1
-                messages.append({"role": "assistant", "content": "",
-                                 "tool_calls": [{"id": call.get('id') or f"call_{executed}",
-                                                 "type": "function",
-                                                 "function": {"name": call.get('name'), "arguments": call.get('arguments') or '{}'}}]})
-                messages.append({"role": "tool", "tool_call_id": call.get('id') or f"call_{executed}",
-                                 "name": call.get('name'),
-                                 "content": json.dumps(result, ensure_ascii=False)[:4000]})
         evidence = await self._admit(evidence, release, as_of)
         legal = intent.kind == 'legal' or bool(evidence)
         if direct_content and not evidence and not legal:

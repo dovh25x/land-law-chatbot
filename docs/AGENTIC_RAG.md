@@ -19,10 +19,13 @@ arguments are rejected without execution.
 
 ## Request and tool budget
 
-- At most **3 Groq requests per turn**, including the final structured generation.
-- At most **2 application-controlled tool executions**.
+- At most **3 Groq requests per turn** as a hard guard, and at most **2** in the
+  normal path: one tool-decision request plus one final structured generation.
+- At most **2 application-controlled tool executions** returned by that single
+  decision. There is no second tool-decision round trip; gpt-oss does not
+  support parallel tool calls, so this is normally one execution.
 - No parallel tool execution, no automatic repair loop, no unbounded reasoning.
-- Social turns normally finish in request 1 with a natural model reply and no retrieval.
+- Social turns finish in request 1 with a natural model reply and no retrieval.
 - Legal questions are forced through reviewed evidence even when the model returns
   a direct answer: the application then performs one bounded retrieval and final generation.
 
