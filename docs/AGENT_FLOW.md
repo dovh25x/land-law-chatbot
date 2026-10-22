@@ -1,8 +1,10 @@
-# Agent flow và đánh giá thiết kế
+# Agent flow (legacy) và đánh giá thiết kế
+
+> **Tài liệu lịch sử / legacy.** Nội dung dưới đây mô tả mode `agentic` dùng LangGraph (`backend/landlaw/agent.py`), **không phải runtime production**. Production hiện chạy bounded Agentic RAG: xem [Agentic RAG](AGENTIC_RAG.md), [Kiến trúc](ARCHITECTURE.md) và sơ đồ [agent-flow.svg](diagrams/agent-flow.svg) (đã cập nhật theo bounded flow).
 
 ## Kết luận thiết kế
 
-Giữ pipeline Agentic RAG trong `backend/landlaw/agent.py` cho mode legacy `agentic`. Các node của LangGraph là các bước trong cùng một lượt hỏi, không phải nhiều agent độc lập. Planner chọn công cụ chỉ đọc, synthesis tạo draft, verifier kiểm tra trước khi `finish` dựng đáp án. Mode `agentic_rag` trong `backend/landlaw/agentic_rag.py` là đường chạy đích hiện tại: model dùng Groq native tool calling, ứng dụng thực thi tối đa hai tool đọc-only và tối đa ba request mỗi lượt; không khôi phục planner/verifier nhiều tầng. Mode `simple_rag` trong `backend/landlaw/simple_rag.py` là rollback: context ngắn, một lượt generation và kiểm tra citation allow-list. Cả ba mode vẫn dùng corpus, source review và giới hạn runtime hiện có; chi tiết tool và guard ở [Agentic RAG](AGENTIC_RAG.md).
+Giữ pipeline Agentic RAG trong `backend/landlaw/agent.py` cho mode legacy `agentic`. Các node của LangGraph là các bước trong cùng một lượt hỏi, không phải nhiều agent độc lập. Planner chọn công cụ chỉ đọc, synthesis tạo draft, verifier kiểm tra trước khi `finish` dựng đáp án. Mode `agentic_rag` trong `backend/landlaw/agentic_rag.py` là đường chạy production hiện tại: model dùng Groq native tool calling, ứng dụng thực thi tối đa hai tool đọc-only và tối đa ba request mỗi lượt; không khôi phục planner/verifier nhiều tầng. Mode `simple_rag` trong `backend/landlaw/simple_rag.py` là rollback: context ngắn, một lượt generation và kiểm tra citation allow-list. Cả ba mode vẫn dùng corpus, source review và giới hạn runtime hiện có; chi tiết tool và guard ở [Agentic RAG](AGENTIC_RAG.md).
 
 Câu hỏi pháp lý chưa chỉ định điều khoản được tra từ nguyên văn câu hỏi trước khi tổng hợp, thay vì dùng một request để đoán điều. Khi người dùng chỉ rõ văn bản và điều, hệ thống mở nguồn đó; các trường hợp còn mơ hồ vẫn có planner giới hạn. History chỉ giúp giải tham chiếu, không trở thành chứng cứ.
 
@@ -23,7 +25,7 @@ Sơ đồ dưới đây phản ánh các cạnh trong `Agent.__init__`; START đ
 
 Khi sửa, synthesis nhận cả draft bị từ chối và danh sách lỗi với cùng chỉ số claim, dùng alias của chứng cứ hiện tại. Model phải sửa hoặc bỏ claim lỗi cùng phần phụ thuộc, giữ điều kiện của kết luận có nguồn và trả một draft mới để kiểm chứng lại toàn bộ. Không chỉ truyền lỗi theo chỉ số khi thiếu draft tương ứng, không tự nối điều kiện vào kết quả sau verify và không mở thêm lượt sửa.
 
-![Graph thực thi agent](diagrams/agent-flow.svg)
+Sơ đồ bounded flow hiện hành nằm tại [agent-flow.svg](diagrams/agent-flow.svg) và [AGENTIC_RAG.md](AGENTIC_RAG.md). Graph legacy dưới đây chỉ còn giá trị tham chiếu lịch sử.
 
 Không phải node nào cũng gọi model. Ngoài phạm vi, thiếu hồ sơ cá nhân, câu hỏi về độ mới dữ liệu hoặc thiếu chứng cứ có thể chỉ tạo thông báo/hỏi lại bằng quy tắc. Node `tools` có thể không truy xuất. Các sự kiện pháp lý hẹp như mốc hiệu lực, thay thế hoặc bãi bỏ một phần chỉ được xử lý bằng quy tắc khi đạt đúng điều kiện nguồn; verifier đối chiếu lại trước khi duyệt.
 
@@ -36,9 +38,9 @@ Không phải node nào cũng gọi model. Ngoài phạm vi, thiếu hồ sơ c�
 
 Không bảo đảm mọi lượt dùng hết các bước hoặc hoàn tất repair. Quota, retry, deadline hoặc provider lỗi có thể kết thúc lượt sớm bằng `limited`/`error`; không trả draft thay cho kết quả đã verify. Mode của client không mở thêm pipeline hoặc tăng ngân sách.
 
-## Cổng phát hành
+## Cổng phát hành (legacy)
 
-![Cổng phát hành đáp án](diagrams/agent-publication-gate.svg)
+![Cổng phát hành đáp án (legacy)](diagrams/agent-publication-gate.svg)
 
 Sơ đồ cổng phát hành gộp kiểm tra verdict và phạm vi vào quyết định cuối; chú thích nêu chính sách nguồn quá hạn theo chế độ vận hành; nhánh retry/repair được trình bày ở graph phía trên. Nhánh không có claim có thể trả thông báo hoặc hỏi làm rõ bằng quy tắc. `answered` luôn cần ít nhất một claim. `Draft.next_steps` không còn được hiển thị; mọi bước thực chất, điều kiện hoặc thời hạn pháp lý phải nằm trong claim có nguồn trước verify. Câu hỏi làm rõ và thông báo giới hạn cố định được runtime dựng riêng theo schema v2. Summary do model sinh không được dùng để dựng phần trả lời.
 

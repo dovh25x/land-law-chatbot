@@ -1,6 +1,6 @@
 # ADR 0006: Standing verified snapshot cho nguồn đã review
 
-**Trạng thái:** Chấp nhận cho implementation và chờ duyệt kích hoạt production
+**Trạng thái:** Chấp nhận và đã kích hoạt production ngày 22/10/2026 (policy `7e6ec4c4…`, 43 đoạn admitted tại 2026-10-22)
 
 ## Bối cảnh
 

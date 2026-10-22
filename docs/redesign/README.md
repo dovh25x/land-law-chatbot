@@ -1,5 +1,8 @@
 # Thiết kế lại trợ lý Vành đai 4 cho người dân
 
+> **Design record — historical.** Tài liệu này được viết trước khi bounded Agentic RAG lên production; các đoạn nói về planner/verifier/repair, budget 6/12/2/1 hoặc schema-2 có thể không còn đúng. Runtime hiện hành: [AGENTIC_RAG.md](../AGENTIC_RAG.md) và [ARCHITECTURE.md](../ARCHITECTURE.md).
+
+
 **Trạng thái: thiết kế đích; mã nguồn đã triển khai các phần mô tả trong [IMPLEMENTATION](IMPLEMENTATION.md).** Phạm vi đã chốt với chủ dự án: thiết kế đầy đủ trước, ưu tiên thủ tục, giấy tờ, nơi liên hệ và khiếu nại liên quan Vành đai 4 tại Hà Nội. Tài liệu thiết kế tiếp tục mô tả đích đầy đủ; IMPLEMENTATION phân biệt phần đã có trong code với nguồn, đánh giá và phát hành còn cần hoàn tất.
 
 Quyết định cốt lõi là chuyển từ công cụ trả lời câu hỏi pháp luật sang trợ lý giúp người dân **hiểu tình huống, hiểu giấy tờ và biết việc tiếp theo có thể tìm hiểu hoặc thực hiện**. Người dùng không cần biết tên luật, điều khoản hay cơ cấu cơ quan để bắt đầu. Mọi hướng dẫn có hệ quả pháp lý vẫn phải có chứng cứ, đúng đối tượng, thời điểm và ngoại lệ.

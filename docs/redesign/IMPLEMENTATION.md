@@ -1,5 +1,8 @@
 # Triển khai phiên bản cho người dân
 
+> **Design record — historical.** Tài liệu này được viết trước khi bounded Agentic RAG lên production; các đoạn nói về planner/verifier/repair, budget 6/12/2/1 hoặc schema-2 có thể không còn đúng. Runtime hiện hành: [AGENTIC_RAG.md](../AGENTIC_RAG.md) và [ARCHITECTURE.md](../ARCHITECTURE.md).
+
+
 Trạng thái này mô tả mã nguồn trong workspace. Triển khai lên dịch vụ công khai, phát hành corpus và chứng nhận chất lượng là các bước riêng, chỉ được ghi hoàn tất khi có bằng chứng tương ứng. [Báo cáo triển khai](../../reports/citizen-implementation-20261019/README.md) lưu kết quả kiểm tra và giới hạn của đợt này.
 
 ## Chức năng đã có trong mã nguồn

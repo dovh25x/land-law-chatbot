@@ -1,5 +1,8 @@
 # Thiết kế kỹ thuật đích
 
+> **Design record — historical.** Tài liệu này được viết trước khi bounded Agentic RAG lên production; các đoạn nói về planner/verifier/repair, budget 6/12/2/1 hoặc schema-2 có thể không còn đúng. Runtime hiện hành: [AGENTIC_RAG.md](../AGENTIC_RAG.md) và [ARCHITECTURE.md](../ARCHITECTURE.md).
+
+
 Giữ một graph và toàn bộ topology hạ tầng hiện tại. Thay đổi nằm trong cách biểu diễn nhu cầu, chọn nguồn, tạo/kiểm chứng hướng dẫn và trình bày kết quả. Mọi trường hoặc module đề xuất dưới đây **chưa tồn tại trong runtime**, trừ phần được ghi là tái sử dụng.
 
 ## Thành phần giữ nguyên

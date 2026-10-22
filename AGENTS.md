@@ -4,11 +4,11 @@ Hanoi Land Law Assistant chỉ phục vụ Vành đai 4 tại Hà Nội: tra c�
 
 ## Ràng buộc kiến trúc
 
-- Giữ một pipeline FastAPI/LangGraph/Groq GPT-OSS 120B và E5 ONNX Q8 384 chiều, contract `multilingual-e5-small-onnx-q8-window-v1`. Không tự đổi model, embedding hoặc hosting Free.
+- Giữ một pipeline FastAPI + bounded Agentic RAG production (Groq GPT-OSS 120B, native tool calling) và E5 ONNX Q8 384 chiều, contract `multilingual-e5-small-onnx-q8-window-v1`. `simple_rag` là rollback; LangGraph `agentic` là legacy. Không tự đổi model, embedding hoặc hosting Free.
 - React/Vite → Cloudflare signed ingress → Render → PostgreSQL/pgvector. SQLite dành cho local; kết quả hai backend không tự tương đương.
 - History, citation và trace chỉ lưu IndexedDB trong 7 ngày. Server chỉ giữ metadata; không lưu messages, answer cache hoặc trace chi tiết. History do client gửi không phải chứng cứ.
 - Quota ứng dụng chỉ áp dụng cho public; trusted operator CLI ghi usage riêng. Cả hai tuân thủ giới hạn thực tế của Groq.
-- Mỗi lượt giữ 6 LLM request gồm retry, 12 tools, 2 retrieval rounds, 1 repair và 90 giây. Không phát draft trước verify hoặc tự nối điều kiện để vượt kiểm chứng.
+- Mỗi lượt `agentic_rag` tối đa 3 LLM request (bình thường 1–2), 2 tool execution, không repair loop và deadline 90 giây. Không phát đáp án pháp luật không qua evidence hoặc tự nối điều kiện để vượt citation/reference guard.
 - Claim phải độc lập, đúng nguồn, chủ thể, điều kiện, ngoại lệ, hệ quả và thời điểm. Loại cả phần phụ thuộc bị mất ngữ cảnh.
 - Chỉ vận hành nguồn Vành đai 4 và luật chung liên quan. Không embedding lại khi chỉ lọc corpus; không thêm pipeline, reranker, fine-tuning, multi-agent, GIS hoặc tính năng ngoài phạm vi.
 

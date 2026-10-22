@@ -17,15 +17,15 @@ Các frame ban đầu được giữ nguyên để đối chiếu:
 | Thư viện văn bản | `7:8` |
 | Đánh giá hệ thống | `7:15` |
 
-[Handoff cho người dân](redesign/IMPLEMENTATION.md#handoff-giao-diện) bổ sung trang đầu và làm rõ tên giấy, sáng/tối, desktop/mobile trên cùng hệ thiết kế. Trang đầu hỏi “Bạn đang vướng việc gì?”, có sáu gợi ý; chọn chỉ điền ô nhập. `CitizenAnswer.tsx` render các claim đã kiểm chứng, nguồn tại đúng claim, một câu làm rõ và lựa chọn không rõ. `citizen.ts` kiểm tra projection và tạo nội dung sao chép tương ứng. Lịch sử schema cũ tiếp tục đọc được. Phiên bản v2 sai cấu trúc không hiển thị content thay thế.
+[Handoff cho người dân](redesign/IMPLEMENTATION.md#handoff-giao-diện) bổ sung trang đầu và làm rõ tên giấy, sáng/tối, desktop/mobile trên cùng hệ thiết kế. Trang đầu hỏi “Bạn đang vướng việc gì?”, có bốn gợi ý; chọn chỉ điền ô nhập. `agentic_rag` production hiện trả `answer_schema_version=1`, nên UI dùng prose renderer; structured claim renderer version 2 chưa hoạt động trong production. `citizen.ts` kiểm tra projection và tạo nội dung sao chép tương ứng. Lịch sử schema cũ tiếp tục đọc được. Phiên bản v2 sai cấu trúc không hiển thị content thay thế.
 
 ## Nguyên tắc trải nghiệm
 
-Hội thoại là luồng chính, tham khảo cách sử dụng của ChatGPT nhưng giữ tên sản phẩm và tiếng Việt. Thư viện nguồn và đánh giá là điều hướng phụ. Không có lựa chọn model, retrieval mode, dự án, tài khoản, thanh toán hoặc upload hồ sơ.
+Hội thoại là luồng chính, tham khảo cách sử dụng của ChatGPT nhưng giữ tên sản phẩm và tiếng Việt. Thư viện nguồn là điều hướng phụ; trang đánh giá đã được gỡ khỏi UI. Không có lựa chọn model, retrieval mode, dự án, tài khoản, thanh toán hoặc upload hồ sơ.
 
 Typography dùng Be Vietnam Pro, palette trung tính, hỗ trợ light/dark. Cột đọc tham chiếu 760 px, sidebar 264 px và source drawer 420 px trên desktop; source panel chuyển toàn màn hình dưới 768 px. Từ 1280 px, nguồn là vùng `complementary` rộng 420 px và không chặn hội thoại; ở 768–1279 px dùng modal drawer. Header cao 64 px; sidebar có thể thu gọn. Nội dung động phải wrap và cuộn được, không cố định chiều cao theo văn bản mẫu trong Figma.
 
-Citation hiển thị nguồn và locator, mở đoạn căn cứ cùng liên kết nguồn chính thức. Thao tác chi tiết thực thi và sao chép đặt cạnh đáp án. “Xem nguồn” mở danh sách citation của đúng đáp án; chọn citation mở đúng đoạn trích. Metadata phiên bản nguồn nằm trong mục mở rộng. Trace chỉ hiển thị sự kiện quan sát được.
+Citation hiển thị nguồn và locator, mở đoạn căn cứ cùng liên kết nguồn chính thức. Thao tác chi tiết thực thi và sao chép đặt cạnh đáp án. “Xem nguồn” mở danh sách citation của đúng đáp án; chọn citation mở đúng đoạn trích. Metadata phiên bản nguồn nằm trong mục mở rộng. Trace không hiển thị trong UI người dân.
 
 ## Cấu trúc implementation
 
@@ -35,7 +35,7 @@ Citation hiển thị nguồn và locator, mở đoạn căn cứ cùng liên k�
 | `frontend/src/api.ts` | Phiên, HTTP và parser SSE |
 | `frontend/src/history.ts` | IndexedDB, TTL, giới hạn dung lượng và history request |
 | `frontend/src/Turnstile.tsx` | Widget xác minh trước khi tạo phiên; chỉ được lazy-load khi có `VITE_TURNSTILE_SITE_KEY` |
-| `frontend/src/ui.tsx` | Component thư viện, nguồn, trace và thông tin dữ liệu |
+| `frontend/src/ui.tsx` | Component thư viện, nguồn và thông tin dữ liệu (`TracePanel` legacy không dùng) |
 | `frontend/src/styles.css` | Tokens sáng/tối và responsive layout |
 | `frontend/public/figma/` | Asset tĩnh lấy từ thiết kế |
 | `frontend/functions/` | Proxy ingress cùng origin |
@@ -44,7 +44,7 @@ Simple Design System được dùng làm tham chiếu thiết kế; repo không 
 
 ## Hội thoại và lịch sử
 
-Nội dung, citation và trace được lưu tại trình duyệt theo giới hạn trong [kiến trúc](ARCHITECTURE.md#lưu-trữ-và-quyền-riêng-tư). UI phải nói rõ lịch sử không đồng bộ thiết bị; xóa lịch sử không đặt lại quota phiên API.
+Nội dung và citation được lưu tại trình duyệt theo giới hạn trong [kiến trúc](ARCHITECTURE.md#lưu-trữ-và-quyền-riêng-tư). UI phải nói rõ lịch sử không đồng bộ thiết bị; xóa lịch sử không đặt lại quota phiên API.
 
 Client chỉ gửi các cặp hội thoại hoàn chỉnh trong giới hạn API. Không gửi trace hoặc xem citation cũ là chứng cứ. Sau mất SSE, không tự gửi lại POST chat; giải thích server không lưu kết quả để khôi phục.
 
@@ -76,7 +76,7 @@ npm --prefix frontend run test:e2e
 
 Đối chiếu Figma trên desktop/mobile và cả hai theme, gồm chiều rộng cột đọc, hierarchy, source panel, citation và composer. Kiểm tra Tab/Escape, focus sau đóng panel, thông báo qua role phù hợp, văn bản dài và không tràn ngang ở 320 px.
 
-E2E fixture kiểm tra gửi/hỏi tiếp, session không đổi khi tạo cuộc mới, reload, xóa, hết hạn, lỗi storage, nguồn và trace. Kiểm tra public deployment được thực hiện riêng theo [runbook](OPERATIONS.md#triển-khai-và-xác-minh); fixture pass không chứng minh Turnstile hoặc LLM thật đã được xác minh.
+E2E fixture kiểm tra gửi/hỏi tiếp, session không đổi khi tạo cuộc mới, reload, xóa, hết hạn, lỗi storage và nguồn. Kiểm tra public deployment được thực hiện riêng theo [runbook](OPERATIONS.md#triển-khai-và-xác-minh); fixture pass không chứng minh Turnstile hoặc LLM thật đã được xác minh.
 
 ## Handoff UI UX Redesign
 
@@ -111,10 +111,6 @@ Thư viện gộp nguồn đã lập chỉ mục và bản gốc tham khảo, h�
 
 Khi generation được cho phép trên snapshot, không hiển thị banner hoặc lời mở đầu tự động cảnh báo nguồn cũ. Với policy v2, đáp án pháp luật có thể kèm một câu ngắn ghi mốc `reviewed_at` và khuyến nghị kiểm tra văn bản gốc; đây là metadata nguồn, không phải banner cảnh báo. Metadata API, ngày kiểm tra nguồn và reports giữ trạng thái thực tế. Câu cảnh báo tự động ở đầu đáp án đã lưu trên thiết bị được bỏ khi hiển thị/sao chép; nội dung gốc trong IndexedDB không bị viết lại.
 
-## Trang đánh giá
+## Trang đánh giá (legacy)
 
-Trang dùng các token, card, typography và điều hướng từ handoff Figma; bố cục mở rộng theo yêu cầu công bố đầy đủ các kết quả hiện có. Tổng quan tách đạt, một phần, chưa đạt và chưa hoàn tất; ba bộ câu hỏi có thanh phân bố và mẫu số riêng. Kết quả nội dung tự nhiên tách khỏi hai ca hỏi lại/từ chối. Không gọi tỷ lệ đạt chung là độ chính xác pháp luật.
-
-Ba mục gồm chất lượng trả lời, tìm nguồn/faithfulness và lịch sử. Người đọc chọn lần chạy, lọc bộ/kết quả/câu hỏi, mở nhận xét từng ca và tải toàn bộ JSON công khai. Ca chưa chạy và chưa rà soát giữ nhãn riêng. Tìm nguồn giữ backend/corpus/configuration của từng phép đo; faithfulness lịch sử luôn hiện theo mẫu và phiên bản gốc. Thông tin fingerprint đầy đủ nằm trong mục phương pháp; không thu gọn toàn bộ báo cáo chỉ vì khác deployment.
-
-Trang đánh giá ưu tiên các thẻ “Kết quả nổi bật đã ghi nhận” trước bảng chi tiết. Mỗi thẻ chọn giá trị cao nhất của một chỉ số đủ điều kiện, kèm mẫu số, thời điểm, backend, cấu hình và liên kết artifact. Điểm lịch sử không được gọi là điểm của deployment hiện tại. Nút xem toàn bộ kết quả dẫn tới bộ chi tiết đầy đủ gần nhất; các ca chưa đạt và chưa chạy vẫn truy cập như trước.
+Trang đánh giá và TracePanel đã bị gỡ khỏi UI từ commit `47ccff0`; `EvaluationPage.tsx`, `evaluation.ts`, `evaluationHighlights.ts` và các e2e spec liên quan chỉ còn là bề mặt legacy được giữ để bảo toàn checksum lịch sử. Không thêm lại dashboard công khai trong phạm vi MVP.

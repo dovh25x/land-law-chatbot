@@ -1,5 +1,8 @@
 # Lộ trình triển khai có thể review
 
+> **Design record — historical.** Tài liệu này được viết trước khi bounded Agentic RAG lên production; các đoạn nói về planner/verifier/repair, budget 6/12/2/1 hoặc schema-2 có thể không còn đúng. Runtime hiện hành: [AGENTIC_RAG.md](../AGENTIC_RAG.md) và [ARCHITECTURE.md](../ARCHITECTURE.md).
+
+
 Đây là kế hoạch được lập trong đợt thiết kế; tiến độ thực tế nằm tại [IMPLEMENTATION](IMPLEMENTATION.md). Giới hạn không sửa runtime/prompt ở đợt thiết kế đã kết thúc khi chủ dự án yêu cầu triển khai; bộ khóa và artifact lịch sử vẫn giữ nguyên. Ưu tiên từng lát chức năng hoàn chỉnh có nguồn, giao diện và phép đo; không gom thành một lần viết lại agent.
 
 ## Thứ tự và điều kiện hoàn tất
