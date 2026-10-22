@@ -6,6 +6,7 @@ in the evidence cited for that sentence, and it flags condition-style claims
 whose wording has no observable lexical support in that evidence. The final
 semantic judgment remains a human/legal-review step.
 """
+from dataclasses import dataclass
 import re
 
 from .security import normalize
@@ -14,7 +15,11 @@ ARTICLE = re.compile(r"\bdieu\s+(\d+[a-z]?)\b")
 CLAUSE = re.compile(r"\bkhoan\s+(\d+[a-z]?)\s+(?:dieu\s+)?(\d+[a-z]?)?")
 DOCUMENT = re.compile(
     r"\b(\d{1,4})\s*/\s*(\d{4})\s*/\s*(QH\d+|ND-?CP|TTLT|TT|NQ|QD-?UBND|QD|UBND)\b", re.I)
-MARKER = re.compile(r"[\[【]\s*S(\d+)\s*[\]】]", re.I)
+# A marker group may contain several adjacent IDs, e.g. "[S1, S2]" or
+# "【S1】【S2】". Both are common harmless renderings of the documented format.
+MARKER = re.compile(
+    r"[\[【]\s*(S\d+(?:\s*[,;]\s*S\d+)*)\s*[\]】]", re.I)
+MARKER_ID = re.compile(r"S(\d+)", re.I)
 CONDITION = re.compile(
     r"\b(dieu kien|phai|neu|khong thuoc|thuoc dien|duoc boi thuong|duoc ho tro|"
     r"duoc bo tri|duoc tai dinh cu|truong hop|co quyen)\b")
@@ -35,9 +40,36 @@ GRAM_STOP = {
 }
 
 
+@dataclass(frozen=True)
+class ValidationResult:
+    """Internal, redacted outcome of deterministic answer validation.
+
+    The public API never exposes this structure. Callers may copy only fixed
+    reason codes into trace diagnostics; answer text and evidence excerpts stay
+    out of logs.
+    """
+    valid: bool
+    reason_codes: tuple[str, ...]
+    issues: tuple[str, ...]
+    cited: tuple[str, ...]
+    unknown: tuple[str, ...]
+    claim_sentences: int
+    uncited_claims: int
+    clarification_only: bool
+
+
+def _marker_groups(answer: str):
+    """Yield (start, end, ids) for each recognized citation group."""
+    for match in MARKER.finditer(answer or ''):
+        ids = tuple(f"S{identifier.group(1)}" for identifier in MARKER_ID.finditer(match.group(1)))
+        if ids:
+            yield match.start(), match.end(), ids
+
+
 def marker_ids(answer: str) -> list[str]:
     """Normalize harmless bracket/spacing variants without judging range."""
-    return list(dict.fromkeys(f"S{match.group(1)}" for match in MARKER.finditer(answer or '')))
+    found = [identifier for _, _, ids in _marker_groups(answer) for identifier in ids]
+    return list(dict.fromkeys(found))
 
 
 def _content_ngrams(text: str, size: int = 3) -> set[str]:
@@ -64,15 +96,14 @@ def _canonical_document(number: str, year: str, suffix: str) -> str:
 def _cited_segments(answer: str) -> list[tuple[str, list[str]]]:
     segments: list[tuple[str, list[str]]] = []
     start = 0
-    for span in MARKER.finditer(answer or ''):
-        statement = (answer or '')[start:span.start()]
-        cited = [f"S{span.group(1)}"]
+    for group_start, group_end, ids in _marker_groups(answer):
+        statement = (answer or '')[start:group_start]
         if statement.strip():
-            segments.append((statement, cited))
+            segments.append((statement, list(ids)))
         elif segments:
-            text, ids = segments[-1]
-            segments[-1] = (text, ids + cited)
-        start = span.end()
+            text, previous = segments[-1]
+            segments[-1] = (text, previous + list(ids))
+        start = group_end
     tail = (answer or '')[start:]
     if tail.strip():
         if segments:
@@ -140,16 +171,22 @@ def condition_support_issues(answer: str, source_map: dict) -> list[str]:
         if not sources:
             continue
         evidence = " ".join(_evidence_text(item) for item in sources)
-        for fragment in _fragments(statement):
-            if not CONDITION.search(fragment):
+        # A follow-up question may sit in the same citation segment as the
+        # grounded explanation. Asking whether a document exists is not an
+        # added legal condition, so only claim-bearing sentences are checked.
+        for sentence in _answer_sentences(statement):
+            if '?' in sentence:
                 continue
-            for phrase in SPECIFIC_CONDITION:
-                if phrase in fragment and phrase not in evidence:
-                    issues.append(f"Điều kiện “{phrase}” không có trong nguồn được dẫn")
-                    break
-            else:
-                continue
-            break
+            for fragment in _fragments(sentence):
+                if not CONDITION.search(fragment):
+                    continue
+                for phrase in SPECIFIC_CONDITION:
+                    if phrase in fragment and phrase not in evidence:
+                        issues.append(f"Điều kiện “{phrase}” không có trong nguồn được dẫn")
+                        break
+                else:
+                    continue
+                break
     return issues
 
 
@@ -164,7 +201,10 @@ def source_role_issues(answer: str, source_map: dict) -> list[str]:
     issues: list[str] = []
     for statement, cited in _cited_segments(answer):
         sources = [source_map[key] for key in cited if key in source_map]
-        if not sources or not LEGAL_ASSERTION.search(normalize(statement)):
+        if not sources:
+            continue
+        claims = [sentence for sentence in _answer_sentences(statement) if '?' not in sentence]
+        if not any(LEGAL_ASSERTION.search(normalize(sentence)) for sentence in claims):
             continue
         if all((item.document.source_kind or 'legal') in CONTEXT_ONLY for item in sources):
             issues.append("Nguồn bối cảnh/dự án không đủ để chứng minh quyền lợi")
@@ -175,15 +215,125 @@ def confidence_issues(answer: str) -> list[str]:
     """Reject absolute outcome wording that the product must not publish.
 
     A negated certainty phrase ("chưa đủ chắc chắn") is a safe clarification
-    and must not be treated as an absolute claim.
+    and must not be treated as an absolute claim. A question asking whether a
+    right applies is not an assertion either, so it is checked sentence-wise
+    and skipped when it is interrogative.
     """
-    normalized = normalize(answer or '')
-    for match in ABSOLUTE.finditer(normalized):
-        prefix = normalized[max(0, match.start() - 60):match.start()]
-        if NEGATION.search(prefix) or re.search(r"\b(?:khong|chua|chang|kho|ko)\b", prefix):
+    for sentence in _answer_sentences(answer or ''):
+        if '?' in sentence:
             continue
-        return ["Câu trả lời dùng từ ngữ khẳng định tuyệt đối"]
+        normalized = normalize(sentence)
+        for match in ABSOLUTE.finditer(normalized):
+            prefix = normalized[max(0, match.start() - 60):match.start()]
+            if NEGATION.search(prefix) or re.search(r"\b(?:khong|chua|chang|kho|ko)\b", prefix):
+                continue
+            return ["Câu trả lời dùng từ ngữ khẳng định tuyệt đối"]
     return []
+
+
+# A legal proposition signal is intentionally narrower than the general
+# CONDITION regex. It lets a genuine clarification ("Bạn đã nhận quyết định
+# thu hồi đất chưa?") pass without a citation, while still catching an uncited
+# assertion ("Hộ có sổ đỏ được bồi thường.") as a substantive legal claim.
+CLAIM_SIGNAL = re.compile(
+    r"\b(?:duoc|khong duoc)\s+(?:boi thuong|ho tro|bo tri|tai dinh cu|huong|dam bao)\b|"
+    r"\b(?:co|khong co)\s+(?:quyen|nghia vu)\b|"
+    r"\b(?:phai|khong phai)\b|"
+    r"\b(?:du|khong du)\s+dieu kien\b|"
+    r"\bdieu kien\s+(?:duoc|de|ap dung)\b|"
+    r"\bthuoc\s+(?:dien|truong hop)\b|"
+    r"\b(?:ap dung|khong ap dung)\b|"
+    r"\b(?:theo|tai)\s+(?:dieu|khoan)\b|"
+    r"\bquy dinh tai\b|"
+    r"\bphap luat quy dinh\b|"
+    r"\bnha nuoc thu hoi\b|"
+    r"\b(?:bi|duoc)\s+thu hoi\b|"
+    r"\b(?:muc|so tien|ty le)\s+(?:boi thuong|ho tro)\b|"
+    r"\b(?:ho tro|boi thuong|tai dinh cu)\s+(?:on dinh|thiet hai|chi phi|bang|theo|duoc|la|gom|bao gom|tai cho)\b|"
+    r"\b(?:thoi han|gia dat)\s+(?:boi thuong|ho tro|tai dinh cu)\b"
+)
+SENTENCE = re.compile(r"(?<=[.!?])\s+|\n+")
+
+
+def _answer_sentences(answer: str) -> list[str]:
+    units = [unit.strip() for unit in SENTENCE.split(answer or '') if unit.strip()]
+    merged: list[str] = []
+    only_marker = re.compile(
+        r"^[\s\-–—*•]*(?:" + MARKER.pattern + r"[\s\-–—*•]*)+$", re.I)
+    for unit in units:
+        if only_marker.fullmatch(unit) and merged:
+            merged[-1] += " " + unit
+        else:
+            merged.append(unit)
+    return merged
+
+
+def _claim_counts(answer: str) -> tuple[int, int]:
+    claims = uncited = 0
+    for sentence in _answer_sentences(answer):
+        if '?' in sentence:
+            continue
+        normalized = normalize(sentence)
+        if not (CLAIM_SIGNAL.search(normalized) or ARTICLE.search(normalized)
+                or DOCUMENT.search(normalized)):
+            continue
+        claims += 1
+        if not marker_ids(sentence):
+            uncited += 1
+    return claims, uncited
+
+
+def validate_answer_result(answer: str, source_map: dict[str, object],
+                           clarification_question: str = "") -> ValidationResult:
+    """Validate a model draft without requiring a citation for pure questions.
+
+    A substantive legal assertion still needs a recognized, in-range marker for
+    the sentence that makes the assertion. A clarification-only draft carries
+    no such assertion and is therefore allowed to have zero markers. This is a
+    narrow contract, not a general relaxation of ``validate_answer``: unknown
+    IDs, unsupported references/conditions and context-only proof remain
+    rejection reasons.
+    """
+    cited = tuple(marker_ids(answer))
+    unknown = tuple(identifier for identifier in cited if identifier not in source_map)
+    refs = tuple(reference_issues(answer, source_map))
+    conditions = tuple(condition_support_issues(answer, source_map))
+    roles = tuple(source_role_issues(answer, source_map))
+    confidence = tuple(confidence_issues(answer))
+    issues = tuple(dict.fromkeys(refs + conditions + roles + confidence))
+    claims, uncited = _claim_counts(answer)
+    reason_codes: list[str] = []
+    if uncited:
+        reason_codes.append('missing_required_citation')
+    if unknown:
+        reason_codes.append('unknown_citation_id')
+    if refs:
+        reason_codes.append('reference_identity_mismatch')
+    if conditions:
+        reason_codes.append('unsupported_legal_condition')
+    if roles:
+        reason_codes.append('invalid_claim_grounding')
+    if confidence:
+        reason_codes.append('unsupported_legal_claim')
+    valid = not reason_codes
+    if valid:
+        has_question = '?' in (answer or '') or '?' in (clarification_question or '')
+        if claims:
+            reason_codes.append('grounded_answer')
+        elif has_question:
+            reason_codes.append('legitimate_clarification')
+        else:
+            reason_codes.append('claim_free_response')
+    return ValidationResult(
+        valid=valid,
+        reason_codes=tuple(reason_codes),
+        issues=issues,
+        cited=cited,
+        unknown=unknown,
+        claim_sentences=claims,
+        uncited_claims=uncited,
+        clarification_only=claims == 0,
+    )
 
 
 def validate_answer(answer: str, source_map: dict) -> list[str]:

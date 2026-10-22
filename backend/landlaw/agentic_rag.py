@@ -5,8 +5,11 @@ legal tools. The application validates every tool argument, executes at most
 two tools, and performs at most three Groq requests per turn:
 
 1. tool decision (request 1);
-2. optional second tool decision after the first result (request 2);
-3. final schema-validated grounded answer (last request).
+2. final schema-validated grounded answer after the tool result (request 2).
+
+There is no second tool-decision round trip and no repair loop. The hard
+ceiling of three LLM requests is retained as a compatibility bound; the
+current flow uses at most two.
 
 Social turns normally finish in request 1 with a natural model reply and no
 retrieval. Legal questions are forced through reviewed evidence even if the
@@ -19,7 +22,7 @@ import time
 import uuid
 
 from .conversation import classify, contextual_retrieval_query
-from .legal_text import marker_ids, reference_issues, validate_answer
+from .legal_text import validate_answer_result
 from .models import AnswerSection, ChatResult, Claim, Evidence, TraceEvent
 from .publication import public_status
 from .provider import Budget, ProviderUnavailable
@@ -32,6 +35,9 @@ from .store import RateLimited
 MAX_LLM_REQUESTS = 3
 MAX_TOOL_EXECUTIONS = 2
 MAX_EVIDENCE = 5
+DIRECT_SOURCE_TERMS = ('bồi thường', 'hỗ trợ', 'tái định cư', 'luật đất đai')
+TRANSITIONAL_SOURCE_TERMS = ('tháo gỡ', 'vướng mắc', 'chuyển tiếp')
+TRANSITIONAL_QUERY_TERMS = TRANSITIONAL_SOURCE_TERMS + ('254/2025', 'cơ chế')
 
 TOOLS = [
     {
@@ -114,7 +120,30 @@ class BoundedAgenticRAG:
             mode="agentic_rag",
         )
 
-    async def _admit(self, evidence, release, as_of):
+    @staticmethod
+    def _legal_priority(item) -> int:
+        """Prefer direct compensation/resettlement law over transitional acts.
+
+        This is a stable ordering rule, not a semantic re-ranker. Transitional
+        resolutions remain available when they are genuinely cited; they simply
+        no longer take the first source slot away from the governing law or the
+        direct decree/local provision for an ordinary compensation question.
+        """
+        title = (item.document.title or '').casefold()
+        if any(term in title for term in TRANSITIONAL_SOURCE_TERMS):
+            return 0
+        if any(term in title for term in DIRECT_SOURCE_TERMS):
+            return 2
+        return 1
+
+    @staticmethod
+    def _prefers_direct_sources(query: str) -> bool:
+        """Keep search order when the question is explicitly about transitions."""
+        normalized = (query or '').casefold()
+        return not any(term in normalized for term in TRANSITIONAL_QUERY_TERMS)
+
+    async def _admit(self, evidence, release, as_of, prefer_legal=False, diversify=False,
+                     prefer_direct=True):
         """Deduplicate and apply the same gate/applicability rules as SimpleRAG."""
         unique = {}
         for item in evidence:
@@ -135,6 +164,32 @@ class BoundedAgenticRAG:
                 continue
             item.applicability = state
             admitted.append(item)
+        if prefer_legal:
+            # Reviewed project news remains context, never proof of a household
+            # entitlement. Keep at most one context passage when a directly
+            # applicable legal provision is available, and do not let context
+            # rows displace the legal basis for a legal question.
+            primary = [item for item in admitted
+                       if (item.document.source_kind or 'legal') == 'legal']
+            context = [item for item in admitted
+                       if (item.document.source_kind or 'legal') != 'legal']
+            if primary:
+                if prefer_direct:
+                    primary.sort(key=self._legal_priority, reverse=True)
+                if diversify:
+                    # Search can return several chunks of one article. Prefer
+                    # distinct provisions first so five slots are not spent on
+                    # one locator; keep duplicates only as a fallback.
+                    distinct, deferred, seen = [], [], set()
+                    for item in primary:
+                        key = (item.document.id, item.chunk.locator)
+                        if key in seen:
+                            deferred.append(item)
+                        else:
+                            seen.add(key)
+                            distinct.append(item)
+                    primary = distinct + deferred
+                admitted = primary + context[:1]
         return admitted[:MAX_EVIDENCE]
 
     async def _retrieve(self, query, request, release, as_of, budget, trace):
@@ -142,7 +197,9 @@ class BoundedAgenticRAG:
         hits = await asyncio.to_thread(
             self.store.search, query, vector, request.project or 'ring4', (release or {}).get('id'),
             self.provider.settings.embedding_model, as_of)
-        admitted = await self._admit(hits, release, as_of)
+        admitted = await self._admit(
+            hits, release, as_of, prefer_legal=True, diversify=True,
+            prefer_direct=self._prefers_direct_sources(query))
         trace.append(TraceEvent(step="retrieval", summary=f"Retrieved {len(admitted)} reviewed passage(s)",
                                 document_ids=[item.document.id for item in admitted]))
         return admitted
@@ -175,7 +232,9 @@ class BoundedAgenticRAG:
         if opened:
             for chunk in opened.chunks:
                 items.append(Evidence(chunk=chunk, document=opened.model_copy(update={'chunks': []})))
-        admitted = await self._admit(items, release, as_of)
+        admitted = await self._admit(
+            items, release, as_of, prefer_legal=True,
+            prefer_direct=self._prefers_direct_sources(f"{request.message} {locator}"))
         if not admitted:
             admitted = await self._retrieve(f"{locator} {request.message}", request, release, as_of, budget, trace)
         trace.append(TraceEvent(step="tool", tool="open_legal_provision",
@@ -215,26 +274,33 @@ class BoundedAgenticRAG:
         return await self._execute_open(arguments, request, release, as_of, budget, trace)
 
     def _final_prompt(self):
-        return """Trả lời bằng tiếng Việt, thân thiện và trực tiếp; chỉ dùng CONTEXT.
-Phân biệt rõ: (a) điều kiện được bồi thường, (b) hình thức bồi thường, (c) hỗ trợ, (d) tái định cư, (e) thủ tục.
-QUY TẮC DẪN NGUỒN BẮT BUỘC: mỗi câu có nội dung pháp lý phải kết thúc bằng mã nguồn tương ứng, ví dụ "…theo Điều 95 [S1]".
-Chỉ nêu điều, khoản, điểm, số hiệu văn bản và mốc thời gian có đúng trong CONTEXT; không suy đoán hoặc thêm điều kiện ngoài CONTEXT.
-Không dùng token trùng nhau để thay cho việc kiểm tra nguồn: nếu CONTEXT không đủ cho một ý, hãy nói rõ phần chưa đủ và không gắn nguồn cho ý đó.
-Không kết luận chắc chắn quyền lợi hoặc số tiền của một hộ cụ thể; nếu thiếu dữ kiện cá nhân, nêu câu trả lời có điều kiện và hỏi tối đa một câu ngắn.
-Nếu câu hỏi dựa trên quy hoạch/dự án mà CONTEXT không có văn bản dự án đã được review, hãy nói rõ đây là khoảng trống nguồn; không suy ra quyền lợi từ tên dự án.
+        return """Trả lời bằng tiếng Việt, thân thiện, trực tiếp và dễ hiểu với người dân; chỉ dùng CONTEXT.
+Mục tiêu: trả lời câu hỏi pháp lý chung trước, sau đó nêu điều kiện/ngoại lệ và phần còn thiếu của hồ sơ.
+Viết ngắn gọn (khoảng 250–400 từ nếu đủ nguồn), không chép nguyên văn dài, không mở đầu bằng "Dưới đây là trích đoạn".
+Phân biệt rõ khi liên quan: (a) quy hoạch, (b) quyết định/thông báo thu hồi, (c) điều kiện bồi thường, (d) hình thức bồi thường, (e) hỗ trợ, (f) tái định cư, (g) thủ tục.
+QUY TẮC DẪN NGUỒN BẮT BUỘC: mỗi câu khẳng định quy tắc, điều kiện, quyền, nghĩa vụ hoặc hệ quả pháp lý phải gắn mã nguồn ngay trong câu, ví dụ "Theo Điều 95 [S1], ...". Chỉ dùng mã có trong CONTEXT và allowed_citation_ids.
+Câu hỏi làm rõ, câu dẫn nhập và câu nêu giới hạn không khẳng định quy tắc pháp lý thì không cần mã nguồn.
+Nếu CONTEXT đã đủ để nêu quy tắc chung, hãy trả lời quy tắc chung; không thay bằng lời từ chối chỉ vì thiếu dữ kiện cá nhân. Khi thiếu dữ kiện, nêu câu trả lời có điều kiện và hỏi tối đa một câu ngắn trong clarification_question.
+Chỉ nêu điều, khoản, điểm, số hiệu văn bản và mốc thời gian có đúng trong CONTEXT. Không thêm điều kiện, mức tiền, thời hạn hoặc quyền lợi ngoài CONTEXT.
+Không gộp điều kiện của thủ tục khác (ví dụ điều kiện tách hộ hoặc cư trú) vào điều kiện bồi thường, hỗ trợ hoặc tái định cư nếu CONTEXT không nêu trực tiếp cho chính quyền lợi đó.
+Không kết luận chắc chắn quyền lợi hoặc số tiền của một hộ cụ thể. Không suy ra quyền lợi từ tên dự án, tin dự án hoặc quy hoạch.
+Nếu CONTEXT không đủ cho một ý pháp lý, không đưa ý đó vào câu trả lời và không gắn nguồn cho ý không được hỗ trợ; chỉ nêu ngắn gọn khoảng trống nguồn.
 Nếu câu hỏi tiếp nối, dùng HISTORY để hiểu chủ thể nhưng không thay đổi chủ thể và không suy diễn dữ kiện chưa có.
+Trường answer chứa nội dung chính; clarification_question chỉ chứa tối đa một câu hỏi; limitation chỉ nêu giới hạn ngắn.
 Không tạo URL, điều luật, mã nguồn hoặc văn bản mới. Không nhắc đến công cụ hay quy trình nội bộ."""
 
-    def _coverage_clarification(self, message: str):
+    @staticmethod
+    def _clarification_question(message: str) -> str:
         normalized = message.casefold()
         if any(term in normalized for term in ('quy hoạch', 'dự án', 'vành đai', 'bố trí', 'tái định cư')):
-            question = "bạn đã nhận quyết định thu hồi đất hoặc thông báo thu hồi chưa?"
-        elif any(term in normalized for term in ('sổ đỏ', 'sổ hồng', 'giấy chứng nhận', 'giấy tờ')):
-            question = "giấy tờ về quyền sử dụng đất bạn đang có là loại nào?"
-        else:
-            question = "đất đang là đất ở hay đất nông nghiệp?"
+            return "bạn đã nhận quyết định thu hồi đất hoặc thông báo thu hồi chưa?"
+        if any(term in normalized for term in ('sổ đỏ', 'sổ hồng', 'giấy chứng nhận', 'giấy tờ')):
+            return "giấy tờ về quyền sử dụng đất bạn đang có là loại nào?"
+        return "đất đang là đất ở hay đất nông nghiệp?"
+
+    def _coverage_clarification(self, message: str):
         return ("Mình chưa tìm thấy đoạn nguồn đã review đủ để kết luận cho tình huống này. "
-                f"Để trả lời đúng, bạn cho biết: {question}")
+                f"Để trả lời đúng, bạn cho biết: {self._clarification_question(message)}")
 
     async def run(self, request, emit, release_id=None):
         started = time.monotonic()
@@ -277,7 +343,10 @@ Không tạo URL, điều luật, mã nguồn hoặc văn bản mới. Không nh
         except ProviderUnavailable as exc:
             # A rejected tool-decision leg is not retried. The bounded fallback
             # below can still retrieve reviewed evidence and generate an answer.
-            trace.append(TraceEvent(step="tool_routing", summary=f"Tool routing unavailable: {type(exc).__name__}"))
+            code = 'generation_schema_failure' if exc.format_failure else 'provider_unavailable'
+            trace.append(TraceEvent(
+                step="tool_routing",
+                summary=f"Tool routing unavailable: reason_codes={code}"))
         if reply is not None:
             calls = reply.get('tool_calls') or []
             if calls:
@@ -290,8 +359,8 @@ Không tạo URL, điều luật, mã nguồn hoặc văn bản mới. Không nh
                     evidence.extend(items)
             else:
                 direct_content = (reply.get('content') or '').strip()
-        evidence = await self._admit(evidence, release, as_of)
         legal = intent.kind == 'legal' or bool(evidence)
+        evidence = await self._admit(evidence, release, as_of, prefer_legal=legal)
         if direct_content and not evidence and not legal:
             return ChatResult(**base, status="answered", content=direct_content, trace=trace,
                               embedding_calls=budget.embedding_calls, llm_calls=budget.llm_calls,
@@ -339,31 +408,76 @@ Không tạo URL, điều luật, mã nguồn hoặc văn bản mới. Không nh
             except BudgetExceeded:
                 answer = None
             except ProviderUnavailable as exc:
-                return ChatResult(**base, status="error", content=str(exc), trace=trace,
+                code = ('generation_schema_failure' if exc.format_failure
+                        else 'provider_unavailable')
+                trace.append(TraceEvent(
+                    step="generation",
+                    summary=f"Generation unavailable: reason_codes={code}"))
+                content = ("Mình chưa thể tạo câu trả lời đúng định dạng từ nguồn đã tra cứu. "
+                           "Bạn thử hỏi lại với phạm vi hẹp hơn."
+                           if exc.format_failure else
+                           "Dịch vụ AI tạm thời chưa phản hồi. Bạn thử lại sau ít phút.")
+                return ChatResult(**base, status="error", content=content, trace=trace,
                                   embedding_calls=budget.embedding_calls, llm_calls=budget.llm_calls,
                                   tool_calls=budget.tool_calls, token_usage=budget.tokens,
+                                  support_level="insufficient",
                                   elapsed_ms=int((time.monotonic() - started) * 1000))
         if answer is None:
             fallback_map = dict(list(source_map.items())[:2])
-            return self._clarification_result(base, started, trace,
-                                              "Generation unavailable inside the turn budget",
-                                              fallback_map, review_meta, budget, as_of)
-        cited = marker_ids(answer.answer)
-        issues = validate_answer(answer.answer, source_map)
-        issues += reference_issues(answer.limitation, source_map)
-        valid = bool(cited) and set(cited) <= set(source_map) and not issues
+            return self._clarification_result(
+                base, started, trace, ('generation_budget_exhausted',),
+                request.message, source_map=fallback_map, review_meta=review_meta,
+                budget=budget, as_of=as_of)
+        validation = validate_answer_result(
+            answer.answer, source_map, answer.clarification_question)
+        limitation = (validate_answer_result(answer.limitation, source_map)
+                      if answer.limitation else None)
+        reported_codes = validation.reason_codes
+        valid = validation.valid
+        if limitation is not None:
+            # The limitation field is for a short caveat, not another legal
+            # answer. Reject a substantive claim moved there, but do not add a
+            # positive "claim_free_response" code to a rejected main answer.
+            if limitation.claim_sentences:
+                valid = False
+                reported_codes += ('invalid_claim_grounding',)
+            elif not limitation.valid:
+                valid = False
+                reported_codes += limitation.reason_codes
+        reason_codes = tuple(dict.fromkeys(reported_codes))
+        cited = tuple(identifier for identifier in validation.cited if identifier in source_map)
         trace.append(TraceEvent(
             step="citation_validation",
-            summary=(f"Validated {len(cited)} inline source marker(s)" if valid else
-                     f"Citation/reference guard rejected the draft: {len(issues)} issue(s)"),
-            document_ids=[source_map[key].document.id for key in cited if key in source_map]))
+            summary=(f"Validation: valid={str(valid).lower()}; reason_codes="
+                     f"{','.join(reason_codes)}; cited={len(cited)}; "
+                     f"unknown={len(validation.unknown)}; claims={validation.claim_sentences}; "
+                     f"uncited={validation.uncited_claims}"),
+            document_ids=[source_map[key].document.id for key in cited]))
         if not valid:
-            fallback_map = {key: source_map[key] for key in cited if key in source_map} or \
+            fallback_map = {key: source_map[key] for key in cited} or \
                 dict(list(source_map.items())[:2])
-            return self._clarification_result(base, started, trace,
-                                              "Draft failed deterministic citation/reference validation",
-                                              fallback_map, review_meta, budget, as_of)
+            return self._clarification_result(
+                base, started, trace, reason_codes, request.message,
+                source_map=fallback_map, review_meta=review_meta,
+                budget=budget, as_of=as_of)
         citations = [_citation(source_map[key], as_of) for key in cited]
+        if validation.clarification_only:
+            # A genuine request for missing facts is a useful answer even with
+            # zero markers. It is not a task success and never becomes a legal
+            # claim or an answered result.
+            content = answer.answer
+            if answer.limitation:
+                content += f"\n\nLưu ý: {answer.limitation}"
+            if answer.clarification_question and '?' not in answer.answer:
+                content += f"\n\nĐể làm rõ hồ sơ: {answer.clarification_question}"
+            trace.append(TraceEvent(step="clarification", summary="Claim-free clarification published",
+                                    document_ids=[citation.document_id for citation in citations]))
+            return ChatResult(**base, status="clarification_needed", content=content,
+                              citations=citations, trace=trace,
+                              embedding_calls=budget.embedding_calls, llm_calls=budget.llm_calls,
+                              tool_calls=budget.tool_calls, token_usage=budget.tokens,
+                              support_level="insufficient",
+                              elapsed_ms=int((time.monotonic() - started) * 1000))
         claim = Claim(text=answer.answer, citation_ids=[citation.id for citation in citations], section="direct")
         content = answer.answer
         notice = _review_notice(review_meta)
@@ -371,7 +485,7 @@ Không tạo URL, điều luật, mã nguồn hoặc văn bản mới. Không nh
             content += f"\n\n{notice}"
         if answer.limitation:
             content += f"\n\nLưu ý: {answer.limitation}"
-        if answer.clarification_question:
+        if answer.clarification_question and '?' not in answer.answer:
             content += f"\n\nĐể làm rõ hồ sơ: {answer.clarification_question}"
         trace.append(TraceEvent(step="generation", summary="Generated one source-marked answer",
                                 document_ids=[citation.document_id for citation in citations]))
@@ -382,24 +496,29 @@ Không tạo URL, điều luật, mã nguồn hoặc văn bản mới. Không nh
                           support_level="full" if not answer.limitation else "partial",
                           elapsed_ms=int((time.monotonic() - started) * 1000))
 
-    def _clarification_result(self, base, started, trace, reason, source_map, review_meta, budget, as_of):
-        lines = [
-            "Mình đã tìm thấy nguồn liên quan nhưng chưa thể xác nhận câu trả lời tự động đủ chắc chắn.",
-            "Dưới đây là trích đoạn để bạn đối chiếu; đây chưa phải kết luận về quyền lợi của hồ sơ cụ thể:",
-        ]
-        for key, item in source_map.items():
-            excerpt = " ".join(item.chunk.text.split())[:500]
-            lines.append(f"- **{item.document.document_number or ''} {item.document.title} — {item.chunk.locator}:** “{excerpt}”")
-        lines.append("Bạn có thể bổ sung loại đất, giấy tờ và giai đoạn đang hỏi để mình tra cứu tiếp.")
-        notice = _review_notice(review_meta)
+    def _clarification_result(self, base, started, trace, reason_codes, message, *,
+                              source_map, review_meta, budget, as_of):
+        lines = ["Mình chưa thể xác nhận câu trả lời tự động đủ chắc chắn cho trường hợp này."]
+        if source_map:
+            selected = list(source_map.values())[:2]
+            identities = "; ".join(
+                f"{item.document.document_number or item.document.title} — {item.chunk.locator}"
+                for item in selected)
+            lines.append(f"Nguồn liên quan đã được đối chiếu: {identities}.")
+            lines.append("Bạn có thể mở phần nguồn để xem nội dung gốc.")
+        question = self._clarification_question(message)
+        lines.append(f"Để trả lời đúng, bạn cho biết: {question}")
         content = "\n\n".join(lines)
-        if notice:
+        notice = _review_notice(review_meta)
+        if notice and source_map:
             content += f"\n\n{notice}"
         citations = [_citation(item, as_of) for item in source_map.values()]
-        trace.append(TraceEvent(step="clarification", summary=reason,
-                                document_ids=[item.document.id for item in source_map.values()]))
+        trace.append(TraceEvent(
+            step="clarification",
+            summary=f"Safe clarification fallback: reason_codes={','.join(reason_codes)}",
+            document_ids=[item.document.id for item in source_map.values()]))
         return ChatResult(**base, status="clarification_needed", content=content, citations=citations,
                           trace=trace, embedding_calls=budget.embedding_calls, llm_calls=budget.llm_calls,
                           tool_calls=budget.tool_calls, token_usage=budget.tokens,
-                          support_level="partial",
+                          support_level="insufficient",
                           elapsed_ms=int((time.monotonic() - started) * 1000))
