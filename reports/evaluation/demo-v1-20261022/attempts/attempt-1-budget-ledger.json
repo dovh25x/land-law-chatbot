@@ -1,0 +1,30 @@
+{
+  "summary": {
+    "max_requests": 5,
+    "reserved_token_cap": 15000,
+    "reserved_tokens_per_request": 3000,
+    "requests_reserved": 2,
+    "reserved_tokens": 6000,
+    "remaining_reserved_tokens": 9000,
+    "reported_actual_tokens": 2325,
+    "blocked_reason": null,
+    "provider_quota_is_separate": true
+  },
+  "entries": [
+    {
+      "id": 0,
+      "state": "confirmed",
+      "reservation": 3000,
+      "wire_bytes": 8995,
+      "confirmed_usage": 2325,
+      "http_status": 200
+    },
+    {
+      "id": 1,
+      "state": "reserved",
+      "reservation": 3000,
+      "wire_bytes": 11461,
+      "confirmed_usage": null
+    }
+  ]
+}

@@ -11,7 +11,6 @@ import json
 import re
 import subprocess
 import tempfile
-import time
 import uuid
 from datetime import date
 from pathlib import Path
@@ -322,6 +321,46 @@ async def run_legal_live(case, store, provider, allocation):
     return record
 
 
+async def run_live_legal_cases(cases, settings, store, allocation, cooldown):
+    """Run all live legal cases in one event loop.
+
+    Creating an httpx client outside the loop and closing each case with a new
+    ``asyncio.run`` leaves the connection pool bound to a closed loop. The
+    failed attempt is kept on disk by the allocation ledger; this function
+    never retries a case and records an explicit ERROR if the harness itself
+    fails after a request was reserved.
+    """
+    provider = GroqProvider(settings, store, usage_scope='operator',
+                            request_budget=allocation)
+    records = []
+    try:
+        if not provider.configured:
+            raise SystemExit('GROQ_API_KEY is not configured; live evaluation was not started')
+        for index, case in enumerate(cases):
+            try:
+                record = await run_legal_live(case, store, provider, allocation)
+            except Exception as exc:  # preserve the attempt; never retry or repair
+                record = {
+                    'id': case['id'], 'kind': 'legal', 'execution': 'ERROR',
+                    'reason': 'HARNESS_ERROR', 'error_type': type(exc).__name__,
+                    'status': 'error', 'answer': 'ERROR: live runner failed before a result was persisted.',
+                    'llm_calls': 0, 'embedding_calls': 0, 'token_usage': 0,
+                    'citations': [], 'evidence_chunk_ids': [],
+                    'manual_review': {
+                        'task_success': None, 'grounded': None, 'false_abstention': None,
+                        'notes': 'Runner error; this case is not a completed answer.',
+                        'reviewer': None, 'reviewed_at': None,
+                    },
+                }
+            records.append(record)
+            if (record.get('execution') == 'RUN' and record.get('llm_calls', 0) > 0
+                    and index < len(cases) - 1):
+                await asyncio.sleep(cooldown)
+    finally:
+        await provider.close()
+    return records
+
+
 def safety_scope_and_dates(store, release, policy):
     as_of = date.fromisoformat('2026-10-22')
     status = store.source_gate_status(release, as_of)
@@ -434,36 +473,30 @@ def main():
             isolated, args.backup, args.policy, args.policy_v1, args.receipts)
         provider = None
         allocation = None
+        live_records = {}
         try:
             if args.live:
                 ledger = args.output.with_name(args.output.stem + '-budget-ledger.json')
                 if ledger.exists():
                     raise SystemExit('Refusing to overwrite an existing live budget ledger')
                 allocation = DemoAllocation(ledger)
-                provider = GroqProvider(isolated, store, usage_scope='operator',
-                                        request_budget=allocation)
-                if not provider.configured:
-                    raise SystemExit('GROQ_API_KEY is not configured; live evaluation was not started')
+                legal_cases = [case for case in cases if case['kind'] == 'legal']
+                records = asyncio.run(run_live_legal_cases(
+                    legal_cases, isolated, store, allocation, args.cooldown_seconds))
+                live_records = {record['id']: record for record in records}
             else:
                 provider = PreflightProvider(
                     isolated.model_copy(update={'groq_api_key': SecretStr('preflight-not-used')}),
                     store, usage_scope='operator')
-            live_legal_done = 0
-            legal_total = sum(case['kind'] == 'legal' for case in cases)
             for case in cases:
                 if case['kind'] == 'social':
                     output['cases'].append(asyncio.run(run_social(case, isolated, store)))
                 elif case['kind'] == 'legal':
                     if args.live:
-                        record = asyncio.run(run_legal_live(case, store, provider, allocation))
+                        output['cases'].append(live_records[case['id']])
                     else:
-                        record = asyncio.run(run_legal_preflight(case, isolated, store, provider))
-                    output['cases'].append(record)
-                    if (args.live and record.get('execution') == 'RUN'
-                            and record.get('llm_calls', 0) > 0):
-                        live_legal_done += 1
-                        if live_legal_done < legal_total:
-                            time.sleep(args.cooldown_seconds)
+                        output['cases'].append(
+                            asyncio.run(run_legal_preflight(case, isolated, store, provider)))
                 else:
                     if case['check'] == 'scope_and_dates':
                         output['cases'].append(safety_scope_and_dates(store, release, policy))
