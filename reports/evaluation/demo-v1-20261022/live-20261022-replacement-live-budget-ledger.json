@@ -1,0 +1,55 @@
+{
+  "summary": {
+    "max_requests": 5,
+    "reserved_token_cap": 15000,
+    "reserved_tokens_per_request": 3000,
+    "requests_reserved": 5,
+    "reserved_tokens": 15000,
+    "remaining_reserved_tokens": 0,
+    "reported_actual_tokens": 10442,
+    "blocked_reason": null,
+    "provider_quota_is_separate": true
+  },
+  "entries": [
+    {
+      "id": 0,
+      "state": "confirmed",
+      "reservation": 3000,
+      "wire_bytes": 8995,
+      "confirmed_usage": 2358,
+      "http_status": 200
+    },
+    {
+      "id": 1,
+      "state": "confirmed",
+      "reservation": 3000,
+      "wire_bytes": 11461,
+      "confirmed_usage": 2766,
+      "http_status": 200
+    },
+    {
+      "id": 2,
+      "state": "confirmed",
+      "reservation": 3000,
+      "wire_bytes": 5610,
+      "confirmed_usage": 1385,
+      "http_status": 200
+    },
+    {
+      "id": 3,
+      "state": "confirmed",
+      "reservation": 3000,
+      "wire_bytes": 8703,
+      "confirmed_usage": 2175,
+      "http_status": 200
+    },
+    {
+      "id": 4,
+      "state": "confirmed",
+      "reservation": 3000,
+      "wire_bytes": 6396,
+      "confirmed_usage": 1758,
+      "http_status": 200
+    }
+  ]
+}
