@@ -13,14 +13,26 @@ import pytest
 
 from conftest import session
 from landlaw.agentic_rag import BoundedAgenticRAG
+from landlaw.conversation import classify
 from landlaw.legal_text import marker_ids, validate_answer_result
 from landlaw.models import ChatRequest
-from landlaw.provider import ProviderUnavailable
+from landlaw.provider import Budget, ProviderUnavailable
+from landlaw.security import local_date
 from landlaw.simple_rag import SimpleAnswer
 from landlaw.store import RateLimited
 
 
 FIXTURE = Path(__file__).parent / "fixtures" / "legal-answer-hotfix-release.json"
+# Mirror frontend/src/citizen.ts; update together when the landing prompts change.
+LEGAL_SUGGESTIONS = (
+    ("Có sổ đỏ, khi Nhà nước thu hồi đất ở thì điều kiện được bồi thường là gì?",
+     {("31/2024/QH15", "Điều 95"), ("40/2026/QĐ-UBND", "Điều 4")}),
+    ("Khi bị thu hồi đất nông nghiệp, người dân có thể được hỗ trợ những gì?",
+     {("88/2024/NĐ-CP", "Điều 19"), ("31/2024/QH15", "Điều 109")}),
+    ("Nếu bị thu hồi đất ở và phải chuyển nhà, điều kiện được bố trí tái định cư là gì?",
+     {("40/2026/QĐ-UBND", "Điều 21"), ("88/2024/NĐ-CP", "Điều 24"),
+      ("31/2024/QH15", "Điều 111")}),
+)
 PURE_ANSWER = SimpleAnswer(
     answer="Bạn đã nhận được quyết định thu hồi đất hoặc thông báo thu hồi chưa?",
     clarification_question="Bạn đã nhận được quyết định thu hồi đất hoặc thông báo thu hồi chưa?",
@@ -216,6 +228,35 @@ def test_l03_life_stabilization_support_answer_is_published(reviewed_store, sett
     assert [(citation.document_number, citation.locator) for citation in result.citations] == [
         ("88/2024/NĐ-CP", "Điều 19")]
     assert not published_fallback(result)
+
+
+def test_capabilities_suggestion_uses_social_control():
+    # Mirror frontend/src/citizen.ts; the prompt should introduce capabilities,
+    # not turn into a legal retrieval query.
+    intent = classify("Trợ lý này có thể giúp gì?")
+    assert intent.kind == "capabilities"
+
+
+def test_citizen_legal_suggestions_have_admitted_evidence(reviewed_store, settings):
+    """Landing prompts must be answerable from the reviewed fixture subset.
+
+    The first landing prompt is a capabilities/social turn and is covered by
+    the social-control test. These three must retrieve at least one directly
+    relevant admitted provision; this checks coverage, not answer correctness.
+    """
+    payload = json.loads(FIXTURE.read_text())
+    payload["id"] = "legal-hotfix-fixture"
+    rag = BoundedAgenticRAG(reviewed_store, ScenarioProvider(settings, PURE_ANSWER))
+    for question, expected in LEGAL_SUGGESTIONS:
+        sid, _ = session(reviewed_store)
+        evidence = asyncio.run(rag._retrieve(
+            question, request(sid, question), payload, local_date(), Budget(), []))
+        identities = {(item.document.document_number, item.chunk.locator)
+                      for item in evidence}
+        assert identities & expected, (question, identities)
+        assert len(evidence) <= 5
+        assert all(item.applicability in {'current', 'provision_specific', 'context'}
+                   for item in evidence)
 
 
 def test_claim_free_clarification_is_published_without_markers(reviewed_store, settings):
